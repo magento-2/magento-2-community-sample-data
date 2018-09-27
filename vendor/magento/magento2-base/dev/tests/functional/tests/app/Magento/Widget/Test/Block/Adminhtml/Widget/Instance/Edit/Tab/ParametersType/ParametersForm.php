@@ -116,7 +116,7 @@ class ParametersForm extends Form
     public function getTemplateBlock()
     {
         return $this->blockFactory->create(
-            \Magento\Backend\Test\Block\Template::class,
+            'Magento\Backend\Test\Block\Template',
             ['element' => $this->_rootElement->find($this->template, Locator::SELECTOR_XPATH)]
         );
     }

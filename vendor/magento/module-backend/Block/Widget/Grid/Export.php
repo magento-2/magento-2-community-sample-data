@@ -4,15 +4,14 @@
  * See COPYING.txt for license details.
  */
 
+// @codingStandardsIgnoreFile
+
 namespace Magento\Backend\Block\Widget\Grid;
 
 use Magento\Framework\App\Filesystem\DirectoryList;
 
 /**
- * @api
- * @deprecated 100.2.0 in favour of UI component implementation
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
- * @since 100.0.2
  */
 class Export extends \Magento\Backend\Block\Widget implements \Magento\Backend\Block\Widget\Grid\ExportInterface
 {
@@ -159,7 +158,7 @@ class Export extends \Magento\Backend\Block\Widget implements \Magento\Backend\B
         $this->setChild(
             'export_button',
             $this->getLayout()->createBlock(
-                \Magento\Backend\Block\Widget\Button::class
+                'Magento\Backend\Block\Widget\Button'
             )->setData(
                 [
                     'label' => __('Export'),
@@ -262,7 +261,7 @@ class Export extends \Magento\Backend\Block\Widget implements \Magento\Backend\B
             $originalCollection->setPageSize($this->getExportPageSize());
             $originalCollection->setCurPage($page);
             $originalCollection->load();
-            if ($count === null) {
+            if (is_null($count)) {
                 $count = $originalCollection->getSize();
                 $lPage = $originalCollection->getLastPageNumber();
             }
@@ -285,10 +284,8 @@ class Export extends \Magento\Backend\Block\Widget implements \Magento\Backend\B
      * @param \Magento\Framework\Filesystem\File\WriteInterface $stream
      * @return void
      */
-    protected function _exportCsvItem(
-        \Magento\Framework\DataObject $item,
-        \Magento\Framework\Filesystem\File\WriteInterface $stream
-    ) {
+    protected function _exportCsvItem(\Magento\Framework\DataObject $item, \Magento\Framework\Filesystem\File\WriteInterface $stream)
+    {
         $row = [];
         foreach ($this->_getColumns() as $column) {
             if (!$column->getIsSystem()) {

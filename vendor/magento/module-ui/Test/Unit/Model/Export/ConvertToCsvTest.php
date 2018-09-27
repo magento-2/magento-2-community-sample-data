@@ -14,10 +14,7 @@ use Magento\Ui\Component\MassAction\Filter;
 use Magento\Ui\Model\Export\ConvertToCsv;
 use Magento\Ui\Model\Export\MetadataProvider;
 
-/**
- * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
- */
-class ConvertToCsvTest extends \PHPUnit\Framework\TestCase
+class ConvertToCsvTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var ConvertToCsv
@@ -56,10 +53,10 @@ class ConvertToCsvTest extends \PHPUnit\Framework\TestCase
 
     protected function setUp()
     {
-        $this->directory = $this->getMockBuilder(\Magento\Framework\Filesystem\Directory\WriteInterface::class)
+        $this->directory = $this->getMockBuilder('Magento\Framework\Filesystem\Directory\WriteInterface')
             ->getMockForAbstractClass();
 
-        $this->filesystem = $this->getMockBuilder(\Magento\Framework\Filesystem::class)
+        $this->filesystem = $this->getMockBuilder('Magento\Framework\Filesystem')
             ->disableOriginalConstructor()
             ->getMock();
         $this->filesystem->expects($this->any())
@@ -67,18 +64,18 @@ class ConvertToCsvTest extends \PHPUnit\Framework\TestCase
             ->with(DirectoryList::VAR_DIR)
             ->willReturn($this->directory);
 
-        $this->filter = $this->getMockBuilder(\Magento\Ui\Component\MassAction\Filter::class)
+        $this->filter = $this->getMockBuilder('Magento\Ui\Component\MassAction\Filter')
             ->disableOriginalConstructor()
             ->getMock();
 
-        $this->metadataProvider = $this->getMockBuilder(\Magento\Ui\Model\Export\MetadataProvider::class)
+        $this->metadataProvider = $this->getMockBuilder('Magento\Ui\Model\Export\MetadataProvider')
             ->disableOriginalConstructor()
             ->getMock();
 
-        $this->component = $this->getMockBuilder(\Magento\Framework\View\Element\UiComponentInterface::class)
+        $this->component = $this->getMockBuilder('Magento\Framework\View\Element\UiComponentInterface')
             ->getMockForAbstractClass();
 
-        $this->stream = $this->getMockBuilder(\Magento\Framework\Filesystem\File\WriteInterface::class)
+        $this->stream = $this->getMockBuilder('Magento\Framework\Filesystem\File\WriteInterface')
             ->setMethods([
                 'lock',
                 'unlock',
@@ -98,7 +95,7 @@ class ConvertToCsvTest extends \PHPUnit\Framework\TestCase
         $componentName = 'component_name';
         $data = ['data_value'];
 
-        $document = $this->getMockBuilder(\Magento\Framework\Api\Search\DocumentInterface::class)
+        $document = $this->getMockBuilder('Magento\Framework\Api\Search\DocumentInterface')
             ->getMockForAbstractClass();
 
         $this->mockComponent($componentName, [$document]);
@@ -152,7 +149,7 @@ class ConvertToCsvTest extends \PHPUnit\Framework\TestCase
      */
     protected function mockStream($expected)
     {
-        $this->stream = $this->getMockBuilder(\Magento\Framework\Filesystem\File\WriteInterface::class)
+        $this->stream = $this->getMockBuilder('Magento\Framework\Filesystem\File\WriteInterface')
             ->setMethods([
                 'lock',
                 'unlock',
@@ -181,21 +178,21 @@ class ConvertToCsvTest extends \PHPUnit\Framework\TestCase
      */
     protected function mockComponent($componentName, $items)
     {
-        $context = $this->getMockBuilder(\Magento\Framework\View\Element\UiComponent\ContextInterface::class)
+        $context = $this->getMockBuilder('Magento\Framework\View\Element\UiComponent\ContextInterface')
             ->setMethods(['getDataProvider'])
             ->getMockForAbstractClass();
 
         $dataProvider = $this->getMockBuilder(
-            \Magento\Framework\View\Element\UiComponent\DataProvider\DataProviderInterface::class
+            'Magento\Framework\View\Element\UiComponent\DataProvider\DataProviderInterface'
         )
             ->setMethods(['getSearchResult'])
             ->getMockForAbstractClass();
 
-        $searchResult = $this->getMockBuilder(\Magento\Framework\Api\Search\SearchResultInterface::class)
+        $searchResult = $this->getMockBuilder('Magento\Framework\Api\Search\SearchResultInterface')
             ->setMethods(['getItems'])
             ->getMockForAbstractClass();
 
-        $searchCriteria = $this->getMockBuilder(\Magento\Framework\Api\SearchCriteriaInterface::class)
+        $searchCriteria = $this->getMockBuilder('\Magento\Framework\Api\SearchCriteriaInterface')
             ->setMethods(['setPageSize', 'setCurrentPage'])
             ->getMockForAbstractClass();
         $this->component->expects($this->any())

@@ -5,57 +5,41 @@
  */
 namespace Magento\Framework\Unserialize\Test\Unit;
 
-use Magento\Framework\Serialize\Serializer\Serialize;
-use Magento\Framework\Unserialize\Unserialize;
-
-class UnserializeTest extends \PHPUnit\Framework\TestCase
+/**
+ * @package Magento\Framework
+ */
+class UnserializeTest extends \PHPUnit_Framework_TestCase
 {
-    /**
-     * @var Serialize|\PHPUnit_Framework_MockObject_MockObject
-     */
-    private $serializerMock;
-
-    /**
-     * @var Unserialize
-     */
-    private $unserialize;
+    /** @var \Magento\Framework\Unserialize\Unserialize */
+    protected $unserialize;
 
     protected function setUp()
     {
-        $this->serializerMock = $this->getMockBuilder(Serialize::class)
-            ->setMethods(
-                ['serialize', 'unserialize']
-            )
-            ->getMock();
-        $this->unserialize = new Unserialize($this->serializerMock);
+        $this->unserialize = new \Magento\Framework\Unserialize\Unserialize();
     }
 
     public function testUnserializeArray()
     {
-        $data = ['foo' => 'bar', 1, 4];
-        $serializedData = 'serialzied data';
-        $this->serializerMock->expects($this->any())
-            ->method('unserialize')
-            ->with($serializedData)
-            ->willReturn($data);
-        $this->assertEquals(
-            $data,
-            $this->unserialize->unserialize($serializedData)
-        );
+        $array = ['foo' => 'bar', 1, 4];
+        $this->assertEquals($array, $this->unserialize->unserialize(serialize($array)));
     }
 
     /**
      * @param string $serialized The string containing serialized object
+     *
      * @expectedException \Exception
      * @expectedExceptionMessage String contains serialized object
-     * @dataProvider unserializeObjectDataProvider
+     * @dataProvider serializedObjectDataProvider
      */
     public function testUnserializeObject($serialized)
     {
         $this->assertFalse($this->unserialize->unserialize($serialized));
     }
 
-    public function unserializeObjectDataProvider()
+    /**
+     * @return array
+     */
+    public function serializedObjectDataProvider()
     {
         return [
             // Upper and lower case serialized object indicators, nested in array

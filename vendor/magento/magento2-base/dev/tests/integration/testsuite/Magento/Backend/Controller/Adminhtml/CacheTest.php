@@ -17,9 +17,7 @@ class CacheTest extends \Magento\TestFramework\TestCase\AbstractBackendControlle
     public function testFlushAllAction()
     {
         /** @var $cache \Magento\Framework\App\Cache */
-        $cache = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->create(
-            \Magento\Framework\App\Cache::class
-        );
+        $cache = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->create('Magento\Framework\App\Cache');
         $this->assertNotEmpty($cache->load('APPLICATION_FIXTURE'));
 
         $this->dispatch('backend/admin/cache/flushAll');
@@ -28,7 +26,7 @@ class CacheTest extends \Magento\TestFramework\TestCase\AbstractBackendControlle
         $this->assertFalse($cache->load('APPLICATION_FIXTURE'));
 
         $cachePool = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->create(
-            \Magento\Framework\App\Cache\Frontend\Pool::class
+            'Magento\Framework\App\Cache\Frontend\Pool'
         );
         /** @var $cacheFrontend \Magento\Framework\Cache\FrontendInterface */
         foreach ($cachePool as $cacheFrontend) {
@@ -45,14 +43,12 @@ class CacheTest extends \Magento\TestFramework\TestCase\AbstractBackendControlle
         $this->dispatch('backend/admin/cache/flushSystem');
 
         /** @var $cache \Magento\Framework\App\Cache */
-        $cache = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->create(
-            \Magento\Framework\App\Cache::class
-        );
+        $cache = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->create('Magento\Framework\App\Cache');
         /** @var $cachePool \Magento\Framework\App\Cache\Frontend\Pool */
         $this->assertFalse($cache->load('APPLICATION_FIXTURE'));
 
         $cachePool = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->create(
-            \Magento\Framework\App\Cache\Frontend\Pool::class
+            'Magento\Framework\App\Cache\Frontend\Pool'
         );
         /** @var $cacheFrontend \Magento\Framework\Cache\FrontendInterface */
         foreach ($cachePool as $cacheFrontend) {

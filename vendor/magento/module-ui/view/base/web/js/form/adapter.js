@@ -2,22 +2,14 @@
  * Copyright © Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
-
-/**
- * @api
- */
 define([
     'jquery',
-    'underscore'
-], function ($, _) {
+    'underscore',
+    'Magento_Ui/js/form/adapter/buttons'
+], function ($, _, buttons) {
     'use strict';
 
-    var buttons = {
-            'reset':            '#reset',
-            'save':             '#save',
-            'saveAndContinue':  '#save_and_continue'
-        },
-        selectorPrefix = '',
+    var selectorPrefix = '',
         eventPrefix;
 
     /**

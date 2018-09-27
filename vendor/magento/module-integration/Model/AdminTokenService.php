@@ -17,12 +17,13 @@ use Magento\Integration\Model\Oauth\Token\RequestThrottler;
 
 /**
  * Class to handle token generation for Admins
+ *
  */
 class AdminTokenService implements \Magento\Integration\Api\AdminTokenServiceInterface
 {
     /**
      * Token Model
-     *
+     *a
      * @var TokenModelFactory
      */
     private $tokenModelFactory;
@@ -106,9 +107,6 @@ class AdminTokenService implements \Magento\Integration\Api\AdminTokenServiceInt
     public function revokeAdminAccessToken($adminId)
     {
         $tokenCollection = $this->tokenModelCollectionFactory->create()->addFilterByAdminId($adminId);
-        if ($tokenCollection->getSize() == 0) {
-            throw new LocalizedException(__('This user has no tokens.'));
-        }
         try {
             foreach ($tokenCollection as $token) {
                 $token->delete();
@@ -123,7 +121,7 @@ class AdminTokenService implements \Magento\Integration\Api\AdminTokenServiceInt
      * Get request throttler instance
      *
      * @return RequestThrottler
-     * @deprecated 100.0.4
+     * @deprecated
      */
     private function getRequestThrottler()
     {

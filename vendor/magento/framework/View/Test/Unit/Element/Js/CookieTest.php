@@ -5,7 +5,7 @@
  */
 namespace Magento\Framework\View\Test\Unit\Element\Js;
 
-class CookieTest extends \PHPUnit\Framework\TestCase
+class CookieTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\Framework\View\Element\Js\Cookie
@@ -29,20 +29,20 @@ class CookieTest extends \PHPUnit\Framework\TestCase
 
     protected function setUp()
     {
-        $this->contextMock = $this->getMockBuilder(\Magento\Framework\View\Element\Template\Context::class)
+        $this->contextMock = $this->getMockBuilder('Magento\Framework\View\Element\Template\Context')
             ->disableOriginalConstructor()
             ->getMock();
-        $this->sessionConfigMock = $this->getMockBuilder(\Magento\Framework\Session\Config::class)
+        $this->sessionConfigMock = $this->getMockBuilder('Magento\Framework\Session\Config')
             ->disableOriginalConstructor()
             ->getMock();
-        $this->ipValidatorMock = $this->getMockBuilder(\Magento\Framework\Validator\Ip::class)
+        $this->ipValidatorMock = $this->getMockBuilder('Magento\Framework\Validator\Ip')
             ->disableOriginalConstructor()
             ->getMock();
 
-        $validtorMock = $this->getMockBuilder(\Magento\Framework\View\Element\Template\File\Validator::class)
+        $validtorMock = $this->getMockBuilder('Magento\Framework\View\Element\Template\File\Validator')
             ->setMethods(['isValid'])->disableOriginalConstructor()->getMock();
 
-        $scopeConfigMock = $this->getMockBuilder(\Magento\Framework\App\Config::class)
+        $scopeConfigMock = $this->getMockBuilder('Magento\Framework\App\Config')
             ->setMethods(['isSetFlag'])->disableOriginalConstructor()->getMock();
 
         $this->contextMock->expects($this->any())
@@ -63,7 +63,7 @@ class CookieTest extends \PHPUnit\Framework\TestCase
 
     public function testInstanceOf()
     {
-        $this->assertInstanceOf(\Magento\Framework\View\Element\Js\Cookie::class, $this->model);
+        $this->assertInstanceOf('Magento\Framework\View\Element\Js\Cookie', $this->model);
     }
 
     /**
@@ -83,6 +83,9 @@ class CookieTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals($expectedResult, $result);
     }
 
+    /**
+     * @return array
+     */
     public static function domainDataProvider()
     {
         return [

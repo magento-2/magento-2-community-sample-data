@@ -7,7 +7,7 @@ use Magento\Framework\App\Filesystem\DirectoryList;
 
 /** @var \Magento\Framework\Filesystem\Directory\Write $rootDirectory */
 $rootDirectory = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->get(
-    \Magento\Framework\Filesystem::class
+    'Magento\Framework\Filesystem'
 )->getDirectoryWrite(
     DirectoryList::ROOT
 );

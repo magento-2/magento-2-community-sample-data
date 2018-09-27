@@ -8,7 +8,7 @@ namespace Magento\Shipping\Test\Unit\Controller\Adminhtml\Order\Shipment;
 /**
  * Class GetShippingItemsGridTest
  */
-class GetShippingItemsGridTest extends \PHPUnit\Framework\TestCase
+class GetShippingItemsGridTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\Shipping\Controller\Adminhtml\Order\ShipmentLoader|\PHPUnit_Framework_MockObject_MockObject
@@ -37,26 +37,41 @@ class GetShippingItemsGridTest extends \PHPUnit\Framework\TestCase
 
     protected function setUp()
     {
-        $this->requestMock = $this->createPartialMock(
-            \Magento\Framework\App\Request\Http::class,
-            ['getParam', '__wakeup']
+        $this->requestMock = $this->getMock(
+            'Magento\Framework\App\Request\Http',
+            ['getParam', '__wakeup'],
+            [],
+            '',
+            false
         );
-        $this->shipmentLoaderMock = $this->createPartialMock(
-            \Magento\Shipping\Controller\Adminhtml\Order\ShipmentLoader::class,
-            ['setOrderId', 'setShipmentId', 'setShipment', 'setTracking', 'load', '__wakeup']
+        $this->shipmentLoaderMock = $this->getMock(
+            'Magento\Shipping\Controller\Adminhtml\Order\ShipmentLoader',
+            ['setOrderId', 'setShipmentId', 'setShipment', 'setTracking', 'load', '__wakeup'],
+            [],
+            '',
+            false
         );
-        $this->viewMock = $this->createPartialMock(
-            \Magento\Framework\App\View::class,
-            ['getLayout', 'renderLayout', '__wakeup']
+        $this->viewMock = $this->getMock(
+            'Magento\Framework\App\View',
+            ['getLayout', 'renderLayout', '__wakeup'],
+            [],
+            '',
+            false
         );
-        $this->responseMock = $this->createPartialMock(
-            \Magento\Framework\App\Response\Http::class,
-            ['setBody', '__wakeup']
+        $this->responseMock = $this->getMock(
+            'Magento\Framework\App\Response\Http',
+            ['setBody', '__wakeup'],
+            [],
+            '',
+            false
         );
 
-        $contextMock = $this->createPartialMock(
-            \Magento\Backend\App\Action\Context::class,
-            ['getRequest', 'getResponse', 'getView', '__wakeup']
+        $contextMock = $this->getMock(
+            'Magento\Backend\App\Action\Context',
+            ['getRequest', 'getResponse', 'getView', '__wakeup'],
+            [],
+            '',
+            false
         );
 
         $contextMock->expects($this->any())->method('getRequest')->will($this->returnValue($this->requestMock));
@@ -80,10 +95,19 @@ class GetShippingItemsGridTest extends \PHPUnit\Framework\TestCase
         $tracking = [];
         $result = 'result-html';
 
-        $layoutMock = $this->createPartialMock(\Magento\Framework\View\Layout::class, ['createBlock']);
-        $gridMock = $this->createPartialMock(
-            \Magento\Shipping\Block\Adminhtml\Order\Packaging\Grid::class,
-            ['setIndex', 'toHtml']
+        $layoutMock = $this->getMock(
+            'Magento\Framework\View\Layout',
+            ['createBlock'],
+            [],
+            '',
+            false
+        );
+        $gridMock = $this->getMock(
+            'Magento\Shipping\Block\Adminhtml\Order\Packaging\Grid',
+            ['setIndex', 'toHtml'],
+            [],
+            '',
+            false
         );
 
         $this->requestMock->expects($this->at(0))
@@ -109,7 +133,7 @@ class GetShippingItemsGridTest extends \PHPUnit\Framework\TestCase
         $this->shipmentLoaderMock->expects($this->once())->method('load');
         $layoutMock->expects($this->once())
             ->method('createBlock')
-            ->with(\Magento\Shipping\Block\Adminhtml\Order\Packaging\Grid::class)
+            ->with('Magento\Shipping\Block\Adminhtml\Order\Packaging\Grid')
             ->will($this->returnValue($gridMock));
         $this->viewMock->expects($this->once())
             ->method('getLayout')

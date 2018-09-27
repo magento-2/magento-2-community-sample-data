@@ -5,7 +5,7 @@
  */
 namespace Magento\Captcha\Block\Captcha;
 
-class DefaultTest extends \PHPUnit\Framework\TestCase
+class DefaultTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\Captcha\Block\Captcha\DefaultCaptcha
@@ -15,9 +15,9 @@ class DefaultTest extends \PHPUnit\Framework\TestCase
     protected function setUp()
     {
         $this->_block = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->get(
-            \Magento\Framework\View\LayoutInterface::class
+            'Magento\Framework\View\LayoutInterface'
         )->createBlock(
-            \Magento\Captcha\Block\Captcha\DefaultCaptcha::class
+            'Magento\Captcha\Block\Captcha\DefaultCaptcha'
         );
     }
 

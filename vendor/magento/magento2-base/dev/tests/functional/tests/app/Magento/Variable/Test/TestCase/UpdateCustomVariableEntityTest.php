@@ -29,13 +29,14 @@ use Magento\Mtf\TestCase\Injectable;
  * 8. Save Custom variable using correspond saveActions.
  * 9. Perform all assertions.
  *
- * @group Variables
+ * @group Variables_(PS)
  * @ZephyrId MAGETWO-26104
  */
 class UpdateCustomVariableEntityTest extends Injectable
 {
     /* tags */
     const MVP = 'yes';
+    const DOMAIN = 'PS';
     /* end tags */
 
     /**
@@ -114,17 +115,14 @@ class UpdateCustomVariableEntityTest extends Injectable
     public function tearDown()
     {
         if ($this->store !== null) {
-            $storeIndex = $this->objectManager->create(\Magento\Backend\Test\Page\Adminhtml\StoreIndex::class);
+            $storeIndex = $this->objectManager->create('Magento\Backend\Test\Page\Adminhtml\StoreIndex');
             $storeIndex->open();
             $storeIndex->getStoreGrid()->searchAndOpen(['store_title' => $this->store->getName()]);
-            $storeNew = $this->objectManager->create(\Magento\Backend\Test\Page\Adminhtml\StoreNew::class);
+            $storeNew = $this->objectManager->create('Magento\Backend\Test\Page\Adminhtml\StoreNew');
             $storeNew->getFormPageActions()->delete();
-
-            /** @var \Magento\Backend\Test\Page\Adminhtml\StoreDelete $storeDelete */
-            $storeDelete = $this->objectManager->create(\Magento\Backend\Test\Page\Adminhtml\StoreDelete::class);
+            $storeDelete = $this->objectManager->create('Magento\Backend\Test\Page\Adminhtml\StoreDelete');
             $storeDelete->getStoreForm()->fillForm(['create_backup' => 'No']);
             $storeDelete->getFormPageActions()->delete();
-            $storeDelete->getModalBlock()->acceptAlert();
         }
         $this->store = null;
     }

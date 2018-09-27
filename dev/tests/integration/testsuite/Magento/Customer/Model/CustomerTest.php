@@ -6,7 +6,7 @@
 
 namespace Magento\Customer\Model;
 
-class CustomerTest extends \PHPUnit\Framework\TestCase
+class CustomerTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\Customer\Model\Customer
@@ -21,10 +21,10 @@ class CustomerTest extends \PHPUnit\Framework\TestCase
     protected function setUp()
     {
         $this->customerModel = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->create(
-            \Magento\Customer\Model\Customer::class
+            'Magento\Customer\Model\Customer'
         );
         $this->customerFactory = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->create(
-            \Magento\Customer\Api\Data\CustomerInterfaceFactory::class
+            'Magento\Customer\Api\Data\CustomerInterfaceFactory'
         );
     }
 

@@ -13,30 +13,18 @@ define('buildTools', [
         isEnabled: storage.getItem(storeName) === null,
 
         /**
-         * Removes base url from the the provided string
+         * Removes base url from the provided string
          *
          * @param {String} url - Url to be processed.
          * @param {Object} config - RequiereJs config object.
          * @returns {String} String without base url.
          */
         removeBaseUrl: function (url, config) {
-            var urlParts,
-                baseUrlParts,
-                baseUrl = config.baseUrl || '',
+            var baseUrl = config.baseUrl || '',
                 index = url.indexOf(baseUrl);
 
             if (~index) {
                 url = url.substring(baseUrl.length - index);
-            } else {
-                baseUrlParts = baseUrl.split('/');
-                baseUrlParts = baseUrlParts.slice(0, -5); // slice area/vendor/theme/locale/empty chunk
-                baseUrl = baseUrlParts.join('/');
-
-                url = url.substring(baseUrl.length);
-
-                urlParts = url.split('/');
-                urlParts = urlParts.slice(5); // slice empty chunk/area/vendor/theme/locale/
-                url = urlParts.join('/');
             }
 
             return url;

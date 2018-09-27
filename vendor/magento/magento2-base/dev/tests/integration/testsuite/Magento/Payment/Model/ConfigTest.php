@@ -7,27 +7,21 @@
  */
 namespace Magento\Payment\Model;
 
-use Magento\Payment\Model\Config;
-use Magento\TestFramework\Helper\Bootstrap;
-
-/**
- * Class ConfigTest
- */
-class ConfigTest extends \PHPUnit\Framework\TestCase
+class ConfigTest extends \PHPUnit_Framework_TestCase
 {
     /**
-     * @var Config
+     * @var \Magento\Payment\Model\Config
      */
-    private $model = null;
+    protected $_model = null;
 
     protected function setUp()
     {
-        $objectManager = Bootstrap::getObjectManager();
+        $objectManager = \Magento\TestFramework\Helper\Bootstrap::getObjectManager();
         /** @var $cache \Magento\Framework\App\Cache */
-        $cache = $objectManager->create(\Magento\Framework\App\Cache::class);
+        $cache = $objectManager->create('Magento\Framework\App\Cache');
         $cache->clean();
         $fileResolverMock = $this->getMockBuilder(
-            \Magento\Framework\Config\FileResolverInterface::class
+            'Magento\Framework\Config\FileResolverInterface'
         )->disableOriginalConstructor()->getMock();
         $fileList = [
             file_get_contents(__DIR__ . '/_files/payment.xml'),
@@ -35,48 +29,32 @@ class ConfigTest extends \PHPUnit\Framework\TestCase
         ];
         $fileResolverMock->expects($this->any())->method('get')->will($this->returnValue($fileList));
         $reader = $objectManager->create(
-            \Magento\Payment\Model\Config\Reader::class,
+            'Magento\Payment\Model\Config\Reader',
             ['fileResolver' => $fileResolverMock]
         );
-        $data = $objectManager->create(\Magento\Payment\Model\Config\Data::class, ['reader' => $reader]);
-        $this->model = $objectManager->create(Config::class, ['dataStorage' => $data]);
-    }
-
-    /**
-     * @covers \Magento\Payment\Model\Config::getActiveMethods
-     */
-    public function testGetActiveMethods()
-    {
-        $paymentMethods = $this->model->getActiveMethods();
-        static::assertNotEmpty($paymentMethods);
-
-        /** @var \Magento\Payment\Model\MethodInterface $method */
-        foreach ($paymentMethods as $method) {
-            static::assertNotEmpty($method->getCode());
-            static::assertTrue($method->isActive());
-            static::assertEquals(0, $method->getStore());
-        }
+        $data = $objectManager->create('Magento\Payment\Model\Config\Data', ['reader' => $reader]);
+        $this->_model = $objectManager->create('Magento\Payment\Model\Config', ['dataStorage' => $data]);
     }
 
     public function testGetCcTypes()
     {
         $expected = ['AE' => 'American Express', 'SM' => 'Switch/Maestro', 'SO' => 'Solo'];
-        $ccTypes = $this->model->getCcTypes();
+        $ccTypes = $this->_model->getCcTypes();
         $this->assertEquals($expected, $ccTypes);
     }
 
     public function testGetGroups()
     {
         $expected = ['any_payment' => 'Any Payment Methods', 'offline' => 'Offline Payment Methods'];
-        $groups = $this->model->getGroups();
+        $groups = $this->_model->getGroups();
         $this->assertEquals($expected, $groups);
     }
 
     protected function tearDown()
     {
-        $objectManager = Bootstrap::getObjectManager();
+        $objectManager = \Magento\TestFramework\Helper\Bootstrap::getObjectManager();
         /** @var $cache \Magento\Framework\App\Cache */
-        $cache = $objectManager->create(\Magento\Framework\App\Cache::class);
+        $cache = $objectManager->create('Magento\Framework\App\Cache');
         $cache->clean();
     }
 }

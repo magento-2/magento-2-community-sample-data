@@ -6,15 +6,13 @@
 namespace Magento\Ui\Api;
 
 /**
- * Bookmark CRUD interface
- *
+ * Bookmark CRUD interface.
  * @api
- * @since 100.0.2
  */
 interface BookmarkRepositoryInterface
 {
     /**
-     * Save bookmark
+     * Save bookmark.
      *
      * @param \Magento\Ui\Api\Data\BookmarkInterface $bookmark
      * @return \Magento\Ui\Api\Data\BookmarkInterface
@@ -23,7 +21,7 @@ interface BookmarkRepositoryInterface
     public function save(\Magento\Ui\Api\Data\BookmarkInterface $bookmark);
 
     /**
-     * Retrieve bookmark
+     * Retrieve bookmark.
      *
      * @param int $bookmarkId
      * @return \Magento\Ui\Api\Data\BookmarkInterface
@@ -32,7 +30,7 @@ interface BookmarkRepositoryInterface
     public function getById($bookmarkId);
 
     /**
-     * Retrieve bookmarks matching the specified criteria
+     * Retrieve bookmarks matching the specified criteria.
      *
      * @param \Magento\Framework\Api\SearchCriteriaInterface $searchCriteria
      * @return \Magento\Ui\Api\Data\BookmarkSearchResultsInterface
@@ -41,7 +39,7 @@ interface BookmarkRepositoryInterface
     public function getList(\Magento\Framework\Api\SearchCriteriaInterface $searchCriteria);
 
     /**
-     * Delete bookmark
+     * Delete bookmark.
      *
      * @param \Magento\Ui\Api\Data\BookmarkInterface $bookmark
      * @return bool true on success
@@ -50,7 +48,7 @@ interface BookmarkRepositoryInterface
     public function delete(\Magento\Ui\Api\Data\BookmarkInterface $bookmark);
 
     /**
-     * Delete bookmark by ID
+     * Delete bookmark by ID.
      *
      * @param int $bookmarkId
      * @return bool true on success

@@ -7,7 +7,7 @@ namespace Magento\Braintree\Gateway\Response;
 
 use Braintree\Transaction;
 use Magento\Braintree\Gateway\Config\Config;
-use Magento\Braintree\Gateway\SubjectReader;
+use Magento\Braintree\Gateway\Helper\SubjectReader;
 use Magento\Payment\Gateway\Response\HandlerInterface;
 use Magento\Payment\Model\InfoInterface;
 use Magento\Sales\Api\Data\OrderPaymentExtensionInterface;
@@ -42,33 +42,23 @@ class VaultDetailsHandler implements HandlerInterface
     protected $config;
 
     /**
-     * @var \Magento\Framework\Serialize\Serializer\Json
-     */
-    private $serializer;
-
-    /**
-     * VaultDetailsHandler constructor.
+     * Constructor
      *
      * @param PaymentTokenInterfaceFactory $paymentTokenFactory
      * @param OrderPaymentExtensionInterfaceFactory $paymentExtensionFactory
      * @param Config $config
      * @param SubjectReader $subjectReader
-     * @param \Magento\Framework\Serialize\Serializer\Json|null $serializer
-     * @throws \RuntimeException
      */
     public function __construct(
         PaymentTokenInterfaceFactory $paymentTokenFactory,
         OrderPaymentExtensionInterfaceFactory $paymentExtensionFactory,
         Config $config,
-        SubjectReader $subjectReader,
-        \Magento\Framework\Serialize\Serializer\Json $serializer = null
+        SubjectReader $subjectReader
     ) {
         $this->paymentTokenFactory = $paymentTokenFactory;
         $this->paymentExtensionFactory = $paymentExtensionFactory;
         $this->config = $config;
         $this->subjectReader = $subjectReader;
-        $this->serializer = $serializer ?: \Magento\Framework\App\ObjectManager::getInstance()
-            ->get(\Magento\Framework\Serialize\Serializer\Json::class);
     }
 
     /**
@@ -143,7 +133,7 @@ class VaultDetailsHandler implements HandlerInterface
      */
     private function convertDetailsToJSON($details)
     {
-        $json = $this->serializer->serialize($details);
+        $json = \Zend_Json::encode($details);
         return $json ? $json : '{}';
     }
 
@@ -156,7 +146,7 @@ class VaultDetailsHandler implements HandlerInterface
     private function getCreditCardType($type)
     {
         $replaced = str_replace(' ', '-', strtolower($type));
-        $mapper = $this->config->getCctypesMapper();
+        $mapper = $this->config->getCcTypesMapper();
 
         return $mapper[$replaced];
     }

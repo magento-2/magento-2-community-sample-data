@@ -5,7 +5,7 @@
  */
 namespace Magento\Widget\Model;
 
-class WidgetTest extends \PHPUnit\Framework\TestCase
+class WidgetTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\Widget\Model\Widget
@@ -15,7 +15,7 @@ class WidgetTest extends \PHPUnit\Framework\TestCase
     protected function setUp()
     {
         $this->_model = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->create(
-            \Magento\Widget\Model\Widget::class
+            'Magento\Widget\Model\Widget'
         );
     }
 
@@ -45,7 +45,7 @@ class WidgetTest extends \PHPUnit\Framework\TestCase
         $objectManager = \Magento\TestFramework\Helper\Bootstrap::getObjectManager();
         \Magento\TestFramework\Helper\Bootstrap::getInstance()
             ->loadArea(\Magento\Backend\App\Area\FrontNameResolver::AREA_CODE);
-        $objectManager->get(\Magento\Framework\View\DesignInterface::class)->setDesignTheme('Magento/backend');
+        $objectManager->get('Magento\Framework\View\DesignInterface')->setDesignTheme('Magento/backend');
         $expectedFilePath = "/adminhtml/Magento/backend/en_US/{$expectedFile}";
 
         $url = $this->_model->getPlaceholderImageUrl($type);
@@ -58,7 +58,8 @@ class WidgetTest extends \PHPUnit\Framework\TestCase
     public function getPlaceholderImageUrlDataProvider()
     {
         return [
-            'custom image' => [\Magento\Catalog\Block\Product\Widget\NewWidget::class,
+            'custom image' => [
+                'Magento\Catalog\Block\Product\Widget\NewWidget',
                 'Magento_Catalog/images/product_widget_new.png',
             ],
             'default image' => ['non_existing_widget_type', 'Magento_Widget/placeholder.gif']

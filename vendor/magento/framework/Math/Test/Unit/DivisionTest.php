@@ -5,7 +5,7 @@
  */
 namespace Magento\Framework\Math\Test\Unit;
 
-class DivisionTest extends \PHPUnit\Framework\TestCase
+class DivisionTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @dataProvider getExactDivisionDataProvider

@@ -16,14 +16,14 @@ $jsonHelper = $this->helper('Magento\Framework\Json\Helper\Data');
 
 <script>
     require([
-        'jquery'
-    ], function ($) {
+        'prototype'
+    ], function () {
         window.resetRobotsToDefault = function(){
-            $('#design_search_engine_robots_custom_instructions').val(<?php
+            $('design_search_engine_robots_custom_instructions').value = <?php
                 /* @escapeNotVerified */ echo $jsonHelper->jsonEncode($block->getRobotsDefaultCustomInstructions())
-            ?>);
+            ?>;
         }
     });
 </script>
 
-<?= $block->getButtonHtml() ?>
+<?php echo $block->getButtonHtml() ?>

@@ -7,7 +7,7 @@ namespace Magento\Framework\Stdlib\Test\Unit\DateTime;
 
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
 
-class DateTimeFormatterTest extends \PHPUnit\Framework\TestCase
+class DateTimeFormatterTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var ObjectManager
@@ -25,16 +25,17 @@ class DateTimeFormatterTest extends \PHPUnit\Framework\TestCase
             $this->markTestSkipped('Skip this test for hhvm due to problem with \IntlDateFormatter::formatObject');
         }
         $this->objectManager = new ObjectManager($this);
-        $this->localeResolverMock = $this->getMockBuilder(\Magento\Framework\Locale\ResolverInterface::class)
+        $this->localeResolverMock = $this->getMockBuilder('Magento\Framework\Locale\ResolverInterface')
             ->disableOriginalConstructor()
             ->getMock();
         $this->localeResolverMock->expects($this->any())
             ->method('getLocale')
             ->willReturn('fr-FR');
+
     }
 
     /**
-     * @param \IntlCalendar|\DateTimeInterface $object
+     * @param \IntlCalendar|\DateTime $object
      * @param string|int|array|null $format
      * @param string|null $locale
      * @param boolean $useIntlFormatObject
@@ -43,7 +44,7 @@ class DateTimeFormatterTest extends \PHPUnit\Framework\TestCase
     public function testFormatObject($object, $format = null, $locale = null, $useIntlFormatObject = false)
     {
         $dateTimeFormatter = $this->objectManager->getObject(
-            \Magento\Framework\Stdlib\DateTime\DateTimeFormatter::class,
+            'Magento\Framework\Stdlib\DateTime\DateTimeFormatter',
             [
                 'useIntlFormatObject' => $useIntlFormatObject,
             ]
@@ -123,7 +124,7 @@ class DateTimeFormatterTest extends \PHPUnit\Framework\TestCase
     public function testFormatObjectIfPassedWrongFormat()
     {
         $dateTimeFormatter = $this->objectManager->getObject(
-            \Magento\Framework\Stdlib\DateTime\DateTimeFormatter::class,
+            'Magento\Framework\Stdlib\DateTime\DateTimeFormatter',
             [
                 'useIntlFormatObject' => false,
             ]

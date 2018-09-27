@@ -26,12 +26,6 @@ class SubscriptionSearchTest extends Setup
         $this->assertInstanceOf('Braintree\RangeNode', $node);
     }
 
-    public function testSearch_createdAt_isRangeNode()
-    {
-        $node = Braintree\SubscriptionSearch::createdAt();
-        $this->assertInstanceOf('Braintree\RangeNode', $node);
-    }
-
     public function testSearch_id_isTextNode()
     {
         $node = Braintree\SubscriptionSearch::id();

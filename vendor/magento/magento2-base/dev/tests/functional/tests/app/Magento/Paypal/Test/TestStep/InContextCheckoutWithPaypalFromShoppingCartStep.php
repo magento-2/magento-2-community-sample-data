@@ -6,9 +6,8 @@
 
 namespace Magento\Paypal\Test\TestStep;
 
-use Magento\Checkout\Test\Page\CheckoutCart;
-use Magento\Cms\Test\Page\CmsIndex;
 use Magento\Mtf\TestStep\TestStepInterface;
+use Magento\Checkout\Test\Page\CheckoutCart;
 
 /**
  * Checkout with PayPal from Shopping Cart.
@@ -23,20 +22,13 @@ class InContextCheckoutWithPaypalFromShoppingCartStep implements TestStepInterfa
     protected $checkoutCart;
 
     /**
-     * @var CmsIndex
-     */
-    private $cmsIndex;
-
-    /**
+     * @constructor
      * @param CheckoutCart $checkoutCart
-     * @param CmsIndex $cmsIndex
      */
     public function __construct(
-        CheckoutCart $checkoutCart,
-        CmsIndex $cmsIndex
+        CheckoutCart $checkoutCart
     ) {
         $this->checkoutCart = $checkoutCart;
-        $this->cmsIndex = $cmsIndex;
     }
 
     /**
@@ -47,8 +39,6 @@ class InContextCheckoutWithPaypalFromShoppingCartStep implements TestStepInterfa
     public function run()
     {
         $this->checkoutCart->open();
-        $this->checkoutCart->getCartBlock()->waitCartContainerLoading();
-        $this->cmsIndex->getCmsPageBlock()->waitPageInit();
         $this->checkoutCart->getCartBlock()->inContextPaypalCheckout();
     }
 }

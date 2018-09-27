@@ -7,7 +7,7 @@ namespace Magento\Config\Test\Unit\Model\Config\Structure\Element;
 
 use \Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
 
-class TabTest extends \PHPUnit\Framework\TestCase
+class TabTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\Config\Model\Config\Structure\Element\Tab
@@ -21,10 +21,16 @@ class TabTest extends \PHPUnit\Framework\TestCase
 
     protected function setUp()
     {
-        $this->_iteratorMock = $this->createMock(\Magento\Config\Model\Config\Structure\Element\Iterator\Field::class);
+        $this->_iteratorMock = $this->getMock(
+            'Magento\Config\Model\Config\Structure\Element\Iterator\Field',
+            [],
+            [],
+            '',
+            false
+        );
 
         $this->_model = (new ObjectManager($this))->getObject(
-            \Magento\Config\Model\Config\Structure\Element\Tab::class,
+            'Magento\Config\Model\Config\Structure\Element\Tab',
             ['childrenIterator' => $this->_iteratorMock]
         );
     }

@@ -7,7 +7,7 @@ namespace Magento\Framework\Config\Test\Unit\Converter;
 
 use \Magento\Framework\Config\Converter\Dom;
 
-class DomTest extends \PHPUnit\Framework\TestCase
+class DomTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @param string $sourceFile
@@ -24,6 +24,9 @@ class DomTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals($resultFile, $converterDom->convert($dom));
     }
 
+    /**
+     * @return array
+     */
     public function convertDataProvider()
     {
         return [

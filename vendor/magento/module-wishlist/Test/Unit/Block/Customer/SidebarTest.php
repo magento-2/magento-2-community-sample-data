@@ -8,7 +8,7 @@ namespace Magento\Wishlist\Test\Unit\Block\Customer;
 use Magento\Framework\Pricing\Render;
 use Magento\Wishlist\Block\Customer\Sidebar;
 
-class SidebarTest extends \PHPUnit\Framework\TestCase
+class SidebarTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\Catalog\Block\Product\Context|\PHPUnit_Framework_MockObject_MockObject
@@ -32,17 +32,17 @@ class SidebarTest extends \PHPUnit\Framework\TestCase
 
     protected function setUp()
     {
-        $this->layout = $this->getMockBuilder(\Magento\Framework\View\LayoutInterface::class)
+        $this->layout = $this->getMockBuilder('Magento\Framework\View\LayoutInterface')
             ->getMockForAbstractClass();
 
-        $this->productContext = $this->getMockBuilder(\Magento\Catalog\Block\Product\Context::class)
+        $this->productContext = $this->getMockBuilder('Magento\Catalog\Block\Product\Context')
             ->disableOriginalConstructor()
             ->getMock();
         $this->productContext->expects($this->any())
             ->method('getLayout')
             ->willReturn($this->layout);
 
-        $this->httpContext = $this->getMockBuilder(\Magento\Framework\App\Http\Context::class)
+        $this->httpContext = $this->getMockBuilder('Magento\Framework\App\Http\Context')
             ->disableOriginalConstructor()
             ->getMock();
 
@@ -57,11 +57,11 @@ class SidebarTest extends \PHPUnit\Framework\TestCase
         $priceType = 'wishlist_configured_price';
         $expected = 'block content';
 
-        $productMock = $this->getMockBuilder(\Magento\Catalog\Model\Product::class)
+        $productMock = $this->getMockBuilder('Magento\Catalog\Model\Product')
             ->disableOriginalConstructor()
             ->getMock();
 
-        $renderMock = $this->getMockBuilder(\Magento\Framework\Pricing\Render::class)
+        $renderMock = $this->getMockBuilder('\Magento\Framework\Pricing\Render')
             ->disableOriginalConstructor()
             ->getMock();
         $renderMock->expects($this->once())
@@ -85,11 +85,11 @@ class SidebarTest extends \PHPUnit\Framework\TestCase
         $priceType = 'wishlist_configured_price';
         $expected = 'block content';
 
-        $productMock = $this->getMockBuilder(\Magento\Catalog\Model\Product::class)
+        $productMock = $this->getMockBuilder('Magento\Catalog\Model\Product')
             ->disableOriginalConstructor()
             ->getMock();
 
-        $renderMock = $this->getMockBuilder(\Magento\Framework\Pricing\Render::class)
+        $renderMock = $this->getMockBuilder('\Magento\Framework\Pricing\Render')
             ->disableOriginalConstructor()
             ->getMock();
         $renderMock->expects($this->once())
@@ -104,7 +104,7 @@ class SidebarTest extends \PHPUnit\Framework\TestCase
         $this->layout->expects($this->once())
             ->method('createBlock')
             ->with(
-                \Magento\Framework\Pricing\Render::class,
+                'Magento\Framework\Pricing\Render',
                 'product.price.render.default',
                 ['data' => ['price_render_handle' => 'catalog_product_prices']]
             )

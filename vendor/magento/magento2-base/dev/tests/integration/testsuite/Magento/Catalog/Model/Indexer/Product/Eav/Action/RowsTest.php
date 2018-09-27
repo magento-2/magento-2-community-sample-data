@@ -8,7 +8,7 @@ namespace Magento\Catalog\Model\Indexer\Product\Eav\Action;
 /**
  * Rows reindex Test
  */
-class RowsTest extends \PHPUnit\Framework\TestCase
+class RowsTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\Catalog\Model\Product\Action
@@ -18,7 +18,7 @@ class RowsTest extends \PHPUnit\Framework\TestCase
     protected function setUp()
     {
         $this->_productAction = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->get(
-            \Magento\Catalog\Model\Product\Action::class
+            'Magento\Catalog\Model\Product\Action'
         );
     }
 
@@ -30,7 +30,7 @@ class RowsTest extends \PHPUnit\Framework\TestCase
     public function testUpdateAttributes()
     {
         /** @var \Magento\Catalog\Model\ResourceModel\Eav\Attribute $attr **/
-        $attr = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->get(\Magento\Eav\Model\Config::class)
+        $attr = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->get('Magento\Eav\Model\Config')
             ->getAttribute('catalog_product', 'weight');
         $attr->setIsFilterable(1)->save();
 
@@ -43,11 +43,11 @@ class RowsTest extends \PHPUnit\Framework\TestCase
         );
 
         $categoryFactory = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->get(
-            \Magento\Catalog\Model\CategoryFactory::class
+            'Magento\Catalog\Model\CategoryFactory'
         );
         /** @var \Magento\Catalog\Block\Product\ListProduct $listProduct */
         $listProduct = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->get(
-            \Magento\Catalog\Block\Product\ListProduct::class
+            'Magento\Catalog\Block\Product\ListProduct'
         );
 
         $category = $categoryFactory->create()->load(2);

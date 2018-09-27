@@ -1,14 +1,10 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2018 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Framework\ObjectManager;
 
-/**
- * Interface \Magento\Framework\ObjectManager\ConfigInterface
- *
- */
 interface ConfigInterface
 {
     /**

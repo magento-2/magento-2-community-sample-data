@@ -8,7 +8,7 @@
 
 namespace Magento\Sales\Test\Unit\Block\Order\Email\Items\Order;
 
-class DefaultOrderTest extends \PHPUnit\Framework\TestCase
+class DefaultOrderTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \PHPUnit_Framework_MockObject_MockObject|\Magento\Sales\Block\Order\Email\Items\Order\DefaultOrder
@@ -40,27 +40,27 @@ class DefaultOrderTest extends \PHPUnit\Framework\TestCase
     {
         $this->objectManager = new \Magento\Framework\TestFramework\Unit\Helper\ObjectManager($this);
 
-        $this->layoutMock = $this->getMockBuilder(\Magento\Framework\View\Layout::class)
+        $this->layoutMock = $this->getMockBuilder('\Magento\Framework\View\Layout')
             ->disableOriginalConstructor()
             ->setMethods(['getBlock'])
             ->getMock();
 
         $this->block = $this->objectManager->getObject(
-            \Magento\Sales\Block\Order\Email\Items\Order\DefaultOrder::class,
+            'Magento\Sales\Block\Order\Email\Items\Order\DefaultOrder',
             [
                 'context' => $this->objectManager->getObject(
-                    \Magento\Backend\Block\Template\Context::class,
+                        'Magento\Backend\Block\Template\Context',
                         ['layout' => $this->layoutMock]
                     )
             ]
         );
 
-        $this->priceRenderBlock = $this->getMockBuilder(\Magento\Backend\Block\Template::class)
+        $this->priceRenderBlock = $this->getMockBuilder('\Magento\Backend\Block\Template')
             ->disableOriginalConstructor()
             ->setMethods(['setItem', 'toHtml'])
             ->getMock();
 
-        $this->itemMock = $this->getMockBuilder(\Magento\Sales\Model\Order\Item::class)
+        $this->itemMock = $this->getMockBuilder('\Magento\Sales\Model\Order\Item')
             ->disableOriginalConstructor()
             ->setMethods(['__wakeup'])
             ->getMock();

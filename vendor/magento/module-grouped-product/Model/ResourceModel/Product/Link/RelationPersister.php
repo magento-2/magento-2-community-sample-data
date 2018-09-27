@@ -9,7 +9,6 @@ namespace Magento\GroupedProduct\Model\ResourceModel\Product\Link;
 use Magento\Catalog\Model\ProductLink\LinkFactory;
 use Magento\Catalog\Model\ResourceModel\Product\Link;
 use Magento\Catalog\Model\ResourceModel\Product\Relation;
-use Magento\GroupedProduct\Model\ResourceModel\Product\Link as GroupedLink;
 
 class RelationPersister
 {
@@ -39,16 +38,17 @@ class RelationPersister
      * Save grouped products to product relation table
      *
      * @param Link $subject
-     * @param Link $result
+     * @param \Closure $proceed
      * @param int $parentId
      * @param array $data
      * @param int $typeId
      * @return Link
      * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      */
-    public function afterSaveProductLinks(Link $subject, Link $result, $parentId, $data, $typeId)
+    public function aroundSaveProductLinks(Link $subject, \Closure $proceed, $parentId, $data, $typeId)
     {
-        if ($typeId == GroupedLink::LINK_TYPE_GROUPED) {
+        $result = $proceed($parentId, $data, $typeId);
+        if ($typeId == \Magento\GroupedProduct\Model\ResourceModel\Product\Link::LINK_TYPE_GROUPED) {
             foreach ($data as $linkData) {
                 $this->relationProcessor->addRelation(
                     $parentId,
@@ -73,7 +73,7 @@ class RelationPersister
         $link = $this->linkFactory->create();
         $subject->load($link, $linkId, $subject->getIdFieldName());
         $result = $proceed($linkId);
-        if ($link->getLinkTypeId() == GroupedLink::LINK_TYPE_GROUPED) {
+        if ($link->getLinkTypeId() == \Magento\GroupedProduct\Model\ResourceModel\Product\Link::LINK_TYPE_GROUPED) {
             $this->relationProcessor->removeRelations(
                 $link->getProductId(),
                 $link->getLinkedProductId()

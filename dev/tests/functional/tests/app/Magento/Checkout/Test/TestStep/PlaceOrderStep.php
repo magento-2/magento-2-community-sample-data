@@ -11,7 +11,6 @@ use Magento\Checkout\Test\Page\CheckoutOnepage;
 use Magento\Checkout\Test\Page\CheckoutOnepageSuccess;
 use Magento\Mtf\Fixture\FixtureFactory;
 use Magento\Mtf\TestStep\TestStepInterface;
-use Magento\Sales\Test\Fixture\OrderInjectable;
 
 /**
  * Place order in one page checkout.
@@ -23,58 +22,47 @@ class PlaceOrderStep implements TestStepInterface
      *
      * @var CheckoutOnepage
      */
-    private $checkoutOnepage;
+    protected $checkoutOnepage;
 
     /**
      * Assert that Order Grand Total is correct on checkout page review block.
      *
      * @var AssertGrandTotalOrderReview
      */
-    private $assertGrandTotalOrderReview;
+    protected $assertGrandTotalOrderReview;
 
     /**
      * One page checkout success page.
      *
      * @var CheckoutOnepageSuccess
      */
-    private $checkoutOnepageSuccess;
+    protected $checkoutOnepageSuccess;
 
     /**
      * Price array.
      *
      * @var array
      */
-    private $prices;
+    protected $prices;
 
     /**
-     * Factory for fixtures.
-     *
      * @var FixtureFactory
      */
     private $fixtureFactory;
 
     /**
-     * Array of product entities.
-     *
      * @var array
      */
     private $products;
 
     /**
-     * Fixture OrderInjectable.
-     *
-     * @var OrderInjectable
-     */
-    private $order;
-
-    /**
+     * @construct
      * @param CheckoutOnepage $checkoutOnepage
      * @param AssertGrandTotalOrderReview $assertGrandTotalOrderReview
      * @param CheckoutOnepageSuccess $checkoutOnepageSuccess
      * @param FixtureFactory $fixtureFactory
      * @param array $products
      * @param array $prices
-     * @param OrderInjectable|null $order
      */
     public function __construct(
         CheckoutOnepage $checkoutOnepage,
@@ -82,16 +70,14 @@ class PlaceOrderStep implements TestStepInterface
         CheckoutOnepageSuccess $checkoutOnepageSuccess,
         FixtureFactory $fixtureFactory,
         array $products = [],
-        array $prices = [],
-        OrderInjectable $order = null
+        array $prices = []
     ) {
         $this->checkoutOnepage = $checkoutOnepage;
         $this->assertGrandTotalOrderReview = $assertGrandTotalOrderReview;
+        $this->prices = $prices;
         $this->checkoutOnepageSuccess = $checkoutOnepageSuccess;
         $this->fixtureFactory = $fixtureFactory;
         $this->products = $products;
-        $this->prices = $prices;
-        $this->order = $order;
     }
 
     /**
@@ -105,20 +91,18 @@ class PlaceOrderStep implements TestStepInterface
             $this->assertGrandTotalOrderReview->processAssert($this->checkoutOnepage, $this->prices['grandTotal']);
         }
         $this->checkoutOnepage->getPaymentBlock()->getSelectedPaymentMethodBlock()->clickPlaceOrder();
-        $orderId = $this->checkoutOnepageSuccess->getSuccessBlock()->getGuestOrderId();
-        $data = [
-            'id' => $orderId,
-            'entity_id' => ['products' => $this->products]
-        ];
-        $orderData = $this->order !== null ? $this->order->getData() : [];
         $order = $this->fixtureFactory->createByCode(
             'orderInjectable',
-            ['data' => array_merge($data, $orderData)]
+            [
+                'data' => [
+                    'entity_id' => ['products' => $this->products]
+                ]
+            ]
         );
 
         return [
-            'orderId' => $orderId,
-            'order' => $order,
+            'orderId' => $this->checkoutOnepageSuccess->getSuccessBlock()->getGuestOrderId(),
+            'order' => $order
         ];
     }
 }

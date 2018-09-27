@@ -6,10 +6,7 @@
 namespace Magento\Security\Model\SecurityChecker;
 
 /**
- * Interface for validation of reset password action
- *
- * @api
- * @since 100.1.0
+ * Interface SecurityCheckerInterface
  */
 interface SecurityCheckerInterface
 {
@@ -21,7 +18,6 @@ interface SecurityCheckerInterface
      * @param int|null $longIp
      * @return void
      * @throws \Magento\Framework\Exception\SecurityViolationException
-     * @since 100.1.0
      */
     public function check($securityEventType, $accountReference = null, $longIp = null);
 }

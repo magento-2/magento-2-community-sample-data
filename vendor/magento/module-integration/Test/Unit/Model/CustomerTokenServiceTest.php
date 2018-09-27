@@ -9,7 +9,10 @@ namespace Magento\Integration\Test\Unit\Model;
 use Magento\Integration\Model\Integration;
 use Magento\Integration\Model\Oauth\Token;
 
-class CustomerTokenServiceTest extends \PHPUnit\Framework\TestCase
+/**
+ * Test for \Magento\Integration\Model\CustomerTokenService
+ */
+class CustomerTokenServiceTest extends \PHPUnit_Framework_TestCase
 {
     /** \Magento\Integration\Model\CustomerTokenService */
     protected $_tokenService;
@@ -34,29 +37,29 @@ class CustomerTokenServiceTest extends \PHPUnit\Framework\TestCase
 
     protected function setUp()
     {
-        $this->_tokenFactoryMock = $this->getMockBuilder(\Magento\Integration\Model\Oauth\TokenFactory::class)
+        $this->_tokenFactoryMock = $this->getMockBuilder('Magento\Integration\Model\Oauth\TokenFactory')
             ->setMethods(['create'])
             ->disableOriginalConstructor()
             ->getMock();
         $this->_tokenFactoryMock->expects($this->any())->method('create')->will($this->returnValue($this->_tokenMock));
 
         $this->_accountManagementMock = $this
-            ->getMockBuilder(\Magento\Customer\Api\AccountManagementInterface::class)
+            ->getMockBuilder('Magento\Customer\Api\AccountManagementInterface')
             ->disableOriginalConstructor()
             ->getMock();
 
-        $this->_tokenMock = $this->getMockBuilder(\Magento\Integration\Model\Oauth\Token::class)
+        $this->_tokenMock = $this->getMockBuilder('Magento\Integration\Model\Oauth\Token')
             ->disableOriginalConstructor()
             ->setMethods(['getToken', 'loadByCustomerId', 'delete', '__wakeup'])->getMock();
 
         $this->_tokenModelCollectionMock = $this->getMockBuilder(
-            \Magento\Integration\Model\ResourceModel\Oauth\Token\Collection::class
+            'Magento\Integration\Model\ResourceModel\Oauth\Token\Collection'
         )->disableOriginalConstructor()->setMethods(
-            ['addFilterByCustomerId', 'getSize', '__wakeup', '_beforeLoad', '_afterLoad', 'getIterator', '_fetchAll']
+            ['addFilterByCustomerId', 'getSize', '__wakeup', '_beforeLoad', '_afterLoad', 'getIterator']
         )->getMock();
 
         $this->_tokenModelCollectionFactoryMock = $this->getMockBuilder(
-            \Magento\Integration\Model\ResourceModel\Oauth\Token\CollectionFactory::class
+            'Magento\Integration\Model\ResourceModel\Oauth\Token\CollectionFactory'
         )->setMethods(['create'])->disableOriginalConstructor()->getMock();
 
         $this->_tokenModelCollectionFactoryMock->expects($this->once())
@@ -64,7 +67,7 @@ class CustomerTokenServiceTest extends \PHPUnit\Framework\TestCase
             ->will($this->returnValue($this->_tokenModelCollectionMock));
 
         $this->validatorHelperMock = $this->getMockBuilder(
-            \Magento\Integration\Model\CredentialsValidator::class
+            'Magento\Integration\Model\CredentialsValidator'
         )->disableOriginalConstructor()->getMock();
 
         $this->_tokenService = new \Magento\Integration\Model\CustomerTokenService(
@@ -83,9 +86,6 @@ class CustomerTokenServiceTest extends \PHPUnit\Framework\TestCase
             ->method('addFilterByCustomerId')
             ->with($customerId)
             ->will($this->returnValue($this->_tokenModelCollectionMock));
-        $this->_tokenModelCollectionMock->expects($this->any())
-            ->method('getSize')
-            ->will($this->returnValue(1));
         $this->_tokenModelCollectionMock->expects($this->once())
             ->method('getIterator')
             ->will($this->returnValue(new \ArrayIterator([$this->_tokenMock])));
@@ -99,12 +99,11 @@ class CustomerTokenServiceTest extends \PHPUnit\Framework\TestCase
         $this->assertTrue($this->_tokenService->revokeCustomerAccessToken($customerId));
     }
 
-    /**
-     * @expectedException \Magento\Framework\Exception\LocalizedException
-     * @expectedExceptionMessage This customer has no tokens.
-     */
     public function testRevokeCustomerAccessTokenWithoutCustomerId()
     {
+        $this->_tokenModelCollectionMock->expects($this->once())
+            ->method('getIterator')
+            ->will($this->returnValue(new \ArrayIterator()));
         $this->_tokenModelCollectionMock->expects($this->once())
             ->method('addFilterByCustomerId')
             ->with(null)
@@ -112,7 +111,7 @@ class CustomerTokenServiceTest extends \PHPUnit\Framework\TestCase
         $this->_tokenMock->expects($this->never())
             ->method('delete')
             ->will($this->returnValue($this->_tokenMock));
-        $this->_tokenService->revokeCustomerAccessToken(null);
+        $this->assertTrue($this->_tokenService->revokeCustomerAccessToken(null));
     }
 
     /**
@@ -127,9 +126,6 @@ class CustomerTokenServiceTest extends \PHPUnit\Framework\TestCase
             ->method('addFilterByCustomerId')
             ->with($customerId)
             ->will($this->returnValue($this->_tokenModelCollectionMock));
-        $this->_tokenModelCollectionMock->expects($this->once())
-            ->method('getSize')
-            ->will($this->returnValue(1));
         $this->_tokenModelCollectionMock->expects($this->once())
             ->method('getIterator')
             ->will($this->returnValue(new \ArrayIterator([$this->_tokenMock])));

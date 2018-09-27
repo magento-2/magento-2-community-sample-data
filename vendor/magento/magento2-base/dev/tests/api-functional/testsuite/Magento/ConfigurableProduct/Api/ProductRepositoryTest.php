@@ -42,7 +42,7 @@ class ProductRepositoryTest extends WebapiAbstract
     public function setUp()
     {
         $this->objectManager = Bootstrap::getObjectManager();
-        $this->eavConfig = $this->objectManager->get(\Magento\Eav\Model\Config::class);
+        $this->eavConfig = $this->objectManager->get('Magento\Eav\Model\Config');
     }
 
     /**
@@ -58,7 +58,7 @@ class ProductRepositoryTest extends WebapiAbstract
     {
         /** @var \Magento\Eav\Model\ResourceModel\Entity\Attribute\Option\Collection $optionCollection */
         $optionCollection = $this->objectManager->create(
-            \Magento\Eav\Model\ResourceModel\Entity\Attribute\Option\Collection::class
+            'Magento\Eav\Model\ResourceModel\Entity\Attribute\Option\Collection'
         );
         $options = $optionCollection->setAttributeFilter($this->configurableAttribute->getId())->getData();
         return $options;
@@ -265,7 +265,6 @@ class ProductRepositoryTest extends WebapiAbstract
         ];
 
         $response = $this->saveProduct($response);
-
         $currentOptions = $response[ExtensibleDataInterface::EXTENSION_ATTRIBUTES_KEY]['configurable_product_options'];
 
         $this->assertEquals($options, $currentOptions);

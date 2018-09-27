@@ -39,9 +39,9 @@ class Transaction
     /**
      * Handler for 'startTest' event
      *
-     * @param \PHPUnit\Framework\TestCase $test
+     * @param \PHPUnit_Framework_TestCase $test
      */
-    public function startTest(\PHPUnit\Framework\TestCase $test)
+    public function startTest(\PHPUnit_Framework_TestCase $test)
     {
         $this->_processTransactionRequests('startTest', $test);
     }
@@ -49,9 +49,9 @@ class Transaction
     /**
      * Handler for 'endTest' event
      *
-     * @param \PHPUnit\Framework\TestCase $test
+     * @param \PHPUnit_Framework_TestCase $test
      */
-    public function endTest(\PHPUnit\Framework\TestCase $test)
+    public function endTest(\PHPUnit_Framework_TestCase $test)
     {
         $this->_processTransactionRequests('endTest', $test);
     }
@@ -68,9 +68,9 @@ class Transaction
      * Query whether there are any requests for transaction operations and performs them
      *
      * @param string $eventName
-     * @param \PHPUnit\Framework\TestCase $test
+     * @param \PHPUnit_Framework_TestCase $test
      */
-    protected function _processTransactionRequests($eventName, \PHPUnit\Framework\TestCase $test)
+    protected function _processTransactionRequests($eventName, \PHPUnit_Framework_TestCase $test)
     {
         $param = $this->_getEventParam();
         $this->_eventManager->fireEvent($eventName . 'TransactionRequest', [$test, $param]);
@@ -85,9 +85,9 @@ class Transaction
     /**
      * Start transaction and fire 'startTransaction' event
      *
-     * @param \PHPUnit\Framework\TestCase $test
+     * @param \PHPUnit_Framework_TestCase $test
      */
-    protected function _startTransaction(\PHPUnit\Framework\TestCase $test)
+    protected function _startTransaction(\PHPUnit_Framework_TestCase $test)
     {
         if (!$this->_isTransactionActive) {
             $this->_getConnection()->beginTransparentTransaction();
@@ -97,7 +97,7 @@ class Transaction
             } catch (\Exception $e) {
                 $test->getTestResultObject()->addFailure(
                     $test,
-                    new \PHPUnit\Framework\AssertionFailedError((string)$e),
+                    new \PHPUnit_Framework_AssertionFailedError((string)$e),
                     0
                 );
             }
@@ -128,7 +128,7 @@ class Transaction
     {
         /** @var $resource \Magento\Framework\App\ResourceConnection */
         $resource = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()
-            ->get(\Magento\Framework\App\ResourceConnection::class);
+            ->get('Magento\Framework\App\ResourceConnection');
         return $resource->getConnection($connectionName);
     }
 

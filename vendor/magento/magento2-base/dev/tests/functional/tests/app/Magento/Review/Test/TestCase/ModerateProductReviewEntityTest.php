@@ -24,13 +24,14 @@ use Magento\Mtf\TestCase\Injectable;
  * 5. Save.
  * 6. Perform all assertions.
  *
- * @group Reviews_and_Ratings
+ * @group Reviews_and_Ratings_(MX)
  * @ZephyrId MAGETWO-26768
  */
 class ModerateProductReviewEntityTest extends Injectable
 {
     /* tags */
     const MVP = 'no';
+    const DOMAIN = 'MX';
     /* end tags */
 
     /**

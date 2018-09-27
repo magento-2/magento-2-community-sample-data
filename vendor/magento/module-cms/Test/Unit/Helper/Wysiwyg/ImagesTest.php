@@ -10,7 +10,7 @@ use Magento\Cms\Model\Wysiwyg\Config as WysiwygConfig;
 /**
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  */
-class ImagesTest extends \PHPUnit\Framework\TestCase
+class ImagesTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\Cms\Helper\Wysiwyg\Images
@@ -77,15 +77,15 @@ class ImagesTest extends \PHPUnit\Framework\TestCase
         $this->path = 'PATH/';
         $this->objectManager = new \Magento\Framework\TestFramework\Unit\Helper\ObjectManager($this);
 
-        $this->eventManagerMock = $this->createMock(\Magento\Framework\Event\ManagerInterface::class);
+        $this->eventManagerMock = $this->getMock(\Magento\Framework\Event\ManagerInterface::class, [], [], '', false);
 
-        $this->requestMock = $this->createMock(\Magento\Framework\App\RequestInterface::class);
+        $this->requestMock = $this->getMock(\Magento\Framework\App\RequestInterface::class, [], [], '', false);
 
-        $this->urlEncoderMock = $this->createMock(\Magento\Framework\Url\EncoderInterface::class);
+        $this->urlEncoderMock = $this->getMock(\Magento\Framework\Url\EncoderInterface::class, [], [], '', false);
 
-        $this->backendDataMock = $this->createMock(\Magento\Backend\Helper\Data::class);
+        $this->backendDataMock = $this->getMock(\Magento\Backend\Helper\Data::class, [], [], '', false);
 
-        $this->contextMock = $this->createMock(\Magento\Framework\App\Helper\Context::class);
+        $this->contextMock = $this->getMock(\Magento\Framework\App\Helper\Context::class, [], [], '', false);
         $this->contextMock->expects($this->any())
             ->method('getEventManager')
             ->willReturn($this->eventManagerMock);
@@ -96,10 +96,13 @@ class ImagesTest extends \PHPUnit\Framework\TestCase
             ->method('getUrlEncoder')
             ->willReturn($this->urlEncoderMock);
 
-        $this->directoryWriteMock = $this->getMockBuilder(\Magento\Framework\Filesystem\Directory\Write::class)
-            ->setConstructorArgs(['path' => $this->path])
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->directoryWriteMock = $this->getMock(
+            \Magento\Framework\Filesystem\Directory\Write::class,
+            [],
+            ['path' => $this->path],
+            '',
+            false
+        );
         $this->directoryWriteMock->expects($this->any())
             ->method('getAbsolutePath')
             ->willReturnMap(
@@ -109,7 +112,7 @@ class ImagesTest extends \PHPUnit\Framework\TestCase
                 ]
             );
 
-        $this->filesystemMock = $this->createMock(\Magento\Framework\Filesystem::class);
+        $this->filesystemMock = $this->getMock(\Magento\Framework\Filesystem::class, [], [], '', false);
         $this->filesystemMock->expects($this->once())
             ->method('getDirectoryWrite')
             ->willReturn($this->directoryWriteMock);
@@ -125,7 +128,7 @@ class ImagesTest extends \PHPUnit\Framework\TestCase
             ->disableOriginalConstructor()
             ->getMock();
 
-        $this->storeMock = $this->createMock(\Magento\Store\Model\Store::class);
+        $this->storeMock = $this->getMock(\Magento\Store\Model\Store::class, [], [], '', false);
 
         $this->imagesHelper = $this->objectManager->getObject(
             \Magento\Cms\Helper\Wysiwyg\Images::class,
@@ -302,7 +305,7 @@ class ImagesTest extends \PHPUnit\Framework\TestCase
     {
         $storeId = 1;
         $this->imagesHelper->setStoreId($storeId);
-        $checkResult = new \stdClass();
+        $checkResult = new \StdClass();
         $checkResult->isAllowed = false;
         $this->eventManagerMock->expects($this->any())
             ->method('dispatch')
@@ -365,7 +368,7 @@ class ImagesTest extends \PHPUnit\Framework\TestCase
 
     public function testGetCurrentPathThrowException()
     {
-        $this->expectException(
+        $this->setExpectedException(
             \Magento\Framework\Exception\LocalizedException::class,
             'The directory PATH/wysiwyg is not writable by server.'
         );
@@ -384,6 +387,9 @@ class ImagesTest extends \PHPUnit\Framework\TestCase
         $this->fail('An expected exception has not been raised.');
     }
 
+    /**
+     * @return array
+     */
     public function providerGetCurrentPath()
     {
         return [
@@ -431,6 +437,9 @@ class ImagesTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals($expectedHtml, $this->imagesHelper->getImageHtmlDeclaration($fileName, true));
     }
 
+    /**
+     * @return array
+     */
     public function providerGetImageHtmlDeclarationRenderingAsTag()
     {
         return [
@@ -465,6 +474,9 @@ class ImagesTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals($expectedHtml, $this->imagesHelper->getImageHtmlDeclaration($fileName));
     }
 
+    /**
+     * @return array
+     */
     public function providerGetImageHtmlDeclaration()
     {
         return [

@@ -8,10 +8,6 @@ namespace Magento\Checkout\Controller\Account;
 use Magento\Framework\Exception\AlreadyExistsException;
 use Magento\Framework\Exception\NoSuchEntityException;
 
-/**
- * @deprecated
- * @see DelegateCreate
- */
 class Create extends \Magento\Framework\App\Action\Action
 {
     /**

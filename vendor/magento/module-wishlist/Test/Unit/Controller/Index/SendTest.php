@@ -36,7 +36,7 @@ use Magento\Wishlist\Model\Wishlist;
  * @SuppressWarnings(PHPMD.TooManyFields)
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  */
-class SendTest extends \PHPUnit\Framework\TestCase
+class SendTest extends \PHPUnit_Framework_TestCase
 {
     /** @var  Send |\PHPUnit_Framework_MockObject_MockObject */
     protected $model;
@@ -188,8 +188,7 @@ class SendTest extends \PHPUnit\Framework\TestCase
             ->getMock();
 
         $this->inlineTranslation = $this->getMockBuilder(\Magento\Framework\Translate\Inline\StateInterface::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+            ->getMockForAbstractClass();
 
         $this->customerViewHelper = $this->getMockBuilder(\Magento\Customer\Helper\View::class)
             ->disableOriginalConstructor()
@@ -197,12 +196,10 @@ class SendTest extends \PHPUnit\Framework\TestCase
 
         $this->wishlistSession = $this->getMockBuilder(\Magento\Framework\Session\Generic::class)
             ->disableOriginalConstructor()
-            ->setMethods(['setSharingForm'])
             ->getMock();
 
         $this->scopeConfig = $this->getMockBuilder(\Magento\Framework\App\Config\ScopeConfigInterface::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+            ->getMockForAbstractClass();
 
         $this->store = $this->getMockBuilder(\Magento\Store\Model\Store::class)
             ->disableOriginalConstructor()
@@ -210,8 +207,7 @@ class SendTest extends \PHPUnit\Framework\TestCase
             ->getMock();
 
         $this->storeManager = $this->getMockBuilder(\Magento\Store\Model\StoreManagerInterface::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+            ->getMockForAbstractClass();
         $this->storeManager->expects($this->any())
             ->method('getStore')
             ->willReturn($this->store);
@@ -662,6 +658,10 @@ class SendTest extends \PHPUnit\Framework\TestCase
                 'message' => $text . $text,
                 'store' => $this->store,
             ])
+            ->willReturnSelf();
+        $this->transportBuilder->expects($this->once())
+            ->method('setScopeId')
+            ->with($storeId)
             ->willReturnSelf();
         $this->transportBuilder->expects($this->once())
             ->method('setFrom')

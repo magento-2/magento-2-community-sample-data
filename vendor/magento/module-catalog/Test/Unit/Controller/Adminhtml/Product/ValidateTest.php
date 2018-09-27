@@ -8,9 +8,6 @@ namespace Magento\Catalog\Test\Unit\Controller\Adminhtml\Product;
 use Magento\Catalog\Controller\Adminhtml\Product\Initialization\Helper;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager as ObjectManagerHelper;
 
-/**
- * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
- */
 class ValidateTest extends \Magento\Catalog\Test\Unit\Controller\Adminhtml\ProductTest
 {
     /** @var \Magento\Catalog\Controller\Adminhtml\Product\Validate */
@@ -52,11 +49,14 @@ class ValidateTest extends \Magento\Catalog\Test\Unit\Controller\Adminhtml\Produ
      */
     protected function setUp()
     {
-        $this->productBuilder = $this->createPartialMock(
-            \Magento\Catalog\Controller\Adminhtml\Product\Builder::class,
-            ['build']
+        $this->productBuilder = $this->getMock(
+            'Magento\Catalog\Controller\Adminhtml\Product\Builder',
+            ['build'],
+            [],
+            '',
+            false
         );
-        $this->product = $this->getMockBuilder(\Magento\Catalog\Model\Product::class)->disableOriginalConstructor()
+        $this->product = $this->getMockBuilder('Magento\Catalog\Model\Product')->disableOriginalConstructor()
             ->setMethods([
                 'addData', 'getSku', 'getTypeId', 'getStoreId', '__sleep', '__wakeup', 'getAttributes',
                 'setAttributeSetId',
@@ -67,20 +67,20 @@ class ValidateTest extends \Magento\Catalog\Test\Unit\Controller\Adminhtml\Produ
         $this->product->expects($this->any())->method('getAttributes')->will($this->returnValue([]));
         $this->productBuilder->expects($this->any())->method('build')->will($this->returnValue($this->product));
 
-        $this->resultPage = $this->getMockBuilder(\Magento\Backend\Model\View\Result\Page::class)
+        $this->resultPage = $this->getMockBuilder('Magento\Backend\Model\View\Result\Page')
             ->disableOriginalConstructor()
             ->getMock();
 
-        $resultPageFactory = $this->getMockBuilder(\Magento\Framework\View\Result\PageFactory::class)
+        $resultPageFactory = $this->getMockBuilder('Magento\Framework\View\Result\PageFactory')
             ->disableOriginalConstructor()
             ->setMethods(['create'])
             ->getMock();
         $resultPageFactory->expects($this->any())->method('create')->willReturn($this->resultPage);
 
-        $this->resultForward = $this->getMockBuilder(\Magento\Backend\Model\View\Result\Forward::class)
+        $this->resultForward = $this->getMockBuilder('Magento\Backend\Model\View\Result\Forward')
             ->disableOriginalConstructor()
             ->getMock();
-        $resultForwardFactory = $this->getMockBuilder(\Magento\Backend\Model\View\Result\ForwardFactory::class)
+        $resultForwardFactory = $this->getMockBuilder('Magento\Backend\Model\View\Result\ForwardFactory')
             ->disableOriginalConstructor()
             ->setMethods(['create'])
             ->getMock();
@@ -88,32 +88,45 @@ class ValidateTest extends \Magento\Catalog\Test\Unit\Controller\Adminhtml\Produ
             ->method('create')
             ->willReturn($this->resultForward);
         $this->resultPage->expects($this->any())->method('getLayout')->willReturn($this->layout);
-        $this->resultRedirectFactory = $this->createPartialMock(
-            \Magento\Backend\Model\View\Result\RedirectFactory::class,
-            ['create']
+        $this->resultRedirectFactory = $this->getMock(
+            'Magento\Backend\Model\View\Result\RedirectFactory',
+            ['create'],
+            [],
+            '',
+            false
         );
-        $this->resultRedirect = $this->createMock(\Magento\Backend\Model\View\Result\Redirect::class);
+        $this->resultRedirect = $this->getMock(
+            'Magento\Backend\Model\View\Result\Redirect',
+            [],
+            [],
+            '',
+            false
+        );
         $this->resultRedirectFactory->expects($this->any())->method('create')->willReturn($this->resultRedirect);
 
-        $this->initializationHelper = $this->createMock(
-            \Magento\Catalog\Controller\Adminhtml\Product\Initialization\Helper::class
+        $this->initializationHelper = $this->getMock(
+            'Magento\Catalog\Controller\Adminhtml\Product\Initialization\Helper',
+            [],
+            [],
+            '',
+            false
         );
 
-        $this->productFactory = $this->getMockBuilder(\Magento\Catalog\Model\ProductFactory::class)
+        $this->productFactory = $this->getMockBuilder('Magento\Catalog\Model\ProductFactory')
             ->disableOriginalConstructor()
             ->setMethods(['create'])
             ->getMock();
         $this->productFactory->expects($this->any())->method('create')->willReturn($this->product);
 
-        $this->resultJson = $this->createMock(\Magento\Framework\Controller\Result\Json::class);
-        $this->resultJsonFactory = $this->getMockBuilder(\Magento\Framework\Controller\Result\JsonFactory::class)
+        $this->resultJson = $this->getMock('Magento\Framework\Controller\Result\Json', [], [], '', false);
+        $this->resultJsonFactory = $this->getMockBuilder('Magento\Framework\Controller\Result\JsonFactory')
             ->disableOriginalConstructor()
             ->setMethods(['create'])
             ->getMock();
         $this->resultJsonFactory->expects($this->any())->method('create')->willReturn($this->resultJson);
 
         $storeManagerInterfaceMock = $this->getMockForAbstractClass(
-            \Magento\Store\Model\StoreManagerInterface::class,
+            'Magento\Store\Model\StoreManagerInterface',
             [],
             '',
             false,
@@ -128,7 +141,7 @@ class ValidateTest extends \Magento\Catalog\Test\Unit\Controller\Adminhtml\Produ
 
         $additionalParams = ['resultRedirectFactory' => $this->resultRedirectFactory];
         $this->action = (new ObjectManagerHelper($this))->getObject(
-            \Magento\Catalog\Controller\Adminhtml\Product\Validate::class,
+            'Magento\Catalog\Controller\Adminhtml\Product\Validate',
             [
                 'context' => $this->initContext($additionalParams),
                 'productBuilder' => $this->productBuilder,

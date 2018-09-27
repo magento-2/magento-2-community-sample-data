@@ -5,7 +5,7 @@
  */
 namespace Magento\GoogleOptimizer\Test\Unit\Observer\Product;
 
-class DeleteProductGoogleExperimentScriptObserverTest extends \PHPUnit\Framework\TestCase
+class DeleteProductGoogleExperimentScriptObserverTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \PHPUnit_Framework_MockObject_MockObject
@@ -27,18 +27,24 @@ class DeleteProductGoogleExperimentScriptObserverTest extends \PHPUnit\Framework
         $entityId = 3;
         $storeId = 0;
 
-        $this->_codeMock = $this->createMock(\Magento\GoogleOptimizer\Model\Code::class);
-        $event = $this->createPartialMock(\Magento\Framework\Event::class, ['getProduct']);
-        $this->_eventObserverMock = $this->createMock(\Magento\Framework\Event\Observer::class);
+        $this->_codeMock = $this->getMock('Magento\GoogleOptimizer\Model\Code', [], [], '', false);
+        $event = $this->getMock('Magento\Framework\Event', ['getProduct'], [], '', false);
+        $this->_eventObserverMock = $this->getMock('Magento\Framework\Event\Observer', [], [], '', false);
         $this->_eventObserverMock->expects($this->once())->method('getEvent')->will($this->returnValue($event));
-        $product = $this->createPartialMock(\Magento\Catalog\Model\Product::class, ['getId', 'getStoreId', '__wakeup']);
+        $product = $this->getMock(
+            'Magento\Catalog\Model\Product',
+            ['getId', 'getStoreId', '__wakeup'],
+            [],
+            '',
+            false
+        );
         $product->expects($this->once())->method('getId')->will($this->returnValue($entityId));
         $product->expects($this->once())->method('getStoreId')->will($this->returnValue($storeId));
         $event->expects($this->once())->method('getProduct')->will($this->returnValue($product));
 
         $objectManagerHelper = new \Magento\Framework\TestFramework\Unit\Helper\ObjectManager($this);
         $this->_model = $objectManagerHelper->getObject(
-            \Magento\GoogleOptimizer\Observer\Product\DeleteProductGoogleExperimentScriptObserver::class,
+            'Magento\GoogleOptimizer\Observer\Product\DeleteProductGoogleExperimentScriptObserver',
             ['modelCode' => $this->_codeMock]
         );
     }

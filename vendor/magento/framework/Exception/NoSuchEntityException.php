@@ -9,9 +9,6 @@ namespace Magento\Framework\Exception;
 
 use Magento\Framework\Phrase;
 
-/**
- * @api
- */
 class NoSuchEntityException extends LocalizedException
 {
     /**
@@ -27,14 +24,13 @@ class NoSuchEntityException extends LocalizedException
     /**
      * @param \Magento\Framework\Phrase $phrase
      * @param \Exception $cause
-     * @param int $code
      */
-    public function __construct(Phrase $phrase = null, \Exception $cause = null, $code = 0)
+    public function __construct(Phrase $phrase = null, \Exception $cause = null)
     {
         if ($phrase === null) {
             $phrase = new Phrase('No such entity.');
         }
-        parent::__construct($phrase, $cause, $code);
+        parent::__construct($phrase, $cause);
     }
 
     /**

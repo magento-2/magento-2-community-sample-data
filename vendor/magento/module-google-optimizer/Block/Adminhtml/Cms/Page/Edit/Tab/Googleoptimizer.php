@@ -8,7 +8,7 @@
 namespace Magento\GoogleOptimizer\Block\Adminhtml\Cms\Page\Edit\Tab;
 
 /**
- * @deprecated 100.1.0
+ * @deprecated
  */
 class Googleoptimizer extends \Magento\GoogleOptimizer\Block\Adminhtml\AbstractTab
 {

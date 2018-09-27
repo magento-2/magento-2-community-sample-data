@@ -11,7 +11,7 @@ use Magento\Framework\Session\Config\Validator\CookieDomainValidator;
 /**
  * Test \Magento\Cookie\Model\Config\Backend\Domain
  */
-class DomainTest extends \PHPUnit\Framework\TestCase
+class DomainTest extends \PHPUnit_Framework_TestCase
 {
     /** @var \Magento\Framework\Model\ResourceModel\AbstractResource | \PHPUnit_Framework_MockObject_MockObject */
     protected $resourceMock;
@@ -26,8 +26,8 @@ class DomainTest extends \PHPUnit\Framework\TestCase
 
     protected function setUp()
     {
-        $eventDispatcherMock = $this->createMock(\Magento\Framework\Event\Manager::class);
-        $contextMock = $this->createMock(\Magento\Framework\Model\Context::class);
+        $eventDispatcherMock = $this->getMock('Magento\Framework\Event\Manager', [], [], '', false);
+        $contextMock = $this->getMock('Magento\Framework\Model\Context', [], [], '', false);
         $contextMock->expects(
             $this->any()
         )->method(
@@ -36,7 +36,9 @@ class DomainTest extends \PHPUnit\Framework\TestCase
             $this->returnValue($eventDispatcherMock)
         );
 
-        $this->resourceMock = $this->createPartialMock(\Magento\Framework\Model\ResourceModel\AbstractResource::class, [
+        $this->resourceMock = $this->getMock(
+            'Magento\Framework\Model\ResourceModel\AbstractResource',
+            [
                 '_construct',
                 'getConnection',
                 'getIdFieldName',
@@ -45,15 +47,19 @@ class DomainTest extends \PHPUnit\Framework\TestCase
                 'commit',
                 'addCommitCallback',
                 'rollBack',
-            ]);
+            ],
+            [],
+            '',
+            false
+        );
 
         $this->validatorMock = $this->getMockBuilder(
-            \Magento\Framework\Session\Config\Validator\CookieDomainValidator::class
+            'Magento\Framework\Session\Config\Validator\CookieDomainValidator'
         )->disableOriginalConstructor()
             ->getMock();
         $helper = new \Magento\Framework\TestFramework\Unit\Helper\ObjectManager($this);
         $this->domain = $helper->getObject(
-            \Magento\Cookie\Model\Config\Backend\Domain::class,
+            'Magento\Cookie\Model\Config\Backend\Domain',
             [
                 'context' => $contextMock,
                 'resource' => $this->resourceMock,

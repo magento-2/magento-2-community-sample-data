@@ -5,10 +5,8 @@
  */
 namespace Magento\Shipping\Model;
 
-use Magento\Framework\App\ObjectManager;
-use Magento\Quote\Model\Quote\Address\RateCollectorInterface;
-use Magento\Quote\Model\Quote\Address\RateRequestFactory;
 use Magento\Sales\Model\Order\Shipment;
+use Magento\Quote\Model\Quote\Address\RateCollectorInterface;
 
 /**
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
@@ -84,11 +82,6 @@ class Shipping implements RateCollectorInterface
     protected $stockRegistry;
 
     /**
-     * @var RateRequestFactory
-     */
-    private $rateRequestFactory;
-
-    /**
      * @param \Magento\Framework\App\Config\ScopeConfigInterface $scopeConfig
      * @param \Magento\Shipping\Model\Config $shippingConfig
      * @param \Magento\Store\Model\StoreManagerInterface $storeManager
@@ -98,9 +91,6 @@ class Shipping implements RateCollectorInterface
      * @param \Magento\Directory\Model\RegionFactory $regionFactory
      * @param \Magento\Framework\Math\Division $mathDivision
      * @param \Magento\CatalogInventory\Api\StockRegistryInterface $stockRegistry
-     * @param RateRequestFactory $rateRequestFactory
-     *
-     * @SuppressWarnings(PHPMD.ExcessiveParameterList)
      */
     public function __construct(
         \Magento\Framework\App\Config\ScopeConfigInterface $scopeConfig,
@@ -111,8 +101,7 @@ class Shipping implements RateCollectorInterface
         \Magento\Shipping\Model\Shipment\RequestFactory $shipmentRequestFactory,
         \Magento\Directory\Model\RegionFactory $regionFactory,
         \Magento\Framework\Math\Division $mathDivision,
-        \Magento\CatalogInventory\Api\StockRegistryInterface $stockRegistry,
-        RateRequestFactory $rateRequestFactory = null
+        \Magento\CatalogInventory\Api\StockRegistryInterface $stockRegistry
     ) {
         $this->_scopeConfig = $scopeConfig;
         $this->_shippingConfig = $shippingConfig;
@@ -123,7 +112,6 @@ class Shipping implements RateCollectorInterface
         $this->_regionFactory = $regionFactory;
         $this->mathDivision = $mathDivision;
         $this->stockRegistry = $stockRegistry;
-        $this->rateRequestFactory = $rateRequestFactory ?: ObjectManager::getInstance()->get(RateRequestFactory::class);
     }
 
     /**
@@ -252,7 +240,7 @@ class Shipping implements RateCollectorInterface
     public function collectCarrierRates($carrierCode, $request)
     {
         /* @var $carrier \Magento\Shipping\Model\Carrier\AbstractCarrier */
-        $carrier = $this->_carrierFactory->createIfActive($carrierCode, $request->getQuoteStoreId());
+        $carrier = $this->_carrierFactory->createIfActive($carrierCode, $request->getStoreId());
         if (!$carrier) {
             return $this;
         }
@@ -475,7 +463,7 @@ class Shipping implements RateCollectorInterface
     public function collectRatesByAddress(\Magento\Framework\DataObject $address, $limitCarrier = null)
     {
         /** @var $request \Magento\Quote\Model\Quote\Address\RateRequest */
-        $request = $this->rateRequestFactory->create();
+        $request = $this->_shipmentRequestFactory->create();
         $request->setAllItems($address->getAllItems());
         $request->setDestCountryId($address->getCountryId());
         $request->setDestRegionId($address->getRegionId());
@@ -485,13 +473,10 @@ class Shipping implements RateCollectorInterface
         $request->setPackageWeight($address->getWeight());
         $request->setFreeMethodWeight($address->getFreeMethodWeight());
         $request->setPackageQty($address->getItemQty());
-
-        /** @var \Magento\Store\Api\Data\StoreInterface $store */
-        $store = $this->_storeManager->getStore();
-        $request->setStoreId($store->getId());
-        $request->setWebsiteId($store->getWebsiteId());
-        $request->setBaseCurrency($store->getBaseCurrency());
-        $request->setPackageCurrency($store->getCurrentCurrency());
+        $request->setStoreId($this->_storeManager->getStore()->getId());
+        $request->setWebsiteId($this->_storeManager->getStore()->getWebsiteId());
+        $request->setBaseCurrency($this->_storeManager->getStore()->getBaseCurrency());
+        $request->setPackageCurrency($this->_storeManager->getStore()->getCurrentCurrency());
         $request->setLimitCarrier($limitCarrier);
 
         $request->setBaseSubtotalInclTax($address->getBaseSubtotalInclTax());

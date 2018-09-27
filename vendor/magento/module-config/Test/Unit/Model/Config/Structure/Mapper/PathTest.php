@@ -5,7 +5,7 @@
  */
 namespace Magento\Config\Test\Unit\Model\Config\Structure\Mapper;
 
-class PathTest extends \PHPUnit\Framework\TestCase
+class PathTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\Config\Model\Config\Structure\Mapper\Path

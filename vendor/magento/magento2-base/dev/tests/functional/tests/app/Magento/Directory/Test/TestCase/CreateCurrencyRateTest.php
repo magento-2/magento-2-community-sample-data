@@ -6,12 +6,11 @@
 
 namespace Magento\Directory\Test\TestCase;
 
-use Magento\Catalog\Test\TestStep\CreateProductsStep;
 use Magento\Config\Test\Fixture\ConfigData;
 use Magento\Mtf\TestCase\Injectable;
 use Magento\Directory\Test\Fixture\CurrencyRate;
+use Magento\Catalog\Test\Fixture\CatalogProductSimple;
 use Magento\CurrencySymbol\Test\Page\Adminhtml\SystemCurrencyIndex;
-use Magento\Mtf\TestStep\TestStepFactory;
 
 /**
  * Preconditions:
@@ -25,14 +24,14 @@ use Magento\Mtf\TestStep\TestStepFactory;
  * 4. Click on 'Save Currency Rates' button.
  * 5. Perform assertions.
  *
- * @group Localization
+ * @group Localization_(PS)
  * @ZephyrId MAGETWO-36824
  */
 class CreateCurrencyRateTest extends Injectable
 {
     /* tags */
     const TEST_TYPE = 'acceptance_test, extended_acceptance_test';
-    const SEVERITY = 'S1';
+    const DOMAIN = 'PS';
     /* end tags */
 
     /**
@@ -43,47 +42,34 @@ class CreateCurrencyRateTest extends Injectable
     protected $currencyIndexPage;
 
     /**
-     * Test step factory.
-     *
-     * @var TestStepFactory
-     */
-    private $stepFactory;
-
-    /**
      * Inject data.
      *
      * @param SystemCurrencyIndex $currencyIndexPage
-     * @param TestStepFactory $stepFactory
+     * @return void
      */
-    public function __inject(SystemCurrencyIndex $currencyIndexPage, TestStepFactory $stepFactory)
+    public function __inject(SystemCurrencyIndex $currencyIndexPage)
     {
         $this->currencyIndexPage = $currencyIndexPage;
-        $this->stepFactory = $stepFactory;
     }
 
     /**
      * Create currency rate test.
      *
      * @param CurrencyRate $currencyRate
-     * @param ConfigData $config
-     * @param string $product
-     * @param array $productData [optional]
-     * @return array
+     * @param CatalogProductSimple $product
+     * @param $config
+     * @return void
      */
-    public function test(CurrencyRate $currencyRate, ConfigData $config, $product, array $productData = [])
+    public function test(CurrencyRate $currencyRate, CatalogProductSimple $product, ConfigData $config)
     {
         // Preconditions:
-        $product = $this->stepFactory
-            ->create(CreateProductsStep::class, ['products' => [$product], 'data' => $productData])
-            ->run()['products'][0];
+        $product->persist();
         $config->persist();
 
         // Steps:
         $this->currencyIndexPage->open();
         $this->currencyIndexPage->getCurrencyRateForm()->fill($currencyRate);
         $this->currencyIndexPage->getFormPageActions()->save();
-
-        return ['product' => $product];
     }
 
     /**
@@ -94,7 +80,7 @@ class CreateCurrencyRateTest extends Injectable
     public function tearDown()
     {
         $this->objectManager->create(
-            \Magento\Config\Test\TestStep\SetupConfigurationStep::class,
+            'Magento\Config\Test\TestStep\SetupConfigurationStep',
             ['configData' => 'config_currency_symbols_usd']
         )->run();
     }

@@ -10,7 +10,7 @@ use Magento\Customer\Api\CustomerMetadataInterface;
 use Magento\Customer\Model\FileProcessor;
 use Magento\Framework\App\Filesystem\DirectoryList;
 
-class FileProcessorTest extends \PHPUnit\Framework\TestCase
+class FileProcessorTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\Framework\Filesystem|\PHPUnit_Framework_MockObject_MockObject
@@ -71,6 +71,11 @@ class FileProcessorTest extends \PHPUnit\Framework\TestCase
             ->getMock();
     }
 
+    /**
+     * @param $entityTypeCode
+     * @param array $allowedExtensions
+     * @return FileProcessor
+     */
     private function getModel($entityTypeCode, array $allowedExtensions = [])
     {
         $model = new FileProcessor(

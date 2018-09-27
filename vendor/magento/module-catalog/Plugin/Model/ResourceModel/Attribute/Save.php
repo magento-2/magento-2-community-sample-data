@@ -6,43 +6,44 @@
 
 namespace Magento\Catalog\Plugin\Model\ResourceModel\Attribute;
 
-use Magento\Catalog\Model\ResourceModel\Attribute;
-use Magento\PageCache\Model\Config;
-use Magento\Framework\App\Cache\TypeListInterface;
-
 class Save
 {
     /**
-     * @var Config
+     * @var \Magento\PageCache\Model\Config
      */
     protected $config;
 
     /**
-     * @var TypeListInterface
+     * @var \Magento\Framework\App\Cache\TypeListInterface
      */
     protected $typeList;
 
     /**
-     * @param Config $config
-     * @param TypeListInterface $typeList
+     * @param \Magento\PageCache\Model\Config $config
+     * @param \Magento\Framework\App\Cache\TypeListInterface $typeList
      */
-    public function __construct(Config $config, TypeListInterface $typeList)
-    {
+    public function __construct(
+        \Magento\PageCache\Model\Config $config,
+        \Magento\Framework\App\Cache\TypeListInterface $typeList
+    ) {
         $this->config = $config;
         $this->typeList = $typeList;
     }
 
     /**
-     * Invalidate full page cache after saving attribute
-     *
-     * @param Attribute $subject
-     * @param Attribute $result
-     * @return Attribute $result
+     * @param \Magento\Catalog\Model\ResourceModel\Attribute $subject
+     * @param callable $proceed
+     * @param \Magento\Framework\Model\AbstractModel $attribute
+     * @return mixed
      *
      * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      */
-    public function afterSave(Attribute $subject, Attribute $result)
-    {
+    public function aroundSave(
+        \Magento\Catalog\Model\ResourceModel\Attribute $subject,
+        \Closure $proceed,
+        \Magento\Framework\Model\AbstractModel $attribute
+    ) {
+        $result = $proceed($attribute);
         if ($this->config->isEnabled()) {
             $this->typeList->invalidate('full_page');
         }

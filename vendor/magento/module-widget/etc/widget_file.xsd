@@ -164,9 +164,6 @@
         </xs:annotation>
         <xs:complexContent>
             <xs:extension base="parameterType">
-                <xs:sequence>
-                    <xs:element name="options" type="optionsType" minOccurs="0"/>
-                </xs:sequence>
                 <xs:attribute name="source_model" type="xs:string" />
             </xs:extension>
         </xs:complexContent>
@@ -212,8 +209,8 @@
         <xs:annotation>
             <xs:documentation>List of parameters this parameter depends on.</xs:documentation>
         </xs:annotation>
-        <xs:sequence maxOccurs="unbounded">
+        <xs:all>
             <xs:element name="parameter" type="dependsParameterType" />
-        </xs:sequence>
+        </xs:all>
     </xs:complexType>
 </xs:schema>

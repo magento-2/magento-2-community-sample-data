@@ -15,7 +15,7 @@ class SearchResultProcessor extends AbstractDataObject implements SearchResultPr
      *
      * @var string
      */
-    protected $dataInterface = \Magento\Framework\DataObject::class;
+    protected $dataInterface = 'Magento\Framework\DataObject';
 
     /**
      * @var AbstractSearchResult
@@ -188,8 +188,8 @@ class SearchResultProcessor extends AbstractDataObject implements SearchResultPr
     }
 
     /**
-     * @param null $valueField
-     * @param null $labelField
+     * @param string|null $valueField
+     * @param string|null $labelField
      * @param array $additional
      * @return array
      */

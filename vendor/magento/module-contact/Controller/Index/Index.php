@@ -6,17 +6,16 @@
  */
 namespace Magento\Contact\Controller\Index;
 
-use Magento\Framework\Controller\ResultFactory;
-
 class Index extends \Magento\Contact\Controller\Index
 {
     /**
      * Show Contact Us page
      *
-     * @return \Magento\Framework\Controller\ResultInterface
+     * @return void
      */
     public function execute()
     {
-        return $this->resultFactory->create(ResultFactory::TYPE_PAGE);
+        $this->_view->loadLayout();
+        $this->_view->renderLayout();
     }
 }

@@ -11,12 +11,13 @@ use Magento\Sales\Test\Page\Adminhtml\CreditMemoIndex;
 use Magento\Mtf\Constraint\AbstractConstraint;
 
 /**
- * Assert that refund is present in the 'Refunds' grid with correct ID, order ID, refunded amount.
+ * Class AssertRefundInRefundsGrid
+ * Assert that refund is present in the 'Refunds' grid with correct ID, order ID, refunded amount
  */
 class AssertRefundInRefundsGrid extends AbstractConstraint
 {
     /**
-     * Assert that refund is present in the 'Refunds' grid with correct ID, order ID, refunded amount.
+     * Assert that refund is present in the 'Refunds' grid with correct ID, order ID, refunded amount
      *
      * @param CreditMemoIndex $creditMemoIndex
      * @param OrderInjectable $order
@@ -26,7 +27,7 @@ class AssertRefundInRefundsGrid extends AbstractConstraint
     public function processAssert(CreditMemoIndex $creditMemoIndex, OrderInjectable $order, array $ids)
     {
         $creditMemoIndex->open();
-        $amount = $order->getPrice()['refund'];
+        $amount = $order->getPrice();
         $orderId = $order->getId();
         foreach ($ids['creditMemoIds'] as $key => $creditMemoId) {
             $filter = [
@@ -46,7 +47,7 @@ class AssertRefundInRefundsGrid extends AbstractConstraint
     }
 
     /**
-     * Returns a string representation of the object.
+     * Returns a string representation of the object
      *
      * @return string
      */

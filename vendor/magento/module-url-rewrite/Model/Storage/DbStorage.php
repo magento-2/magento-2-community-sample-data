@@ -7,12 +7,9 @@ namespace Magento\UrlRewrite\Model\Storage;
 
 use Magento\Framework\Api\DataObjectHelper;
 use Magento\Framework\App\ResourceConnection;
-use Magento\Framework\DB\Select;
 use Magento\UrlRewrite\Model\OptionProvider;
 use Magento\UrlRewrite\Service\V1\Data\UrlRewrite;
 use Magento\UrlRewrite\Service\V1\Data\UrlRewriteFactory;
-use Psr\Log\LoggerInterface;
-use Magento\UrlRewrite\Service\V1\Data\UrlRewrite as UrlRewriteData;
 
 class DbStorage extends AbstractStorage
 {
@@ -24,7 +21,7 @@ class DbStorage extends AbstractStorage
     /**
      * Code of "Integrity constraint violation: 1062 Duplicate entry" error
      */
-    const ERROR_CODE_DUPLICATE_ENTRY = 1062;
+    const ERROR_CODE_DUPLICATE_ENTRY = 23000;
 
     /**
      * @var \Magento\Framework\DB\Adapter\AdapterInterface
@@ -37,26 +34,17 @@ class DbStorage extends AbstractStorage
     protected $resource;
 
     /**
-     * @var \Psr\Log\LoggerInterface
-     */
-    private $logger;
-
-    /**
      * @param \Magento\UrlRewrite\Service\V1\Data\UrlRewriteFactory $urlRewriteFactory
      * @param DataObjectHelper $dataObjectHelper
      * @param \Magento\Framework\App\ResourceConnection $resource
-     * @param \Psr\Log\LoggerInterface|null $logger
      */
     public function __construct(
         UrlRewriteFactory $urlRewriteFactory,
         DataObjectHelper $dataObjectHelper,
-        ResourceConnection $resource,
-        LoggerInterface $logger = null
+        ResourceConnection $resource
     ) {
         $this->connection = $resource->getConnection();
         $this->resource = $resource;
-        $this->logger = $logger ?: \Magento\Framework\App\ObjectManager::getInstance()
-            ->get(\Psr\Log\LoggerInterface::class);
 
         parent::__construct($urlRewriteFactory, $dataObjectHelper);
     }
@@ -67,7 +55,7 @@ class DbStorage extends AbstractStorage
      * @param array $data
      * @return \Magento\Framework\DB\Select
      */
-    protected function prepareSelect(array $data)
+    protected function prepareSelect($data)
     {
         $select = $this->connection->select();
         $select->from($this->resource->getTableName(self::TABLE_NAME));
@@ -81,7 +69,7 @@ class DbStorage extends AbstractStorage
     /**
      * {@inheritdoc}
      */
-    protected function doFindAllByData(array $data)
+    protected function doFindAllByData($data)
     {
         return $this->connection->fetchAll($this->prepareSelect($data));
     }
@@ -89,9 +77,10 @@ class DbStorage extends AbstractStorage
     /**
      * {@inheritdoc}
      */
-    protected function doFindOneByData(array $data)
+    protected function doFindOneByData($data)
     {
-        if (array_key_exists(UrlRewrite::REQUEST_PATH, $data)
+        if (is_array($data)
+            && array_key_exists(UrlRewrite::REQUEST_PATH, $data)
             && is_string($data[UrlRewrite::REQUEST_PATH])
         ) {
             $result = null;
@@ -142,93 +131,19 @@ class DbStorage extends AbstractStorage
     }
 
     /**
-     * @param UrlRewrite[] $urls
-     *
-     * @return void
+     * {@inheritdoc}
      */
-    private function deleteOldUrls(array $urls)
+    protected function doReplace($urls)
     {
-        $oldUrlsSelect = $this->connection->select();
-        $oldUrlsSelect->from(
-            $this->resource->getTableName(self::TABLE_NAME)
-        );
-        /** @var UrlRewrite $url */
-        foreach ($urls as $url) {
-            $oldUrlsSelect->orWhere(
-                $this->connection->quoteIdentifier(
-                    UrlRewrite::ENTITY_TYPE
-                ) . ' = ?',
-                $url->getEntityType()
-            );
-            $oldUrlsSelect->where(
-                $this->connection->quoteIdentifier(
-                    UrlRewrite::ENTITY_ID
-                ) . ' = ?',
-                $url->getEntityId()
-            );
-            $oldUrlsSelect->where(
-                $this->connection->quoteIdentifier(
-                    UrlRewrite::STORE_ID
-                ) . ' = ?',
-                $url->getStoreId()
-            );
+        foreach ($this->createFilterDataBasedOnUrls($urls) as $type => $urlData) {
+            $urlData[UrlRewrite::ENTITY_TYPE] = $type;
+            $this->deleteByData($urlData);
         }
-
-        // prevent query locking in a case when nothing to delete
-        $checkOldUrlsSelect = clone $oldUrlsSelect;
-        $checkOldUrlsSelect->reset(Select::COLUMNS);
-        $checkOldUrlsSelect->columns('count(*)');
-        $hasOldUrls = (bool)$this->connection->fetchOne($checkOldUrlsSelect);
-
-        if ($hasOldUrls) {
-            $this->connection->query(
-                $oldUrlsSelect->deleteFromSelect(
-                    $this->resource->getTableName(self::TABLE_NAME)
-                )
-            );
-        }
-    }
-
-    /**
-     * @inheritDoc
-     */
-    protected function doReplace(array $urls)
-    {
-        $this->deleteOldUrls($urls);
-
         $data = [];
         foreach ($urls as $url) {
             $data[] = $url->toArray();
         }
-        try {
-            $this->insertMultiple($data);
-        } catch (\Magento\Framework\Exception\AlreadyExistsException $e) {
-            /** @var \Magento\UrlRewrite\Service\V1\Data\UrlRewrite[] $urlConflicted */
-            $urlConflicted = [];
-            foreach ($urls as $url) {
-                $urlFound = $this->doFindOneByData(
-                    [
-                        UrlRewriteData::REQUEST_PATH => $url->getRequestPath(),
-                        UrlRewriteData::STORE_ID => $url->getStoreId(),
-                    ]
-                );
-                if (isset($urlFound[UrlRewriteData::URL_REWRITE_ID])) {
-                    $urlConflicted[$urlFound[UrlRewriteData::URL_REWRITE_ID]] = $url->toArray();
-                }
-            }
-            if ($urlConflicted) {
-                throw new \Magento\UrlRewrite\Model\Exception\UrlAlreadyExistsException(
-                    __('URL key for specified store already exists.'),
-                    $e,
-                    $e->getCode(),
-                    $urlConflicted
-                );
-            } else {
-                throw $e->getPrevious() ?: $e;
-            }
-        }
-
-        return $urls;
+        $this->insertMultiple($data);
     }
 
     /**
@@ -236,7 +151,7 @@ class DbStorage extends AbstractStorage
      *
      * @param array $data
      * @return void
-     * @throws \Magento\Framework\Exception\AlreadyExistsException|\Exception
+     * @throws \Magento\Framework\Exception\AlreadyExistsException
      * @throws \Exception
      */
     protected function insertMultiple($data)
@@ -244,12 +159,11 @@ class DbStorage extends AbstractStorage
         try {
             $this->connection->insertMultiple($this->resource->getTableName(self::TABLE_NAME), $data);
         } catch (\Exception $e) {
-            if (($e->getCode() === self::ERROR_CODE_DUPLICATE_ENTRY)
+            if ($e->getCode() === self::ERROR_CODE_DUPLICATE_ENTRY
                 && preg_match('#SQLSTATE\[23000\]: [^:]+: 1062[^\d]#', $e->getMessage())
             ) {
                 throw new \Magento\Framework\Exception\AlreadyExistsException(
-                    __('URL key for specified store already exists.'),
-                    $e
+                    __('URL key for specified store already exists.')
                 );
             }
             throw $e;
@@ -261,7 +175,6 @@ class DbStorage extends AbstractStorage
      *
      * @param UrlRewrite[] $urls
      * @return array
-     * @deprecated Not used anymore.
      */
     protected function createFilterDataBasedOnUrls($urls)
     {

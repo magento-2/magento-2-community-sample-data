@@ -10,7 +10,7 @@ use Magento\Cms\Model\ResourceModel\Block\Relation\Store\SaveHandler;
 use Magento\Framework\EntityManager\MetadataPool;
 use Magento\Cms\Api\Data\BlockInterface;
 
-class SaveHandlerTest extends \PHPUnit\Framework\TestCase
+class SaveHandlerTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var SaveHandler
@@ -29,11 +29,11 @@ class SaveHandlerTest extends \PHPUnit\Framework\TestCase
 
     protected function setUp()
     {
-        $this->metadataPool = $this->getMockBuilder(\Magento\Framework\EntityManager\MetadataPool::class)
+        $this->metadataPool = $this->getMockBuilder('Magento\Framework\EntityManager\MetadataPool')
             ->disableOriginalConstructor()
             ->getMock();
 
-        $this->resourceBlock = $this->getMockBuilder(\Magento\Cms\Model\ResourceModel\Block::class)
+        $this->resourceBlock = $this->getMockBuilder('Magento\Cms\Model\ResourceModel\Block')
             ->disableOriginalConstructor()
             ->getMock();
 
@@ -51,7 +51,7 @@ class SaveHandlerTest extends \PHPUnit\Framework\TestCase
         $newStore = 2;
         $linkField = 'link_id';
 
-        $adapter = $this->getMockBuilder(\Magento\Framework\DB\Adapter\AdapterInterface::class)
+        $adapter = $this->getMockBuilder('Magento\Framework\DB\Adapter\AdapterInterface')
             ->getMockForAbstractClass();
 
         $whereForDelete = [
@@ -72,7 +72,7 @@ class SaveHandlerTest extends \PHPUnit\Framework\TestCase
             ->with('cms_block_store', [$whereForInsert])
             ->willReturnSelf();
 
-        $entityMetadata = $this->getMockBuilder(\Magento\Framework\EntityManager\EntityMetadata::class)
+        $entityMetadata = $this->getMockBuilder('Magento\Framework\EntityManager\EntityMetadata')
             ->disableOriginalConstructor()
             ->getMock();
         $entityMetadata->expects($this->once())
@@ -95,7 +95,7 @@ class SaveHandlerTest extends \PHPUnit\Framework\TestCase
             ->with('cms_block_store')
             ->willReturn('cms_block_store');
 
-        $block = $this->getMockBuilder(\Magento\Cms\Model\Block::class)
+        $block = $this->getMockBuilder('Magento\Cms\Model\Block')
             ->disableOriginalConstructor()
             ->setMethods([
                 'getStores',

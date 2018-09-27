@@ -8,7 +8,7 @@ namespace Magento\GiftMessage\Test\Unit\Block\Cart\Item\Renderer\Actions;
 use Magento\GiftMessage\Block\Cart\Item\Renderer\Actions\ItemIdProcessor;
 use Magento\Quote\Model\Quote\Item;
 
-class ItemIdProcessorTest extends \PHPUnit\Framework\TestCase
+class ItemIdProcessorTest extends \PHPUnit_Framework_TestCase
 {
     /** @var ItemIdProcessor */
     protected $model;
@@ -29,7 +29,7 @@ class ItemIdProcessorTest extends \PHPUnit\Framework\TestCase
         /**
          * @var Item|\PHPUnit_Framework_MockObject_MockObject $itemMock
          */
-        $itemMock = $this->getMockBuilder(\Magento\Quote\Model\Quote\Item::class)
+        $itemMock = $this->getMockBuilder('Magento\Quote\Model\Quote\Item')
             ->disableOriginalConstructor()
             ->getMock();
         $itemMock->expects($this->any())
@@ -39,6 +39,9 @@ class ItemIdProcessorTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals($result, $this->model->process($jsLayout, $itemMock));
     }
 
+    /**
+     * @return array
+     */
     public function dataProviderProcess()
     {
         return [

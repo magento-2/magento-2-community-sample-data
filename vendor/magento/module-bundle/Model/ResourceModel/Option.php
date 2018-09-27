@@ -8,10 +8,11 @@ namespace Magento\Bundle\Model\ResourceModel;
 use Magento\Catalog\Api\Data\ProductInterface;
 use Magento\Framework\EntityManager\MetadataPool;
 use Magento\Framework\App\ObjectManager;
-use Magento\Framework\EntityManager\EntityManager;
 
 /**
  * Bundle Option Resource Model
+ *
+ * @author      Magento Core Team <core@magentocommerce.com>
  */
 class Option extends \Magento\Framework\Model\ResourceModel\Db\AbstractDb
 {
@@ -26,27 +27,17 @@ class Option extends \Magento\Framework\Model\ResourceModel\Db\AbstractDb
     private $metadataPool;
 
     /**
-     * @var EntityManager
-     */
-    private $entityManager;
-
-    /**
      * @param \Magento\Framework\Model\ResourceModel\Db\Context $context
      * @param \Magento\Bundle\Model\Option\Validator $validator
      * @param string $connectionName
-     * @param EntityManager|null $entityManager
      */
     public function __construct(
         \Magento\Framework\Model\ResourceModel\Db\Context $context,
         \Magento\Bundle\Model\Option\Validator $validator,
-        $connectionName = null,
-        EntityManager $entityManager = null
+        $connectionName = null
     ) {
         parent::__construct($context, $connectionName);
         $this->validator = $validator;
-
-        $this->entityManager = $entityManager
-            ?: ObjectManager::getInstance()->get(EntityManager::class);
     }
 
     /**
@@ -81,39 +72,29 @@ class Option extends \Magento\Framework\Model\ResourceModel\Db\AbstractDb
     {
         parent::_afterSave($object);
 
-        $conditions = [
+        $condition = [
             'option_id = ?' => $object->getId(),
-            'store_id = ? OR store_id = 0' => $object->getStoreId(),
-            'parent_product_id = ?' => $object->getParentId()
+            'store_id = ? OR store_id = 0' => $object->getStoreId()
         ];
 
         $connection = $this->getConnection();
+        $connection->delete($this->getTable('catalog_product_bundle_option_value'), $condition);
 
-        if ($this->isOptionPresent($conditions)) {
-            $connection->update(
-                $this->getTable('catalog_product_bundle_option_value'),
-                [
-                    'title' => $object->getTitle()
-                ],
-                $conditions
-            );
-        } else {
-            $data = new \Magento\Framework\DataObject();
-            $data->setOptionId($object->getId())
-                ->setStoreId($object->getStoreId())
-                ->setParentProductId($object->getParentId())
-                ->setTitle($object->getTitle());
+        $data = new \Magento\Framework\DataObject();
+        $data->setOptionId($object->getId())
+            ->setStoreId($object->getStoreId())
+            ->setTitle($object->getTitle());
 
+        $connection->insert($this->getTable('catalog_product_bundle_option_value'), $data->getData());
+
+        /**
+         * also saving default value if this store view scope
+         */
+
+        if ($object->getStoreId()) {
+            $data->setStoreId(0);
+            $data->setTitle($object->getDefaultTitle());
             $connection->insert($this->getTable('catalog_product_bundle_option_value'), $data->getData());
-
-            /**
-             * also saving default value if this store view scope
-             */
-            if ($object->getStoreId()) {
-                $data->setStoreId(0);
-                $data->setTitle($object->getDefaultTitle());
-                $connection->insert($this->getTable('catalog_product_bundle_option_value'), $data->getData());
-            }
         }
 
         return $this;
@@ -132,10 +113,7 @@ class Option extends \Magento\Framework\Model\ResourceModel\Db\AbstractDb
         $this->getConnection()
             ->delete(
                 $this->getTable('catalog_product_bundle_option_value'),
-                [
-                    'option_id = ?' => $object->getId(),
-                    'parent_product_id = ?' => $object->getParentId()
-                ]
+                ['option_id = ?' => $object->getId()]
             );
 
         return $this;
@@ -207,37 +185,5 @@ class Option extends \Magento\Framework\Model\ResourceModel\Db\AbstractDb
             $this->metadataPool = ObjectManager::getInstance()->get(MetadataPool::class);
         }
         return $this->metadataPool;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function save(\Magento\Framework\Model\AbstractModel $object)
-    {
-        $this->entityManager->save($object);
-
-        return $this;
-    }
-
-    /**
-     * Is Bundle option present in the database
-     *
-     * @param array $conditions
-     *
-     * @return bool
-     */
-    private function isOptionPresent($conditions)
-    {
-        $connection = $this->getConnection();
-
-        $select = $connection->select()->from($this->getTable('catalog_product_bundle_option_value'));
-        foreach ($conditions as $condition => $conditionValue) {
-            $select->where($condition, $conditionValue);
-        }
-        $select->limit(1);
-
-        $rowSelect = $connection->fetchRow($select);
-
-        return (is_array($rowSelect) && !empty($rowSelect));
     }
 }

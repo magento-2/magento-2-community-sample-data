@@ -3,15 +3,13 @@
  * Copyright © Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
+
 namespace Magento\CatalogWidget\Test\Unit\Model;
 
-class RuleTest extends \PHPUnit\Framework\TestCase
-{
-    /**
-     * @var \Magento\Framework\TestFramework\Unit\Helper\ObjectManager
-     */
-    private $objectManager;
+use Magento\Framework\TestFramework\Unit\Helper\ObjectManager as ObjectManagerHelper;
 
+class RuleTest extends \PHPUnit_Framework_TestCase
+{
     /**
      * @var \Magento\CatalogWidget\Model\Rule
      */
@@ -24,14 +22,26 @@ class RuleTest extends \PHPUnit\Framework\TestCase
 
     protected function setUp()
     {
-        $this->objectManager = new \Magento\Framework\TestFramework\Unit\Helper\ObjectManager($this);
-        $this->combineFactory = $this->getMockBuilder(\Magento\CatalogWidget\Model\Rule\Condition\CombineFactory::class)
+        $this->combineFactory = $this->getMockBuilder('Magento\CatalogWidget\Model\Rule\Condition\CombineFactory')
             ->setMethods(['create'])
             ->disableOriginalConstructor()
             ->getMock();
 
-        $this->rule = $this->objectManager->getObject(
-            \Magento\CatalogWidget\Model\Rule::class,
+        $objectManagerHelper = new ObjectManagerHelper($this);
+
+        $this->prepareObjectManager([
+            [
+                'Magento\Framework\Api\ExtensionAttributesFactory',
+                $this->getMock('Magento\Framework\Api\ExtensionAttributesFactory', [], [], '', false)
+            ],
+            [
+                'Magento\Framework\Api\AttributeValueFactory',
+                $this->getMock('Magento\Framework\Api\AttributeValueFactory', [], [], '', false)
+            ],
+        ]);
+
+        $this->rule = $objectManagerHelper->getObject(
+            'Magento\CatalogWidget\Model\Rule',
             [
                 'conditionsFactory' => $this->combineFactory
             ]
@@ -40,7 +50,7 @@ class RuleTest extends \PHPUnit\Framework\TestCase
 
     public function testGetConditionsInstance()
     {
-        $condition = $this->getMockBuilder(\Magento\CatalogWidget\Model\Rule\Condition\Combine::class)
+        $condition = $this->getMockBuilder('Magento\CatalogWidget\Model\Rule\Condition\Combine')
             ->setMethods([])
             ->disableOriginalConstructor()
             ->getMock();
@@ -51,5 +61,21 @@ class RuleTest extends \PHPUnit\Framework\TestCase
     public function testGetActionsInstance()
     {
         $this->assertNull($this->rule->getActionsInstance());
+    }
+
+    /**
+     * @param $map
+     */
+    private function prepareObjectManager($map)
+    {
+        $objectManagerMock = $this->getMock('Magento\Framework\ObjectManagerInterface');
+        $objectManagerMock->expects($this->any())->method('getInstance')->willReturnSelf();
+        $objectManagerMock->expects($this->any())
+            ->method('get')
+            ->will($this->returnValueMap($map));
+        $reflectionClass = new \ReflectionClass('Magento\Framework\App\ObjectManager');
+        $reflectionProperty = $reflectionClass->getProperty('_instance');
+        $reflectionProperty->setAccessible(true);
+        $reflectionProperty->setValue($objectManagerMock);
     }
 }

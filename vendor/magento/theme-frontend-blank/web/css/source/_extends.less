@@ -1139,13 +1139,12 @@
         }
 
         .action {
-            &.clear,
-            &.update {
-                margin-left: @indent__s;
-            }
-
             &.continue {
                 float: left;
+            }
+
+            &.clear {
+                margin-right: @indent__s;
             }
         }
     }
@@ -1402,7 +1401,7 @@
         &.active {
             > .title {
                 .lib-icon-font-symbol(
-                @_icon-font-content: @icon-prev,
+                @_icon-font-content: @icon-up,
                 @_icon-font-position: after
                 );
             }

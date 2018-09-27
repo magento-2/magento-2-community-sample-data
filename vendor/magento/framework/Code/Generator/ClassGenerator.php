@@ -129,10 +129,6 @@ class ClassGenerator extends \Zend\Code\Generator\ClassGenerator implements
                 $methodObject->setDocBlock($docBlockObject);
             }
 
-            if (!empty($methodOptions['returnType'])) {
-                $methodObject->setReturnType($methodOptions['returnType']);
-            }
-
             $this->addMethodFromGenerator($methodObject);
         }
         return $this;
@@ -210,10 +206,10 @@ class ClassGenerator extends \Zend\Code\Generator\ClassGenerator implements
     }
 
     /**
-     * @return string|null
+     * {@inheritdoc}
      */
     public function getNamespaceName()
     {
-        return ltrim(parent::getNamespaceName(), '\\') ?: null;
+        return ltrim(parent::getNamespaceName(), '\\');
     }
 }

@@ -5,7 +5,7 @@
  */
 namespace Magento\Eav\Test\Unit\Model\Adminhtml\System\Config\Source;
 
-class InputtypeTest extends \PHPUnit\Framework\TestCase
+class InputtypeTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\Eav\Model\Adminhtml\System\Config\Source\Inputtype

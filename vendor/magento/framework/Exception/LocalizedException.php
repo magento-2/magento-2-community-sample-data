@@ -26,14 +26,15 @@ class LocalizedException extends \Exception
     protected $logMessage;
 
     /**
+     * Constructor
+     *
      * @param \Magento\Framework\Phrase $phrase
      * @param \Exception $cause
-     * @param int $code
      */
-    public function __construct(Phrase $phrase, \Exception $cause = null, $code = 0)
+    public function __construct(Phrase $phrase, \Exception $cause = null)
     {
         $this->phrase = $phrase;
-        parent::__construct($phrase->render(), intval($code), $cause);
+        parent::__construct($phrase->render(), 0, $cause);
     }
 
     /**

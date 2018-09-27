@@ -10,10 +10,8 @@ use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
 
 /**
  * Class SessionTest tests Magento\Backend\Model\Auth\Session
- *
- * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  */
-class SessionTest extends \PHPUnit\Framework\TestCase
+class SessionTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\Backend\App\Config | \PHPUnit_Framework_MockObject_MockObject
@@ -52,30 +50,42 @@ class SessionTest extends \PHPUnit\Framework\TestCase
 
     protected function setUp()
     {
-        $this->cookieMetadataFactory = $this->createPartialMock(
-            \Magento\Framework\Stdlib\Cookie\CookieMetadataFactory::class,
-            ['createPublicCookieMetadata']
+        $this->cookieMetadataFactory = $this->getMock(
+            'Magento\Framework\Stdlib\Cookie\CookieMetadataFactory',
+            ['createPublicCookieMetadata'],
+            [],
+            '',
+            false
         );
 
-        $this->config = $this->createPartialMock(\Magento\Backend\App\Config::class, ['getValue']);
-        $this->cookieManager = $this->createPartialMock(
-            \Magento\Framework\Stdlib\Cookie\PhpCookieManager::class,
-            ['getCookie', 'setPublicCookie']
+        $this->config = $this->getMock('Magento\Backend\App\Config', ['getValue'], [], '', false);
+        $this->cookieManager = $this->getMock(
+            'Magento\Framework\Stdlib\Cookie\PhpCookieManager',
+            ['getCookie', 'setPublicCookie'],
+            [],
+            '',
+            false
         );
-        $this->storage = $this->createPartialMock(
-            \Magento\Framework\Session\Storage::class,
-            ['getUser', 'getAcl', 'setAcl']
+        $this->storage = $this->getMock(
+            'Magento\Framework\Session\Storage',
+            ['getUser', 'getAcl', 'setAcl'],
+            [],
+            '',
+            false
         );
-        $this->sessionConfig = $this->createPartialMock(
-            \Magento\Framework\Session\Config::class,
-            ['getCookiePath', 'getCookieDomain', 'getCookieSecure', 'getCookieHttpOnly']
+        $this->sessionConfig = $this->getMock(
+            'Magento\Framework\Session\Config',
+            ['getCookiePath', 'getCookieDomain', 'getCookieSecure', 'getCookieHttpOnly'],
+            [],
+            '',
+            false
         );
-        $this->aclBuilder = $this->getMockBuilder(\Magento\Framework\Acl\Builder::class)
+        $this->aclBuilder = $this->getMockBuilder('Magento\Framework\Acl\Builder')
             ->disableOriginalConstructor()
             ->getMock();
         $objectManager = new ObjectManager($this);
         $this->session = $objectManager->getObject(
-            \Magento\Backend\Model\Auth\Session::class,
+            'Magento\Backend\Model\Auth\Session',
             [
                 'config' => $this->config,
                 'sessionConfig' => $this->sessionConfig,
@@ -100,9 +110,9 @@ class SessionTest extends \PHPUnit\Framework\TestCase
      */
     public function testRefreshAcl($isUserPassedViaParams)
     {
-        $aclMock = $this->getMockBuilder(\Magento\Framework\Acl::class)->disableOriginalConstructor()->getMock();
+        $aclMock = $this->getMockBuilder('Magento\Framework\Acl')->disableOriginalConstructor()->getMock();
         $this->aclBuilder->expects($this->any())->method('getAcl')->willReturn($aclMock);
-        $userMock = $this->getMockBuilder(\Magento\User\Model\User::class)
+        $userMock = $this->getMockBuilder('Magento\User\Model\User')
             ->setMethods(['getReloadAclFlag', 'setReloadAclFlag', 'unsetData', 'save'])
             ->disableOriginalConstructor()
             ->getMock();
@@ -120,6 +130,9 @@ class SessionTest extends \PHPUnit\Framework\TestCase
         $this->assertSame($aclMock, $this->session->getAcl());
     }
 
+    /**
+     * @return array
+     */
     public function refreshAclDataProvider()
     {
         return [
@@ -130,7 +143,7 @@ class SessionTest extends \PHPUnit\Framework\TestCase
 
     public function testIsLoggedInPositive()
     {
-        $user = $this->createPartialMock(\Magento\User\Model\User::class, ['getId', '__wakeup']);
+        $user = $this->getMock('Magento\User\Model\User', ['getId', '__wakeup'], [], '', false);
         $user->expects($this->once())
             ->method('getId')
             ->will($this->returnValue(1));
@@ -146,21 +159,12 @@ class SessionTest extends \PHPUnit\Framework\TestCase
     {
         $name = session_name();
         $cookie = 'cookie';
-        $lifetime = 900;
         $path = '/';
         $domain = 'magento2';
         $secure = true;
         $httpOnly = true;
 
-        $this->config->expects($this->once())
-            ->method('getValue')
-            ->with(\Magento\Backend\Model\Auth\Session::XML_PATH_SESSION_LIFETIME)
-            ->willReturn($lifetime);
-        $cookieMetadata = $this->createMock(\Magento\Framework\Stdlib\Cookie\PublicCookieMetadata::class);
-        $cookieMetadata->expects($this->once())
-            ->method('setDuration')
-            ->with($lifetime)
-            ->will($this->returnSelf());
+        $cookieMetadata = $this->getMock('Magento\Framework\Stdlib\Cookie\PublicCookieMetadata');
         $cookieMetadata->expects($this->once())
             ->method('setPath')
             ->with($path)
@@ -219,11 +223,11 @@ class SessionTest extends \PHPUnit\Framework\TestCase
     {
         $userAclRole = 'userAclRole';
         if ($isAclDefined) {
-            $aclMock = $this->getMockBuilder(\Magento\Framework\Acl::class)->disableOriginalConstructor()->getMock();
+            $aclMock = $this->getMockBuilder('Magento\Framework\Acl')->disableOriginalConstructor()->getMock();
             $this->storage->expects($this->any())->method('getAcl')->willReturn($aclMock);
         }
         if ($isUserDefined) {
-            $userMock = $this->getMockBuilder(\Magento\User\Model\User::class)->disableOriginalConstructor()->getMock();
+            $userMock = $this->getMockBuilder('Magento\User\Model\User')->disableOriginalConstructor()->getMock();
             $this->storage->expects($this->once())->method('getUser')->willReturn($userMock);
         }
         if ($isAclDefined && $isUserDefined) {
@@ -234,6 +238,9 @@ class SessionTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals($expectedResult, $this->session->isAllowed('resource'));
     }
 
+    /**
+     * @return array
+     */
     public function isAllowedDataProvider()
     {
         return [
@@ -254,6 +261,9 @@ class SessionTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals($isFirstPageAfterLogin, $this->session->isFirstPageAfterLogin());
     }
 
+    /**
+     * @return array
+     */
     public function firstPageAfterLoginDataProvider()
     {
         return [

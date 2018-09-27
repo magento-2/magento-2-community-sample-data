@@ -8,11 +8,13 @@ namespace Magento\CatalogUrlRewrite\Model\Map;
 use Magento\Framework\ObjectManagerInterface;
 
 /**
- * Pool for database maps
+ * Pool for database maps.
  */
 class DatabaseMapPool
 {
     /**
+     * Data array.
+     *
      * @var DatabaseMapInterface[]
      */
     private $dataArray = [];
@@ -23,8 +25,6 @@ class DatabaseMapPool
     private $objectManager;
 
     /**
-     * Constructor
-     *
      * @param ObjectManagerInterface $objectManager
      */
     public function __construct(
@@ -34,7 +34,7 @@ class DatabaseMapPool
     }
 
     /**
-     * Gets a map by instance and category Id
+     * Gets a map by instance and category Id.
      *
      * @param string $instanceName
      * @param int $categoryId
@@ -57,11 +57,12 @@ class DatabaseMapPool
             }
             $this->dataArray[$key] = $instance;
         }
+
         return $this->dataArray[$key];
     }
 
     /**
-     * Resets a database map by instance and category Id
+     * Resets a database map by instance and category Id.
      *
      * @param string $instanceName
      * @param int $categoryId

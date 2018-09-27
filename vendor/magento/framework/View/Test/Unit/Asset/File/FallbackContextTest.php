@@ -8,7 +8,7 @@ namespace Magento\Framework\View\Test\Unit\Asset\File;
 /**
  * @covers \Magento\Framework\View\Asset\File\FallbackContext
  */
-class FallbackContextTest extends \PHPUnit\Framework\TestCase
+class FallbackContextTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\Framework\TestFramework\Unit\Helper\ObjectManager
@@ -47,12 +47,15 @@ class FallbackContextTest extends \PHPUnit\Framework\TestCase
                 'baseUrl' => $baseUrl,
                 'areaType' => $areaType,
                 'themePath' => $themePath,
-                'localeCode' => $localeCode
+                'localeCode' => $localeCode,
             ]
         );
         $this->assertEquals($expectedResult, $this->fallbackContext->getConfigPath());
     }
 
+    /**
+     * @return array
+     */
     public function getConfigPathDataProvider()
     {
         return [

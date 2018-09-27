@@ -5,25 +5,27 @@
  */
 namespace Magento\Cms\Model;
 
-use Magento\Cms\Api\PageRepositoryInterface;
-use Magento\Framework\Stdlib\DateTime\DateTime;
-
 /**
  * @magentoAppArea adminhtml
  */
-class PageTest extends \PHPUnit\Framework\TestCase
+class PageTest extends \PHPUnit_Framework_TestCase
 {
+    /**
+     * @var \Magento\Cms\Model\Page
+     */
+    protected $model;
+
     protected function setUp()
     {
         $user = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->create(
-            \Magento\User\Model\User::class
+            'Magento\User\Model\User'
         )->loadByUsername(
             \Magento\TestFramework\Bootstrap::ADMIN_NAME
         );
 
         /** @var $session \Magento\Backend\Model\Auth\Session */
         $session = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->get(
-            \Magento\Backend\Model\Auth\Session::class
+            'Magento\Backend\Model\Auth\Session'
         );
         $session->setUser($user);
     }
@@ -36,25 +38,10 @@ class PageTest extends \PHPUnit\Framework\TestCase
     {
         $objectManager = \Magento\TestFramework\Helper\Bootstrap::getObjectManager();
         /** @var \Magento\Cms\Model\Page $page */
-        $page = $objectManager->create(\Magento\Cms\Model\Page::class);
+        $page = $objectManager->create('Magento\Cms\Model\Page');
         $page->setData($data);
         $page->save();
         $this->assertEquals($expectedIdentifier, $page->getIdentifier());
-    }
-
-    /**
-     * @magentoDbIsolation enabled
-     */
-    public function testUpdateTime()
-    {
-        $objectManager = \Magento\TestFramework\Helper\Bootstrap::getObjectManager();
-        /** @var \Magento\Cms\Model\Page $page */
-        $page = $objectManager->create(\Magento\Cms\Model\Page::class);
-        $page->setData(['title' => 'Test', 'stores' => [1]]);
-        $page->save();
-        $page = $objectManager->get(PageRepositoryInterface::class)->getById($page->getId());
-        $date = $objectManager->get(DateTime::class)->date();
-        $this->assertEquals($date, $page->getUpdateTime());
     }
 
     public function generateIdentifierFromTitleDataProvider()

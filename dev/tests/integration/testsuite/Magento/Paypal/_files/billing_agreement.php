@@ -5,7 +5,7 @@
  */
 /** @var \Magento\Paypal\Model\Billing\Agreement $billingAgreement */
 $billingAgreement = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->create(
-    \Magento\Paypal\Model\Billing\Agreement::class
+    'Magento\Paypal\Model\Billing\Agreement'
 )->setAgreementLabel(
     'TEST'
 )->setCustomerId(

@@ -44,7 +44,7 @@ class OauthClient extends AbstractService
             $httpClient->setTimeout(self::DEFAULT_TIMEOUT);
         }
         if (!isset($storage)) {
-            $storage = new \OAuth\Common\Storage\Memory();
+            $storage = new \OAuth\Common\Storage\Session();
         }
         if (!isset($signature)) {
             $signature = new \Magento\TestFramework\Authentication\Rest\OauthClient\Signature($credentials);
@@ -89,7 +89,7 @@ class OauthClient extends AbstractService
      */
     public function getTestApiEndpoint()
     {
-        $defaultStoreCode = Bootstrap::getObjectManager()->get(\Magento\Store\Model\StoreManagerInterface::class)
+        $defaultStoreCode = Bootstrap::getObjectManager()->get('Magento\Store\Model\StoreManagerInterface')
             ->getStore()->getCode();
         return new Uri(TESTS_BASE_URL . '/rest/' . $defaultStoreCode . '/V1/testmodule1');
     }

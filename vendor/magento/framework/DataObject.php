@@ -8,7 +8,7 @@ namespace Magento\Framework;
 /**
  * Universal data container with array access implementation
  *
- * @api
+ * @author      Magento Core Team <core@magentocommerce.com>
  * @SuppressWarnings(PHPMD.NumberOfChildren)
  */
 class DataObject implements \ArrayAccess
@@ -115,6 +115,7 @@ class DataObject implements \ArrayAccess
      * @param string|int $index
      * @return mixed
      */
+
     public function getData($key = '', $index = null)
     {
         if ('' === $key) {
@@ -325,21 +326,19 @@ class DataObject implements \ArrayAccess
      * Convert object data to JSON
      *
      * @param array $keys array of required keys
-     * @return bool|string
-     * @throws \InvalidArgumentException
+     * @return string
      */
     public function toJson(array $keys = [])
     {
         $data = $this->toArray($keys);
-        return \Magento\Framework\Serialize\JsonConverter::convert($data);
+        return \Zend_Json::encode($data);
     }
 
     /**
      * The "__" style wrapper for toJson
      *
-     * @param array $keys
-     * @return bool|string
-     * @throws \InvalidArgumentException
+     * @param  array $keys
+     * @return string
      */
     public function convertToJson(array $keys = [])
     {

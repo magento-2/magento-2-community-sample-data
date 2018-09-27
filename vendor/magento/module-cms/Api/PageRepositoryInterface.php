@@ -10,7 +10,6 @@ use Magento\Framework\Api\SearchCriteriaInterface;
 /**
  * CMS page CRUD interface.
  * @api
- * @since 100.0.2
  */
 interface PageRepositoryInterface
 {

@@ -38,7 +38,7 @@ abstract class PdfDocumentsMassAction extends \Magento\Sales\Controller\Adminhtm
      * Get Order Collection Factory
      *
      * @return \Magento\Sales\Model\ResourceModel\Order\CollectionFactory
-     * @deprecated 100.1.3
+     * @deprecated
      */
     private function getOrderCollection()
     {

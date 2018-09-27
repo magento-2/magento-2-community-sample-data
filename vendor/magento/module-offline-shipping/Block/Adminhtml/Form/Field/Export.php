@@ -21,7 +21,7 @@ class Export extends \Magento\Framework\Data\Form\Element\AbstractElement
      * @param \Magento\Framework\Data\Form\Element\Factory $factoryElement
      * @param \Magento\Framework\Data\Form\Element\CollectionFactory $factoryCollection
      * @param \Magento\Framework\Escaper $escaper
-     * @param \Magento\Backend\Helper\Data $helper
+     * @param \Magento\Backend\Model\UrlInterface $backendUrl
      * @param array $data
      */
     public function __construct(
@@ -41,9 +41,7 @@ class Export extends \Magento\Framework\Data\Form\Element\AbstractElement
     public function getElementHtml()
     {
         /** @var \Magento\Backend\Block\Widget\Button $buttonBlock  */
-        $buttonBlock = $this->getForm()->getParent()->getLayout()->createBlock(
-            \Magento\Backend\Block\Widget\Button::class
-        );
+        $buttonBlock = $this->getForm()->getParent()->getLayout()->createBlock('Magento\Backend\Block\Widget\Button');
 
         $params = ['website' => $buttonBlock->getRequest()->getParam('website')];
 

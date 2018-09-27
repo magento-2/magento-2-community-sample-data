@@ -37,17 +37,14 @@ class AggregationFactory
         foreach ($rawAggregation as $rawBucketName => $rawBucket) {
             /** @var \Magento\Framework\Search\Response\Bucket[] $buckets */
             $buckets[$rawBucketName] = $this->objectManager->create(
-                \Magento\Framework\Search\Response\Bucket::class,
+                'Magento\Framework\Search\Response\Bucket',
                 [
                     'name' => $rawBucketName,
                     'values' => $this->prepareValues((array)$rawBucket)
                 ]
             );
         }
-        return $this->objectManager->create(
-            \Magento\Framework\Search\Response\Aggregation::class,
-            ['buckets' => $buckets]
-        );
+        return $this->objectManager->create('Magento\Framework\Search\Response\Aggregation', ['buckets' => $buckets]);
     }
 
     /**
@@ -61,7 +58,7 @@ class AggregationFactory
         $valuesObjects = [];
         foreach ($values as $name => $value) {
             $valuesObjects[] = $this->objectManager->create(
-                \Magento\Framework\Search\Response\Aggregation\Value::class,
+                'Magento\Framework\Search\Response\Aggregation\Value',
                 [
                     'value' => $name,
                     'metrics' => $value,

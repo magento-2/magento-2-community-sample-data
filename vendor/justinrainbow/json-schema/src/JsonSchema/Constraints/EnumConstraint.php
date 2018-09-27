@@ -9,8 +9,6 @@
 
 namespace JsonSchema\Constraints;
 
-use JsonSchema\Entity\JsonPointer;
-
 /**
  * The EnumConstraint Constraints, validates an element against a given set of possibilities
  *
@@ -20,35 +18,29 @@ use JsonSchema\Entity\JsonPointer;
 class EnumConstraint extends Constraint
 {
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
-    public function check(&$element, $schema = null, JsonPointer $path = null, $i = null)
+    public function check($element, $schema = null, $path = null, $i = null)
     {
         // Only validate enum if the attribute exists
         if ($element instanceof UndefinedConstraint && (!isset($schema->required) || !$schema->required)) {
             return;
         }
-        $type = gettype($element);
 
         foreach ($schema->enum as $enum) {
-            $enumType = gettype($enum);
-            if ($this->factory->getConfig(self::CHECK_MODE_TYPE_CAST) && $type == 'array' && $enumType == 'object') {
-                if ((object) $element == $enum) {
-                    return;
-                }
-            }
-
+            $type = gettype($element);
             if ($type === gettype($enum)) {
-                if ($type == 'object') {
-                    if ($element == $enum) {
+                if ($type == "object") {
+                    if ($element == $enum)
                         return;
-                    }
-                } elseif ($element === $enum) {
-                    return;
+                } else {
+                    if ($element === $enum)
+                        return;
+
                 }
             }
         }
 
-        $this->addError($path, 'Does not have a value in the enumeration ' . json_encode($schema->enum), 'enum', array('enum' => $schema->enum));
+        $this->addError($path, "Does not have a value in the enumeration " . print_r($schema->enum, true), 'enum', array('enum' => $schema->enum,));
     }
 }

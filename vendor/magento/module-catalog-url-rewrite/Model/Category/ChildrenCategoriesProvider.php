@@ -9,9 +9,7 @@ use Magento\Catalog\Model\Category;
 
 class ChildrenCategoriesProvider
 {
-    /**
-     * @var array
-     */
+    /** @var array */
     protected $childrenIds = [];
 
     /**

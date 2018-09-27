@@ -5,12 +5,12 @@
  */
 namespace Magento\ConfigurableProduct\Model\Product\Validator;
 
+use Closure;
 use Magento\Catalog\Model\Product;
 use Magento\Catalog\Model\ProductFactory;
 use Magento\Framework\App\RequestInterface;
 use Magento\Framework\Event\Manager;
 use Magento\Framework\Json\Helper\Data;
-use Magento\Framework\DataObject;
 
 /**
  * Configurable product validation
@@ -48,44 +48,27 @@ class Plugin
     }
 
     /**
-     * Set configurable type to product
-     *
-     * @param Product\Validator $subject
-     * @param Product $product
-     * @param RequestInterface $request
-     * @param DataObject $response
-     * @return void
-     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
-     */
-    public function beforeValidate(
-        \Magento\Catalog\Model\Product\Validator $subject,
-        \Magento\Catalog\Model\Product $product,
-        RequestInterface $request,
-        DataObject $response
-    ) {
-        if ($request->has('attributes')) {
-            $product->setTypeId(\Magento\ConfigurableProduct\Model\Product\Type\Configurable::TYPE_CODE);
-        }
-    }
-
-    /**
      * Validate product data
      *
      * @param Product\Validator $subject
-     * @param bool|array $result
+     * @param Closure $proceed
      * @param Product $product
      * @param RequestInterface $request
      * @param \Magento\Framework\DataObject $response
      * @return bool
      * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      */
-    public function afterValidate(
+    public function aroundValidate(
         \Magento\Catalog\Model\Product\Validator $subject,
-        $result,
+        Closure $proceed,
         \Magento\Catalog\Model\Product $product,
-        RequestInterface $request,
-        DataObject $response
+        \Magento\Framework\App\RequestInterface $request,
+        \Magento\Framework\DataObject $response
     ) {
+        if ($request->has('attributes')) {
+            $product->setTypeId(\Magento\ConfigurableProduct\Model\Product\Type\Configurable::TYPE_CODE);
+        }
+        $result = $proceed($product, $request, $response);
         $variationProducts = (array)$request->getPost('variations-matrix');
         if ($variationProducts) {
             $validationResult = $this->_validateProductVariations($product, $variationProducts, $request);
@@ -129,11 +112,9 @@ class Plugin
             $product->addData($productData);
             $product->setCollectExceptionMessages(true);
             $configurableAttribute = [];
-            if (!empty($productData['configurable_attribute'])) {
-                $encodedData = $productData['configurable_attribute'];
-                if ($encodedData) {
-                    $configurableAttribute = $this->jsonHelper->jsonDecode($encodedData);
-                }
+            $encodedData = $productData['configurable_attribute'];
+            if ($encodedData) {
+                $configurableAttribute = $this->jsonHelper->jsonDecode($encodedData);
             }
             $configurableAttribute = implode('-', $configurableAttribute);
 

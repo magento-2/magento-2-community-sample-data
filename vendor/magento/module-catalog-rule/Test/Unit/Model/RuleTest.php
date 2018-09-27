@@ -3,18 +3,23 @@
  * Copyright © Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
+
 namespace Magento\CatalogRule\Test\Unit\Model;
 
+use Magento\Framework\TestFramework\Unit\Helper\ObjectManager as ObjectManagerHelper;
+
 /**
+ * Class RuleTest
+ * @package Magento\CatalogRule\Test\Unit\Model
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  */
-class RuleTest extends \PHPUnit\Framework\TestCase
+class RuleTest extends \PHPUnit_Framework_TestCase
 {
     /** @var \Magento\CatalogRule\Model\Rule */
     protected $rule;
 
-    /** @var \Magento\Framework\TestFramework\Unit\Helper\ObjectManager */
-    private $objectManager;
+    /** @var ObjectManagerHelper */
+    protected $objectManagerHelper;
 
     /** @var \Magento\Store\Model\StoreManagerInterface|\PHPUnit_Framework_MockObject_MockObject */
     protected $storeManager;
@@ -58,103 +63,94 @@ class RuleTest extends \PHPUnit\Framework\TestCase
      */
     protected function setUp()
     {
-        $this->objectManager = new \Magento\Framework\TestFramework\Unit\Helper\ObjectManager($this);
-        $this->storeManager = $this->createMock(\Magento\Store\Model\StoreManagerInterface::class);
-        $this->storeModel = $this->createPartialMock(\Magento\Store\Model\Store::class, ['__wakeup', 'getId']);
-        $this->combineFactory = $this->createPartialMock(
-            \Magento\CatalogRule\Model\Rule\Condition\CombineFactory::class,
+        $this->storeManager = $this->getMock('Magento\Store\Model\StoreManagerInterface');
+        $this->storeModel = $this->getMock('Magento\Store\Model\Store', ['__wakeup', 'getId'], [], '', false);
+        $this->combineFactory = $this->getMock(
+            'Magento\CatalogRule\Model\Rule\Condition\CombineFactory',
             [
                 'create'
-            ]
+            ],
+            [],
+            '',
+            false
         );
-        $this->productModel = $this->createPartialMock(
-            \Magento\Catalog\Model\Product::class,
+        $this->productModel = $this->getMock(
+            'Magento\Catalog\Model\Product',
             [
-                '__wakeup',
-                'getId',
-                'setData'
-            ]
+                '__wakeup', 'getId', 'setData'
+            ],
+            [],
+            '',
+            false
         );
-        $this->condition = $this->createPartialMock(
-            \Magento\Rule\Model\Condition\Combine::class,
+        $this->condition = $this->getMock(
+            'Magento\Rule\Model\Condition\Combine',
             [
                 'setRule',
                 'validate'
-            ]
+            ],
+            [],
+            '',
+            false
         );
-        $this->websiteModel = $this->createPartialMock(
-            \Magento\Store\Model\Website::class,
+        $this->websiteModel = $this->getMock(
+            'Magento\Store\Model\Website',
             [
                 '__wakeup',
                 'getId',
                 'getDefaultStore'
-            ]
+            ],
+            [],
+            '',
+            false
         );
-        $this->_ruleProductProcessor = $this->createMock(
-            \Magento\CatalogRule\Model\Indexer\Rule\RuleProductProcessor::class
-        );
-
-        $this->_productCollectionFactory = $this->createPartialMock(
-            \Magento\Catalog\Model\ResourceModel\Product\CollectionFactory::class,
-            ['create']
-        );
-
-        $this->_resourceIterator = $this->createPartialMock(
-            \Magento\Framework\Model\ResourceModel\Iterator::class,
-            ['walk']
+        $this->_ruleProductProcessor = $this->getMock(
+            '\Magento\CatalogRule\Model\Indexer\Rule\RuleProductProcessor',
+            [],
+            [],
+            '',
+            false
         );
 
-        $extensionFactoryMock = $this->createMock(\Magento\Framework\Api\ExtensionAttributesFactory::class);
-        $attributeValueFactoryMock = $this->createMock(\Magento\Framework\Api\AttributeValueFactory::class);
+        $this->_productCollectionFactory = $this->getMock(
+            '\Magento\Catalog\Model\ResourceModel\Product\CollectionFactory',
+            ['create'],
+            [],
+            '',
+            false
+        );
 
-        $this->rule = $this->objectManager->getObject(
-            \Magento\CatalogRule\Model\Rule::class,
+        $this->_resourceIterator = $this->getMock(
+            '\Magento\Framework\Model\ResourceModel\Iterator',
+            ['walk'],
+            [],
+            '',
+            false
+        );
+
+        $this->objectManagerHelper = new ObjectManagerHelper($this);
+
+        $this->prepareObjectManager([
+            [
+                'Magento\Framework\Api\ExtensionAttributesFactory',
+                $this->getMock('Magento\Framework\Api\ExtensionAttributesFactory', [], [], '', false)
+            ],
+            [
+                'Magento\Framework\Api\AttributeValueFactory',
+                $this->getMock('Magento\Framework\Api\AttributeValueFactory', [], [], '', false)
+            ],
+        ]);
+
+        $this->rule = $this->objectManagerHelper->getObject(
+            'Magento\CatalogRule\Model\Rule',
             [
                 'storeManager' => $this->storeManager,
                 'combineFactory' => $this->combineFactory,
                 'ruleProductProcessor' => $this->_ruleProductProcessor,
                 'productCollectionFactory' => $this->_productCollectionFactory,
                 'resourceIterator' => $this->_resourceIterator,
-                'extensionFactory' => $extensionFactoryMock,
-                'customAttributeFactory' => $attributeValueFactoryMock,
-                'serializer' => $this->getSerializerMock(),
             ]
         );
-    }
-
-    /**
-     * Get mock for serializer
-     *
-     * @return \PHPUnit_Framework_MockObject_MockObject
-     */
-    private function getSerializerMock()
-    {
-        $serializerMock = $this->getMockBuilder(\Magento\Framework\Serialize\Serializer\Json::class)
-            ->disableOriginalConstructor()
-            ->setMethods(['serialize', 'unserialize'])
-            ->getMock();
-
-        $serializerMock->expects($this->any())
-            ->method('serialize')
-            ->will(
-                $this->returnCallback(
-                    function ($value) {
-                        return json_encode($value);
-                    }
-                )
-            );
-
-        $serializerMock->expects($this->any())
-            ->method('unserialize')
-            ->will(
-                $this->returnCallback(
-                    function ($value) {
-                        return json_decode($value, true);
-                    }
-                )
-            );
-
-        return $serializerMock;
     }
 
     /**
@@ -304,7 +300,7 @@ class RuleTest extends \PHPUnit\Framework\TestCase
      */
     public function testAfterDelete()
     {
-        $indexer = $this->createMock(\Magento\Framework\Indexer\IndexerInterface::class);
+        $indexer = $this->getMock('\Magento\Framework\Indexer\IndexerInterface');
         $indexer->expects($this->once())->method('invalidate');
         $this->_ruleProductProcessor->expects($this->once())->method('getIndexer')->will($this->returnValue($indexer));
         $this->rule->afterDelete();
@@ -318,7 +314,7 @@ class RuleTest extends \PHPUnit\Framework\TestCase
     public function testAfterUpdate()
     {
         $this->rule->isObjectNew(false);
-        $indexer = $this->createMock(\Magento\Framework\Indexer\IndexerInterface::class);
+        $indexer = $this->getMock('\Magento\Framework\Indexer\IndexerInterface');
         $indexer->expects($this->once())->method('invalidate');
         $this->_ruleProductProcessor->expects($this->once())->method('getIndexer')->will($this->returnValue($indexer));
         $this->rule->afterSave();
@@ -340,7 +336,7 @@ class RuleTest extends \PHPUnit\Framework\TestCase
     {
         $this->rule->setData('website_ids', []);
         $this->rule->isObjectNew($isObjectNew);
-        $indexer = $this->createMock(\Magento\Framework\Indexer\IndexerInterface::class);
+        $indexer = $this->getMock('\Magento\Framework\Indexer\IndexerInterface');
         $indexer->expects($this->any())->method('invalidate');
         $this->_ruleProductProcessor->expects($this->any())->method('getIndexer')->will($this->returnValue($indexer));
 
@@ -381,37 +377,18 @@ class RuleTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * @dataProvider reindexDataProvider
-     * @param array $productIds
-     * @param \PHPUnit_Framework_MockObject_Matcher_InvokedCount $callCount
-     * @return void
+     * @param $map
      */
-    public function testReindex(
-        array $productIds,
-        \PHPUnit_Framework_MockObject_Matcher_InvokedCount $callCount
-    ) {
-        $this->objectManager->setBackwardCompatibleProperty($this->rule, '_productIds', $productIds);
-        $this->_ruleProductProcessor->expects($callCount)->method('reindexList');
-        $this->rule->reindex();
-    }
-
-    /**
-     * @return array
-     */
-    public function reindexDataProvider():array
+    private function prepareObjectManager($map)
     {
-        return [
-            [
-                'productIds' => [
-                        1 => [1 =>true],
-                        2 => [1 =>true],
-                ],
-                'call' => $this->once(),
-            ],
-            [
-                'productIds' => [],
-                'call' => $this->never(),
-            ],
-        ];
+        $objectManagerMock = $this->getMock('Magento\Framework\ObjectManagerInterface');
+        $objectManagerMock->expects($this->any())->method('getInstance')->willReturnSelf();
+        $objectManagerMock->expects($this->any())
+            ->method('get')
+            ->will($this->returnValueMap($map));
+        $reflectionClass = new \ReflectionClass('Magento\Framework\App\ObjectManager');
+        $reflectionProperty = $reflectionClass->getProperty('_instance');
+        $reflectionProperty->setAccessible(true);
+        $reflectionProperty->setValue($objectManagerMock);
     }
 }

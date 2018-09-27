@@ -25,6 +25,7 @@ use Zend\ServiceManager\Exception\ServiceNotFoundException;
 use Zend\Stdlib\ResponseInterface as Response;
 use Zend\Stdlib\StringUtils;
 use Zend\Text\Table;
+use Zend\Version\Version;
 use Zend\View\Model\ConsoleModel;
 
 class RouteNotFoundStrategy extends AbstractListenerAggregate
@@ -46,9 +47,9 @@ class RouteNotFoundStrategy extends AbstractListenerAggregate
     /**
      * {@inheritDoc}
      */
-    public function attach(EventManagerInterface $events, $priority = 1)
+    public function attach(EventManagerInterface $events)
     {
-        $this->listeners[] = $events->attach(MvcEvent::EVENT_DISPATCH_ERROR, [$this, 'handleRouteNotFoundError']);
+        $this->listeners[] = $events->attach(MvcEvent::EVENT_DISPATCH_ERROR, array($this, 'handleRouteNotFoundError'));
     }
 
     /**
@@ -177,7 +178,7 @@ class RouteNotFoundStrategy extends AbstractListenerAggregate
         /*
          * Loop through all loaded modules and collect banners
          */
-        $banners = [];
+        $banners = array();
         if ($moduleManager !== null) {
             foreach ($moduleManager->getLoadedModules(false) as $module) {
                 // Strict-type on ConsoleBannerProviderInterface, or duck-type
@@ -203,7 +204,7 @@ class RouteNotFoundStrategy extends AbstractListenerAggregate
          * Handle an application with no defined banners
          */
         if (!count($banners)) {
-            return "Zend Framework application\nUsage:\n";
+            return sprintf("Zend Framework %s application\nUsage:\n", Version::VERSION);
         }
 
         /*
@@ -229,7 +230,7 @@ class RouteNotFoundStrategy extends AbstractListenerAggregate
         /*
          * Loop through all loaded modules and collect usage info
          */
-        $usageInfo = [];
+        $usageInfo = array();
 
         if ($moduleManager !== null) {
             foreach ($moduleManager->getLoadedModules(false) as $name => $module) {
@@ -243,8 +244,7 @@ class RouteNotFoundStrategy extends AbstractListenerAggregate
 
                 // We prepend the usage by the module name (printed in red), so that each module is
                 // clearly visible by the user
-                $moduleName = sprintf(
-                    "%s\n%s\n%s\n",
+                $moduleName = sprintf("%s\n%s\n%s\n",
                     str_repeat('-', $console->getWidth()),
                     $name,
                     str_repeat('-', $console->getWidth())
@@ -259,7 +259,7 @@ class RouteNotFoundStrategy extends AbstractListenerAggregate
                     array_unshift($usage, $moduleName);
                     $usageInfo[$name] = $usage;
                 } elseif (is_string($usage) && ($usage != '')) {
-                    $usageInfo[$name] = [$moduleName, $usage];
+                    $usageInfo[$name] = array($moduleName, $usage);
                 }
             }
         }
@@ -313,7 +313,7 @@ class RouteNotFoundStrategy extends AbstractListenerAggregate
 
                     $tableCols = 2;
                     $tableType = 1;
-                    $table[]   = [$a, $b];
+                    $table[]   = array($a, $b);
                     continue;
                 }
 
@@ -390,7 +390,7 @@ class RouteNotFoundStrategy extends AbstractListenerAggregate
         $strWrapper = StringUtils::getWrapper('UTF-8');
 
         // Determine max width for each column
-        $maxW = [];
+        $maxW = array();
         for ($x = 1; $x <= $cols; $x += 1) {
             $maxW[$x] = 0;
             foreach ($data as $row) {
@@ -450,17 +450,16 @@ class RouteNotFoundStrategy extends AbstractListenerAggregate
             return '';
         }
 
-        $reason    = (!empty($this->reason)) ? $this->reason : 'unknown';
-        $reasons   = [
+        $reason    = (isset($this->reason) && !empty($this->reason)) ? $this->reason : 'unknown';
+        $reasons   = array(
             Application::ERROR_CONTROLLER_NOT_FOUND => 'Could not match to a controller',
             Application::ERROR_CONTROLLER_INVALID   => 'Invalid controller specified',
             Application::ERROR_ROUTER_NO_MATCH      => 'Invalid arguments or no arguments provided',
             'unknown'                               => 'Unknown',
-        ];
+        );
         $report = sprintf("\nReason for failure: %s\n", $reasons[$reason]);
 
-        // @TODO clean up once PHP 7 requirement is enforced
-        while ($exception instanceof \Exception || $exception instanceof \Throwable) {
+        while ($exception instanceof \Exception) {
             $report   .= sprintf("Exception: %s\nTrace:\n%s\n", $exception->getMessage(), $exception->getTraceAsString());
             $exception = $exception->getPrevious();
         }

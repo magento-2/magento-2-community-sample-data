@@ -14,7 +14,7 @@ use Magento\Directory\Model\Currency;
 use Magento\Setup\Module\Setup;
 use Magento\Store\Model\Store;
 
-class StoreConfigurationDataMapperTest extends \PHPUnit\Framework\TestCase
+class StoreConfigurationDataMapperTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @param array $data

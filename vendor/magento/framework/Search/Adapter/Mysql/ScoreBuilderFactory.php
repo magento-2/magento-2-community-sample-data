@@ -32,7 +32,7 @@ class ScoreBuilderFactory
      */
     public function __construct(
         \Magento\Framework\ObjectManagerInterface $objectManager,
-        $instanceName = \Magento\Framework\Search\Adapter\Mysql\ScoreBuilder::class
+        $instanceName = 'Magento\Framework\Search\Adapter\Mysql\ScoreBuilder'
     ) {
         $this->_objectManager = $objectManager;
         $this->_instanceName = $instanceName;

@@ -7,9 +7,6 @@ namespace Magento\Backend\Block\Page;
 
 /**
  * Copyright footer block
- *
- * @api
- * @since 100.0.2
  */
 class Copyright extends \Magento\Backend\Block\Template
 {
@@ -18,5 +15,5 @@ class Copyright extends \Magento\Backend\Block\Template
      *
      * @var string
      */
-    protected $_template = 'page/copyright.phtml';
+    protected $_template = 'Magento_Backend::page/copyright.phtml';
 }

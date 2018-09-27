@@ -30,7 +30,7 @@ class Links extends \Magento\Backend\Block\Template
     /**
      * @var string
      */
-    protected $_template = 'product/edit/downloadable/links.phtml';
+    protected $_template = 'Magento_Downloadable::product/edit/downloadable/links.phtml';
 
     /**
      * Downloadable file
@@ -174,7 +174,7 @@ class Links extends \Magento\Backend\Block\Template
     public function getAddButtonHtml()
     {
         $addButton = $this->getLayout()->createBlock(
-            \Magento\Backend\Block\Widget\Button::class
+            'Magento\Backend\Block\Widget\Button'
         )->setData(
             [
                 'label' => __('Add New Link'),
@@ -356,7 +356,7 @@ class Links extends \Magento\Backend\Block\Template
     {
         $this->addChild(
             'upload_button',
-            \Magento\Backend\Block\Widget\Button::class,
+            'Magento\Backend\Block\Widget\Button',
             [
                 'id' => '',
                 'label' => __('Upload Files'),

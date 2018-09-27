@@ -51,14 +51,14 @@ class Pro
      *
      * @var string
      */
-    protected $_apiType = \Magento\Paypal\Model\Api\Nvp::class;
+    protected $_apiType = 'Magento\Paypal\Model\Api\Nvp';
 
     /**
      * Config model type
      *
      * @var string
      */
-    protected $_configType = \Magento\Paypal\Model\Config::class;
+    protected $_configType = 'Magento\Paypal\Model\Config';
 
     /**
      * @var \Magento\Paypal\Model\Config\Factory
@@ -258,7 +258,7 @@ class Pro
         }
         $api = $this->getApi()
             ->setAuthorizationId($authTransactionId)
-            ->setIsCaptureComplete($payment->isCaptureFinal($amount))
+            ->setIsCaptureComplete($payment->getShouldCloseParentTransaction())
             ->setAmount($amount);
 
         $order = $payment->getOrder();

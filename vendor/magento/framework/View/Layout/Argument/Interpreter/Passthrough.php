@@ -12,6 +12,7 @@ use Magento\Framework\Data\Argument\InterpreterInterface;
  */
 class Passthrough implements InterpreterInterface
 {
+
     /**
      * {@inheritdoc}
      * @return array

@@ -7,10 +7,6 @@
  */
 namespace Magento\Framework\Event;
 
-/**
- * Interface \Magento\Framework\Event\ConfigInterface
- *
- */
 interface ConfigInterface
 {
     /**#@+

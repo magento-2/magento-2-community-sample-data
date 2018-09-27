@@ -10,7 +10,6 @@ use Magento\Framework\Api\ExtensibleDataInterface;
 /**
  * Interface ShippingAssignmentInterface
  * @api
- * @since 100.0.4
  */
 interface ShippingAssignmentInterface extends ExtensibleDataInterface
 {
@@ -28,7 +27,6 @@ interface ShippingAssignmentInterface extends ExtensibleDataInterface
      * Gets shipping object
      *
      * @return \Magento\Sales\Api\Data\ShippingInterface
-     * @since 100.0.4
      */
     public function getShipping();
 
@@ -36,7 +34,6 @@ interface ShippingAssignmentInterface extends ExtensibleDataInterface
      * Gets order items of shipping assignment
      *
      * @return \Magento\Sales\Api\Data\OrderItemInterface[]
-     * @since 100.0.4
      */
     public function getItems();
 
@@ -44,7 +41,6 @@ interface ShippingAssignmentInterface extends ExtensibleDataInterface
      * Gets stock id
      *
      * @return int|null
-     * @since 100.0.4
      */
     public function getStockId();
 
@@ -53,7 +49,6 @@ interface ShippingAssignmentInterface extends ExtensibleDataInterface
      *
      * @param \Magento\Sales\Api\Data\ShippingInterface $shipping
      * @return $this
-     * @since 100.0.4
      */
     public function setShipping(\Magento\Sales\Api\Data\ShippingInterface $shipping);
 
@@ -62,7 +57,6 @@ interface ShippingAssignmentInterface extends ExtensibleDataInterface
      *
      * @param \Magento\Sales\Api\Data\OrderItemInterface[] $items
      * @return $this
-     * @since 100.0.4
      */
     public function setItems(array $items);
 
@@ -71,7 +65,6 @@ interface ShippingAssignmentInterface extends ExtensibleDataInterface
      *
      * @param int|null $stockId
      * @return $this
-     * @since 100.0.4
      */
     public function setStockId($stockId = null);
 
@@ -79,7 +72,6 @@ interface ShippingAssignmentInterface extends ExtensibleDataInterface
      * Retrieve existing extension attributes object or create a new one.
      *
      * @return \Magento\Sales\Api\Data\ShippingAssignmentExtensionInterface|null
-     * @since 100.0.4
      */
     public function getExtensionAttributes();
 
@@ -88,7 +80,6 @@ interface ShippingAssignmentInterface extends ExtensibleDataInterface
      *
      * @param \Magento\Sales\Api\Data\ShippingAssignmentExtensionInterface $extensionAttributes
      * @return $this
-     * @since 100.0.4
      */
     public function setExtensionAttributes(
         \Magento\Sales\Api\Data\ShippingAssignmentExtensionInterface $extensionAttributes

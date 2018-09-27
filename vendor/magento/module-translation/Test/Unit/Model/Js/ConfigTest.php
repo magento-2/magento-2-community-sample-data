@@ -7,7 +7,7 @@ namespace Magento\Translation\Test\Unit\Model\Js;
 
 use Magento\Translation\Model\Js\Config;
 
-class ConfigTest extends \PHPUnit\Framework\TestCase
+class ConfigTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var Config
@@ -26,12 +26,12 @@ class ConfigTest extends \PHPUnit\Framework\TestCase
 
     protected function setUp()
     {
-        $this->scopeMock = $this->getMockBuilder(\Magento\Framework\App\Config\ScopeConfigInterface::class)
+        $this->scopeMock = $this->getMockBuilder('Magento\Framework\App\Config\ScopeConfigInterface')
             ->disableOriginalConstructor()
             ->getMock();
         $objectManager = new \Magento\Framework\TestFramework\Unit\Helper\ObjectManager($this);
         $this->model = $objectManager->getObject(
-            \Magento\Translation\Model\Js\Config::class,
+            'Magento\Translation\Model\Js\Config',
             [
                 'scopeConfig' => $this->scopeMock,
                 'patterns' => $this->patterns

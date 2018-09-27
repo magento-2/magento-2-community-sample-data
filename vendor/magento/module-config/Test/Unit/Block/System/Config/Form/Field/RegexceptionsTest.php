@@ -9,7 +9,7 @@
  */
 namespace Magento\Config\Test\Unit\Block\System\Config\Form\Field;
 
-class RegexceptionsTest extends \PHPUnit\Framework\TestCase
+class RegexceptionsTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var array
@@ -51,16 +51,16 @@ class RegexceptionsTest extends \PHPUnit\Framework\TestCase
 
         $objectManager = new \Magento\Framework\TestFramework\Unit\Helper\ObjectManager($this);
 
-        $this->labelFactoryMock = $this->getMockBuilder(\Magento\Framework\View\Design\Theme\LabelFactory::class)
+        $this->labelFactoryMock = $this->getMockBuilder('Magento\Framework\View\Design\Theme\LabelFactory')
             ->disableOriginalConstructor()
             ->getMock();
-        $this->labelMock = $this->getMockBuilder(\Magento\Framework\View\Design\Theme\Label::class)
+        $this->labelMock = $this->getMockBuilder('Magento\Framework\View\Design\Theme\Label')
             ->disableOriginalConstructor()
             ->getMock();
-        $this->elementFactoryMock = $this->getMockBuilder(\Magento\Framework\Data\Form\Element\Factory::class)
+        $this->elementFactoryMock = $this->getMockBuilder('Magento\Framework\Data\Form\Element\Factory')
             ->disableOriginalConstructor()
             ->getMock();
-        $this->elementMock = $this->getMockBuilder(\Magento\Framework\Data\Form\Element\AbstractElement::class)
+        $this->elementMock = $this->getMockBuilder('Magento\Framework\Data\Form\Element\AbstractElement')
             ->disableOriginalConstructor()
             ->setMethods(
                 ['setForm', 'setName', 'setHtmlId', 'setValues', 'getName', 'getHtmlId', 'getValues', 'getElementHtml']
@@ -74,10 +74,7 @@ class RegexceptionsTest extends \PHPUnit\Framework\TestCase
                 'element' => $this->elementMock
             ],
         ];
-        $this->object = $objectManager->getObject(
-            \Magento\Config\Block\System\Config\Form\Field\Regexceptions::class,
-            $data
-        );
+        $this->object = $objectManager->getObject('Magento\Config\Block\System\Config\Form\Field\Regexceptions', $data);
     }
 
     public function testRenderCellTemplateValueColumn()
@@ -128,8 +125,7 @@ class RegexceptionsTest extends \PHPUnit\Framework\TestCase
 
         $this->object->addColumn($wrongColumnName, $this->cellParameters);
 
-        $this->expectException('\Exception');
-        $this->expectExceptionMessage('Wrong column name specified.');
+        $this->setExpectedException('\Exception', 'Wrong column name specified.');
 
         $this->object->renderCellTemplate($columnName);
     }

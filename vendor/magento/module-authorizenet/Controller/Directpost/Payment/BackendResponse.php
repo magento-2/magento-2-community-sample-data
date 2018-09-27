@@ -40,7 +40,7 @@ class BackendResponse extends \Magento\Authorizenet\Controller\Directpost\Paymen
         Context $context,
         Registry $coreRegistry,
         DataFactory $dataFactory,
-        DirectpostFactory $directpostFactory,
+        DirectpostFactory $directpostFactory = null,
         LoggerInterface $logger = null
     ) {
         parent::__construct($context, $coreRegistry, $dataFactory);
@@ -67,9 +67,11 @@ class BackendResponse extends \Magento\Authorizenet\Controller\Directpost\Paymen
             $paymentMethod->validateResponse();
         } catch (LocalizedException $e) {
             $this->logger->critical($e->getMessage());
+
             return $this->_redirect('noroute');
         }
         $this->_responseAction('adminhtml');
+
         return $this->resultFactory->create(ResultFactory::TYPE_PAGE);
     }
 }

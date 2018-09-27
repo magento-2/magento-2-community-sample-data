@@ -8,7 +8,7 @@ namespace Magento\Framework\Search\Test\Unit\Adapter\Mysql\Aggregation\Builder;
 use Magento\Framework\Search\Request\BucketInterface as RequestBucketInterface;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
 
-class MetricsTest extends \PHPUnit\Framework\TestCase
+class MetricsTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\Framework\Search\Adapter\Mysql\Aggregation\Builder\Metrics
@@ -29,17 +29,17 @@ class MetricsTest extends \PHPUnit\Framework\TestCase
     {
         $helper = new ObjectManager($this);
 
-        $this->requestBucket = $this->getMockBuilder(\Magento\Framework\Search\Request\BucketInterface::class)
+        $this->requestBucket = $this->getMockBuilder('Magento\Framework\Search\Request\BucketInterface')
             ->setMethods(['getMetrics'])
             ->disableOriginalConstructor()
             ->getMockForAbstractClass();
 
-        $this->metric = $this->getMockBuilder(\Magento\Framework\Search\Request\Aggregation\Metric::class)
+        $this->metric = $this->getMockBuilder('Magento\Framework\Search\Request\Aggregation\Metric')
             ->setMethods(['getType'])
             ->disableOriginalConstructor()
             ->getMockForAbstractClass();
 
-        $this->metrics = $helper->getObject(\Magento\Framework\Search\Adapter\Mysql\Aggregation\Builder\Metrics::class);
+        $this->metrics = $helper->getObject('Magento\Framework\Search\Adapter\Mysql\Aggregation\Builder\Metrics');
     }
 
     public function testBuild()

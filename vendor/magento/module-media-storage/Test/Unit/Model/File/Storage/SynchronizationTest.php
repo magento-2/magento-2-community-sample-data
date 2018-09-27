@@ -5,20 +5,26 @@
  */
 namespace Magento\MediaStorage\Test\Unit\Model\File\Storage;
 
-class SynchronizationTest extends \PHPUnit\Framework\TestCase
+class SynchronizationTest extends \PHPUnit_Framework_TestCase
 {
     public function testSynchronize()
     {
         $content = 'content';
         $relativeFileName = 'config.xml';
 
-        $storageFactoryMock = $this->createPartialMock(
-            \Magento\MediaStorage\Model\File\Storage\DatabaseFactory::class,
-            ['create', '_wakeup']
+        $storageFactoryMock = $this->getMock(
+            'Magento\MediaStorage\Model\File\Storage\DatabaseFactory',
+            ['create', '_wakeup'],
+            [],
+            '',
+            false
         );
-        $storageMock = $this->createPartialMock(
-            \Magento\MediaStorage\Model\File\Storage\Database::class,
-            ['getContent', 'getId', 'loadByFilename', '__wakeup']
+        $storageMock = $this->getMock(
+            'Magento\MediaStorage\Model\File\Storage\Database',
+            ['getContent', 'getId', 'loadByFilename', '__wakeup'],
+            [],
+            '',
+            false
         );
         $storageFactoryMock->expects($this->once())->method('create')->will($this->returnValue($storageMock));
 
@@ -26,15 +32,18 @@ class SynchronizationTest extends \PHPUnit\Framework\TestCase
         $storageMock->expects($this->once())->method('getId')->will($this->returnValue(true));
         $storageMock->expects($this->once())->method('loadByFilename');
 
-        $file = $this->createPartialMock(
-            \Magento\Framework\Filesystem\File\Write::class,
-            ['lock', 'write', 'unlock', 'close']
+        $file = $this->getMock(
+            'Magento\Framework\Filesystem\File\Write',
+            ['lock', 'write', 'unlock', 'close'],
+            [],
+            '',
+            false
         );
         $file->expects($this->once())->method('lock');
         $file->expects($this->once())->method('write')->with($content);
         $file->expects($this->once())->method('unlock');
         $file->expects($this->once())->method('close');
-        $directory = $this->getMockForAbstractClass(\Magento\Framework\Filesystem\Directory\WriteInterface::class);
+        $directory = $this->getMockForAbstractClass('Magento\Framework\Filesystem\Directory\WriteInterface');
         $directory->expects($this->once())
             ->method('openFile')
             ->with($relativeFileName)

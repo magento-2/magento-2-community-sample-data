@@ -10,12 +10,12 @@ use Magento\TestFramework\Helper\Bootstrap;
 /**
  * Test \Magento\Customer\Model\Config\Share
  */
-class ShareTest extends \PHPUnit\Framework\TestCase
+class ShareTest extends \PHPUnit_Framework_TestCase
 {
     public function testGetSharedWebsiteIds()
     {
         /** @var Share $share */
-        $share = Bootstrap::getObjectManager()->get(\Magento\Customer\Model\Config\Share::class);
+        $share = Bootstrap::getObjectManager()->get('Magento\Customer\Model\Config\Share');
 
         $websiteIds = $share->getSharedWebsiteIds(42);
 
@@ -29,12 +29,10 @@ class ShareTest extends \PHPUnit\Framework\TestCase
     public function testGetSharedWebsiteIdsMultipleSites()
     {
         /** @var Share $share */
-        $share = Bootstrap::getObjectManager()->get(\Magento\Customer\Model\Config\Share::class);
+        $share = Bootstrap::getObjectManager()->get('Magento\Customer\Model\Config\Share');
         $expectedIds = [1];
         /** @var \Magento\Store\Model\Website $website */
-        $website = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->create(
-            \Magento\Store\Model\Website::class
-        );
+        $website = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->create('Magento\Store\Model\Website');
         $expectedIds[] = $website->load('secondwebsite')->getId();
         $expectedIds[] = $website->load('thirdwebsite')->getId();
 

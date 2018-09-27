@@ -71,16 +71,7 @@ class CreditCardTest extends Setup
             'billingAddressId', 'cardholderName', 'cvv', 'number', 'deviceSessionId',
             'expirationDate', 'expirationMonth', 'expirationYear', 'token', 'venmoSdkPaymentMethodCode',
             'deviceData', 'fraudMerchantId', 'paymentMethodNonce',
-            [
-                'options' => [
-                    'makeDefault',
-                    'verificationMerchantAccountId',
-                    'verifyCard',
-                    'verificationAmount',
-                    'venmoSdkSession',
-                    'failOnDuplicatePaymentMethod',
-                ]
-            ],
+            ['options' => ['makeDefault', 'verificationMerchantAccountId', 'verifyCard', 'verificationAmount', 'venmoSdkSession']],
             [
                 'billingAddress' => [
                     'firstName',

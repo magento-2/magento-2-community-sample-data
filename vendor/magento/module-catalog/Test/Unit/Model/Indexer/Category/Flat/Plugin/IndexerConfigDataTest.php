@@ -5,33 +5,36 @@
  */
 namespace Magento\Catalog\Test\Unit\Model\Indexer\Category\Flat\Plugin;
 
-use Magento\Catalog\Model\Indexer\Category\Flat\Plugin\IndexerConfigData;
-use Magento\Catalog\Model\Indexer\Category\Flat\State;
-use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
-use Magento\Indexer\Model\Config\Data;
-
-class IndexerConfigDataTest extends \PHPUnit\Framework\TestCase
+class IndexerConfigDataTest extends \PHPUnit_Framework_TestCase
 {
     /**
-     * @var IndexerConfigData
+     * @var \Magento\Catalog\Model\Indexer\Category\Flat\Plugin\IndexerConfigData
      */
     protected $model;
 
     /**
-     * @var State|\PHPUnit_Framework_MockObject_MockObject
+     * @var \Magento\Catalog\Model\Indexer\Category\Flat\State|\PHPUnit_Framework_MockObject_MockObject
      */
     protected $stateMock;
 
     /**
-     * @var Data|\PHPUnit_Framework_MockObject_MockObject
+     * @var \PHPUnit_Framework_MockObject_MockObject
      */
     protected $subjectMock;
 
     protected function setUp()
     {
-        $this->stateMock = $this->createPartialMock(State::class, ['isFlatEnabled']);
-        $this->subjectMock = $this->createMock(Data::class);
-        $this->model = (new ObjectManager($this))->getObject(IndexerConfigData::class, ['state' => $this->stateMock]);
+        $this->stateMock = $this->getMock(
+            'Magento\Catalog\Model\Indexer\Category\Flat\State',
+            ['isFlatEnabled'],
+            [],
+            '',
+            false
+        );
+
+        $this->subjectMock = $this->getMock('Magento\Indexer\Model\Config\Data', [], [], '', false);
+
+        $this->model = new \Magento\Catalog\Model\Indexer\Category\Flat\Plugin\IndexerConfigData($this->stateMock);
     }
 
     /**
@@ -45,9 +48,15 @@ class IndexerConfigDataTest extends \PHPUnit\Framework\TestCase
     public function testAroundGet($isFlat, $path, $default, $inputData, $outputData)
     {
         $this->stateMock->expects($this->once())->method('isFlatEnabled')->will($this->returnValue($isFlat));
-        $this->assertEquals($outputData, $this->model->afterGet($this->subjectMock, $inputData, $path, $default));
+        $closureMock = function () use ($inputData) {
+            return $inputData;
+        };
+        $this->assertEquals($outputData, $this->model->aroundGet($this->subjectMock, $closureMock, $path, $default));
     }
 
+    /**
+     * @return array
+     */
     public function aroundGetDataProvider()
     {
         $flatIndexerData = [

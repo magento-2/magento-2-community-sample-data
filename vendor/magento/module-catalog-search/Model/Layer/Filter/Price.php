@@ -156,8 +156,7 @@ class Price extends AbstractFilter
     {
         $rate = $this->_getData('currency_rate');
         if ($rate === null) {
-            $rate = $this->_storeManager->getStore($this->getStoreId())
-                ->getCurrentCurrencyRate();
+            $rate = $this->_storeManager->getStore()->getCurrentCurrencyRate();
         }
         if (!$rate) {
             $rate = 1;
@@ -175,8 +174,10 @@ class Price extends AbstractFilter
      */
     protected function _renderRangeLabel($fromPrice, $toPrice)
     {
-        $fromPrice = empty($fromPrice) ? 0 : $fromPrice * $this->getCurrencyRate();
-        $toPrice = empty($toPrice) ? $toPrice : $toPrice * $this->getCurrencyRate();
+        $fromPrice *= $this->getCurrencyRate();
+        if ($toPrice) {
+            $toPrice *= $this->getCurrencyRate();
+        }
 
         $formattedFromPrice = $this->priceCurrency->format($fromPrice);
         if ($toPrice === '') {
@@ -215,7 +216,7 @@ class Price extends AbstractFilter
                 if (strpos($key, '_') === false) {
                     continue;
                 }
-                $data[] = $this->prepareData($key, $count, $data);
+                $data[] = $this->prepareData($key, $count);
             }
         }
 
@@ -264,7 +265,10 @@ class Price extends AbstractFilter
         if ($to == '*') {
             $to = $this->getTo($to);
         }
-        $label = $this->_renderRangeLabel($from, $to);
+        $label = $this->_renderRangeLabel(
+            empty($from) ? 0 : $from,
+            $to
+        );
         $value = $from . '-' . $to . $this->dataProvider->getAdditionalRequestData();
 
         $data = [

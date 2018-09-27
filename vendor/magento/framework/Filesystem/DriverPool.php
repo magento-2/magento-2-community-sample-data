@@ -20,12 +20,16 @@ class DriverPool
     const ZLIB = 'compress.zlib';
     /**#@- */
 
-    /**#@- */
+    /**
+     * Supported types
+     *
+     * @var string[]
+     */
     protected $types = [
-        self::FILE => \Magento\Framework\Filesystem\Driver\File::class,
-        self::HTTP => \Magento\Framework\Filesystem\Driver\Http::class,
-        self::HTTPS => \Magento\Framework\Filesystem\Driver\Https::class,
-        self::ZLIB => \Magento\Framework\Filesystem\Driver\Zlib::class,
+        self::FILE => 'Magento\Framework\Filesystem\Driver\File',
+        self::HTTP => 'Magento\Framework\Filesystem\Driver\Http',
+        self::HTTPS => 'Magento\Framework\Filesystem\Driver\Https',
+        self::ZLIB => 'Magento\Framework\Filesystem\Driver\Zlib',
     ];
 
     /**
@@ -51,7 +55,7 @@ class DriverPool
                 $type = $typeOrObject;
                 $object = false;
             }
-            if (!is_subclass_of($type, \Magento\Framework\Filesystem\DriverInterface::class)) {
+            if (!is_subclass_of($type, '\Magento\Framework\Filesystem\DriverInterface')) {
                 throw new \InvalidArgumentException("The specified type '{$type}' does not implement DriverInterface.");
             }
             $this->types[$code] = $type;

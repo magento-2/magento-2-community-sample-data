@@ -12,7 +12,7 @@ use Magento\Framework\Phrase;
 /**
  * Class EmailNotConfirmedExceptionTest
  */
-class EmailNotConfirmedExceptionTest extends \PHPUnit\Framework\TestCase
+class EmailNotConfirmedExceptionTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @return void

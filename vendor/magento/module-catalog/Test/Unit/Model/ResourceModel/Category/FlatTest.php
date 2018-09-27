@@ -22,7 +22,7 @@ use Magento\Store\Model\StoreManagerInterface;
  *
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  */
-class FlatTest extends \PHPUnit\Framework\TestCase
+class FlatTest extends \PHPUnit_Framework_TestCase
 {
     const STORE_ID = 1;
     const TABLE_NAME = 'test_table';

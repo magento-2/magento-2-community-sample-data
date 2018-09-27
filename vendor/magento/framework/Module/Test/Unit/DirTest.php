@@ -7,7 +7,7 @@ namespace Magento\Framework\Module\Test\Unit;
 
 use Magento\Framework\Component\ComponentRegistrar;
 
-class DirTest extends \PHPUnit\Framework\TestCase
+class DirTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\Framework\Module\Dir
@@ -21,7 +21,14 @@ class DirTest extends \PHPUnit\Framework\TestCase
 
     protected function setUp()
     {
-        $this->moduleRegistryMock = $this->createMock(\Magento\Framework\Component\ComponentRegistrarInterface::class);
+        $this->moduleRegistryMock = $this->getMock(
+            'Magento\Framework\Component\ComponentRegistrarInterface',
+            [],
+            [],
+            '',
+            false,
+            false
+        );
 
         $this->_model = new \Magento\Framework\Module\Dir($this->moduleRegistryMock);
     }
@@ -58,18 +65,5 @@ class DirTest extends \PHPUnit\Framework\TestCase
             ->will($this->returnValue('/Test/Module'));
 
         $this->_model->getDir('Test_Module', 'unknown');
-    }
-
-    /**
-     * @expectedException \InvalidArgumentException
-     * @expectedExceptionMessage Module 'Test Module' is not correctly registered.
-     */
-    public function testGetDirModuleIncorrectlyRegistered()
-    {
-        $this->moduleRegistryMock->expects($this->once())
-            ->method('getPath')
-            ->with($this->identicalTo(ComponentRegistrar::MODULE), $this->identicalTo('Test Module'))
-            ->willReturn(null);
-        $this->_model->getDir('Test Module');
     }
 }

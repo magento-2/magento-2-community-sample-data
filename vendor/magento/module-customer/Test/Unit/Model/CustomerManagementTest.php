@@ -5,7 +5,7 @@
  */
 namespace Magento\Customer\Test\Unit\Model;
 
-class CustomerManagementTest extends \PHPUnit\Framework\TestCase
+class CustomerManagementTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\Customer\Model\CustomerManagement
@@ -19,9 +19,12 @@ class CustomerManagementTest extends \PHPUnit\Framework\TestCase
 
     protected function setUp()
     {
-        $this->customersFactoryMock = $this->createPartialMock(
-            \Magento\Customer\Model\ResourceModel\Customer\CollectionFactory::class,
-            ['create']
+        $this->customersFactoryMock = $this->getMock(
+            'Magento\Customer\Model\ResourceModel\Customer\CollectionFactory',
+            ['create'],
+            [],
+            '',
+            false
         );
         $this->model = new \Magento\Customer\Model\CustomerManagement(
             $this->customersFactoryMock
@@ -30,7 +33,7 @@ class CustomerManagementTest extends \PHPUnit\Framework\TestCase
 
     public function testGetCount()
     {
-        $customersMock = $this->createMock(\Magento\Customer\Model\ResourceModel\Customer\Collection::class);
+        $customersMock = $this->getMock('\Magento\Customer\Model\ResourceModel\Customer\Collection', [], [], '', false);
 
         $this->customersFactoryMock
             ->expects($this->once())

@@ -9,15 +9,13 @@ use Magento\Eav\Model\Entity\Setup\Context;
 use Magento\Eav\Model\Entity\Setup\PropertyMapperInterface;
 use Magento\Eav\Model\ResourceModel\Entity\Attribute\Group\CollectionFactory;
 use Magento\Framework\App\CacheInterface;
-use Magento\Framework\Exception\LocalizedException;
 use Magento\Framework\Setup\ModuleDataSetupInterface;
+use Magento\Framework\Exception\LocalizedException;
 
 /**
- * @api
  * @SuppressWarnings(PHPMD.ExcessiveClassComplexity)
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  * @codeCoverageIgnore
- * @since 100.0.2
  */
 class EavSetup
 {
@@ -558,7 +556,6 @@ class EavSetup
     /**
      * @param string $groupName
      * @return string
-     * @since 100.1.0
      */
     public function convertToAttributeGroupCode($groupName)
     {
@@ -631,7 +628,6 @@ class EavSetup
      * @param string $code
      * @param string $field
      * @return mixed
-     * @since 100.1.0
      */
     public function getAttributeGroupByCode($entityTypeId, $setId, $code, $field = null)
     {
@@ -771,24 +767,19 @@ class EavSetup
      */
     private function _validateAttributeData($data)
     {
-        $minLength = \Magento\Eav\Model\Entity\Attribute::ATTRIBUTE_CODE_MIN_LENGTH;
-        $maxLength = \Magento\Eav\Model\Entity\Attribute::ATTRIBUTE_CODE_MAX_LENGTH;
-        $attributeCode = isset($data['attribute_code']) ? $data['attribute_code'] : '';
+        $attributeCodeMaxLength = \Magento\Eav\Model\Entity\Attribute::ATTRIBUTE_CODE_MAX_LENGTH;
 
-        $isAllowedLength = \Zend_Validate::is(
-            trim($attributeCode),
-            'StringLength',
-            ['min' => $minLength, 'max' => $maxLength]
-        );
-
-        if (!$isAllowedLength) {
-            $errorMessage = __(
-                'An attribute code must not be less than %1 and more than %2 characters.',
-                $minLength,
-                $maxLength
+        if (isset(
+                $data['attribute_code']
+            ) && !\Zend_Validate::is(
+                $data['attribute_code'],
+                'StringLength',
+                ['max' => $attributeCodeMaxLength]
+            )
+        ) {
+            throw new LocalizedException(
+                __('An attribute code must not be more than %1 characters.', $attributeCodeMaxLength)
             );
-
-            throw new LocalizedException($errorMessage);
         }
 
         return true;
@@ -951,7 +942,6 @@ class EavSetup
      * @param mixed $value
      * @param int $sortOrder
      * @return $this
-     * @throws LocalizedException
      */
     private function _updateAttribute($entityTypeId, $id, $field, $value = null, $sortOrder = null)
     {
@@ -982,15 +972,11 @@ class EavSetup
                 return $this;
             }
         }
-        $attributeId = $this->getAttributeId($entityTypeId, $id);
-        if (false === $attributeId) {
-            throw new LocalizedException(__('Attribute with ID: "%1" does not exist', $id));
-        }
 
         $this->setup->updateTableRow(
             'eav_attribute',
             'attribute_id',
-            $attributeId,
+            $this->getAttributeId($entityTypeId, $id),
             $field,
             $value,
             'entity_type_id',
@@ -1008,7 +994,6 @@ class EavSetup
      * @param string|array $field
      * @param mixed $value
      * @return $this
-     * @throws LocalizedException
      */
     private function _updateAttributeAdditionalData($entityTypeId, $id, $field, $value = null)
     {
@@ -1017,41 +1002,35 @@ class EavSetup
             return $this;
         }
         $additionalTableExists = $this->setup->getConnection()->isTableExists($this->setup->getTable($additionalTable));
-        if (!$additionalTableExists) {
-            return $this;
-        }
-        $attributeFields = $this->setup->getConnection()->describeTable($this->setup->getTable($additionalTable));
-        if (is_array($field)) {
-            $bind = [];
-            foreach ($field as $k => $v) {
-                if (isset($attributeFields[$k])) {
-                    $bind[$k] = $this->setup->getConnection()->prepareColumnValue($attributeFields[$k], $v);
+        if ($additionalTable && $additionalTableExists) {
+            $attributeFields = $this->setup->getConnection()->describeTable($this->setup->getTable($additionalTable));
+            if (is_array($field)) {
+                $bind = [];
+                foreach ($field as $k => $v) {
+                    if (isset($attributeFields[$k])) {
+                        $bind[$k] = $this->setup->getConnection()->prepareColumnValue($attributeFields[$k], $v);
+                    }
+                }
+                if (!$bind) {
+                    return $this;
+                }
+                $field = $bind;
+            } else {
+                if (!isset($attributeFields[$field])) {
+                    return $this;
                 }
             }
-            if (!$bind) {
-                return $this;
-            }
-            $field = $bind;
-        } else {
-            if (!isset($attributeFields[$field])) {
-                return $this;
-            }
-        }
-      
-        $attributeId = $this->getAttributeId($entityTypeId, $id);
-        if (false === $attributeId) {
-            throw new LocalizedException(__('Attribute with ID: "%1" does not exist', $id));
-        }
-        $this->setup->updateTableRow(
-            $this->setup->getTable($additionalTable),
-            'attribute_id',
-            $this->getAttributeId($entityTypeId, $id),
-            $field,
-            $value
-        );
+            $this->setup->updateTableRow(
+                $this->setup->getTable($additionalTable),
+                'attribute_id',
+                $this->getAttributeId($entityTypeId, $id),
+                $field,
+                $value
+            );
 
-        $attribute = $this->getAttribute($entityTypeId, $id);
-        $this->updateCachedRow($field, $value, $attribute);
+            $attribute = $this->getAttribute($entityTypeId, $id);
+            $this->updateCachedRow($field, $value, $attribute);
+        }
 
         return $this;
     }

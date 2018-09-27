@@ -17,7 +17,11 @@ class MultiSelectConfigOption extends AbstractConfigOption
     const FRONTEND_WIZARD_MULTISELECT = 'multiselect';
     /**#@- */
 
-    /**#@- */
+    /**
+     * Available options
+     *
+     * @var array
+     */
     private $selectOptions;
 
     /**

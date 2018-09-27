@@ -7,7 +7,7 @@
  */
 namespace Magento\Sales\Test\Unit\Model\Order\Pdf\Config;
 
-class XsdTest extends \PHPUnit\Framework\TestCase
+class XsdTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var string
@@ -62,7 +62,7 @@ class XsdTest extends \PHPUnit\Framework\TestCase
      */
     protected function _testSchema($schema, $fixtureXml, array $expectedErrors)
     {
-        $validationStateMock = $this->createMock(\Magento\Framework\Config\ValidationStateInterface::class);
+        $validationStateMock = $this->getMock('\Magento\Framework\Config\ValidationStateInterface', [], [], '', false);
         $validationStateMock->method('isValidationRequired')
             ->willReturn(true);
         $dom = new \Magento\Framework\Config\Dom($fixtureXml, $validationStateMock, [], null, null, '%message%');

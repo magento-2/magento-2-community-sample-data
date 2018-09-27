@@ -9,7 +9,6 @@ use Magento\Framework\Search\Request\FilterInterface;
 
 /**
  * Bool Filter
- * @api
  */
 class BoolExpression implements FilterInterface
 {

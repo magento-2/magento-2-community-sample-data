@@ -9,7 +9,7 @@ use Magento\TestFramework\Integrity\Library\Injectable;
 
 /**
  */
-class InjectableTest extends \PHPUnit\Framework\TestCase
+class InjectableTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var Injectable
@@ -38,23 +38,23 @@ class InjectableTest extends \PHPUnit\Framework\TestCase
     {
         $this->injectable = new Injectable();
         $this->fileReflection = $this->getMockBuilder(
-            \Zend\Code\Reflection\FileReflection::class
+            'Zend\Code\Reflection\FileReflection'
         )->disableOriginalConstructor()->getMock();
 
         $classReflection = $this->getMockBuilder(
-            \Zend\Code\Reflection\ClassReflection::class
+            'Zend\Code\Reflection\ClassReflection'
         )->disableOriginalConstructor()->getMock();
 
         $methodReflection = $this->getMockBuilder(
-            \Zend\Code\Reflection\MethodReflection::class
+            'Zend\Code\Reflection\MethodReflection'
         )->disableOriginalConstructor()->getMock();
 
         $this->parameterReflection = $this->getMockBuilder(
-            \Zend\Code\Reflection\ParameterReflection::class
+            'Zend\Code\Reflection\ParameterReflection'
         )->disableOriginalConstructor()->getMock();
 
         $this->declaredClass = $this->getMockBuilder(
-            \Zend\Code\Reflection\ClassReflection::class
+            'Zend\Code\Reflection\ClassReflection'
         )->disableOriginalConstructor()->getMock();
 
         $methodReflection->expects(
@@ -98,7 +98,7 @@ class InjectableTest extends \PHPUnit\Framework\TestCase
     public function testGetDependencies()
     {
         $classReflection = $this->getMockBuilder(
-            \Zend\Code\Reflection\ClassReflection::class
+            'Zend\Code\Reflection\ClassReflection'
         )->disableOriginalConstructor()->getMock();
 
         $classReflection->expects(
@@ -106,7 +106,7 @@ class InjectableTest extends \PHPUnit\Framework\TestCase
         )->method(
             'getName'
         )->will(
-            $this->returnValue(\Magento\Core\Model\Object::class)
+            $this->returnValue('Magento\Core\Model\Object')
         );
 
         $this->parameterReflection->expects(
@@ -118,7 +118,7 @@ class InjectableTest extends \PHPUnit\Framework\TestCase
         );
 
         $this->assertEquals(
-            [\Magento\Core\Model\Object::class],
+            ['Magento\Core\Model\Object'],
             $this->injectable->getDependencies($this->fileReflection)
         );
     }
@@ -139,7 +139,7 @@ class InjectableTest extends \PHPUnit\Framework\TestCase
         );
 
         $this->assertEquals(
-            [\Magento\Core\Model\Object::class],
+            ['Magento\Core\Model\Object'],
             $this->injectable->getDependencies($this->fileReflection)
         );
     }

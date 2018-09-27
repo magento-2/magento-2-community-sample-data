@@ -51,7 +51,7 @@ class Conditions extends Template implements RendererInterface
     /**
      * @var string
      */
-    protected $_template = 'product/widget/conditions.phtml';
+    protected $_template = 'Magento_CatalogWidget::product/widget/conditions.phtml';
 
     /**
      * @param \Magento\Framework\Data\Form\Element\Factory $elementFactory
@@ -73,6 +73,7 @@ class Conditions extends Template implements RendererInterface
         $this->conditions = $conditions;
         $this->rule = $rule;
         $this->registry = $registry;
+
         parent::__construct($context, $data);
     }
 
@@ -83,9 +84,10 @@ class Conditions extends Template implements RendererInterface
     {
         $widgetParameters = [];
         $widget = $this->registry->registry('current_widget_instance');
+        
         if ($widget) {
             $widgetParameters = $widget->getWidgetParameters();
-        } elseif ($widgetOptions = $this->getLayout()->getBlock('wysiwyg_widget.options')) {
+        } elseif (($widgetOptions = $this->getLayout()->getBlock('wysiwyg_widget.options')) != false) {
             $widgetParameters = $widgetOptions->getWidgetValues();
         }
 
@@ -100,7 +102,6 @@ class Conditions extends Template implements RendererInterface
     public function render(AbstractElement $element)
     {
         $this->element = $element;
-        $this->rule->getConditions()->setJsFormObject($this->getHtmlId());
         return $this->toHtml();
     }
 

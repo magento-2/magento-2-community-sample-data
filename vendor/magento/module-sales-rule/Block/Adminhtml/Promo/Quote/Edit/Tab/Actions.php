@@ -6,7 +6,11 @@
 namespace Magento\SalesRule\Block\Adminhtml\Promo\Quote\Edit\Tab;
 
 use Magento\Framework\App\ObjectManager;
+use Magento\SalesRule\Model\RuleFactory;
 
+/**
+ * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
+ */
 class Actions extends \Magento\Backend\Block\Widget\Form\Generic implements
     \Magento\Ui\Component\Layout\Tabs\TabInterface
 {
@@ -24,7 +28,7 @@ class Actions extends \Magento\Backend\Block\Widget\Form\Generic implements
 
     /**
      * @var \Magento\Config\Model\Config\Source\Yesno
-     * @deprecated 100.1.0
+     * @deprecated
      */
     protected $_sourceYesno;
 
@@ -39,7 +43,7 @@ class Actions extends \Magento\Backend\Block\Widget\Form\Generic implements
     private $ruleFactory;
 
     /**
-     * Constructor
+     * Initialize dependencies.
      *
      * @param \Magento\Backend\Block\Template\Context $context
      * @param \Magento\Framework\Registry $registry
@@ -48,7 +52,8 @@ class Actions extends \Magento\Backend\Block\Widget\Form\Generic implements
      * @param \Magento\Rule\Block\Actions $ruleActions
      * @param \Magento\Backend\Block\Widget\Form\Renderer\Fieldset $rendererFieldset
      * @param array $data
-     * @param \Magento\SalesRule\Model\RuleFactory|null $ruleFactory
+     * @param RuleFactory|null $ruleFactory
+     * @throws \RuntimeException
      */
     public function __construct(
         \Magento\Backend\Block\Template\Context $context,
@@ -58,18 +63,21 @@ class Actions extends \Magento\Backend\Block\Widget\Form\Generic implements
         \Magento\Rule\Block\Actions $ruleActions,
         \Magento\Backend\Block\Widget\Form\Renderer\Fieldset $rendererFieldset,
         array $data = [],
-        \Magento\SalesRule\Model\RuleFactory $ruleFactory = null
+        RuleFactory $ruleFactory = null
     ) {
         $this->_rendererFieldset = $rendererFieldset;
         $this->_ruleActions = $ruleActions;
         $this->_sourceYesno = $sourceYesno;
-        $this->ruleFactory = $ruleFactory ?: ObjectManager::getInstance()
-            ->get(\Magento\SalesRule\Model\RuleFactory::class);
         parent::__construct($context, $registry, $formFactory, $data);
+        if ($ruleFactory === null) {
+            $ruleFactory = ObjectManager::getInstance()->get(RuleFactory::class);
+        }
+        $this->ruleFactory = $ruleFactory;
     }
 
     /**
      * {@inheritdoc}
+     * @codeCoverageIgnore
      */
     public function getTabClass()
     {
@@ -78,6 +86,7 @@ class Actions extends \Magento\Backend\Block\Widget\Form\Generic implements
 
     /**
      * {@inheritdoc}
+     * @codeCoverageIgnore
      */
     public function getTabUrl()
     {
@@ -86,6 +95,7 @@ class Actions extends \Magento\Backend\Block\Widget\Form\Generic implements
 
     /**
      * {@inheritdoc}
+     * @codeCoverageIgnore
      */
     public function isAjaxLoaded()
     {
@@ -94,6 +104,7 @@ class Actions extends \Magento\Backend\Block\Widget\Form\Generic implements
 
     /**
      * {@inheritdoc}
+     * @codeCoverageIgnore
      */
     public function getTabLabel()
     {
@@ -102,6 +113,7 @@ class Actions extends \Magento\Backend\Block\Widget\Form\Generic implements
 
     /**
      * {@inheritdoc}
+     * @codeCoverageIgnore
      */
     public function getTabTitle()
     {
@@ -110,6 +122,7 @@ class Actions extends \Magento\Backend\Block\Widget\Form\Generic implements
 
     /**
      * {@inheritdoc}
+     * @codeCoverageIgnore
      */
     public function canShowTab()
     {
@@ -118,6 +131,7 @@ class Actions extends \Magento\Backend\Block\Widget\Form\Generic implements
 
     /**
      * {@inheritdoc}
+     * @codeCoverageIgnore
      */
     public function isHidden()
     {

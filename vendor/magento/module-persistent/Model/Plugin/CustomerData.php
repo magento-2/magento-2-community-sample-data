@@ -59,7 +59,8 @@ class CustomerData
         \Closure $proceed
     ) {
         /** unset customer first name  */
-        if (!$this->customerSession->isLoggedIn()
+        if (
+            !$this->customerSession->isLoggedIn()
             && $this->persistentData->isEnabled()
             && $this->persistentSession->isPersistent()
         ) {

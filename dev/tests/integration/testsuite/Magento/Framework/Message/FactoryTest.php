@@ -8,7 +8,7 @@ namespace Magento\Framework\Message;
 /**
  * \Magento\Framework\Message\Factory test case
  */
-class FactoryTest extends \PHPUnit\Framework\TestCase
+class FactoryTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\Framework\Message\Factory
@@ -23,7 +23,7 @@ class FactoryTest extends \PHPUnit\Framework\TestCase
     public function setUp()
     {
         $this->objectManager = \Magento\TestFramework\Helper\Bootstrap::getObjectManager();
-        $this->model = $this->objectManager->create(\Magento\Framework\Message\Factory::class);
+        $this->model = $this->objectManager->create('Magento\Framework\Message\Factory');
     }
 
     /**
@@ -32,7 +32,7 @@ class FactoryTest extends \PHPUnit\Framework\TestCase
     public function testCreate($messageType)
     {
         $message = $this->model->create($messageType, 'some text');
-        $this->assertInstanceOf(\Magento\Framework\Message\MessageInterface::class, $message);
+        $this->assertInstanceOf('\Magento\Framework\Message\MessageInterface', $message);
     }
 
     public function createProvider()

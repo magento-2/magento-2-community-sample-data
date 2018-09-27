@@ -4,6 +4,8 @@
  * See COPYING.txt for license details.
  */
 
+// @codingStandardsIgnoreFile
+
 namespace Magento\Framework\Translate;
 
 /**
@@ -22,7 +24,6 @@ interface AdapterInterface
      */
     public function translate($messageId, $locale = null);
 
-    // @codingStandardsIgnoreStart
     /**
      * Translate string
      *
@@ -30,5 +31,4 @@ interface AdapterInterface
      * @SuppressWarnings(PHPMD.ShortMethodName)
      */
     public function __();
-    // @codingStandardsIgnoreEnd
 }

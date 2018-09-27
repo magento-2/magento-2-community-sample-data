@@ -5,17 +5,14 @@
  */
 namespace Magento\Theme\Block\Html;
 
-use Magento\Framework\Data\Tree\Node;
-use Magento\Framework\Data\Tree\NodeFactory;
-use Magento\Framework\Data\TreeFactory;
 use Magento\Framework\DataObject\IdentityInterface;
 use Magento\Framework\View\Element\Template;
+use Magento\Framework\Data\TreeFactory;
+use Magento\Framework\Data\Tree\Node;
+use Magento\Framework\Data\Tree\NodeFactory;
 
 /**
  * Html page top menu block
- *
- * @api
- * @since 100.0.2
  */
 class Topmenu extends Template implements IdentityInterface
 {
@@ -34,11 +31,24 @@ class Topmenu extends Template implements IdentityInterface
     protected $_menu;
 
     /**
+     * Core registry
+     *
+     * @var Registry
+     *
+     * @deprecated
+     */
+    protected $registry;
+
+    /**
+     * Data tree node.
+     * 
      * @var NodeFactory
      */
     private $nodeFactory;
 
     /**
+     * Data tree.
+     *
      * @var TreeFactory
      */
     private $treeFactory;
@@ -56,6 +66,7 @@ class Topmenu extends Template implements IdentityInterface
         array $data = []
     ) {
         parent::__construct($context, $data);
+
         $this->nodeFactory = $nodeFactory;
         $this->treeFactory = $treeFactory;
     }
@@ -64,7 +75,6 @@ class Topmenu extends Template implements IdentityInterface
      * Get block cache life time
      *
      * @return int
-     * @since 100.1.0
      */
     protected function getCacheLifetime()
     {
@@ -97,6 +107,7 @@ class Topmenu extends Template implements IdentityInterface
             ['menu' => $this->getMenu(), 'transportObject' => $transportObject]
         );
         $html = $transportObject->getHtml();
+
         return $html;
     }
 
@@ -115,6 +126,7 @@ class Topmenu extends Template implements IdentityInterface
                 $total += $this->_countItems($item->getChildren());
             }
         }
+
         return $total;
     }
 
@@ -182,7 +194,7 @@ class Topmenu extends Template implements IdentityInterface
             $colStops = $this->_columnBrake($child->getChildren(), $limit);
         }
 
-        $html .= '<ul class="level' . $childLevel . ' ' . $childrenWrapClass . '">';
+        $html .= '<ul class="level' . $childLevel . ' submenu">';
         $html .= $this->_getHtml($child, $childrenWrapClass, $limit, $colStops);
         $html .= '</ul>';
 
@@ -220,11 +232,7 @@ class Topmenu extends Template implements IdentityInterface
         $parentPositionClass = $menuTree->getPositionClass();
         $itemPositionClassPrefix = $parentPositionClass ? $parentPositionClass . '-' : 'nav-';
 
-        /** @var \Magento\Framework\Data\Tree\Node $child */
         foreach ($children as $child) {
-            if ($childLevel === 0 && $child->getData('is_parent_active') === false) {
-                continue;
-            }
             $child->setLevel($childLevel);
             $child->setIsFirst($counter == 1);
             $child->setIsLast($counter == $childrenCount);
@@ -235,13 +243,7 @@ class Topmenu extends Template implements IdentityInterface
 
             if ($childLevel == 0 && $outermostClass) {
                 $outermostClassCode = ' class="' . $outermostClass . '" ';
-                $currentClass = $child->getClass();
-
-                if (empty($currentClass)) {
-                    $child->setClass($outermostClass);
-                } else {
-                    $child->setClass($currentClass . ' ' . $outermostClass);
-                }
+                $child->setClass($outermostClass);
             }
 
             if (count($colBrakes) && $colBrakes[$counter]['colbrake']) {
@@ -249,14 +251,14 @@ class Topmenu extends Template implements IdentityInterface
             }
 
             $html .= '<li ' . $this->_getRenderedMenuItemAttributes($child) . '>';
-            $html .= '<a href="' . $child->getUrl() . '" ' . $outermostClassCode . '><span>' . $this->escapeHtml(
-                $child->getName()
-            ) . '</span></a>' . $this->_addSubMenu(
-                $child,
-                $childLevel,
-                $childrenWrapClass,
-                $limit
-            ) . '</li>';
+            $html .= '<a href="' . $child->getUrl() . '" ' . $outermostClassCode . '><span>'
+                . $this->escapeHtml($child->getName())
+                . '</span></a>' . $this->_addSubMenu(
+                    $child,
+                    $childLevel,
+                    $childrenWrapClass,
+                    $limit
+                ) . '</li>';
             $itemPosition++;
             $counter++;
         }
@@ -281,6 +283,7 @@ class Topmenu extends Template implements IdentityInterface
         foreach ($attributes as $attributeName => $attributeValue) {
             $html .= ' ' . $attributeName . '="' . str_replace('"', '\"', $attributeValue) . '"';
         }
+
         return $html;
     }
 
@@ -293,6 +296,7 @@ class Topmenu extends Template implements IdentityInterface
     protected function _getMenuItemAttributes(\Magento\Framework\Data\Tree\Node $item)
     {
         $menuItemClasses = $this->_getMenuItemClasses($item);
+
         return ['class' => implode(' ', $menuItemClasses)];
     }
 
@@ -337,7 +341,7 @@ class Topmenu extends Template implements IdentityInterface
     /**
      * Add identity
      *
-     * @param string|array $identity
+     * @param array $identity
      * @return void
      */
     public function addIdentity($identity)
@@ -361,12 +365,12 @@ class Topmenu extends Template implements IdentityInterface
      * Get cache key informative items
      *
      * @return array
-     * @since 100.1.0
      */
     public function getCacheKeyInfo()
     {
         $keyInfo = parent::getCacheKeyInfo();
         $keyInfo[] = $this->getUrl('*/*/*', ['_current' => true, '_query' => '']);
+
         return $keyInfo;
     }
 
@@ -374,7 +378,6 @@ class Topmenu extends Template implements IdentityInterface
      * Get tags array for saving cache
      *
      * @return array
-     * @since 100.1.0
      */
     protected function getCacheTags()
     {
@@ -388,7 +391,6 @@ class Topmenu extends Template implements IdentityInterface
      * The creation logic was moved from class constructor into separate method.
      *
      * @return Node
-     * @since 100.1.0
      */
     public function getMenu()
     {
@@ -401,6 +403,7 @@ class Topmenu extends Template implements IdentityInterface
                 ]
             );
         }
+
         return $this->_menu;
     }
 }

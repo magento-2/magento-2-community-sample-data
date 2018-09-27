@@ -7,7 +7,7 @@ namespace Magento\CheckoutAgreements\Test\Unit\Model;
 
 use Magento\CheckoutAgreements\Model\AgreementModeOptions;
 
-class AgreementModeOptionsTest extends \PHPUnit\Framework\TestCase
+class AgreementModeOptionsTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\CheckoutAgreements\Model\AgreementModeOptions
@@ -17,7 +17,7 @@ class AgreementModeOptionsTest extends \PHPUnit\Framework\TestCase
     protected function setUp()
     {
         $objectManager = new \Magento\Framework\TestFramework\Unit\Helper\ObjectManager($this);
-        $this->model = $objectManager->getObject(\Magento\CheckoutAgreements\Model\AgreementModeOptions::class);
+        $this->model = $objectManager->getObject('Magento\CheckoutAgreements\Model\AgreementModeOptions');
     }
 
     public function testGetOptionsArray()

@@ -17,18 +17,16 @@ module.exports = function (grunt) {
         };
 
     grunt.registerTask('static', function (target) {
-        var currentTarget = target || 'file',
+        var currentTarget = target || 'test',
             file = grunt.option('file'),
             tasks = [
-                'continue:on',
                 'eslint:' + currentTarget,
-                'jscs:' + currentTarget,
-                'continue:off',
-                'continue:fail-on-warning'
+                'jscs:' + currentTarget
             ];
 
         setConfig('eslint', currentTarget, cvf.getFiles(file));
         setConfig('jscs', currentTarget, cvf.getFiles(file));
+        grunt.option('force', true);
         grunt.task.run(tasks);
 
         if (!grunt.option('file')) {

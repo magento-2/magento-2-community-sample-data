@@ -52,10 +52,7 @@ class CleanupFiles
      */
     public function clearCodeGeneratedClasses()
     {
-        return array_merge(
-            $this->emptyDir(DirectoryList::GENERATED_CODE),
-            $this->emptyDir(DirectoryList::GENERATED_METADATA)
-        );
+        return array_merge($this->emptyDir(DirectoryList::GENERATION), $this->emptyDir(DirectoryList::DI));
     }
 
     /**
@@ -106,7 +103,7 @@ class CleanupFiles
                 $messages[] = $dirPath . $path;
                 try {
                     $dir->delete($path);
-                } catch (FileSystemException $e) {
+                } catch (FilesystemException $e) {
                     $messages[] = $e->getMessage();
                 }
             }

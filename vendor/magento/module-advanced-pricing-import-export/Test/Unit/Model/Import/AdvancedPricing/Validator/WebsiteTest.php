@@ -6,14 +6,14 @@
 
 namespace Magento\AdvancedPricingImportExport\Test\Unit\Model\Import\AdvancedPricing\Validator;
 
-use Magento\AdvancedPricingImportExport\Model\Import\AdvancedPricing as AdvancedPricing;
+use \Magento\AdvancedPricingImportExport\Model\Import\AdvancedPricing as AdvancedPricing;
 
-class WebsiteTest extends \PHPUnit\Framework\TestCase
+class WebsiteTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\Store\Model\WebSite|\PHPUnit_Framework_MockObject_MockObject
      */
-    protected $webSiteModel;
+     protected $webSiteModel;
 
     /**
      * @var \Magento\CatalogImportExport\Model\Import\Product\StoreResolver|\PHPUnit_Framework_MockObject_MockObject
@@ -27,21 +27,30 @@ class WebsiteTest extends \PHPUnit\Framework\TestCase
 
     protected function setUp()
     {
-        $this->webSiteModel = $this->getMockBuilder(\Magento\Store\Model\Website::class)
-            ->setMethods(['getBaseCurrency'])
-            ->disableOriginalConstructor()
-            ->getMock();
-        $this->storeResolver = $this->createPartialMock(
-            \Magento\CatalogImportExport\Model\Import\Product\StoreResolver::class,
-            ['getWebsiteCodeToId']
+        $this->webSiteModel = $this->getMock(
+            '\Magento\Store\Model\WebSite',
+            ['getBaseCurrency'],
+            [],
+            '',
+            false
+        );
+        $this->storeResolver = $this->getMock(
+            '\Magento\CatalogImportExport\Model\Import\Product\StoreResolver',
+            ['getWebsiteCodeToId'],
+            [],
+            '',
+            false
         );
 
-        $this->website = $this->getMockBuilder(
-            \Magento\AdvancedPricingImportExport\Model\Import\AdvancedPricing\Validator\Website::class
-        )
-            ->setMethods(['getAllWebsitesValue', '_clearMessages', '_addMessages'])
-            ->setConstructorArgs([$this->storeResolver, $this->webSiteModel])
-            ->getMock();
+        $this->website = $this->getMock(
+            '\Magento\AdvancedPricingImportExport\Model\Import\AdvancedPricing\Validator\Website',
+            ['getAllWebsitesValue', '_clearMessages', '_addMessages'],
+            [
+                $this->storeResolver,
+                $this->webSiteModel,
+            ],
+            ''
+        );
     }
 
     public function testInit()
@@ -97,23 +106,30 @@ class WebsiteTest extends \PHPUnit\Framework\TestCase
     public function testGetAllWebsitesValue()
     {
         $currencyCode = 'currencyCodeValue';
-        $currency = $this->createPartialMock(\Magento\Directory\Model\Currency::class, ['getCurrencyCode']);
+        $currency = $this->getMock('\Magento\Directory\Model\Currency', ['getCurrencyCode'], [], '', false);
         $currency->expects($this->once())->method('getCurrencyCode')->willReturn($currencyCode);
 
         $this->webSiteModel->expects($this->once())->method('getBaseCurrency')->willReturn($currency);
 
         $expectedResult = AdvancedPricing::VALUE_ALL_WEBSITES . ' [' . $currencyCode . ']';
-        $this->websiteString = $this->getMockBuilder(
-            \Magento\AdvancedPricingImportExport\Model\Import\AdvancedPricing\Validator\Website::class
-        )
-            ->setMethods(['_clearMessages', '_addMessages'])
-            ->setConstructorArgs([$this->storeResolver, $this->webSiteModel])
-            ->getMock();
-        $result = $this->websiteString->getAllWebsitesValue();
 
+        $website = $this->getMock(
+            '\Magento\AdvancedPricingImportExport\Model\Import\AdvancedPricing\Validator\Website',
+            null,
+            [
+                $this->storeResolver,
+                $this->webSiteModel,
+            ],
+            ''
+        );
+
+        $result = $website->getAllWebsitesValue();
         $this->assertEquals($expectedResult, $result);
     }
 
+    /**
+     * @return array
+     */
     public function isValidReturnDataProvider()
     {
         return [

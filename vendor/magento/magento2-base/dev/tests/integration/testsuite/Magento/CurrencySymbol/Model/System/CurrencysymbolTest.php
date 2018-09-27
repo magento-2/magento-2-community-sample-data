@@ -13,7 +13,7 @@ use Magento\TestFramework\Helper\Bootstrap;
  *
  * @magentoAppArea adminhtml
  */
-class CurrencysymbolTest extends \PHPUnit\Framework\TestCase
+class CurrencysymbolTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\CurrencySymbol\Model\System\Currencysymbol
@@ -23,15 +23,15 @@ class CurrencysymbolTest extends \PHPUnit\Framework\TestCase
     protected function setUp()
     {
         $this->currencySymbolModel = Bootstrap::getObjectManager()->create(
-            \Magento\CurrencySymbol\Model\System\Currencysymbol::class
+            'Magento\CurrencySymbol\Model\System\Currencysymbol'
         );
     }
 
     protected function tearDown()
     {
         $this->currencySymbolModel = null;
-        Bootstrap::getObjectManager()->get(\Magento\Framework\App\Config\ReinitableConfigInterface::class)->reinit();
-        Bootstrap::getObjectManager()->create(\Magento\Store\Model\StoreManagerInterface::class)->reinitStores();
+        Bootstrap::getObjectManager()->get('Magento\Framework\App\Config\ReinitableConfigInterface')->reinit();
+        Bootstrap::getObjectManager()->create('Magento\Store\Model\StoreManagerInterface')->reinitStores();
     }
 
     public function testGetCurrencySymbolsData()

@@ -40,7 +40,7 @@ class IpnFactory
     public function create(array $data = [])
     {
         $type = isset($data['data']['txn_type']) ? $data['data']['txn_type'] : '';
-        $instanceType = isset($this->mapping[$type]) ? $this->mapping[$type] : \Magento\Paypal\Model\Ipn::class;
+        $instanceType = isset($this->mapping[$type]) ? $this->mapping[$type] : 'Magento\Paypal\Model\Ipn';
         return $this->_objectManager->create($instanceType, $data);
     }
 }

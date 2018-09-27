@@ -1,5 +1,6 @@
 <?php
 /**
+ *
  * Copyright © Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
@@ -15,6 +16,7 @@ use Magento\Eav\Api\Data\AttributeGroupInterfaceFactory;
 use Magento\Eav\Api\Data\AttributeInterface;
 use Magento\Eav\Api\Data\AttributeSetInterface;
 use Magento\Framework\Api\SearchCriteriaBuilder;
+use Magento\Framework\Api\SortOrderBuilder;
 use Magento\Framework\Exception\LocalizedException;
 use Psr\Log\LoggerInterface;
 use Magento\Framework\Api\ExtensionAttributesFactory;
@@ -52,6 +54,11 @@ class AddAttributeToTemplate extends \Magento\Catalog\Controller\Adminhtml\Produ
     protected $searchCriteriaBuilder;
 
     /**
+     * @var SortOrderBuilder
+     */
+    protected $sortOrderBuilder;
+
+    /**
      * @var AttributeGroupInterfaceFactory
      */
     protected $attributeGroupFactory;
@@ -72,12 +79,11 @@ class AddAttributeToTemplate extends \Magento\Catalog\Controller\Adminhtml\Produ
     protected $extensionAttributesFactory;
 
     /**
-     * Constructor
-     *
      * @param \Magento\Backend\App\Action\Context $context
      * @param Builder $productBuilder
      * @param \Magento\Framework\Controller\Result\JsonFactory $resultJsonFactory
-     * @param \Magento\Eav\Api\Data\AttributeGroupInterfaceFactory|null $attributeGroupFactory
+     * @param AttributeGroupInterfaceFactory|null $attributeGroupFactory
+     * @throws \RuntimeException
      * @SuppressWarnings(PHPMD.ExcessiveParameterList)
      */
     public function __construct(
@@ -88,8 +94,11 @@ class AddAttributeToTemplate extends \Magento\Catalog\Controller\Adminhtml\Produ
     ) {
         parent::__construct($context, $productBuilder);
         $this->resultJsonFactory = $resultJsonFactory;
-        $this->attributeGroupFactory = $attributeGroupFactory ?: \Magento\Framework\App\ObjectManager::getInstance()
-            ->get(\Magento\Eav\Api\Data\AttributeGroupInterfaceFactory::class);
+        if (null === $attributeGroupFactory) {
+            $attributeGroupFactory = \Magento\Framework\App\ObjectManager::getInstance()
+                ->get(\Magento\Eav\Api\Data\AttributeGroupInterfaceFactory::class);
+        }
+        $this->attributeGroupFactory = $attributeGroupFactory;
     }
 
     /**
@@ -114,6 +123,7 @@ class AddAttributeToTemplate extends \Magento\Catalog\Controller\Adminhtml\Produ
             $attributeGroupSearchCriteria = $this->getSearchCriteriaBuilder()
                 ->addFilter('attribute_set_id', $attributeSet->getAttributeSetId())
                 ->addFilter('attribute_group_code', $groupCode)
+                ->addSortOrder($this->getSortOrderBuilder()->setAscendingDirection()->create())
                 ->setPageSize(1)
                 ->create();
 
@@ -197,7 +207,7 @@ class AddAttributeToTemplate extends \Magento\Catalog\Controller\Adminhtml\Produ
     {
         if (null === $this->attributeRepository) {
             $this->attributeRepository = \Magento\Framework\App\ObjectManager::getInstance()
-                ->get(\Magento\Eav\Api\AttributeRepositoryInterface::class);
+                ->get('Magento\Eav\Api\AttributeRepositoryInterface');
         }
         return $this->attributeRepository;
     }
@@ -209,7 +219,7 @@ class AddAttributeToTemplate extends \Magento\Catalog\Controller\Adminhtml\Produ
     {
         if (null === $this->attributeSetRepository) {
             $this->attributeSetRepository = \Magento\Framework\App\ObjectManager::getInstance()
-                ->get(\Magento\Catalog\Api\AttributeSetRepositoryInterface::class);
+                ->get('Magento\Catalog\Api\AttributeSetRepositoryInterface');
         }
         return $this->attributeSetRepository;
     }
@@ -221,7 +231,7 @@ class AddAttributeToTemplate extends \Magento\Catalog\Controller\Adminhtml\Produ
     {
         if (null === $this->attributeGroupRepository) {
             $this->attributeGroupRepository = \Magento\Framework\App\ObjectManager::getInstance()
-                ->get(\Magento\Eav\Api\AttributeGroupRepositoryInterface::class);
+                ->get('Magento\Eav\Api\AttributeGroupRepositoryInterface');
         }
         return $this->attributeGroupRepository;
     }
@@ -233,9 +243,21 @@ class AddAttributeToTemplate extends \Magento\Catalog\Controller\Adminhtml\Produ
     {
         if (null === $this->searchCriteriaBuilder) {
             $this->searchCriteriaBuilder = \Magento\Framework\App\ObjectManager::getInstance()
-                ->get(\Magento\Framework\Api\SearchCriteriaBuilder::class);
+                ->get('Magento\Framework\Api\SearchCriteriaBuilder');
         }
         return $this->searchCriteriaBuilder;
+    }
+
+    /**
+     * @return SortOrderBuilder
+     */
+    private function getSortOrderBuilder()
+    {
+        if (null === $this->sortOrderBuilder) {
+            $this->sortOrderBuilder = \Magento\Framework\App\ObjectManager::getInstance()
+                ->get('Magento\Framework\Api\SortOrderBuilder');
+        }
+        return $this->sortOrderBuilder;
     }
 
     /**
@@ -245,7 +267,7 @@ class AddAttributeToTemplate extends \Magento\Catalog\Controller\Adminhtml\Produ
     {
         if (null === $this->attributeManagement) {
             $this->attributeManagement = \Magento\Framework\App\ObjectManager::getInstance()
-                ->get(\Magento\Eav\Api\AttributeManagementInterface::class);
+                ->get('Magento\Eav\Api\AttributeManagementInterface');
         }
         return $this->attributeManagement;
     }
@@ -257,7 +279,7 @@ class AddAttributeToTemplate extends \Magento\Catalog\Controller\Adminhtml\Produ
     {
         if (null === $this->logger) {
             $this->logger = \Magento\Framework\App\ObjectManager::getInstance()
-                ->get(\Psr\Log\LoggerInterface::class);
+                ->get('Psr\Log\LoggerInterface');
         }
         return $this->logger;
     }
@@ -269,7 +291,7 @@ class AddAttributeToTemplate extends \Magento\Catalog\Controller\Adminhtml\Produ
     {
         if (null === $this->extensionAttributesFactory) {
             $this->extensionAttributesFactory = \Magento\Framework\App\ObjectManager::getInstance()
-                ->get(\Magento\Framework\Api\ExtensionAttributesFactory::class);
+                ->get('Magento\Framework\Api\ExtensionAttributesFactory');
         }
         return $this->extensionAttributesFactory;
     }

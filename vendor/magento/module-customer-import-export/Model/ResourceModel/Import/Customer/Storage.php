@@ -9,20 +9,21 @@ use Magento\Framework\DataObject;
 use Magento\Framework\DB\Select;
 use Magento\Customer\Model\ResourceModel\Customer\CollectionFactory as CustomerCollectionFactory;
 use Magento\Customer\Model\ResourceModel\Customer\Collection as CustomerCollection;
-use Magento\ImportExport\Model\ResourceModel\CollectionByPagesIteratorFactory;
-use Magento\ImportExport\Model\ResourceModel\CollectionByPagesIterator;
 
-/**
- * Helper class to help dealing with existent customers.
- */
 class Storage
 {
     /**
-     * @deprecated
+     * Flag to not load collection more than one time
+     *
+     * @var bool
+     * @deprecated Collection is not used anymore.
      */
     protected $_isCollectionLoaded = false;
 
     /**
+     * Customer collection
+     *
+     * @var CustomerCollection
      * @deprecated
      */
     protected $_customerCollection;
@@ -49,9 +50,9 @@ class Storage
     protected $_pageSize;
 
     /**
-     * Collection by pages iterator.
+     * Collection by pages iterator
      *
-     * @var CollectionByPagesIterator
+     * @var \Magento\ImportExport\Model\ResourceModel\CollectionByPagesIterator
      */
     protected $_byPagesIterator;
 
@@ -62,12 +63,12 @@ class Storage
 
     /**
      * @param CustomerCollectionFactory $collectionFactory
-     * @param CollectionByPagesIteratorFactory $colIteratorFactory
+     * @param \Magento\ImportExport\Model\ResourceModel\CollectionByPagesIteratorFactory $colIteratorFactory
      * @param array $data
      */
     public function __construct(
         CustomerCollectionFactory $collectionFactory,
-        CollectionByPagesIteratorFactory $colIteratorFactory,
+        \Magento\ImportExport\Model\ResourceModel\CollectionByPagesIteratorFactory $colIteratorFactory,
         array $data = []
     ) {
         $this->_customerCollection = isset(
@@ -81,10 +82,10 @@ class Storage
     }
 
     /**
-     * @return void
+     * Load needed data from customer collection
      *
-     * @deprecated
-     * @see prepareCustomers
+     * @return void
+     * @deprecated This method of loading customers is not used anymore.
      */
     public function load()
     {
@@ -111,9 +112,8 @@ class Storage
      *
      * @return CustomerCollection
      */
-    private function prepareCollection(
-        array $customerIdentifiers
-    ): CustomerCollection {
+    private function prepareCollection(array $customerIdentifiers)
+    {
         /** @var CustomerCollection $collection */
         $collection = $this->customerCollectionFactory->create();
         $collection->removeAttributeToSelect();

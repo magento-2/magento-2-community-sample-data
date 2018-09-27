@@ -24,7 +24,7 @@ class Cart extends \Magento\Checkout\Test\Block\Cart
     public function getCartItem(FixtureInterface $product)
     {
         return $this->blockFactory->create(
-            \Magento\GroupedProduct\Test\Block\Checkout\Cart\CartItem::class,
+            'Magento\GroupedProduct\Test\Block\Checkout\Cart\CartItem',
             [
                 'element' => $this->_rootElement,
                 'config' => [

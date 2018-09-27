@@ -6,6 +6,7 @@
  */
 namespace Magento\Tax\Controller\Adminhtml\Rule;
 
+
 class Index extends \Magento\Tax\Controller\Adminhtml\Rule
 {
     /**

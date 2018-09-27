@@ -8,7 +8,7 @@ namespace Magento\Reports\Test\Unit\Block\Adminhtml\Sales\Grid\Column\Renderer;
 
 use Magento\Reports\Block\Adminhtml\Sales\Grid\Column\Renderer\Date;
 
-class DateTest extends \PHPUnit\Framework\TestCase
+class DateTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\Reports\Block\Adminhtml\Sales\Grid\Column\Renderer\Date
@@ -63,7 +63,7 @@ class DateTest extends \PHPUnit\Framework\TestCase
      */
     private function mockGridDateColumnConfig($objectDataIndex, $periodType)
     {
-        $columnMock = $this->getMockBuilder(\Magento\Backend\Block\Widget\Grid\Column::class)
+        $columnMock = $this->getMockBuilder('Magento\Backend\Block\Widget\Grid\Column')
             ->disableOriginalConstructor()
             ->setMethods(['getIndex', 'getPeriodType'])
             ->getMock();
@@ -78,7 +78,7 @@ class DateTest extends \PHPUnit\Framework\TestCase
      */
     protected function setUp()
     {
-        $this->localeDate = $this->getMockBuilder(\Magento\Framework\Stdlib\DateTime\TimezoneInterface::class)
+        $this->localeDate = $this->getMockBuilder('Magento\Framework\Stdlib\DateTime\TimezoneInterface')
             ->disableOriginalConstructor()
             ->getMock();
         $this->localeDate
@@ -86,7 +86,7 @@ class DateTest extends \PHPUnit\Framework\TestCase
             ->method('date')
             ->willReturnArgument(0);
 
-        $this->contextMock = $this->getMockBuilder(\Magento\Backend\Block\Context::class)
+        $this->contextMock = $this->getMockBuilder('Magento\Backend\Block\Context')
             ->disableOriginalConstructor()
             ->getMock();
         $this->contextMock
@@ -94,22 +94,17 @@ class DateTest extends \PHPUnit\Framework\TestCase
             ->method('getLocaleDate')
             ->willReturn($this->localeDate);
 
-        $this->resolverMock = $this->getMockBuilder(\Magento\Framework\Locale\ResolverInterface::class)
+        $this->resolverMock = $this->getMockBuilder('Magento\Framework\Locale\ResolverInterface')
             ->getMock();
 
-        $this->dateTimeFormatter = $this->createMock(
-            \Magento\Framework\Stdlib\DateTime\DateTimeFormatterInterface::class
-        );
+        $this->dateTimeFormatter = $this->getMock('Magento\Framework\Stdlib\DateTime\DateTimeFormatterInterface');
 
         $objectManager = new \Magento\Framework\TestFramework\Unit\Helper\ObjectManager($this);
-        $this->date = $objectManager->getObject(
-            \Magento\Reports\Block\Adminhtml\Sales\Grid\Column\Renderer\Date::class,
-            [
-                'context' => $this->contextMock,
-                'localeResolver' => $this->resolverMock,
-                'dateTimeFormatter' => $this->dateTimeFormatter,
-            ]
-        );
+        $this->date = $objectManager->getObject('Magento\Reports\Block\Adminhtml\Sales\Grid\Column\Renderer\Date', [
+            'context' => $this->contextMock,
+            'localeResolver' => $this->resolverMock,
+            'dateTimeFormatter' => $this->dateTimeFormatter,
+        ]);
         $this->globalStateLocaleBackup = \Locale::getDefault();
     }
 
@@ -139,7 +134,7 @@ class DateTest extends \PHPUnit\Framework\TestCase
         $this->mockGridDateRendererBehaviorWithLocale($locale);
         $this->mockGridDateColumnConfig($index, $period);
 
-        $objectMock = $this->getMockBuilder(\Magento\Framework\DataObject::class)
+        $objectMock = $this->getMockBuilder('Magento\Framework\DataObject')
             ->setMethods(['getData'])
             ->getMock();
         $objectMock->expects($this->once())->method('getData')->willReturn($data);
@@ -204,7 +199,7 @@ class DateTest extends \PHPUnit\Framework\TestCase
         $this->mockGridDateRendererBehaviorWithLocale($locale);
         $this->mockGridDateColumnConfig('period', 'day');
 
-        $objectMock = $this->getMockBuilder(\Magento\Framework\DataObject::class)
+        $objectMock = $this->getMockBuilder('Magento\Framework\DataObject')
             ->setMethods(['getData'])
             ->getMock();
         $objectMock->expects($this->any())->method('getData')->willReturn('2014-06-25');

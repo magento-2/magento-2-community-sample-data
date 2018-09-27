@@ -2,16 +2,12 @@
  * Copyright © Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
-
-/**
- * @deprecated since version 2.2.0
- */
 define([
-    'jquery',
+    "jquery",
     'mage/template',
-    'jquery/ui'
-], function ($, mageTemplate) {
-    'use strict';
+    "jquery/ui"
+], function($, mageTemplate){
+    "use strict";
 
     $.widget('mage.list', {
         options: {
@@ -27,17 +23,14 @@ define([
             maxItemsAlert: null
         },
 
-        /**
-         * @private
-         */
-        _create: function () {
-            var options, destination, addButton;
+        _create: function() {
 
             this.options.itemCount = this.options.itemIndex = 0;
 
-            options = this.options;
-            destination = $(options.destinationSelector);
-            addButton = this.element.find($(options.addButton));
+            var that = this,
+                options = this.options,
+                destination = $(options.destinationSelector),
+                addButton = this.element.find($(options.addButton));
 
             this.element
                 .addClass('list-widget');
@@ -48,75 +41,50 @@ define([
             destination.on('click', this.options.removeButton, $.proxy(this.removeItem, this));
         },
 
-        /**
-         * @return {Boolean}
-         */
-        handleAdd: function () {
+        handleAdd: function() {
             this.addItem(++this.options.itemIndex);
-
             return false;
         },
 
-        /**
-         * @param {*} index
-         * @param {*} parent
-         * @return {*|jQuery|HTMLElement}
-         */
-        addItem: function (index, parent) {
+        addItem: function(index, parent) {
             var options = this.options,
                 template = $(options.template),
                 destination = $(options.destinationSelector),
-                item = $(options.templateWrapper),
-                source, preTemplate, context, compiledTemplate;
+                item = $(options.templateWrapper);
 
             item.addClass(this.options.templateClass)
-                .attr('id', 'list-item-' + index)
+                .attr('id', 'list-item-'+ index)
                 .attr('data-role', 'addedItem')
                 .attr('data-parent', parent);
 
-            source = template.html();
-            preTemplate = mageTemplate(source);
-            context = this.handleContext(index);
-            compiledTemplate = preTemplate({
-                data: context
-            });
+
+            var source = template.html(),
+                preTemplate = mageTemplate(source),
+                context = this.handleContext(index),
+                compiledTemplate = preTemplate({
+                    data: context
+                });
 
             item.append(compiledTemplate);
             destination.append(item);
 
             this.checkLimit(++this.options.itemCount);
-
             return item;
         },
 
-        /**
-         * @param {*} index
-         * @return {Object}
-         */
-        handleContext: function (index) {
-            var context = {
-                _index_: index
-            };
-
+        handleContext: function(index) {
+            var context = {_index_: index};
             return context;
         },
 
-        /**
-         * @param {jQuery.Event} e
-         * @return {Boolean}
-         */
-        removeItem: function (e) {
+        removeItem: function(e) {
             $(e.currentTarget).closest('[data-role="addedItem"]').remove();
 
             this.checkLimit(--this.options.itemCount);
-
             return false;
         },
 
-        /**
-         * @param {*} index
-         */
-        checkLimit: function (index) {
+        checkLimit: function(index) {
             var addButton = $(this.options.addButton),
                 maxItems = this.options.maxItems,
                 maxItemsAlert = $(this.options.maxItemsAlert);
@@ -124,25 +92,25 @@ define([
             if (maxItems !== null && index >= maxItems) {
                 addButton.hide();
                 maxItemsAlert.show();
-            } else if (addButton.is(':hidden')) {
+            } else if (addButton.is(":hidden")) {
                 addButton.show();
                 maxItemsAlert.hide();
             }
         },
 
-        /**
-         * @private
-         */
-        _destroy: function () {
+        _destroy: function() {
+
             var destination = $(this.options.destinationSelector);
 
             this.element
                 .removeClass('list-widget');
+
             destination
                 .find('[data-role="addedItem"]')
                 .remove();
         }
-    });
 
+    });
+    
     return $.mage.list;
 });

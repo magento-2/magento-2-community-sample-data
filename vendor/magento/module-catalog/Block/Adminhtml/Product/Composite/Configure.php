@@ -4,14 +4,13 @@
  * See COPYING.txt for license details.
  */
 
-namespace Magento\Catalog\Block\Adminhtml\Product\Composite;
-
 /**
  * Adminhtml catalog product composite configure block
  *
- * @api
- * @since 100.0.2
+ * @author      Magento Core Team <core@magentocommerce.com>
  */
+namespace Magento\Catalog\Block\Adminhtml\Product\Composite;
+
 class Configure extends \Magento\Backend\Block\Widget
 {
     /**
@@ -22,7 +21,7 @@ class Configure extends \Magento\Backend\Block\Widget
     /**
      * @var string
      */
-    protected $_template = 'catalog/product/composite/configure.phtml';
+    protected $_template = 'Magento_Catalog::catalog/product/composite/configure.phtml';
 
     /**
      * Core registry

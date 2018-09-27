@@ -5,7 +5,7 @@
  */
 namespace Magento\CatalogInventory\Test\Unit\Model\Plugin;
 
-class ProductLinksTest extends \PHPUnit\Framework\TestCase
+class ProductLinksTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\CatalogInventory\Model\Plugin\ProductLinks
@@ -24,8 +24,20 @@ class ProductLinksTest extends \PHPUnit\Framework\TestCase
 
     protected function setUp()
     {
-        $this->configMock = $this->createMock(\Magento\CatalogInventory\Model\Configuration::class);
-        $this->stockHelperMock = $this->createMock(\Magento\CatalogInventory\Helper\Stock::class);
+        $this->configMock = $this->getMock(
+            'Magento\CatalogInventory\Model\Configuration',
+            [],
+            [],
+            '',
+            false
+        );
+        $this->stockHelperMock = $this->getMock(
+            '\Magento\CatalogInventory\Helper\Stock',
+            [],
+            [],
+            '',
+            false
+        );
 
         $this->model = new \Magento\CatalogInventory\Model\Plugin\ProductLinks(
             $this->configMock,
@@ -48,15 +60,22 @@ class ProductLinksTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals($collectionMock, $this->model->afterGetProductCollection($subjectMock, $collectionMock));
     }
 
+    /**
+     * @return array
+     */
     private function buildMocks()
     {
         /** @var \Magento\Catalog\Model\ResourceModel\Product\Link\Product\Collection $collectionMock */
-        $collectionMock = $this->createMock(
-            \Magento\Catalog\Model\ResourceModel\Product\Link\Product\Collection::class
+        $collectionMock = $this->getMock(
+            'Magento\Catalog\Model\ResourceModel\Product\Link\Product\Collection',
+            [],
+            [],
+            '',
+            false
         );
 
         /** @var \Magento\Catalog\Model\Product\Link $subjectMock */
-        $subjectMock = $this->createMock(\Magento\Catalog\Model\Product\Link::class);
+        $subjectMock = $this->getMock('Magento\Catalog\Model\Product\Link', [], [], '', false);
         return [$collectionMock, $subjectMock];
     }
 

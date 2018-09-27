@@ -7,7 +7,7 @@ namespace Magento\Theme\Test\Unit\Model\Design\Config;
 
 use Magento\Theme\Model\Design\Config\Plugin;
 
-class PluginTest extends \PHPUnit\Framework\TestCase
+class PluginTest extends \PHPUnit_Framework_TestCase
 {
     /** @var \Magento\Framework\Event\ManagerInterface|\PHPUnit_Framework_MockObject_MockObject */
     protected $eventManager;
@@ -33,32 +33,32 @@ class PluginTest extends \PHPUnit\Framework\TestCase
     public function setUp()
     {
         $this->eventManager = $this->getMockForAbstractClass(
-            \Magento\Framework\Event\ManagerInterface::class,
+            'Magento\Framework\Event\ManagerInterface',
             [],
             '',
             false
         );
         $this->storeManager = $this->getMockForAbstractClass(
-            \Magento\Store\Model\StoreManagerInterface::class,
+            'Magento\Store\Model\StoreManagerInterface',
             [],
             '',
             false
         );
-        $this->repository = $this->createMock(\Magento\Theme\Model\DesignConfigRepository::class);
+        $this->repository = $this->getMock('Magento\Theme\Model\DesignConfigRepository', [], [], '', false);
         $this->designConfig = $this->getMockForAbstractClass(
-            \Magento\Theme\Api\Data\DesignConfigInterface::class,
+            'Magento\Theme\Api\Data\DesignConfigInterface',
             [],
             '',
             false
         );
         $this->website = $this->getMockForAbstractClass(
-            \Magento\Store\Api\Data\WebsiteInterface::class,
+            'Magento\Store\Api\Data\WebsiteInterface',
             [],
             '',
             false
         );
         $this->store = $this->getMockForAbstractClass(
-            \Magento\Store\Api\Data\StoreInterface::class,
+            'Magento\Store\Api\Data\StoreInterface',
             [],
             '',
             false

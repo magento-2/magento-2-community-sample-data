@@ -7,7 +7,7 @@
  */
 namespace Magento\Framework\Webapi\Test\Unit\Rest\Response\Renderer;
 
-class XmlTest extends \PHPUnit\Framework\TestCase
+class XmlTest extends \PHPUnit_Framework_TestCase
 {
     /** @var \Magento\Framework\Webapi\Rest\Response\Renderer\Xml */
     protected $_restXmlRenderer;

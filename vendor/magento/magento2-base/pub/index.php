@@ -10,7 +10,7 @@ use Magento\Framework\App\Bootstrap;
 use Magento\Framework\App\Filesystem\DirectoryList;
 
 try {
-    require __DIR__ . '/../app/bootstrap.php';
+    require realpath(__DIR__) . '/../app/bootstrap.php';
 } catch (\Exception $e) {
     echo <<<HTML
 <div style="font:12px/1.35em arial, helvetica, sans-serif;">
@@ -33,5 +33,5 @@ $params[Bootstrap::INIT_PARAM_FILESYSTEM_DIR_PATHS] = [
 ];
 $bootstrap = \Magento\Framework\App\Bootstrap::create(BP, $params);
 /** @var \Magento\Framework\App\Http $app */
-$app = $bootstrap->createApplication(\Magento\Framework\App\Http::class);
+$app = $bootstrap->createApplication('Magento\Framework\App\Http');
 $bootstrap->run($app);

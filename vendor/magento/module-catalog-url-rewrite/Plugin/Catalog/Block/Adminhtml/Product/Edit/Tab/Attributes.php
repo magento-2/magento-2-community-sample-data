@@ -20,7 +20,7 @@ class Attributes
         $field = $form->getElement('url_key');
         if ($field) {
             $field->setRenderer(
-                $subject->getLayout()->createBlock(\Magento\CatalogUrlRewrite\Block\UrlKeyRenderer::class)
+                $subject->getLayout()->createBlock('Magento\CatalogUrlRewrite\Block\UrlKeyRenderer')
             );
         }
         return $result;

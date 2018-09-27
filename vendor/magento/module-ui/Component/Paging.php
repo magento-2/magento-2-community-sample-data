@@ -6,8 +6,7 @@
 namespace Magento\Ui\Component;
 
 /**
- * @api
- * @since 100.0.2
+ * Class Paging
  */
 class Paging extends AbstractComponent
 {

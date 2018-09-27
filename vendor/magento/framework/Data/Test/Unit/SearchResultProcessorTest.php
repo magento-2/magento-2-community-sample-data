@@ -10,7 +10,7 @@ use \Magento\Framework\Data\SearchResultProcessor;
 /**
  * Class SearchResultProcessorTest
  */
-class SearchResultProcessorTest extends \PHPUnit\Framework\TestCase
+class SearchResultProcessorTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var SearchResultProcessor
@@ -29,11 +29,11 @@ class SearchResultProcessorTest extends \PHPUnit\Framework\TestCase
 
     protected function setUp()
     {
-        $this->searchCriteriaMock = $this->getMockBuilder(\Magento\Framework\Api\CriteriaInterface::class)
+        $this->searchCriteriaMock = $this->getMockBuilder('Magento\Framework\Api\CriteriaInterface')
             ->disableOriginalConstructor()
             ->getMock();
 
-        $this->searchResultCollectionMock = $this->getMockBuilder(\Magento\Framework\Data\AbstractSearchResult::class)
+        $this->searchResultCollectionMock = $this->getMockBuilder('Magento\Framework\Data\AbstractSearchResult')
             ->disableOriginalConstructor()
             ->setMethods(['getSearchCriteria', 'getItems', 'getItemId'])
             ->getMockForAbstractClass();

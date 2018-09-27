@@ -17,7 +17,7 @@ use PHPUnit_Framework_MockObject_MockObject as MockObject;
 /**
  * Class PriceBackendTest
  */
-class PriceBackendTest extends \PHPUnit\Framework\TestCase
+class PriceBackendTest extends \PHPUnit_Framework_TestCase
 {
     const CLOSURE_VALUE = 'CLOSURE';
 

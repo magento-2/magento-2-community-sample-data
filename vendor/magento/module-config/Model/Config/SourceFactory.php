@@ -5,10 +5,6 @@
  */
 namespace Magento\Config\Model\Config;
 
-/**
- * @api
- * @since 100.0.2
- */
 class SourceFactory
 {
     /**
@@ -30,7 +26,7 @@ class SourceFactory
      * Create backend model by name
      *
      * @param string $modelName
-     * @return \Magento\Framework\Option\ArrayInterface
+     * @return mixed
      */
     public function create($modelName)
     {

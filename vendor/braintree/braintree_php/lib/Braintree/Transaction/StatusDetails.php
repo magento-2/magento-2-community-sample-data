@@ -8,6 +8,7 @@ use Braintree\Instance;
  * Creates an instance of StatusDetails, as part of a transaction response
  *
  * @package    Braintree
+ * @copyright  2015 Braintree, a division of PayPal, Inc.
  *
  * @property-read string $amount
  * @property-read string $status

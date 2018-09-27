@@ -5,7 +5,7 @@
  */
 namespace Magento\Catalog\Test\Unit\Model\Indexer\Category\Flat\System\Config;
 
-class ModeTest extends \PHPUnit\Framework\TestCase
+class ModeTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\Catalog\Model\Indexer\Category\Flat\System\Config\Mode
@@ -34,21 +34,21 @@ class ModeTest extends \PHPUnit\Framework\TestCase
 
     protected function setUp()
     {
-        $this->configMock = $this->createMock(\Magento\Framework\App\Config\ScopeConfigInterface::class);
-        $this->indexerStateMock = $this->createPartialMock(
-            \Magento\Indexer\Model\Indexer\State::class,
-            ['loadByIndexer', 'setStatus', 'save', '__wakeup']
+        $this->configMock = $this->getMock('Magento\Framework\App\Config\ScopeConfigInterface');
+        $this->indexerStateMock = $this->getMock(
+            'Magento\Indexer\Model\Indexer\State',
+            ['loadByIndexer', 'setStatus', 'save', '__wakeup'],
+            [],
+            '',
+            false
         );
-        $this->indexerRegistry = $this->createPartialMock(
-            \Magento\Framework\Indexer\IndexerRegistry::class,
-            ['load', 'setScheduled', 'get']
-        );
+        $this->indexerRegistry = $this->getMock('Magento\Framework\Indexer\IndexerRegistry', [], [], '', false);
 
-        $this->flatIndexer = $this->createMock(\Magento\Framework\Indexer\IndexerInterface::class);
+        $this->flatIndexer = $this->getMock('Magento\Framework\Indexer\IndexerInterface');
 
         $objectManager = new \Magento\Framework\TestFramework\Unit\Helper\ObjectManager($this);
         $this->model = $objectManager->getObject(
-            \Magento\Catalog\Model\Indexer\Category\Flat\System\Config\Mode::class,
+            'Magento\Catalog\Model\Indexer\Category\Flat\System\Config\Mode',
             [
                 'config' => $this->configMock,
                 'indexerState' => $this->indexerStateMock,
@@ -57,6 +57,9 @@ class ModeTest extends \PHPUnit\Framework\TestCase
         );
     }
 
+    /**
+     * @return array
+     */
     public function dataProviderProcessValueEqual()
     {
         return [['0', '0'], ['', '0'], ['0', ''], ['1', '1']];
@@ -92,6 +95,9 @@ class ModeTest extends \PHPUnit\Framework\TestCase
         $this->model->processValue();
     }
 
+    /**
+     * @return array
+     */
     public function dataProviderProcessValueOn()
     {
         return [['0', '1'], ['', '1']];
@@ -143,6 +149,9 @@ class ModeTest extends \PHPUnit\Framework\TestCase
         $this->model->processValue();
     }
 
+    /**
+     * @return array
+     */
     public function dataProviderProcessValueOff()
     {
         return [['1', '0'], ['1', '']];

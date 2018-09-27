@@ -7,8 +7,8 @@
 namespace Magento\Framework\Indexer\Table;
 
 /**
- * Interface \Magento\Framework\Indexer\Table\StrategyInterface
- *
+ * Interface StrategyInterface
+ * @package Magento\Indexer
  */
 interface StrategyInterface
 {

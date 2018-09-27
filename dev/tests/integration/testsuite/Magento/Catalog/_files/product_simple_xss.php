@@ -7,13 +7,13 @@
 /** @var \Magento\TestFramework\ObjectManager $objectManager */
 $objectManager = \Magento\TestFramework\Helper\Bootstrap::getObjectManager();
 
-$objectManager->removeSharedInstance(\Magento\Catalog\Model\ProductRepository::class);
-$objectManager->removeSharedInstance(\Magento\Catalog\Model\CategoryLinkRepository::class);
+$objectManager->removeSharedInstance('Magento\Catalog\Model\ProductRepository');
+$objectManager->removeSharedInstance('Magento\Catalog\Model\CategoryLinkRepository');
 
 /** @var \Magento\Catalog\Api\CategoryLinkManagementInterface $categoryLinkManagement */
-$categoryLinkManagement = $objectManager->create(\Magento\Catalog\Api\CategoryLinkManagementInterface::class);
+$categoryLinkManagement = $objectManager->create('Magento\Catalog\Api\CategoryLinkManagementInterface');
 
-$product = $objectManager->create(\Magento\Catalog\Model\Product::class);
+$product = $objectManager->create('Magento\Catalog\Model\Product');
 
 $product->setTypeId(\Magento\Catalog\Model\Product\Type::TYPE_SIMPLE)
     ->setAttributeSetId(4)

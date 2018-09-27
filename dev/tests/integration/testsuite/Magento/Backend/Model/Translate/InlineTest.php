@@ -8,7 +8,7 @@ namespace Magento\Backend\Model\Translate;
 /**
  * @magentoAppArea adminhtml
  */
-class InlineTest extends \PHPUnit\Framework\TestCase
+class InlineTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\Framework\Translate\InlineInterface
@@ -18,7 +18,7 @@ class InlineTest extends \PHPUnit\Framework\TestCase
     protected function setUp()
     {
         $this->_translateInline = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->create(
-            \Magento\Framework\Translate\InlineInterface::class
+            'Magento\Framework\Translate\InlineInterface'
         );
     }
 
@@ -30,14 +30,12 @@ class InlineTest extends \PHPUnit\Framework\TestCase
     {
         $body = '<html><body>some body</body></html>';
         /** @var \Magento\Backend\Model\UrlInterface $url */
-        $url = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->get(\Magento\Framework\UrlInterface::class);
+        $url = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->get('Magento\Framework\UrlInterface');
         $url->getUrl(\Magento\Backend\App\Area\FrontNameResolver::AREA_CODE . '/ajax/translate');
         $this->_translateInline->processResponseBody($body, true);
-        $expected = str_replace(
-            [':', '/'],
-            ['\u003A', '\u002F'],
-            $url->getUrl(\Magento\Backend\App\Area\FrontNameResolver::AREA_CODE . '/ajax/translate')
+        $this->assertContains(
+            $url->getUrl(\Magento\Backend\App\Area\FrontNameResolver::AREA_CODE . '/ajax/translate'),
+            $body
         );
-        $this->assertContains($expected, $body);
     }
 }

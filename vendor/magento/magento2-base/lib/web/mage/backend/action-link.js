@@ -2,19 +2,19 @@
  * Copyright © Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
-
+/*jshint jquery:true*/
 define([
-    'jquery',
-    'jquery/ui'
-], function ($) {
-    'use strict';
-
+    "jquery",
+    "jquery/ui"
+], function($){
+    "use strict";
+    
     $.widget('mage.actionLink', {
         /**
          * Button creation
          * @protected
          */
-        _create: function () {
+        _create: function() {
             this._bind();
         },
 
@@ -22,36 +22,20 @@ define([
          * Bind handler on button click
          * @protected
          */
-        _bind: function () {
+        _bind: function() {
             var keyCode = $.ui.keyCode;
-
             this._on({
-                /**
-                 * @param {jQuery.Event} e
-                 */
-                mousedown: function (e) {
+                mousedown: function(e){
                     this._stopPropogation(e);
                 },
-
-                /**
-                 * @param {jQuery.Event} e
-                 */
-                mouseup: function (e) {
+                mouseup: function(e){
                     this._stopPropogation(e);
                 },
-
-                /**
-                 * @param {jQuery.Event} e
-                 */
-                click: function (e) {
+                click: function(e) {
                     this._stopPropogation(e);
                     this._triggerEvent();
                 },
-
-                /**
-                 * @param {jQuery.Event} e
-                 */
-                keydown: function (e) {
+                keydown: function(e) {
                     switch (e.keyCode) {
                         case keyCode.ENTER:
                         case keyCode.NUMPAD_ENTER:
@@ -60,11 +44,7 @@ define([
                             break;
                     }
                 },
-
-                /**
-                 * @param {jQuery.Event} e
-                 */
-                keyup: function (e) {
+                keyup: function(e) {
                     switch (e.keyCode) {
                         case keyCode.ENTER:
                         case keyCode.NUMPAD_ENTER:
@@ -79,7 +59,7 @@ define([
          * @param {Object} e - event object
          * @private
          */
-        _stopPropogation: function (e) {
+        _stopPropogation: function(e) {
             e.stopImmediatePropagation();
             e.preventDefault();
         },
@@ -87,11 +67,11 @@ define([
         /**
          * @private
          */
-        _triggerEvent: function () {
+        _triggerEvent: function() {
             $(this.options.related || this.element)
                 .trigger(this.options.event, this.options.eventData ? [this.options.eventData] : [{}]);
         }
     });
-
+    
     return $.mage.actionLink;
 });

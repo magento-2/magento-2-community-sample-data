@@ -9,7 +9,7 @@ namespace Magento\Translation\Test\Unit\Model\Inline;
 /**
  * @covers \Magento\Translation\Model\Inline\CacheManager
  */
-class CacheManagerTest extends \PHPUnit\Framework\TestCase
+class CacheManagerTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\Translation\Model\Inline\CacheManager
@@ -38,29 +38,29 @@ class CacheManagerTest extends \PHPUnit\Framework\TestCase
 
     protected function setUp()
     {
-        $this->eventManagerMock = $this->getMockBuilder(\Magento\Framework\Event\ManagerInterface::class)
+        $this->eventManagerMock = $this->getMockBuilder('Magento\Framework\Event\ManagerInterface')
             ->disableOriginalConstructor()
             ->setMethods([])
             ->getMock();
 
-        $this->translateResourceMock = $this->getMockBuilder(\Magento\Framework\Translate\ResourceInterface::class)
+        $this->translateResourceMock = $this->getMockBuilder('Magento\Framework\Translate\ResourceInterface')
             ->disableOriginalConstructor()
             ->setMethods([])
             ->getMock();
 
-        $this->localeResolverMock = $this->getMockBuilder(\Magento\Framework\Locale\ResolverInterface::class)
+        $this->localeResolverMock = $this->getMockBuilder('Magento\Framework\Locale\ResolverInterface')
             ->disableOriginalConstructor()
             ->setMethods([])
             ->getMock();
 
-        $this->fileManagerMock = $this->getMockBuilder(\Magento\Translation\Model\FileManager::class)
+        $this->fileManagerMock = $this->getMockBuilder('Magento\Translation\Model\FileManager')
             ->disableOriginalConstructor()
             ->setMethods([])
             ->getMock();
 
         $objectManagerHelper = new \Magento\Framework\TestFramework\Unit\Helper\ObjectManager($this);
         $this->model = $objectManagerHelper->getObject(
-            \Magento\Translation\Model\Inline\CacheManager::class,
+            'Magento\Translation\Model\Inline\CacheManager',
             [
                 'eventManager' => $this->eventManagerMock,
                 'translateResource' => $this->translateResourceMock,

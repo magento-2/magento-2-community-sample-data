@@ -5,13 +5,14 @@
  */
  -->
 <!-- ko if: isActive() || hasActiveOptions() -->
-<button class="action action-gift"
-        data-bind="
-            click: $data.toggleFormBlockVisibility.bind($data),
-            css: {_active: formBlockVisibility() || resultBlockVisibility()}
-        ">
+<a href="#"
+   class="action action-gift"
+   data-bind="
+   click: $data.toggleFormBlockVisibility.bind($data),
+   css: {_active: formBlockVisibility() || resultBlockVisibility()}
+   ">
     <span data-bind="i18n: 'Gift options'"></span>
-</button>
+</a>
 <div class="gift-content" data-bind="css: {_active: formBlockVisibility() || resultBlockVisibility()}"> <!-- add class "active" to display the content -->
     <!-- ko ifnot: resultBlockVisibility() -->
         <div class="gift-options">

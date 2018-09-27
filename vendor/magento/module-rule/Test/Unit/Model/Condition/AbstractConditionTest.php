@@ -6,7 +6,7 @@
 
 namespace Magento\Rule\Test\Unit\Model\Condition;
 
-class AbstractConditionTest extends \PHPUnit\Framework\TestCase
+class AbstractConditionTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var AbstractCondition|\PHPUnit_Framework_MockObject_MockObject
@@ -16,7 +16,7 @@ class AbstractConditionTest extends \PHPUnit\Framework\TestCase
     protected function setUp()
     {
         $this->_condition = $this->getMockForAbstractClass(
-            \Magento\Rule\Model\Condition\AbstractCondition::class,
+            '\Magento\Rule\Model\Condition\AbstractCondition',
             [],
             '',
             false,
@@ -40,6 +40,9 @@ class AbstractConditionTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals('category_ids', $this->_condition->getMappedSqlField());
     }
 
+    /**
+     * @return array
+     */
     public function validateAttributeDataProvider()
     {
         return [
@@ -117,9 +120,12 @@ class AbstractConditionTest extends \PHPUnit\Framework\TestCase
      */
     public function testValidate($existingValue, $operator, $valueForValidate, $expectedResult)
     {
-        $objectMock = $this->createPartialMock(
-            \Magento\Framework\Model\AbstractModel::class,
-            ['hasData', 'load', 'getId', 'getData']
+        $objectMock = $this->getMock(
+            'Magento\Framework\Model\AbstractModel',
+            ['hasData', 'load', 'getId', 'getData'],
+            [],
+            '',
+            false
         );
         $objectMock->expects($this->once())
             ->method('hasData')
@@ -146,6 +152,9 @@ class AbstractConditionTest extends \PHPUnit\Framework\TestCase
         );
     }
 
+    /**
+     * @return array
+     */
     public function validateAttributeArrayInputTypeDataProvider()
     {
         return [

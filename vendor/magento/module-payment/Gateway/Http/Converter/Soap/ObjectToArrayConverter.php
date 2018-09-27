@@ -11,7 +11,6 @@ use Magento\Payment\Gateway\Http\ConverterInterface;
  * Class ObjectToArrayConverter
  * @package Magento\Payment\Gateway\Http\Converter\Soap
  * @api
- * @since 100.0.2
  */
 class ObjectToArrayConverter implements ConverterInterface
 {

@@ -10,8 +10,8 @@ use Magento\Sales\Api\Data\CreditmemoCommentInterface;
 use Magento\Sales\Model\AbstractModel;
 
 /**
- * @api
- * @since 100.0.2
+ * @method \Magento\Sales\Model\ResourceModel\Order\Creditmemo\Comment _getResource()
+ * @method \Magento\Sales\Model\ResourceModel\Order\Creditmemo\Comment getResource()
  */
 class Comment extends AbstractModel implements CreditmemoCommentInterface
 {
@@ -67,7 +67,7 @@ class Comment extends AbstractModel implements CreditmemoCommentInterface
      */
     protected function _construct()
     {
-        $this->_init(\Magento\Sales\Model\ResourceModel\Order\Creditmemo\Comment::class);
+        $this->_init('Magento\Sales\Model\ResourceModel\Order\Creditmemo\Comment');
     }
 
     /**
@@ -110,7 +110,6 @@ class Comment extends AbstractModel implements CreditmemoCommentInterface
     }
 
     //@codeCoverageIgnoreStart
-
     /**
      * Returns comment
      *
@@ -222,6 +221,5 @@ class Comment extends AbstractModel implements CreditmemoCommentInterface
     ) {
         return $this->_setExtensionAttributes($extensionAttributes);
     }
-
     //@codeCoverageIgnoreEnd
 }

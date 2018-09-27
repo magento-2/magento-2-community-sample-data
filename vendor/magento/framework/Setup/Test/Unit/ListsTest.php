@@ -8,7 +8,7 @@ namespace Magento\Framework\Setup\Test\Unit;
 
 use Magento\Framework\Setup\Lists;
 
-class ListsTest extends \PHPUnit\Framework\TestCase
+class ListsTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var Lists
@@ -52,7 +52,7 @@ class ListsTest extends \PHPUnit\Framework\TestCase
 
     protected function setUp()
     {
-        $this->mockConfig = $this->getMockBuilder(\Magento\Framework\Locale\ConfigInterface::class)
+        $this->mockConfig = $this->getMockBuilder('\Magento\Framework\Locale\ConfigInterface')
             ->disableOriginalConstructor()
             ->getMock();
         $this->mockConfig->expects($this->any())

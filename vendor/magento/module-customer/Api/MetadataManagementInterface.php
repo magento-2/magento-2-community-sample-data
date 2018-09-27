@@ -10,7 +10,6 @@ use Magento\Customer\Api\Data\AttributeMetadataInterface;
 /**
  * Interface for managing attributes metadata.
  * @api
- * @since 100.0.2
  */
 interface MetadataManagementInterface
 {

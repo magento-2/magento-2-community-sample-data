@@ -60,7 +60,7 @@ abstract class Create extends \Magento\Backend\App\Action
      */
     protected function _getSession()
     {
-        return $this->_objectManager->get(\Magento\Backend\Model\Session\Quote::class);
+        return $this->_objectManager->get('Magento\Backend\Model\Session\Quote');
     }
 
     /**
@@ -80,7 +80,7 @@ abstract class Create extends \Magento\Backend\App\Action
      */
     protected function _getOrderCreateModel()
     {
-        return $this->_objectManager->get(\Magento\Sales\Model\AdminOrder\Create::class);
+        return $this->_objectManager->get('Magento\Sales\Model\AdminOrder\Create');
     }
 
     /**
@@ -90,7 +90,7 @@ abstract class Create extends \Magento\Backend\App\Action
      */
     protected function _getGiftmessageSaveModel()
     {
-        return $this->_objectManager->get(\Magento\GiftMessage\Model\Save::class);
+        return $this->_objectManager->get('Magento\GiftMessage\Model\Save');
     }
 
     /**
@@ -154,7 +154,7 @@ abstract class Create extends \Magento\Backend\App\Action
         $this->_eventManager->dispatch('adminhtml_sales_order_create_process_data_before', $eventData);
 
         /**
-         * Import post data, in order to make order quote valid
+         * Saving order data
          */
         if ($data = $this->getRequest()->getPost('order')) {
             $this->_getOrderCreateModel()->importPostData($data);
@@ -210,8 +210,6 @@ abstract class Create extends \Magento\Backend\App\Action
             $this->_getOrderCreateModel()->applySidebarData($data);
         }
 
-        $this->_eventManager->dispatch('adminhtml_sales_order_create_process_item_before', $eventData);
-
         /**
          * Adding product to quote from shopping cart, wishlist etc.
          */
@@ -258,8 +256,6 @@ abstract class Create extends \Magento\Backend\App\Action
             $this->_getOrderCreateModel()->moveQuoteItem($moveItemId, $moveTo, $moveQty);
         }
 
-        $this->_eventManager->dispatch('adminhtml_sales_order_create_process_item_after', $eventData);
-
         if ($paymentData = $this->getRequest()->getPost('payment')) {
             $this->_getOrderCreateModel()->getQuote()->getPayment()->addData($paymentData);
         }
@@ -290,7 +286,7 @@ abstract class Create extends \Magento\Backend\App\Action
          */
         if ($data = $this->getRequest()->getPost('add_products')) {
             $this->_getGiftmessageSaveModel()->importAllowQuoteItemsFromProducts(
-                $this->_objectManager->get(\Magento\Framework\Json\Helper\Data::class)->jsonDecode($data)
+                $this->_objectManager->get('Magento\Framework\Json\Helper\Data')->jsonDecode($data)
             );
         }
 
@@ -349,7 +345,7 @@ abstract class Create extends \Magento\Backend\App\Action
     protected function _processFiles($items)
     {
         /* @var $productHelper \Magento\Catalog\Helper\Product */
-        $productHelper = $this->_objectManager->get(\Magento\Catalog\Helper\Product::class);
+        $productHelper = $this->_objectManager->get('Magento\Catalog\Helper\Product');
         foreach ($items as $id => $item) {
             $buyRequest = new \Magento\Framework\DataObject($item);
             $params = ['files_prefix' => 'item_' . $id . '_'];

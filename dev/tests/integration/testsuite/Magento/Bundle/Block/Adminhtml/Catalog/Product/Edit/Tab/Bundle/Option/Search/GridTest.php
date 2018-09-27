@@ -5,7 +5,7 @@
  */
 namespace Magento\Bundle\Block\Adminhtml\Catalog\Product\Edit\Tab\Bundle\Option\Search;
 
-class GridTest extends \PHPUnit\Framework\TestCase
+class GridTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @magentoAppIsolation enabled
@@ -16,11 +16,11 @@ class GridTest extends \PHPUnit\Framework\TestCase
             ->loadArea(\Magento\Backend\App\Area\FrontNameResolver::AREA_CODE);
         /** @var $layout \Magento\Framework\View\LayoutInterface */
         $layout = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->create(
-            \Magento\Framework\View\Layout::class,
+            'Magento\Framework\View\Layout',
             ['area' => \Magento\Backend\App\Area\FrontNameResolver::AREA_CODE]
         );
         $block = $layout->createBlock(
-            \Magento\Bundle\Block\Adminhtml\Catalog\Product\Edit\Tab\Bundle\Option\Search\Grid::class,
+            'Magento\Bundle\Block\Adminhtml\Catalog\Product\Edit\Tab\Bundle\Option\Search\Grid',
             'block'
         );
         $block->setId('temp_id');

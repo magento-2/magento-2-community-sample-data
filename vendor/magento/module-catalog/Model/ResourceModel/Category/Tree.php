@@ -10,9 +10,7 @@ use Magento\Catalog\Api\Data\CategoryInterface;
 use Magento\Framework\EntityManager\MetadataPool;
 
 /**
- * @api
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
- * @since 100.0.2
  */
 class Tree extends Dbp
 {
@@ -95,7 +93,6 @@ class Tree extends Dbp
 
     /**
      * @var MetadataPool
-     * @since 101.0.0
      */
     protected $metadataPool;
 
@@ -686,7 +683,7 @@ class Tree extends Dbp
     {
         if (null === $this->metadataPool) {
             $this->metadataPool = \Magento\Framework\App\ObjectManager::getInstance()
-                ->get(\Magento\Framework\EntityManager\MetadataPool::class);
+                ->get('Magento\Framework\EntityManager\MetadataPool');
         }
         return $this->metadataPool;
     }

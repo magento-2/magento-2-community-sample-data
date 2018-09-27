@@ -23,13 +23,14 @@ use Magento\Mtf\TestCase\Injectable;
  * 4. Click 'Create account' button.
  * 5. Perform assertions.
  *
- * @group Customer_Account
+ * @group Customer_Account_(CS)
  * @ZephyrId MAGETWO-23545
  */
 class CreateExistingCustomerFrontendEntity extends Injectable
 {
     /* tags */
     const MVP = 'yes';
+    const DOMAIN = 'CS';
     /* end tags */
 
     /**
@@ -96,6 +97,6 @@ class CreateExistingCustomerFrontendEntity extends Injectable
      */
     public function tearDown()
     {
-        $this->objectManager->create(\Magento\Customer\Test\TestStep\LogoutCustomerOnFrontendStep::class)->run();
+        $this->objectManager->create('Magento\Customer\Test\TestStep\LogoutCustomerOnFrontendStep')->run();
     }
 }

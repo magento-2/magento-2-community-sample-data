@@ -9,7 +9,7 @@
  */
 namespace Magento\Test\Bootstrap;
 
-class DocBlockTest extends \PHPUnit\Framework\TestCase
+class DocBlockTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\TestFramework\Bootstrap\DocBlock
@@ -24,7 +24,7 @@ class DocBlockTest extends \PHPUnit\Framework\TestCase
     protected function setUp()
     {
         $this->_object = new \Magento\TestFramework\Bootstrap\DocBlock(__DIR__);
-        $this->_application = $this->createMock(\Magento\TestFramework\Application::class);
+        $this->_application = $this->getMock('Magento\TestFramework\Application', [], [], '', false);
     }
 
     protected function tearDown()
@@ -52,11 +52,11 @@ class DocBlockTest extends \PHPUnit\Framework\TestCase
     public function testRegisterAnnotations()
     {
         $this->_expectNoListenerCreation(
-            \Magento\TestFramework\Event\PhpUnit::class,
+            'Magento\TestFramework\Event\PhpUnit',
             'Instance of the event manager is required.'
         );
         $this->_expectNoListenerCreation(
-            \Magento\TestFramework\Event\Magento::class,
+            'Magento\TestFramework\Event\Magento',
             'Instance of the "Magento\TestFramework\EventManager" is expected.'
         );
         $this->_object->registerAnnotations($this->_application);

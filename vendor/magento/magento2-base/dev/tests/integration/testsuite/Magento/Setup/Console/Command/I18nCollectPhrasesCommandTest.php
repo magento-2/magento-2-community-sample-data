@@ -7,7 +7,7 @@ namespace Magento\Setup\Console\Command;
 
 use Symfony\Component\Console\Tester\CommandTester;
 
-class I18nCollectPhrasesCommandTest extends \PHPUnit\Framework\TestCase
+class I18nCollectPhrasesCommandTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var I18nCollectPhrasesCommand
@@ -27,7 +27,7 @@ class I18nCollectPhrasesCommandTest extends \PHPUnit\Framework\TestCase
 
     public function tearDown()
     {
-        $property = new \ReflectionProperty(\Magento\Setup\Module\I18n\ServiceLocator::class, '_dictionaryGenerator');
+        $property = new \ReflectionProperty('\Magento\Setup\Module\I18n\ServiceLocator', '_dictionaryGenerator');
         $property->setAccessible(true);
         $property->setValue(null);
         $property->setAccessible(false);

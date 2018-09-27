@@ -10,9 +10,6 @@ namespace Magento\ProductAlert\Model;
  *
  * @author     Magento Core Team <core@magentocommerce.com>
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
- *
- * @api
- * @since 100.0.2
  */
 class Email extends \Magento\Framework\Model\AbstractModel
 {
@@ -377,6 +374,8 @@ class Email extends \Magento\Framework\Model\AbstractModel
                 'customerName' => $this->_customerHelper->getCustomerName($this->_customer),
                 'alertGrid' => $alertGrid,
             ]
+        )->setScopeId(
+            $storeId
         )->setFrom(
             $this->_scopeConfig->getValue(
                 self::XML_PATH_EMAIL_IDENTITY,

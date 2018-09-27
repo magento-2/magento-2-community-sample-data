@@ -22,7 +22,9 @@ class Updater
     const TASK_TYPE_MAINTENANCE_MODE = 'maintenance_mode';
     /**#@-*/
 
-    /**#@-*/
+    /**
+     * @var Queue
+     */
     private $queue;
 
     /**

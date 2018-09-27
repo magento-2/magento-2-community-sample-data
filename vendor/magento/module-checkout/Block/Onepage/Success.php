@@ -10,8 +10,6 @@ use Magento\Sales\Model\Order;
 
 /**
  * One page checkout success page
- *
- * @api
  */
 class Success extends \Magento\Framework\View\Element\Template
 {
@@ -123,14 +121,5 @@ class Success extends \Magento\Framework\View\Element\Template
     {
         return $this->httpContext->getValue(Context::CONTEXT_AUTH)
             && $this->isVisible($order);
-    }
-
-    /**
-     * @return string
-     * @since 100.2.0
-     */
-    public function getContinueUrl()
-    {
-        return $this->_storeManager->getStore()->getBaseUrl();
     }
 }

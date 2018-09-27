@@ -5,10 +5,11 @@
  */
 namespace Magento\CatalogImportExport\Test\Unit\Model\Import\Product;
 
-use Magento\CatalogImportExport\Model\Import\Product\CategoryProcessor;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager as ObjectManagerHelper;
+use Magento\CatalogImportExport\Model\Import\Product\Validator;
+use Magento\CatalogImportExport\Model\Import\Product\CategoryProcessor;
 
-class CategoryProcessorTest extends \PHPUnit\Framework\TestCase
+class CategoryProcessorTest extends \PHPUnit_Framework_TestCase
 {
     const PARENT_CATEGORY_ID = 1;
 
@@ -39,17 +40,17 @@ class CategoryProcessorTest extends \PHPUnit\Framework\TestCase
         $this->objectManager = new \Magento\Framework\TestFramework\Unit\Helper\ObjectManager($this);
         $this->objectManagerHelper = new ObjectManagerHelper($this);
 
-        $childCategory = $this->getMockBuilder(\Magento\Catalog\Model\Category::class)
+        $childCategory = $this->getMockBuilder('Magento\Catalog\Model\Category')
             ->disableOriginalConstructor()
             ->getMock();
         $childCategory->method('getId')->will($this->returnValue(self::CHILD_CATEGORY_ID));
-        $childCategory->method('getName')->will($this->returnValue(self::CHILD_CATEGORY_NAME));
+        $childCategory->method('getName')->will($this->returnValue('Child'));
         $childCategory->method('getPath')->will($this->returnValue(
             self::PARENT_CATEGORY_ID . CategoryProcessor::DELIMITER_CATEGORY
             . self::CHILD_CATEGORY_ID
         ));
 
-        $parentCategory = $this->getMockBuilder(\Magento\Catalog\Model\Category::class)
+        $parentCategory = $this->getMockBuilder('Magento\Catalog\Model\Category')
             ->disableOriginalConstructor()
             ->getMock();
         $parentCategory->method('getId')->will($this->returnValue(self::PARENT_CATEGORY_ID));
@@ -58,7 +59,7 @@ class CategoryProcessorTest extends \PHPUnit\Framework\TestCase
 
         $categoryCollection =
             $this->objectManagerHelper->getCollectionMock(
-                \Magento\Catalog\Model\ResourceModel\Category\Collection::class,
+                'Magento\Catalog\Model\ResourceModel\Category\Collection',
                 [
                     self::PARENT_CATEGORY_ID => $parentCategory,
                     self::CHILD_CATEGORY_ID => $childCategory,
@@ -80,14 +81,23 @@ class CategoryProcessorTest extends \PHPUnit\Framework\TestCase
             )
             ->will($this->returnSelf());
 
-        $categoryColFactory = $this->createPartialMock(
-            \Magento\Catalog\Model\ResourceModel\Category\CollectionFactory::class,
-            ['create']
+        $categoryColFactory = $this->getMock(
+            'Magento\Catalog\Model\ResourceModel\Category\CollectionFactory',
+            ['create'],
+            [],
+            '',
+            false
         );
 
         $categoryColFactory->method('create')->will($this->returnValue($categoryCollection));
 
-        $categoryFactory = $this->createPartialMock(\Magento\Catalog\Model\CategoryFactory::class, ['create']);
+        $categoryFactory = $this->getMock(
+            'Magento\Catalog\Model\CategoryFactory',
+            ['create'],
+            [],
+            '',
+            false
+        );
 
         $categoryFactory->method('create')->will($this->returnValue($childCategory));
 
@@ -105,22 +115,6 @@ class CategoryProcessorTest extends \PHPUnit\Framework\TestCase
         $this->assertArrayHasKey(self::CHILD_CATEGORY_ID, array_flip($categoryIds));
     }
 
-    public function testClearFailedCategories()
-    {
-        $dummyFailedCategory = [
-            [
-                'category' => 'dummy category',
-                'exception' => 'dummy exception',
-            ]
-        ];
-
-        $this->setPropertyValue($this->categoryProcessor, 'failedCategories', $dummyFailedCategory);
-        $this->assertCount(count($dummyFailedCategory), $this->categoryProcessor->getFailedCategories());
-
-        $this->categoryProcessor->clearFailedCategories();
-        $this->assertEmpty($this->categoryProcessor->getFailedCategories());
-    }
-
     /**
      * Cover getCategoryById().
      *
@@ -135,6 +129,9 @@ class CategoryProcessorTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals($expectedResult, $actualResult);
     }
 
+    /**
+     * @return array
+     */
     public function getCategoryByIdDataProvider()
     {
         return [

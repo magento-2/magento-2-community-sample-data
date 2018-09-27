@@ -3,11 +3,6 @@
  * Copyright © Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
-namespace Magento\Catalog\Model;
-
-use Magento\TestFramework\Helper\Bootstrap;
-use Magento\Catalog\Api\ProductRepositoryInterface;
-use Magento\Catalog\Model\ResourceModel\Product\Collection;
 
 /**
  * Tests product model:
@@ -16,7 +11,9 @@ use Magento\Catalog\Model\ResourceModel\Product\Collection;
  * @see \Magento\Catalog\Model\ProductTest
  * @see \Magento\Catalog\Model\ProductExternalTest
  */
-class ProductPriceTest extends \PHPUnit\Framework\TestCase
+namespace Magento\Catalog\Model;
+
+class ProductPriceTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\Catalog\Model\Product
@@ -25,7 +22,9 @@ class ProductPriceTest extends \PHPUnit\Framework\TestCase
 
     protected function setUp()
     {
-        $this->_model = Bootstrap::getObjectManager()->create(Product::class);
+        $this->_model = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->create(
+            'Magento\Catalog\Model\Product'
+        );
     }
 
     public function testGetPrice()
@@ -38,7 +37,7 @@ class ProductPriceTest extends \PHPUnit\Framework\TestCase
     public function testGetPriceModel()
     {
         $default = $this->_model->getPriceModel();
-        $this->assertInstanceOf(\Magento\Catalog\Model\Product\Type\Price::class, $default);
+        $this->assertInstanceOf('Magento\Catalog\Model\Product\Type\Price', $default);
         $this->assertSame($default, $this->_model->getPriceModel());
     }
 
@@ -69,25 +68,7 @@ class ProductPriceTest extends \PHPUnit\Framework\TestCase
     public function testSetGetFinalPrice()
     {
         $this->assertEquals(0, $this->_model->getFinalPrice());
-        $this->_model->setPrice(10);
         $this->_model->setFinalPrice(10);
         $this->assertEquals(10, $this->_model->getFinalPrice());
-    }
-
-    /**
-     * @magentoDbIsolation disabled
-     * @magentoDataFixture Magento/Catalog/_files/product_with_options.php
-     */
-    public function testGetMinPrice()
-    {
-        $productRepository = Bootstrap::getObjectManager()->create(ProductRepositoryInterface::class);
-        $product = $productRepository->get('simple');
-        $collection = Bootstrap::getObjectManager()->create(Collection::class);
-        $collection->addIdFilter($product->getId());
-        $collection->addPriceData();
-        $collection->load();
-        /** @var \Magento\Catalog\Model\Product $product */
-        $product = $collection->getFirstItem();
-        $this->assertEquals(333, $product->getData('min_price'));
     }
 }

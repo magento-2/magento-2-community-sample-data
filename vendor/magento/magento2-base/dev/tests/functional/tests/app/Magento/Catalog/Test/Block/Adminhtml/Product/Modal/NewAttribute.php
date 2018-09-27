@@ -30,7 +30,7 @@ class NewAttribute extends FormSections
     protected function getFormPageActionsBlock()
     {
         return $this->blockFactory->create(
-            \Magento\Backend\Test\Block\FormPageActions::class,
+            'Magento\Backend\Test\Block\FormPageActions',
             ['element' => $this->_rootElement->find($this->newAttributeBlock, Locator::SELECTOR_XPATH)]
         );
     }

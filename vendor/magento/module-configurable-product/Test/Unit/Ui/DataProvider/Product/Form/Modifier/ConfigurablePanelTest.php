@@ -11,7 +11,7 @@ use Magento\Catalog\Model\Locator\LocatorInterface;
 use Magento\Framework\UrlInterface;
 use Magento\Catalog\Api\Data\ProductInterface;
 
-class ConfigurablePanelTest extends \PHPUnit\Framework\TestCase
+class ConfigurablePanelTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var ConfigurablePanelModifier

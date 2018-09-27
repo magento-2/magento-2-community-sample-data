@@ -8,7 +8,7 @@ namespace Magento\Integration\Test\Unit\Model\ResourceModel\Oauth;
 /**
  * Unit test for \Magento\Integration\Model\ResourceModel\Oauth\Consumer
  */
-class ConsumerTest extends \PHPUnit\Framework\TestCase
+class ConsumerTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\Framework\DB\Adapter\AdapterInterface|\PHPUnit_Framework_MockObject_MockObject
@@ -32,17 +32,20 @@ class ConsumerTest extends \PHPUnit\Framework\TestCase
 
     protected function setUp()
     {
-        $this->consumerMock = $this->createPartialMock(
-            \Magento\Integration\Model\Oauth\Consumer::class,
-            ['setUpdatedAt', 'getId']
+        $this->consumerMock = $this->getMock(
+            'Magento\Integration\Model\Oauth\Consumer',
+            ['setUpdatedAt', 'getId'],
+            [],
+            '',
+            false
         );
 
-        $this->connectionMock = $this->createMock(\Magento\Framework\DB\Adapter\Pdo\Mysql::class);
+        $this->connectionMock = $this->getMock('Magento\Framework\DB\Adapter\Pdo\Mysql', [], [], '', false);
 
-        $this->resourceMock = $this->createMock(\Magento\Framework\App\ResourceConnection::class);
+        $this->resourceMock = $this->getMock('Magento\Framework\App\ResourceConnection', [], [], '', false);
         $this->resourceMock->expects($this->any())->method('getConnection')->willReturn($this->connectionMock);
 
-        $contextMock = $this->createMock(\Magento\Framework\Model\ResourceModel\Db\Context::class);
+        $contextMock = $this->getMock('Magento\Framework\Model\ResourceModel\Db\Context', [], [], '', false);
         $contextMock->expects($this->once())->method('getResources')->willReturn($this->resourceMock);
         $this->consumerResource = new \Magento\Integration\Model\ResourceModel\Oauth\Consumer(
             $contextMock,
@@ -54,14 +57,14 @@ class ConsumerTest extends \PHPUnit\Framework\TestCase
     {
         $this->connectionMock->expects($this->exactly(2))->method('delete');
         $this->assertInstanceOf(
-            \Magento\Integration\Model\ResourceModel\Oauth\Consumer::class,
+            'Magento\Integration\Model\ResourceModel\Oauth\Consumer',
             $this->consumerResource->_afterDelete($this->consumerMock)
         );
     }
 
     public function testGetTimeInSecondsSinceCreation()
     {
-        $selectMock = $this->createMock(\Magento\Framework\DB\Select::class);
+        $selectMock = $this->getMock('Magento\Framework\DB\Select', [], [], '', false);
         $selectMock->expects($this->any())->method('from')->will($this->returnValue($selectMock));
         $selectMock->expects($this->any())->method('reset')->will($this->returnValue($selectMock));
         $selectMock->expects($this->any())->method('columns')->will($this->returnValue($selectMock));

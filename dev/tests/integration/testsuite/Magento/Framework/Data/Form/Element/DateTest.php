@@ -9,7 +9,7 @@
  */
 namespace Magento\Framework\Data\Form\Element;
 
-class DateTest extends \PHPUnit\Framework\TestCase
+class DateTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\Framework\Data\Form\ElementFactory
@@ -22,7 +22,7 @@ class DateTest extends \PHPUnit\Framework\TestCase
     protected function setUp()
     {
         $objectManager = \Magento\TestFramework\Helper\Bootstrap::getObjectManager();
-        $this->_elementFactory = $objectManager->create(\Magento\Framework\Data\Form\ElementFactory::class);
+        $this->_elementFactory = $objectManager->create('Magento\Framework\Data\Form\ElementFactory');
     }
 
     /**
@@ -31,7 +31,7 @@ class DateTest extends \PHPUnit\Framework\TestCase
     public function testGetValue(array $data, $expect)
     {
         /** @var $date \Magento\Framework\Data\Form\Element\Date */
-        $date = $this->_elementFactory->create(\Magento\Framework\Data\Form\Element\Date::class, $data);
+        $date = $this->_elementFactory->create('Magento\Framework\Data\Form\Element\Date', $data);
         $this->assertEquals($expect, $date->getValue());
     }
 

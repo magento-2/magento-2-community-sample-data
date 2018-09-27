@@ -8,8 +8,7 @@ namespace Magento\Downloadable\Model\ResourceModel\Link\Purchased\Item;
 /**
  * Downloadable links purchased items resource collection
  *
- * @api
- * @since 100.0.2
+ * @author      Magento Core Team <core@magentocommerce.com>
  */
 class Collection extends \Magento\Framework\Model\ResourceModel\Db\Collection\AbstractCollection
 {
@@ -21,8 +20,8 @@ class Collection extends \Magento\Framework\Model\ResourceModel\Db\Collection\Ab
     protected function _construct()
     {
         $this->_init(
-            \Magento\Downloadable\Model\Link\Purchased\Item::class,
-            \Magento\Downloadable\Model\ResourceModel\Link\Purchased\Item::class
+            'Magento\Downloadable\Model\Link\Purchased\Item',
+            'Magento\Downloadable\Model\ResourceModel\Link\Purchased\Item'
         );
     }
 }

@@ -10,24 +10,19 @@ use Magento\Backend\App\Action\Context;
 use Magento\Framework\Controller\ResultFactory;
 use Magento\Theme\Model\Design\Config\FileUploader\FileProcessor;
 
-/**
- * File Uploads Action Controller
- *
- * @api
- * @since 100.1.0
- */
 class Save extends Action
 {
     /**
-     * @var FileProcessor
-     * @since 100.1.0
-     */
-    protected $fileProcessor;
-
-    /**
-     * Authorization level
+     * Authorization level of a basic admin session.
+     *
+     * @see _isAllowed()
      */
     const ADMIN_RESOURCE = 'Magento_Theme::theme';
+
+    /**
+     * @var FileProcessor
+     */
+    protected $fileProcessor;
 
     /**
      * @param Context $context
@@ -43,7 +38,6 @@ class Save extends Action
 
     /**
      * @inheritDoc
-     * @since 100.1.0
      */
     public function execute()
     {

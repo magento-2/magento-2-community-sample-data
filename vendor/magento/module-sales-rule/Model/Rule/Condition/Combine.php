@@ -5,10 +5,6 @@
  */
 namespace Magento\SalesRule\Model\Rule\Condition;
 
-/**
- * @api
- * @since 100.0.2
- */
 class Combine extends \Magento\Rule\Model\Condition\Combine
 {
     /**
@@ -38,7 +34,7 @@ class Combine extends \Magento\Rule\Model\Condition\Combine
         $this->_eventManager = $eventManager;
         $this->_conditionAddress = $conditionAddress;
         parent::__construct($context, $data);
-        $this->setType(\Magento\SalesRule\Model\Rule\Condition\Combine::class);
+        $this->setType('Magento\SalesRule\Model\Rule\Condition\Combine');
     }
 
     /**
@@ -62,15 +58,15 @@ class Combine extends \Magento\Rule\Model\Condition\Combine
             $conditions,
             [
                 [
-                    'value' => \Magento\SalesRule\Model\Rule\Condition\Product\Found::class,
+                    'value' => 'Magento\SalesRule\Model\Rule\Condition\Product\Found',
                     'label' => __('Product attribute combination'),
                 ],
                 [
-                    'value' => \Magento\SalesRule\Model\Rule\Condition\Product\Subselect::class,
+                    'value' => 'Magento\SalesRule\Model\Rule\Condition\Product\Subselect',
                     'label' => __('Products subselection')
                 ],
                 [
-                    'value' => \Magento\SalesRule\Model\Rule\Condition\Combine::class,
+                    'value' => 'Magento\SalesRule\Model\Rule\Condition\Combine',
                     'label' => __('Conditions combination')
                 ],
                 ['label' => __('Cart Attribute'), 'value' => $attributes]

@@ -7,7 +7,7 @@
  */
 namespace Magento\Framework\DB\Test\Unit\Tree;
 
-class NodeTest extends \PHPUnit\Framework\TestCase
+class NodeTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @param array $data
@@ -20,8 +20,7 @@ class NodeTest extends \PHPUnit\Framework\TestCase
         $expectedException,
         $expectedExceptionMessage
     ) {
-        $this->expectException($expectedException);
-        $this->expectExceptionMessage($expectedExceptionMessage);
+        $this->setExpectedException($expectedException, $expectedExceptionMessage);
         new \Magento\Framework\DB\Tree\Node($data['node_data'], $data['keys']);
     }
 
@@ -93,21 +92,24 @@ class NodeTest extends \PHPUnit\Framework\TestCase
                 [
                     'node_data' => null,
                     'keys' => null,
-                ], \Magento\Framework\Exception\LocalizedException::class,
+                ],
+                '\Magento\Framework\Exception\LocalizedException',
                 'Empty array of node information',
             ],
             [
                 [
                     'node_data' => null,
                     'keys' => true,
-                ], \Magento\Framework\Exception\LocalizedException::class,
+                ],
+                '\Magento\Framework\Exception\LocalizedException',
                 'Empty array of node information'
             ],
             [
                 [
                     'node_data' => true,
                     'keys' => null,
-                ], \Magento\Framework\Exception\LocalizedException::class,
+                ],
+                '\Magento\Framework\Exception\LocalizedException',
                 'Empty keys array'
             ]
         ];

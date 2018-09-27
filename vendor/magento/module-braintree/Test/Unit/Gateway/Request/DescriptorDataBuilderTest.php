@@ -6,13 +6,16 @@
 namespace Magento\Braintree\Test\Unit\Gateway\Request;
 
 use Magento\Braintree\Gateway\Config\Config;
-use Magento\Braintree\Gateway\SubjectReader;
+use Magento\Braintree\Gateway\Helper\SubjectReader;
 use Magento\Braintree\Gateway\Request\DescriptorDataBuilder;
 use Magento\Payment\Gateway\Data\OrderAdapterInterface;
 use Magento\Payment\Gateway\Data\PaymentDataObjectInterface;
 use PHPUnit_Framework_MockObject_MockObject as MockObject;
 
-class DescriptorDataBuilderTest extends \PHPUnit\Framework\TestCase
+/**
+ * Class DescriptorDataBuilderTest
+ */
+class DescriptorDataBuilderTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var Config|MockObject
@@ -41,8 +44,8 @@ class DescriptorDataBuilderTest extends \PHPUnit\Framework\TestCase
      */
     public function testBuild(array $descriptors, array $expected)
     {
-        $paymentDO = $this->createMock(PaymentDataObjectInterface::class);
-        $order = $this->createMock(OrderAdapterInterface::class);
+        $paymentDO = $this->getMockForAbstractClass(PaymentDataObjectInterface::class);
+        $order = $this->getMockForAbstractClass(OrderAdapterInterface::class);
         $paymentDO->method('getOrder')
             ->willReturn($order);
 

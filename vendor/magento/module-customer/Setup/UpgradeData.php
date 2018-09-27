@@ -17,8 +17,6 @@ use Magento\Framework\Setup\ModuleContextInterface;
 use Magento\Framework\Setup\ModuleDataSetupInterface;
 use Magento\Store\Model\ScopeInterface;
 use Magento\Store\Model\StoreManagerInterface;
-use Magento\Framework\DB\FieldDataConverterFactory;
-use Magento\Framework\DB\DataConverter\SerializedToJson;
 
 /**
  * @codeCoverageIgnore
@@ -34,11 +32,6 @@ class UpgradeData implements UpgradeDataInterface
     protected $customerSetupFactory;
 
     /**
-     * @var AllowedCountries
-     */
-    private $allowedCountriesReader;
-
-    /**
      * @var IndexerRegistry
      */
     protected $indexerRegistry;
@@ -49,34 +42,28 @@ class UpgradeData implements UpgradeDataInterface
     protected $eavConfig;
 
     /**
+     * @var AllowedCountries
+     */
+    private $allowedCountriesReader;
+
+    /**
      * @var StoreManagerInterface
      */
     private $storeManager;
 
     /**
-     * @var FieldDataConverterFactory
-     */
-    private $fieldDataConverterFactory;
-
-    /**
      * @param CustomerSetupFactory $customerSetupFactory
      * @param IndexerRegistry $indexerRegistry
      * @param \Magento\Eav\Model\Config $eavConfig
-     * @param FieldDataConverterFactory|null $fieldDataConverterFactory
      */
     public function __construct(
         CustomerSetupFactory $customerSetupFactory,
         IndexerRegistry $indexerRegistry,
-        \Magento\Eav\Model\Config $eavConfig,
-        FieldDataConverterFactory $fieldDataConverterFactory = null
+        \Magento\Eav\Model\Config $eavConfig
     ) {
         $this->customerSetupFactory = $customerSetupFactory;
         $this->indexerRegistry = $indexerRegistry;
         $this->eavConfig = $eavConfig;
-
-        $this->fieldDataConverterFactory = $fieldDataConverterFactory ?: ObjectManager::getInstance()->get(
-            FieldDataConverterFactory::class
-        );
     }
 
     /**
@@ -121,14 +108,6 @@ class UpgradeData implements UpgradeDataInterface
             );
         }
 
-        if (version_compare($context->getVersion(), '2.0.8', '<')) {
-            $setup->getConnection()->update(
-                $setup->getTable('core_config_data'),
-                ['path' => \Magento\Customer\Model\Form::XML_PATH_ENABLE_AUTOCOMPLETE],
-                ['path = ?' => 'general/restriction/autocomplete_on_storefront']
-            );
-        }
-
         if (version_compare($context->getVersion(), '2.0.7', '<')) {
             $this->upgradeVersionTwoZeroSeven($customerSetup);
             $this->upgradeCustomerPasswordResetlinkExpirationPeriodConfig($setup);
@@ -145,23 +124,6 @@ class UpgradeData implements UpgradeDataInterface
                 throw $e;
             }
         }
-        if (version_compare($context->getVersion(), '2.0.11', '<')) {
-            $fieldDataConverter = $this->fieldDataConverterFactory->create(SerializedToJson::class);
-            $fieldDataConverter->convert(
-                $setup->getConnection(),
-                $setup->getTable('customer_eav_attribute'),
-                'attribute_id',
-                'validate_rules'
-            );
-        }
-
-        if (version_compare($context->getVersion(), '2.0.12', '<')) {
-            $this->upgradeVersionTwoZeroTwelve($customerSetup);
-        }
-
-        if (version_compare($context->getVersion(), '2.0.13', '<')) {
-            $this->upgradeVersionTwoZeroThirteen($customerSetup);
-        }
 
         $indexer = $this->indexerRegistry->get(Customer::CUSTOMER_GRID_INDEXER_ID);
         $indexer->reindexAll();
@@ -172,7 +134,7 @@ class UpgradeData implements UpgradeDataInterface
     /**
      * Retrieve Store Manager
      *
-     * @deprecated 100.1.3
+     * @deprecated
      * @return StoreManagerInterface
      */
     private function getStoreManager()
@@ -187,7 +149,7 @@ class UpgradeData implements UpgradeDataInterface
     /**
      * Retrieve Allowed Countries Reader
      *
-     * @deprecated 100.1.3
+     * @deprecated
      * @return AllowedCountries
      */
     private function getAllowedCountriesReader()
@@ -200,7 +162,7 @@ class UpgradeData implements UpgradeDataInterface
     }
 
     /**
-     * Merge allowed countries between different scopes
+     * Merge allowed countries from different scopes
      *
      * @param array $countries
      * @param array $newCountries
@@ -220,7 +182,7 @@ class UpgradeData implements UpgradeDataInterface
     }
 
     /**
-     * Retrieve countries not depending on global scope
+     * Retrieve unqiue allowed countries by scope
      *
      * @param string $scope
      * @param int $scopeCode
@@ -228,18 +190,21 @@ class UpgradeData implements UpgradeDataInterface
      */
     private function getAllowedCountries($scope, $scopeCode)
     {
-        $reader = $this->getAllowedCountriesReader();
-        return $reader->makeCountriesUnique($reader->getCountriesFromConfig($scope, $scopeCode));
+        $allowedCountriesReader = $this->getAllowedCountriesReader();
+        return $allowedCountriesReader->makeCountriesUnique(
+            $allowedCountriesReader->getCountriesFromConfig($scope, $scopeCode)
+        );
     }
 
     /**
-     * Merge allowed countries from stores to websites
+     * Migrate and merge allowed countries
      *
      * @param SetupInterface $setup
      * @return void
      */
     private function migrateStoresAllowedCountriesToWebsite(SetupInterface $setup)
     {
+
         $allowedCountries = [];
         //Process Websites
         foreach ($this->getStoreManager()->getStores() as $store) {
@@ -553,45 +518,45 @@ class UpgradeData implements UpgradeDataInterface
         $customerSetup->updateEntityType(
             \Magento\Customer\Model\Customer::ENTITY,
             'entity_model',
-            \Magento\Customer\Model\ResourceModel\Customer::class
+            'Magento\Customer\Model\ResourceModel\Customer'
         );
         $customerSetup->updateEntityType(
             \Magento\Customer\Model\Customer::ENTITY,
             'increment_model',
-            \Magento\Eav\Model\Entity\Increment\NumericValue::class
+            'Magento\Eav\Model\Entity\Increment\NumericValue'
         );
         $customerSetup->updateEntityType(
             \Magento\Customer\Model\Customer::ENTITY,
             'entity_attribute_collection',
-            \Magento\Customer\Model\ResourceModel\Attribute\Collection::class
+            'Magento\Customer\Model\ResourceModel\Attribute\Collection'
         );
         $customerSetup->updateEntityType(
             'customer_address',
             'entity_model',
-            \Magento\Customer\Model\ResourceModel\Address::class
+            'Magento\Customer\Model\ResourceModel\Address'
         );
         $customerSetup->updateEntityType(
             'customer_address',
             'entity_attribute_collection',
-            \Magento\Customer\Model\ResourceModel\Address\Attribute\Collection::class
+            'Magento\Customer\Model\ResourceModel\Address\Attribute\Collection'
         );
         $customerSetup->updateAttribute(
             'customer_address',
             'country_id',
             'source_model',
-            \Magento\Customer\Model\ResourceModel\Address\Attribute\Source\Country::class
+            'Magento\Customer\Model\ResourceModel\Address\Attribute\Source\Country'
         );
         $customerSetup->updateAttribute(
             'customer_address',
             'region',
             'backend_model',
-            \Magento\Customer\Model\ResourceModel\Address\Attribute\Backend\Region::class
+            'Magento\Customer\Model\ResourceModel\Address\Attribute\Backend\Region'
         );
         $customerSetup->updateAttribute(
             'customer_address',
             'region_id',
             'source_model',
-            \Magento\Customer\Model\ResourceModel\Address\Attribute\Source\Region::class
+            'Magento\Customer\Model\ResourceModel\Address\Attribute\Source\Region'
         );
     }
 
@@ -645,15 +610,6 @@ class UpgradeData implements UpgradeDataInterface
     }
 
     /**
-     * @param CustomerSetup $customerSetup
-     * @return void
-     */
-    private function upgradeVersionTwoZeroTwelve(CustomerSetup $customerSetup)
-    {
-        $customerSetup->updateAttribute('customer_address', 'vat_id', 'frontend_label', 'VAT Number');
-    }
-
-    /**
      * @param ModuleDataSetupInterface $setup
      * @return void
      */
@@ -666,37 +622,5 @@ class UpgradeData implements UpgradeDataInterface
             ['value' => new \Zend_Db_Expr('value*24')],
             ['path = ?' => \Magento\Customer\Model\Customer::XML_PATH_CUSTOMER_RESET_PASSWORD_LINK_EXPIRATION_PERIOD]
         );
-    }
-
-    /**
-     * @param CustomerSetup $customerSetup
-     */
-    private function upgradeVersionTwoZeroThirteen(CustomerSetup $customerSetup)
-    {
-        $entityAttributes = [
-            'customer_address' => [
-                'firstname' => [
-                    'input_filter' => 'trim'
-                ],
-                'lastname' => [
-                    'input_filter' => 'trim'
-                ],
-                'middlename' => [
-                    'input_filter' => 'trim'
-                ],
-            ],
-            'customer' => [
-                'firstname' => [
-                    'input_filter' => 'trim'
-                ],
-                'lastname' => [
-                    'input_filter' => 'trim'
-                ],
-                'middlename' => [
-                    'input_filter' => 'trim'
-                ],
-            ],
-        ];
-        $this->upgradeAttributes($entityAttributes, $customerSetup);
     }
 }

@@ -3,7 +3,7 @@ namespace Braintree\MerchantAccount;
 
 use Braintree\Instance;
 
-class FundingDetails extends Instance
+final class FundingDetails extends Instance
 {
     protected $_attributes = [];
 }

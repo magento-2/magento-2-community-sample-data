@@ -33,14 +33,14 @@ class Query implements RouteInterface
      *
      * @var array
      */
-    protected $assembledParams = [];
+    protected $assembledParams = array();
 
     /**
      * Create a new wildcard route.
      *
      * @param array $defaults
      */
-    public function __construct(array $defaults = [])
+    public function __construct(array $defaults = array())
     {
         /**
          * Legacy purposes only, to prevent code that uses it from breaking.
@@ -57,7 +57,7 @@ class Query implements RouteInterface
      * @return Query
      * @throws Exception\InvalidArgumentException
      */
-    public static function factory($options = [])
+    public static function factory($options = array())
     {
         if ($options instanceof Traversable) {
             $options = ArrayUtils::iteratorToArray($options);
@@ -66,7 +66,7 @@ class Query implements RouteInterface
         }
 
         if (!isset($options['defaults'])) {
-            $options['defaults'] = [];
+            $options['defaults'] = array();
         }
 
         return new static($options['defaults']);
@@ -95,7 +95,7 @@ class Query implements RouteInterface
      */
     protected function recursiveUrldecode(array $array)
     {
-        $matches = [];
+        $matches = array();
 
         foreach ($array as $key => $value) {
             if (is_array($value)) {
@@ -116,10 +116,10 @@ class Query implements RouteInterface
      * @param  array $options
      * @return mixed
      */
-    public function assemble(array $params = [], array $options = [])
+    public function assemble(array $params = array(), array $options = array())
     {
         $mergedParams          = array_merge($this->defaults, $params);
-        $this->assembledParams = [];
+        $this->assembledParams = array();
 
         if (isset($options['uri']) && count($mergedParams)) {
             foreach ($mergedParams as $key => $value) {

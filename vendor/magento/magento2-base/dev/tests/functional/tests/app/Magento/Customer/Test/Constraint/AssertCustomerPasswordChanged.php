@@ -48,7 +48,7 @@ class AssertCustomerPasswordChanged extends AbstractConstraint
         );
 
         $this->objectManager->create(
-            \Magento\Customer\Test\TestStep\LoginCustomerOnFrontendStep::class,
+            'Magento\Customer\Test\TestStep\LoginCustomerOnFrontendStep',
             ['customer' => $customer]
         )->run();
 

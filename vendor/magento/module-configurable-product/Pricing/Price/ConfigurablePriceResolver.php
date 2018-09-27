@@ -12,20 +12,18 @@ use Magento\Framework\Pricing\PriceCurrencyInterface;
 
 class ConfigurablePriceResolver implements PriceResolverInterface
 {
-    /**
-     * @var \Magento\ConfigurableProduct\Pricing\Price\PriceResolverInterface
-     */
+    /** @var PriceResolverInterface */
     protected $priceResolver;
 
     /**
      * @var PriceCurrencyInterface
-     * @deprecated 100.1.1
+     * @deprecated
      */
     protected $priceCurrency;
 
     /**
      * @var Configurable
-     * @deprecated 100.1.1
+     * @deprecated
      */
     protected $configurable;
 
@@ -55,8 +53,7 @@ class ConfigurablePriceResolver implements PriceResolverInterface
 
     /**
      * @param \Magento\Framework\Pricing\SaleableInterface|\Magento\Catalog\Model\Product $product
-     * @return float
-     * @throws \Magento\Framework\Exception\LocalizedException
+     * @return float|null
      */
     public function resolvePrice(\Magento\Framework\Pricing\SaleableInterface $product)
     {
@@ -67,6 +64,6 @@ class ConfigurablePriceResolver implements PriceResolverInterface
             $price = $price ? min($price, $productPrice) : $productPrice;
         }
 
-        return (float)$price;
+        return $price === null ? null : (float)$price;
     }
 }

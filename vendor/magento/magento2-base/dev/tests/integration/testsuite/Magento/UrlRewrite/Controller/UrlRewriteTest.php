@@ -16,20 +16,16 @@ class UrlRewriteTest extends \Magento\TestFramework\TestCase\AbstractController
      *
      * @param string $request
      * @param string $redirect
-     * @param int $expectedCode
      *
      * @dataProvider requestDataProvider
      */
-    public function testMatchUrlRewrite(
-        $request,
-        $redirect,
-        $expectedCode = 301
-    ) {
+    public function testMatchUrlRewrite($request, $redirect)
+    {
         $this->dispatch($request);
         $code = $this->getResponse()->getHttpResponseCode();
         $location = $this->getResponse()->getHeader('Location')->getFieldValue();
 
-        $this->assertEquals($expectedCode, $code, 'Invalid response code');
+        $this->assertEquals(301, $code, 'Invalid response code');
         $this->assertStringEndsWith($redirect, $location, 'Invalid location header');
     }
 
@@ -60,12 +56,6 @@ class UrlRewriteTest extends \Magento\TestFramework\TestCase\AbstractController
                 'request' => '/page-similar/',
                 'redirect' => '/page-b',
             ],
-            'Use Case #7: Rewrite during stores switching' => [
-                'request' => '/page-c-on-2nd-store'
-                    . '?___store=default&___from_store=fixture_second_store',
-                'redirect' => '/page-c-on-1st-store',
-                'expectedCode' => 302
-            ]
         ];
     }
 }

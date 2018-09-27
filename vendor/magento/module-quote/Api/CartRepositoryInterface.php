@@ -8,7 +8,6 @@ namespace Magento\Quote\Api;
 /**
  * Interface CartRepositoryInterface
  * @api
- * @since 100.0.2
  */
 interface CartRepositoryInterface
 {
@@ -29,10 +28,10 @@ interface CartRepositoryInterface
      * which call to use to get detailed information about all attributes for an object.
      *
      *
-     * @param \Magento\Framework\Api\SearchCriteriaInterface $searchCriteria
+     * @param \Magento\Framework\Api\SearchCriteria $searchCriteria
      * @return \Magento\Quote\Api\Data\CartSearchResultsInterface
      */
-    public function getList(\Magento\Framework\Api\SearchCriteriaInterface $searchCriteria);
+    public function getList(\Magento\Framework\Api\SearchCriteria $searchCriteria);
 
     /**
      * Get quote by customer Id

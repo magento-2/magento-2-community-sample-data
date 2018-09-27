@@ -13,7 +13,7 @@ use \Magento\Weee\Pricing\Adjustment;
 use Magento\Framework\Pricing\SaleableInterface;
 use Magento\Weee\Helper\Data as WeeeHelper;
 
-class AdjustmentTest extends \PHPUnit\Framework\TestCase
+class AdjustmentTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var Adjustment
@@ -37,8 +37,8 @@ class AdjustmentTest extends \PHPUnit\Framework\TestCase
 
     protected function setUp()
     {
-        $this->weeeHelper = $this->createMock(\Magento\Weee\Helper\Data::class);
-        $this->priceCurrencyMock = $this->createMock(\Magento\Framework\Pricing\PriceCurrencyInterface::class);
+        $this->weeeHelper = $this->getMock('Magento\Weee\Helper\Data', [], [], '', false);
+        $this->priceCurrencyMock = $this->getMock('\Magento\Framework\Pricing\PriceCurrencyInterface');
         $this->priceCurrencyMock->expects($this->any())
             ->method('convertAndRound')
             ->will($this->returnCallback(
@@ -103,7 +103,7 @@ class AdjustmentTest extends \PHPUnit\Framework\TestCase
      */
     public function testApplyAdjustment($amount, $amountOld, $expectedResult)
     {
-        $object = $this->getMockForAbstractClass(\Magento\Framework\Pricing\SaleableInterface::class);
+        $object = $this->getMockForAbstractClass('Magento\Framework\Pricing\SaleableInterface');
 
         $this->weeeHelper->expects($this->any())
             ->method('getAmountExclTax')
@@ -134,6 +134,9 @@ class AdjustmentTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals($expectedResult, $this->adjustment->isExcludedWith($adjustmentCode));
     }
 
+    /**
+     * @return array
+     */
     public function isExcludedWithDataProvider()
     {
         return [
@@ -157,6 +160,9 @@ class AdjustmentTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals($expectedResult, $this->adjustment->getSortOrder());
     }
 
+    /**
+     * @return array
+     */
     public function getSortOrderProvider()
     {
         return [

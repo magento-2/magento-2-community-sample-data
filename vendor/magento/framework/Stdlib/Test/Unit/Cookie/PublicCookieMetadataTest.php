@@ -14,7 +14,7 @@ use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
  * Test PublicCookieMetadata
  *
  */
-class PublicCookieMetadataTest extends \PHPUnit\Framework\TestCase
+class PublicCookieMetadataTest extends \PHPUnit_Framework_TestCase
 {
     /** @var PublicCookieMetadata */
     private $publicCookieMetadata;
@@ -23,7 +23,7 @@ class PublicCookieMetadataTest extends \PHPUnit\Framework\TestCase
     {
         $objectManager = new ObjectManager($this);
         $this->publicCookieMetadata = $objectManager->getObject(
-            \Magento\Framework\Stdlib\Cookie\PublicCookieMetadata::class
+            'Magento\Framework\Stdlib\Cookie\PublicCookieMetadata'
         );
     }
 
@@ -33,6 +33,7 @@ class PublicCookieMetadataTest extends \PHPUnit\Framework\TestCase
      * @param StringUtils $expectedValue
      * @dataProvider getMethodData
      */
+
     public function testGetters($setMethodName, $getMethodName, $expectedValue)
     {
         $this->publicCookieMetadata->$setMethodName($expectedValue);

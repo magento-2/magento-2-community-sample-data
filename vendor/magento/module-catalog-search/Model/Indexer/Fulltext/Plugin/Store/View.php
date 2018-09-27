@@ -5,66 +5,48 @@
  */
 namespace Magento\CatalogSearch\Model\Indexer\Fulltext\Plugin\Store;
 
-use Magento\CatalogSearch\Model\Indexer\Fulltext\Plugin\AbstractPlugin as AbstractIndexerPlugin;
-use Magento\Store\Model\ResourceModel\Store as StoreResourceModel;
-use Magento\Framework\Model\AbstractModel;
-use Magento\CatalogSearch\Model\Indexer\Fulltext as FulltextIndexer;
+use Magento\CatalogSearch\Model\Indexer\Fulltext;
+use Magento\CatalogSearch\Model\Indexer\Fulltext\Plugin\AbstractPlugin;
 
-/**
- * Plugin for Magento\Store\Model\ResourceModel\Store
- */
-class View extends AbstractIndexerPlugin
+class View extends AbstractPlugin
 {
-    /**
-     * @var bool
-     */
-    private $needInvalidation;
-
-    /**
-     * Check if indexer requires invalidation after store view save
-     *
-     * @param StoreResourceModel $subject
-     * @param AbstractModel $store
-     * @return void
-     *
-     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
-     */
-    public function beforeSave(StoreResourceModel $subject, AbstractModel $store)
-    {
-        $this->needInvalidation = $store->isObjectNew();
-    }
-
     /**
      * Invalidate indexer on store view save
      *
-     * @param StoreResourceModel $subject
-     * @param StoreResourceModel $result
-     * @return StoreResourceModel
+     * @param \Magento\Store\Model\ResourceModel\Store $subject
+     * @param \Closure $proceed
+     * @param \Magento\Framework\Model\AbstractModel $store
      *
+     * @return \Magento\Store\Model\ResourceModel\Store
      * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      */
-    public function afterSave(StoreResourceModel $subject, StoreResourceModel $result)
-    {
-        if ($this->needInvalidation) {
-            $this->indexerRegistry->get(FulltextIndexer::INDEXER_ID)->invalidate();
+    public function aroundSave(
+        \Magento\Store\Model\ResourceModel\Store $subject,
+        \Closure $proceed,
+        \Magento\Framework\Model\AbstractModel $store
+    ) {
+        $needInvalidation = $store->isObjectNew();
+        $result = $proceed($store);
+        if ($needInvalidation) {
+            $this->indexerRegistry->get(Fulltext::INDEXER_ID)->invalidate();
         }
-
         return $result;
     }
 
     /**
      * Invalidate indexer on store view delete
      *
-     * @param StoreResourceModel $subject
-     * @param StoreResourceModel $result
-     * @return StoreResourceModel
+     * @param \Magento\Store\Model\ResourceModel\Store $subject
+     * @param \Magento\Store\Model\ResourceModel\Store $result
      *
+     * @return \Magento\Store\Model\ResourceModel\Store
      * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      */
-    public function afterDelete(StoreResourceModel $subject, StoreResourceModel $result)
-    {
-        $this->indexerRegistry->get(FulltextIndexer::INDEXER_ID)->invalidate();
-
+    public function afterDelete(
+        \Magento\Store\Model\ResourceModel\Store $subject,
+        \Magento\Store\Model\ResourceModel\Store $result
+    ) {
+        $this->indexerRegistry->get(Fulltext::INDEXER_ID)->invalidate();
         return $result;
     }
 }

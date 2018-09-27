@@ -11,7 +11,6 @@ namespace Zend\Validator;
 
 use Traversable;
 use Zend\Stdlib\ArrayUtils;
-use Zend\ServiceManager\ServiceManager;
 
 class Explode extends AbstractValidator implements ValidatorPluginManagerAwareInterface
 {
@@ -22,14 +21,14 @@ class Explode extends AbstractValidator implements ValidatorPluginManagerAwareIn
     /**
      * @var array
      */
-    protected $messageTemplates = [
+    protected $messageTemplates = array(
         self::INVALID => "Invalid type given",
-    ];
+    );
 
     /**
      * @var array
      */
-    protected $messageVariables = [];
+    protected $messageVariables = array();
 
     /**
      * @var string
@@ -85,8 +84,8 @@ class Explode extends AbstractValidator implements ValidatorPluginManagerAwareIn
      */
     public function getValidatorPluginManager()
     {
-        if (! $this->pluginManager) {
-            $this->setValidatorPluginManager(new ValidatorPluginManager(new ServiceManager));
+        if (!$this->pluginManager) {
+            $this->setValidatorPluginManager(new ValidatorPluginManager());
         }
 
         return $this->pluginManager;
@@ -102,17 +101,17 @@ class Explode extends AbstractValidator implements ValidatorPluginManagerAwareIn
     public function setValidator($validator)
     {
         if (is_array($validator)) {
-            if (! isset($validator['name'])) {
+            if (!isset($validator['name'])) {
                 throw new Exception\RuntimeException(
                     'Invalid validator specification provided; does not include "name" key'
                 );
             }
             $name = $validator['name'];
-            $options = isset($validator['options']) ? $validator['options'] : [];
+            $options = isset($validator['options']) ? $validator['options'] : array();
             $validator = $this->getValidatorPluginManager()->get($name, $options);
         }
 
-        if (! $validator instanceof ValidatorInterface) {
+        if (!$validator instanceof ValidatorInterface) {
             throw new Exception\RuntimeException(
                 'Invalid validator given'
             );
@@ -182,14 +181,14 @@ class Explode extends AbstractValidator implements ValidatorPluginManagerAwareIn
             // single values (ie. MultiCheckbox form behavior)
             $values = (null !== $delimiter)
                       ? explode($this->valueDelimiter, $value)
-                      : [$value];
+                      : array($value);
         } else {
-            $values = [$value];
+            $values = array($value);
         }
 
         $validator = $this->getValidator();
 
-        if (! $validator) {
+        if (!$validator) {
             throw new Exception\RuntimeException(sprintf(
                 '%s expects a validator to be set; none given',
                 __METHOD__
@@ -197,7 +196,7 @@ class Explode extends AbstractValidator implements ValidatorPluginManagerAwareIn
         }
 
         foreach ($values as $value) {
-            if (! $validator->isValid($value, $context)) {
+            if (!$validator->isValid($value, $context)) {
                 $this->abstractOptions['messages'][] = $validator->getMessages();
 
                 if ($this->isBreakOnFirstFailure()) {

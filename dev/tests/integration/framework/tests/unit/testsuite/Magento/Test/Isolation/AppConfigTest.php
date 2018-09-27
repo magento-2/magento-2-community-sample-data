@@ -12,7 +12,7 @@ namespace Magento\Test\Isolation;
 use Magento\Framework\ObjectManagerInterface;
 use Magento\TestFramework\ObjectManager;
 
-class AppConfigTest extends \PHPUnit\Framework\TestCase
+class AppConfigTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\TestFramework\Isolation\WorkingDirectory
@@ -31,7 +31,7 @@ class AppConfigTest extends \PHPUnit\Framework\TestCase
 
     public function testStartTestEndTest()
     {
-        $test = $this->getMockBuilder(\PHPUnit\Framework\TestCase::class)
+        $test = $this->getMockBuilder(\PHPUnit_Framework_TestCase::class)
             ->disableOriginalConstructor()
             ->getMock();
         $modelReflection = new \ReflectionClass($this->model);
@@ -41,8 +41,9 @@ class AppConfigTest extends \PHPUnit\Framework\TestCase
             ->disableOriginalConstructor()
             ->getMock();
         $testAppConfigProperty->setValue($this->model, $testAppConfigMock);
-        $testAppConfigMock->expects($this->once())
+        $testAppConfigMock->expects($this->exactly(2))
             ->method('clean');
         $this->model->startTest($test);
+        $this->model->endTest($test);
     }
 }

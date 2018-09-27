@@ -7,10 +7,7 @@ namespace Magento\Downloadable\Test\Unit\Controller\Download;
 
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager as ObjectManagerHelper;
 
-/**
- * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
- */
-class LinkSampleTest extends \PHPUnit\Framework\TestCase
+class LinkSampleTest extends \PHPUnit_Framework_TestCase
 {
     /** @var \Magento\Downloadable\Controller\Download\LinkSample */
     protected $linkSample;
@@ -70,9 +67,9 @@ class LinkSampleTest extends \PHPUnit\Framework\TestCase
     {
         $this->objectManagerHelper = new ObjectManagerHelper($this);
 
-        $this->request = $this->createMock(\Magento\Framework\App\RequestInterface::class);
-        $this->response = $this->createPartialMock(
-            \Magento\Framework\App\ResponseInterface::class,
+        $this->request = $this->getMock('Magento\Framework\App\RequestInterface');
+        $this->response = $this->getMock(
+            '\Magento\Framework\App\ResponseInterface',
             [
                 'setHttpResponseCode',
                 'clearBody',
@@ -83,33 +80,75 @@ class LinkSampleTest extends \PHPUnit\Framework\TestCase
             ]
         );
 
-        $this->helperData = $this->createPartialMock(\Magento\Downloadable\Helper\Data::class, [
+        $this->helperData = $this->getMock(
+            'Magento\Downloadable\Helper\Data',
+            [
                 'getIsShareable'
-            ]);
-        $this->downloadHelper = $this->createPartialMock(\Magento\Downloadable\Helper\Download::class, [
+            ],
+            [],
+            '',
+            false
+        );
+        $this->downloadHelper = $this->getMock(
+            'Magento\Downloadable\Helper\Download',
+            [
                 'setResource',
                 'getFilename',
                 'getContentType',
                 'getFileSize',
                 'getContentDisposition',
                 'output'
-            ]);
-        $this->product = $this->createPartialMock(\Magento\Catalog\Model\Product::class, [
+            ],
+            [],
+            '',
+            false
+        );
+        $this->product = $this->getMock(
+            'Magento\Catalog\Model\Product',
+            [
                 '_wakeup',
                 'load',
                 'getId',
                 'getProductUrl',
                 'getName'
-            ]);
-        $this->messageManager = $this->createMock(\Magento\Framework\Message\ManagerInterface::class);
-        $this->redirect = $this->createMock(\Magento\Framework\App\Response\RedirectInterface::class);
-        $this->urlInterface = $this->createMock(\Magento\Framework\UrlInterface::class);
-        $this->objectManager = $this->createPartialMock(\Magento\Framework\ObjectManager\ObjectManager::class, [
+            ],
+            [],
+            '',
+            false
+        );
+        $this->messageManager = $this->getMock(
+            'Magento\Framework\Message\ManagerInterface',
+            [],
+            [],
+            '',
+            false
+        );
+        $this->redirect = $this->getMock(
+            'Magento\Framework\App\Response\RedirectInterface',
+            [],
+            [],
+            '',
+            false
+        );
+        $this->urlInterface = $this->getMock(
+            'Magento\Framework\UrlInterface',
+            [],
+            [],
+            '',
+            false
+        );
+        $this->objectManager = $this->getMock(
+            '\Magento\Framework\ObjectManager\ObjectManager',
+            [
                 'create',
                 'get'
-            ]);
+            ],
+            [],
+            '',
+            false
+        );
         $this->linkSample = $this->objectManagerHelper->getObject(
-            \Magento\Downloadable\Controller\Download\LinkSample::class,
+            'Magento\Downloadable\Controller\Download\LinkSample',
             [
                 'objectManager' => $this->objectManager,
                 'request' => $this->request,
@@ -122,7 +161,7 @@ class LinkSampleTest extends \PHPUnit\Framework\TestCase
 
     public function testExecuteLinkTypeUrl()
     {
-        $linkMock = $this->getMockBuilder(\Magento\Downloadable\Model\Link::class)
+        $linkMock = $this->getMockBuilder('Magento\Downloadable\Model\Link')
             ->disableOriginalConstructor()
             ->setMethods(['getId', 'load', 'getSampleType', 'getSampleUrl'])
             ->getMock();
@@ -130,7 +169,7 @@ class LinkSampleTest extends \PHPUnit\Framework\TestCase
         $this->request->expects($this->once())->method('getParam')->with('link_id', 0)->willReturn('some_link_id');
         $this->objectManager->expects($this->once())
             ->method('create')
-            ->with(\Magento\Downloadable\Model\Link::class)
+            ->with('Magento\Downloadable\Model\Link')
             ->willReturn($linkMock);
         $linkMock->expects($this->once())->method('load')->with('some_link_id')->willReturnSelf();
         $linkMock->expects($this->once())->method('getId')->willReturn('some_link_id');
@@ -140,7 +179,7 @@ class LinkSampleTest extends \PHPUnit\Framework\TestCase
         $linkMock->expects($this->once())->method('getSampleUrl')->willReturn('sample_url');
         $this->objectManager->expects($this->at(1))
             ->method('get')
-            ->with(\Magento\Downloadable\Helper\Download::class)
+            ->with('Magento\Downloadable\Helper\Download')
             ->willReturn($this->downloadHelper);
         $this->response->expects($this->once())->method('setHttpResponseCode')->with(200)->willReturnSelf();
         $this->response->expects($this->any())->method('setHeader')->willReturnSelf();
@@ -157,11 +196,11 @@ class LinkSampleTest extends \PHPUnit\Framework\TestCase
 
     public function testExecuteLinkTypeFile()
     {
-        $linkMock = $this->getMockBuilder(\Magento\Downloadable\Model\Link::class)
+        $linkMock = $this->getMockBuilder('Magento\Downloadable\Model\Link')
             ->disableOriginalConstructor()
             ->setMethods(['getId', 'load', 'getSampleType', 'getSampleUrl', 'getBaseSamplePath'])
             ->getMock();
-        $fileMock = $this->getMockBuilder(\Magento\Downloadable\Helper\File::class)
+        $fileMock = $this->getMockBuilder('Magento\Downloadable\Helper\File')
             ->disableOriginalConstructor()
             ->setMethods(['getFilePath', 'load', 'getSampleType', 'getSampleUrl'])
             ->getMock();
@@ -169,7 +208,7 @@ class LinkSampleTest extends \PHPUnit\Framework\TestCase
         $this->request->expects($this->once())->method('getParam')->with('link_id', 0)->willReturn('some_link_id');
         $this->objectManager->expects($this->at(0))
             ->method('create')
-            ->with(\Magento\Downloadable\Model\Link::class)
+            ->with('Magento\Downloadable\Model\Link')
             ->willReturn($linkMock);
         $linkMock->expects($this->once())->method('load')->with('some_link_id')->willReturnSelf();
         $linkMock->expects($this->once())->method('getId')->willReturn('some_link_id');
@@ -178,16 +217,16 @@ class LinkSampleTest extends \PHPUnit\Framework\TestCase
         );
         $this->objectManager->expects($this->at(1))
             ->method('get')
-            ->with(\Magento\Downloadable\Helper\File::class)
+            ->with('Magento\Downloadable\Helper\File')
             ->willReturn($fileMock);
         $this->objectManager->expects($this->at(2))
             ->method('get')
-            ->with(\Magento\Downloadable\Model\Link::class)
+            ->with('Magento\Downloadable\Model\Link')
             ->willReturn($linkMock);
         $linkMock->expects($this->once())->method('getBaseSamplePath')->willReturn('downloadable/files/link_samples');
         $this->objectManager->expects($this->at(3))
             ->method('get')
-            ->with(\Magento\Downloadable\Helper\Download::class)
+            ->with('Magento\Downloadable\Helper\Download')
             ->willReturn($this->downloadHelper);
         $this->response->expects($this->once())->method('setHttpResponseCode')->with(200)->willReturnSelf();
         $this->response->expects($this->any())->method('setHeader')->willReturnSelf();

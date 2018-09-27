@@ -17,7 +17,11 @@ class SelectConfigOption extends AbstractConfigOption
     const FRONTEND_WIZARD_SELECT = 'select';
     /**#@- */
 
-    /**#@- */
+    /**
+     * Available options
+     *
+     * @var array
+     */
     private $selectOptions;
 
     /**

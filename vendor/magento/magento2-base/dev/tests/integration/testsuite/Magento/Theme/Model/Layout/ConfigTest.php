@@ -7,7 +7,7 @@
  */
 namespace Magento\Theme\Model\Layout;
 
-class ConfigTest extends \PHPUnit\Framework\TestCase
+class ConfigTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\Theme\Model\Layout\Config
@@ -18,22 +18,22 @@ class ConfigTest extends \PHPUnit\Framework\TestCase
     {
         $objectManager = \Magento\TestFramework\Helper\Bootstrap::getObjectManager();
         /** @var $cache \Magento\Framework\App\Cache */
-        $cache = $objectManager->create(\Magento\Framework\App\Cache::class);
+        $cache = $objectManager->create('Magento\Framework\App\Cache');
         $cache->clean();
         $configFile = file_get_contents(__DIR__ . '/_files/page_layouts.xml');
-        $fileResolverMock = $this->getMockBuilder(\Magento\Framework\Config\FileResolverInterface::class)
+        $fileResolverMock = $this->getMockBuilder('Magento\Framework\Config\FileResolverInterface')
             ->disableOriginalConstructor()
             ->getMock();
         $fileResolverMock->expects($this->any())
             ->method('get')
             ->will($this->returnValue([$configFile]));
         $reader = $objectManager->create(
-            \Magento\Theme\Model\Layout\Config\Reader::class,
+            'Magento\Theme\Model\Layout\Config\Reader',
             ['fileResolver' => $fileResolverMock]
         );
-        $dataStorage = $objectManager->create(\Magento\Theme\Model\Layout\Config\Data::class, ['reader' => $reader]);
+        $dataStorage = $objectManager->create('Magento\Theme\Model\Layout\Config\Data', ['reader' => $reader]);
         $this->_model = $objectManager->create(
-            \Magento\Theme\Model\Layout\Config::class,
+            'Magento\Theme\Model\Layout\Config',
             ['dataStorage' => $dataStorage]
         );
     }

@@ -24,9 +24,8 @@ class InstallExtensionGrid extends AbstractActionController
     /**
      * @param PackagesData $packagesData
      */
-    public function __construct(
-        PackagesData $packagesData
-    ) {
+    public function __construct(PackagesData $packagesData)
+    {
         $this->packagesData = $packagesData;
     }
 
@@ -51,8 +50,6 @@ class InstallExtensionGrid extends AbstractActionController
     {
         $extensions = $this->packagesData->getPackagesForInstall();
         $packages = isset($extensions['packages']) ? $extensions['packages'] : [];
-        $packages = $this->formatPackageList($packages);
-
         return new JsonModel(
             [
                 'success' => true,
@@ -60,20 +57,5 @@ class InstallExtensionGrid extends AbstractActionController
                 'total' => count($packages)
             ]
         );
-    }
-
-    /**
-     * Format package list
-     *
-     * @param array $packages
-     * @return array
-     */
-    private function formatPackageList(array $packages)
-    {
-        array_walk($packages, function (&$package) {
-            $package['vendor'] = ucfirst($package['vendor']);
-        });
-
-        return $packages;
     }
 }

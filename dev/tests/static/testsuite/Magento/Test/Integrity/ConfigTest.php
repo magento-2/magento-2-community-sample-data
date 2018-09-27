@@ -7,7 +7,7 @@ namespace Magento\Test\Integrity;
 
 use Magento\Framework\App\Utility\Classes;
 
-class ConfigTest extends \PHPUnit\Framework\TestCase
+class ConfigTest extends \PHPUnit_Framework_TestCase
 {
     public function testPaymentMethods()
     {

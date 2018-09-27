@@ -114,12 +114,12 @@ class Ini extends AbstractWriter
      * @param  array $parents
      * @return string
      */
-    protected function addBranch(array $config, $parents = [])
+    protected function addBranch(array $config, $parents = array())
     {
         $iniString = '';
 
         foreach ($config as $key => $value) {
-            $group = array_merge($parents, [$key]);
+            $group = array_merge($parents, array($key));
 
             if (is_array($value)) {
                 $iniString .= $this->addBranch($value, $group);
@@ -163,7 +163,7 @@ class Ini extends AbstractWriter
      */
     protected function sortRootElements(array $config)
     {
-        $sections = [];
+        $sections = array();
 
         // Remove sections from config array.
         foreach ($config as $key => $value) {

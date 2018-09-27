@@ -9,7 +9,6 @@ use Magento\Framework\Search\Request\QueryInterface;
 
 /**
  * Match Query
- * @api
  */
 class Match implements QueryInterface
 {

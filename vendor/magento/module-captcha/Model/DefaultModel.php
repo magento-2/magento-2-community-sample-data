@@ -6,12 +6,11 @@
 namespace Magento\Captcha\Model;
 
 /**
- * Implementation of \Zend\Captcha\Image
+ * Implementation of \Zend_Captcha
  *
- * @api
- * @since 100.0.2
+ * @author     Magento Core Team <core@magentocommerce.com>
  */
-class DefaultModel extends \Zend\Captcha\Image implements \Magento\Captcha\Model\CaptchaInterface
+class DefaultModel extends \Zend_Captcha_Image implements \Magento\Captcha\Model\CaptchaInterface
 {
     /**
      * Key in session for captcha code
@@ -30,58 +29,50 @@ class DefaultModel extends \Zend\Captcha\Image implements \Magento\Captcha\Model
 
     /**
      * @var \Magento\Captcha\Helper\Data
-     * @since 100.2.0
      */
-    protected $captchaData;
+    protected $_captchaData;
 
     /**
      * Captcha expire time
      * @var int
-     * @since 100.2.0
      */
-    protected $expiration;
+    protected $_expiration;
 
     /**
      * Override default value to prevent a captcha cut off
      * @var int
-     * @see \Zend\Captcha\Image::$fsize
-     * @since 100.2.0
+     * @see \Zend_Captcha_Image::$_fsize
      */
-    protected $fsize = 22;
+    protected $_fsize = 22;
 
     /**
      * Captcha form id
      * @var string
-     * @since 100.2.0
      */
-    protected $formId;
+    protected $_formId;
 
     /**
      * @var \Magento\Captcha\Model\ResourceModel\LogFactory
-     * @since 100.2.0
      */
-    protected $resLogFactory;
+    protected $_resLogFactory;
 
     /**
      * Overrides parent parameter as session comes in constructor.
      *
      * @var bool
-     * @since 100.2.0
      */
-    protected $keepSession = true;
+    protected $_keepSession = true;
 
     /**
      * @var \Magento\Framework\Session\SessionManagerInterface
-     * @since 100.2.0
      */
-    protected $session;
+    protected $_session;
 
     /**
      * @param \Magento\Framework\Session\SessionManagerInterface $session
      * @param \Magento\Captcha\Helper\Data $captchaData
-     * @param ResourceModel\LogFactory $resLogFactory
+     * @param \Magento\Captcha\Model\ResourceModel\LogFactory $resLogFactory
      * @param string $formId
-     * @throws \Zend\Captcha\Exception\ExtensionNotLoadedException
      */
     public function __construct(
         \Magento\Framework\Session\SessionManagerInterface $session,
@@ -89,11 +80,10 @@ class DefaultModel extends \Zend\Captcha\Image implements \Magento\Captcha\Model
         \Magento\Captcha\Model\ResourceModel\LogFactory $resLogFactory,
         $formId
     ) {
-        parent::__construct();
-        $this->session = $session;
-        $this->captchaData = $captchaData;
-        $this->resLogFactory = $resLogFactory;
-        $this->formId = $formId;
+        $this->_session = $session;
+        $this->_captchaData = $captchaData;
+        $this->_resLogFactory = $resLogFactory;
+        $this->_formId = $formId;
     }
 
     /**
@@ -102,9 +92,9 @@ class DefaultModel extends \Zend\Captcha\Image implements \Magento\Captcha\Model
      * @param string $key
      * @return string
      */
-    private function getFormIdKey($key)
+    protected function _getFormIdKey($key)
     {
-        return $this->formId . '_' . $key;
+        return $this->_formId . '_' . $key;
     }
 
     /**
@@ -114,7 +104,7 @@ class DefaultModel extends \Zend\Captcha\Image implements \Magento\Captcha\Model
      */
     public function getBlockName()
     {
-        return \Magento\Captcha\Block\Captcha\DefaultCaptcha::class;
+        return 'Magento\Captcha\Block\Captcha\DefaultCaptcha';
     }
 
     /**
@@ -125,20 +115,19 @@ class DefaultModel extends \Zend\Captcha\Image implements \Magento\Captcha\Model
      */
     public function isRequired($login = null)
     {
-        if ($this->isUserAuth()
-            && !$this->isShownToLoggedInUser()
-            || !$this->isEnabled()
-            || !in_array(
-                $this->formId,
-                $this->getTargetForms()
-            )
+        if ($this->_isUserAuth() && !$this->isShownToLoggedInUser() || !$this->_isEnabled() || !in_array(
+            $this->_formId,
+            $this->_getTargetForms()
+        )
         ) {
             return false;
         }
 
-        return $this->isShowAlways()
-            || $this->isOverLimitAttempts($login)
-            || $this->session->getData($this->getFormIdKey('show_captcha'));
+        return $this->_isShowAlways() || $this->_isOverLimitAttempts(
+            $login
+        ) || $this->_session->getData(
+            $this->_getFormIdKey('show_captcha')
+        );
     }
 
     /**
@@ -148,9 +137,9 @@ class DefaultModel extends \Zend\Captcha\Image implements \Magento\Captcha\Model
      */
     public function isShownToLoggedInUser()
     {
-        $forms = (array)$this->captchaData->getConfig('shown_to_logged_in_user');
+        $forms = (array)$this->_captchaData->getConfig('shown_to_logged_in_user');
         foreach ($forms as $formId => $isShownToLoggedIn) {
-            if ($isShownToLoggedIn && $this->formId == $formId) {
+            if ($isShownToLoggedIn && $this->_formId == $formId) {
                 return true;
             }
         }
@@ -163,9 +152,9 @@ class DefaultModel extends \Zend\Captcha\Image implements \Magento\Captcha\Model
      * @param string $login
      * @return bool
      */
-    private function isOverLimitAttempts($login)
+    protected function _isOverLimitAttempts($login)
     {
-        return $this->isOverLimitIpAttempt() || $this->isOverLimitLoginAttempts($login);
+        return $this->_isOverLimitIpAttempt() || $this->_isOverLimitLoginAttempts($login);
     }
 
     /**
@@ -173,9 +162,9 @@ class DefaultModel extends \Zend\Captcha\Image implements \Magento\Captcha\Model
      *
      * @return int
      */
-    private function getAllowedAttemptsForSameLogin()
+    protected function _getAllowedAttemptsForSameLogin()
     {
-        return (int)$this->captchaData->getConfig('failed_attempts_login');
+        return (int)$this->_captchaData->getConfig('failed_attempts_login');
     }
 
     /**
@@ -183,20 +172,20 @@ class DefaultModel extends \Zend\Captcha\Image implements \Magento\Captcha\Model
      *
      * @return int
      */
-    private function getAllowedAttemptsFromSameIp()
+    protected function _getAllowedAttemptsFromSameIp()
     {
-        return (int)$this->captchaData->getConfig('failed_attempts_ip');
+        return (int)$this->_captchaData->getConfig('failed_attempts_ip');
     }
 
     /**
-     * Check is over limit saved attempts from one ip
+     * Check is overlimit saved attempts from one ip
      *
      * @return bool
      */
-    private function isOverLimitIpAttempt()
+    protected function _isOverLimitIpAttempt()
     {
-        $countAttemptsByIp = $this->getResourceModel()->countAttemptsByRemoteAddress();
-        return $countAttemptsByIp >= $this->getAllowedAttemptsFromSameIp();
+        $countAttemptsByIp = $this->_getResourceModel()->countAttemptsByRemoteAddress();
+        return $countAttemptsByIp >= $this->_getAllowedAttemptsFromSameIp();
     }
 
     /**
@@ -205,11 +194,11 @@ class DefaultModel extends \Zend\Captcha\Image implements \Magento\Captcha\Model
      * @param string $login
      * @return bool
      */
-    private function isOverLimitLoginAttempts($login)
+    protected function _isOverLimitLoginAttempts($login)
     {
         if ($login != false) {
-            $countAttemptsByLogin = $this->getResourceModel()->countAttemptsByUserLogin($login);
-            return $countAttemptsByLogin >= $this->getAllowedAttemptsForSameLogin();
+            $countAttemptsByLogin = $this->_getResourceModel()->countAttemptsByUserLogin($login);
+            return $countAttemptsByLogin >= $this->_getAllowedAttemptsForSameLogin();
         }
         return false;
     }
@@ -219,9 +208,9 @@ class DefaultModel extends \Zend\Captcha\Image implements \Magento\Captcha\Model
      *
      * @return bool
      */
-    private function isUserAuth()
+    protected function _isUserAuth()
     {
-        return $this->session->isLoggedIn();
+        return $this->_session->isLoggedIn();
     }
 
     /**
@@ -231,7 +220,7 @@ class DefaultModel extends \Zend\Captcha\Image implements \Magento\Captcha\Model
      */
     public function isCaseSensitive()
     {
-        return (string)$this->captchaData->getConfig('case_sensitive');
+        return (string)$this->_captchaData->getConfig('case_sensitive');
     }
 
     /**
@@ -241,8 +230,8 @@ class DefaultModel extends \Zend\Captcha\Image implements \Magento\Captcha\Model
      */
     public function getFont()
     {
-        $font = (string)$this->captchaData->getConfig('font');
-        $fonts = $this->captchaData->getFonts();
+        $font = (string)$this->_captchaData->getConfig('font');
+        $fonts = $this->_captchaData->getFonts();
 
         if (isset($fonts[$font])) {
             $fontPath = $fonts[$font]['path'];
@@ -261,14 +250,14 @@ class DefaultModel extends \Zend\Captcha\Image implements \Magento\Captcha\Model
      */
     public function getExpiration()
     {
-        if (!$this->expiration) {
+        if (!$this->_expiration) {
             /**
              * as "timeout" configuration parameter specifies timeout in minutes - we multiply it on 60 to set
              * expiration in seconds
              */
-            $this->expiration = (int)$this->captchaData->getConfig('timeout') * 60;
+            $this->_expiration = (int)$this->_captchaData->getConfig('timeout') * 60;
         }
-        return $this->expiration;
+        return $this->_expiration;
     }
 
     /**
@@ -288,7 +277,7 @@ class DefaultModel extends \Zend\Captcha\Image implements \Magento\Captcha\Model
      */
     public function getImgDir()
     {
-        return $this->captchaData->getImgDir();
+        return $this->_captchaData->getImgDir();
     }
 
     /**
@@ -298,7 +287,7 @@ class DefaultModel extends \Zend\Captcha\Image implements \Magento\Captcha\Model
      */
     public function getImgUrl()
     {
-        return $this->captchaData->getImgUrl();
+        return $this->_captchaData->getImgUrl();
     }
 
     /**
@@ -310,7 +299,7 @@ class DefaultModel extends \Zend\Captcha\Image implements \Magento\Captcha\Model
     public function isCorrect($word)
     {
         $storedWord = $this->getWord();
-        $this->clearWord();
+        $this->_clearWord();
 
         if (!$word || !$storedWord) {
             return false;
@@ -341,9 +330,9 @@ class DefaultModel extends \Zend\Captcha\Image implements \Magento\Captcha\Model
      */
     public function logAttempt($login)
     {
-        if ($this->isEnabled() && in_array($this->formId, $this->getTargetForms())) {
-            $this->getResourceModel()->logAttempt($login);
-            if ($this->isOverLimitLoginAttempts($login)) {
+        if ($this->_isEnabled() && in_array($this->_formId, $this->_getTargetForms())) {
+            $this->_getResourceModel()->logAttempt($login);
+            if ($this->_isOverLimitLoginAttempts($login)) {
                 $this->setShowCaptchaInSession(true);
             }
         }
@@ -355,7 +344,6 @@ class DefaultModel extends \Zend\Captcha\Image implements \Magento\Captcha\Model
      *
      * @param bool $value
      * @return void
-     * @since 100.1.0
      */
     public function setShowCaptchaInSession($value = true)
     {
@@ -363,21 +351,19 @@ class DefaultModel extends \Zend\Captcha\Image implements \Magento\Captcha\Model
             $value = false;
         }
 
-        $this->session->setData($this->getFormIdKey('show_captcha'), $value);
+        $this->_session->setData($this->_getFormIdKey('show_captcha'), $value);
     }
 
     /**
      * Generate word used for captcha render
      *
      * @return string
-     * @throws \Magento\Framework\Exception\LocalizedException
-     * @since 100.2.0
      */
-    protected function generateWord()
+    protected function _generateWord()
     {
         $word = '';
-        $symbols = $this->getSymbols();
-        $wordLen = $this->getWordLen();
+        $symbols = $this->_getSymbols();
+        $wordLen = $this->_getWordLen();
         for ($i = 0; $i < $wordLen; $i++) {
             $word .= $symbols[array_rand($symbols)];
         }
@@ -389,23 +375,21 @@ class DefaultModel extends \Zend\Captcha\Image implements \Magento\Captcha\Model
      *
      * @return array
      */
-    private function getSymbols()
+    protected function _getSymbols()
     {
-        return str_split((string)$this->captchaData->getConfig('symbols'));
+        return str_split((string)$this->_captchaData->getConfig('symbols'));
     }
 
     /**
      * Returns length for generating captcha word. This value may be dynamic.
      *
      * @return int
-     * @throws \Magento\Framework\Exception\LocalizedException
-     * @since 100.2.0
      */
-    public function getWordLen()
+    protected function _getWordLen()
     {
         $from = 0;
         $to = 0;
-        $length = (string)$this->captchaData->getConfig('length');
+        $length = (string)$this->_captchaData->getConfig('length');
         if (!is_numeric($length)) {
             if (preg_match('/(\d+)-(\d+)/', $length, $matches)) {
                 $from = (int)$matches[1];
@@ -429,21 +413,22 @@ class DefaultModel extends \Zend\Captcha\Image implements \Magento\Captcha\Model
      *
      * @return bool
      */
-    private function isShowAlways()
+    protected function _isShowAlways()
     {
-        if ((string)$this->captchaData->getConfig('mode') == \Magento\Captcha\Helper\Data::MODE_ALWAYS) {
+        if ((string)$this->_captchaData->getConfig('mode') == \Magento\Captcha\Helper\Data::MODE_ALWAYS) {
             return true;
         }
 
-        if ((string)$this->captchaData->getConfig('mode') == \Magento\Captcha\Helper\Data::MODE_AFTER_FAIL
-            && $this->getAllowedAttemptsForSameLogin() == 0
+        if ((string)$this->_captchaData->getConfig(
+            'mode'
+        ) == \Magento\Captcha\Helper\Data::MODE_AFTER_FAIL && $this->_getAllowedAttemptsForSameLogin() == 0
         ) {
             return true;
         }
 
-        $alwaysFor = $this->captchaData->getConfig('always_for');
+        $alwaysFor = $this->_captchaData->getConfig('always_for');
         foreach ($alwaysFor as $nodeFormId => $isAlwaysFor) {
-            if ($isAlwaysFor && $this->formId == $nodeFormId) {
+            if ($isAlwaysFor && $this->_formId == $nodeFormId) {
                 return true;
             }
         }
@@ -456,9 +441,9 @@ class DefaultModel extends \Zend\Captcha\Image implements \Magento\Captcha\Model
      *
      * @return bool
      */
-    private function isEnabled()
+    protected function _isEnabled()
     {
-        return (string)$this->captchaData->getConfig('enable');
+        return (string)$this->_captchaData->getConfig('enable');
     }
 
     /**
@@ -468,9 +453,9 @@ class DefaultModel extends \Zend\Captcha\Image implements \Magento\Captcha\Model
      *
      * @return array
      */
-    private function getTargetForms()
+    protected function _getTargetForms()
     {
-        $formsString = (string)$this->captchaData->getConfig('forms');
+        $formsString = (string)$this->_captchaData->getConfig('forms');
         return explode(',', $formsString);
     }
 
@@ -481,7 +466,7 @@ class DefaultModel extends \Zend\Captcha\Image implements \Magento\Captcha\Model
      */
     public function getWord()
     {
-        $sessionData = $this->session->getData($this->getFormIdKey(self::SESSION_WORD));
+        $sessionData = $this->_session->getData($this->_getFormIdKey(self::SESSION_WORD));
         return time() < $sessionData['expires'] ? $sessionData['data'] : null;
     }
 
@@ -490,15 +475,14 @@ class DefaultModel extends \Zend\Captcha\Image implements \Magento\Captcha\Model
      *
      * @param  string $word
      * @return $this
-     * @since 100.2.0
      */
-    protected function setWord($word)
+    protected function _setWord($word)
     {
-        $this->session->setData(
-            $this->getFormIdKey(self::SESSION_WORD),
+        $this->_session->setData(
+            $this->_getFormIdKey(self::SESSION_WORD),
             ['data' => $word, 'expires' => time() + $this->getTimeout()]
         );
-        $this->word = $word;
+        $this->_word = $word;
         return $this;
     }
 
@@ -507,22 +491,20 @@ class DefaultModel extends \Zend\Captcha\Image implements \Magento\Captcha\Model
      *
      * @return $this
      */
-    private function clearWord()
+    protected function _clearWord()
     {
-        $this->session->unsetData($this->getFormIdKey(self::SESSION_WORD));
-        $this->word = null;
+        $this->_session->unsetData($this->_getFormIdKey(self::SESSION_WORD));
+        $this->_word = null;
         return $this;
     }
 
     /**
      * Override function to generate less curly captcha that will not cut off
      *
-     * @see \Zend\Captcha\Image::_randomSize()
+     * @see \Zend_Captcha_Image::_randomSize()
      * @return int
-     * @throws \Magento\Framework\Exception\LocalizedException
-     * @since 100.2.0
      */
-    protected function randomSize()
+    protected function _randomSize()
     {
         return \Magento\Framework\Math\Random::getRandomNumber(280, 300) / 100;
     }
@@ -534,12 +516,8 @@ class DefaultModel extends \Zend\Captcha\Image implements \Magento\Captcha\Model
      *
      * Now deleting old captcha images make crontab script
      * @see \Magento\Captcha\Cron\DeleteExpiredImages::execute
-     *
-     * Added SuppressWarnings since this method is declared in parent class and we can not use other method name.
-     * @SuppressWarnings(PHPMD.ShortMethodName)
-     * @since 100.2.0
      */
-    protected function gc()
+    protected function _gc()
     {
         //do nothing
     }
@@ -549,8 +527,8 @@ class DefaultModel extends \Zend\Captcha\Image implements \Magento\Captcha\Model
      *
      * @return \Magento\Captcha\Model\ResourceModel\Log
      */
-    private function getResourceModel()
+    protected function _getResourceModel()
     {
-        return $this->resLogFactory->create();
+        return $this->_resLogFactory->create();
     }
 }

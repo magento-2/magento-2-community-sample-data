@@ -6,15 +6,17 @@
 
 namespace Magento\Swatches\Test\Unit\Controller\Adminhtml\Product\Attribute\Plugin;
 
-class SaveTest extends \PHPUnit\Framework\TestCase
+class SaveTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @dataProvider dataRequest
      */
     public function testBeforeDispatch($dataRequest, $runTimes)
     {
-        $subject = $this->createMock(\Magento\Catalog\Controller\Adminhtml\Product\Attribute\Save::class);
-        $request = $this->createPartialMock(\Magento\Framework\App\RequestInterface::class, [
+        $subject = $this->getMock('\Magento\Catalog\Controller\Adminhtml\Product\Attribute\Save', [], [], '', false);
+        $request = $this->getMock(
+            '\Magento\Framework\App\RequestInterface',
+            [
                 'getPostValue',
                 'setPostValue',
                 'getModuleName',
@@ -26,12 +28,14 @@ class SaveTest extends \PHPUnit\Framework\TestCase
                 'getParams',
                 'getCookie',
                 'isSecure'
-            ]);
+            ],
+            [],
+            '',
+            false
+        );
 
         $objectManager = new \Magento\Framework\TestFramework\Unit\Helper\ObjectManager($this);
-        $controller = $objectManager->getObject(
-            \Magento\Swatches\Controller\Adminhtml\Product\Attribute\Plugin\Save::class
-        );
+        $controller = $objectManager->getObject('\Magento\Swatches\Controller\Adminhtml\Product\Attribute\Plugin\Save');
 
         $request->expects($this->once())->method('getPostValue')->willReturn($dataRequest);
         $request->expects($this->exactly($runTimes))->method('setPostValue')->willReturn($this->returnSelf());
@@ -39,6 +43,9 @@ class SaveTest extends \PHPUnit\Framework\TestCase
         $controller->beforeDispatch($subject, $request);
     }
 
+    /**
+     * @return array
+     */
     public function dataRequest()
     {
         return [

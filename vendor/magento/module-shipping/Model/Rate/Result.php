@@ -5,13 +5,6 @@
  */
 namespace Magento\Shipping\Model\Rate;
 
-/**
- * Class Result
- * Container for Rates
- *
- * @api
- * @since 100.0.2
- */
 class Result
 {
     /**

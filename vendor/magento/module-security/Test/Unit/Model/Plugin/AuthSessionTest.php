@@ -11,7 +11,7 @@ use Magento\Security\Model\SecurityCookie;
 /**
  * Test class for \Magento\Security\Model\Plugin\AuthSession testing
  */
-class AuthSessionTest extends \PHPUnit\Framework\TestCase
+class AuthSessionTest extends \PHPUnit_Framework_TestCase
 {
     /** @var  \Magento\Security\Model\Plugin\AuthSession */
     protected $model;
@@ -46,30 +46,54 @@ class AuthSessionTest extends \PHPUnit\Framework\TestCase
         $this->objectManager = new ObjectManager($this);
 
         $this->requestMock = $this->getMockForAbstractClass(
-            \Magento\Framework\App\RequestInterface::class,
+            '\Magento\Framework\App\RequestInterface',
             ['getParam', 'getModuleName', 'getActionName'],
             '',
             false
         );
 
-        $this->messageManagerMock = $this->createMock(\Magento\Framework\Message\ManagerInterface::class);
-
-        $this->adminSessionsManagerMock = $this->createPartialMock(
-            \Magento\Security\Model\AdminSessionsManager::class,
-            ['getCurrentSession', 'processProlong', 'getLogoutReasonMessage']
+        $this->messageManagerMock = $this->getMock(
+            '\Magento\Framework\Message\ManagerInterface',
+            [],
+            [],
+            '',
+            false
         );
 
-        $this->securityCookieMock = $this->createPartialMock(SecurityCookie::class, ['setLogoutReasonCookie']);
+        $this->adminSessionsManagerMock = $this->getMock(
+            '\Magento\Security\Model\AdminSessionsManager',
+            ['getCurrentSession', 'processProlong', 'getLogoutReasonMessage'],
+            [],
+            '',
+            false
+        );
 
-        $this->authSessionMock = $this->createPartialMock(\Magento\Backend\Model\Auth\Session::class, ['destroy']);
+        $this->securityCookieMock = $this->getMock(
+            SecurityCookie::class,
+            ['setLogoutReasonCookie'],
+            [],
+            '',
+            false
+        );
 
-        $this->currentSessionMock = $this->createPartialMock(
-            \Magento\Security\Model\AdminSessionInfo::class,
-            ['isLoggedInStatus', 'getStatus', 'isActive']
+        $this->authSessionMock = $this->getMock(
+            '\Magento\Backend\Model\Auth\Session',
+            ['destroy'],
+            [],
+            '',
+            false
+        );
+
+        $this->currentSessionMock = $this->getMock(
+            '\Magento\Security\Model\AdminSessionInfo',
+            ['isLoggedInStatus', 'getStatus'],
+            [],
+            '',
+            false
         );
 
         $this->model = $this->objectManager->getObject(
-            \Magento\Security\Model\Plugin\AuthSession::class,
+            '\Magento\Security\Model\Plugin\AuthSession',
             [
                 'request' => $this->requestMock,
                 'messageManager' => $this->messageManagerMock,

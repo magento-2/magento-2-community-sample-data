@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2018 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 
@@ -8,7 +8,7 @@ namespace Magento\Setup\Test\Unit\Fixtures;
 
 use \Magento\Setup\Fixtures\IndexersStatesApplyFixture;
 
-class IndexersStatesApplyFixtureTest extends \PHPUnit\Framework\TestCase
+class IndexersStatesApplyFixtureTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \PHPUnit_Framework_MockObject_MockObject|\Magento\Setup\Fixtures\FixtureModel
@@ -22,15 +22,15 @@ class IndexersStatesApplyFixtureTest extends \PHPUnit\Framework\TestCase
 
     public function setUp()
     {
-        $this->fixtureModelMock = $this->createMock(\Magento\Setup\Fixtures\FixtureModel::class);
+        $this->fixtureModelMock = $this->getMock(\Magento\Setup\Fixtures\FixtureModel::class, [], [], '', false);
 
         $this->model = new IndexersStatesApplyFixture($this->fixtureModelMock);
     }
 
     public function testExecute()
     {
-        $cacheInterfaceMock = $this->createMock(\Magento\Framework\App\CacheInterface::class);
-        $indexerRegistryMock = $this->createMock(\Magento\Framework\Indexer\IndexerRegistry::class);
+        $cacheInterfaceMock = $this->getMock(\Magento\Framework\App\CacheInterface::class, [], [], '', false);
+        $indexerRegistryMock = $this->getMock(\Magento\Framework\Indexer\IndexerRegistry::class, [], [], '', false);
         $indexerMock = $this->getMockForAbstractClass(\Magento\Framework\Indexer\IndexerInterface::class);
 
         $indexerRegistryMock->expects($this->once())
@@ -40,7 +40,7 @@ class IndexersStatesApplyFixtureTest extends \PHPUnit\Framework\TestCase
         $indexerMock->expects($this->once())
             ->method('setScheduled');
 
-        $objectManagerMock = $this->createMock(\Magento\Framework\ObjectManager\ObjectManager::class);
+        $objectManagerMock = $this->getMock(\Magento\Framework\ObjectManager\ObjectManager::class, [], [], '', false);
         $objectManagerMock->expects($this->once())
             ->method('get')
             ->willReturn($cacheInterfaceMock);
@@ -63,10 +63,10 @@ class IndexersStatesApplyFixtureTest extends \PHPUnit\Framework\TestCase
 
     public function testNoFixtureConfigValue()
     {
-        $cacheInterfaceMock = $this->createMock(\Magento\Framework\App\CacheInterface::class);
+        $cacheInterfaceMock = $this->getMock(\Magento\Framework\App\CacheInterface::class, [], [], '', false);
         $cacheInterfaceMock->expects($this->never())->method('clean');
 
-        $objectManagerMock = $this->createMock(\Magento\Framework\ObjectManager\ObjectManager::class);
+        $objectManagerMock = $this->getMock(\Magento\Framework\ObjectManager\ObjectManager::class, [], [], '', false);
         $objectManagerMock->expects($this->never())
             ->method('get')
             ->willReturn($cacheInterfaceMock);

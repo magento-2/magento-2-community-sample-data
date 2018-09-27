@@ -5,7 +5,7 @@
  */
 namespace Magento\Authorizenet\Test\Unit\Helper;
 
-class DataTest extends \PHPUnit\Framework\TestCase
+class DataTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * Last 4 digit of cc
@@ -31,11 +31,11 @@ class DataTest extends \PHPUnit\Framework\TestCase
     {
         $helper = new \Magento\Framework\TestFramework\Unit\Helper\ObjectManager($this);
 
-        $this->storeManagerMock = $this->getMockBuilder(\Magento\Store\Model\StoreManagerInterface::class)
+        $this->storeManagerMock = $this->getMockBuilder('Magento\Store\Model\StoreManagerInterface')
             ->getMockForAbstractClass();
 
         $this->dataHelper = $helper->getObject(
-            \Magento\Authorizenet\Helper\Data::class,
+            'Magento\Authorizenet\Helper\Data',
             ['storeManager' => $this->storeManagerMock]
         );
     }
@@ -50,15 +50,15 @@ class DataTest extends \PHPUnit\Framework\TestCase
      */
     public function testGetTransactionMessage($type, $amount, $exception, $additionalMessage, $expected)
     {
-        $currency = $this->createPartialMock(\Magento\Directory\Model\Currency::class, ['formatTxt', '__wakeup']);
+        $currency = $this->getMock('Magento\Directory\Model\Currency', ['formatTxt', '__wakeup'], [], '', false);
         $currency->expects($this->any())
             ->method('formatTxt')
             ->will($this->returnValue($amount));
-        $order = $this->createPartialMock(\Magento\Sales\Model\Order::class, ['getBaseCurrency', '__wakeup']);
+        $order = $this->getMock('Magento\Sales\Model\Order', ['getBaseCurrency', '__wakeup'], [], '', false);
         $order->expects($this->any())
             ->method('getBaseCurrency')
             ->will($this->returnValue($currency));
-        $payment = $this->createPartialMock(\Magento\Payment\Model\Info::class, ['getOrder', '__wakeup']);
+        $payment = $this->getMock('Magento\Payment\Model\Info', ['getOrder', '__wakeup'], [], '', false);
         $payment->expects($this->any())
             ->method('getOrder')
             ->will($this->returnValue($order));
@@ -116,7 +116,7 @@ class DataTest extends \PHPUnit\Framework\TestCase
         $storeId = 10;
         $baseUrl = 'http://base.url/';
 
-        $storeMock = $this->getMockBuilder(\Magento\Store\Model\Store::class)
+        $storeMock = $this->getMockBuilder('Magento\Store\Model\Store')
             ->disableOriginalConstructor()
             ->getMock();
 

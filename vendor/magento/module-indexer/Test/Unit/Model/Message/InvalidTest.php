@@ -5,7 +5,7 @@
  */
 namespace Magento\Indexer\Test\Unit\Model\Message;
 
-class InvalidTest extends \PHPUnit\Framework\TestCase
+class InvalidTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\Indexer\Model\Indexer
@@ -22,11 +22,29 @@ class InvalidTest extends \PHPUnit\Framework\TestCase
      */
     protected function setUp()
     {
-        $collectionMock = $this->createPartialMock(\Magento\Indexer\Model\Indexer\Collection::class, ['getItems']);
+        $collectionMock = $this->getMock(
+            '\Magento\Indexer\Model\Indexer\Collection',
+            ['getItems'],
+            [],
+            '',
+            false
+        );
 
-        $this->indexerMock = $this->createPartialMock(\Magento\Indexer\Model\Indexer::class, ['getStatus']);
+        $this->indexerMock = $this->getMock(
+            '\Magento\Indexer\Model\Indexer',
+            ['getStatus'],
+            [],
+            '',
+            false
+        );
 
-        $urlBuilder = $this->createMock(\Magento\Framework\UrlInterface::class);
+        $urlBuilder = $this->getMock(
+            '\Magento\Framework\UrlInterface',
+            [],
+            [],
+            '',
+            false
+        );
 
         $collectionMock->expects($this->any())->method('getItems')->with()->willReturn([$this->indexerMock]);
 

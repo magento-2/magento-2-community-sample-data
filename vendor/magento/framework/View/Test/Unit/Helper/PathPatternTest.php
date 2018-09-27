@@ -7,7 +7,7 @@ namespace Magento\Framework\View\Test\Unit\Helper;
 
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager as ObjectManagerHelper;
 
-class PathPatternTest extends \PHPUnit\Framework\TestCase
+class PathPatternTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\Framework\View\Helper\PathPattern
@@ -23,7 +23,7 @@ class PathPatternTest extends \PHPUnit\Framework\TestCase
     {
         $this->objectManagerHelper = new ObjectManagerHelper($this);
         $this->pathPatternHelper = $this->objectManagerHelper->getObject(
-            \Magento\Framework\View\Helper\PathPattern::class
+            'Magento\Framework\View\Helper\PathPattern'
         );
     }
 

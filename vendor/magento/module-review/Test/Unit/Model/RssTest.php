@@ -8,7 +8,7 @@ namespace Magento\Review\Test\Unit\Model;
 
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager as ObjectManagerHelper;
 
-class RssTest extends \PHPUnit\Framework\TestCase
+class RssTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\Review\Model\Rss
@@ -32,12 +32,12 @@ class RssTest extends \PHPUnit\Framework\TestCase
 
     protected function setUp()
     {
-        $this->managerInterface = $this->createMock(\Magento\Framework\Event\ManagerInterface::class);
-        $this->reviewFactory = $this->createPartialMock(\Magento\Review\Model\ReviewFactory::class, ['create']);
+        $this->managerInterface = $this->getMock('Magento\Framework\Event\ManagerInterface');
+        $this->reviewFactory = $this->getMock('Magento\Review\Model\ReviewFactory', ['create'], [], '', false);
 
         $this->objectManagerHelper = new ObjectManagerHelper($this);
         $this->rss = $this->objectManagerHelper->getObject(
-            \Magento\Review\Model\Rss::class,
+            'Magento\Review\Model\Rss',
             [
                 'eventManager' => $this->managerInterface,
                 'reviewFactory' => $this->reviewFactory
@@ -47,17 +47,26 @@ class RssTest extends \PHPUnit\Framework\TestCase
 
     public function testGetProductCollection()
     {
-        $reviewModel = $this->createPartialMock(\Magento\Review\Model\Review::class, [
+        $reviewModel = $this->getMock(
+            'Magento\Review\Model\Review',
+            [
                 '__wakeUp',
                 'getProductCollection'
-            ]);
-        $productCollection = $this->createPartialMock(
-            \Magento\Review\Model\ResourceModel\Review\Product\Collection::class,
+            ],
+            [],
+            '',
+            false
+        );
+        $productCollection = $this->getMock(
+            'Magento\Review\Model\ResourceModel\Review\Product\Collection',
             [
                 'addStatusFilter',
                 'addAttributeToSelect',
                 'setDateOrder'
-            ]
+            ],
+            [],
+            '',
+            false
         );
         $reviewModel->expects($this->once())->method('getProductCollection')
             ->will($this->returnValue($productCollection));

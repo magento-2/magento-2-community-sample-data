@@ -5,7 +5,7 @@
  */
 namespace Magento\Email\Test\Unit\Model\Template\Config;
 
-class ConverterTest extends \PHPUnit\Framework\TestCase
+class ConverterTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\Email\Model\Template\Config\Converter

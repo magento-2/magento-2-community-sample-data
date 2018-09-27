@@ -8,7 +8,7 @@ namespace Magento\Integration\Test\Unit\Model\Config\Consolidated;
 /**
  * Test for validation rules implemented by XSD schema for integration configuration.
  */
-class XsdTest extends \PHPUnit\Framework\TestCase
+class XsdTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var string
@@ -33,7 +33,7 @@ class XsdTest extends \PHPUnit\Framework\TestCase
      */
     public function testExemplarXml($fixtureXml, array $expectedErrors)
     {
-        $validationStateMock = $this->createMock(\Magento\Framework\Config\ValidationStateInterface::class);
+        $validationStateMock = $this->getMock('\Magento\Framework\Config\ValidationStateInterface', [], [], '', false);
         $validationStateMock->method('isValidationRequired')
             ->willReturn(true);
         $messageFormat = '%message%';

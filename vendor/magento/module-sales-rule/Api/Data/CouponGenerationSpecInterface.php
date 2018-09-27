@@ -9,7 +9,6 @@ namespace Magento\SalesRule\Api\Data;
  * CouponGenerationSpecInterface
  *
  * @api
- * @since 100.0.2
  */
 interface CouponGenerationSpecInterface extends \Magento\Framework\Api\ExtensibleDataInterface
 {

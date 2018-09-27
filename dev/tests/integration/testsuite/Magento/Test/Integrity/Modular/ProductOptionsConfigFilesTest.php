@@ -7,7 +7,7 @@ namespace Magento\Test\Integrity\Modular;
 
 use Magento\Framework\Component\ComponentRegistrar;
 
-class ProductOptionsConfigFilesTest extends \PHPUnit\Framework\TestCase
+class ProductOptionsConfigFilesTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\Catalog\Model\ProductOptions\Config\Reader
@@ -19,8 +19,8 @@ class ProductOptionsConfigFilesTest extends \PHPUnit\Framework\TestCase
         //init primary configs
         $objectManager = \Magento\TestFramework\Helper\Bootstrap::getObjectManager();
         /** @var $moduleDirSearch \Magento\Framework\Component\DirSearch */
-        $moduleDirSearch = $objectManager->get(\Magento\Framework\Component\DirSearch::class);
-        $fileIteratorFactory = $objectManager->get(\Magento\Framework\Config\FileIteratorFactory::class);
+        $moduleDirSearch = $objectManager->get('Magento\Framework\Component\DirSearch');
+        $fileIteratorFactory = $objectManager->get('Magento\Framework\Config\FileIteratorFactory');
         $xmlFiles = $fileIteratorFactory->create(
             $moduleDirSearch->collectFiles(
                 ComponentRegistrar::MODULE,
@@ -28,13 +28,13 @@ class ProductOptionsConfigFilesTest extends \PHPUnit\Framework\TestCase
             )
         );
 
-        $fileResolverMock = $this->createMock(\Magento\Framework\Config\FileResolverInterface::class);
+        $fileResolverMock = $this->getMock('Magento\Framework\Config\FileResolverInterface');
         $fileResolverMock->expects($this->any())->method('get')->will($this->returnValue($xmlFiles));
-        $validationStateMock = $this->createMock(\Magento\Framework\Config\ValidationStateInterface::class);
+        $validationStateMock = $this->getMock('Magento\Framework\Config\ValidationStateInterface');
         $validationStateMock->expects($this->any())->method('isValidationRequired')->will($this->returnValue(true));
         $objectManager = \Magento\TestFramework\Helper\Bootstrap::getObjectManager();
         $this->_model = $objectManager->create(
-            \Magento\Catalog\Model\ProductOptions\Config\Reader::class,
+            'Magento\Catalog\Model\ProductOptions\Config\Reader',
             ['fileResolver' => $fileResolverMock, 'validationState' => $validationStateMock]
         );
     }

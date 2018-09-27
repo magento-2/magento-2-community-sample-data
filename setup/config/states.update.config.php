@@ -60,8 +60,8 @@ return [
             'url'         => 'start-updater',
             'templateUrl' => "$base/start-updater",
             'controller'  => 'startUpdaterController',
-            'title'       => "Extension \n Update",
-            'header'      => 'Step 3: Extension Update',
+            'title'       => "Component \n Update",
+            'header'      => 'Step 3: Component Update',
             'nav'         => true,
             'order'       => 6,
             'type'        => 'update'

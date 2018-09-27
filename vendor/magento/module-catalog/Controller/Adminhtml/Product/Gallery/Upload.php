@@ -41,19 +41,19 @@ class Upload extends \Magento\Backend\App\Action
     {
         try {
             $uploader = $this->_objectManager->create(
-                \Magento\MediaStorage\Model\File\Uploader::class,
+                'Magento\MediaStorage\Model\File\Uploader',
                 ['fileId' => 'image']
             );
             $uploader->setAllowedExtensions(['jpg', 'jpeg', 'gif', 'png']);
             /** @var \Magento\Framework\Image\Adapter\AdapterInterface $imageAdapter */
-            $imageAdapter = $this->_objectManager->get(\Magento\Framework\Image\AdapterFactory::class)->create();
+            $imageAdapter = $this->_objectManager->get('Magento\Framework\Image\AdapterFactory')->create();
             $uploader->addValidateCallback('catalog_product_image', $imageAdapter, 'validateUploadFile');
             $uploader->setAllowRenameFiles(true);
             $uploader->setFilesDispersion(true);
             /** @var \Magento\Framework\Filesystem\Directory\Read $mediaDirectory */
-            $mediaDirectory = $this->_objectManager->get(\Magento\Framework\Filesystem::class)
+            $mediaDirectory = $this->_objectManager->get('Magento\Framework\Filesystem')
                 ->getDirectoryRead(DirectoryList::MEDIA);
-            $config = $this->_objectManager->get(\Magento\Catalog\Model\Product\Media\Config::class);
+            $config = $this->_objectManager->get('Magento\Catalog\Model\Product\Media\Config');
             $result = $uploader->save($mediaDirectory->getAbsolutePath($config->getBaseTmpMediaPath()));
 
             $this->_eventManager->dispatch(
@@ -64,7 +64,7 @@ class Upload extends \Magento\Backend\App\Action
             unset($result['tmp_name']);
             unset($result['path']);
 
-            $result['url'] = $this->_objectManager->get(\Magento\Catalog\Model\Product\Media\Config::class)
+            $result['url'] = $this->_objectManager->get('Magento\Catalog\Model\Product\Media\Config')
                 ->getTmpMediaUrl($result['file']);
             $result['file'] = $result['file'] . '.tmp';
         } catch (\Exception $e) {

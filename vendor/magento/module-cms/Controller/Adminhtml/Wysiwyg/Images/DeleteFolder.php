@@ -6,7 +6,7 @@
  */
 namespace Magento\Cms\Controller\Adminhtml\Wysiwyg\Images;
 
-use Magento\Framework\App\Filesystem\DirectoryList;
+use \Magento\Framework\App\Filesystem\DirectoryList;
 
 /**
  * Delete image folder.
@@ -43,6 +43,7 @@ class DeleteFolder extends \Magento\Cms\Controller\Adminhtml\Wysiwyg\Images
         \Magento\Framework\App\Filesystem\DirectoryResolver $directoryResolver = null
     ) {
         parent::__construct($context, $coreRegistry);
+
         $this->resultRawFactory = $resultRawFactory;
         $this->resultJsonFactory = $resultJsonFactory;
         $this->directoryResolver = $directoryResolver
@@ -50,7 +51,7 @@ class DeleteFolder extends \Magento\Cms\Controller\Adminhtml\Wysiwyg\Images
     }
 
     /**
-     * Delete folder action.
+     * Delete folder action
      *
      * @return \Magento\Framework\Controller\ResultInterface
      * @throws \Magento\Framework\Exception\LocalizedException
@@ -65,13 +66,11 @@ class DeleteFolder extends \Magento\Cms\Controller\Adminhtml\Wysiwyg\Images
                 );
             }
             $this->getStorage()->deleteDirectory($path);
-            
             return $this->resultRawFactory->create();
         } catch (\Exception $e) {
             $result = ['error' => true, 'message' => $e->getMessage()];
             /** @var \Magento\Framework\Controller\Result\Json $resultJson */
             $resultJson = $this->resultJsonFactory->create();
-
             return $resultJson->setData($result);
         }
     }

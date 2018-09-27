@@ -10,7 +10,7 @@ use Magento\Framework\App\Request\Http;
 use Magento\Framework\App\ScopeResolverPool;
 use Magento\Theme\Block\Adminhtml\Design\Config\Edit\Scope;
 
-class ScopeTest extends \PHPUnit\Framework\TestCase
+class ScopeTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var Scope
@@ -36,7 +36,7 @@ class ScopeTest extends \PHPUnit\Framework\TestCase
     {
         $this->initContext();
 
-        $this->scopeResolverPool = $this->getMockBuilder(\Magento\Framework\App\ScopeResolverPool::class)
+        $this->scopeResolverPool = $this->getMockBuilder('Magento\Framework\App\ScopeResolverPool')
             ->disableOriginalConstructor()
             ->getMock();
 
@@ -59,13 +59,13 @@ class ScopeTest extends \PHPUnit\Framework\TestCase
                 ['scope_id', null, $scopeId],
             ]);
 
-        $scopeObject = $this->getMockBuilder(\Magento\Framework\App\ScopeInterface::class)
+        $scopeObject = $this->getMockBuilder('Magento\Framework\App\ScopeInterface')
             ->getMockForAbstractClass();
         $scopeObject->expects($this->once())
             ->method('getScopeTypeName')
             ->willReturn($scopeTypeName);
 
-        $scopeResolver = $this->getMockBuilder(\Magento\Framework\App\ScopeResolverInterface::class)
+        $scopeResolver = $this->getMockBuilder('Magento\Framework\App\ScopeResolverInterface')
             ->getMockForAbstractClass();
         $scopeResolver->expects($this->once())
             ->method('getScope')
@@ -98,11 +98,11 @@ class ScopeTest extends \PHPUnit\Framework\TestCase
 
     protected function initContext()
     {
-        $this->request = $this->getMockBuilder(\Magento\Framework\App\Request\Http::class)
+        $this->request = $this->getMockBuilder('Magento\Framework\App\Request\Http')
             ->disableOriginalConstructor()
             ->getMock();
 
-        $this->context = $this->getMockBuilder(\Magento\Backend\Block\Template\Context::class)
+        $this->context = $this->getMockBuilder('Magento\Backend\Block\Template\Context')
             ->disableOriginalConstructor()
             ->getMock();
         $this->context->expects($this->any())

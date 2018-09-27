@@ -10,7 +10,7 @@ use Magento\Integration\Api\AuthorizationServiceInterface as IntegrationAuthoriz
 use Magento\Integration\Model\IntegrationConfig;
 
 /**
- * Plugin for @see \Magento\Integration\Model\ConfigBasedIntegrationManager model to manage resource permissions of
+ * Plugin for ConfigBasedIntegrationManager model to manage resource permissions of
  * integration installed from config file
  */
 class Manager
@@ -59,7 +59,7 @@ class Manager
      *
      * @return string[]
      * @SuppressWarnings(PHPMD.UnusedFormalParameter)
-     * @deprecated 100.1.0
+     * @deprecated
      */
     public function afterProcessIntegrationConfig(
         ConfigBasedIntegrationManager $subject,

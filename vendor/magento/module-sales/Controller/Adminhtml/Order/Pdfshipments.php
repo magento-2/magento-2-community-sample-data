@@ -22,7 +22,9 @@ use Magento\Sales\Model\ResourceModel\Order\CollectionFactory;
 class Pdfshipments extends \Magento\Sales\Controller\Adminhtml\Order\AbstractMassAction
 {
     /**
-     * Authorization level of a basic admin session
+     * Authorization level of a basic admin session.
+     *
+     * @see _isAllowed()
      */
     const ADMIN_RESOURCE = 'Magento_Sales::ship';
 
@@ -44,7 +46,7 @@ class Pdfshipments extends \Magento\Sales\Controller\Adminhtml\Order\AbstractMas
     /**
      * @var ShipmentCollectionFactory
      */
-    protected $shipmentCollectionFactory;
+    protected $shipmentCollectionFactotory;
 
     /**
      * @param Context $context
@@ -68,7 +70,7 @@ class Pdfshipments extends \Magento\Sales\Controller\Adminhtml\Order\AbstractMas
         $this->dateTime = $dateTime;
         $this->pdfShipment = $shipment;
         $this->collectionFactory = $collectionFactory;
-        $this->shipmentCollectionFactory = $shipmentCollectionFactory;
+        $this->shipmentCollectionFactotory = $shipmentCollectionFactory;
         parent::__construct($context, $filter);
     }
 
@@ -80,7 +82,7 @@ class Pdfshipments extends \Magento\Sales\Controller\Adminhtml\Order\AbstractMas
      */
     protected function massAction(AbstractCollection $collection)
     {
-        $shipmentsCollection = $this->shipmentCollectionFactory
+        $shipmentsCollection = $this->shipmentCollectionFactotory
             ->create()
             ->setOrderFilter(['in' => $collection->getAllIds()]);
         if (!$shipmentsCollection->getSize()) {

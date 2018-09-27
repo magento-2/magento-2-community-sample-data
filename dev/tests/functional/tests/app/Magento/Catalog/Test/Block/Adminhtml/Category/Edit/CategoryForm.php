@@ -60,6 +60,7 @@ class CategoryForm extends FormSections
             $modal->acceptAlert();
             $modal->waitModalWindowToDisappear();
         }
+
         return parent::fill($fixture, $element);
     }
 }

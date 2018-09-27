@@ -5,7 +5,7 @@
  */
 namespace Magento\Store\Test\Unit\App\FrontController\Plugin;
 
-class RequestPreprocessorTest extends \PHPUnit\Framework\TestCase
+class RequestPreprocessorTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\Store\App\FrontController\Plugin\RequestPreprocessor
@@ -54,17 +54,17 @@ class RequestPreprocessorTest extends \PHPUnit\Framework\TestCase
 
     protected function setUp()
     {
-        $this->_storeMock = $this->createMock(\Magento\Store\Model\Store::class);
-        $this->_requestMock = $this->createMock(\Magento\Framework\App\Request\Http::class);
+        $this->_storeMock = $this->getMock('\Magento\Store\Model\Store', [], [], '', false);
+        $this->_requestMock = $this->getMock('\Magento\Framework\App\Request\Http', [], [], '', false);
         $this->closureMock = function () {
             return 'Expected';
         };
-        $this->_storeManagerMock = $this->createMock(\Magento\Store\Model\StoreManager::class);
-        $this->_urlMock = $this->createMock(\Magento\Framework\Url::class);
-        $this->_scopeConfigMock = $this->createMock(\Magento\Framework\App\Config\ScopeConfigInterface::class);
-        $this->subjectMock = $this->createMock(\Magento\Framework\App\FrontController::class);
+        $this->_storeManagerMock = $this->getMock('\Magento\Store\Model\StoreManager', [], [], '', false);
+        $this->_urlMock = $this->getMock('\Magento\Framework\Url', [], [], '', false);
+        $this->_scopeConfigMock = $this->getMock('\Magento\Framework\App\Config\ScopeConfigInterface');
+        $this->subjectMock = $this->getMock('Magento\Framework\App\FrontController', [], [], '', false);
 
-        $this->baseUrlChecker = $this->createMock(\Magento\Store\Model\BaseUrlChecker::class);
+        $this->baseUrlChecker = $this->getMock('Magento\Store\Model\BaseUrlChecker', [], [], '', false);
         $this->baseUrlChecker->expects($this->any())
             ->method('execute')
             ->willReturn(true);
@@ -73,7 +73,7 @@ class RequestPreprocessorTest extends \PHPUnit\Framework\TestCase
             $this->_storeManagerMock,
             $this->_urlMock,
             $this->_scopeConfigMock,
-            $this->createMock(\Magento\Framework\App\ResponseFactory::class)
+            $this->getMock('\Magento\Framework\App\ResponseFactory', [], [], '', false)
         );
 
         $modelProperty = (new \ReflectionClass(get_class($this->_model)))

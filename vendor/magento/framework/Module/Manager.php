@@ -9,32 +9,22 @@
  */
 namespace Magento\Framework\Module;
 
-/**
- * Module status manager.
- *
- * Usage:
- * ```php
- *  $manager->isEnabled('Vendor_Module');
- * ```
- */
 class Manager
 {
     /**
      * @var Output\ConfigInterface
-     * @deprecated 100.2.0
      */
-    private $outputConfig;
+    private $_outputConfig;
 
     /**
      * @var ModuleListInterface
      */
-    private $moduleList;
+    private $_moduleList;
 
     /**
      * @var array
-     * @deprecated 100.2.0
      */
-    private $outputConfigPaths;
+    private $_outputConfigPaths;
 
     /**
      * @param Output\ConfigInterface $outputConfig
@@ -46,9 +36,9 @@ class Manager
         ModuleListInterface $moduleList,
         array $outputConfigPaths = []
     ) {
-        $this->outputConfig = $outputConfig;
-        $this->moduleList = $moduleList;
-        $this->outputConfigPaths = $outputConfigPaths;
+        $this->_outputConfig = $outputConfig;
+        $this->_moduleList = $moduleList;
+        $this->_outputConfigPaths = $outputConfigPaths;
     }
 
     /**
@@ -59,7 +49,7 @@ class Manager
      */
     public function isEnabled($moduleName)
     {
-        return $this->moduleList->has($moduleName);
+        return $this->_moduleList->has($moduleName);
     }
 
     /**
@@ -67,17 +57,19 @@ class Manager
      *
      * @param string $moduleName Fully-qualified module name
      * @return boolean
-     * @deprecated 100.2.0 Magento does not support disabling/enabling modules output from the Admin Panel since 2.2.0
-     * version. Module output can still be enabled/disabled in configuration files. However, this functionality should
-     * not be used in future development. Module design should explicitly state dependencies to avoid requiring output
-     * disabling. This functionality will temporarily be kept in Magento core, as there are unresolved modularity
-     * issues that will be addressed in future releases.
      */
     public function isOutputEnabled($moduleName)
     {
-        return $this->isEnabled($moduleName)
-            && $this->_isCustomOutputConfigEnabled($moduleName)
-            && !$this->outputConfig->isEnabled($moduleName);
+        if (!$this->isEnabled($moduleName)) {
+            return false;
+        }
+        if (!$this->_isCustomOutputConfigEnabled($moduleName)) {
+            return false;
+        }
+        if ($this->_outputConfig->isEnabled($moduleName)) {
+            return false;
+        }
+        return true;
     }
 
     /**
@@ -85,16 +77,15 @@ class Manager
      *
      * @param string $moduleName Fully-qualified module name
      * @return boolean
-     * @deprecated 100.2.0
      */
     protected function _isCustomOutputConfigEnabled($moduleName)
     {
-        if (isset($this->outputConfigPaths[$moduleName])) {
-            $configPath = $this->outputConfigPaths[$moduleName];
+        if (isset($this->_outputConfigPaths[$moduleName])) {
+            $configPath = $this->_outputConfigPaths[$moduleName];
             if (defined($configPath)) {
                 $configPath = constant($configPath);
             }
-            return $this->outputConfig->isSetFlag($configPath);
+            return $this->_outputConfig->isSetFlag($configPath);
         }
         return true;
     }

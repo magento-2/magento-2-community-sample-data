@@ -8,9 +8,7 @@ namespace Magento\Reports\Block\Adminhtml\Sales;
 /**
  * Adminhtml refunded report page content block
  *
- * @api
  * @author     Magento Core Team <core@magentocommerce.com>
- * @since 100.0.2
  */
 class Refunded extends \Magento\Backend\Block\Widget\Grid\Container
 {
@@ -19,7 +17,7 @@ class Refunded extends \Magento\Backend\Block\Widget\Grid\Container
      *
      * @var string
      */
-    protected $_template = 'report/grid/container.phtml';
+    protected $_template = 'Magento_Reports::report/grid/container.phtml';
 
     /**
      * {@inheritdoc}

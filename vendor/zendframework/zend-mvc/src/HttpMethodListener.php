@@ -19,7 +19,7 @@ class HttpMethodListener extends AbstractListenerAggregate
     /**
      * @var array
      */
-    protected $allowedMethods = [
+    protected $allowedMethods = array(
         HttpRequest::METHOD_CONNECT,
         HttpRequest::METHOD_DELETE,
         HttpRequest::METHOD_GET,
@@ -30,7 +30,7 @@ class HttpMethodListener extends AbstractListenerAggregate
         HttpRequest::METHOD_PUT,
         HttpRequest::METHOD_PROPFIND,
         HttpRequest::METHOD_TRACE,
-    ];
+    );
 
     /**
      * @var bool
@@ -41,7 +41,7 @@ class HttpMethodListener extends AbstractListenerAggregate
      * @param bool  $enabled
      * @param array $allowedMethods
      */
-    public function __construct($enabled = true, $allowedMethods = [])
+    public function __construct($enabled = true, $allowedMethods = array())
     {
         $this->setEnabled($enabled);
 
@@ -53,7 +53,7 @@ class HttpMethodListener extends AbstractListenerAggregate
     /**
      * {@inheritdoc}
      */
-    public function attach(EventManagerInterface $events, $priority = 1)
+    public function attach(EventManagerInterface $events)
     {
         if (! $this->isEnabled()) {
             return;
@@ -61,7 +61,7 @@ class HttpMethodListener extends AbstractListenerAggregate
 
         $this->listeners[] = $events->attach(
             MvcEvent::EVENT_ROUTE,
-            [$this, 'onRoute'],
+            array($this, 'onRoute'),
             10000
         );
     }

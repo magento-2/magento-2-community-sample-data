@@ -17,7 +17,7 @@ use Psr\Log\LoggerInterface;
 /**
  * Class TransactionSubmitForSettlementTest
  */
-class TransactionSubmitForSettlementTest extends \PHPUnit\Framework\TestCase
+class TransactionSubmitForSettlementTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var TransactionSubmitForSettlement
@@ -57,6 +57,7 @@ class TransactionSubmitForSettlementTest extends \PHPUnit\Framework\TestCase
         $this->client = new TransactionSubmitForSettlement(
             $criticalLogger,
             $this->logger,
+            $this->adapter,
             $adapterFactory
         );
     }
@@ -96,7 +97,7 @@ class TransactionSubmitForSettlementTest extends \PHPUnit\Framework\TestCase
      */
     private function getTransferObjectMock()
     {
-        $mock = $this->createMock(TransferInterface::class);
+        $mock = $this->getMock(TransferInterface::class);
         $mock->method('getBody')
             ->willReturn([
                 'transaction_id' => 'vb4c6b',

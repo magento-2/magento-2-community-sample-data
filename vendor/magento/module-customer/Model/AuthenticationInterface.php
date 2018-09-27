@@ -8,10 +8,6 @@ namespace Magento\Customer\Model;
 use Magento\Framework\Exception\InvalidEmailOrPasswordException;
 use Magento\Framework\Exception\State\UserLockedException;
 
-/**
- * Interface \Magento\Customer\Model\AuthenticationInterface
- *
- */
 interface AuthenticationInterface
 {
     /**

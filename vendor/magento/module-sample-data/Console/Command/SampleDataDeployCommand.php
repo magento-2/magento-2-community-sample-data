@@ -6,22 +6,20 @@
 
 namespace Magento\SampleData\Console\Command;
 
-use Composer\Console\Application;
-use Magento\Framework\App\Filesystem\DirectoryList;
-use Magento\Setup\Model\PackagesAuth;
 use Symfony\Component\Console\Command\Command;
-use Symfony\Component\Console\Input\ArrayInput;
 use Symfony\Component\Console\Input\InputInterface;
-use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
+use Magento\Framework\App\State;
+use Symfony\Component\Console\Input\ArrayInput;
+use Magento\Framework\App\Filesystem\DirectoryList;
+use Composer\Console\Application;
+use Magento\Setup\Model\PackagesAuth;
 
 /**
  * Command for deployment of Sample Data
  */
 class SampleDataDeployCommand extends Command
 {
-    const OPTION_NO_UPDATE = 'no-update';
-
     /**
      * @var \Magento\Framework\Filesystem
      */
@@ -34,7 +32,7 @@ class SampleDataDeployCommand extends Command
 
     /**
      * @var \Symfony\Component\Console\Input\ArrayInputFactory
-     * @deprecated 100.1.0
+     * @deprecated
      */
     private $arrayInputFactory;
 
@@ -69,12 +67,6 @@ class SampleDataDeployCommand extends Command
     {
         $this->setName('sampledata:deploy')
             ->setDescription('Deploy sample data modules');
-        $this->addOption(
-            self::OPTION_NO_UPDATE,
-            null,
-            InputOption::VALUE_NONE,
-            'Update composer.json without executing composer update'
-        );
         parent::configure();
     }
 
@@ -89,9 +81,6 @@ class SampleDataDeployCommand extends Command
         if (!empty($sampleDataPackages)) {
             $baseDir = $this->filesystem->getDirectoryRead(DirectoryList::ROOT)->getAbsolutePath();
             $commonArgs = ['--working-dir' => $baseDir, '--no-progress' => 1];
-            if ($input->getOption(self::OPTION_NO_UPDATE)) {
-                $commonArgs['--no-update'] = 1;
-            }
             $packages = [];
             foreach ($sampleDataPackages as $name => $version) {
                 $packages[] = "$name:$version";
@@ -127,7 +116,7 @@ class SampleDataDeployCommand extends Command
     private function createAuthFile()
     {
         $directory = $this->filesystem->getDirectoryWrite(DirectoryList::COMPOSER_HOME);
-
+        
         if (!$directory->isExist(PackagesAuth::PATH_TO_AUTH_FILE)) {
             try {
                 $directory->writeFile(PackagesAuth::PATH_TO_AUTH_FILE, '{}');
@@ -162,7 +151,7 @@ class SampleDataDeployCommand extends Command
     {
         $unit = strtolower(substr($value, -1, 1));
         $value = (int) $value;
-        switch ($unit) {
+        switch($unit) {
             case 'g':
                 $value *= 1024 * 1024 * 1024;
                 break;

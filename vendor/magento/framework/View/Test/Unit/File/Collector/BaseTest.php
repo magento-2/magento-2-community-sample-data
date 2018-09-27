@@ -8,7 +8,7 @@ namespace Magento\Framework\View\Test\Unit\File\Collector;
 use Magento\Framework\Component\ComponentRegistrar;
 use Magento\Framework\View\File;
 
-class BaseTest extends \PHPUnit\Framework\TestCase
+class BaseTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\Framework\View\File\Collector\Base
@@ -32,14 +32,14 @@ class BaseTest extends \PHPUnit\Framework\TestCase
 
     protected function setUp()
     {
-        $this->fileFactoryMock = $this->getMockBuilder(\Magento\Framework\View\File\Factory::class)
+        $this->fileFactoryMock = $this->getMockBuilder('Magento\Framework\View\File\Factory')
             ->disableOriginalConstructor()
             ->getMock();
-        $this->themeMock = $this->getMockBuilder(\Magento\Framework\View\Design\ThemeInterface::class)
+        $this->themeMock = $this->getMockBuilder('Magento\Framework\View\Design\ThemeInterface')
             ->setMethods(['getData'])
             ->getMockForAbstractClass();
 
-        $this->dirSearch = $this->createMock(\Magento\Framework\Component\DirSearch::class);
+        $this->dirSearch = $this->getMock('Magento\Framework\Component\DirSearch', [], [], '', false);
 
         $this->fileCollector = new \Magento\Framework\View\File\Collector\Base(
             $this->dirSearch,
@@ -53,7 +53,7 @@ class BaseTest extends \PHPUnit\Framework\TestCase
         $files = [];
         foreach (['shared', 'theme'] as $fileType) {
             for ($i = 0; $i < 2; $i++) {
-                $file = $this->createMock(\Magento\Framework\Component\ComponentFile::class);
+                $file = $this->getMock('\Magento\Framework\Component\ComponentFile', [], [], '', false);
                 $file->expects($this->once())
                     ->method('getFullPath')
                     ->will($this->returnValue("{$fileType}/module/{$i}/path"));
@@ -82,10 +82,10 @@ class BaseTest extends \PHPUnit\Framework\TestCase
 
         $result = $this->fileCollector->getFiles($this->themeMock, '*.xml');
         $this->assertCount(4, $result);
-        $this->assertInstanceOf(\Magento\Framework\View\File::class, $result[0]);
-        $this->assertInstanceOf(\Magento\Framework\View\File::class, $result[1]);
-        $this->assertInstanceOf(\Magento\Framework\View\File::class, $result[2]);
-        $this->assertInstanceOf(\Magento\Framework\View\File::class, $result[3]);
+        $this->assertInstanceOf('Magento\Framework\View\File', $result[0]);
+        $this->assertInstanceOf('Magento\Framework\View\File', $result[1]);
+        $this->assertInstanceOf('Magento\Framework\View\File', $result[2]);
+        $this->assertInstanceOf('Magento\Framework\View\File', $result[3]);
     }
 
     /**
@@ -95,7 +95,7 @@ class BaseTest extends \PHPUnit\Framework\TestCase
      */
     protected function createFileMock()
     {
-        return $this->getMockBuilder(\Magento\Framework\View\File::class)
+        return $this->getMockBuilder('Magento\Framework\View\File')
             ->disableOriginalConstructor()
             ->getMock();
     }

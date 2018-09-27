@@ -7,10 +7,6 @@ namespace Magento\Framework\View\Element\Message\Renderer;
 
 use Magento\Framework\Message\MessageInterface;
 
-/**
- * Interface \Magento\Framework\View\Element\Message\Renderer\RendererInterface
- *
- */
 interface RendererInterface
 {
     /**

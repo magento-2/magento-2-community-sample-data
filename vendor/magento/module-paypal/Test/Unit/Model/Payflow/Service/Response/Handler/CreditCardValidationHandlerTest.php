@@ -9,7 +9,7 @@ use Magento\Framework\DataObject;
 use Magento\Paypal\Model\Info;
 use Magento\Paypal\Model\Payflow\Service\Response\Handler\CreditCardValidationHandler;
 
-class CreditCardValidationHandlerTest extends \PHPUnit\Framework\TestCase
+class CreditCardValidationHandlerTest extends \PHPUnit_Framework_TestCase
 {
     public function testHandleCreditCardValidationFields()
     {
@@ -20,12 +20,13 @@ class CreditCardValidationHandlerTest extends \PHPUnit\Framework\TestCase
             Info::PAYPAL_IAVS => 'X'
         ];
 
-        $paypalInfoManager = $this->getMockBuilder(\Magento\Paypal\Model\Info::class)
+
+        $paypalInfoManager = $this->getMockBuilder('Magento\Paypal\Model\Info')
             ->disableOriginalConstructor()
             ->getMock();
-        $paymentMock = $this->getMockBuilder(\Magento\Payment\Model\InfoInterface::class)
+        $paymentMock = $this->getMockBuilder('Magento\Payment\Model\InfoInterface')
             ->getMock();
-        $responseMock = $this->getMockBuilder(\Magento\Framework\DataObject::class)
+        $responseMock = $this->getMockBuilder('Magento\Framework\DataObject')
             ->disableOriginalConstructor()
             ->getMock();
 

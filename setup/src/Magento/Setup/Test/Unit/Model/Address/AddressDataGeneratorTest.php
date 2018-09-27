@@ -5,7 +5,7 @@
  */
 namespace Magento\Setup\Test\Unit\Model\Address;
 
-class AddressDataGeneratorTest extends \PHPUnit\Framework\TestCase
+class AddressDataGeneratorTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var array

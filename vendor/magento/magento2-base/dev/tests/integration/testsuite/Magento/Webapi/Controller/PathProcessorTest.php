@@ -8,7 +8,7 @@ namespace Magento\Webapi\Controller;
 
 use Magento\Store\Model\Store;
 
-class PathProcessorTest extends \PHPUnit\Framework\TestCase
+class PathProcessorTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\Store\Model\StoreManagerInterface
@@ -23,9 +23,9 @@ class PathProcessorTest extends \PHPUnit\Framework\TestCase
     protected function setUp()
     {
         $objectManager = \Magento\TestFramework\Helper\Bootstrap::getObjectManager();
-        $this->storeManager = $objectManager->get(\Magento\Store\Model\StoreManagerInterface::class);
+        $this->storeManager = $objectManager->get('Magento\Store\Model\StoreManagerInterface');
         $this->storeManager->reinitStores();
-        $this->pathProcessor = $objectManager->get(\Magento\Webapi\Controller\PathProcessor::class);
+        $this->pathProcessor = $objectManager->get('Magento\Webapi\Controller\PathProcessor');
     }
 
     /**
@@ -50,6 +50,7 @@ class PathProcessorTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals($path, $result);
         $this->assertEquals(Store::ADMIN_CODE, $this->storeManager->getStore()->getCode());
     }
+
 
     public function testProcessWithoutStoreCode()
     {

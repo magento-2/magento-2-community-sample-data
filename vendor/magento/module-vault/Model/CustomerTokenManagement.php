@@ -40,9 +40,11 @@ class CustomerTokenManagement
      */
     public function getCustomerSessionTokens()
     {
+        $vaultPayments = [];
+
         $customerId = $this->session->getCustomerId();
-        if (!$customerId || $this->session->isLoggedIn() === false) {
-            return [];
+        if (!$customerId) {
+            return $vaultPayments;
         }
 
         return $this->tokenManagement->getVisibleAvailableTokens($customerId);

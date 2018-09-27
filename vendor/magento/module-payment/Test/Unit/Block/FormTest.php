@@ -10,7 +10,7 @@ namespace Magento\Payment\Test\Unit\Block;
 
 use Magento\Framework\DataObject;
 
-class FormTest extends \PHPUnit\Framework\TestCase
+class FormTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \PHPUnit_Framework_MockObject_MockObject
@@ -45,7 +45,7 @@ class FormTest extends \PHPUnit\Framework\TestCase
         )->setMethods(
                 ['dispatch']
             )->disableOriginalConstructor()->getMock();
-        $this->_escaper = $helper->getObject(\Magento\Framework\Escaper::class);
+        $this->_escaper = $this->getMock(\Magento\Framework\Escaper::class, null, [], '', true);
         $context = $helper->getObject(
             \Magento\Framework\View\Element\Template\Context::class,
             [
@@ -69,7 +69,7 @@ class FormTest extends \PHPUnit\Framework\TestCase
 
     public function testGetMethodCode()
     {
-        $method = $this->createMock(\Magento\Payment\Model\MethodInterface::class);
+        $method = $this->getMock(\Magento\Payment\Model\MethodInterface::class, [], [], '', false);
         $method->expects($this->once())
             ->method('getCode')
             ->will($this->returnValue('method_code'));

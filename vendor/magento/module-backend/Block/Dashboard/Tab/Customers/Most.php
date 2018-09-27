@@ -8,9 +8,8 @@ namespace Magento\Backend\Block\Dashboard\Tab\Customers;
 /**
  * Adminhtml dashboard most active buyers
  *
- * @api
+ * @author      Magento Core Team <core@magentocommerce.com>
  * @SuppressWarnings(PHPMD.DepthOfInheritance)
- * @since 100.0.2
  */
 class Most extends \Magento\Backend\Block\Dashboard\Grid
 {

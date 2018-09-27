@@ -13,7 +13,6 @@
 namespace Composer\Package\Archiver;
 
 use ZipArchive;
-use Composer\Util\Filesystem;
 
 /**
  * @author Jan Prieser <jan@prieser.net>
@@ -27,24 +26,18 @@ class ZipArchiver implements ArchiverInterface
     /**
      * {@inheritdoc}
      */
-    public function archive($sources, $target, $format, array $excludes = array(), $ignoreFilters = false)
+    public function archive($sources, $target, $format, array $excludes = array())
     {
-        $fs = new Filesystem();
-        $sources = $fs->normalizePath($sources);
-
+        $sources = realpath($sources);
         $zip = new ZipArchive();
         $res = $zip->open($target, ZipArchive::CREATE);
         if ($res === true) {
-            $files = new ArchivableFilesFinder($sources, $excludes, $ignoreFilters);
+            $files = new ArchivableFilesFinder($sources, $excludes);
             foreach ($files as $file) {
                 /** @var $file \SplFileInfo */
-                $filepath = strtr($file->getPath()."/".$file->getFilename(), '\\', '/');
-                $localname = str_replace($sources.'/', '', $filepath);
-                if ($file->isDir()) {
-                    $zip->addEmptyDir($localname);
-                } else {
-                    $zip->addFile($filepath, $localname);
-                }
+                $filepath = $file->getPath()."/".$file->getFilename();
+                $localname = str_replace($sources."/", '', $filepath);
+                $zip->addFile($filepath, $localname);
             }
             if ($zip->close()) {
                 return $target;

@@ -10,7 +10,7 @@ use Magento\Framework\App\Bootstrap;
 use Magento\Framework\App\Filesystem\DirectoryList;
 
 /**
- * Tests for the \Magento\CatalogImportExport\Model\Import\Uploader class
+ * Tests for the \Magento\CatalogImportExport\Model\Import\Uploader class.
  */
 class UploaderTest extends \Magento\TestFramework\Indexer\TestCase
 {
@@ -52,6 +52,7 @@ class UploaderTest extends \Magento\TestFramework\Indexer\TestCase
     }
 
     /**
+     * @return void
      * @magentoAppIsolation enabled
      */
     public function testMoveWithValidFile()
@@ -60,10 +61,12 @@ class UploaderTest extends \Magento\TestFramework\Indexer\TestCase
         $filePath = $this->directory->getAbsolutePath($this->uploader->getTmpDir() . '/' . $fileName);
         copy(__DIR__ . '/_files/' . $fileName, $filePath);
         $this->uploader->move($fileName);
+
         $this->assertTrue($this->directory->isExist($this->uploader->getTmpDir() . '/' . $fileName));
     }
 
     /**
+     * @return void
      * @magentoAppIsolation enabled
      * @expectedException \Exception
      */
@@ -73,6 +76,7 @@ class UploaderTest extends \Magento\TestFramework\Indexer\TestCase
         $filePath = $this->directory->getAbsolutePath($this->uploader->getTmpDir() . '/' . $fileName);
         copy(__DIR__ . '/_files/' . $fileName, $filePath);
         $this->uploader->move($fileName);
+
         $this->assertFalse($this->directory->isExist($this->uploader->getTmpDir() . '/' . $fileName));
     }
 }

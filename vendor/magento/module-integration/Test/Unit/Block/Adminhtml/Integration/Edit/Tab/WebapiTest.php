@@ -10,7 +10,7 @@ use Magento\Integration\Block\Adminhtml\Integration\Edit\Tab\Info;
 use Magento\Integration\Controller\Adminhtml\Integration as IntegrationController;
 use Magento\Integration\Model\Integration as IntegrationModel;
 
-class WebapiTest extends \PHPUnit\Framework\TestCase
+class WebapiTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\Framework\TestFramework\Unit\Helper\ObjectManager
@@ -51,23 +51,23 @@ class WebapiTest extends \PHPUnit\Framework\TestCase
     {
         $this->objectManager = new \Magento\Framework\TestFramework\Unit\Helper\ObjectManager($this);
 
-        $this->registry = $this->getMockBuilder(\Magento\Framework\Registry::class)
+        $this->registry = $this->getMockBuilder('Magento\Framework\Registry')
             ->disableOriginalConstructor()
             ->getMock();
 
-        $this->rootResource = $this->getMockBuilder(\Magento\Framework\Acl\RootResource::class)
+        $this->rootResource = $this->getMockBuilder('Magento\Framework\Acl\RootResource')
             ->disableOriginalConstructor()
             ->getMock();
 
-        $this->aclResourceProvider = $this->getMockBuilder(\Magento\Framework\Acl\AclResource\ProviderInterface::class)
+        $this->aclResourceProvider = $this->getMockBuilder('Magento\Framework\Acl\AclResource\ProviderInterface')
             ->disableOriginalConstructor()
             ->getMockForAbstractClass();
 
-        $this->integrationHelper = $this->getMockBuilder(\Magento\Integration\Helper\Data::class)
+        $this->integrationHelper = $this->getMockBuilder('Magento\Integration\Helper\Data')
             ->disableOriginalConstructor()
             ->getMock();
 
-        $this->integrationService = $this->getMockBuilder(\Magento\Integration\Model\IntegrationService::class)
+        $this->integrationService = $this->getMockBuilder('Magento\Integration\Model\IntegrationService')
             ->disableOriginalConstructor()
             ->getMock();
     }
@@ -83,6 +83,9 @@ class WebapiTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals($expectedValue, $this->webapiBlock->canShowTab());
     }
 
+    /**
+     * @return array
+     */
     public function canShowTabProvider()
     {
         return [
@@ -127,6 +130,9 @@ class WebapiTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals($expectedValue, $this->webapiBlock->isEverythingAllowed());
     }
 
+    /**
+     * @return array
+     */
     public function isEverythingAllowedProvider()
     {
         return [
@@ -155,8 +161,7 @@ class WebapiTest extends \PHPUnit\Framework\TestCase
     {
         $this->webapiBlock = $this->getWebapiBlock();
         $resources = [
-            ['id' => 'Magento_Backend::admin', 'children' => ['resource1', 'resource2', 'resource3']],
-            ['id' => 'Invalid_Node', 'children' => ['resource4', 'resource5', 'resource6']]
+            1 => [ 'id' => 'Magento_Backend::admin', 'children' => [1, 2, 3] ]
         ];
         $this->aclResourceProvider->expects($this->once())
             ->method('getAclResources')
@@ -164,7 +169,7 @@ class WebapiTest extends \PHPUnit\Framework\TestCase
         $rootArray = "rootArrayValue";
         $this->integrationHelper->expects($this->once())
             ->method('mapResources')
-            ->with(['resource1', 'resource2', 'resource3'])
+            ->with([1, 2, 3])
             ->will($this->returnValue($rootArray));
         $this->assertEquals($rootArray, $this->webapiBlock->getTree());
     }
@@ -198,7 +203,7 @@ class WebapiTest extends \PHPUnit\Framework\TestCase
         return [
             'root resource in array' => [
                 2,
-                ['all_resources' => 0, 'resource' => [2, 3]],
+                ['all_resources' => 0, 'resource'=>[2, 3]],
                 true
             ],
             'root resource not in array' => [
@@ -234,7 +239,7 @@ class WebapiTest extends \PHPUnit\Framework\TestCase
             ->willReturnOnConsecutiveCalls(false, $integrationData, $integrationData);
 
         return $this->objectManager->getObject(
-            \Magento\Integration\Block\Adminhtml\Integration\Edit\Tab\Webapi::class,
+            'Magento\Integration\Block\Adminhtml\Integration\Edit\Tab\Webapi',
             [
                 'registry' => $this->registry,
                 'rootResource' => $this->rootResource,

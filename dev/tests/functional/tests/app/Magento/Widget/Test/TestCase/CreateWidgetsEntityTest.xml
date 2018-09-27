@@ -6,7 +6,7 @@
  */
  -->
 <config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="../../../../../../vendor/magento/mtf/etc/variations.xsd">
-    <testCase name="Magento\Widget\Test\TestCase\CreateWidgetsEntityTest" summary="Create Widget" ticketId="MAGETWO-60672">
+    <testCase name="Magento\Widget\Test\TestCase\CreateWidgetsEntityTest" summary="Create Widget" ticketId="MAGETWO-61801">
         <variation name="CreateWidgetEntityTestWithDifferentThemes" summary="Widgets with different themes is presented in grid/filter">
             <data name="tag" xsi:type="string">severity:S3</data>
             <data name="widgets/0" xsi:type="string">default</data>

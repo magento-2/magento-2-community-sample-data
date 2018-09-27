@@ -10,7 +10,6 @@ use Magento\Framework\Api\ExtensibleDataInterface;
 /**
  * Interface AttributeGroupInterface
  * @api
- * @since 100.0.2
  */
 interface AttributeGroupInterface extends ExtensibleDataInterface
 {

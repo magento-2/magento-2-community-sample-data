@@ -3,7 +3,6 @@
  * Copyright © Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
-
 namespace Magento\Cms\Test\Constraint;
 
 use Magento\Cms\Test\Fixture\CmsPage;
@@ -36,5 +35,15 @@ class AssertCmsPageFormSingleStoreMode extends AssertCmsPageForm
         $cmsFixtureData = $cms->getData();
         $errors = $this->verifyData($cmsFixtureData, $cmsFormData);
         \PHPUnit_Framework_Assert::assertEmpty($errors, $errors);
+    }
+
+    /**
+     * CMS Page content equals to data from fixture.
+     *
+     * @return string
+     */
+    public function toString()
+    {
+        return 'CMS Page content equals to data from fixture.';
     }
 }

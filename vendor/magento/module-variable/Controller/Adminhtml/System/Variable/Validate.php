@@ -6,11 +6,6 @@
  */
 namespace Magento\Variable\Controller\Adminhtml\System\Variable;
 
-/**
- * Validate variable value before save controller
- * @api
- * @since 100.0.2
- */
 class Validate extends \Magento\Variable\Controller\Adminhtml\System\Variable
 {
     /**

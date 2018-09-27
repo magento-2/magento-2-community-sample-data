@@ -12,41 +12,26 @@ use Magento\Integration\Model\Integration as IntegrationModel;
 
 /**
  * API permissions tab for integration activation dialog.
- *
- * @api
- * @since 100.0.2
  */
 class Webapi extends \Magento\Backend\Block\Widget\Form\Generic implements
     \Magento\Backend\Block\Widget\Tab\TabInterface
 {
-    /**
-     * @var string[]
-     */
+    /** @var string[] */
     protected $_selectedResources;
 
-    /**
-     * @var \Magento\Framework\Acl\RootResource
-     */
+    /** @var \Magento\Framework\Acl\RootResource */
     protected $_rootResource;
 
-    /**
-     * @var \Magento\Framework\Acl\AclResource\ProviderInterface
-     */
+    /** @var \Magento\Framework\Acl\AclResource\ProviderInterface */
     protected $_resourceProvider;
 
-    /**
-     * @var \Magento\Integration\Helper\Data
-     */
+    /** @var \Magento\Integration\Helper\Data */
     protected $_integrationData;
 
-    /**
-     * @var \Magento\Framework\Json\Encoder
-     */
+    /** @var \Magento\Framework\Json\Encoder */
     protected $encoder;
 
-    /**
-     * @var \Magento\Integration\Api\IntegrationServiceInterface
-     */
+    /** @var \Magento\Integration\Api\IntegrationServiceInterface */
     protected $integrationService;
 
     /**
@@ -162,7 +147,12 @@ class Webapi extends \Magento\Backend\Block\Widget\Form\Generic implements
      */
     public function getResourcesTreeJson()
     {
-        $aclResourcesTree = $this->_integrationData->mapResources($this->getAclResources());
+        $resources = $this->_resourceProvider->getAclResources();
+        $configResource = array_filter($resources, function ($node) {
+            return isset($node['id']) && $node['id'] == 'Magento_Backend::admin';
+        });
+        $configResource = reset($configResource);
+        $aclResourcesTree = $this->_integrationData->mapResources($configResource['children']);
 
         return $this->encoder->encode($aclResourcesTree);
     }
@@ -180,27 +170,14 @@ class Webapi extends \Magento\Backend\Block\Widget\Form\Generic implements
     {
         $selectedResources = $this->_selectedResources;
         if ($this->isEverythingAllowed()) {
-            $selectedResources = $this->_getAllResourceIds($this->getAclResources());
+            $resources = $this->_resourceProvider->getAclResources();
+            $configResource = array_filter($resources, function ($node) {
+                return isset($node['id']) && $node['id'] == 'Magento_Backend::admin';
+            });
+            $configResource = reset($configResource);
+            $selectedResources = $this->_getAllResourceIds($configResource['children']);
         }
         return $this->encoder->encode($selectedResources);
-    }
-
-    /**
-     * Get lit of all ACL resources declared in the system.
-     *
-     * @return array
-     */
-    private function getAclResources()
-    {
-        $resources = $this->_resourceProvider->getAclResources();
-        $configResource = array_filter(
-            $resources,
-            function ($node) {
-                return $node['id'] == 'Magento_Backend::admin';
-            }
-        );
-        $configResource = reset($configResource);
-        return isset($configResource['children']) ? $configResource['children'] : [];
     }
 
     /**

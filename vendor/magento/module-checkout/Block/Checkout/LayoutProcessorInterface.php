@@ -5,15 +5,6 @@
  */
 namespace Magento\Checkout\Block\Checkout;
 
-/**
- * Layout processor interface.
- *
- * Can be used to provide a custom logic for checkout JS layout preparation.
- *
- * @see \Magento\Checkout\Block\Onepage
- *
- * @api
- */
 interface LayoutProcessorInterface
 {
     /**

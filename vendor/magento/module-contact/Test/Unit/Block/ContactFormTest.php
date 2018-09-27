@@ -8,7 +8,7 @@ namespace Magento\Contact\Test\Unit\Block;
 
 use Magento\Contact\Block\ContactForm;
 
-class ContactFormTest extends \PHPUnit\Framework\TestCase
+class ContactFormTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\Contact\Block\ContactForm
@@ -30,12 +30,12 @@ class ContactFormTest extends \PHPUnit\Framework\TestCase
      */
     protected function setUp()
     {
-        $this->contextMock = $this->getMockBuilder(\Magento\Framework\View\Element\Template\Context::class)
+        $this->contextMock = $this->getMockBuilder('Magento\Framework\View\Element\Template\Context')
             ->disableOriginalConstructor()
             ->setMethods(['getUrlBuilder'])
             ->getMock();
 
-        $this->urlBuilderMock = $this->getMockBuilder(\Magento\Framework\UrlInterface::class)
+        $this->urlBuilderMock = $this->getMockBuilder('Magento\Framework\UrlInterface')
             ->disableOriginalConstructor()
             ->getMock();
 

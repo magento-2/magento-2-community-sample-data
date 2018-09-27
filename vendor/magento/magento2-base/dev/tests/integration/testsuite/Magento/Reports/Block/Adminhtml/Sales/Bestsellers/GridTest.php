@@ -8,7 +8,7 @@ namespace Magento\Reports\Block\Adminhtml\Sales\Bestsellers;
 /**
  * @magentoAppArea adminhtml
  */
-class GridTest extends \PHPUnit\Framework\TestCase
+class GridTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\Reports\Block\Adminhtml\Sales\Bestsellers\Grid
@@ -19,9 +19,9 @@ class GridTest extends \PHPUnit\Framework\TestCase
     {
         parent::setUp();
         $this->_block = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->get(
-            \Magento\Framework\View\LayoutInterface::class
+            'Magento\Framework\View\LayoutInterface'
         )->createBlock(
-            \Magento\Reports\Block\Adminhtml\Sales\Bestsellers\Grid::class
+            'Magento\Reports\Block\Adminhtml\Sales\Bestsellers\Grid'
         );
     }
 

@@ -8,7 +8,7 @@ namespace Magento\CatalogInventory\Test\Unit\Block;
 /**
  * Unit test for Qtyincrements block
  */
-class QtyincrementsTest extends \PHPUnit\Framework\TestCase
+class QtyincrementsTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\CatalogInventory\Block\Qtyincrements
@@ -33,13 +33,16 @@ class QtyincrementsTest extends \PHPUnit\Framework\TestCase
     protected function setUp()
     {
         $objectManager = new \Magento\Framework\TestFramework\Unit\Helper\ObjectManager($this);
-        $this->registryMock = $this->createMock(\Magento\Framework\Registry::class);
-        $this->stockItem = $this->getMockBuilder(\Magento\CatalogInventory\Api\Data\StockItemInterface::class)
-            ->setMethods(['getQtyIncrements', 'getStockItem'])
-            ->getMockForAbstractClass();
+        $this->registryMock = $this->getMock('Magento\Framework\Registry', [], [], '', false);
+        $this->stockItem = $this->getMockForAbstractClass(
+            'Magento\CatalogInventory\Api\Data\StockItemInterface',
+            ['getQtyIncrements'],
+            '',
+            false
+        );
         $this->stockItem->expects($this->any())->method('getStockItem')->willReturn(1);
         $this->stockRegistry = $this->getMockForAbstractClass(
-            \Magento\CatalogInventory\Api\StockRegistryInterface::class,
+            'Magento\CatalogInventory\Api\StockRegistryInterface',
             ['getStockItem'],
             '',
             false
@@ -47,7 +50,7 @@ class QtyincrementsTest extends \PHPUnit\Framework\TestCase
         $this->stockRegistry->expects($this->any())->method('getStockItem')->willReturn($this->stockItem);
 
         $this->block = $objectManager->getObject(
-            \Magento\CatalogInventory\Block\Qtyincrements::class,
+            'Magento\CatalogInventory\Block\Qtyincrements',
             [
                 'registry' => $this->registryMock,
                 'stockRegistry' => $this->stockRegistry
@@ -63,9 +66,9 @@ class QtyincrementsTest extends \PHPUnit\Framework\TestCase
     public function testGetIdentities()
     {
         $productTags = ['catalog_product_1'];
-        $product = $this->createMock(\Magento\Catalog\Model\Product::class);
+        $product = $this->getMock('Magento\Catalog\Model\Product', [], [], '', false);
         $product->expects($this->once())->method('getIdentities')->will($this->returnValue($productTags));
-        $store = $this->createPartialMock(\Magento\Store\Model\Store::class, ['getWebsiteId', '__wakeup']);
+        $store = $this->getMock('Magento\Store\Model\Store', ['getWebsiteId', '__wakeup'], [], '', false);
         $store->expects($this->any())->method('getWebsiteId')->willReturn(0);
         $product->expects($this->any())->method('getStore')->will($this->returnValue($store));
         $this->registryMock->expects($this->once())
@@ -88,10 +91,10 @@ class QtyincrementsTest extends \PHPUnit\Framework\TestCase
             ->method('getQtyIncrements')
             ->will($this->returnValue($qtyInc));
 
-        $product = $this->createMock(\Magento\Catalog\Model\Product::class);
+        $product = $this->getMock('Magento\Catalog\Model\Product', [], [], '', false);
         $product->expects($this->once())->method('getId')->will($this->returnValue($productId));
         $product->expects($this->once())->method('isSaleable')->will($this->returnValue($isSaleable));
-        $store = $this->createPartialMock(\Magento\Store\Model\Store::class, ['getWebsiteId', '__wakeup']);
+        $store = $this->getMock('Magento\Store\Model\Store', ['getWebsiteId', '__wakeup'], [], '', false);
         $store->expects($this->any())->method('getWebsiteId')->willReturn(0);
         $product->expects($this->any())->method('getStore')->will($this->returnValue($store));
 

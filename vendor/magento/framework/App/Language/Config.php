@@ -13,9 +13,7 @@ use Magento\Framework\Config\Dom;
  */
 class Config
 {
-    /**
-     * @var \Magento\Framework\Config\Dom\UrnResolver
-     */
+    /** @var \Magento\Framework\Config\Dom\UrnResolver */
     protected $urnResolver;
 
     /**

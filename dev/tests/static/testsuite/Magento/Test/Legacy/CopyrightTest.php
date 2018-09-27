@@ -9,7 +9,7 @@
  */
 namespace Magento\Test\Legacy;
 
-class CopyrightTest extends \PHPUnit\Framework\TestCase
+class CopyrightTest extends \PHPUnit_Framework_TestCase
 {
     public function testCopyright()
     {
@@ -18,7 +18,7 @@ class CopyrightTest extends \PHPUnit\Framework\TestCase
             function ($filename) {
                 $fileText = file_get_contents($filename);
                 if (strpos($fileText, 'Copyright © Magento, Inc. All rights reserved.') === false) {
-                    $this->fail('Copyright is missing or has wrong format ' . $filename);
+                    $this->fail('Copyright is missing or has wrong year in ' . $filename);
                 }
             },
             $this->copyrightDataProvider()
@@ -27,7 +27,7 @@ class CopyrightTest extends \PHPUnit\Framework\TestCase
 
     public function copyrightDataProvider()
     {
-        $blackList = $this->getFilesData('blacklist*.php');
+        $blackList = include __DIR__ . '/_files/copyright/blacklist.php';
 
         $changedFiles = [];
         foreach (glob(__DIR__ . '/../_files/changed_files*') as $listFile) {
@@ -55,19 +55,5 @@ class CopyrightTest extends \PHPUnit\Framework\TestCase
             }
         );
         return $changedFiles;
-    }
-
-    /**
-     * @param string $filePattern
-     * @return array
-     */
-    protected function getFilesData($filePattern)
-    {
-        $result = [];
-        foreach (glob(__DIR__ . '/_files/copyright/' . $filePattern) as $file) {
-            $fileData = include $file;
-            $result = array_merge($result, $fileData);
-        }
-        return $result;
     }
 }

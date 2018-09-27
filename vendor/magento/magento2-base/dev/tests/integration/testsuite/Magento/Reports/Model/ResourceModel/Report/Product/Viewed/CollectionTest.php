@@ -8,7 +8,7 @@ namespace Magento\Reports\Model\ResourceModel\Report\Product\Viewed;
 /**
  * @magentoAppArea adminhtml
  */
-class CollectionTest extends \PHPUnit\Framework\TestCase
+class CollectionTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\Reports\Model\ResourceModel\Report\Product\Viewed\Collection
@@ -18,7 +18,7 @@ class CollectionTest extends \PHPUnit\Framework\TestCase
     protected function setUp()
     {
         $this->_collection = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->create(
-            \Magento\Reports\Model\ResourceModel\Report\Product\Viewed\Collection::class
+            'Magento\Reports\Model\ResourceModel\Report\Product\Viewed\Collection'
         );
         $this->_collection->setPeriod('day')
             ->setDateRange(null, null)

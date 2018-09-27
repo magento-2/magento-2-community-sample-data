@@ -19,7 +19,7 @@ class Link extends \Magento\Downloadable\Controller\Download
      */
     protected function _getCustomerSession()
     {
-        return $this->_objectManager->get(\Magento\Customer\Model\Session::class);
+        return $this->_objectManager->get('Magento\Customer\Model\Session');
     }
 
     /**
@@ -38,7 +38,7 @@ class Link extends \Magento\Downloadable\Controller\Download
         $id = $this->getRequest()->getParam('id', 0);
         /** @var PurchasedLink $linkPurchasedItem */
         $linkPurchasedItem = $this->_objectManager->create(
-            \Magento\Downloadable\Model\Link\Purchased\Item::class
+            'Magento\Downloadable\Model\Link\Purchased\Item'
         )->load(
             $id,
             'link_hash'
@@ -47,12 +47,12 @@ class Link extends \Magento\Downloadable\Controller\Download
             $this->messageManager->addNotice(__("We can't find the link you requested."));
             return $this->_redirect('*/customer/products');
         }
-        if (!$this->_objectManager->get(\Magento\Downloadable\Helper\Data::class)->getIsShareable($linkPurchasedItem)) {
+        if (!$this->_objectManager->get('Magento\Downloadable\Helper\Data')->getIsShareable($linkPurchasedItem)) {
             $customerId = $session->getCustomerId();
             if (!$customerId) {
                 /** @var \Magento\Catalog\Model\Product $product */
                 $product = $this->_objectManager->create(
-                    \Magento\Catalog\Model\Product::class
+                    'Magento\Catalog\Model\Product'
                 )->load(
                     $linkPurchasedItem->getProductId()
                 );
@@ -69,7 +69,7 @@ class Link extends \Magento\Downloadable\Controller\Download
                 $session->authenticate();
                 $session->setBeforeAuthUrl(
                     $this->_objectManager->create(
-                        \Magento\Framework\UrlInterface::class
+                        'Magento\Framework\UrlInterface'
                     )->getUrl(
                         'downloadable/customer/products/',
                         ['_secure' => true]
@@ -79,7 +79,7 @@ class Link extends \Magento\Downloadable\Controller\Download
             }
             /** @var \Magento\Downloadable\Model\Link\Purchased $linkPurchased */
             $linkPurchased = $this->_objectManager->create(
-                \Magento\Downloadable\Model\Link\Purchased::class
+                'Magento\Downloadable\Model\Link\Purchased'
             )->load(
                 $linkPurchasedItem->getPurchasedId()
             );
@@ -102,7 +102,7 @@ class Link extends \Magento\Downloadable\Controller\Download
                 $resourceType = DownloadHelper::LINK_TYPE_URL;
             } elseif ($linkPurchasedItem->getLinkType() == DownloadHelper::LINK_TYPE_FILE) {
                 $resource = $this->_objectManager->get(
-                    \Magento\Downloadable\Helper\File::class
+                    'Magento\Downloadable\Helper\File'
                 )->getFilePath(
                     $this->_getLink()->getBasePath(),
                     $linkPurchasedItem->getLinkFile()

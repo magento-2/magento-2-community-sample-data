@@ -23,19 +23,19 @@ $salesRule->setData(
         'coupon_type' => Rule::COUPON_TYPE_SPECIFIC,
         'conditions' => [
             [
-                'type' => \Magento\SalesRule\Model\Rule\Condition\Address::class,
+                'type' => 'Magento\SalesRule\Model\Rule\Condition\Address',
                 'attribute' => 'base_subtotal',
                 'operator' => '>',
-                'value' => 45,
-            ],
+                'value' => 45
+            ]
         ],
         'simple_action' => Rule::CART_FIXED_ACTION,
         'discount_amount' => 15,
         'discount_step' => 0,
         'stop_rules_processing' => 1,
         'website_ids' => [
-            $objectManager->get(StoreManagerInterface::class)->getWebsite()->getId(),
-        ],
+            $objectManager->get(StoreManagerInterface::class)->getWebsite()->getId()
+        ]
     ]
 );
 $objectManager->get(\Magento\SalesRule\Model\ResourceModel\Rule::class)->save($salesRule);

@@ -17,9 +17,6 @@ class Collection extends \Magento\Framework\Model\ResourceModel\Db\Collection\Ab
      */
     protected function _construct()
     {
-        $this->_init(
-            \Magento\Integration\Model\Oauth\Nonce::class,
-            \Magento\Integration\Model\ResourceModel\Oauth\Nonce::class
-        );
+        $this->_init('Magento\Integration\Model\Oauth\Nonce', 'Magento\Integration\Model\ResourceModel\Oauth\Nonce');
     }
 }

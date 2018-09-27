@@ -111,21 +111,19 @@ class CheckUserEditObserver implements ObserverInterface
                 )
             )) {
                 $customerId = $this->customerSession->getCustomerId();
-                if ($customerId) {
-                    $this->authentication->processAuthenticationFailure($customerId);
-                    if ($this->authentication->isLocked($customerId)) {
-                        $this->customerSession->logout();
-                        $this->customerSession->start();
-                        $message = __(
-                            'The account is locked. Please wait and try again or contact %1.',
-                            $this->scopeConfig->getValue('contact/email/recipient_email')
-                        );
-                        $this->messageManager->addError($message);
-                    }
-                    $this->messageManager->addError(__('Incorrect CAPTCHA'));
-                    $this->actionFlag->set('', \Magento\Framework\App\Action\Action::FLAG_NO_DISPATCH, true);
-                    $this->redirect->redirect($controller->getResponse(), '*/*/edit');
+                $this->authentication->processAuthenticationFailure($customerId);
+                if ($this->authentication->isLocked($customerId)) {
+                    $this->customerSession->logout();
+                    $this->customerSession->start();
+                    $message = __(
+                        'The account is locked. Please wait and try again or contact %1.',
+                        $this->scopeConfig->getValue('contact/email/recipient_email')
+                    );
+                    $this->messageManager->addError($message);
                 }
+                $this->messageManager->addError(__('Incorrect CAPTCHA'));
+                $this->actionFlag->set('', \Magento\Framework\App\Action\Action::FLAG_NO_DISPATCH, true);
+                $this->redirect->redirect($controller->getResponse(), '*/*/edit');
             }
         }
 

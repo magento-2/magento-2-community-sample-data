@@ -7,9 +7,6 @@
  */
 namespace Magento\Sales\Model\Order\Pdf;
 
-/**
- * Class Config
- */
 class Config
 {
     /**

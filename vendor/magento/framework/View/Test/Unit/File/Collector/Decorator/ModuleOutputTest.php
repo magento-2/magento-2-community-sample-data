@@ -8,7 +8,7 @@
 
 namespace Magento\Framework\View\Test\Unit\File\Collector\Decorator;
 
-class ModuleOutputTest extends \PHPUnit\Framework\TestCase
+class ModuleOutputTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\Framework\View\File\Collector\Decorator\ModuleOutput
@@ -27,8 +27,8 @@ class ModuleOutputTest extends \PHPUnit\Framework\TestCase
 
     protected function setUp()
     {
-        $this->_fileSource = $this->getMockForAbstractClass(\Magento\Framework\View\File\CollectorInterface::class);
-        $this->_moduleManager = $this->createMock(\Magento\Framework\Module\Manager::class);
+        $this->_fileSource = $this->getMockForAbstractClass('Magento\Framework\View\File\CollectorInterface');
+        $this->_moduleManager = $this->getMock('Magento\Framework\Module\Manager', [], [], '', false);
         $this->_moduleManager
             ->expects($this->any())
             ->method('isOutputEnabled')
@@ -43,7 +43,7 @@ class ModuleOutputTest extends \PHPUnit\Framework\TestCase
 
     public function testGetFiles()
     {
-        $theme = $this->getMockForAbstractClass(\Magento\Framework\View\Design\ThemeInterface::class);
+        $theme = $this->getMockForAbstractClass('Magento\Framework\View\Design\ThemeInterface');
         $fileOne = new \Magento\Framework\View\File('1.xml', 'Module_OutputEnabled');
         $fileTwo = new \Magento\Framework\View\File('2.xml', 'Module_OutputDisabled');
         $fileThree = new \Magento\Framework\View\File('3.xml', 'Module_OutputEnabled', $theme);

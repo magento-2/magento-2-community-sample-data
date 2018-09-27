@@ -9,40 +9,24 @@ use Magento\Framework\App\Http\Context;
 use Magento\Framework\App\PageCache\Identifier;
 use Magento\Framework\App\Response\Http;
 use Magento\Framework\App\Request\Http as HttpRequest;
-use Magento\Framework\Serialize\Serializer\Json;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
 
-class IdentifierTest extends \PHPUnit\Framework\TestCase
+class IdentifierTest extends \PHPUnit_Framework_TestCase
 {
-    /**
-     * Test value for cache vary string
-     */
+    /** Test value for cache vary string */
     const VARY = '123';
 
-    /**
-     * @var \Magento\Framework\TestFramework\Unit\Helper\ObjectManager
-     */
+    /** @var \Magento\Framework\TestFramework\Unit\Helper\ObjectManager */
     private $objectManager;
 
-    /**
-     * @var Context|\PHPUnit_Framework_MockObject_MockObject
-     */
+    /** @var Context */
     private $contextMock;
 
-    /**
-     * @var HttpRequest|\PHPUnit_Framework_MockObject_MockObject
-     */
+    /** @var HttpRequest */
     private $requestMock;
 
-    /**
-     * @var Identifier
-     */
+    /** @var Identifier */
     private $model;
-
-    /**
-     * @var Json|\PHPUnit_Framework_MockObject_MockObject
-     */
-    private $serializerMock;
 
     /**
      * @return \Magento\Framework\TestFramework\Unit\Helper\ObjectManager
@@ -57,30 +41,13 @@ class IdentifierTest extends \PHPUnit\Framework\TestCase
         $this->requestMock = $this->getMockBuilder(HttpRequest::class)
             ->disableOriginalConstructor()
             ->getMock();
-
-        $this->serializerMock = $this->getMockBuilder(Json::class)
-            ->setMethods(['serialize'])
-            ->disableOriginalConstructor()
-            ->getMock();
-        $this->serializerMock->expects($this->any())
-            ->method('serialize')
-            ->will(
-                $this->returnCallback(
-                    function ($value) {
-                        return json_encode($value);
-                    }
-                )
-            );
-
         $this->model = $this->objectManager->getObject(
             Identifier::class,
             [
-                'request'    => $this->requestMock,
-                'context'    => $this->contextMock,
-                'serializer' => $this->serializerMock,
+                'request' => $this->requestMock,
+                'context' => $this->contextMock,
             ]
         );
-        return parent::setUp();
     }
 
     public function testSecureDifferentiator()
@@ -144,39 +111,11 @@ class IdentifierTest extends \PHPUnit\Framework\TestCase
         $this->model->getValue();
     }
 
+    /**
+     * @return array
+     */
     public function trueFalseDataProvider()
     {
         return [[true], [false]];
-    }
-
-    /**
-     * Test get identifier value
-     */
-    public function testGetValue()
-    {
-        $this->requestMock->expects($this->any())
-            ->method('isSecure')
-            ->will($this->returnValue(true));
-
-        $this->requestMock->expects($this->any())
-            ->method('getUriString')
-            ->willReturn('http://example.com/path1/');
-
-        $this->contextMock->expects($this->any())
-            ->method('getVaryString')
-            ->will($this->returnValue(self::VARY));
-
-        $this->assertEquals(
-            sha1(
-                json_encode(
-                    [
-                        true,
-                        'http://example.com/path1/',
-                        self::VARY
-                    ]
-                )
-            ),
-            $this->model->getValue()
-        );
     }
 }

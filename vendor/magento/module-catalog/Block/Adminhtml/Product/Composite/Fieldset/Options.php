@@ -3,14 +3,14 @@
  * Copyright © Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
-namespace Magento\Catalog\Block\Adminhtml\Product\Composite\Fieldset;
 
 /**
  * Adminhtml block for fieldset of product custom options
  *
- * @api
- * @since 100.0.2
+ * @author      Magento Core Team <core@magentocommerce.com>
  */
+namespace Magento\Catalog\Block\Adminhtml\Product\Composite\Fieldset;
+
 class Options extends \Magento\Catalog\Block\Product\View\Options
 {
     /**

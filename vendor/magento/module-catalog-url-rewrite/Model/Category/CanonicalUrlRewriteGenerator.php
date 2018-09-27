@@ -12,14 +12,10 @@ use Magento\UrlRewrite\Service\V1\Data\UrlRewriteFactory;
 
 class CanonicalUrlRewriteGenerator
 {
-    /**
-     * @var \Magento\CatalogUrlRewrite\Model\CategoryUrlPathGenerator
-     */
+    /** @var \Magento\CatalogUrlRewrite\Model\CategoryUrlPathGenerator */
     protected $categoryUrlPathGenerator;
 
-    /**
-     * @var \Magento\UrlRewrite\Service\V1\Data\UrlRewriteFactory
-     */
+    /** @var \Magento\UrlRewrite\Service\V1\Data\UrlRewriteFactory */
     protected $urlRewriteFactory;
 
     /**

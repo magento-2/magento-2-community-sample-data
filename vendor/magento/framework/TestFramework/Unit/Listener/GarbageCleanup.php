@@ -3,23 +3,20 @@
  * Copyright © Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
-namespace Magento\Framework\TestFramework\Unit\Listener;
-
-use PHPUnit\Framework\Test;
-use PHPUnit\Framework\Warning;
 
 /**
  * Listener of PHPUnit built-in events that enforces cleanup of cyclic object references
- *
  */
-class GarbageCleanup implements \PHPUnit\Framework\TestListener
+namespace Magento\Framework\TestFramework\Unit\Listener;
+
+class GarbageCleanup implements \PHPUnit_Framework_TestListener
 {
     /**
      * {@inheritdoc}
      * @SuppressWarnings(PHPMD.ShortVariable)
      * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      */
-    public function addError(\PHPUnit\Framework\Test $test, \Exception $e, $time)
+    public function addError(\PHPUnit_Framework_Test $test, \Exception $e, $time)
     {
     }
 
@@ -28,7 +25,7 @@ class GarbageCleanup implements \PHPUnit\Framework\TestListener
      * @SuppressWarnings(PHPMD.ShortVariable)
      * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      */
-    public function addFailure(\PHPUnit\Framework\Test $test, \PHPUnit\Framework\AssertionFailedError $e, $time)
+    public function addFailure(\PHPUnit_Framework_Test $test, \PHPUnit_Framework_AssertionFailedError $e, $time)
     {
     }
 
@@ -37,7 +34,7 @@ class GarbageCleanup implements \PHPUnit\Framework\TestListener
      * @SuppressWarnings(PHPMD.ShortVariable)
      * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      */
-    public function addIncompleteTest(\PHPUnit\Framework\Test $test, \Exception $e, $time)
+    public function addIncompleteTest(\PHPUnit_Framework_Test $test, \Exception $e, $time)
     {
     }
 
@@ -46,7 +43,7 @@ class GarbageCleanup implements \PHPUnit\Framework\TestListener
      * @SuppressWarnings(PHPMD.ShortVariable)
      * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      */
-    public function addRiskyTest(\PHPUnit\Framework\Test $test, \Exception $e, $time)
+    public function addRiskyTest(\PHPUnit_Framework_Test $test, \Exception $e, $time)
     {
     }
 
@@ -55,7 +52,7 @@ class GarbageCleanup implements \PHPUnit\Framework\TestListener
      * @SuppressWarnings(PHPMD.ShortVariable)
      * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      */
-    public function addSkippedTest(\PHPUnit\Framework\Test $test, \Exception $e, $time)
+    public function addSkippedTest(\PHPUnit_Framework_Test $test, \Exception $e, $time)
     {
     }
 
@@ -63,7 +60,7 @@ class GarbageCleanup implements \PHPUnit\Framework\TestListener
      * {@inheritdoc}
      * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      */
-    public function startTestSuite(\PHPUnit\Framework\TestSuite $suite)
+    public function startTestSuite(\PHPUnit_Framework_TestSuite $suite)
     {
     }
 
@@ -71,7 +68,7 @@ class GarbageCleanup implements \PHPUnit\Framework\TestListener
      * {@inheritdoc}
      * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      */
-    public function endTestSuite(\PHPUnit\Framework\TestSuite $suite)
+    public function endTestSuite(\PHPUnit_Framework_TestSuite $suite)
     {
         gc_collect_cycles();
     }
@@ -80,7 +77,7 @@ class GarbageCleanup implements \PHPUnit\Framework\TestListener
      * {@inheritdoc}
      * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      */
-    public function startTest(\PHPUnit\Framework\Test $test)
+    public function startTest(\PHPUnit_Framework_Test $test)
     {
     }
 
@@ -88,15 +85,7 @@ class GarbageCleanup implements \PHPUnit\Framework\TestListener
      * {@inheritdoc}
      * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      */
-    public function endTest(\PHPUnit\Framework\Test $test, $time)
-    {
-    }
-
-    /**
-     * {@inheritdoc}
-     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
-     */
-    public function addWarning(Test $test, Warning $e, $time)
+    public function endTest(\PHPUnit_Framework_Test $test, $time)
     {
     }
 }

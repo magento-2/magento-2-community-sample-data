@@ -10,7 +10,7 @@ use Magento\Framework\TestFramework\Unit\Helper\ObjectManager as ObjectManagerHe
 /**
  * Class HistoryTest
  */
-class HistoryTest extends \PHPUnit\Framework\TestCase
+class HistoryTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var ObjectManagerHelper
@@ -27,17 +27,26 @@ class HistoryTest extends \PHPUnit\Framework\TestCase
      */
     protected function setUp()
     {
-        $this->historyResourceModel = $this->createPartialMock(
-            \Magento\ImportExport\Model\ResourceModel\History::class,
-            ['getConnection', 'getMainTable', 'getIdFieldName']
+        $this->historyResourceModel = $this->getMock(
+            'Magento\ImportExport\Model\ResourceModel\History',
+            ['getConnection', 'getMainTable', 'getIdFieldName'],
+            [],
+            '',
+            false
         );
-        $dbAdapterMock = $this->createPartialMock(
-            \Magento\Framework\DB\Adapter\Pdo\Mysql::class,
-            ['select', 'fetchOne']
+        $dbAdapterMock = $this->getMock(
+            'Magento\Framework\DB\Adapter\Pdo\Mysql',
+            ['select', 'fetchOne'],
+            [],
+            '',
+            false
         );
-        $selectMock = $this->createPartialMock(
-            \Magento\Framework\DB\Select::class,
-            ['from', 'order', 'where', 'limit']
+        $selectMock = $this->getMock(
+            'Magento\Framework\DB\Select',
+            ['from', 'order', 'where', 'limit'],
+            [],
+            '',
+            false
         );
         $selectMock->expects($this->any())->method('from')->will($this->returnSelf());
         $selectMock->expects($this->any())->method('order')->will($this->returnSelf());

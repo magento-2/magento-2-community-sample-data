@@ -17,7 +17,7 @@ use Magento\Framework\Controller\ResultFactory;
 /**
  * Class AttributeTest
  */
-class AttributeTest extends \PHPUnit\Framework\TestCase
+class AttributeTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var ObjectManager

@@ -9,23 +9,16 @@ namespace Magento\Payment\Model;
 use Magento\Framework\App\ObjectManager;
 use Magento\Payment\Model\Method\AbstractMethod;
 
-/**
- * Methods List service class.
- *
- * @api
- * @since 100.0.2
- */
 class MethodList
 {
     /**
      * @var \Magento\Payment\Helper\Data
-     * @deprecated 100.1.3 Do not use this property in case of inheritance.
+     * @deprecated
      */
     protected $paymentHelper;
 
     /**
      * @var \Magento\Payment\Model\Checks\SpecificationFactory
-     * @deprecated 100.2.0 Do not use this property in case of inheritance.
      */
     protected $methodSpecificationFactory;
 
@@ -54,6 +47,7 @@ class MethodList
     /**
      * @param \Magento\Quote\Api\Data\CartInterface $quote
      * @return \Magento\Payment\Model\MethodInterface[]
+     * @api
      */
     public function getAvailableMethods(\Magento\Quote\Api\Data\CartInterface $quote = null)
     {
@@ -96,6 +90,7 @@ class MethodList
      * Get payment method list.
      *
      * @return \Magento\Payment\Api\PaymentMethodListInterface
+     * @deprecated
      */
     private function getPaymentMethodList()
     {
@@ -111,6 +106,7 @@ class MethodList
      * Get payment method instance factory.
      *
      * @return \Magento\Payment\Model\Method\InstanceFactory
+     * @deprecated
      */
     private function getPaymentMethodInstanceFactory()
     {

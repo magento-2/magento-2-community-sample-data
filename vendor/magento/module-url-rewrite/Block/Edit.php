@@ -118,7 +118,7 @@ class Edit extends \Magento\Backend\Block\Widget\Container
             'reset',
             [
                 'label' => __('Reset'),
-                'onclick' => 'location.reload();',
+                'onclick' => '$(\'edit_form\').reset()',
                 'class' => 'scalable',
                 'level' => -1
             ]
@@ -208,7 +208,7 @@ class Edit extends \Magento\Backend\Block\Widget\Container
     protected function _createEditFormBlock()
     {
         return $this->getLayout()->createBlock(
-            \Magento\UrlRewrite\Block\Edit\Form::class,
+            'Magento\UrlRewrite\Block\Edit\Form',
             '',
             ['data' => ['url_rewrite' => $this->_getUrlRewrite()]]
         );
@@ -232,7 +232,7 @@ class Edit extends \Magento\Backend\Block\Widget\Container
     private function _getSelectorBlock()
     {
         if (!$this->_selectorBlock) {
-            $this->_selectorBlock = $this->getLayout()->createBlock(\Magento\UrlRewrite\Block\Selector::class);
+            $this->_selectorBlock = $this->getLayout()->createBlock('Magento\UrlRewrite\Block\Selector');
         }
         return $this->_selectorBlock;
     }

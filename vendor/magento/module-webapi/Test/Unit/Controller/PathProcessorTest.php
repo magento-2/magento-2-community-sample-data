@@ -8,7 +8,7 @@ namespace Magento\Webapi\Test\Unit\Controller;
 
 use Magento\Store\Model\Store;
 
-class PathProcessorTest extends \PHPUnit\Framework\TestCase
+class PathProcessorTest extends \PHPUnit_Framework_TestCase
 {
     /** @var \PHPUnit_Framework_MockObject_MockObject | \Magento\Store\Model\StoreManagerInterface */
     private $storeManagerMock;
@@ -24,7 +24,7 @@ class PathProcessorTest extends \PHPUnit\Framework\TestCase
 
     protected function setUp()
     {
-        $this->storeManagerMock = $this->getMockBuilder(\Magento\Store\Model\StoreManagerInterface::class)
+        $this->storeManagerMock = $this->getMockBuilder('Magento\Store\Model\StoreManagerInterface')
             ->disableOriginalConstructor()
             ->getMock();
         $this->storeManagerMock->expects($this->once())
@@ -51,6 +51,9 @@ class PathProcessorTest extends \PHPUnit\Framework\TestCase
         $this->assertSame($this->endpointPath, $result);
     }
 
+    /**
+     * @return array
+     */
     public function processPathDataProvider()
     {
         return [

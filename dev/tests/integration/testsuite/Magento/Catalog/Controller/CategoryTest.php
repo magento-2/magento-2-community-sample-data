@@ -5,8 +5,6 @@
  */
 namespace Magento\Catalog\Controller;
 
-use Magento\Framework\App\ActionInterface;
-
 /**
  * Test class for \Magento\Catalog\Controller\Category.
  *
@@ -19,7 +17,7 @@ class CategoryTest extends \Magento\TestFramework\TestCase\AbstractController
         parent::assert404NotFound();
         /** @var $objectManager \Magento\TestFramework\ObjectManager */
         $objectManager = \Magento\TestFramework\Helper\Bootstrap::getObjectManager();
-        $this->assertNull($objectManager->get(\Magento\Framework\Registry::class)->registry('current_category'));
+        $this->assertNull($objectManager->get('Magento\Framework\Registry')->registry('current_category'));
     }
 
     public function getViewActionDataProvider()
@@ -57,7 +55,6 @@ class CategoryTest extends \Magento\TestFramework\TestCase\AbstractController
     /**
      * @dataProvider getViewActionDataProvider
      * @magentoDataFixture Magento/CatalogUrlRewrite/_files/categories_with_product_ids.php
-     * @magentoDbIsolation disabled
      */
     public function testViewAction($categoryId, array $expectedHandles, array $expectedContent)
     {
@@ -67,18 +64,18 @@ class CategoryTest extends \Magento\TestFramework\TestCase\AbstractController
         $objectManager = \Magento\TestFramework\Helper\Bootstrap::getObjectManager();
 
         /** @var $currentCategory \Magento\Catalog\Model\Category */
-        $currentCategory = $objectManager->get(\Magento\Framework\Registry::class)->registry('current_category');
-        $this->assertInstanceOf(\Magento\Catalog\Model\Category::class, $currentCategory);
+        $currentCategory = $objectManager->get('Magento\Framework\Registry')->registry('current_category');
+        $this->assertInstanceOf('Magento\Catalog\Model\Category', $currentCategory);
         $this->assertEquals($categoryId, $currentCategory->getId(), 'Category in registry.');
 
         $lastCategoryId = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->get(
-            \Magento\Catalog\Model\Session::class
+            'Magento\Catalog\Model\Session'
         )->getLastVisitedCategoryId();
         $this->assertEquals($categoryId, $lastCategoryId, 'Last visited category.');
 
         /* Layout updates */
         $handles = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->get(
-            \Magento\Framework\View\LayoutInterface::class
+            'Magento\Framework\View\LayoutInterface'
         )->getUpdate()->getHandles();
         foreach ($expectedHandles as $expectedHandleName) {
             $this->assertContains($expectedHandleName, $handles);
@@ -104,23 +101,5 @@ class CategoryTest extends \Magento\TestFramework\TestCase\AbstractController
         $this->dispatch('catalog/category/view/id/8');
 
         $this->assert404NotFound();
-    }
-
-    /**
-     * Test changing Store View on Category page.
-     *
-     * @magentoAppIsolation enabled
-     * @magentoDbIsolation disabled
-     * @magentoDataFixture Magento/Catalog/_files/enable_using_store_codes.php
-     * @magentoDataFixture Magento/Store/_files/core_fixturestore.php
-     * @magentoDataFixture Magento/Catalog/_files/category_with_two_stores.php
-     */
-    public function testChangeStoreView()
-    {
-        $this->getRequest()->setMethod('POST');
-        $this->getRequest()->setPostValue([ActionInterface::PARAM_NAME_URL_ENCODED => 1]);
-        $this->dispatch('fixturestore/catalog/category/view/id/555?___from_store=default');
-        $html = $this->getResponse()->getBody();
-        $this->assertContains('<span>Fixture Store</span>', $html);
     }
 }

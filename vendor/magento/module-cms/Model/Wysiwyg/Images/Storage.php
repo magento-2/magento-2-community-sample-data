@@ -3,8 +3,6 @@
  * Copyright © Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
-declare(strict_types=1);
-
 namespace Magento\Cms\Model\Wysiwyg\Images;
 
 use Magento\Cms\Helper\Wysiwyg\Images;
@@ -16,9 +14,6 @@ use Magento\Framework\App\Filesystem\DirectoryList;
  * @SuppressWarnings(PHPMD.LongVariable)
  * @SuppressWarnings(PHPMD.TooManyFields)
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
- *
- * @api
- * @since 100.0.2
  */
 class Storage extends \Magento\Framework\DataObject
 {
@@ -250,6 +245,7 @@ class Storage extends \Magento\Framework\DataObject
 
             if (array_key_exists($rootChildParts[1], $conditions['plain'])
                 || ($regExp && preg_match($regExp, $value->getFilename()))) {
+
                 $collection->removeItemByKey($key);
             }
         }
@@ -470,7 +466,7 @@ class Storage extends \Magento\Framework\DataObject
     }
 
     /**
-     * Upload and resize new file
+     * Upload and resize new file.
      *
      * @param string $targetPath Target directory
      * @param string $type Type of storage, e.g. image, media etc.
@@ -499,14 +495,6 @@ class Storage extends \Magento\Framework\DataObject
 
         // create thumbnail
         $this->resizeFile($targetPath . '/' . $uploader->getUploadedFileName(), true);
-
-        $result['cookie'] = [
-            'name' => $this->getSession()->getName(),
-            'value' => $this->getSession()->getSessionId(),
-            'lifetime' => $this->getSession()->getCookieLifetime(),
-            'path' => $this->getSession()->getCookiePath(),
-            'domain' => $this->getSession()->getCookieDomain(),
-        ];
 
         return $result;
     }
@@ -640,7 +628,7 @@ class Storage extends \Magento\Framework\DataObject
     }
 
     /**
-     * Prepare allowed_extensions config settings
+     * Prepare allowed_extensions config settings.
      *
      * @param string $type Type of storage, e.g. image, media etc.
      * @return array Array of allowed file extensions
@@ -737,7 +725,7 @@ class Storage extends \Magento\Framework\DataObject
      */
     protected function _sanitizePath($path)
     {
-        return rtrim(preg_replace('~[/\\\]+~', '/', $this->_directory->getDriver()->getRealPathSafety($path)), '/');
+        return rtrim(preg_replace('~[/\\\]+~', '/', $this->_directory->getDriver()->getRealPath($path)), '/');
     }
 
     /**
@@ -755,12 +743,12 @@ class Storage extends \Magento\Framework\DataObject
     }
 
     /**
-     * Prepare mime types config settings
+     * Prepare mime types config settings.
      *
      * @param string|null $type Type of storage, e.g. image, media etc.
      * @return array Array of allowed file extensions
      */
-    private function getAllowedMimeTypes($type = null): array
+    private function getAllowedMimeTypes($type = null)
     {
         $allowed = $this->getExtensionsList($type);
 
@@ -768,18 +756,19 @@ class Storage extends \Magento\Framework\DataObject
     }
 
     /**
-     * Get list of allowed file extensions with mime type in values
+     * Get list of allowed file extensions with mime type in values.
      *
      * @param string|null $type
      * @return array
      */
-    private function getExtensionsList($type = null): array
+    private function getExtensionsList($type = null)
     {
         if (is_string($type) && array_key_exists("{$type}_allowed", $this->_extensions)) {
             $allowed = $this->_extensions["{$type}_allowed"];
         } else {
             $allowed = $this->_extensions['allowed'];
         }
+
         return $allowed;
     }
 }

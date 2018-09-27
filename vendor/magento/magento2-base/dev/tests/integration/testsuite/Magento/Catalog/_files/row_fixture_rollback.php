@@ -5,28 +5,27 @@
  */
 
 /** @var \Magento\Framework\Registry $registry */
-$registry = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->get(\Magento\Framework\Registry::class);
+$registry = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->get('Magento\Framework\Registry');
 
 $registry->unregister('isSecureArea');
 $registry->register('isSecureArea', true);
 
+/** @var $product \Magento\Catalog\Model\Product */
+$product = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->create('Magento\Catalog\Model\Product');
+$product->loadByAttribute('sku', 'simple');
+if ($product->getId()) {
+    $product->delete();
+}
 
-$productSkuList = ['simple', '12345'];
-foreach ($productSkuList as $sku) {
-    try {
-        $productRepository = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()
-            ->get(\Magento\Catalog\Api\ProductRepositoryInterface::class);
-        $product = $productRepository->get($sku, true);
-        if ($product->getId()) {
-            $productRepository->delete($product);
-        }
-    } catch (\Magento\Framework\Exception\NoSuchEntityException $e) {
-        //Product already removed
-    }
+/** @var $product \Magento\Catalog\Model\Product */
+$product = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->create('Magento\Catalog\Model\Product');
+$product->loadByAttribute('sku', '12345');
+if ($product->getId()) {
+    $product->delete();
 }
 
 /** @var $category \Magento\Catalog\Model\Category */
-$category = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->create(\Magento\Catalog\Model\Category::class);
+$category = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->create('Magento\Catalog\Model\Category');
 $category->load(9);
 if ($category->getId()) {
     $category->delete();

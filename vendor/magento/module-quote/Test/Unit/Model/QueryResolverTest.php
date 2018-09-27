@@ -6,100 +6,83 @@
 
 namespace Magento\Quote\Test\Unit\Model;
 
-use Magento\Framework\Serialize\SerializerInterface;
-
-class QueryResolverTest extends \PHPUnit\Framework\TestCase
+class QueryResolverTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\Quote\Model\QueryResolver
      */
-    private $quoteResolver;
+    protected $quoteResolver;
 
     /**
      * @var \PHPUnit_Framework_MockObject_MockObject
      */
-    private $configMock;
+    protected $configMock;
 
     /**
      * @var \PHPUnit_Framework_MockObject_MockObject
      */
-    private $cacheMock;
-
-    /**
-     * @var SerializerInterface|\PHPUnit_Framework_MockObject_MockObject
-     */
-    private $serializer;
+    protected $cacheMock;
 
     protected function setUp()
     {
-        $this->configMock = $this->createMock(\Magento\Framework\App\ResourceConnection\ConfigInterface::class);
-        $this->cacheMock = $this->createMock(\Magento\Framework\Config\CacheInterface::class);
-        $this->serializer = $this->getMockForAbstractClass(SerializerInterface::class);
+        $this->configMock = $this->getMock('Magento\Framework\App\ResourceConnection\ConfigInterface');
+        $this->cacheMock = $this->getMock('Magento\Framework\Config\CacheInterface');
         $this->quoteResolver = new \Magento\Quote\Model\QueryResolver(
             $this->configMock,
             $this->cacheMock,
-            'connection_config_cache',
-            $this->serializer
+            'connection_config_cache'
         );
+
     }
 
     public function testIsSingleQueryWhenDataWereCached()
     {
-        $serializedData = '{"checkout":true}';
-        $data = ['checkout' => true];
+        $queryData['checkout'] = true;
         $this->cacheMock
             ->expects($this->once())
             ->method('load')
             ->with('connection_config_cache')
-            ->willReturn($serializedData);
-        $this->serializer->expects($this->once())
-            ->method('unserialize')
-            ->with($serializedData)
-            ->willReturn($data);
+            ->willReturn(serialize($queryData));
         $this->assertTrue($this->quoteResolver->isSingleQuery());
     }
 
-    /**
-     * @param string $connectionName
-     * @param bool $isSingleQuery
-     *
-     * @dataProvider isSingleQueryWhenDataNotCachedDataProvider
-     */
-    public function testIsSingleQueryWhenDataNotCached($connectionName, $isSingleQuery)
+    public function testIsSingleQueryWhenDataNotCached()
     {
-        $data = ['checkout' => $isSingleQuery];
-        $serializedData = '{"checkout":true}';
+        $queryData['checkout'] = true;
         $this->cacheMock
             ->expects($this->once())
             ->method('load')
             ->with('connection_config_cache')
             ->willReturn(false);
-        $this->serializer->expects($this->never())
-            ->method('unserialize');
         $this->configMock
             ->expects($this->once())
             ->method('getConnectionName')
             ->with('checkout_setup')
-            ->willReturn($connectionName);
-        $this->serializer->expects($this->once())
-            ->method('serialize')
-            ->with($data)
-            ->willReturn($serializedData);
+            ->willReturn('default');
         $this->cacheMock
             ->expects($this->once())
             ->method('save')
-            ->with($serializedData, 'connection_config_cache', []);
-        $this->assertEquals($isSingleQuery, $this->quoteResolver->isSingleQuery());
+            ->with(serialize($queryData), 'connection_config_cache', []);
+        $this->assertTrue($this->quoteResolver->isSingleQuery());
     }
 
-    /**
-     * @return array
-     */
-    public function isSingleQueryWhenDataNotCachedDataProvider()
+    public function testIsSingleQueryWhenSeveralConnectionsExist()
     {
-        return [
-            ['default', true],
-            ['checkout', false],
-        ];
+        $queryData['checkout'] = false;
+        $this->cacheMock
+            ->expects($this->once())
+            ->method('load')
+            ->with('connection_config_cache')
+            ->willReturn(false);
+        $this->configMock
+            ->expects($this->once())
+            ->method('getConnectionName')
+            ->with('checkout_setup')
+            ->willReturn('checkout');
+        $this->cacheMock
+            ->expects($this->once())
+            ->method('save')
+            ->with(serialize($queryData), 'connection_config_cache', []);
+        $this->assertFalse($this->quoteResolver->isSingleQuery());
     }
 }

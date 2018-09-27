@@ -15,6 +15,8 @@ use Magento\Framework\View\Element\UiComponent\DataProvider\Reporting;
 class DataProvider extends \Magento\Framework\View\Element\UiComponent\DataProvider\DataProvider
 {
     /**
+     * Authorization.
+     *
      * @var AuthorizationInterface
      */
     private $authorization;
@@ -57,19 +59,22 @@ class DataProvider extends \Magento\Framework\View\Element\UiComponent\DataProvi
     }
 
     /**
-     * @deprecated 101.0.7
+     * Get Authorization instance.
+     *
+     * @deprecated
      * @return AuthorizationInterface|mixed
      */
     private function getAuthorizationInstance()
     {
-        if ($this->authorization === null) {
+        if (null === $this->authorization) {
             $this->authorization = ObjectManager::getInstance()->get(AuthorizationInterface::class);
         }
+
         return $this->authorization;
     }
 
     /**
-     * Prepares Meta
+     * Prepares Meta.
      *
      * @return array
      */
@@ -84,12 +89,12 @@ class DataProvider extends \Magento\Framework\View\Element\UiComponent\DataProvi
                         'data' => [
                             'config' => [
                                 'editorConfig' => [
-                                    'enabled' => false
-                                ]
-                            ]
-                        ]
-                    ]
-                ]
+                                    'enabled' => false,
+                                ],
+                            ],
+                        ],
+                    ],
+                ],
             ];
         }
 

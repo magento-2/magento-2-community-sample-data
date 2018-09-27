@@ -9,7 +9,7 @@
  */
 namespace Magento\Eav\Test\Unit\Model\Entity\Attribute;
 
-class ConfigTest extends \PHPUnit\Framework\TestCase
+class ConfigTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\Eav\Model\Entity\Attribute\Config
@@ -32,7 +32,7 @@ class ConfigTest extends \PHPUnit\Framework\TestCase
     protected $_cacheId;
 
     /**
-     * @var \Magento\Eav\Model\Entity\Attribute|\PHPUnit_Framework_MockObject_MockObject
+     * @var \PHPUnit_Framework_MockObject_MockObject
      */
     protected $_attribute;
 
@@ -43,25 +43,31 @@ class ConfigTest extends \PHPUnit\Framework\TestCase
 
     protected function setUp()
     {
-        $this->_attribute = $this->createMock(\Magento\Eav\Model\Entity\Attribute::class);
-        $this->_entityType = $this->createMock(\Magento\Eav\Model\Entity\Type::class);
-        $this->_readerMock = $this->createMock(\Magento\Eav\Model\Entity\Attribute\Config\Reader::class);
-        $this->_cacheMock = $this->createMock(\Magento\Framework\App\Cache\Type\Config::class);
+        $this->_attribute = $this->getMock('Magento\Eav\Model\Entity\Attribute', [], [], '', false);
+        $this->_entityType = $this->getMock('Magento\Eav\Model\Entity\Type', [], [], '', false);
+        $this->_readerMock = $this->getMock(
+            'Magento\Eav\Model\Entity\Attribute\Config\Reader',
+            [],
+            [],
+            '',
+            false
+        );
+        $this->_cacheMock = $this->getMock('Magento\Framework\App\Cache\Type\Config', [], [], '', false);
         $this->_cacheId = 'eav_attributes';
-        $this->_cacheMock->expects($this->once())
-            ->method('load')
-            ->with($this->_cacheId)
-            ->willReturn('');
-
-        $serializerMock = $this->createMock(\Magento\Framework\Serialize\SerializerInterface::class);
-        $serializerMock->method('unserialize')
-            ->willReturn([]);
+        $this->_cacheMock->expects(
+            $this->once()
+        )->method(
+            'load'
+        )->with(
+            $this->equalTo($this->_cacheId)
+        )->will(
+            $this->returnValue(serialize([]))
+        );
 
         $this->_model = new \Magento\Eav\Model\Entity\Attribute\Config(
             $this->_readerMock,
             $this->_cacheMock,
-            $this->_cacheId,
-            $serializerMock
+            $this->_cacheId
         );
     }
 

@@ -5,7 +5,7 @@
  */
 namespace Magento\Catalog\Test\Unit\Model\Product;
 
-class CatalogPriceTest extends \PHPUnit\Framework\TestCase
+class CatalogPriceTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\Catalog\Model\Product\CatalogPrice
@@ -29,11 +29,15 @@ class CatalogPriceTest extends \PHPUnit\Framework\TestCase
 
     protected function setUp()
     {
-        $this->priceFactoryMock = $this->createMock(\Magento\Catalog\Model\Product\CatalogPriceFactory::class);
-        $this->productMock = $this->createMock(\Magento\Catalog\Model\Product::class);
-        $this->catalogPriceInterfaceMock = $this->createMock(
-            \Magento\Catalog\Model\Product\CatalogPriceInterface::class
+        $this->priceFactoryMock = $this->getMock(
+            'Magento\Catalog\Model\Product\CatalogPriceFactory',
+            [],
+            [],
+            '',
+            false
         );
+        $this->productMock = $this->getMock('\Magento\Catalog\Model\Product', [], [], '', false);
+        $this->catalogPriceInterfaceMock = $this->getMock('Magento\Catalog\Model\Product\CatalogPriceInterface');
         $this->model = new \Magento\Catalog\Model\Product\CatalogPrice(
             $this->priceFactoryMock,
             ['custom_product_type' => 'CustomProduct/Model/CatalogPrice']

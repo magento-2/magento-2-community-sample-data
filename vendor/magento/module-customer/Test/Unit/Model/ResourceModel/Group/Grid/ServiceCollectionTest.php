@@ -13,7 +13,7 @@ use Magento\Framework\Api\SortOrder;
 /**
  * Unit test for \Magento\Customer\Model\ResourceModel\Group\Grid\ServiceCollection
  */
-class ServiceCollectionTest extends \PHPUnit\Framework\TestCase
+class ServiceCollectionTest extends \PHPUnit_Framework_TestCase
 {
     /** @var \Magento\Framework\TestFramework\Unit\Helper\ObjectManager  */
     protected $objectManager;
@@ -39,22 +39,22 @@ class ServiceCollectionTest extends \PHPUnit\Framework\TestCase
     protected function setUp()
     {
         $this->objectManager = new \Magento\Framework\TestFramework\Unit\Helper\ObjectManager($this);
-        $this->filterBuilder = $this->objectManager->getObject(\Magento\Framework\Api\FilterBuilder::class);
+        $this->filterBuilder = $this->objectManager->getObject('Magento\Framework\Api\FilterBuilder');
         $filterGroupBuilder = $this->objectManager
-            ->getObject(\Magento\Framework\Api\Search\FilterGroupBuilder::class);
+            ->getObject('Magento\Framework\Api\Search\FilterGroupBuilder');
         /** @var \Magento\Framework\Api\SearchCriteriaBuilder $searchBuilder */
         $this->searchCriteriaBuilder = $this->objectManager->getObject(
-            \Magento\Framework\Api\SearchCriteriaBuilder::class,
+            'Magento\Framework\Api\SearchCriteriaBuilder',
             ['filterGroupBuilder' => $filterGroupBuilder]
         );
         $this->sortOrderBuilder = $this->objectManager->getObject(
-            \Magento\Framework\Api\SortOrderBuilder::class
+            'Magento\Framework\Api\SortOrderBuilder'
         );
-        $this->groupRepositoryMock = $this->getMockBuilder(\Magento\Customer\Api\GroupRepositoryInterface::class)
+        $this->groupRepositoryMock = $this->getMockBuilder('\Magento\Customer\Api\GroupRepositoryInterface')
             ->getMock();
 
         $this->searchResults = $this->getMockForAbstractClass(
-            \Magento\Framework\Api\SearchResultsInterface::class,
+            'Magento\Framework\Api\SearchResultsInterface',
             ['getTotalCount', 'getItems']
         );
 
@@ -68,7 +68,7 @@ class ServiceCollectionTest extends \PHPUnit\Framework\TestCase
 
         $this->serviceCollection = $this->objectManager
             ->getObject(
-                \Magento\Customer\Model\ResourceModel\Group\Grid\ServiceCollection::class,
+                'Magento\Customer\Model\ResourceModel\Group\Grid\ServiceCollection',
                 [
                     'filterBuilder' => $this->filterBuilder,
                     'searchCriteriaBuilder' => $this->searchCriteriaBuilder,
@@ -227,6 +227,9 @@ class ServiceCollectionTest extends \PHPUnit\Framework\TestCase
         $this->serviceCollection->addFieldToFilter($fields, $conditions);
     }
 
+    /**
+     * @return array
+     */
     public function addFieldToFilterInconsistentArraysDataProvider()
     {
         return [

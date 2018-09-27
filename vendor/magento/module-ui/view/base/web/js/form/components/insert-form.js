@@ -3,9 +3,6 @@
  * See COPYING.txt for license details.
  */
 
-/**
- * @api
- */
 define([
     './insert',
     'mageUtils',
@@ -41,10 +38,7 @@ define([
 
         el.innerHTML = elem;
         actions = el.getElementsByClassName(actionsClass)[0];
-
-        if (actions) {
-            el.removeChild(actions);
-        }
+        el.removeChild(actions);
 
         return el.innerHTML;
     }

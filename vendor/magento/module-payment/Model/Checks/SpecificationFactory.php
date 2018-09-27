@@ -6,12 +6,7 @@
 namespace Magento\Payment\Model\Checks;
 
 /**
- * Creates complex specification.
- *
- * Use this class to register predefined list of specifications that should be added to any complex specification.
- *
- * @api
- * @since 100.0.2
+ * Class \Magento\Payment\Model\Methods\SpecificationFactory
  */
 class SpecificationFactory
 {
@@ -22,9 +17,7 @@ class SpecificationFactory
      */
     protected $compositeFactory;
 
-    /**
-     * @var array
-     */
+    /** @var  array mapping */
     protected $mapping;
 
     /**

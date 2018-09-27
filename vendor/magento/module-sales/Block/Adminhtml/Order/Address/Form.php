@@ -19,7 +19,7 @@ class Form extends \Magento\Sales\Block\Adminhtml\Order\Create\Form\Address
      *
      * @var string
      */
-    protected $_template = 'order/address/form.phtml';
+    protected $_template = 'Magento_Sales::order/address/form.phtml';
 
     /**
      * Core registry
@@ -134,21 +134,5 @@ class Form extends \Magento\Sales\Block\Adminhtml\Order\Create\Form\Address
     public function getFormValues()
     {
         return $this->_getAddress()->getData();
-    }
-
-    /**
-     * @inheritdoc
-     */
-    protected function processCountryOptions(
-        \Magento\Framework\Data\Form\Element\AbstractElement $countryElement,
-        $storeId = null
-    ) {
-        /** @var \Magento\Sales\Model\Order\Address $address */
-        $address = $this->_coreRegistry->registry('order_address');
-        if ($address !== null) {
-            $storeId = $address->getOrder()->getStoreId();
-        }
-
-        parent::processCountryOptions($countryElement, $storeId);
     }
 }

@@ -13,7 +13,7 @@ namespace Magento\Catalog\Model\Layer\Filter;
  * @magentoDbIsolation enabled
  * @magentoAppIsolation enabled
  */
-class DecimalTest extends \PHPUnit\Framework\TestCase
+class DecimalTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\Catalog\Model\Layer\Filter\Decimal
@@ -24,13 +24,13 @@ class DecimalTest extends \PHPUnit\Framework\TestCase
     {
         $category = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()
             ->create(
-                \Magento\Catalog\Model\Category::class
+                'Magento\Catalog\Model\Category'
             );
         $category->load(4);
 
         $layer = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()
             ->create(
-                \Magento\Catalog\Model\Layer\Category::class,
+                'Magento\Catalog\Model\Layer\Category',
                 [
                     'data' => ['current_category' => $category]
                 ]
@@ -39,12 +39,12 @@ class DecimalTest extends \PHPUnit\Framework\TestCase
         /** @var $attribute \Magento\Catalog\Model\Entity\Attribute */
         $attribute = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()
             ->create(
-                \Magento\Catalog\Model\Entity\Attribute::class
+                'Magento\Catalog\Model\Entity\Attribute'
             );
         $attribute->loadByCode('catalog_product', 'weight');
 
         $this->_model = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()
-            ->create(\Magento\Catalog\Model\Layer\Filter\Decimal::class, ['layer' => $layer]);
+            ->create('Magento\Catalog\Model\Layer\Filter\Decimal', ['layer' => $layer]);
         $this->_model->setAttributeModel($attribute);
     }
 
@@ -54,7 +54,7 @@ class DecimalTest extends \PHPUnit\Framework\TestCase
         /** @var $objectManager \Magento\TestFramework\ObjectManager */
         $objectManager = \Magento\TestFramework\Helper\Bootstrap::getObjectManager();
         /** @var $request \Magento\TestFramework\Request */
-        $request = $objectManager->get(\Magento\TestFramework\Request::class);
+        $request = $objectManager->get('Magento\TestFramework\Request');
         $this->_model->apply($request);
 
         $this->assertEmpty($this->_model->getData('range'));
@@ -66,7 +66,7 @@ class DecimalTest extends \PHPUnit\Framework\TestCase
         /** @var $objectManager \Magento\TestFramework\ObjectManager */
         $objectManager = \Magento\TestFramework\Helper\Bootstrap::getObjectManager();
         /** @var $request \Magento\TestFramework\Request */
-        $request = $objectManager->get(\Magento\TestFramework\Request::class);
+        $request = $objectManager->get('Magento\TestFramework\Request');
         $request->setParam('decimal', 'non-decimal');
         $this->_model->apply($request);
 
@@ -78,7 +78,7 @@ class DecimalTest extends \PHPUnit\Framework\TestCase
         /** @var $objectManager \Magento\TestFramework\ObjectManager */
         $objectManager = \Magento\TestFramework\Helper\Bootstrap::getObjectManager();
         /** @var $request \Magento\TestFramework\Request */
-        $request = $objectManager->get(\Magento\TestFramework\Request::class);
+        $request = $objectManager->get('Magento\TestFramework\Request');
         $request->setParam('decimal', '1,100');
         $this->_model->apply($request);
     }

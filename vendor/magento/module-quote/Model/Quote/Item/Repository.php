@@ -118,7 +118,7 @@ class Repository implements \Magento\Quote\Api\CartItemRepositoryInterface
 
     /**
      * @return CartItemOptionsProcessor
-     * @deprecated 100.1.0
+     * @deprecated
      */
     private function getCartItemOptionsProcessor()
     {

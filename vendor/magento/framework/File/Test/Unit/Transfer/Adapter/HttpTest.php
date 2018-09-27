@@ -7,7 +7,7 @@ namespace Magento\Framework\File\Test\Unit\Transfer\Adapter;
 
 use \Magento\Framework\File\Transfer\Adapter\Http;
 
-class HttpTest extends \PHPUnit\Framework\TestCase
+class HttpTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\Framework\HTTP\PhpEnvironment\Response|\PHPUnit_Framework_MockObject_MockObject
@@ -26,11 +26,14 @@ class HttpTest extends \PHPUnit\Framework\TestCase
 
     protected function setUp()
     {
-        $this->response = $this->createPartialMock(
-            \Magento\Framework\HTTP\PhpEnvironment\Response::class,
-            ['setHeader', 'sendHeaders', 'setHeaders']
+        $this->response = $this->getMock(
+            '\Magento\Framework\HTTP\PhpEnvironment\Response',
+            ['setHeader', 'sendHeaders', 'setHeaders'],
+            [],
+            '',
+            false
         );
-        $this->mime = $this->createMock(\Magento\Framework\File\Mime::class);
+        $this->mime = $this->getMock('Magento\Framework\File\Mime');
         $this->object = new Http($this->response, $this->mime);
     }
 
@@ -65,7 +68,7 @@ class HttpTest extends \PHPUnit\Framework\TestCase
         $this->response->expects($this->atLeastOnce())
             ->method('setHeader')
             ->withConsecutive(['Content-length', filesize($file)], ['Content-Type', $contentType]);
-        $this->response->expects($this->atLeastOnce())
+        $this->response->expects($this->once())
             ->method('setHeaders')
             ->with($headers);
         $this->response->expects($this->once())
@@ -73,11 +76,12 @@ class HttpTest extends \PHPUnit\Framework\TestCase
         $this->mime->expects($this->once())
             ->method('getMimeType')
             ->with($file)
-            ->will($this->returnValue($contentType));
+            ->willReturn($contentType);
         $this->expectOutputString(file_get_contents($file));
 
         $this->object->send(['filepath' => $file, 'headers' => $headers]);
     }
+
     /**
      * @expectedException \InvalidArgumentException
      * @expectedExceptionMessage Filename is not set

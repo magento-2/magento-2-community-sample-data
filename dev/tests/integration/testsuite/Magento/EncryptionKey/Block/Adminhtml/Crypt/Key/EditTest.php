@@ -5,7 +5,7 @@
  */
 namespace Magento\EncryptionKey\Block\Adminhtml\Crypt\Key;
 
-class EditTest extends \PHPUnit\Framework\TestCase
+class EditTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * Test edit block
@@ -16,9 +16,9 @@ class EditTest extends \PHPUnit\Framework\TestCase
          * @var \Magento\EncryptionKey\Block\Adminhtml\Crypt\Key\Edit
          */
         $block = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->get(
-            \Magento\Framework\View\LayoutInterface::class
+            'Magento\Framework\View\LayoutInterface'
         )->createBlock(
-            \Magento\EncryptionKey\Block\Adminhtml\Crypt\Key\Edit::class
+            'Magento\EncryptionKey\Block\Adminhtml\Crypt\Key\Edit'
         );
 
         $this->assertEquals('Encryption Key', $block->getHeaderText());

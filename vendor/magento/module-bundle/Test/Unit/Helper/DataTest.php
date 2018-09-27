@@ -7,7 +7,7 @@ namespace Magento\Bundle\Test\Unit\Helper;
 
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
 
-class DataTest extends \PHPUnit\Framework\TestCase
+class DataTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\Catalog\Model\ProductTypes\ConfigInterface|\PHPUnit_Framework_MockObject_MockObject
@@ -21,9 +21,9 @@ class DataTest extends \PHPUnit\Framework\TestCase
 
     protected function setUp()
     {
-        $this->config = $this->createMock(\Magento\Catalog\Model\ProductTypes\ConfigInterface::class);
+        $this->config = $this->getMock('Magento\Catalog\Model\ProductTypes\ConfigInterface');
         $this->helper = (new \Magento\Framework\TestFramework\Unit\Helper\ObjectManager($this))->getObject(
-            \Magento\Bundle\Helper\Data::class,
+            'Magento\Bundle\Helper\Data',
             ['config' => $this->config]
         );
     }

@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2018 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\CatalogInventory\Model;
@@ -83,7 +83,7 @@ class StockManagement implements StockManagementInterface
 
     /**
      * Subtract product qtys from stock.
-     * Return array of items that require full save.
+     * Return array of items that require full save
      *
      * @param string[] $items
      * @param int $websiteId
@@ -134,7 +134,6 @@ class StockManagement implements StockManagementInterface
         }
         $this->qtyCounter->correctItemsQty($registeredItems, $websiteId, '-');
         $this->getResource()->commit();
-        
         return $fullSaveItems;
     }
 

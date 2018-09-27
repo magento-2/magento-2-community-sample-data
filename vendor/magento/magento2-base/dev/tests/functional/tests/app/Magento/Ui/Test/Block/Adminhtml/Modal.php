@@ -49,13 +49,6 @@ class Modal extends Block
     protected $acceptWarningSelector = '.action-primary';
 
     /**
-     * Locator value for decline warning button.
-     *
-     * @var string
-     */
-    protected $dismissWarningSelector = '.action-secondary';
-
-    /**
      * Modal overlay selector.
      *
      * @var string
@@ -89,18 +82,6 @@ class Modal extends Block
     {
         $this->waitModalAnimationFinished();
         $this->_rootElement->find($this->acceptWarningSelector)->click();
-        $this->waitForElementNotVisible($this->loadingMask);
-    }
-
-    /**
-     * Press Cancel on a warning popup.
-     *
-     * @return void
-     */
-    public function dismissWarning()
-    {
-        $this->waitModalAnimationFinished();
-        $this->_rootElement->find($this->dismissWarningSelector)->click();
         $this->waitForElementNotVisible($this->loadingMask);
     }
 
@@ -150,7 +131,7 @@ class Modal extends Block
     }
 
     /**
-     * Wait until modal window will disapper.
+     * Wait until modal window will disappear.
      *
      * @return void
      */
@@ -169,7 +150,7 @@ class Modal extends Block
      *
      * @return void
      */
-    protected function waitModalAnimationFinished()
+    private function waitModalAnimationFinished()
     {
         usleep(500000);
     }

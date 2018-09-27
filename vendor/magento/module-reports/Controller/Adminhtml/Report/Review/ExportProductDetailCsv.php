@@ -20,7 +20,7 @@ class ExportProductDetailCsv extends \Magento\Reports\Controller\Adminhtml\Repor
     {
         $fileName = 'review_product_detail.csv';
         $content = $this->_view->getLayout()->createBlock(
-            \Magento\Reports\Block\Adminhtml\Review\Detail\Grid::class
+            'Magento\Reports\Block\Adminhtml\Review\Detail\Grid'
         )->getCsv();
 
         return $this->_fileFactory->create($fileName, $content, DirectoryList::VAR_DIR);

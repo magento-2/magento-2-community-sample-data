@@ -1,13 +1,11 @@
 <?php
 /**
+ *
  * Copyright © Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 
-/**
- * @codingStandardsIgnoreFile
- * Coding Standards have to be ignored in this file, as it is just a data source for tests.
- */
+// @codingStandardsIgnoreFile
 
 namespace ArgumentSequence;
 
@@ -40,6 +38,15 @@ class ParentClass
 
     protected $parentOptionalScalar;
 
+    /**
+     * ParentClass constructor.
+     * @param ContextObject $contextObject
+     * @param ParentRequiredObject $parentRequiredObject
+     * @param array $parentRequiredScalar
+     * @param ParentOptionalObject|null $parentOptionalObject
+     * @param array $data
+     * @param array $parentOptionalScalar
+     */
     public function __construct(
         ContextObject $contextObject,
         ParentRequiredObject $parentRequiredObject,

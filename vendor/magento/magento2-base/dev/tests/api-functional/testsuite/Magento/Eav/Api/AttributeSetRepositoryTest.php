@@ -5,11 +5,6 @@
  */
 namespace Magento\Eav\Api;
 
-use Magento\Framework\Api\FilterBuilder;
-use Magento\Framework\Api\SearchCriteriaBuilder;
-use Magento\Framework\Api\SortOrder;
-use Magento\Framework\Api\SortOrderBuilder;
-use Magento\TestFramework\Helper\Bootstrap;
 use Magento\TestFramework\TestCase\WebapiAbstract;
 
 class AttributeSetRepositoryTest extends WebapiAbstract
@@ -144,9 +139,9 @@ class AttributeSetRepositoryTest extends WebapiAbstract
      */
     public function testDeleteByIdDefaultAttributeSet()
     {
-        $objectManager = Bootstrap::getObjectManager();
+        $objectManager = \Magento\TestFramework\Helper\Bootstrap::getObjectManager();
         /** @var \Magento\Eav\Model\Config */
-        $eavConfig = $objectManager->create(\Magento\Eav\Model\Config::class);
+        $eavConfig = $objectManager->create('Magento\Eav\Model\Config');
 
         $defaultAttributeSetId = $eavConfig
             ->getEntityType(\Magento\Catalog\Api\Data\ProductAttributeInterface::ENTITY_TYPE_CODE)
@@ -196,54 +191,31 @@ class AttributeSetRepositoryTest extends WebapiAbstract
     }
 
     /**
-     * @magentoApiDataFixture Magento/Eav/_files/attribute_set_for_search.php
+     * @magentoApiDataFixture Magento/Eav/_files/empty_attribute_set.php
      */
     public function testGetList()
     {
-        /** @var SearchCriteriaBuilder $searchCriteriaBuilder */
-        $searchCriteriaBuilder = Bootstrap::getObjectManager()
-            ->create(SearchCriteriaBuilder::class);
-
-        /** @var FilterBuilder $filterBuilder */
-        $filterBuilder = Bootstrap::getObjectManager()->create(FilterBuilder::class);
-
-        $filter1 = $filterBuilder
-            ->setField('entity_type_code')
-            ->setValue('catalog_product')
-            ->create();
-        $filter2 = $filterBuilder
-            ->setField('sort_order')
-            ->setValue(200)
-            ->setConditionType('gteq')
-            ->create();
-        $filter3 = $filterBuilder
-            ->setField('sort_order')
-            ->setValue(300)
-            ->setConditionType('lteq')
-            ->create();
-
-        $searchCriteriaBuilder->addFilters([$filter1, $filter2]);
-        $searchCriteriaBuilder->addFilters([$filter3]);
-
-        /** @var SortOrderBuilder $sortOrderBuilder */
-        $sortOrderBuilder = Bootstrap::getObjectManager()->create(SortOrderBuilder::class);
-
-        /** @var SortOrder $sortOrder */
-        $sortOrder = $sortOrderBuilder->setField('sort_order')
-            ->setDirection(SortOrder::SORT_ASC)
-            ->create();
-
-        $searchCriteriaBuilder->setSortOrders([$sortOrder]);
-
-        $searchCriteriaBuilder->setPageSize(1);
-        $searchCriteriaBuilder->setCurrentPage(2);
-
-        $searchData = $searchCriteriaBuilder->create()->__toArray();
-        $requestData = ['searchCriteria' => $searchData];
+        $searchCriteria = [
+            'searchCriteria' => [
+                'filter_groups' => [
+                    [
+                        'filters' => [
+                            [
+                                'field' => 'entity_type_code',
+                                'value' => 'catalog_product',
+                                'condition_type' => 'eq',
+                            ],
+                        ],
+                    ],
+                ],
+                'current_page' => 1,
+                'page_size' => 2,
+            ],
+        ];
 
         $serviceInfo = [
             'rest' => [
-                'resourcePath' => '/V1/eav/attribute-sets/list' . '?' . http_build_query($requestData),
+                'resourcePath' => '/V1/eav/attribute-sets/list' . '?' . http_build_query($searchCriteria),
                 'httpMethod' => \Magento\Framework\Webapi\Rest\Request::HTTP_METHOD_GET,
             ],
             'soap' => [
@@ -253,14 +225,18 @@ class AttributeSetRepositoryTest extends WebapiAbstract
             ],
         ];
 
-        $searchResult = $this->_webApiCall($serviceInfo, $requestData);
+        $response = $this->_webApiCall($serviceInfo, $searchCriteria);
 
-        $this->assertEquals(2, $searchResult['total_count']);
-        $this->assertEquals(1, count($searchResult['items']));
-        $this->assertEquals(
-            $searchResult['items'][0]['attribute_set_name'],
-            'attribute_set_3_for_search'
-        );
+        $this->assertArrayHasKey('search_criteria', $response);
+        $this->assertArrayHasKey('total_count', $response);
+        $this->assertArrayHasKey('items', $response);
+
+        $this->assertEquals($searchCriteria['searchCriteria'], $response['search_criteria']);
+        $this->assertTrue($response['total_count'] > 0);
+        $this->assertTrue(count($response['items']) > 0);
+
+        $this->assertNotNull($response['items'][0]['attribute_set_id']);
+        $this->assertNotNull($response['items'][0]['attribute_set_name']);
     }
 
     /**
@@ -272,9 +248,9 @@ class AttributeSetRepositoryTest extends WebapiAbstract
      */
     protected function getAttributeSetByName($attributeSetName)
     {
-        $objectManager = Bootstrap::getObjectManager();
+        $objectManager = \Magento\TestFramework\Helper\Bootstrap::getObjectManager();
         /** @var \Magento\Eav\Model\Entity\Attribute\Set $attributeSet */
-        $attributeSet = $objectManager->create(\Magento\Eav\Model\Entity\Attribute\Set::class)
+        $attributeSet = $objectManager->create('Magento\Eav\Model\Entity\Attribute\Set')
             ->load($attributeSetName, 'attribute_set_name');
         if ($attributeSet->getId() === null) {
             return null;

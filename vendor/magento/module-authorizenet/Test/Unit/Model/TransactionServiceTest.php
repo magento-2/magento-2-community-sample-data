@@ -9,7 +9,7 @@ use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
 use Magento\Framework\Simplexml\Element;
 use Magento\Authorizenet\Model\TransactionService;
 
-class TransactionServiceTest extends \PHPUnit\Framework\TestCase
+class TransactionServiceTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\Framework\HTTP\ZendClient|\PHPUnit_Framework_MockObject_MockObject
@@ -30,7 +30,7 @@ class TransactionServiceTest extends \PHPUnit\Framework\TestCase
     {
         $httpClientFactoryMock = $this->getHttpClientFactoryMock();
 
-        $this->authorizenetMock = $this->getMockBuilder(\Magento\Authorizenet\Model\Directpost::class)
+        $this->authorizenetMock = $this->getMockBuilder('Magento\Authorizenet\Model\Directpost')
             ->disableOriginalConstructor()
             ->getMock();
 
@@ -42,14 +42,11 @@ class TransactionServiceTest extends \PHPUnit\Framework\TestCase
             ]);
 
         $objectManagerHelper = new ObjectManager($this);
-        $xmlSecurity = $objectManagerHelper->getObject(\Magento\Framework\Xml\Security::class);
-        $this->transactionService = $objectManagerHelper->getObject(
-            \Magento\Authorizenet\Model\TransactionService::class,
-            [
-                'xmlSecurityHelper' => $xmlSecurity,
-                'httpClientFactory' => $httpClientFactoryMock
-            ]
-        );
+        $xmlSecurity = $objectManagerHelper->getObject('Magento\Framework\Xml\Security');
+        $this->transactionService = $objectManagerHelper->getObject('\Magento\Authorizenet\Model\TransactionService', [
+            'xmlSecurityHelper' => $xmlSecurity,
+            'httpClientFactory' => $httpClientFactoryMock
+        ]);
     }
 
     /**
@@ -104,7 +101,7 @@ class TransactionServiceTest extends \PHPUnit\Framework\TestCase
      */
     private function getHttpClientFactoryMock()
     {
-        $this->httpClientMock = $this->getMockBuilder(\Magento\Framework\HTTP\ZendClient::class)
+        $this->httpClientMock = $this->getMockBuilder('Magento\Framework\HTTP\ZendClient')
             ->disableOriginalConstructor()
             ->setMethods(['request', 'getBody', '__wakeup'])
             ->getMock();
@@ -113,7 +110,7 @@ class TransactionServiceTest extends \PHPUnit\Framework\TestCase
             ->method('request')
             ->willReturnSelf();
 
-        $httpClientFactoryMock = $this->getMockBuilder(\Magento\Framework\HTTP\ZendClientFactory::class)
+        $httpClientFactoryMock = $this->getMockBuilder('Magento\Framework\HTTP\ZendClientFactory')
             ->disableOriginalConstructor()
             ->setMethods(['create'])
             ->getMock();

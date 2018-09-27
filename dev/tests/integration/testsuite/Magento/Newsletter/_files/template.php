@@ -4,9 +4,7 @@
  * See COPYING.txt for license details.
  */
 
-$template = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->create(
-    \Magento\Newsletter\Model\Template::class
-);
+$template = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->create('Magento\Newsletter\Model\Template');
 $template->setTemplateCode(
     'fixture_tpl'
 )->setTemplateText(

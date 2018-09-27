@@ -12,7 +12,7 @@ use Magento\Sales\Ui\Component\Listing\Column\CustomerGroup;
 /**
  * Class CustomerGroupTest
  */
-class CustomerGroupTest extends \PHPUnit\Framework\TestCase
+class CustomerGroupTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var CustomerGroup
@@ -27,15 +27,15 @@ class CustomerGroupTest extends \PHPUnit\Framework\TestCase
     protected function setUp()
     {
         $objectManager = new ObjectManager($this);
-        $contextMock = $this->getMockBuilder(\Magento\Framework\View\Element\UiComponent\ContextInterface::class)
+        $contextMock = $this->getMockBuilder('Magento\Framework\View\Element\UiComponent\ContextInterface')
             ->getMockForAbstractClass();
-        $processor = $this->getMockBuilder(\Magento\Framework\View\Element\UiComponent\Processor::class)
+        $processor = $this->getMockBuilder('Magento\Framework\View\Element\UiComponent\Processor')
             ->disableOriginalConstructor()
             ->getMock();
-        $contextMock->expects($this->never())->method('getProcessor')->willReturn($processor);
-        $this->groupRepository = $this->getMockForAbstractClass(\Magento\Customer\Api\GroupRepositoryInterface::class);
+        $contextMock->expects($this->any())->method('getProcessor')->willReturn($processor);
+        $this->groupRepository = $this->getMockForAbstractClass('Magento\Customer\Api\GroupRepositoryInterface');
         $this->model = $objectManager->getObject(
-            \Magento\Sales\Ui\Component\Listing\Column\CustomerGroup::class,
+            'Magento\Sales\Ui\Component\Listing\Column\CustomerGroup',
             ['groupRepository' => $this->groupRepository, 'context' => $contextMock]
         );
     }
@@ -53,7 +53,7 @@ class CustomerGroupTest extends \PHPUnit\Framework\TestCase
             ]
         ];
 
-        $group = $this->getMockForAbstractClass(\Magento\Customer\Api\Data\GroupInterface::class);
+        $group = $this->getMockForAbstractClass('Magento\Customer\Api\Data\GroupInterface');
         $group->expects($this->once())
             ->method('getCode')
             ->willReturn($newItemValue);

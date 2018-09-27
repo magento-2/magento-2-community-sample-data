@@ -8,7 +8,7 @@ namespace Magento\Sales\Test\Unit\Controller\Adminhtml;
 
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager as ObjectManagerHelper;
 
-class PdfDocumentsMassActionTest extends \PHPUnit\Framework\TestCase
+class PdfDocumentsMassActionTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\Sales\Controller\Adminhtml\Order\PdfDocumentsMassAction
@@ -44,25 +44,43 @@ class PdfDocumentsMassActionTest extends \PHPUnit\Framework\TestCase
     {
         $objectManagerHelper = new ObjectManagerHelper($this);
 
-        $this->messageManager = $this->createPartialMock(
+        $this->messageManager = $this->getMock(
             \Magento\Framework\Message\Manager::class,
-            ['addSuccess', 'addError']
+            ['addSuccess', 'addError'],
+            [],
+            '',
+            false
         );
 
-        $this->orderCollectionMock = $this->createMock(\Magento\Sales\Model\ResourceModel\Order\Collection::class);
-        $this->filterMock = $this->createMock(\Magento\Ui\Component\MassAction\Filter::class);
+        $this->orderCollectionMock = $this->getMock(
+            \Magento\Sales\Model\ResourceModel\Order\Collection::class,
+            [],
+            [],
+            '',
+            false
+        );
+        $this->filterMock = $this->getMock(\Magento\Ui\Component\MassAction\Filter::class, [], [], '', false);
 
-        $this->orderCollectionFactoryMock = $this->createPartialMock(
+        $this->orderCollectionFactoryMock = $this->getMock(
             \Magento\Sales\Model\ResourceModel\Order\CollectionFactory::class,
-            ['create']
+            ['create'],
+            [],
+            '',
+            false
         );
 
         $this->orderCollectionFactoryMock
             ->expects($this->once())
             ->method('create')
             ->willReturn($this->orderCollectionMock);
-        $this->resultRedirect = $this->createMock(\Magento\Backend\Model\View\Result\Redirect::class);
-        $resultRedirectFactory = $this->createMock(\Magento\Framework\Controller\ResultFactory::class);
+        $this->resultRedirect = $this->getMock(\Magento\Backend\Model\View\Result\Redirect::class, [], [], '', false);
+        $resultRedirectFactory = $this->getMock(
+            \Magento\Framework\Controller\ResultFactory::class,
+            [],
+            [],
+            '',
+            false
+        );
         $resultRedirectFactory->expects($this->any())->method('create')->willReturn($this->resultRedirect);
         $this->controller = $objectManagerHelper->getObject(
             \Magento\Sales\Controller\Adminhtml\Order\Pdfinvoices::class,

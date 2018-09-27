@@ -15,9 +15,8 @@ use Magento\Theme\Controller\Result\MessagePlugin;
 
 /**
  * @SuppressWarnings(PHPMD.NumberOfChildren)
- * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  */
-abstract class AbstractController extends \PHPUnit\Framework\TestCase
+abstract class AbstractController extends \PHPUnit_Framework_TestCase
 {
     protected $_runCode = '';
 
@@ -26,12 +25,12 @@ abstract class AbstractController extends \PHPUnit\Framework\TestCase
     protected $_runOptions = [];
 
     /**
-     * @var \Magento\Framework\App\RequestInterface
+     * @var \Magento\TestFramework\Request
      */
     protected $_request;
 
     /**
-     * @var \Magento\Framework\App\ResponseInterface
+     * @var \Magento\TestFramework\Response
      */
     protected $_response;
 
@@ -64,8 +63,8 @@ abstract class AbstractController extends \PHPUnit\Framework\TestCase
     {
         $this->_assertSessionErrors = false;
         $this->_objectManager = \Magento\TestFramework\Helper\Bootstrap::getObjectManager();
-        $this->_objectManager->removeSharedInstance(\Magento\Framework\App\ResponseInterface::class);
-        $this->_objectManager->removeSharedInstance(\Magento\Framework\App\RequestInterface::class);
+        $this->_objectManager->removeSharedInstance('Magento\Framework\App\ResponseInterface');
+        $this->_objectManager->removeSharedInstance('Magento\Framework\App\RequestInterface');
     }
 
     protected function tearDown()
@@ -103,12 +102,12 @@ abstract class AbstractController extends \PHPUnit\Framework\TestCase
     /**
      * Request getter
      *
-     * @return \Magento\Framework\App\RequestInterface
+     * @return \Magento\TestFramework\Request
      */
     public function getRequest()
     {
         if (!$this->_request) {
-            $this->_request = $this->_objectManager->get(\Magento\Framework\App\RequestInterface::class);
+            $this->_request = $this->_objectManager->get('Magento\Framework\App\RequestInterface');
         }
         return $this->_request;
     }
@@ -116,12 +115,12 @@ abstract class AbstractController extends \PHPUnit\Framework\TestCase
     /**
      * Response getter
      *
-     * @return \Magento\Framework\App\ResponseInterface
+     * @return \Magento\TestFramework\Response
      */
     public function getResponse()
     {
         if (!$this->_response) {
-            $this->_response = $this->_objectManager->get(\Magento\Framework\App\ResponseInterface::class);
+            $this->_response = $this->_objectManager->get('Magento\Framework\App\ResponseInterface');
         }
         return $this->_response;
     }
@@ -140,7 +139,7 @@ abstract class AbstractController extends \PHPUnit\Framework\TestCase
      *
      * @param string $headerName
      * @param string $valueRegex
-     * @throws \PHPUnit\Framework\AssertionFailedError when header not found
+     * @throws \PHPUnit_Framework_AssertionFailedError when header not found
      */
     public function assertHeaderPcre($headerName, $valueRegex)
     {
@@ -166,9 +165,9 @@ abstract class AbstractController extends \PHPUnit\Framework\TestCase
      * $this->assertRedirect($this->stringEndsWith($expectedUrlSuffix));
      * $this->assertRedirect($this->stringContains($expectedUrlSubstring));
      *
-     * @param \PHPUnit\Framework\Constraint\Constraint|null $urlConstraint
+     * @param \PHPUnit_Framework_Constraint|null $urlConstraint
      */
-    public function assertRedirect(\PHPUnit\Framework\Constraint\Constraint $urlConstraint = null)
+    public function assertRedirect(\PHPUnit_Framework_Constraint $urlConstraint = null)
     {
         $this->assertTrue($this->getResponse()->isRedirect(), 'Redirect was expected, but none was performed.');
         if ($urlConstraint) {
@@ -190,15 +189,15 @@ abstract class AbstractController extends \PHPUnit\Framework\TestCase
      * $this->assertSessionMessages($this->equalTo(['Entity has been saved.'],
      * \Magento\Framework\Message\MessageInterface::TYPE_SUCCESS);
      *
-     * @param \PHPUnit\Framework\Constraint\Constraint $constraint Constraint to compare actual messages against
+     * @param \PHPUnit_Framework_Constraint $constraint Constraint to compare actual messages against
      * @param string|null $messageType Message type filter,
      *        one of the constants \Magento\Framework\Message\MessageInterface::*
      * @param string $messageManagerClass Class of the session model that manages messages
      */
     public function assertSessionMessages(
-        \PHPUnit\Framework\Constraint\Constraint $constraint,
+        \PHPUnit_Framework_Constraint $constraint,
         $messageType = null,
-        $messageManagerClass = \Magento\Framework\Message\Manager::class
+        $messageManagerClass = 'Magento\Framework\Message\Manager'
     ) {
         $this->_assertSessionErrors = false;
 
@@ -220,7 +219,7 @@ abstract class AbstractController extends \PHPUnit\Framework\TestCase
      */
     protected function getMessages(
         $messageType = null,
-        $messageManagerClass = \Magento\Framework\Message\Manager::class
+        $messageManagerClass = 'Magento\Framework\Message\Manager'
     ) {
         return array_merge(
             $this->getSessionMessages($messageType, $messageManagerClass),
@@ -237,7 +236,7 @@ abstract class AbstractController extends \PHPUnit\Framework\TestCase
      */
     protected function getSessionMessages(
         $messageType = null,
-        $messageManagerClass = \Magento\Framework\Message\Manager::class
+        $messageManagerClass = 'Magento\Framework\Message\Manager'
     ) {
         /** @var $messageManager \Magento\Framework\Message\ManagerInterface */
         $messageManager = $this->_objectManager->get($messageManagerClass);
@@ -269,21 +268,14 @@ abstract class AbstractController extends \PHPUnit\Framework\TestCase
     {
         /** @var $cookieManager CookieManagerInterface */
         $cookieManager = $this->_objectManager->get(CookieManagerInterface::class);
-
-        /** @var $jsonSerializer \Magento\Framework\Serialize\Serializer\Json */
-        $jsonSerializer = $this->_objectManager->get(\Magento\Framework\Serialize\Serializer\Json::class);
         try {
-            $messages = $jsonSerializer->unserialize(
-                $cookieManager->getCookie(
-                    MessagePlugin::MESSAGES_COOKIES_NAME,
-                    $jsonSerializer->serialize([])
-                )
+            $messages = \Zend_Json::decode(
+                $cookieManager->getCookie(MessagePlugin::MESSAGES_COOKIES_NAME, \Zend_Json::encode([]))
             );
-
             if (!is_array($messages)) {
                 $messages = [];
             }
-        } catch (\InvalidArgumentException $e) {
+        } catch (\Zend_Json_Exception $e) {
             $messages = [];
         }
 

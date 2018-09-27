@@ -9,9 +9,6 @@
  */
 namespace Magento\Framework\Acl;
 
-/**
- * @api
- */
 class AclResource extends \Zend_Acl_Resource
 {
 }

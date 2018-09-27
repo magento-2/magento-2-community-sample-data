@@ -9,7 +9,7 @@ use Magento\Framework\TestFramework\Unit\Helper\ObjectManager as ObjectManagerHe
 use Magento\Catalog\Ui\DataProvider\CatalogEavValidationRules;
 use PHPUnit_Framework_MockObject_MockObject as MockObject;
 
-class CatalogEavValidationRulesTest extends \PHPUnit\Framework\TestCase
+class CatalogEavValidationRulesTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var ObjectManagerHelper
@@ -41,7 +41,7 @@ class CatalogEavValidationRulesTest extends \PHPUnit\Framework\TestCase
     public function testBuild($frontendInput, $frontendClass, array $eavConfig, array $expectedResult)
     {
         /** @var \Magento\Catalog\Api\Data\ProductAttributeInterface|MockObject $attribute */
-        $attribute = $this->createMock(\Magento\Catalog\Api\Data\ProductAttributeInterface::class);
+        $attribute = $this->getMock(\Magento\Catalog\Api\Data\ProductAttributeInterface::class);
 
         $attribute->expects($this->once())
             ->method('getFrontendInput')
@@ -53,6 +53,9 @@ class CatalogEavValidationRulesTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals($expectedResult, $this->catalogEavValidationRules->build($attribute, $eavConfig));
     }
 
+    /**
+     * @return array
+     */
     public function buildDataProvider()
     {
         $data['required'] = true;

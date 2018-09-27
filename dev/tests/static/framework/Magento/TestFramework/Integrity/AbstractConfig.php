@@ -7,7 +7,7 @@
  */
 namespace Magento\TestFramework\Integrity;
 
-abstract class AbstractConfig extends \PHPUnit\Framework\TestCase
+abstract class AbstractConfig extends \PHPUnit_Framework_TestCase
 {
     public function testXmlFiles()
     {
@@ -36,7 +36,7 @@ abstract class AbstractConfig extends \PHPUnit\Framework\TestCase
     public function testSchemaUsingInvalidXml($expectedErrors = null)
     {
         if (!function_exists('libxml_set_external_entity_loader')) {
-            $this->markTestSkipped('Skipped due to MAGETWO-45033');
+            $this->markTestSkipped('Skipped due to MAGETWO-44919');
         }
         $xmlFile = $this->_getKnownInvalidXml();
         $schema = $this->_getXsd();
@@ -46,7 +46,7 @@ abstract class AbstractConfig extends \PHPUnit\Framework\TestCase
     public function testFileSchemaUsingPartialXml()
     {
         if (!function_exists('libxml_set_external_entity_loader')) {
-            $this->markTestSkipped('Skipped due to MAGETWO-45033');
+            $this->markTestSkipped('Skipped due to MAGETWO-44919');
         }
         $xmlFile = $this->_getKnownValidPartialXml();
         if ($xmlFile === null) {

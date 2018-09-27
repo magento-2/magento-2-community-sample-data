@@ -5,10 +5,10 @@
  */
 namespace Magento\Sniffs\NamingConventions;
 
-use PHP_CodeSniffer\Sniffs\Sniff;
-use PHP_CodeSniffer\Files\File;
+use PHP_CodeSniffer_File;
+use PHP_CodeSniffer_Sniff;
 
-class InterfaceNameSniff implements Sniff
+class InterfaceNameSniff implements PHP_CodeSniffer_Sniff
 {
     const INTERFACE_SUFFIX = 'Interface';
 
@@ -23,7 +23,7 @@ class InterfaceNameSniff implements Sniff
     /**
      * {@inheritdoc}
      */
-    public function process(File $sourceFile, $stackPtr)
+    public function process(PHP_CodeSniffer_File $sourceFile, $stackPtr)
     {
         $tokens = $sourceFile->getTokens();
         $declarationLine = $tokens[$stackPtr]['line'];
@@ -32,11 +32,7 @@ class InterfaceNameSniff implements Sniff
         while ($tokens[$stackPtr]['line'] == $declarationLine) {
             if ($tokens[$stackPtr]['type'] == 'T_STRING') {
                 if (substr($tokens[$stackPtr]['content'], 0 - $suffixLength) != self::INTERFACE_SUFFIX) {
-                    $sourceFile->addError(
-                        'Interface should have name that ends with "Interface" suffix.',
-                        $stackPtr,
-                        'WrongInterfaceName'
-                    );
+                    $sourceFile->addError('Interface should have name that ends with "Interface" suffix.', $stackPtr);
                 }
                 break;
             }

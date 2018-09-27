@@ -16,8 +16,7 @@ use Magento\Store\Model\ScopeInterface;
 /**
  * Downloadable Sales Order Email items renderer
  *
- * @api
- * @since 100.0.2
+ * @author     Magento Core Team <core@magentocommerce.com>
  */
 class Downloadable extends \Magento\Sales\Block\Order\Email\Items\Order\DefaultOrder
 {
@@ -108,7 +107,7 @@ class Downloadable extends \Magento\Sales\Block\Order\Email\Items\Order\DefaultO
      * Get frontend URL builder
      *
      * @return \Magento\Framework\UrlInterface
-     * @deprecated 100.1.0
+     * @deprecated
      */
     private function getFrontendUrlBuilder()
     {

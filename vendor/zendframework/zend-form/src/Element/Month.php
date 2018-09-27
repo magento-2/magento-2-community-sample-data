@@ -15,24 +15,14 @@ use Zend\Validator\ValidatorInterface;
 
 class Month extends DateTime
 {
-
-    const DATETIME_FORMAT = 'Y-m';
-
-    /**
-     * A valid format string accepted by date()
-     *
-     * @var string
-     */
-    protected $format = self::DATETIME_FORMAT;
-
     /**
      * Seed attributes
      *
      * @var array
      */
-    protected $attributes = [
+    protected $attributes = array(
         'type' => 'month',
-    ];
+    );
 
     /**
      * Retrieves a Date Validator configured for a Month Input type
@@ -57,10 +47,10 @@ class Month extends DateTime
         $baseValue = (isset($this->attributes['min']))
                      ? $this->attributes['min'] : '1970-01';
 
-        return new DateStepValidator([
+        return new DateStepValidator(array(
             'format'    => "Y-m",
             'baseValue' => $baseValue,
             'step'      => new \DateInterval("P{$stepValue}M"),
-        ]);
+        ));
     }
 }

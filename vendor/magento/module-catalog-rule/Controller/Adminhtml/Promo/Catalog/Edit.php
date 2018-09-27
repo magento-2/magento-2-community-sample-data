@@ -17,7 +17,7 @@ class Edit extends \Magento\CatalogRule\Controller\Adminhtml\Promo\Catalog
 
         /** @var \Magento\CatalogRule\Api\CatalogRuleRepositoryInterface $ruleRepository */
         $ruleRepository = $this->_objectManager->get(
-            \Magento\CatalogRule\Api\CatalogRuleRepositoryInterface::class
+            'Magento\CatalogRule\Api\CatalogRuleRepositoryInterface'
         );
 
         if ($id) {
@@ -30,11 +30,11 @@ class Edit extends \Magento\CatalogRule\Controller\Adminhtml\Promo\Catalog
             }
         } else {
             /** @var \Magento\CatalogRule\Model\Rule $model */
-            $model = $this->_objectManager->create(\Magento\CatalogRule\Model\Rule::class);
+            $model = $this->_objectManager->create('Magento\CatalogRule\Model\Rule');
         }
 
         // set entered data if was error when we do save
-        $data = $this->_objectManager->get(\Magento\Backend\Model\Session::class)->getPageData(true);
+        $data = $this->_objectManager->get('Magento\Backend\Model\Session')->getPageData(true);
         if (!empty($data)) {
             $model->addData($data);
         }

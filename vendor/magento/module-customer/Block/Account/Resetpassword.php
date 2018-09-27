@@ -9,9 +9,6 @@ use Magento\Customer\Model\AccountManagement;
 
 /**
  * Customer reset password form
- *
- * @api
- * @since 100.0.2
  */
 class Resetpassword extends \Magento\Framework\View\Element\Template
 {
@@ -32,7 +29,6 @@ class Resetpassword extends \Magento\Framework\View\Element\Template
      * Get minimum password length
      *
      * @return string
-     * @since 100.1.0
      */
     public function getMinimumPasswordLength()
     {
@@ -43,7 +39,6 @@ class Resetpassword extends \Magento\Framework\View\Element\Template
      * Get minimum password length
      *
      * @return string
-     * @since 100.1.0
      */
     public function getRequiredCharacterClassesNumber()
     {

@@ -5,7 +5,7 @@
  */
 namespace Magento\Eav\Test\Unit\Model\Attribute\Data;
 
-class TextTest extends \PHPUnit\Framework\TestCase
+class TextTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\Eav\Model\Attribute\Data\Text
@@ -14,10 +14,24 @@ class TextTest extends \PHPUnit\Framework\TestCase
 
     protected function setUp()
     {
-        $locale = $this->createMock(\Magento\Framework\Stdlib\DateTime\TimezoneInterface::class);
-        $localeResolver = $this->createMock(\Magento\Framework\Locale\ResolverInterface::class);
-        $logger = $this->createMock(\Psr\Log\LoggerInterface::class);
-        $helper = $this->createMock(\Magento\Framework\Stdlib\StringUtils::class);
+        $locale = $this->getMock(
+            'Magento\Framework\Stdlib\DateTime\TimezoneInterface',
+            [],
+            [],
+            '',
+            false,
+            false
+        );
+        $localeResolver = $this->getMock(
+            'Magento\Framework\Locale\ResolverInterface',
+            [],
+            [],
+            '',
+            false,
+            false
+        );
+        $logger = $this->getMock('Psr\Log\LoggerInterface');
+        $helper = $this->getMock('Magento\Framework\Stdlib\StringUtils', [], [], '', false, false);
 
         $attributeData = [
             'store_label' => 'Test',
@@ -26,9 +40,9 @@ class TextTest extends \PHPUnit\Framework\TestCase
             'validate_rules' => ['min_text_length' => 0, 'max_text_length' => 0, 'input_validation' => 0],
         ];
 
-        $attributeClass = \Magento\Eav\Model\Entity\Attribute\AbstractAttribute::class;
+        $attributeClass = 'Magento\Eav\Model\Entity\Attribute\AbstractAttribute';
         $objectManagerHelper = new \Magento\Framework\TestFramework\Unit\Helper\ObjectManager($this);
-        $eavTypeFactory = $this->createMock(\Magento\Eav\Model\Entity\TypeFactory::class);
+        $eavTypeFactory = $this->getMock('Magento\Eav\Model\Entity\TypeFactory', [], [], '', false, false);
         $arguments = $objectManagerHelper->getConstructArguments(
             $attributeClass,
             ['eavTypeFactory' => $eavTypeFactory, 'data' => $attributeData]
@@ -37,10 +51,7 @@ class TextTest extends \PHPUnit\Framework\TestCase
         /** @var $attribute \Magento\Eav\Model\Entity\Attribute\AbstractAttribute|
          * \PHPUnit_Framework_MockObject_MockObject
          */
-        $attribute = $this->getMockBuilder($attributeClass)
-            ->setMethods(['_init'])
-            ->setConstructorArgs($arguments)
-            ->getMock();
+        $attribute = $this->getMock($attributeClass, ['_init'], $arguments);
         $this->_model = new \Magento\Eav\Model\Attribute\Data\Text($locale, $logger, $localeResolver, $helper);
         $this->_model->setAttribute($attribute);
     }

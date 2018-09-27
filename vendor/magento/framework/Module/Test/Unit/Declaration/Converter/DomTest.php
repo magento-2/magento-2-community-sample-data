@@ -5,7 +5,7 @@
  */
 namespace Magento\Framework\Module\Test\Unit\Declaration\Converter;
 
-class DomTest extends \PHPUnit\Framework\TestCase
+class DomTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\Framework\Module\Declaration\Converter\Dom
@@ -37,11 +37,14 @@ class DomTest extends \PHPUnit\Framework\TestCase
         try {
             $dom->loadXML($xmlString);
             $this->_converter->convert($dom);
-        } catch (\PHPUnit\Framework\Error $ex) {
-            // do nothing because we expect \Exception but not \PHPUnit\Framework\Error
+        } catch (\PHPUnit_Framework_Error $ex) {
+            // do nothing because we expect \Exception but not \PHPUnit_Framework_Error
         }
     }
 
+    /**
+     * @return array
+     */
     public function convertWithInvalidDomDataProvider()
     {
         return [

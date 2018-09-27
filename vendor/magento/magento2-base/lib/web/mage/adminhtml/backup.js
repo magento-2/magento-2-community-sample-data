@@ -2,114 +2,75 @@
  * Copyright © Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
-
-/**
- * @deprecated since version 2.2.0
- */
-/* global  AdminBackup, setLocation */
-/* eslint-disable strict */
 define([
-    'jquery',
-    'Magento_Ui/js/modal/modal',
-    'mage/mage',
-    'prototype'
-], function (jQuery) {
-    window.AdminBackup = new Class.create();
+    "jquery",
+    "Magento_Ui/js/modal/modal",
+    "mage/mage",
+    "prototype"
+], function(jQuery){
 
+    AdminBackup = new Class.create();
+    
     AdminBackup.prototype = {
-        /**
-         * Initialize.
-         */
-        initialize: function () {
+        initialize : function(a, b){
             this.reset();
             this.rollbackUrl = this.backupUrl = '';
         },
 
-        /**
-         * reset.
-         */
-        reset: function () {
+        reset: function() {
             this.time = 0;
             this.type = '';
         },
 
-        /**
-         * @param {*} type
-         * @return {Boolean}
-         */
-        backup: function (type) {
+        backup: function(type) {
             this.reset();
             this.type = type;
             this.requestBackupOptions();
-
             return false;
         },
 
-        /**
-         * @param {*} type
-         * @param {*} time
-         * @return {Boolean}
-         */
-        rollback: function (type, time) {
+        rollback: function(type, time) {
             this.reset();
             this.time = time;
             this.type = type;
             this.showRollbackWarning();
-
             return false;
         },
 
-        /**
-         * Show rollback warning.
-         */
-        showRollbackWarning: function () {
+        showRollbackWarning: function() {
             this.showPopup('rollback-warning');
         },
 
-        /**
-         * request backup options.
-         */
-        requestBackupOptions: function () {
-            var action;
-
+        requestBackupOptions: function() {
             this.hidePopups();
-            action = this.type != 'snapshot' ? 'hide' : 'show'; //eslint-disable-line eqeqeq
+            
+            var action = this.type != 'snapshot' ? 'hide' : 'show';
+            
             this.showPopup('backup-options');
 
             $$('#exclude-media-checkbox-container').invoke(action);
         },
 
-        /**
-         * Request password.
-         */
-        requestPassword: function () {
+        requestPassword: function() {
             this.hidePopups();
 
             this.showPopup('rollback-request-password');
 
-            this.type != 'db' ? //eslint-disable-line eqeqeq
+            this.type != 'db' ?
                 $('use-ftp-checkbox-row').show() :
                 $('use-ftp-checkbox-row').hide();
         },
 
-        /**
-         * Toggle Ftp Credentials Form.
-         */
-        toggleFtpCredentialsForm: function () {
+        toggleFtpCredentialsForm: function() {
             $('use_ftp').checked ? $('ftp-credentials-container').show()
                 : $('ftp-credentials-container').hide();
 
-            $$('#ftp-credentials-container input').each(function (item) {
-                if (item.name == 'ftp_path') { //eslint-disable-line eqeqeq
-                    return;
-                }
+            $$('#ftp-credentials-container input').each(function(item) {
+                if (item.name == 'ftp_path') return;
                 $('use_ftp').checked ? item.addClassName('required-entry') : item.removeClassName('required-entry');
             });
         },
 
-        /**
-         * Submit backup.
-         */
         submitBackup: function () {
             var data = {
                 'type': this.type,
@@ -119,7 +80,7 @@ define([
             };
 
             new Ajax.Request(this.backupUrl, {
-                onSuccess: function (transport) {
+                onSuccess: function(transport) {
                     this.processResponse(transport, 'backup-options');
                 }.bind(this),
                 method: 'post',
@@ -129,14 +90,11 @@ define([
             this.modal.modal('closeModal');
         },
 
-        /**
-         * Submit rollback.
-         */
-        submitRollback: function () {
+        submitRollback: function() {
             var data = this.getPostData();
 
             new Ajax.Request(this.rollbackUrl, {
-                onSuccess: function (transport) {
+                onSuccess: function(transport) {
                     this.processResponse(transport, 'rollback-request-password');
                 }.bind(this),
                 method: 'post',
@@ -146,75 +104,46 @@ define([
             this.modal.modal('closeModal');
         },
 
-        /**
-         * @param {Object} transport
-         * @param {*} popupId
-         */
-        processResponse: function (transport, popupId) {
-            var json;
-
+        processResponse: function(transport, popupId) {
             if (!transport.responseText.isJSON()) {
                 return;
             }
 
-            json = transport.responseText.evalJSON();
+            var json = transport.responseText.evalJSON();
 
-            if (json.error) {
+            if (!!json.error) {
                 this.showPopup(popupId);
                 this.displayError(popupId, json.error);
-
                 return;
             }
 
-            if (json['redirect_url']) {
-                setLocation(json['redirect_url']);
+            if (!!json.redirect_url) {
+                setLocation(json.redirect_url);
             }
         },
 
-        /**
-         * @param {*} parentContainer
-         * @param {*} message
-         */
-        displayError: function (parentContainer, message) {
+        displayError: function(parentContainer, message) {
             var messageHtml = this.getErrorMessageHtml(message);
-
             $$('#' + parentContainer + ' .backup-messages .messages').invoke('update', messageHtml);
             $$('#' + parentContainer + ' .backup-messages').invoke('show');
         },
 
-        /**
-         * @param {*} message
-         * @return {String}
-         */
-        getErrorMessageHtml: function (message) {
+        getErrorMessageHtml: function(message) {
             return '<div class="message message-error error"><div>' + message + '</div></div>';
         },
 
-        /**
-         * @return {*|jQuery}
-         */
-        getPostData: function () {
+        getPostData: function() {
             var data = $('rollback-form').serialize(true);
-
-            data.time = this.time;
-            data.type = this.type;
-
+            data['time'] = this.time;
+            data['type'] = this.type;
             return data;
         },
         backupConfig: {
             'backup-options': {
                 title: jQuery.mage.__('Backup options'),
-
-                /**
-                 * @return {String}
-                 */
                 content: function () {
                     return document.getElementById('backup-options-template').textContent;
                 },
-
-                /**
-                 * Action Ok.
-                 */
                 actionOk: function () {
                     this.modal.find('#backup-form').validation({
                         submitHandler: jQuery.proxy(this.submitBackup, this)
@@ -224,17 +153,9 @@ define([
             },
             'rollback-warning': {
                 title: jQuery.mage.__('Warning'),
-
-                /**
-                 * @return {String}
-                 */
                 content: function () {
                     return document.getElementById('rollback-warning-template').textContent;
                 },
-
-                /**
-                 * Action Ok.
-                 */
                 actionOk: function () {
                     this.modal.modal('closeModal');
                     this.requestPassword();
@@ -242,57 +163,30 @@ define([
             },
             'rollback-request-password': {
                 title: jQuery.mage.__('Backup options'),
-
-                /**
-                 * @return {String}
-                 */
                 content: function () {
                     return document.getElementById('rollback-request-password-template').textContent;
                 },
-
-                /**
-                 * Action Ok.
-                 */
                 actionOk: function () {
                     this.modal.find('#rollback-form').validation({
                         submitHandler: jQuery.proxy(this.submitRollback, this)
                     });
                     this.modal.find('#rollback-form').submit();
                 },
-
-                /**
-                 * Opened.
-                 */
                 opened: function () {
                     this.toggleFtpCredentialsForm();
                 }
             }
         },
-
-        /**
-         * @param {*} divId
-         */
-        showPopup: function (divId) {
+        showPopup: function(divId) {
             var self = this;
 
-            this.modal = jQuery('<div/>').attr({
-                id: divId
-            }).html(this.backupConfig[divId].content()).modal({
+            this.modal = jQuery('<div/>').attr({id: divId}).html(this.backupConfig[divId].content()).modal({
                 modalClass: 'magento',
                 title: this.backupConfig[divId].title,
                 type: 'slide',
-
-                /**
-                 * @param {juery.Event} e
-                 * @param {Object} modal
-                 */
-                closed: function (e, modal) {
+                closed: function(e, modal){
                     modal.modal.remove();
                 },
-
-                /**
-                 * Opened.
-                 */
                 opened: function () {
                     if (self.backupConfig[divId].opened) {
                         self.backupConfig[divId].opened.call(self);
@@ -301,20 +195,12 @@ define([
                 buttons: [{
                     text: jQuery.mage.__('Cancel'),
                     'class': 'action cancel',
-
-                    /**
-                     * Click action.
-                     */
                     click: function () {
                         this.closeModal();
                     }
                 }, {
                     text: jQuery.mage.__('Ok'),
                     'class': 'action primary',
-
-                    /**
-                     * Click action.
-                     */
                     click: function () {
                         self.backupConfig[divId].actionOk.call(self);
                     }
@@ -323,18 +209,13 @@ define([
             this.modal.modal('openModal');
         },
 
-        /**
-         * Hide Popups.
-         */
-        hidePopups: function () {
-            var mask;
-
+        hidePopups: function() {
             $$('.backup-dialog').each(Element.hide);
-            mask = $('popup-window-mask');
-
+            var mask = $('popup-window-mask');
             if (mask) {
                 mask.hide();
             }
         }
-    };
+    }
+
 });

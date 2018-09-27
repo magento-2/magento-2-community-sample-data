@@ -7,7 +7,7 @@ namespace Magento\Braintree\Test\Unit\Gateway\Request;
 
 use Magento\Braintree\Gateway\Request\VaultDataBuilder;
 
-class VaultDataBuilderTest extends \PHPUnit\Framework\TestCase
+class VaultDataBuilderTest extends \PHPUnit_Framework_TestCase
 {
     public function testBuild()
     {

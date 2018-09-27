@@ -6,7 +6,7 @@
 
 namespace Magento\Store\Test\Unit\Model\System;
 
-class StoreTest extends \PHPUnit\Framework\TestCase
+class StoreTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\Store\Model\System\Store
@@ -41,22 +41,22 @@ class StoreTest extends \PHPUnit\Framework\TestCase
     protected function setUp()
     {
         $objectManager = new \Magento\Framework\TestFramework\Unit\Helper\ObjectManager($this);
-        $this->websiteMock = $this->getMockBuilder(\Magento\Store\Model\Website::class)
+        $this->websiteMock = $this->getMockBuilder('Magento\Store\Model\Website')
             ->disableOriginalConstructor()
             ->setMethods([])
             ->getMock();
-        $this->groupMock = $this->getMockBuilder(\Magento\Store\Model\Group::class)
+        $this->groupMock = $this->getMockBuilder('Magento\Store\Model\Group')
             ->disableOriginalConstructor()
             ->setMethods([])
             ->getMock();
 
-        $this->storeMock = $this->getMockBuilder(\Magento\Store\Model\Store::class)
+        $this->storeMock = $this->getMockBuilder('Magento\Store\Model\Store')
             ->disableOriginalConstructor()
             ->setMethods([])
             ->getMock();
 
         $this->storeManagerMock = $this->getMockForAbstractClass(
-            \Magento\Store\Model\StoreManagerInterface::class,
+            'Magento\Store\Model\StoreManagerInterface',
             [],
             '',
             false,
@@ -70,7 +70,7 @@ class StoreTest extends \PHPUnit\Framework\TestCase
         $this->storeManagerMock->expects($this->atLeastOnce())->method('getWebsites')->willReturn([$this->websiteMock]);
         $this->storeManagerMock->expects($this->atLeastOnce())->method('getStores')->willReturn([$this->storeMock]);
         $this->model = $objectManager->getObject(
-            \Magento\Store\Model\System\Store::class,
+            'Magento\Store\Model\System\Store',
             ['storeManager' => $this->storeManagerMock]
         );
     }
@@ -104,6 +104,9 @@ class StoreTest extends \PHPUnit\Framework\TestCase
         );
     }
 
+    /**
+     * @return array
+     */
     public function getStoresStructureDataProvider()
     {
         $websiteName = 'website';
@@ -207,6 +210,9 @@ class StoreTest extends \PHPUnit\Framework\TestCase
         );
     }
 
+    /**
+     * @return array
+     */
     public function getStoreValuesForFormDataProvider()
     {
         $websiteName = 'website';

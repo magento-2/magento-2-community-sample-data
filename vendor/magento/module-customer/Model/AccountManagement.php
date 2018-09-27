@@ -15,10 +15,10 @@ use Magento\Customer\Api\Data\ValidationResultsInterfaceFactory;
 use Magento\Customer\Helper\View as CustomerViewHelper;
 use Magento\Customer\Model\Config\Share as ConfigShare;
 use Magento\Customer\Model\Customer as CustomerModel;
-use Magento\Customer\Model\Customer\CredentialsValidator;
 use Magento\Customer\Model\Metadata\Validator;
 use Magento\Eav\Model\Validator\Attribute\Backend;
 use Magento\Framework\Api\ExtensibleDataObjectConverter;
+use Magento\Framework\Api\SearchCriteriaBuilder;
 use Magento\Framework\App\Area;
 use Magento\Framework\App\Config\ScopeConfigInterface;
 use Magento\Framework\App\ObjectManager;
@@ -40,6 +40,7 @@ use Magento\Framework\Exception\State\UserLockedException;
 use Magento\Framework\Intl\DateTimeFactory;
 use Magento\Framework\Mail\Template\TransportBuilder;
 use Magento\Framework\Math\Random;
+use Magento\Framework\Phrase;
 use Magento\Framework\Reflection\DataObjectProcessor;
 use Magento\Framework\Registry;
 use Magento\Framework\Stdlib\DateTime;
@@ -92,10 +93,6 @@ class AccountManagement implements AccountManagementInterface
      */
     const XML_PATH_FORGOT_EMAIL_IDENTITY = 'customer/password/forgot_email_identity';
 
-    /**
-     * @deprecated
-     * @see AccountConfirmation::XML_PATH_IS_CONFIRM
-     */
     const XML_PATH_IS_CONFIRM = 'customer/create_account/confirm';
 
     /**
@@ -311,19 +308,14 @@ class AccountManagement implements AccountManagementInterface
     private $eavValidator;
 
     /**
-     * @var CredentialsValidator
-     */
-    private $credentialsValidator;
-
-    /**
      * @var DateTimeFactory
      */
     private $dateTimeFactory;
 
     /**
-     * @var AccountConfirmation
+     * @var SearchCriteriaBuilder
      */
-    private $accountConfirmation;
+    private $searchCriteriaBuilder;
 
     /**
      * @param CustomerFactory $customerFactory
@@ -349,13 +341,11 @@ class AccountManagement implements AccountManagementInterface
      * @param CustomerModel $customerModel
      * @param ObjectFactory $objectFactory
      * @param ExtensibleDataObjectConverter $extensibleDataObjectConverter
-     * @param CredentialsValidator|null $credentialsValidator
-     * @param DateTimeFactory|null $dateTimeFactory
-     * @param AccountConfirmation|null $accountConfirmation
      * @param DateTimeFactory $dateTimeFactory
      * @param SessionManagerInterface|null $sessionManager
      * @param SaveHandlerInterface|null $saveHandler
      * @param CollectionFactory|null $visitorCollectionFactory
+     * @param SearchCriteriaBuilder|null $searchCriteriaBuilder
      * @SuppressWarnings(PHPMD.ExcessiveParameterList)
      */
     public function __construct(
@@ -382,12 +372,11 @@ class AccountManagement implements AccountManagementInterface
         CustomerModel $customerModel,
         ObjectFactory $objectFactory,
         ExtensibleDataObjectConverter $extensibleDataObjectConverter,
-        CredentialsValidator $credentialsValidator = null,
         DateTimeFactory $dateTimeFactory = null,
-        AccountConfirmation $accountConfirmation = null,
         SessionManagerInterface $sessionManager = null,
         SaveHandlerInterface $saveHandler = null,
-        CollectionFactory $visitorCollectionFactory = null
+        CollectionFactory $visitorCollectionFactory = null,
+        SearchCriteriaBuilder $searchCriteriaBuilder = null
     ) {
         $this->customerFactory = $customerFactory;
         $this->eventManager = $eventManager;
@@ -412,17 +401,15 @@ class AccountManagement implements AccountManagementInterface
         $this->customerModel = $customerModel;
         $this->objectFactory = $objectFactory;
         $this->extensibleDataObjectConverter = $extensibleDataObjectConverter;
-        $this->credentialsValidator =
-            $credentialsValidator ?: ObjectManager::getInstance()->get(CredentialsValidator::class);
         $this->dateTimeFactory = $dateTimeFactory ?: ObjectManager::getInstance()->get(DateTimeFactory::class);
-        $this->accountConfirmation = $accountConfirmation ?: ObjectManager::getInstance()
-            ->get(AccountConfirmation::class);
         $this->sessionManager = $sessionManager
             ?: ObjectManager::getInstance()->get(SessionManagerInterface::class);
         $this->saveHandler = $saveHandler
             ?: ObjectManager::getInstance()->get(SaveHandlerInterface::class);
         $this->visitorCollectionFactory = $visitorCollectionFactory
             ?: ObjectManager::getInstance()->get(CollectionFactory::class);
+        $this->searchCriteriaBuilder = $searchCriteriaBuilder
+            ?: ObjectManager::getInstance()->get(SearchCriteriaBuilder::class);
     }
 
     /**
@@ -575,25 +562,64 @@ class AccountManagement implements AccountManagementInterface
                     $this->getEmailNotification()->passwordResetConfirmation($customer);
                     break;
                 default:
-                    throw new InputException(__(
-                        'Invalid value of "%value" provided for the %fieldName field. '.
-                        'Possible values: %template1 or %template2.',
-                        [
-                            'value' => $template,
-                            'fieldName' => 'template',
-                            'template1' => AccountManagement::EMAIL_REMINDER,
-                            'template2' => AccountManagement::EMAIL_RESET
-                        ]
-                    ));
+                    throw new InputException(
+                        __(
+                            'Invalid value of "%value" provided for the %fieldName field. ' .
+                            'Possible values are %template1 or %template2.',
+                            [
+                                'value' => $template,
+                                'fieldName' => 'template',
+                                'template1' => AccountManagement::EMAIL_REMINDER,
+                                'template2' => AccountManagement::EMAIL_RESET
+                            ]
+                        )
+                    );
             }
-
             return true;
         } catch (MailException $e) {
             // If we are not able to send a reset password email, this should be ignored
             $this->logger->critical($e);
         }
-
         return false;
+    }
+
+    /**
+     * Match a customer by their RP token.
+     *
+     * @param string $rpToken
+     * @throws ExpiredException
+     * @throws NoSuchEntityException
+     *
+     * @return CustomerInterface
+     */
+    private function matchCustomerByRpToken($rpToken)
+    {
+
+        $this->searchCriteriaBuilder->addFilter(
+            'rp_token',
+            $rpToken
+        );
+        $this->searchCriteriaBuilder->setPageSize(1);
+        $found = $this->customerRepository->getList(
+            $this->searchCriteriaBuilder->create()
+        );
+
+        if ($found->getTotalCount() > 1) {
+            //Failed to generated unique RP token
+            throw new ExpiredException(
+                new Phrase('Reset password token expired.')
+            );
+        }
+        if ($found->getTotalCount() === 0) {
+            //Customer with such token not found.
+            throw NoSuchEntityException::singleField(
+                'rp_token',
+                $rpToken
+            );
+        }
+
+        //Unique customer found.
+        return $found->getItems()[0];
     }
 
     /**
@@ -601,7 +627,11 @@ class AccountManagement implements AccountManagementInterface
      */
     public function resetPassword($email, $resetToken, $newPassword)
     {
-        $customer = $this->customerRepository->get($email);
+        if (!$email) {
+            $customer = $this->matchCustomerByRpToken($resetToken);
+        } else {
+            $customer = $this->customerRepository->get($email);
+        }
         //Validate Token and new password strength
         $this->validateResetPasswordToken($customer->getId(), $resetToken);
         $this->checkPasswordStrength($newPassword);
@@ -610,6 +640,7 @@ class AccountManagement implements AccountManagementInterface
         $customerSecure->setRpToken(null);
         $customerSecure->setRpTokenCreatedAt(null);
         $customerSecure->setPasswordHash($this->createPasswordHash($newPassword));
+        $this->getAuthentication()->unlock($customer->getId());
         $this->sessionManager->destroy();
         $this->destroyCustomerSessions($customer->getId());
         $this->customerRepository->save($customer);
@@ -725,12 +756,6 @@ class AccountManagement implements AccountManagementInterface
     {
         if ($password !== null) {
             $this->checkPasswordStrength($password);
-            $customerEmail = $customer->getEmail();
-            try {
-                $this->credentialsValidator->checkPasswordDifferentFromEmail($customerEmail, $password);
-            } catch (InputException $e) {
-                throw new LocalizedException(__('Password cannot be the same as email address.'));
-            }
             $hash = $this->createPasswordHash($password);
         } else {
             $hash = null;
@@ -803,7 +828,6 @@ class AccountManagement implements AccountManagementInterface
                     $this->addressRepository->save($address);
                 }
             }
-            $this->customerRegistry->remove($customer->getId());
         } catch (InputException $e) {
             $this->customerRepository->delete($customer);
             throw $e;
@@ -855,8 +879,6 @@ class AccountManagement implements AccountManagementInterface
         } catch (MailException $e) {
             // If we are not able to send a new account email, this should be ignored
             $this->logger->critical($e);
-        } catch (\UnexpectedValueException $e) {
-            $this->logger->error($e);
         }
     }
 
@@ -904,8 +926,6 @@ class AccountManagement implements AccountManagementInterface
         } catch (InvalidEmailOrPasswordException $e) {
             throw new InvalidEmailOrPasswordException(__('The password doesn\'t match this account.'));
         }
-        $customerEmail = $customer->getEmail();
-        $this->credentialsValidator->checkPasswordDifferentFromEmail($customerEmail, $newPassword);
         $customerSecure = $this->customerRegistry->retrieveSecureData($customer->getId());
         $customerSecure->setRpToken(null);
         $customerSecure->setRpTokenCreatedAt(null);
@@ -1011,12 +1031,9 @@ class AccountManagement implements AccountManagementInterface
     private function validateResetPasswordToken($customerId, $resetPasswordLinkToken)
     {
         if (empty($customerId) || $customerId < 0) {
-            throw new InputException(
-                __(
-                    'Invalid value of "%value" provided for the %fieldName field.',
-                    ['value' => $customerId, 'fieldName' => 'customerId']
-                )
-            );
+            //Looking for the customer.
+            $customerId = $this->matchCustomerByRpToken($resetPasswordLinkToken)
+                ->getId();
         }
         if (!is_string($resetPasswordLinkToken) || empty($resetPasswordLinkToken)) {
             $params = ['fieldName' => 'resetPasswordLinkToken'];
@@ -1060,7 +1077,7 @@ class AccountManagement implements AccountManagementInterface
      * @param string $sendemailStoreId
      * @return $this
      * @throws LocalizedException
-     * @deprecated 100.1.0
+     * @deprecated
      */
     protected function sendNewAccountEmail(
         $customer,
@@ -1099,7 +1116,7 @@ class AccountManagement implements AccountManagementInterface
      *
      * @param CustomerInterface $customer
      * @return $this
-     * @deprecated 100.1.0
+     * @deprecated
      */
     protected function sendPasswordResetNotificationEmail($customer)
     {
@@ -1112,7 +1129,7 @@ class AccountManagement implements AccountManagementInterface
      * @param CustomerInterface $customer
      * @param int|string|null $defaultStoreId
      * @return int
-     * @deprecated 100.1.0
+     * @deprecated
      */
     protected function getWebsiteStoreId($customer, $defaultStoreId = null)
     {
@@ -1126,7 +1143,7 @@ class AccountManagement implements AccountManagementInterface
 
     /**
      * @return array
-     * @deprecated 100.1.0
+     * @deprecated
      */
     protected function getTemplateTypes()
     {
@@ -1140,10 +1157,10 @@ class AccountManagement implements AccountManagementInterface
          * self::NEW_ACCOUNT_EMAIL_CONFIRMATION             email with confirmation link
          */
         $types = [
-            self::NEW_ACCOUNT_EMAIL_REGISTERED             => self::XML_PATH_REGISTER_EMAIL_TEMPLATE,
+            self::NEW_ACCOUNT_EMAIL_REGISTERED => self::XML_PATH_REGISTER_EMAIL_TEMPLATE,
             self::NEW_ACCOUNT_EMAIL_REGISTERED_NO_PASSWORD => self::XML_PATH_REGISTER_NO_PASSWORD_EMAIL_TEMPLATE,
-            self::NEW_ACCOUNT_EMAIL_CONFIRMED              => self::XML_PATH_CONFIRMED_EMAIL_TEMPLATE,
-            self::NEW_ACCOUNT_EMAIL_CONFIRMATION           => self::XML_PATH_CONFIRM_EMAIL_TEMPLATE,
+            self::NEW_ACCOUNT_EMAIL_CONFIRMED => self::XML_PATH_CONFIRMED_EMAIL_TEMPLATE,
+            self::NEW_ACCOUNT_EMAIL_CONFIRMATION => self::XML_PATH_CONFIRM_EMAIL_TEMPLATE,
         ];
         return $types;
     }
@@ -1158,7 +1175,7 @@ class AccountManagement implements AccountManagementInterface
      * @param int|null $storeId
      * @param string $email
      * @return $this
-     * @deprecated 100.1.0
+     * @deprecated
      */
     protected function sendEmailTemplate(
         $customer,
@@ -1173,11 +1190,13 @@ class AccountManagement implements AccountManagementInterface
             $email = $customer->getEmail();
         }
 
-        $transport = $this->transportBuilder->setTemplateIdentifier($templateId)->setTemplateOptions(
-            ['area' => Area::AREA_FRONTEND, 'store' => $storeId]
-        )->setTemplateVars($templateParams)->setFrom(
-            $this->scopeConfig->getValue($sender, ScopeInterface::SCOPE_STORE, $storeId)
-        )->addTo($email, $this->customerViewHelper->getCustomerName($customer))->getTransport();
+        $transport = $this->transportBuilder->setTemplateIdentifier($templateId)
+            ->setTemplateOptions(['area' => Area::AREA_FRONTEND, 'store' => $storeId])
+            ->setTemplateVars($templateParams)
+            ->setScopeId($storeId)
+            ->setFrom($this->scopeConfig->getValue($sender, ScopeInterface::SCOPE_STORE, $storeId))
+            ->addTo($email, $this->customerViewHelper->getCustomerName($customer))
+            ->getTransport();
 
         $transport->sendMessage();
 
@@ -1189,15 +1208,17 @@ class AccountManagement implements AccountManagementInterface
      *
      * @param CustomerInterface $customer
      * @return bool
-     * @deprecated
-     * @see AccountConfirmation::isConfirmationRequired
      */
     protected function isConfirmationRequired($customer)
     {
-        return $this->accountConfirmation->isConfirmationRequired(
-            $customer->getWebsiteId(),
-            $customer->getId(),
-            $customer->getEmail()
+        if ($this->canSkipConfirmation($customer)) {
+            return false;
+        }
+
+        return (bool)$this->scopeConfig->getValue(
+            self::XML_PATH_IS_CONFIRM,
+            ScopeInterface::SCOPE_WEBSITES,
+            $customer->getWebsiteId()
         );
     }
 
@@ -1206,8 +1227,6 @@ class AccountManagement implements AccountManagementInterface
      *
      * @param CustomerInterface $customer
      * @return bool
-     * @deprecated
-     * @see AccountConfirmation::isConfirmationRequired
      */
     protected function canSkipConfirmation($customer)
     {
@@ -1291,7 +1310,7 @@ class AccountManagement implements AccountManagementInterface
      *
      * @param CustomerInterface $customer
      * @return $this
-     * @deprecated 100.1.0
+     * @deprecated
      */
     public function sendPasswordReminderEmail($customer)
     {
@@ -1318,7 +1337,7 @@ class AccountManagement implements AccountManagementInterface
      *
      * @param CustomerInterface $customer
      * @return $this
-     * @deprecated 100.1.0
+     * @deprecated
      */
     public function sendPasswordResetConfirmationEmail($customer)
     {
@@ -1362,7 +1381,7 @@ class AccountManagement implements AccountManagementInterface
      *
      * @param CustomerInterface $customer
      * @return Data\CustomerSecure
-     * @deprecated 100.1.0
+     * @deprecated
      */
     protected function getFullCustomerObject($customer)
     {
@@ -1391,7 +1410,7 @@ class AccountManagement implements AccountManagementInterface
      * Get email notification
      *
      * @return EmailNotificationInterface
-     * @deprecated 100.1.0
+     * @deprecated
      */
     private function getEmailNotification()
     {

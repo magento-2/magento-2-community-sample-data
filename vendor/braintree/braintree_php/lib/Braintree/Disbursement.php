@@ -1,7 +1,7 @@
 <?php
 namespace Braintree;
 
-class Disbursement extends Base
+final class Disbursement extends Base
 {
     private $_merchantAccount;
 

@@ -9,9 +9,6 @@ use Magento\Customer\Controller\RegistryConstants;
 
 /**
  * Adminhtml customer orders grid block
- *
- * @api
- * @since 100.0.2
  */
 class Orders extends \Magento\Backend\Block\Widget\Grid\Extended
 {
@@ -142,7 +139,7 @@ class Orders extends \Magento\Backend\Block\Widget\Grid\Extended
                     'filter' => false,
                     'sortable' => false,
                     'width' => '100px',
-                    'renderer' => \Magento\Sales\Block\Adminhtml\Reorder\Renderer\Action::class
+                    'renderer' => 'Magento\Sales\Block\Adminhtml\Reorder\Renderer\Action'
                 ]
             );
         }

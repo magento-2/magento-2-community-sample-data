@@ -13,7 +13,7 @@
  */
 namespace Magento\Test\Db\Adapter;
 
-class TransactionInterfaceTest extends \PHPUnit\Framework\TestCase
+class TransactionInterfaceTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @param string $class
@@ -26,7 +26,7 @@ class TransactionInterfaceTest extends \PHPUnit\Framework\TestCase
         $connectionMock->expects($this->once())->method('beginTransaction')->will($this->returnValue($uniqid));
         $this->assertSame(0, $connectionMock->getTransactionLevel());
         $this->assertEquals($uniqid, $connectionMock->beginTransparentTransaction());
-        $this->assertSame(0, $connectionMock->getTransactionLevel());
+        $this->assertSame(-1, $connectionMock->getTransactionLevel());
     }
 
     /**
@@ -81,8 +81,8 @@ class TransactionInterfaceTest extends \PHPUnit\Framework\TestCase
      */
     protected function _getConnectionMock($class)
     {
-        $connection = $this->createPartialMock($class, ['beginTransaction', 'rollback', 'commit']);
-        $this->assertInstanceOf(\Magento\TestFramework\Db\Adapter\TransactionInterface::class, $connection);
+        $connection = $this->getMock($class, ['beginTransaction', 'rollback', 'commit'], [], '', false);
+        $this->assertInstanceOf('Magento\TestFramework\Db\Adapter\TransactionInterface', $connection);
         return $connection;
     }
 }

@@ -81,30 +81,6 @@ class CreditCardTest extends Setup
         $this->assertTrue($card2->isDefault());
     }
 
-    public function testCreateWithVerificationAmount()
-    {
-        $customer = Braintree\Customer::createNoValidate();
-        $result = Braintree\CreditCard::create([
-            'customerId' => $customer->id,
-            'cardholderName' => 'Cardholder',
-            'number' => '4111111111111111',
-            'expirationDate' => '05/12',
-            'options' => [
-                'verificationAmount' => '5.00',
-                'verifyCard' => true
-            ]
-        ]);
-        $this->assertTrue($result->success);
-        $this->assertEquals($customer->id, $result->creditCard->customerId);
-        $this->assertEquals('411111', $result->creditCard->bin);
-        $this->assertEquals('1111', $result->creditCard->last4);
-        $this->assertEquals('Cardholder', $result->creditCard->cardholderName);
-        $this->assertEquals('05/2012', $result->creditCard->expirationDate);
-        $this->assertEquals(1, preg_match('/\A\w{32}\z/', $result->creditCard->uniqueNumberIdentifier));
-        $this->assertFalse($result->creditCard->isVenmoSdk());
-        $this->assertEquals(1, preg_match('/png/', $result->creditCard->imageUrl));
-    }
-
     public function testAddCardToExistingCustomerUsingNonce()
     {
         $customer = Braintree\Customer::createNoValidate();
@@ -221,14 +197,11 @@ class CreditCardTest extends Setup
             'customerId' => $customer->id,
             'number' => '4111111111111111',
             'expirationDate' => '05/2011',
-            'options' => ['verifyCard' => true],
-            'deviceSessionId' => 'abc123'
+            'options' => ['verifyCard' => true]
         ]);
         $this->assertTrue($result->success);
         $this->assertNotNull($result->creditCard->verification->riskData);
         $this->assertNotNull($result->creditCard->verification->riskData->decision);
-        $this->assertNull($result->creditCard->verification->riskData->deviceDataCaptured);
-        $this->assertNull($result->creditCard->verification->riskData->id);
     }
 
     public function testCreate_withCardVerificationAndOverriddenAmount()
@@ -242,8 +215,6 @@ class CreditCardTest extends Setup
         ]);
         $this->assertFalse($result->success);
         $this->assertEquals(Braintree\Result\CreditCardVerification::PROCESSOR_DECLINED, $result->creditCardVerification->status);
-        $this->assertEquals('1.02', $result->creditCardVerification->amount);
-        $this->assertEquals('USD', $result->creditCardVerification->currencyIsoCode);
         $this->assertEquals('2000', $result->creditCardVerification->processorResponseCode);
         $this->assertEquals('Do Not Honor', $result->creditCardVerification->processorResponseText);
         $this->assertEquals('I', $result->creditCardVerification->cvvResponseCode);
@@ -1230,7 +1201,6 @@ class CreditCardTest extends Setup
             'options' => ['verifyCard' => true]
         ]);
         $this->assertEquals(Braintree\CreditCard::PAYROLL_YES, $result->creditCard->payroll);
-        $this->assertEquals('MSA', $result->creditCard->productId);
     }
 
     public function testHealthCareCard()
@@ -1244,7 +1214,6 @@ class CreditCardTest extends Setup
             'options' => ['verifyCard' => true]
         ]);
         $this->assertEquals(Braintree\CreditCard::HEALTHCARE_YES, $result->creditCard->healthcare);
-        $this->assertEquals('J3', $result->creditCard->productId);
     }
 
     public function testDurbinRegulatedCard()
@@ -1302,7 +1271,6 @@ class CreditCardTest extends Setup
         $this->assertEquals(Braintree\CreditCard::DEBIT_NO, $result->creditCard->debit);
         $this->assertEquals(Braintree\CreditCard::HEALTHCARE_NO, $result->creditCard->healthcare);
         $this->assertEquals(Braintree\CreditCard::COMMERCIAL_NO, $result->creditCard->commercial);
-        $this->assertEquals('MSB', $result->creditCard->productId);
     }
 
     public function testUnknownCardTypeIndicators()
@@ -1323,6 +1291,5 @@ class CreditCardTest extends Setup
         $this->assertEquals(Braintree\CreditCard::COMMERCIAL_UNKNOWN, $result->creditCard->commercial);
         $this->assertEquals(Braintree\CreditCard::COUNTRY_OF_ISSUANCE_UNKNOWN, $result->creditCard->countryOfIssuance);
         $this->assertEquals(Braintree\CreditCard::ISSUING_BANK_UNKNOWN, $result->creditCard->issuingBank);
-        $this->assertEquals(Braintree\CreditCard::PRODUCT_ID_UNKNOWN, $result->creditCard->productId);
     }
 }

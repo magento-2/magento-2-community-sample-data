@@ -5,11 +5,11 @@
  */
 namespace Magento\Theme\Test\Unit\Model\Design\Backend;
 
-use Magento\Framework\Serialize\Serializer\Json;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
+use Magento\Theme\Model\Design\Backend\Exceptions;
 use Magento\Framework\App\Area;
 
-class ExceptionsTest extends \PHPUnit\Framework\TestCase
+class ExceptionsTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\Theme\Model\Design\Backend\Exceptions
@@ -28,20 +28,19 @@ class ExceptionsTest extends \PHPUnit\Framework\TestCase
 
     protected function setUp()
     {
-        $this->contextMock = $this->getMockBuilder(\Magento\Framework\Model\Context::class)
+        $this->contextMock = $this->getMockBuilder('Magento\Framework\Model\Context')
             ->disableOriginalConstructor()
             ->getMock();
-        $this->designMock = $this->getMockBuilder(\Magento\Framework\View\DesignInterface::class)->getMock();
+        $this->designMock = $this->getMockBuilder('Magento\Framework\View\DesignInterface')->getMock();
         $this->contextMock->expects($this->once())
             ->method('getEventDispatcher')
-            ->willReturn($this->getMockBuilder(\Magento\Framework\Event\ManagerInterface::class)->getMock());
-        $serializerMock = $this->getMockBuilder(Json::class)->getMock();
+            ->willReturn($this->getMockBuilder('Magento\Framework\Event\ManagerInterface')->getMock());
+
         $this->model = (new ObjectManager($this))->getObject(
-            \Magento\Theme\Model\Design\Backend\Exceptions::class,
+            'Magento\Theme\Model\Design\Backend\Exceptions',
             [
                 'context' => $this->contextMock,
                 'design' => $this->designMock,
-                'serializer' => $serializerMock,
             ]
         );
     }

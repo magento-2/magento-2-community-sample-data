@@ -1,5 +1,4 @@
 <?php
-
 /**
  * Zend Framework (http://framework.zend.com/)
  *
@@ -46,14 +45,7 @@ class NumberFormat extends AbstractHelper
      *
      * @var array
      */
-    protected $formatters = [];
-
-    /**
-     * Text attributes.
-     *
-     * @var array
-     */
-    protected $textAttributes = [];
+    protected $formatters = array();
 
     /**
      * Locale to use instead of the default
@@ -67,7 +59,7 @@ class NumberFormat extends AbstractHelper
      */
     public function __construct()
     {
-        if (! extension_loaded('intl')) {
+        if (!extension_loaded('intl')) {
             throw new Exception\ExtensionNotLoadedException(sprintf(
                 '%s component requires the intl PHP extension',
                 __NAMESPACE__
@@ -83,7 +75,6 @@ class NumberFormat extends AbstractHelper
      * @param  int       $formatType
      * @param  string    $locale
      * @param  int       $decimals
-     * @param  array|null $textAttributes
      * @return string
      */
     public function __invoke(
@@ -91,8 +82,7 @@ class NumberFormat extends AbstractHelper
         $formatStyle = null,
         $formatType = null,
         $locale = null,
-        $decimals = null,
-        array $textAttributes = null
+        $decimals = null
     ) {
         if (null === $locale) {
             $locale = $this->getLocale();
@@ -103,36 +93,25 @@ class NumberFormat extends AbstractHelper
         if (null === $formatType) {
             $formatType = $this->getFormatType();
         }
-        if (! is_int($decimals) || $decimals < 0) {
+        if (!is_int($decimals) || $decimals < 0) {
             $decimals = $this->getDecimals();
         }
-        if (! is_array($textAttributes)) {
-            $textAttributes = $this->getTextAttributes();
-        }
 
-        $formatterId = md5(
-            $formatStyle . "\0" . $locale . "\0" . $decimals . "\0"
-            . md5(serialize($textAttributes))
-        );
+        $formatterId = md5($formatStyle . "\0" . $locale . "\0" . $decimals);
 
-        if (isset($this->formatters[$formatterId])) {
-            $formatter = $this->formatters[$formatterId];
-        } else {
-            $formatter = new NumberFormatter($locale, $formatStyle);
+        if (!isset($this->formatters[$formatterId])) {
+            $this->formatters[$formatterId] = new NumberFormatter(
+                $locale,
+                $formatStyle
+            );
 
             if ($decimals !== null) {
-                $formatter->setAttribute(NumberFormatter::MIN_FRACTION_DIGITS, $decimals);
-                $formatter->setAttribute(NumberFormatter::MAX_FRACTION_DIGITS, $decimals);
+                $this->formatters[$formatterId]->setAttribute(NumberFormatter::MIN_FRACTION_DIGITS, $decimals);
+                $this->formatters[$formatterId]->setAttribute(NumberFormatter::MAX_FRACTION_DIGITS, $decimals);
             }
-
-            foreach ($textAttributes as $textAttribute => $value) {
-                $formatter->setTextAttribute($textAttribute, $value);
-            }
-
-            $this->formatters[$formatterId] = $formatter;
         }
 
-        return $formatter->format($number, $formatType);
+        return $this->formatters[$formatterId]->format($number, $formatType);
     }
 
     /**
@@ -232,23 +211,5 @@ class NumberFormat extends AbstractHelper
         }
 
         return $this->locale;
-    }
-
-    /**
-     * @return array
-     */
-    public function getTextAttributes()
-    {
-        return $this->textAttributes;
-    }
-
-    /**
-     * @param array $textAttributes
-     * @return NumberFormat
-     */
-    public function setTextAttributes(array $textAttributes)
-    {
-        $this->textAttributes = $textAttributes;
-        return $this;
     }
 }

@@ -23,13 +23,14 @@ use Magento\Mtf\TestCase\Injectable;
  * 8. Click "Save" button
  * 9. Perform all assertions
  *
- * @group Web_API_Framework
+ * @group Web_API_Framework_(PS)
  * @ZephyrId MAGETWO-16756
  */
 class CreateIntegrationWithDuplicatedNameTest extends Injectable
 {
     /* tags */
     const MVP = 'yes';
+    const DOMAIN = 'PS';
     /* end tags */
 
     /**

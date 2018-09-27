@@ -9,10 +9,13 @@ namespace Magento\Checkout\Test\Constraint;
 use Magento\Mtf\Constraint\AbstractConstraint;
 use Magento\Checkout\Test\Page\CheckoutOnepage;
 
+/**
+ * Assert that link Go To Cart is present in summary block.
+ */
 class AssertLinkGoToCartPresentInSummaryBlock extends AbstractConstraint
 {
     /**
-     * Assert that Go to Cart link is present in checkout summary block
+     * Assert that Go to Cart link is present in checkout summary block.
      *
      * @param CheckoutOnepage $checkoutPage
      * @return void
@@ -28,9 +31,7 @@ class AssertLinkGoToCartPresentInSummaryBlock extends AbstractConstraint
     }
 
     /**
-     * Returns a string representation of the object.
-     *
-     * @return string
+     * {@inheritdoc}
      */
     public function toString()
     {

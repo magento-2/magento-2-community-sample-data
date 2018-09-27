@@ -60,7 +60,7 @@ class AssociatedProducts extends Tab
     protected function getSearchGridBlock()
     {
         return $this->blockFactory->create(
-            \Magento\GroupedProduct\Test\Block\Adminhtml\Product\Grouped\AssociatedProducts\Search\Grid::class,
+            'Magento\GroupedProduct\Test\Block\Adminhtml\Product\Grouped\AssociatedProducts\Search\Grid',
             ['element' => $this->browser->find($this->productSearchGrid)]
         );
     }
@@ -70,10 +70,10 @@ class AssociatedProducts extends Tab
      *
      * @return ListAssociatedProducts
      */
-    public function getListAssociatedProductsBlock()
+    protected function getListAssociatedProductsBlock()
     {
         return $this->blockFactory->create(
-            ListAssociatedProducts::class,
+            'Magento\GroupedProduct\Test\Block\Adminhtml\Product\Grouped\AssociatedProducts\ListAssociatedProducts',
             ['element' => $this->_rootElement->find($this->associatedProductsBlock)]
         );
     }

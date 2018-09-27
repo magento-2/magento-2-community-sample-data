@@ -11,7 +11,7 @@ namespace Magento\Test\Legacy;
 
 use Magento\Framework\Component\ComponentRegistrar;
 
-class ObsoleteThemeLocalXmlTest extends \PHPUnit\Framework\TestCase
+class ObsoleteThemeLocalXmlTest extends \PHPUnit_Framework_TestCase
 {
     public function testLocalXmlFilesAbsent()
     {

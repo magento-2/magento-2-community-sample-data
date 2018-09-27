@@ -5,7 +5,7 @@
  */
 namespace Magento\Backend\Test\Unit\Model\Menu\Item;
 
-class ValidatorTest extends \PHPUnit\Framework\TestCase
+class ValidatorTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\Backend\Model\Menu\Item\Validator
@@ -79,6 +79,9 @@ class ValidatorTest extends \PHPUnit\Framework\TestCase
         }
     }
 
+    /**
+     * @return array
+     */
     public function requiredParamsProvider()
     {
         return [['id'], ['title'], ['resource']];
@@ -102,6 +105,9 @@ class ValidatorTest extends \PHPUnit\Framework\TestCase
         }
     }
 
+    /**
+     * @return array
+     */
     public function invalidParamsProvider()
     {
         return [
@@ -138,8 +144,7 @@ class ValidatorTest extends \PHPUnit\Framework\TestCase
         }
 
         $newItem = array_merge($newItem, $this->_params);
-        $result = $this->_model->validate($newItem);
-        $this->assertNull($result);
+        $this->_model->validate($newItem);
     }
 
     /**
@@ -208,8 +213,7 @@ class ValidatorTest extends \PHPUnit\Framework\TestCase
     public function testValidateParamWithNullForNonRequiredParamDoesntValidate()
     {
         try {
-            $result = $this->_model->validateParam('toolTip', null);
-            $this->assertNull($result);
+            $this->_model->validateParam('toolTip', null);
         } catch (\Exception $e) {
             $this->fail("Non required null values should not be validated");
         }
@@ -228,7 +232,6 @@ class ValidatorTest extends \PHPUnit\Framework\TestCase
      */
     public function testValidateParamResourceCompoundModuleNamespace()
     {
-        $result = $this->_model->validateParam('resource', 'TheCompoundNamespace_TheCompoundModule::resource');
-        $this->assertNull($result);
+        $this->_model->validateParam('resource', 'TheCompoundNamespace_TheCompoundModule::resource');
     }
 }

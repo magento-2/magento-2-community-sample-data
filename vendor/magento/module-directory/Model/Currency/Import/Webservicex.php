@@ -3,7 +3,11 @@
  * Copyright © Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
+
 namespace Magento\Directory\Model\Currency\Import;
+
+use Magento\Framework\App\ObjectManager;
+use Magento\Framework\HTTP\ZendClientFactory;
 
 /**
  * Currency rate import model (From www.webservicex.net)
@@ -13,13 +17,14 @@ class Webservicex extends \Magento\Directory\Model\Currency\Import\AbstractImpor
     /**
      * Currency converter url
      */
-    const CURRENCY_CONVERTER_URL = 'http://www.webservicex.net/CurrencyConvertor.asmx/ConversionRate'
-        . '?FromCurrency={{CURRENCY_FROM}}&ToCurrency={{CURRENCY_TO}}';
+    // @codingStandardsIgnoreStart
+    const CURRENCY_CONVERTER_URL = 'http://www.webservicex.net/CurrencyConvertor.asmx/ConversionRate?FromCurrency={{CURRENCY_FROM}}&ToCurrency={{CURRENCY_TO}}';
+    // @codingStandardsIgnoreEnd
 
     /**
      * Http Client Factory
      *
-     * @var \Magento\Framework\HTTP\ZendClientFactory
+     * @var ZendClientFactory
      */
     protected $httpClientFactory;
 
@@ -31,21 +36,19 @@ class Webservicex extends \Magento\Directory\Model\Currency\Import\AbstractImpor
     private $scopeConfig;
 
     /**
-     * Constructor
-     *
      * @param \Magento\Directory\Model\CurrencyFactory $currencyFactory
      * @param \Magento\Framework\App\Config\ScopeConfigInterface $scopeConfig
-     * @param \Magento\Framework\HTTP\ZendClientFactory|null $zendClientFactory
+     * @param ZendClientFactory|null $httpClientFactory
+     * @throws \RuntimeException
      */
     public function __construct(
         \Magento\Directory\Model\CurrencyFactory $currencyFactory,
         \Magento\Framework\App\Config\ScopeConfigInterface $scopeConfig,
-        \Magento\Framework\HTTP\ZendClientFactory $zendClientFactory = null
+        ZendClientFactory $httpClientFactory = null
     ) {
         parent::__construct($currencyFactory);
         $this->scopeConfig = $scopeConfig;
-        $this->httpClientFactory = $zendClientFactory ?: \Magento\Framework\App\ObjectManager::getInstance()
-            ->get(\Magento\Framework\HTTP\ZendClientFactory::class);
+        $this->httpClientFactory = $httpClientFactory ?: ObjectManager::getInstance()->get(ZendClientFactory::class);
     }
 
     /**

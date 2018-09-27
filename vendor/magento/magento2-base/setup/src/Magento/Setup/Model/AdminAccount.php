@@ -10,7 +10,7 @@ use Magento\Authorization\Model\Acl\Role\Group;
 use Magento\Authorization\Model\Acl\Role\User;
 use Magento\Authorization\Model\UserContextInterface;
 use Magento\Framework\Encryption\EncryptorInterface;
-use Magento\Framework\DB\Adapter\AdapterInterface;
+use Magento\Setup\Module\Setup;
 
 class AdminAccount
 {
@@ -22,15 +22,14 @@ class AdminAccount
     const KEY_EMAIL = 'admin-email';
     const KEY_FIRST_NAME = 'admin-firstname';
     const KEY_LAST_NAME = 'admin-lastname';
-    const KEY_PREFIX = 'db-prefix';
     /**#@- */
 
     /**
-     * Db connection
+     * Setup
      *
-     * @var AdapterInterface
+     * @var Setup
      */
-    private $connection;
+    private $setup;
 
     /**
      * Configurations
@@ -47,16 +46,16 @@ class AdminAccount
     /**
      * Default Constructor
      *
-     * @param AdapterInterface $connection
+     * @param Setup $setup
      * @param EncryptorInterface $encryptor
      * @param array $data
      */
     public function __construct(
-        AdapterInterface $connection,
+        Setup $setup,
         EncryptorInterface $encryptor,
         array $data
     ) {
-        $this->connection = $connection;
+        $this->setup  = $setup;
         $this->encryptor = $encryptor;
         $this->data = $data;
     }
@@ -94,100 +93,52 @@ class AdminAccount
      */
     private function saveAdminUser()
     {
-        $passwordHash = $this->generatePassword();
         $adminData = [
             'firstname' => $this->data[self::KEY_FIRST_NAME],
             'lastname'  => $this->data[self::KEY_LAST_NAME],
-            'password'  => $passwordHash,
+            'password'  => $this->generatePassword(),
             'is_active' => 1,
         ];
-        $result = $this->connection->fetchRow(
-            'SELECT user_id, username, email FROM ' . $this->getTableName('admin_user') . ' ' .
+        $result = $this->setup->getConnection()->fetchRow(
+            'SELECT user_id, username, email FROM ' . $this->setup->getTable('admin_user') . ' ' .
             'WHERE username = :username OR email = :email',
-            ['username' => $this->data[self::KEY_USER], 'email' => $this->data[self::KEY_EMAIL]],
-            null
+            ['username' => $this->data[self::KEY_USER], 'email' => $this->data[self::KEY_EMAIL]]
         );
 
         if (!empty($result)) {
             // User exists, update
-            $this->validateUserMatches();
+            $this->validateUserMatches($result['username'], $result['email']);
             $adminId = $result['user_id'];
             $adminData['modified'] = date('Y-m-d H:i:s');
-
-            $this->connection->update(
-                $this->getTableName('admin_user'),
+            $this->setup->getConnection()->update(
+                $this->setup->getTable('admin_user'),
                 $adminData,
-                $this->connection->quoteInto('username = ?', $this->data[self::KEY_USER])
+                $this->setup->getConnection()->quoteInto('username = ?', $this->data[self::KEY_USER])
             );
         } else {
             // User does not exist, create it
             $adminData['username'] = $this->data[self::KEY_USER];
             $adminData['email'] = $this->data[self::KEY_EMAIL];
-            $this->connection->insert(
-                $this->getTableName('admin_user'),
+            $adminData['extra'] = serialize(null);
+            $this->setup->getConnection()->insert(
+                $this->setup->getTable('admin_user'),
                 $adminData
             );
-            $adminId = $this->connection->lastInsertId();
+            $adminId = $this->setup->getConnection()->lastInsertId();
         }
-        $this->trackPassword($adminId, $passwordHash);
-
         return $adminId;
     }
 
     /**
-     * Remember a password hash for further usage.
+     * Validates that the username and email both match the user.
      *
-     * @param int $adminId
-     * @param string $passwordHash
-     * @return void
-     */
-    private function trackPassword($adminId, $passwordHash)
-    {
-        $this->connection->insert(
-            $this->getTableName('admin_passwords'),
-            [
-                'user_id' => $adminId,
-                'password_hash' => $passwordHash,
-                'last_updated' => time()
-            ]
-        );
-    }
-
-    /**
-     * Validates that the username and email both match the user,
-     * and that password exists and is different from user name.
-     *
+     * @param string $username Existing user's username
+     * @param string $email Existing user's email
      * @return void
      * @throws \Exception If the username and email do not both match data provided to install
-     * @throws \Exception If password is empty and if password is the same as the user name
      */
-    public function validateUserMatches()
+    public function validateUserMatches($username, $email)
     {
-        if (empty($this->data[self::KEY_PASSWORD])) {
-            throw new \Exception(
-                'Password is a required field.'
-            );
-        }
-
-        if (strcasecmp($this->data[self::KEY_PASSWORD], $this->data[self::KEY_USER]) == 0) {
-            throw new \Exception(
-                'Password cannot be the same as the user name.'
-            );
-        }
-
-        try {
-            $result = $this->connection->fetchRow(
-                "SELECT user_id, username, email FROM {$this->getTableName('admin_user')} "
-                . "WHERE username = :username OR email = :email",
-                ['username' => $this->data[self::KEY_USER], 'email' => $this->data[self::KEY_EMAIL]]
-            );
-        } catch (\Exception $e) {
-            return; // New installation, no need to validate existing users.
-        }
-
-        $email = $result['email'];
-        $username = $result['username'];
-
         if ((strcasecmp($email, $this->data[self::KEY_EMAIL]) == 0) &&
             (strcasecmp($username, $this->data[self::KEY_USER]) != 0)) {
             // email matched but username did not
@@ -216,8 +167,8 @@ class AdminAccount
      */
     private function saveAdminUserRole($adminId)
     {
-        $result = $this->connection->fetchRow(
-            'SELECT * FROM ' . $this->getTableName('authorization_role') . ' ' .
+        $result = $this->setup->getConnection()->fetchRow(
+            'SELECT * FROM ' . $this->setup->getTable('authorization_role') . ' ' .
             'WHERE user_id = :user_id AND user_type = :user_type',
             ['user_id' => $adminId, 'user_type' => UserContextInterface::USER_TYPE_ADMIN]
         );
@@ -231,7 +182,7 @@ class AdminAccount
                 'user_type'  => UserContextInterface::USER_TYPE_ADMIN,
                 'role_name'  => $this->data[self::KEY_USER],
             ];
-            $this->connection->insert($this->getTableName('authorization_role'), $adminRoleData);
+            $this->setup->getConnection()->insert($this->setup->getTable('authorization_role'), $adminRoleData);
         }
     }
 
@@ -252,8 +203,8 @@ class AdminAccount
             'user_type' => UserContextInterface::USER_TYPE_ADMIN,
             'role_name' => 'Administrators',
         ];
-        $result = $this->connection->fetchRow(
-            'SELECT * FROM ' . $this->getTableName('authorization_role') . ' ' .
+        $result = $this->setup->getConnection()->fetchRow(
+            'SELECT * FROM ' . $this->setup->getTable('authorization_role') . ' ' .
             'WHERE parent_id = :parent_id AND tree_level = :tree_level AND role_type = :role_type AND ' .
             'user_id = :user_id AND user_type = :user_type AND role_name = :role_name',
             $administratorsRoleData
@@ -264,20 +215,5 @@ class AdminAccount
             // Found at least one, use first
             return $result['role_id'];
         }
-    }
-
-    /**
-     * Take table with prefix without loading modules
-     *
-     * @param string $table
-     * @return string
-     */
-    private function getTableName($table)
-    {
-        if (!empty($this->data[self::KEY_PREFIX])) {
-            return $this->connection->getTableName($this->data[self::KEY_PREFIX] . $table);
-        }
-
-        return $this->connection->getTableName($table);
     }
 }

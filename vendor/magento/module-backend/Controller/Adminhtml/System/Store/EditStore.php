@@ -28,21 +28,21 @@ class EditStore extends \Magento\Backend\Controller\Adminhtml\System\Store
         switch ($this->_coreRegistry->registry('store_type')) {
             case 'website':
                 $itemId = $this->getRequest()->getParam('website_id', null);
-                $model = $this->_objectManager->create(\Magento\Store\Model\Website::class);
+                $model = $this->_objectManager->create('Magento\Store\Model\Website');
                 $title = __("Web Site");
                 $notExists = __("The website does not exist.");
                 $codeBase = __('Before modifying the website code please make sure it is not used in index.php.');
                 break;
             case 'group':
                 $itemId = $this->getRequest()->getParam('group_id', null);
-                $model = $this->_objectManager->create(\Magento\Store\Model\Group::class);
+                $model = $this->_objectManager->create('Magento\Store\Model\Group');
                 $title = __("Store");
                 $notExists = __("The store does not exist");
                 $codeBase = false;
                 break;
             case 'store':
                 $itemId = $this->getRequest()->getParam('store_id', null);
-                $model = $this->_objectManager->create(\Magento\Store\Model\Store::class);
+                $model = $this->_objectManager->create('Magento\Store\Model\Store');
                 $title = __("Store View");
                 $notExists = __("Store view doesn't exist");
                 $codeBase = __('Before modifying the store view code please make sure it is not used in index.php.');
@@ -66,9 +66,7 @@ class EditStore extends \Magento\Backend\Controller\Adminhtml\System\Store
                 $resultPage->getConfig()->getTitle()->prepend($model->getName());
             }
             $resultPage->getConfig()->getTitle()->prepend(__('Stores'));
-            $resultPage->addContent($resultPage->getLayout()->createBlock(
-                \Magento\Backend\Block\System\Store\Edit::class
-            ));
+            $resultPage->addContent($resultPage->getLayout()->createBlock('Magento\Backend\Block\System\Store\Edit'));
             return $resultPage;
         } else {
             $this->messageManager->addError($notExists);

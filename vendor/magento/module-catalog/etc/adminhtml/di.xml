@@ -20,19 +20,19 @@
         <arguments>
             <argument name="imageTypes" xsi:type="array">
                 <item name="small" xsi:type="array">
-                    <item name="title" xsi:type="string" translatable="true">Small</item>
+                    <item name="title" xsi:type="string">Small</item>
                     <item name="attribute" xsi:type="string">small_image</item>
                 </item>
                 <item name="main" xsi:type="array">
-                    <item name="title" xsi:type="string" translatable="true">Main</item>
+                    <item name="title" xsi:type="string">Main</item>
                     <item name="attribute" xsi:type="string">image</item>
                 </item>
                 <item name="cart" xsi:type="array">
-                    <item name="title" xsi:type="string" translatable="true">Thumbnail</item>
+                    <item name="title" xsi:type="string">Thumbnail</item>
                     <item name="attribute" xsi:type="string">thumbnail</item>
                 </item>
                 <item name="custom" xsi:type="array">
-                    <item name="title" xsi:type="string" translatable="true">Custom image</item>
+                    <item name="title" xsi:type="string">Custom image</item>
                     <item name="attribute" xsi:type="string">custom_image</item>
                 </item>
             </argument>
@@ -51,7 +51,6 @@
         <arguments>
             <argument name="multipleAttributeList" xsi:type="array">
                 <item name="select" xsi:type="string">option</item>
-                <item name="multiselect" xsi:type="string">option</item>
             </argument>
         </arguments>
     </type>
@@ -153,10 +152,6 @@
                     <item name="class" xsi:type="string">Magento\Catalog\Ui\DataProvider\Product\Form\Modifier\Alerts</item>
                     <item name="sortOrder" xsi:type="number">130</item>
                 </item>
-                <item name="advanced-pricing-tier-price-type" xsi:type="array">
-                    <item name="class" xsi:type="string">Magento\Catalog\Ui\DataProvider\Product\Form\Modifier\TierPrice</item>
-                    <item name="sortOrder" xsi:type="number">150</item>
-                </item>
             </argument>
         </arguments>
     </virtualType>
@@ -179,18 +174,5 @@
         <arguments>
             <argument name="scopeName" xsi:type="string">product_form.product_form</argument>
         </arguments>
-    </type>
-    <type name="Magento\Catalog\Ui\DataProvider\Product\Form\Modifier\TierPrice">
-        <arguments>
-            <argument name="productPriceOptions" xsi:type="object">Magento\Catalog\Model\Config\Source\Product\Options\TierPrice</argument>
-        </arguments>
-    </type>
-    <type name="Magento\Catalog\Model\Product\Attribute\Backend\Price">
-        <arguments>
-            <argument name="scopeOverriddenValue" xsi:type="object">Magento\Catalog\Model\Attribute\ScopeOverriddenValue</argument>
-        </arguments>
-    </type>
-    <type name="Magento\Eav\Api\AttributeSetRepositoryInterface">
-        <plugin name="remove_products" type="Magento\Catalog\Plugin\Model\AttributeSetRepository\RemoveProducts"/>
     </type>
 </config>

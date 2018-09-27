@@ -7,7 +7,7 @@ namespace Magento\Checkout\Test\Unit\Model;
 
 use Magento\Checkout\Model\Sidebar;
 
-class SidebarTest extends \PHPUnit\Framework\TestCase
+class SidebarTest extends \PHPUnit_Framework_TestCase
 {
     /** @var Sidebar */
     protected $sidebar;
@@ -23,9 +23,9 @@ class SidebarTest extends \PHPUnit\Framework\TestCase
 
     protected function setUp()
     {
-        $this->cartMock = $this->createMock(\Magento\Checkout\Model\Cart::class);
-        $this->checkoutHelperMock = $this->createMock(\Magento\Checkout\Helper\Data::class);
-        $this->resolverMock = $this->createMock(\Magento\Framework\Locale\ResolverInterface::class);
+        $this->cartMock = $this->getMock('Magento\Checkout\Model\Cart', [], [], '', false);
+        $this->checkoutHelperMock = $this->getMock('Magento\Checkout\Helper\Data', [], [], '', false);
+        $this->resolverMock = $this->getMock('Magento\Framework\Locale\ResolverInterface');
 
         $this->sidebar = new Sidebar(
             $this->cartMock,
@@ -45,6 +45,9 @@ class SidebarTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals($result, $this->sidebar->getResponseData($error));
     }
 
+    /**
+     * @return array
+     */
     public function dataProviderGetResponseData()
     {
         return [
@@ -74,10 +77,10 @@ class SidebarTest extends \PHPUnit\Framework\TestCase
     {
         $itemId = 1;
 
-        $itemMock = $this->getMockBuilder(\Magento\Quote\Api\Data\CartItemInterface::class)
+        $itemMock = $this->getMockBuilder('Magento\Quote\Api\Data\CartItemInterface')
             ->getMock();
 
-        $quoteMock = $this->getMockBuilder(\Magento\Quote\Model\Quote::class)
+        $quoteMock = $this->getMockBuilder('Magento\Quote\Model\Quote')
             ->disableOriginalConstructor()
             ->getMock();
         $quoteMock->expects($this->once())
@@ -100,7 +103,7 @@ class SidebarTest extends \PHPUnit\Framework\TestCase
     {
         $itemId = 2;
 
-        $quoteMock = $this->getMockBuilder(\Magento\Quote\Model\Quote::class)
+        $quoteMock = $this->getMockBuilder('Magento\Quote\Model\Quote')
             ->disableOriginalConstructor()
             ->getMock();
         $quoteMock->expects($this->once())

@@ -7,24 +7,18 @@
 namespace Magento\ImportExport\Helper;
 
 use Magento\Framework\App\Filesystem\DirectoryList;
+use Magento\Framework\Stdlib\DateTime;
 use Magento\ImportExport\Model\Import;
 
 /**
  * ImportExport history reports helper
- *
- * @api
- * @since 100.0.2
  */
 class Report extends \Magento\Framework\App\Helper\AbstractHelper
 {
-    /**
-     * @var \Magento\Framework\Stdlib\DateTime\Timezone
-     */
+    /** @var \Magento\Framework\Stdlib\DateTime\Timezone */
     protected $timeZone;
 
-    /**
-     * @var \Magento\Framework\Filesystem\Directory\WriteInterface
-     */
+    /** @var \Magento\Framework\Filesystem\Directory\WriteInterface */
     protected $varDirectory;
 
     /**
@@ -129,15 +123,5 @@ class Report extends \Magento\Framework\App\Helper\AbstractHelper
         }
 
         return $this->varDirectory->getRelativePath(Import::IMPORT_HISTORY_DIR . $filename);
-    }
-
-    /**
-     * Get csv delimiter from request.
-     *
-     * @return string
-     */
-    public function getDelimiter()
-    {
-        return $this->_request->getParam(Import::FIELD_FIELD_SEPARATOR, ',');
     }
 }

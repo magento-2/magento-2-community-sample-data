@@ -5,9 +5,6 @@
  */
 namespace Magento\Checkout\Block\Cart\Item\Renderer\Actions;
 
-/**
- * @api
- */
 class Edit extends Generic
 {
     /**

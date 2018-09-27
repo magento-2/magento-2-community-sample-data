@@ -6,23 +6,18 @@
  */
 namespace Magento\CatalogRuleConfigurable\Plugin\CatalogRule\Model\Rule;
 
-use Magento\ConfigurableProduct\Model\Product\Type\Configurable;
-use Magento\CatalogRule\Model\Rule;
-use Magento\Framework\DataObject;
-use Magento\Catalog\Model\Product;
+use \Magento\ConfigurableProduct\Model\Product\Type\Configurable;
 
 /**
  * Class Validation. Call validate method for configurable product instead simple product
  */
 class Validation
 {
-    /**
-     * @var Configurable
-     */
+    /** @var Configurable */
     private $configurable;
 
     /**
-     * @param Configurable $configurableType
+     * @param \Magento\ConfigurableProduct\Model\Product\Type\Configurable $configurableType
      */
     public function __construct(Configurable $configurableType)
     {
@@ -30,15 +25,17 @@ class Validation
     }
 
     /**
-     * Define if it is needed to apply rule if parent configurable product match conditions
-     *
-     * @param Rule $rule
-     * @param bool $validateResult
-     * @param DataObject|Product $product
+     * @param \Magento\CatalogRule\Model\Rule $rule
+     * @param \Closure $proceed
+     * @param \Magento\Framework\DataObject|\Magento\Catalog\Model\Product $product
      * @return bool
      */
-    public function afterValidate(Rule $rule, $validateResult, DataObject $product)
-    {
+    public function aroundValidate(
+        \Magento\CatalogRule\Model\Rule $rule,
+        \Closure $proceed,
+        \Magento\Framework\DataObject $product
+    ) {
+        $validateResult = $proceed($product);
         if (!$validateResult && ($configurableProducts = $this->configurable->getParentIdsByChild($product->getId()))) {
             foreach ($configurableProducts as $configurableProductId) {
                 $validateResult = $rule->getConditions()->validateByEntityId($configurableProductId);

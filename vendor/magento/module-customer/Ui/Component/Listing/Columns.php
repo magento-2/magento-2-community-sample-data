@@ -14,19 +14,13 @@ use Magento\Customer\Api\CustomerMetadataInterface;
 
 class Columns extends \Magento\Ui\Component\Listing\Columns
 {
-    /**
-     * @var int
-     */
+    /** @var int */
     protected $columnSortOrder;
 
-    /**
-     * @var \Magento\Customer\Ui\Component\Listing\AttributeRepository
-     */
+    /** @var AttributeRepository  */
     protected $attributeRepository;
 
-    /**
-     * @var \Magento\Customer\Ui\Component\Listing\Column\InlineEditUpdater
-     */
+    /** @var InlineEditUpdater */
     protected $inlineEditUpdater;
 
     /**

@@ -5,13 +5,13 @@
  */
 namespace Magento\Sniffs\Whitespace;
 
-use PHP_CodeSniffer\Sniffs\Sniff;
-use PHP_CodeSniffer\Files\File;
+use PHP_CodeSniffer_File;
+use PHP_CodeSniffer_Sniff;
 
 /**
  * Class MultipleEmptyLinesSniff
  */
-class MultipleEmptyLinesSniff implements Sniff
+class MultipleEmptyLinesSniff implements PHP_CodeSniffer_Sniff
 {
     /**
      * {@inheritdoc}
@@ -24,7 +24,7 @@ class MultipleEmptyLinesSniff implements Sniff
     /**
      * {@inheritdoc}
      */
-    public function process(File $phpcsFile, $stackPtr)
+    public function process(PHP_CodeSniffer_File $phpcsFile, $stackPtr)
     {
         $tokens = $phpcsFile->getTokens();
         if ($phpcsFile->hasCondition($stackPtr, T_FUNCTION)

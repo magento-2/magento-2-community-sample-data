@@ -116,11 +116,6 @@ class Translate implements \Magento\Framework\TranslateInterface
     protected $packDictionary;
 
     /**
-     * @var \Magento\Framework\Serialize\SerializerInterface
-     */
-    private $serializer;
-
-    /**
      * @param \Magento\Framework\View\DesignInterface $viewDesign
      * @param \Magento\Framework\Cache\FrontendInterface $cache
      * @param \Magento\Framework\View\FileSystem $viewFileSystem
@@ -185,26 +180,23 @@ class Translate implements \Magento\Framework\TranslateInterface
      */
     public function loadData($area = null, $forceReload = false)
     {
-        $this->_data = [];
-        if ($area === null) {
-            $area = $this->_appState->getAreaCode();
-        }
         $this->setConfig(
             [
-                self::CONFIG_AREA_KEY => $area,
+                self::CONFIG_AREA_KEY => $area !== null ? $area : $this->_appState->getAreaCode(),
             ]
         );
 
         if (!$forceReload) {
-            if (false !== $data = $this->_loadCache()) {
-                $this->_data = $data;
+            $this->_data = $this->_loadCache();
+            if ($this->_data !== false) {
                 return $this;
             }
         }
+        $this->_data = [];
 
         $this->_loadModuleTranslation();
-        $this->_loadPackTranslation();
         $this->_loadThemeTranslation();
+        $this->_loadPackTranslation();
         $this->_loadDbTranslation();
 
         if (!$forceReload) {
@@ -312,14 +304,11 @@ class Translate implements \Magento\Framework\TranslateInterface
     {
         foreach ($data as $key => $value) {
             if ($key === $value) {
-                if (isset($this->_data[$key])) {
-                    unset($this->_data[$key]);
-                }
                 continue;
             }
 
             $key = str_replace('""', '"', $key);
-            $value = str_replace('""', '"', $value);
+            $value  = str_replace('""', '"', $value);
 
             $this->_data[$key] = $value;
         }
@@ -489,7 +478,7 @@ class Translate implements \Magento\Framework\TranslateInterface
     {
         $data = $this->_cache->load($this->getCacheId());
         if ($data) {
-            $data = $this->getSerializer()->unserialize($data);
+            $data = unserialize($data);
         }
         return $data;
     }
@@ -501,22 +490,7 @@ class Translate implements \Magento\Framework\TranslateInterface
      */
     protected function _saveCache()
     {
-        $this->_cache->save($this->getSerializer()->serialize($this->getData()), $this->getCacheId(), [], false);
+        $this->_cache->save(serialize($this->getData()), $this->getCacheId(), [], false);
         return $this;
-    }
-
-    /**
-     * Get serializer
-     *
-     * @return \Magento\Framework\Serialize\SerializerInterface
-     * @deprecated 100.2.0
-     */
-    private function getSerializer()
-    {
-        if ($this->serializer === null) {
-            $this->serializer = \Magento\Framework\App\ObjectManager::getInstance()
-                ->get(Serialize\SerializerInterface::class);
-        }
-        return $this->serializer;
     }
 }

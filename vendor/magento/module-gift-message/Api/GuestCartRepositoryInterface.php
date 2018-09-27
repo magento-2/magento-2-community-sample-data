@@ -8,7 +8,6 @@ namespace Magento\GiftMessage\Api;
 /**
  * Interface GuestCartRepositoryInterface
  * @api
- * @since 100.0.2
  */
 interface GuestCartRepositoryInterface
 {

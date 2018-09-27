@@ -7,7 +7,7 @@ namespace Magento\Customer\Test\Unit\Block;
 
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager as ObjectManagerHelper;
 
-class SectionConfigTest extends \PHPUnit\Framework\TestCase
+class SectionConfigTest extends \PHPUnit_Framework_TestCase
 {
     /** @var \Magento\Customer\Block\block */
     protected $block;
@@ -26,13 +26,13 @@ class SectionConfigTest extends \PHPUnit\Framework\TestCase
 
     protected function setUp()
     {
-        $this->context = $this->createMock(\Magento\Framework\View\Element\Template\Context::class);
-        $this->sectionConfig = $this->createMock(\Magento\Framework\Config\DataInterface::class);
-        $this->encoder = $this->createMock(\Magento\Framework\Json\EncoderInterface::class);
+        $this->context = $this->getMock('Magento\Framework\View\Element\Template\Context', [], [], '', false);
+        $this->sectionConfig = $this->getMock('Magento\Framework\Config\DataInterface');
+        $this->encoder = $this->getMock('Magento\Framework\Json\EncoderInterface');
 
         $this->objectManagerHelper = new ObjectManagerHelper($this);
         $this->block = $this->objectManagerHelper->getObject(
-            \Magento\Customer\Block\SectionConfig::class,
+            'Magento\Customer\Block\SectionConfig',
             [
                 'context' => $this->context,
                 'sectionConfig' => $this->sectionConfig

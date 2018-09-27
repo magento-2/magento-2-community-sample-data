@@ -7,8 +7,8 @@ namespace Magento\Setup\Model;
 
 use Composer\Package\Version\VersionParser;
 use Magento\Framework\Composer\ComposerInformation;
-use Magento\Framework\Convert\DataSize;
 use Magento\Setup\Controller\ResponseTypeInterface;
+use Magento\Framework\Convert\DataSize;
 
 /**
  * Checks for PHP readiness. It is used by both Cron and Setup wizard.
@@ -102,8 +102,7 @@ class PhpReadinessCheck
 
         $settings = array_merge(
             $this->checkXDebugNestedLevel(),
-            $this->checkPopulateRawPostSetting(),
-            $this->checkFunctionsExistence()
+            $this->checkPopulateRawPostSetting()
         );
 
         foreach ($settings as $setting) {
@@ -194,7 +193,8 @@ class PhpReadinessCheck
 
         $currentMemoryInteger = intval($currentMemoryLimit);
 
-        if ($currentMemoryInteger > 0
+        if (
+            $currentMemoryInteger > 0
             && $this->dataSize->convertSizeToBytes($currentMemoryLimit)
             < $this->dataSize->convertSizeToBytes($minimumRequiredMemoryLimit)
         ) {
@@ -202,13 +202,14 @@ class PhpReadinessCheck
             $message = sprintf(
                 'Your current PHP memory limit is %s.
                  Magento 2 requires it to be set to %s or more.
-                 As a user with root privileges, edit your php.ini file to increase memory_limit.
-                 (The command php --ini tells you where it is located.)
+                 As a user with root privileges, edit your php.ini file to increase memory_limit. 
+                 (The command php --ini tells you where it is located.) 
                  After that, restart your web server and try again.',
                 $currentMemoryLimit,
                 $minimumRequiredMemoryLimit
             );
-        } elseif ($currentMemoryInteger > 0
+        } elseif (
+            $currentMemoryInteger > 0
             && $this->dataSize->convertSizeToBytes($currentMemoryLimit)
             < $this->dataSize->convertSizeToBytes($recommendedForUpgradeMemoryLimit)
         ) {
@@ -216,8 +217,8 @@ class PhpReadinessCheck
             $message = sprintf(
                 'Your current PHP memory limit is %s.
                  We recommend it to be set to %s or more to use Setup Wizard.
-                 As a user with root privileges, edit your php.ini file to increase memory_limit.
-                 (The command php --ini tells you where it is located.)
+                 As a user with root privileges, edit your php.ini file to increase memory_limit. 
+                 (The command php --ini tells you where it is located.) 
                  After that, restart your web server and try again.',
                 $currentMemoryLimit,
                 $recommendedForUpgradeMemoryLimit
@@ -244,6 +245,7 @@ class PhpReadinessCheck
 
         $currentExtensions = $this->phpInformation->getCurrent();
         if (in_array('xdebug', $currentExtensions)) {
+
             $currentXDebugNestingLevel = intval(ini_get('xdebug.max_nesting_level'));
             $minimumRequiredXDebugNestedLevel = $this->phpInformation->getRequiredMinimumXDebugNestedLevel();
 
@@ -286,7 +288,7 @@ class PhpReadinessCheck
 
         $data = [];
         $error = false;
-        $iniSetting = intVal(ini_get('always_populate_raw_post_data'));
+        $iniSetting = intval(ini_get('always_populate_raw_post_data'));
 
         $checkVersionConstraint = $this->versionParser->parseConstraints('~5.6.0');
         $normalizedPhpVersion = $this->getNormalizedCurrentPhpVersion(PHP_VERSION);
@@ -302,7 +304,7 @@ class PhpReadinessCheck
 	        Please open your php.ini file and set always_populate_raw_post_data to -1.
  	        If you need more help please call your hosting provider.',
             PHP_VERSION,
-            intVal(ini_get('always_populate_raw_post_data'))
+            intval(ini_get('always_populate_raw_post_data'))
         );
 
         $data['always_populate_raw_post_data'] = [
@@ -310,33 +312,6 @@ class PhpReadinessCheck
             'helpUrl' => 'http://php.net/manual/en/ini.core.php#ini.always-populate-settings-data',
             'error' => $error
         ];
-
-        return $data;
-    }
-
-    /**
-     * Check whether all special functions exists
-     *
-     * @return array
-     */
-    private function checkFunctionsExistence()
-    {
-        $data = [];
-        $requiredFunctions = [
-            [
-                'name' => 'imagecreatefromjpeg',
-                'message' => 'You must have installed GD library with --with-jpeg-dir=DIR option.',
-                'helpUrl' => 'http://php.net/manual/en/image.installation.php',
-            ],
-        ];
-
-        foreach ($requiredFunctions as $function) {
-            $data['missed_function_' . $function['name']] = [
-                'message' => $function['message'],
-                'helpUrl' => $function['helpUrl'],
-                'error' => !function_exists($function['name']),
-            ];
-        }
 
         return $data;
     }

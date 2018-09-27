@@ -23,13 +23,14 @@ use Magento\Mtf\TestCase\Injectable;
  * 5. Click "Save" button.
  * 6. Perform all assertions.
  *
- * @group Web_API_Framework
+ * @group Web_API_Framework_(PS)
  * @ZephyrId MAGETWO-26102
  */
 class UpdateIntegrationEntityTest extends Injectable
 {
     /* tags */
     const MVP = 'yes';
+    const DOMAIN = 'PS';
     /* end tags */
 
     /**

@@ -39,7 +39,7 @@ class Literal implements RouteInterface
      * @param  string $route
      * @param  array  $defaults
      */
-    public function __construct($route, array $defaults = [])
+    public function __construct($route, array $defaults = array())
     {
         $this->route    = $route;
         $this->defaults = $defaults;
@@ -53,7 +53,7 @@ class Literal implements RouteInterface
      * @return Literal
      * @throws Exception\InvalidArgumentException
      */
-    public static function factory($options = [])
+    public static function factory($options = array())
     {
         if ($options instanceof Traversable) {
             $options = ArrayUtils::iteratorToArray($options);
@@ -66,7 +66,7 @@ class Literal implements RouteInterface
         }
 
         if (!isset($options['defaults'])) {
-            $options['defaults'] = [];
+            $options['defaults'] = array();
         }
 
         return new static($options['route'], $options['defaults']);
@@ -114,7 +114,7 @@ class Literal implements RouteInterface
      * @param  array $options
      * @return mixed
      */
-    public function assemble(array $params = [], array $options = [])
+    public function assemble(array $params = array(), array $options = array())
     {
         return $this->route;
     }
@@ -127,6 +127,6 @@ class Literal implements RouteInterface
      */
     public function getAssembledParams()
     {
-        return [];
+        return array();
     }
 }

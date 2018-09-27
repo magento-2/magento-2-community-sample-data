@@ -8,10 +8,10 @@ require realpath(__DIR__ . '/../../') . '/Catalog/_files/product_associated.php'
 require realpath(__DIR__ . '/../../') . '/Catalog/_files/product_virtual_in_stock.php';
 
 $objectManager = \Magento\TestFramework\Helper\Bootstrap::getObjectManager();
-$productRepository = $objectManager->get(\Magento\Catalog\Api\ProductRepositoryInterface::class);
+$productRepository = $objectManager->get('Magento\Catalog\Api\ProductRepositoryInterface');
 
 /** @var $product \Magento\Catalog\Model\Product */
-$product = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->create(\Magento\Catalog\Model\Product::class);
+$product = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->create('Magento\Catalog\Model\Product');
 $product->isObjectNew(true);
 $product->setTypeId(
     \Magento\GroupedProduct\Model\Product\Type\Grouped::TYPE_CODE
@@ -34,7 +34,7 @@ $product->setTypeId(
 );
 
 $newLinks = [];
-$productLinkFactory = $objectManager->get(\Magento\Catalog\Api\Data\ProductLinkInterfaceFactory::class);
+$productLinkFactory = $objectManager->get('Magento\Catalog\Api\Data\ProductLinkInterfaceFactory');
 
 /** @var \Magento\Catalog\Api\Data\ProductLinkInterface $productLink */
 $productLink = $productLinkFactory->create();
@@ -61,12 +61,3 @@ $productLink->setSku($product->getSku())
 $newLinks[] = $productLink;
 $product->setProductLinks($newLinks);
 $product->save();
-
-/** @var \Magento\Catalog\Api\CategoryLinkManagementInterface $categoryLinkManagement */
-$categoryLinkManagement = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()
-    ->create(\Magento\Catalog\Api\CategoryLinkManagementInterface::class);
-
-$categoryLinkManagement->assignProductToCategories(
-    $product->getSku(),
-    [2]
-);

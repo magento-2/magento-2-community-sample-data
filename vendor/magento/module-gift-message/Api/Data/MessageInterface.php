@@ -8,7 +8,6 @@ namespace Magento\GiftMessage\Api\Data;
 /**
  * Interface MessageInterface
  * @api
- * @since 100.0.2
  */
 interface MessageInterface extends \Magento\Framework\Api\ExtensibleDataInterface
 {

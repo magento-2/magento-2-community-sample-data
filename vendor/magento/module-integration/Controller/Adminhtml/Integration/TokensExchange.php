@@ -1,6 +1,5 @@
 <?php
 /**
- *
  * Copyright © Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
@@ -8,6 +7,9 @@ namespace Magento\Integration\Controller\Adminhtml\Integration;
 
 use Magento\Integration\Model\Integration as IntegrationModel;
 
+/**
+ * Tokens Exchange controller.
+ */
 class TokensExchange extends \Magento\Integration\Controller\Adminhtml\Integration
 {
     /**

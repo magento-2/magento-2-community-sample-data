@@ -39,14 +39,10 @@ final class StreamContextFactory
             'max_redirects' => 20,
         ));
 
-        // Handle HTTP_PROXY/http_proxy on CLI only for security reasons
-        if (PHP_SAPI === 'cli' && (!empty($_SERVER['HTTP_PROXY']) || !empty($_SERVER['http_proxy']))) {
+        // Handle system proxy
+        if (!empty($_SERVER['HTTP_PROXY']) || !empty($_SERVER['http_proxy'])) {
+            // Some systems seem to rely on a lowercased version instead...
             $proxy = parse_url(!empty($_SERVER['http_proxy']) ? $_SERVER['http_proxy'] : $_SERVER['HTTP_PROXY']);
-        }
-
-        // Prefer CGI_HTTP_PROXY if available
-        if (!empty($_SERVER['CGI_HTTP_PROXY'])) {
-            $proxy = parse_url($_SERVER['CGI_HTTP_PROXY']);
         }
 
         // Override with HTTPS proxy if present and URL is https
@@ -141,12 +137,11 @@ final class StreamContextFactory
 
         if (!isset($options['http']['header']) || false === strpos(strtolower(implode('', $options['http']['header'])), 'user-agent')) {
             $options['http']['header'][] = sprintf(
-                'User-Agent: Composer/%s (%s; %s; %s%s)',
+                'User-Agent: Composer/%s (%s; %s; %s)',
                 Composer::VERSION === '@package_version@' ? 'source' : Composer::VERSION,
                 php_uname('s'),
                 php_uname('r'),
-                $phpVersion,
-                getenv('CI') ? '; CI' : ''
+                $phpVersion
             );
         }
 

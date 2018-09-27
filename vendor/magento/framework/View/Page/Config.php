@@ -117,6 +117,7 @@ class Config
         'description' => null,
         'keywords' => null,
         'robots' => null,
+        'title' => null,
     ];
 
     /**
@@ -134,13 +135,13 @@ class Config
      *
      * @return \Magento\Framework\App\State
      *
-     * @deprecated 100.0.7
+     * @deprecated
      */
     private function getAreaResolver()
     {
         if ($this->areaResolver === null) {
             $this->areaResolver = \Magento\Framework\App\ObjectManager::getInstance()
-                ->get(\Magento\Framework\App\State::class);
+                ->get('Magento\Framework\App\State');
         }
         return $this->areaResolver;
     }

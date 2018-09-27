@@ -9,7 +9,7 @@ namespace Magento\Test\Legacy\Magento\Framework\Module;
 /**
  * Test for obsolete nodes/attributes in the module.xml
  */
-class ModuleXMLTest extends \PHPUnit\Framework\TestCase
+class ModuleXMLTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @param string $file

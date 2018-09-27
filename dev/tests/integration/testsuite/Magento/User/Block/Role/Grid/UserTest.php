@@ -8,7 +8,7 @@ namespace Magento\User\Block\Role\Grid;
 /**
  * @magentoAppArea adminhtml
  */
-class UserTest extends \PHPUnit\Framework\TestCase
+class UserTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\User\Block\Role\Grid\User
@@ -18,16 +18,16 @@ class UserTest extends \PHPUnit\Framework\TestCase
     protected function setUp()
     {
         $layout = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->get(
-            \Magento\Framework\View\LayoutInterface::class
+            'Magento\Framework\View\LayoutInterface'
         );
-        $this->_block = $layout->createBlock(\Magento\User\Block\Role\Grid\User::class);
+        $this->_block = $layout->createBlock('Magento\User\Block\Role\Grid\User');
     }
 
     public function testPreparedCollection()
     {
         $this->_block->toHtml();
         $this->assertInstanceOf(
-            \Magento\User\Model\ResourceModel\Role\User\Collection::class,
+            'Magento\User\Model\ResourceModel\Role\User\Collection',
             $this->_block->getCollection()
         );
     }

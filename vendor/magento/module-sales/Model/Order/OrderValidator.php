@@ -6,6 +6,7 @@
 namespace Magento\Sales\Model\Order;
 
 use Magento\Sales\Api\Data\OrderInterface;
+use Magento\Sales\Exception\DocumentValidationException;
 
 /**
  * Class OrderValidator

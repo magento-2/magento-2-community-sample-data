@@ -5,26 +5,27 @@
  */
 namespace Magento\Catalog\Test\Unit\Model\Layer\Filter;
 
-class DecimalTest extends \PHPUnit\Framework\TestCase
+class DecimalTest extends \PHPUnit_Framework_TestCase
 {
     public function testConstructorRequestVarIsOverwrittenCorrectlyInParent()
     {
-        $attributeModel = $this->createPartialMock(
-            \Magento\Catalog\Model\ResourceModel\Eav\Attribute::class,
-            ['getAttributeCode', '__wakeup']
+        $attributeModel = $this->getMock(
+            'Magento\Catalog\Model\ResourceModel\Eav\Attribute',
+            ['getAttributeCode', '__wakeup'],
+            [],
+            '',
+            false
         );
         $attributeModel->expects($this->once())->method('getAttributeCode')->will($this->returnValue('price1'));
 
         $objectManager = new \Magento\Framework\TestFramework\Unit\Helper\ObjectManager($this);
 
-        $dataProviderFactory = $this->getMockBuilder(
-            \Magento\Catalog\Model\Layer\Filter\DataProvider\DecimalFactory::class
-        )
+        $dataProviderFactory = $this->getMockBuilder('\Magento\Catalog\Model\Layer\Filter\DataProvider\DecimalFactory')
             ->disableOriginalConstructor()
             ->setMethods(['create'])
             ->getMock();
         $instance = $objectManager->getObject(
-            \Magento\Catalog\Model\Layer\Filter\Decimal::class,
+            'Magento\Catalog\Model\Layer\Filter\Decimal',
             [
                 'data' => [
                     'attribute_model' => $attributeModel,

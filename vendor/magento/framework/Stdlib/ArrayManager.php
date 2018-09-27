@@ -9,7 +9,6 @@ namespace Magento\Framework\Stdlib;
  * Provides methods for nested array manipulations
  *
  * @api
- * @since 100.1.0
  */
 class ArrayManager
 {
@@ -20,24 +19,21 @@ class ArrayManager
 
     /**
      * @var array
-     * @since 100.1.0
      */
     protected $parentNode;
 
     /**
      * @var string
-     * @since 100.1.0
      */
     protected $nodeIndex;
 
     /**
      * Check if node exists
      *
-     * @param array|string $path
+     * @param string $path
      * @param array $data
      * @param string $delimiter
      * @return bool
-     * @since 100.1.0
      */
     public function exists($path, array $data, $delimiter = self::DEFAULT_PATH_DELIMITER)
     {
@@ -47,12 +43,11 @@ class ArrayManager
     /**
      * Retrieve node
      *
-     * @param array|string $path
+     * @param string $path
      * @param array $data
      * @param null $defaultValue
      * @param string $delimiter
      * @return mixed|null
-     * @since 100.1.0
      */
     public function get($path, array $data, $defaultValue = null, $delimiter = self::DEFAULT_PATH_DELIMITER)
     {
@@ -62,12 +57,11 @@ class ArrayManager
     /**
      * Set value into node and return modified data
      *
-     * @param array|string $path
+     * @param string $path
      * @param array $data
      * @param mixed $value
      * @param string $delimiter
      * @return array
-     * @since 100.1.0
      */
     public function set($path, array $data, $value, $delimiter = self::DEFAULT_PATH_DELIMITER)
     {
@@ -81,12 +75,11 @@ class ArrayManager
     /**
      * Set value into existing node and return modified data
      *
-     * @param array|string $path
+     * @param string $path
      * @param array $data
      * @param mixed $value
      * @param string $delimiter
      * @return array
-     * @since 100.1.0
      */
     public function replace($path, array $data, $value, $delimiter = self::DEFAULT_PATH_DELIMITER)
     {
@@ -100,13 +93,12 @@ class ArrayManager
     /**
      * Move value from one location to another
      *
-     * @param array|string $path
+     * @param string $path
      * @param string $targetPath
      * @param array $data
      * @param bool $overwrite
      * @param string $delimiter
      * @return array
-     * @since 100.1.0
      */
     public function move($path, $targetPath, array $data, $overwrite = false, $delimiter = self::DEFAULT_PATH_DELIMITER)
     {
@@ -128,12 +120,11 @@ class ArrayManager
     /**
      * Merge value with node and return modified data
      *
-     * @param array|string $path
+     * @param string $path
      * @param array $data
      * @param array $value
      * @param string $delimiter
      * @return array
-     * @since 100.1.0
      */
     public function merge($path, array $data, array $value, $delimiter = self::DEFAULT_PATH_DELIMITER)
     {
@@ -150,11 +141,10 @@ class ArrayManager
     /**
      * Populate nested array if possible and needed
      *
-     * @param array|string $path
+     * @param string $path
      * @param array $data
      * @param string $delimiter
      * @return array
-     * @since 100.1.0
      */
     public function populate($path, array $data, $delimiter = self::DEFAULT_PATH_DELIMITER)
     {
@@ -166,11 +156,10 @@ class ArrayManager
     /**
      * Remove node and return modified data
      *
-     * @param array|string $path
+     * @param string $path
      * @param array $data
      * @param string $delimiter
      * @return array
-     * @since 100.1.0
      */
     public function remove($path, array $data, $delimiter = self::DEFAULT_PATH_DELIMITER)
     {
@@ -184,19 +173,14 @@ class ArrayManager
     /**
      * Finds node in nested array and saves its index and parent node reference
      *
-     * @param array|string $path
+     * @param string $path
      * @param array $data
      * @param string $delimiter
      * @param bool $populate
      * @return bool
-     * @since 100.1.0
      */
     protected function find($path, array &$data, $delimiter, $populate = false)
     {
-        if (is_array($path)) {
-            $path = implode($delimiter, $path);
-        }
-
         if ($path === null) {
             return false;
         }
@@ -237,7 +221,6 @@ class ArrayManager
      * @return array
      * @SuppressWarnings(PHPMD.CyclomaticComplexity)
      * @SuppressWarnings(PHPMD.NPathComplexity)
-     * @since 100.1.0
      */
     public function findPaths(
         $indexes,
@@ -295,7 +278,6 @@ class ArrayManager
      * @param string|array|null $internalPath
      * @param string $delimiter
      * @return string|null
-     * @since 100.1.0
      */
     public function findPath(
         $indexes,
@@ -317,7 +299,6 @@ class ArrayManager
      * @param int|null $length
      * @param string $delimiter
      * @return string
-     * @since 100.1.0
      */
     public function slicePath($path, $offset, $length = null, $delimiter = self::DEFAULT_PATH_DELIMITER)
     {

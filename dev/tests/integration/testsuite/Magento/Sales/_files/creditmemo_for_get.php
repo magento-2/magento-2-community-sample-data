@@ -9,11 +9,11 @@ require __DIR__ . '/order.php';
 
 $objectManager = \Magento\TestFramework\Helper\Bootstrap::getObjectManager();
 /** @var \Magento\Sales\Model\Order $order */
-$order = $objectManager->create(\Magento\Sales\Model\Order::class);
+$order = $objectManager->create('Magento\Sales\Model\Order');
 $order->loadByIncrementId('100000001');
 
 /** @var \Magento\Sales\Model\Order\CreditmemoFactory $creditmemoFactory */
-$creditmemoFactory = $objectManager->get(\Magento\Sales\Model\Order\CreditmemoFactory::class);
+$creditmemoFactory = $objectManager->get('Magento\Sales\Model\Order\CreditmemoFactory');
 $creditmemo = $creditmemoFactory->createByOrder($order, $order->getData());
 $creditmemo->setOrder($order);
 $creditmemo->setState(Magento\Sales\Model\Order\Creditmemo::STATE_OPEN);
@@ -28,7 +28,7 @@ $orderItem->setName('Test item')
     ->setOriginalPrice(20);
 
 /** @var \Magento\Sales\Model\Order\Creditmemo\Item $creditItem */
-$creditItem = $objectManager->get(\Magento\Sales\Model\Order\Creditmemo\Item::class);
+$creditItem = $objectManager->get('Magento\Sales\Model\Order\Creditmemo\Item');
 $creditItem->setCreditmemo($creditmemo)
     ->setName('Creditmemo item')
     ->setOrderItemId($orderItem->getId())

@@ -11,20 +11,18 @@ namespace Magento\Framework\View\Utility;
 
 /**
  * Class Layout
- *
- * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  */
 class Layout
 {
     /**
-     * @var \PHPUnit\Framework\TestCase
+     * @var \PHPUnit_Framework_TestCase
      */
     protected $_testCase;
 
     /**
-     * @param \PHPUnit\Framework\TestCase $testCase
+     * @param \PHPUnit_Framework_TestCase $testCase
      */
-    public function __construct(\PHPUnit\Framework\TestCase $testCase)
+    public function __construct(\PHPUnit_Framework_TestCase $testCase)
     {
         $this->_testCase = $testCase;
     }
@@ -39,29 +37,28 @@ class Layout
     {
         $objectManager = \Magento\TestFramework\Helper\Bootstrap::getObjectManager();
         /** @var \Magento\Framework\View\File\Factory $fileFactory */
-        $fileFactory = $objectManager->get(\Magento\Framework\View\File\Factory::class);
+        $fileFactory = $objectManager->get('Magento\Framework\View\File\Factory');
         $files = [];
         foreach ((array)$layoutUpdatesFile as $filename) {
             $files[] = $fileFactory->create($filename, 'Magento_View');
         }
-        $fileSource = $this->_testCase
-            ->getMockBuilder(\Magento\Framework\View\File\CollectorInterface::class)->getMockForAbstractClass();
+        $fileSource = $this->_testCase->getMockForAbstractClass('Magento\Framework\View\File\CollectorInterface');
         $fileSource->expects(
-            \PHPUnit\Framework\TestCase::any()
+            \PHPUnit_Framework_TestCase::any()
         )->method(
             'getFiles'
         )->will(
-            \PHPUnit\Framework\TestCase::returnValue($files)
+            \PHPUnit_Framework_TestCase::returnValue($files)
         );
-        $pageLayoutFileSource = $this->_testCase
-            ->getMockBuilder(\Magento\Framework\View\File\CollectorInterface::class)->getMockForAbstractClass();
-        $pageLayoutFileSource->expects(\PHPUnit\Framework\TestCase::any())
+        $pageLayoutFileSource = $this->_testCase->getMockForAbstractClass(
+            'Magento\Framework\View\File\CollectorInterface'
+        );
+        $pageLayoutFileSource->expects(\PHPUnit_Framework_TestCase::any())
             ->method('getFiles')
             ->willReturn([]);
-        $cache = $this->_testCase
-            ->getMockBuilder(\Magento\Framework\Cache\FrontendInterface::class)->getMockForAbstractClass();
+        $cache = $this->_testCase->getMockForAbstractClass('Magento\Framework\Cache\FrontendInterface');
         return $objectManager->create(
-            \Magento\Framework\View\Layout\ProcessorInterface::class,
+            'Magento\Framework\View\Layout\ProcessorInterface',
             ['fileSource' => $fileSource, 'pageLayoutFileSource' => $pageLayoutFileSource, 'cache' => $cache]
         );
     }
@@ -75,18 +72,15 @@ class Layout
      */
     public function getLayoutFromFixture($layoutUpdatesFile, array $args = [])
     {
-        $layout = $this->_testCase->getMockBuilder(\Magento\Framework\View\Layout::class)
-            ->setMethods(['getUpdate'])
-            ->setConstructorArgs($args)
-            ->getMock();
+        $layout = $this->_testCase->getMock('Magento\Framework\View\Layout', ['getUpdate'], $args);
         $layoutUpdate = $this->getLayoutUpdateFromFixture($layoutUpdatesFile);
         $layoutUpdate->asSimplexml();
         $layout->expects(
-            \PHPUnit\Framework\TestCase::any()
+            \PHPUnit_Framework_TestCase::any()
         )->method(
             'getUpdate'
         )->will(
-            \PHPUnit\Framework\TestCase::returnValue($layoutUpdate)
+            \PHPUnit_Framework_TestCase::returnValue($layoutUpdate)
         );
         return $layout;
     }
@@ -100,20 +94,18 @@ class Layout
     {
         $objectManager = \Magento\TestFramework\Helper\Bootstrap::getObjectManager();
         return [
-            'processorFactory' => $objectManager->get(\Magento\Framework\View\Layout\ProcessorFactory::class),
-            'eventManager' => $objectManager->get(\Magento\Framework\Event\ManagerInterface::class),
-            'structure' => $objectManager->create(\Magento\Framework\View\Layout\Data\Structure::class, []),
-            'messageManager' => $objectManager->get(\Magento\Framework\Message\ManagerInterface::class),
-            'themeResolver' => $objectManager->get(\Magento\Framework\View\Design\Theme\ResolverInterface::class),
+            'processorFactory' => $objectManager->get('Magento\Framework\View\Layout\ProcessorFactory'),
+            'eventManager' => $objectManager->get('Magento\Framework\Event\ManagerInterface'),
+            'structure' => $objectManager->create('Magento\Framework\View\Layout\Data\Structure', []),
+            'messageManager' => $objectManager->get('Magento\Framework\Message\ManagerInterface'),
+            'themeResolver' => $objectManager->get('Magento\Framework\View\Design\Theme\ResolverInterface'),
             'reader' => $objectManager->get('commonRenderPool'),
-            'generatorPool' => $objectManager->get(\Magento\Framework\View\Layout\GeneratorPool::class),
-            'cache' => $objectManager->get(\Magento\Framework\App\Cache\Type\Layout::class),
-            'readerContextFactory' => $objectManager->get(\Magento\Framework\View\Layout\Reader\ContextFactory::class),
-            'generatorContextFactory' => $objectManager->get(
-                \Magento\Framework\View\Layout\Generator\ContextFactory::class
-            ),
-            'appState' => $objectManager->get(\Magento\Framework\App\State::class),
-            'logger' => $objectManager->get(\Psr\Log\LoggerInterface::class),
+            'generatorPool' => $objectManager->get('Magento\Framework\View\Layout\GeneratorPool'),
+            'cache' => $objectManager->get('Magento\Framework\App\Cache\Type\Layout'),
+            'readerContextFactory' => $objectManager->get('Magento\Framework\View\Layout\Reader\ContextFactory'),
+            'generatorContextFactory' => $objectManager->get('Magento\Framework\View\Layout\Generator\ContextFactory'),
+            'appState' => $objectManager->get('Magento\Framework\App\State'),
+            'logger' => $objectManager->get('Psr\Log\LoggerInterface'),
         ];
     }
 }

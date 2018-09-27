@@ -5,8 +5,8 @@
  */
 namespace Magento\Framework\Setup\SampleData;
 
-use Magento\Framework\App\Filesystem\DirectoryList;
 use Magento\Framework\Filesystem;
+use Magento\Framework\App\Filesystem\DirectoryList;
 
 class State implements StateInterface
 {
@@ -123,6 +123,7 @@ class State implements StateInterface
             $stream = $directoryWrite->openFile($fileName, $mode);
         }
         return $stream;
+
     }
 
     /**

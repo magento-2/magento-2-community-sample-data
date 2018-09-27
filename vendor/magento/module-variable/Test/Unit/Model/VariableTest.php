@@ -7,34 +7,21 @@ namespace Magento\Variable\Test\Unit\Model;
 
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
 
-/**
- * Unit test for class Magento\Variable\Model\Variable.
- */
-class VariableTest extends \PHPUnit\Framework\TestCase
+class VariableTest extends \PHPUnit_Framework_TestCase
 {
-    /**
-     * @var \Magento\Variable\Model\Variable
-     */
+    /** @var  \Magento\Variable\Model\Variable */
     private $model;
 
-    /**
-     * @var \PHPUnit_Framework_MockObject_MockObject
-     */
+    /** @var \PHPUnit_Framework_MockObject_MockObject */
     private $escaperMock;
 
-    /**
-     * @var \PHPUnit_Framework_MockObject_MockObject
-     */
+    /** @var \PHPUnit_Framework_MockObject_MockObject */
     private $resourceMock;
 
-    /**
-     * @var \Magento\Framework\Phrase
-     */
+    /** @var  \Magento\Framework\Phrase */
     private $validationFailedPhrase;
 
-    /**
-     * @var \Magento\Framework\TestFramework\Unit\Helper\ObjectManager
-     */
+    /** @var  \Magento\Framework\TestFramework\Unit\Helper\ObjectManager */
     private $objectManager;
 
     protected function setUp()
@@ -50,7 +37,7 @@ class VariableTest extends \PHPUnit\Framework\TestCase
             \Magento\Variable\Model\Variable::class,
             [
                 'escaper' => $this->escaperMock,
-                'resource' => $this->resourceMock
+                'resource' => $this->resourceMock,
             ]
         );
         $this->validationFailedPhrase = __('Validation has failed.');
@@ -94,6 +81,7 @@ class VariableTest extends \PHPUnit\Framework\TestCase
     {
         $this->model->setCode($code)->setName($name);
         $this->assertEquals($this->validationFailedPhrase, $this->model->validate());
+
     }
 
     /**
@@ -111,6 +99,9 @@ class VariableTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals($expectedResult, $this->model->validate($variableArray));
     }
 
+    /**
+     * @return array
+     */
     public function validateDataProvider()
     {
         $variable = [
@@ -123,6 +114,9 @@ class VariableTest extends \PHPUnit\Framework\TestCase
         ];
     }
 
+    /**
+     * @return array
+     */
     public function validateMissingInfoDataProvider()
     {
         return [

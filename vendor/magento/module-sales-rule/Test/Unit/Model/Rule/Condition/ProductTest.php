@@ -7,7 +7,6 @@ namespace Magento\SalesRule\Test\Unit\Model\Rule\Condition;
 
 use \Magento\Framework\DB\Adapter\AdapterInterface;
 use \Magento\Framework\DB\Select;
-use \Magento\Framework\Model\AbstractModel;
 use Magento\Quote\Model\Quote\Item\AbstractItem;
 use \Magento\Rule\Model\Condition\Context;
 use \Magento\Backend\Helper\Data;
@@ -24,7 +23,7 @@ use \Magento\SalesRule\Model\Rule\Condition\Product as SalesRuleProduct;
 /**
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  */
-class ProductTest extends \PHPUnit\Framework\TestCase
+class ProductTest extends \PHPUnit_Framework_TestCase
 {
     /** @var SalesRuleProduct */
     protected $model;
@@ -147,26 +146,26 @@ class ProductTest extends \PHPUnit\Framework\TestCase
     /**
      * @return array
      */
-    public function getValueElementChooserUrlDataProvider()
+    public function testGetValueElementChooserUrlDataProvider()
     {
         return [
             'category_ids_without_js_object' => [
                 'category_ids',
-                'sales_rule/promo_widget/chooser/attribute/'
+                'catalog_rule/promo_widget/chooser/attribute/'
             ],
             'category_ids_with_js_object' => [
                 'category_ids',
-                'sales_rule/promo_widget/chooser/attribute/',
+                'catalog_rule/promo_widget/chooser/attribute/',
                 'jsobject'
             ],
             'sku_without_js_object' => [
                 'sku',
-                'sales_rule/promo_widget/chooser/attribute/',
+                'catalog_rule/promo_widget/chooser/attribute/',
                 'jsobject'
             ],
             'sku_without_with_js_object' => [
                 'sku',
-                'sales_rule/promo_widget/chooser/attribute/'
+                'catalog_rule/promo_widget/chooser/attribute/'
             ],
             'none' => [
                 '',
@@ -180,7 +179,7 @@ class ProductTest extends \PHPUnit\Framework\TestCase
      * @param string $attribute
      * @param string $url
      * @param string $jsObject
-     * @dataProvider getValueElementChooserUrlDataProvider
+     * @dataProvider testGetValueElementChooserUrlDataProvider
      */
     public function testGetValueElementChooserUrl($attribute, $url, $jsObject = '')
     {

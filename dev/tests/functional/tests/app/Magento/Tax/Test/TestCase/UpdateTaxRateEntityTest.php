@@ -26,13 +26,14 @@ use Magento\Mtf\TestCase\Injectable;
  * 6. Click 'Save Rate' button.
  * 7. Perform asserts.
  *
- * @group Tax
+ * @group Tax_(CS)
  * @ZephyrId MAGETWO-23299
  */
 class UpdateTaxRateEntityTest extends Injectable
 {
     /* tags */
     const MVP = 'yes';
+    const DOMAIN = 'CS';
     /* end tags */
 
     /**

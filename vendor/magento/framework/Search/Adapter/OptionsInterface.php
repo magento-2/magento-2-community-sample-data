@@ -5,10 +5,6 @@
  */
 namespace Magento\Framework\Search\Adapter;
 
-/**
- * Interface \Magento\Framework\Search\Adapter\OptionsInterface
- *
- */
 interface OptionsInterface
 {
     /**

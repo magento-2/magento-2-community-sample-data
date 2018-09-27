@@ -3,11 +3,12 @@
  * Copyright © Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
+
 namespace Magento\Tax\Test\Unit\Observer;
 
-use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
+use \Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
 
-class UpdateProductOptionsObserverTest extends \PHPUnit\Framework\TestCase
+class UpdateProductOptionsObserverTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * Tests the methods that rely on the ScopeConfigInterface object to provide their return values
@@ -24,18 +25,18 @@ class UpdateProductOptionsObserverTest extends \PHPUnit\Framework\TestCase
         $displayPriceExcludingTax
     ) {
 
-        $frameworkObject = new \Magento\Framework\DataObject();
+        $frameworkObject= new \Magento\Framework\DataObject();
         $frameworkObject->setAdditionalOptions([]);
 
-        $product=$this->createMock(\Magento\Catalog\Model\Product::class);
+        $product=$this->getMock('Magento\Catalog\Model\Product', [], [], '', false);
 
-        $registry=$this->createMock(\Magento\Framework\Registry::class);
+        $registry=$this->getMock('Magento\Framework\Registry', [], [], '', false);
         $registry->expects($this->any())
             ->method('registry')
             ->with('current_product')
             ->will($this->returnValue($product));
 
-        $taxData=$this->createMock(\Magento\Tax\Helper\Data::class);
+        $taxData=$this->getMock('Magento\Tax\Helper\Data', [], [], '', false);
         $taxData->expects($this->any())
             ->method('getCalculationAlgorithm')
             ->will($this->returnValue('TOTAL_BASE_CALCULATION'));
@@ -52,29 +53,29 @@ class UpdateProductOptionsObserverTest extends \PHPUnit\Framework\TestCase
             ->method('displayPriceExcludingTax')
             ->will($this->returnValue($displayPriceExcludingTax));
 
-        $eventObject=$this->createPartialMock(\Magento\Framework\Event::class, ['getResponseObject']);
+        $eventObject=$this->getMock('Magento\Framework\Event', ['getResponseObject'], [], '', false);
         $eventObject->expects($this->any())
             ->method('getResponseObject')
             ->will($this->returnValue($frameworkObject));
 
-        $observerObject=$this->createMock(\Magento\Framework\Event\Observer::class);
+        $observerObject=$this->getMock('Magento\Framework\Event\Observer', [], [], '', false);
 
         $observerObject->expects($this->any())
             ->method('getEvent')
             ->will($this->returnValue($eventObject));
 
-        $objectManager = new ObjectManager($this);
-        $taxObserverObject = $objectManager->getObject(
-            \Magento\Tax\Observer\UpdateProductOptionsObserver::class,
-            [
-                'taxData' => $taxData,
-                'registry' => $registry,
-            ]
-        );
+         $objectManager = new ObjectManager($this);
+         $taxObserverObject = $objectManager->getObject(
+             'Magento\Tax\Observer\UpdateProductOptionsObserver',
+             [
+                 'taxData' => $taxData,
+                 'registry' => $registry,
+             ]
+         );
 
-        $taxObserverObject->execute($observerObject);
+         $taxObserverObject->execute($observerObject);
 
-        $this->assertEquals($expected, $frameworkObject->getAdditionalOptions());
+         $this->assertEquals($expected, $frameworkObject->getAdditionalOptions());
     }
 
     /**

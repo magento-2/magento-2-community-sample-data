@@ -4,11 +4,11 @@
  * See COPYING.txt for license details.
  */
 
-namespace Magento\Directory\Model;
-
 /**
  * Region
  *
+ * @method \Magento\Directory\Model\ResourceModel\Region _getResource()
+ * @method \Magento\Directory\Model\ResourceModel\Region getResource()
  * @method string getRegionId()
  * @method string getCountryId()
  * @method \Magento\Directory\Model\Region setCountryId(string $value)
@@ -17,9 +17,10 @@ namespace Magento\Directory\Model;
  * @method string getDefaultName()
  * @method \Magento\Directory\Model\Region setDefaultName(string $value)
  *
- * @api
- * @since 100.0.2
+ * @author      Magento Core Team <core@magentocommerce.com>
  */
+namespace Magento\Directory\Model;
+
 class Region extends \Magento\Framework\Model\AbstractModel
 {
     /**
@@ -27,13 +28,13 @@ class Region extends \Magento\Framework\Model\AbstractModel
      */
     protected function _construct()
     {
-        $this->_init(\Magento\Directory\Model\ResourceModel\Region::class);
+        $this->_init('Magento\Directory\Model\ResourceModel\Region');
     }
 
     /**
      * Retrieve region name
      *
-     * If name is not declared, then default_name is used
+     * If name is no declared, then default_name is used
      *
      * @return string
      */

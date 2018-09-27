@@ -29,8 +29,7 @@ class ConfigProvider implements ConfigProviderInterface
     private $resolver;
 
     /**
-     * Initialize dependencies.
-     *
+     * ConfigProvider constructor.
      * @param Config $config
      * @param ResolverInterface $resolver
      */
@@ -41,8 +40,6 @@ class ConfigProvider implements ConfigProviderInterface
     }
 
     /**
-     * Retrieve assoc array of checkout configuration
-     *
      * @return array
      */
     public function getConfig()
@@ -54,7 +51,7 @@ class ConfigProvider implements ConfigProviderInterface
                     'title' => $this->config->getTitle(),
                     'isAllowShippingAddressOverride' => $this->config->isAllowToEditShippingAddress(),
                     'merchantName' => $this->config->getMerchantName(),
-                    'locale' => $this->resolver->getLocale(),
+                    'locale' => strtolower($this->resolver->getLocale()),
                     'paymentAcceptanceMarkSrc' =>
                         'https://www.paypalobjects.com/webstatic/en_US/i/buttons/pp-acceptance-medium.png',
                     'vaultCode' => self::PAYPAL_VAULT_CODE,

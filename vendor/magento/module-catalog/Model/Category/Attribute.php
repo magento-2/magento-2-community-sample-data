@@ -29,15 +29,14 @@ class Attribute extends \Magento\Catalog\Model\Entity\Attribute implements
      */
     public function getApplyTo()
     {
-        $applyTo = $this->_getData(self::APPLY_TO);
-        if ($applyTo) {
-            if (is_array($applyTo)) {
-                return $applyTo;
+        if ($this->getData(self::APPLY_TO)) {
+            if (is_array($this->getData(self::APPLY_TO))) {
+                return $this->getData(self::APPLY_TO);
             }
-            return explode(',', $applyTo);
+            return explode(',', $this->getData(self::APPLY_TO));
+        } else {
+            return [];
         }
-
-        return [];
     }
 
     /**
@@ -60,7 +59,7 @@ class Attribute extends \Magento\Catalog\Model\Entity\Attribute implements
      */
     public function getIsWysiwygEnabled()
     {
-        return $this->_getData(self::IS_WYSIWYG_ENABLED);
+        return $this->getData(self::IS_WYSIWYG_ENABLED);
     }
 
     /**
@@ -71,7 +70,7 @@ class Attribute extends \Magento\Catalog\Model\Entity\Attribute implements
      */
     public function setIsWysiwygEnabled($isWysiwygEnabled)
     {
-        return $this->setData(self::IS_WYSIWYG_ENABLED, $isWysiwygEnabled);
+        return $this->getData(self::IS_WYSIWYG_ENABLED, $isWysiwygEnabled);
     }
 
     /**
@@ -79,7 +78,7 @@ class Attribute extends \Magento\Catalog\Model\Entity\Attribute implements
      */
     public function getIsHtmlAllowedOnFront()
     {
-        return $this->_getData(self::IS_HTML_ALLOWED_ON_FRONT);
+        return $this->getData(self::IS_HTML_ALLOWED_ON_FRONT);
     }
 
     /**
@@ -98,7 +97,7 @@ class Attribute extends \Magento\Catalog\Model\Entity\Attribute implements
      */
     public function getUsedForSortBy()
     {
-        return $this->_getData(self::USED_FOR_SORT_BY);
+        return $this->getData(self::USED_FOR_SORT_BY);
     }
 
     /**
@@ -117,7 +116,7 @@ class Attribute extends \Magento\Catalog\Model\Entity\Attribute implements
      */
     public function getIsFilterable()
     {
-        return $this->_getData(self::IS_FILTERABLE);
+        return $this->getData(self::IS_FILTERABLE);
     }
 
     /**
@@ -136,7 +135,7 @@ class Attribute extends \Magento\Catalog\Model\Entity\Attribute implements
      */
     public function getIsFilterableInSearch()
     {
-        return $this->_getData(self::IS_FILTERABLE_IN_SEARCH);
+        return $this->getData(self::IS_FILTERABLE_IN_SEARCH);
     }
 
     /**
@@ -144,7 +143,7 @@ class Attribute extends \Magento\Catalog\Model\Entity\Attribute implements
      */
     public function getIsUsedInGrid()
     {
-        return (bool)$this->_getData(self::IS_USED_IN_GRID);
+        return (bool)$this->getData(self::IS_USED_IN_GRID);
     }
 
     /**
@@ -152,7 +151,7 @@ class Attribute extends \Magento\Catalog\Model\Entity\Attribute implements
      */
     public function getIsVisibleInGrid()
     {
-        return (bool)$this->_getData(self::IS_VISIBLE_IN_GRID);
+        return (bool)$this->getData(self::IS_VISIBLE_IN_GRID);
     }
 
     /**
@@ -160,7 +159,7 @@ class Attribute extends \Magento\Catalog\Model\Entity\Attribute implements
      */
     public function getIsFilterableInGrid()
     {
-        return (bool)$this->_getData(self::IS_FILTERABLE_IN_GRID);
+        return (bool)$this->getData(self::IS_FILTERABLE_IN_GRID);
     }
 
     /**
@@ -171,7 +170,7 @@ class Attribute extends \Magento\Catalog\Model\Entity\Attribute implements
      */
     public function setIsFilterableInSearch($isFilterableInSearch)
     {
-        return $this->setData(self::IS_FILTERABLE_IN_SEARCH, $isFilterableInSearch);
+        return $this->getData(self::IS_FILTERABLE_IN_SEARCH, $isFilterableInSearch);
     }
 
     /**
@@ -179,7 +178,7 @@ class Attribute extends \Magento\Catalog\Model\Entity\Attribute implements
      */
     public function getPosition()
     {
-        return $this->_getData(self::POSITION);
+        return $this->getData(self::POSITION);
     }
 
     /**
@@ -198,7 +197,7 @@ class Attribute extends \Magento\Catalog\Model\Entity\Attribute implements
      */
     public function getIsSearchable()
     {
-        return $this->_getData(self::IS_SEARCHABLE);
+        return $this->getData(self::IS_SEARCHABLE);
     }
 
     /**
@@ -217,7 +216,7 @@ class Attribute extends \Magento\Catalog\Model\Entity\Attribute implements
      */
     public function getIsVisibleInAdvancedSearch()
     {
-        return $this->_getData(self::IS_VISIBLE_IN_ADVANCED_SEARCH);
+        return $this->getData(self::IS_VISIBLE_IN_ADVANCED_SEARCH);
     }
 
     /**
@@ -236,7 +235,7 @@ class Attribute extends \Magento\Catalog\Model\Entity\Attribute implements
      */
     public function getIsComparable()
     {
-        return $this->_getData(self::IS_COMPARABLE);
+        return $this->getData(self::IS_COMPARABLE);
     }
 
     /**
@@ -255,7 +254,7 @@ class Attribute extends \Magento\Catalog\Model\Entity\Attribute implements
      */
     public function getIsUsedForPromoRules()
     {
-        return $this->_getData(self::IS_USED_FOR_PROMO_RULES);
+        return $this->getData(self::IS_USED_FOR_PROMO_RULES);
     }
 
     /**
@@ -274,7 +273,7 @@ class Attribute extends \Magento\Catalog\Model\Entity\Attribute implements
      */
     public function getIsVisibleOnFront()
     {
-        return $this->_getData(self::IS_VISIBLE_ON_FRONT);
+        return $this->getData(self::IS_VISIBLE_ON_FRONT);
     }
 
     /**
@@ -293,7 +292,7 @@ class Attribute extends \Magento\Catalog\Model\Entity\Attribute implements
      */
     public function getUsedInProductListing()
     {
-        return $this->_getData(self::USED_IN_PRODUCT_LISTING);
+        return $this->getData(self::USED_IN_PRODUCT_LISTING);
     }
 
     /**
@@ -312,7 +311,7 @@ class Attribute extends \Magento\Catalog\Model\Entity\Attribute implements
      */
     public function getIsVisible()
     {
-        return $this->_getData(self::IS_VISIBLE);
+        return $this->getData(self::IS_VISIBLE);
     }
 
     /**
@@ -325,7 +324,6 @@ class Attribute extends \Magento\Catalog\Model\Entity\Attribute implements
     {
         return $this->setData(self::IS_VISIBLE, $isVisible);
     }
-
     //@codeCoverageIgnoreEnd
 
     /**
@@ -333,7 +331,7 @@ class Attribute extends \Magento\Catalog\Model\Entity\Attribute implements
      */
     public function getScope()
     {
-        $scope = $this->_getData(self::KEY_IS_GLOBAL);
+        $scope = $this->getData(self::KEY_IS_GLOBAL);
         if ($scope == self::SCOPE_GLOBAL) {
             return self::SCOPE_GLOBAL_TEXT;
         } elseif ($scope == self::SCOPE_WEBSITE) {
@@ -361,32 +359,5 @@ class Attribute extends \Magento\Catalog\Model\Entity\Attribute implements
             //Ignore unrecognized scope
             return $this;
         }
-    }
-
-    /**
-     * @inheritdoc
-     */
-    public function setIsUsedInGrid($isUsedInGrid)
-    {
-        $this->setData(self::IS_USED_IN_GRID, $isUsedInGrid);
-        return $this;
-    }
-
-    /**
-     * @inheritdoc
-     */
-    public function setIsVisibleInGrid($isVisibleInGrid)
-    {
-        $this->setData(self::IS_VISIBLE_IN_GRID, $isVisibleInGrid);
-        return $this;
-    }
-
-    /**
-     * @inheritdoc
-     */
-    public function setIsFilterableInGrid($isFilterableInGrid)
-    {
-        $this->setData(self::IS_FILTERABLE_IN_GRID, $isFilterableInGrid);
-        return $this;
     }
 }

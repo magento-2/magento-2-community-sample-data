@@ -28,20 +28,11 @@ class ConfigurableProductGenerator
     private $productGeneratorFactory;
 
     /**
-     * @var AutoIncrement
-     */
-    private $autoIncrement;
-
-    /**
      * @param ProductGeneratorFactory $productGeneratorFactory
-     * @param AutoIncrement $autoIncrement
      */
-    public function __construct(
-        ProductGeneratorFactory $productGeneratorFactory,
-        AutoIncrement $autoIncrement
-    ) {
+    public function __construct(ProductGeneratorFactory $productGeneratorFactory)
+    {
         $this->productGeneratorFactory = $productGeneratorFactory;
-        $this->autoIncrement = $autoIncrement;
     }
 
     /**
@@ -110,8 +101,7 @@ class ConfigurableProductGenerator
      */
     private function generateSuperAttributeId($superAttributeId, $entityNumber, array $fixture)
     {
-        return $superAttributeId + ($entityNumber + 1) * $fixture['_attributes_count']
-            * $this->autoIncrement->getIncrement();
+        return $superAttributeId + $entityNumber * $fixture['_attributes_count'] + $fixture['_attributes_count'];
     }
 
     /**

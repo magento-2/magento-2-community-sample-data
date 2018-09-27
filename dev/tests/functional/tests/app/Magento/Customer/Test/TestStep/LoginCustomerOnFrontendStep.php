@@ -75,8 +75,6 @@ class LoginCustomerOnFrontendStep implements TestStepInterface
         $this->cmsIndex->getCmsPageBlock()->waitPageInit();
         $this->customerAccountLogin->getLoginBlock()->login($this->customer);
         $this->cmsIndex->getCmsPageBlock()->waitPageInit();
-        $this->cmsIndex->getLinksBlock()->openLink('My Account');
-        $this->cmsIndex->getCmsPageBlock()->waitPageInit();
     }
 
     /**

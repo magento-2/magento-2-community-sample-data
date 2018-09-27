@@ -11,7 +11,7 @@ use Magento\Sales\Test\Page\Adminhtml\OrderCreateIndex;
 use Magento\Mtf\TestStep\TestStepInterface;
 
 /**
- * Fill Billing Address.
+ * Fill Sales Data.
  */
 class FillBillingAddressStep implements TestStepInterface
 {
@@ -23,18 +23,11 @@ class FillBillingAddressStep implements TestStepInterface
     protected $orderCreateIndex;
 
     /**
-     * Billing Address fixture.
+     * Address.
      *
      * @var Address
      */
     protected $billingAddress;
-
-    /**
-     * Shipping Address fixture.
-     *
-     * @var Address
-     */
-    protected $shippingAddress;
 
     /**
      * Save Address.
@@ -44,45 +37,40 @@ class FillBillingAddressStep implements TestStepInterface
     protected $saveAddress;
 
     /**
-     * Flag to set 'Same as billing address' for shipping address.
+     * Flag for set same as billing shipping address.
      *
      * @var string
      */
     protected $setShippingAddress;
 
     /**
+     * @constructor
      * @param OrderCreateIndex $orderCreateIndex
      * @param Address $billingAddress
-     * @param Address $shippingAddress [optional]
-     * @param string $saveAddress [optional]
+     * @param string $saveAddress
      * @param bool $setShippingAddress [optional]
      */
     public function __construct(
         OrderCreateIndex $orderCreateIndex,
         Address $billingAddress,
-        Address $shippingAddress = null,
         $saveAddress = 'No',
         $setShippingAddress = true
     ) {
         $this->orderCreateIndex = $orderCreateIndex;
         $this->billingAddress = $billingAddress;
-        $this->shippingAddress = $shippingAddress;
         $this->saveAddress = $saveAddress;
         $this->setShippingAddress = $setShippingAddress;
     }
 
     /**
-     * Fill Billing Address.
+     * Fill Sales Data.
      *
-     * @return array
+     * @return Address
      */
     public function run()
     {
-        if ($this->shippingAddress !== null) {
-            $this->setShippingAddress = null;
-        }
         $this->orderCreateIndex->getCreateBlock()
-            ->fillBillingAddress($this->billingAddress, $this->saveAddress, $this->setShippingAddress);
+            ->fillAddresses($this->billingAddress, $this->saveAddress, $this->setShippingAddress);
 
         return ['billingAddress' => $this->billingAddress];
     }

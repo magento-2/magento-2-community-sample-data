@@ -8,9 +8,7 @@ namespace Magento\Theme\Block\Adminhtml\System\Design\Theme\Edit\Tab;
 /**
  * Theme form, Js editor tab
  *
- * @api
  * @SuppressWarnings(PHPMD.DepthOfInheritance)
- * @since 100.0.2
  */
 class Js extends \Magento\Theme\Block\Adminhtml\System\Design\Theme\Edit\AbstractTab
 {
@@ -81,7 +79,7 @@ class Js extends \Magento\Theme\Block\Adminhtml\System\Design\Theme\Edit\Abstrac
      */
     protected function _getAdditionalElementTypes()
     {
-        $fileElement = \Magento\Theme\Block\Adminhtml\System\Design\Theme\Edit\Form\Element\File::class;
+        $fileElement = 'Magento\Theme\Block\Adminhtml\System\Design\Theme\Edit\Form\Element\File';
         return ['js_files' => $fileElement];
     }
 

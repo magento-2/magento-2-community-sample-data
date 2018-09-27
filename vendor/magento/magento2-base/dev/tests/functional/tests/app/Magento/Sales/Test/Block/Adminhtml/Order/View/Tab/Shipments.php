@@ -29,7 +29,7 @@ class Shipments extends Tab
     public function getGridBlock()
     {
         return $this->blockFactory->create(
-            \Magento\Sales\Test\Block\Adminhtml\Order\View\Tab\Shipments\Grid::class,
+            'Magento\Sales\Test\Block\Adminhtml\Order\View\Tab\Shipments\Grid',
             ['element' => $this->_rootElement->find($this->grid)]
         );
     }

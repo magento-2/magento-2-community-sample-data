@@ -7,11 +7,13 @@
  */
 namespace Magento\ConfigurableProduct\Model\Product\Type\Configurable;
 
-use Magento\Catalog\Api\Data\ProductInterface;
 use Magento\Framework\Api\AttributeValueFactory;
 use Magento\Framework\EntityManager\MetadataPool;
+use Magento\Catalog\Api\Data\ProductInterface;
 
 /**
+ * @method Attribute _getResource()
+ * @method Attribute getResource()
  * @method Attribute setProductAttribute(\Magento\Eav\Model\Entity\Attribute\AbstractAttribute $value)
  * @method \Magento\Eav\Model\Entity\Attribute\AbstractAttribute getProductAttribute()
  */
@@ -29,7 +31,9 @@ class Attribute extends \Magento\Framework\Model\AbstractExtensibleModel impleme
     const KEY_PRODUCT_ID = 'product_id';
     /**#@-*/
 
-    /**#@-*/
+    /**
+     * @var MetadataPool
+     */
     private $metadataPool;
 
     /**
@@ -71,7 +75,7 @@ class Attribute extends \Magento\Framework\Model\AbstractExtensibleModel impleme
      */
     protected function _construct()
     {
-        $this->_init(\Magento\ConfigurableProduct\Model\ResourceModel\Product\Type\Configurable\Attribute::class);
+        $this->_init('Magento\ConfigurableProduct\Model\ResourceModel\Product\Type\Configurable\Attribute');
     }
 
     /**
@@ -262,7 +266,6 @@ class Attribute extends \Magento\Framework\Model\AbstractExtensibleModel impleme
     {
         return $this->setData(self::KEY_PRODUCT_ID, $value);
     }
-
     //@codeCoverageIgnoreEnd
 
     /**

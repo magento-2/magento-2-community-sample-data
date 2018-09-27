@@ -31,7 +31,7 @@ class AbstractResourceStub extends AbstractResource
      *
      * @return AdapterInterface
      */
-    public function getConnection()
+    protected function getConnection()
     {
         return $this->connectionAdapter;
     }

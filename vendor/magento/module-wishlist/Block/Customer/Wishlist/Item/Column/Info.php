@@ -11,10 +11,6 @@
  */
 namespace Magento\Wishlist\Block\Customer\Wishlist\Item\Column;
 
-/**
- * @api
- * @since 100.0.2
- */
 class Info extends \Magento\Wishlist\Block\Customer\Wishlist\Item\Column
 {
 }

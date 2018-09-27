@@ -5,10 +5,6 @@
  */
 namespace Magento\Framework\ObjectManager;
 
-/**
- * Interface \Magento\Framework\ObjectManager\DynamicConfigInterface
- *
- */
 interface DynamicConfigInterface
 {
     /**

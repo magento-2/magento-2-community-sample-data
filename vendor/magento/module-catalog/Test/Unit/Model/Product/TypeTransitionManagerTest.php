@@ -5,7 +5,7 @@
  */
 namespace Magento\Catalog\Test\Unit\Model\Product;
 
-class TypeTransitionManagerTest extends \PHPUnit\Framework\TestCase
+class TypeTransitionManagerTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\Catalog\Model\Product\TypeTransitionManager
@@ -24,14 +24,17 @@ class TypeTransitionManagerTest extends \PHPUnit\Framework\TestCase
 
     protected function setUp()
     {
-        $this->productMock = $this->createPartialMock(
-            \Magento\Catalog\Model\Product::class,
-            ['getTypeId', 'setTypeId', 'setTypeInstance']
+        $this->productMock = $this->getMock(
+            'Magento\Catalog\Model\Product',
+            ['getTypeId', 'setTypeId', 'setTypeInstance'],
+            [],
+            '',
+            false
         );
-        $this->weightResolver = $this->createMock(\Magento\Catalog\Model\Product\Edit\WeightResolver::class);
+        $this->weightResolver = $this->getMock('Magento\Catalog\Model\Product\Edit\WeightResolver');
         $this->model = (new \Magento\Framework\TestFramework\Unit\Helper\ObjectManager($this))
             ->getObject(
-                \Magento\Catalog\Model\Product\TypeTransitionManager::class,
+                'Magento\Catalog\Model\Product\TypeTransitionManager',
                 [
                     'weightResolver' => $this->weightResolver,
                     'compatibleTypes' => [

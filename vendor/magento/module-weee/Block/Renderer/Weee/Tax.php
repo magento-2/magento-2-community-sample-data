@@ -33,7 +33,7 @@ class Tax extends \Magento\Backend\Block\Widget implements \Magento\Framework\Da
     /**
      * @var string
      */
-    protected $_template = 'renderer/tax.phtml';
+    protected $_template = 'Magento_Weee::renderer/tax.phtml';
 
     /**
      * Core registry
@@ -96,11 +96,13 @@ class Tax extends \Magento\Backend\Block\Widget implements \Magento\Framework\Da
     protected function _prepareLayout()
     {
         $this->addChild(
-            'add_button', \Magento\Backend\Block\Widget\Button::class,
+            'add_button',
+            'Magento\Backend\Block\Widget\Button',
             ['label' => __('Add Tax'), 'data_attribute' => ['action' => 'add-fpt-item'], 'class' => 'add']
         );
         $this->addChild(
-            'delete_button', \Magento\Backend\Block\Widget\Button::class,
+            'delete_button',
+            'Magento\Backend\Block\Widget\Button',
             [
                 'label' => __('Delete Tax'),
                 'data_attribute' => ['action' => 'delete-fpt-item'],

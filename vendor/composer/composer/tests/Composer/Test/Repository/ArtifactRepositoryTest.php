@@ -10,9 +10,8 @@
  * file that was distributed with this source code.
  */
 
-namespace Composer\Test\Repository;
+namespace Composer\Repository;
 
-use Composer\Repository\ArtifactRepository;
 use Composer\TestCase;
 use Composer\IO\NullIO;
 use Composer\Config;

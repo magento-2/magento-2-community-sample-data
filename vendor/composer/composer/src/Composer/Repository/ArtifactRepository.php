@@ -27,7 +27,6 @@ class ArtifactRepository extends ArrayRepository implements ConfigurableReposito
 
     protected $lookup;
     protected $repoConfig;
-    private $io;
 
     public function __construct(array $repoConfig, IOInterface $io)
     {
@@ -109,7 +108,7 @@ class ArtifactRepository extends ArrayRepository implements ConfigurableReposito
                 }
 
                 $length = strlen($stat['name']);
-                if ($indexOfShortestMatch === false || $length < $lengthOfShortestMatch) {
+                if ($indexOfShortestMatch == false || $length < $lengthOfShortestMatch) {
                     //Check it's not a directory.
                     $contents = $zip->getFromIndex($i);
                     if ($contents !== false) {
@@ -149,11 +148,7 @@ class ArtifactRepository extends ArrayRepository implements ConfigurableReposito
             'shasum' => sha1_file($file->getRealPath()),
         );
 
-        try {
-            $package = $this->loader->load($package);
-        } catch (\UnexpectedValueException $e) {
-            throw new \UnexpectedValueException('Failed loading package in '.$file.': '.$e->getMessage(), 0, $e);
-        }
+        $package = $this->loader->load($package);
 
         return $package;
     }

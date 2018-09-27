@@ -5,7 +5,7 @@
  */
 namespace Magento\Catalog\Test\Unit\Model\Indexer\Product;
 
-class EavTest extends \PHPUnit\Framework\TestCase
+class EavTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\Catalog\Model\Indexer\Product\Eav
@@ -34,21 +34,15 @@ class EavTest extends \PHPUnit\Framework\TestCase
 
     protected function setUp()
     {
-        $this->_productEavIndexerRow = $this->getMockBuilder(
-            \Magento\Catalog\Model\Indexer\Product\Eav\Action\Row::class
-        )
+        $this->_productEavIndexerRow = $this->getMockBuilder('Magento\Catalog\Model\Indexer\Product\Eav\Action\Row')
             ->disableOriginalConstructor()
             ->getMock();
 
-        $this->_productEavIndexerRows = $this->getMockBuilder(
-            \Magento\Catalog\Model\Indexer\Product\Eav\Action\Rows::class
-        )
+        $this->_productEavIndexerRows = $this->getMockBuilder('Magento\Catalog\Model\Indexer\Product\Eav\Action\Rows')
             ->disableOriginalConstructor()
             ->getMock();
 
-        $this->_productEavIndexerFull = $this->getMockBuilder(
-            \Magento\Catalog\Model\Indexer\Product\Eav\Action\Full::class
-        )
+        $this->_productEavIndexerFull = $this->getMockBuilder('Magento\Catalog\Model\Indexer\Product\Eav\Action\Full')
             ->disableOriginalConstructor()
             ->getMock();
 
@@ -58,7 +52,7 @@ class EavTest extends \PHPUnit\Framework\TestCase
             $this->_productEavIndexerFull
         );
 
-        $this->cacheContextMock = $this->createMock(\Magento\Framework\Indexer\CacheContext::class);
+        $this->cacheContextMock = $this->getMock(\Magento\Framework\Indexer\CacheContext::class, [], [], '', false);
 
         $cacheContextProperty = new \ReflectionProperty(
             \Magento\Catalog\Model\Indexer\Product\Eav::class,
@@ -89,8 +83,7 @@ class EavTest extends \PHPUnit\Framework\TestCase
             ->method('execute')
             ->with($ids);
 
-        $result = $this->model->executeList($ids);
-        $this->assertNull($result);
+        $this->model->executeList($ids);
     }
 
     public function testExecuteFull()

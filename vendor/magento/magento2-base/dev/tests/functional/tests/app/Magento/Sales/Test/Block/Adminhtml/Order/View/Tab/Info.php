@@ -7,9 +7,9 @@
 namespace Magento\Sales\Test\Block\Adminhtml\Order\View\Tab;
 
 use Magento\Backend\Test\Block\Widget\Tab;
+use Magento\Sales\Test\Block\Adminhtml\Order\View\Tab\Info\ShippingInfoBlock;
 use Magento\Sales\Test\Block\Adminhtml\Order\View\Tab\Info\CommentsHistoryBlock;
 use Magento\Sales\Test\Block\Adminhtml\Order\View\Tab\Info\PaymentInfoBlock;
-use Magento\Sales\Test\Block\Adminhtml\Order\View\Tab\Info\ShippingInfoBlock;
 
 /**
  * Order information tab block.

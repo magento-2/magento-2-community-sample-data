@@ -10,16 +10,13 @@ use Magento\Newsletter\Model\Queue as ModelQueue;
 
 /**
  * Newsletter queue edit block
- *
- * @api
- * @since 100.0.2
  */
 class Edit extends \Magento\Backend\Block\Template
 {
     /**
      * @var string
      */
-    protected $_template = 'queue/edit.phtml';
+    protected $_template = 'Magento_Newsletter::queue/edit.phtml';
 
     /**
      * Core registry
@@ -73,7 +70,7 @@ class Edit extends \Magento\Backend\Block\Template
     {
         $this->setChild(
             'form',
-            $this->getLayout()->createBlock(\Magento\Newsletter\Block\Adminhtml\Queue\Edit\Form::class, 'form')
+            $this->getLayout()->createBlock('Magento\Newsletter\Block\Adminhtml\Queue\Edit\Form', 'form')
         );
         return parent::_beforeToHtml();
     }
@@ -102,7 +99,7 @@ class Edit extends \Magento\Backend\Block\Template
     {
         $this->getToolbar()->addChild(
             'back_button',
-            \Magento\Backend\Block\Widget\Button::class,
+            'Magento\Backend\Block\Widget\Button',
             [
                 'label' => __('Back'),
                 'onclick' => "window.location.href = '" . $this->getUrl(
@@ -114,19 +111,19 @@ class Edit extends \Magento\Backend\Block\Template
 
         $this->getToolbar()->addChild(
             'reset_button',
-            \Magento\Backend\Block\Widget\Button::class,
+            'Magento\Backend\Block\Widget\Button',
             ['label' => __('Reset'), 'class' => 'reset', 'onclick' => 'window.location = window.location']
         );
 
         $this->getToolbar()->addChild(
             'preview_button',
-            \Magento\Backend\Block\Widget\Button::class,
+            'Magento\Backend\Block\Widget\Button',
             ['label' => __('Preview Template'), 'onclick' => 'queueControl.preview();', 'class' => 'preview']
         );
 
         $this->getToolbar()->addChild(
             'save_button',
-            \Magento\Backend\Block\Widget\Button::class,
+            'Magento\Backend\Block\Widget\Button',
             [
                 'label' => __('Save Newsletter'),
                 'class' => 'save primary',
@@ -138,7 +135,7 @@ class Edit extends \Magento\Backend\Block\Template
 
         $this->getToolbar()->addChild(
             'save_and_resume',
-            \Magento\Backend\Block\Widget\Button::class,
+            'Magento\Backend\Block\Widget\Button',
             [
                 'label' => __('Save and Resume'),
                 'class' => 'save',

@@ -13,20 +13,16 @@ use Magento\Cms\Api\Data\BlockInterface;
 class InlineEdit extends \Magento\Backend\App\Action
 {
     /**
-     * Authorization level of a basic admin session
+     * Authorization level of a basic admin session.
      *
      * @see _isAllowed()
      */
     const ADMIN_RESOURCE = 'Magento_Cms::block';
 
-    /**
-     * @var \Magento\Cms\Api\BlockRepositoryInterface
-     */
+    /** @var BlockRepository  */
     protected $blockRepository;
 
-    /**
-     * @var \Magento\Framework\Controller\Result\JsonFactory
-     */
+    /** @var JsonFactory  */
     protected $jsonFactory;
 
     /**

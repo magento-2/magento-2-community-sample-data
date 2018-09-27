@@ -9,7 +9,7 @@ namespace Magento\Persistent\Observer;
 /**
  * @magentoDataFixture Magento/Persistent/_files/persistent.php
  */
-class EmulateQuoteObserverTest extends \PHPUnit\Framework\TestCase
+class EmulateQuoteObserverTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\Customer\Api\CustomerRepositoryInterface
@@ -45,20 +45,20 @@ class EmulateQuoteObserverTest extends \PHPUnit\Framework\TestCase
     {
         $this->_objectManager = \Magento\TestFramework\Helper\Bootstrap::getObjectManager();
 
-        $this->_customerSession = $this->_objectManager->get(\Magento\Customer\Model\Session::class);
+        $this->_customerSession = $this->_objectManager->get('Magento\Customer\Model\Session');
 
         $this->customerRepository = $this->_objectManager->create(
-            \Magento\Customer\Api\CustomerRepositoryInterface::class
+            'Magento\Customer\Api\CustomerRepositoryInterface'
         );
 
         $this->_checkoutSession = $this->getMockBuilder(
-            \Magento\Checkout\Model\Session::class
+            'Magento\Checkout\Model\Session'
         )->disableOriginalConstructor()->setMethods([])->getMock();
 
-        $this->_persistentSessionHelper = $this->_objectManager->create(\Magento\Persistent\Helper\Session::class);
+        $this->_persistentSessionHelper = $this->_objectManager->create('Magento\Persistent\Helper\Session');
 
         $this->_observer = $this->_objectManager->create(
-            \Magento\Persistent\Observer\EmulateQuoteObserver::class,
+            'Magento\Persistent\Observer\EmulateQuoteObserver',
             [
                 'customerRepository' => $this->customerRepository,
                 'checkoutSession' => $this->_checkoutSession,
@@ -78,7 +78,7 @@ class EmulateQuoteObserverTest extends \PHPUnit\Framework\TestCase
     public function testEmulateQuote()
     {
         $requestMock = $this->getMockBuilder(
-            \Magento\Framework\App\Request\Http::class
+            'Magento\Framework\App\Request\Http'
         )->disableOriginalConstructor()->setMethods(
             []
         )->getMock();

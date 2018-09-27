@@ -10,7 +10,6 @@ namespace Magento\Customer\Api\Data;
 /**
  * Validation rule interface.
  * @api
- * @since 100.0.2
  */
 interface ValidationRuleInterface
 {

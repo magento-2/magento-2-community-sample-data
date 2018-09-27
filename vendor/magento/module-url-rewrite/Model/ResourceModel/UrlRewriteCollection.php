@@ -45,10 +45,7 @@ class UrlRewriteCollection extends \Magento\Framework\Model\ResourceModel\Db\Col
      */
     protected function _construct()
     {
-        $this->_init(
-            \Magento\UrlRewrite\Model\UrlRewrite::class,
-            \Magento\UrlRewrite\Model\ResourceModel\UrlRewrite::class
-        );
+        $this->_init('Magento\UrlRewrite\Model\UrlRewrite', 'Magento\UrlRewrite\Model\ResourceModel\UrlRewrite');
     }
 
     /**

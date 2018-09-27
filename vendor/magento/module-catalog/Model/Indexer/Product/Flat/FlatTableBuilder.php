@@ -272,7 +272,7 @@ class FlatTableBuilder
 
             $select->joinLeft(
                 $temporaryTableName,
-                sprintf('e.%1$s = %2$s.%1$s', $linkField, $temporaryTableName),
+                "e.${linkField} = ${temporaryTableName}.${linkField}",
                 $columnsNames
             );
             $allColumns = array_merge($allColumns, $columnsNames);
@@ -286,7 +286,7 @@ class FlatTableBuilder
             if (!empty($columnValueNames)) {
                 $select->joinLeft(
                     $temporaryValueTableName,
-                    sprintf('e.%1$s = %2$s.%1$s', $linkField, $temporaryValueTableName),
+                    "e.${linkField} = " . $temporaryValueTableName . ".${linkField}",
                     $columnValueNames
                 );
                 $allColumns = array_merge($allColumns, $columnValueNames);
@@ -380,7 +380,7 @@ class FlatTableBuilder
     {
         if (null === $this->metadataPool) {
             $this->metadataPool = \Magento\Framework\App\ObjectManager::getInstance()
-                ->get(\Magento\Framework\EntityManager\MetadataPool::class);
+                ->get('Magento\Framework\EntityManager\MetadataPool');
         }
         return $this->metadataPool;
     }

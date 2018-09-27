@@ -5,7 +5,7 @@
  */
 namespace Magento\Catalog\Test\Unit\Model\Product\PriceModifier;
 
-class CompositeTest extends \PHPUnit\Framework\TestCase
+class CompositeTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\Catalog\Model\Product\PriceModifier\Composite
@@ -29,9 +29,9 @@ class CompositeTest extends \PHPUnit\Framework\TestCase
 
     protected function setUp()
     {
-        $this->objectManagerMock = $this->createMock(\Magento\Framework\ObjectManagerInterface::class);
-        $this->productMock = $this->createMock(\Magento\Catalog\Model\Product::class);
-        $this->priceModifierMock = $this->createMock(\Magento\Catalog\Model\Product\PriceModifierInterface::class);
+        $this->objectManagerMock = $this->getMock('Magento\Framework\ObjectManagerInterface');
+        $this->productMock = $this->getMock('Magento\Catalog\Model\Product', [], [], '', false);
+        $this->priceModifierMock = $this->getMock('Magento\Catalog\Model\Product\PriceModifierInterface');
     }
 
     public function testModifyPriceIfModifierExists()

@@ -56,7 +56,7 @@ class TypeResolver
         }
 
         if (count($dataInterfaces) == 0) {
-            return $className;
+            throw new \Exception('Unable to determine data interface for ' . $className);
         }
 
         foreach ($dataInterfaces as $dataInterface) {

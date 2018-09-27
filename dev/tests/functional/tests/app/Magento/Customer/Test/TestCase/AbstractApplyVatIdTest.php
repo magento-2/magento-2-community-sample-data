@@ -76,7 +76,7 @@ abstract class AbstractApplyVatIdTest extends Injectable
     }
 
     /**
-     * Prepare VAT ID confguration.
+     * Prepare VAT ID configuration.
      *
      * @param ConfigData $vatConfig
      * @param string $customerGroup
@@ -120,7 +120,7 @@ abstract class AbstractApplyVatIdTest extends Injectable
     public function tearDown()
     {
         $this->objectManager->create(
-            \Magento\Config\Test\TestStep\SetupConfigurationStep::class,
+            'Magento\Config\Test\TestStep\SetupConfigurationStep',
             ['configData' => $this->configData, 'rollback' => true]
         )->run();
     }

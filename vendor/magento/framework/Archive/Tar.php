@@ -84,7 +84,7 @@ class Tar extends \Magento\Framework\Archive\AbstractArchive implements \Magento
      *
      * @return string
      */
-    protected static function _getFormatParseHeader()
+    final protected static function _getFormatParseHeader()
     {
         return 'a100name/a8mode/a8uid/a8gid/a12size/a12mtime/a8checksum/a1type/a100symlink/a6magic/a2version/' .
             'a32uname/a32gname/a8devmajor/a8devminor/a155prefix/a12closer';
@@ -252,7 +252,7 @@ class Tar extends \Magento\Framework\Archive\AbstractArchive implements \Magento
         $file = $this->_getCurrentFile();
 
         if (is_dir($file)) {
-            $dirFiles = scandir($file);
+            $dirFiles = scandir($file, SCANDIR_SORT_NONE);
 
             if (false === $dirFiles) {
                 throw new \Magento\Framework\Exception\LocalizedException(

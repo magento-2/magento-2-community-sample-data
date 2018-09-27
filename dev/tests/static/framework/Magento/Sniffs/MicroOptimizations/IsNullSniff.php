@@ -5,10 +5,10 @@
  */
 namespace Magento\Sniffs\MicroOptimizations;
 
-use PHP_CodeSniffer\Sniffs\Sniff;
-use PHP_CodeSniffer\Files\File;
+use PHP_CodeSniffer_File;
+use PHP_CodeSniffer_Sniff;
 
-class IsNullSniff implements Sniff
+class IsNullSniff implements PHP_CodeSniffer_Sniff
 {
     /**
      * @var string
@@ -26,15 +26,11 @@ class IsNullSniff implements Sniff
     /**
      * @inheritdoc
      */
-    public function process(File $sourceFile, $stackPtr)
+    public function process(PHP_CodeSniffer_File $sourceFile, $stackPtr)
     {
         $tokens = $sourceFile->getTokens();
         if ($tokens[$stackPtr]['content'] === $this->blacklist) {
-            $sourceFile->addError(
-                "is_null must be avoided. Use strict comparison instead.",
-                $stackPtr,
-                'IsNullUsage'
-            );
+            $sourceFile->addError("is_null must be avoided. Use strict comparison instead.", $stackPtr);
         }
     }
 }

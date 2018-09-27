@@ -5,7 +5,7 @@
  */
 namespace Magento\ImportExport\Test\Unit\Model\Import;
 
-class SourceAbstractTest extends \PHPUnit\Framework\TestCase
+class SourceAbstractTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\ImportExport\Model\Import\AbstractSource|\PHPUnit_Framework_MockObject_MockObject
@@ -15,7 +15,7 @@ class SourceAbstractTest extends \PHPUnit\Framework\TestCase
     protected function setUp()
     {
         $this->_model = $this->getMockForAbstractClass(
-            \Magento\ImportExport\Model\Import\AbstractSource::class,
+            'Magento\ImportExport\Model\Import\AbstractSource',
             [['key1', 'key2', 'key3']]
         );
     }
@@ -27,7 +27,7 @@ class SourceAbstractTest extends \PHPUnit\Framework\TestCase
      */
     public function testConstructException($argument)
     {
-        $this->getMockForAbstractClass(\Magento\ImportExport\Model\Import\AbstractSource::class, [$argument]);
+        $this->getMockForAbstractClass('Magento\ImportExport\Model\Import\AbstractSource', [$argument]);
     }
 
     /**

@@ -55,7 +55,7 @@ class FlashMessenger extends AbstractPlugin implements IteratorAggregate, Counta
      * Messages from previous request
      * @var array
      */
-    protected $messages = [];
+    protected $messages = array();
 
     /**
      * @var Manager
@@ -306,7 +306,7 @@ class FlashMessenger extends AbstractPlugin implements IteratorAggregate, Counta
             return $this->messages[$namespace]->toArray();
         }
 
-        return [];
+        return array();
     }
 
     /**
@@ -393,7 +393,7 @@ class FlashMessenger extends AbstractPlugin implements IteratorAggregate, Counta
             return false;
         }
         unset($this->messages);
-        $this->messages = [];
+        $this->messages = array();
 
         return true;
     }
@@ -478,7 +478,7 @@ class FlashMessenger extends AbstractPlugin implements IteratorAggregate, Counta
             return $container->{$namespace}->toArray();
         }
 
-        return [];
+        return array();
     }
 
     /**
@@ -579,7 +579,7 @@ class FlashMessenger extends AbstractPlugin implements IteratorAggregate, Counta
     {
         $container = $this->getContainer();
 
-        $namespaces = [];
+        $namespaces = array();
         foreach ($container as $namespace => $messages) {
             $namespaces[] = $namespace;
         }
@@ -650,7 +650,7 @@ class FlashMessenger extends AbstractPlugin implements IteratorAggregate, Counta
 
         $container = $this->getContainer();
 
-        $namespaces = [];
+        $namespaces = array();
         foreach ($container as $namespace => $messages) {
             $this->messages[$namespace] = $messages;
             $namespaces[] = $namespace;

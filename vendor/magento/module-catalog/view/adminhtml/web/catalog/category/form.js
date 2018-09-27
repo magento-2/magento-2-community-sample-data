@@ -3,6 +3,8 @@
  * See COPYING.txt for license details.
  */
 
+/*global alert:true*/
+
 define([
     'jquery',
     'Magento_Ui/js/modal/alert'

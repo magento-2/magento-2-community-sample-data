@@ -21,7 +21,7 @@ use PHPUnit_Framework_MockObject_MockObject as MockObject;
  *
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  */
-class FactoryTest extends \PHPUnit\Framework\TestCase
+class FactoryTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var Configurable|MockObject
@@ -75,7 +75,7 @@ class FactoryTest extends \PHPUnit\Framework\TestCase
             ->setMethods(['create'])
             ->getMock();
 
-        $this->productAttributeRepository = $this->createMock(ProductAttributeRepositoryInterface::class);
+        $this->productAttributeRepository = $this->getMock(ProductAttributeRepositoryInterface::class);
 
         $this->factory = new Factory(
             $this->configurable,
@@ -156,7 +156,7 @@ class FactoryTest extends \PHPUnit\Framework\TestCase
             ->with($eavAttribute)
             ->willReturn(true);
 
-        $option = $this->createMock(OptionValueInterface::class);
+        $option = $this->getMock(OptionValueInterface::class);
         $option->expects(static::once())
             ->method('setValueIndex')
             ->with($valueIndex)

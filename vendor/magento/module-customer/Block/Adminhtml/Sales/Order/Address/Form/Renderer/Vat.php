@@ -24,7 +24,7 @@ class Vat extends \Magento\Backend\Block\Widget\Form\Renderer\Fieldset\Element
     /**
      * @var string
      */
-    protected $_template = 'sales/order/create/address/form/renderer/vat.phtml';
+    protected $_template = 'Magento_Customer::sales/order/create/address/form/renderer/vat.phtml';
 
     /**
      * @var \Magento\Framework\Json\EncoderInterface
@@ -101,7 +101,7 @@ class Vat extends \Magento\Backend\Block\Widget\Form\Renderer\Fieldset\Element
                 $vatValidateOptions .
                 ';</script>';
             $this->_validateButton = $this->getLayout()->createBlock(
-                \Magento\Backend\Block\Widget\Button::class
+                'Magento\Backend\Block\Widget\Button'
             )->setData(
                 [
                     'label' => __('Validate VAT Number'),

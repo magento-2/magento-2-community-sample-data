@@ -13,8 +13,6 @@ namespace Magento\Reports\Controller\Adminhtml\Report;
 
 /**
  * @SuppressWarnings(PHPMD.NumberOfChildren)
- * @api
- * @since 100.0.2
  */
 abstract class Sales extends AbstractReport
 {
@@ -55,6 +53,9 @@ abstract class Sales extends AbstractReport
                 break;
             case 'coupons':
                 return $this->_authorization->isAllowed('Magento_Reports::coupons');
+                break;
+            case 'shipping':
+                return $this->_authorization->isAllowed('Magento_Reports::shipping');
                 break;
             case 'bestsellers':
                 return $this->_authorization->isAllowed('Magento_Reports::bestsellers');

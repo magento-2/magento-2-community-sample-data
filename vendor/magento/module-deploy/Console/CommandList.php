@@ -8,7 +8,7 @@ namespace Magento\Deploy\Console;
 use Magento\Framework\ObjectManagerInterface;
 
 /**
- * Provides list of commands to be available for uninstalled application
+ * This class groups and instantiates a list of deploy commands in order to be used separately before install
  */
 class CommandList implements \Magento\Framework\Console\CommandListInterface
 {
@@ -20,7 +20,7 @@ class CommandList implements \Magento\Framework\Console\CommandListInterface
     private $objectManager;
 
     /**
-     * @param ObjectManagerInterface $objectManager Object Manager
+     * @param ObjectManagerInterface $objectManager
      */
     public function __construct(ObjectManagerInterface $objectManager)
     {
@@ -32,15 +32,15 @@ class CommandList implements \Magento\Framework\Console\CommandListInterface
      *
      * @return string[]
      */
-    private function getCommandsClasses()
+    protected function getCommandsClasses()
     {
         return [
-            \Magento\Deploy\Console\Command\App\ConfigImportCommand::class,
+            \Magento\Deploy\Console\Command\DeployStaticContentCommand::class
         ];
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function getCommands()
     {
@@ -52,7 +52,6 @@ class CommandList implements \Magento\Framework\Console\CommandListInterface
                 throw new \Exception('Class ' . $class . ' does not exist');
             }
         }
-
         return $commands;
     }
 }

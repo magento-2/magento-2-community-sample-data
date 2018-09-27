@@ -18,9 +18,7 @@ class Form extends \Magento\UrlRewrite\Block\Edit\Form
      */
     protected $_pageFactory;
 
-    /**
-     * @var \Magento\CmsUrlRewrite\Model\CmsPageUrlPathGenerator
-     */
+    /** @var \Magento\CmsUrlRewrite\Model\CmsPageUrlPathGenerator */
     protected $cmsPageUrlPathGenerator;
 
     /**

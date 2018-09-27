@@ -10,7 +10,7 @@ use Magento\Store\Model\ScopeInterface;
 use Magento\Store\Model\Website;
 use Magento\Store\Model\WebsiteFactory;
 
-class WebsiteTest extends \PHPUnit\Framework\TestCase
+class WebsiteTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var Website
@@ -31,23 +31,26 @@ class WebsiteTest extends \PHPUnit\Framework\TestCase
     {
         $this->objectManagerHelper = new ObjectManager($this);
 
-        $this->websiteFactory = $this->getMockBuilder(\Magento\Store\Model\WebsiteFactory::class)
+        $this->websiteFactory = $this->getMockBuilder('Magento\Store\Model\WebsiteFactory')
             ->disableOriginalConstructor()
             ->setMethods(['create', 'getCollection', '__wakeup'])
             ->getMock();
 
         /** @var Website $websiteModel */
         $this->model = $this->objectManagerHelper->getObject(
-            \Magento\Store\Model\Website::class,
+            'Magento\Store\Model\Website',
             ['websiteFactory' => $this->websiteFactory]
         );
     }
 
     public function testIsCanDelete()
     {
-        $websiteCollection = $this->createPartialMock(
-            \Magento\Store\Model\ResourceModel\Website\Collection::class,
-            ['getSize']
+        $websiteCollection = $this->getMock(
+            'Magento\Store\Model\ResourceModel\Website\Collection',
+            ['getSize'],
+            [],
+            '',
+            false
         );
         $websiteCollection->expects($this->any())->method('getSize')->will($this->returnValue(2));
 

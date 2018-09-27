@@ -88,33 +88,6 @@ class VersionSelectorTest extends \PHPUnit_Framework_TestCase
         $this->assertSame($package1, $best, 'Latest most stable version should be returned (1.0.0)');
     }
 
-    public function testMostStableVersionIsReturnedRegardlessOfOrder()
-    {
-        $packageName = 'foobar';
-
-        $package1 = $this->createPackage('2.x-dev');
-        $package2 = $this->createPackage('2.0.0-beta3');
-        $packages = array($package1, $package2);
-
-        $pool = $this->createMockPool();
-        $pool->expects($this->at(0))
-            ->method('whatProvides')
-            ->with($packageName, null, true)
-            ->will($this->returnValue($packages));
-
-        $pool->expects($this->at(1))
-            ->method('whatProvides')
-            ->with($packageName, null, true)
-            ->will($this->returnValue(array_reverse($packages)));
-
-        $versionSelector = new VersionSelector($pool);
-        $best = $versionSelector->findBestCandidate($packageName, null, null);
-        $this->assertSame($package2, $best, 'Expecting 2.0.0-beta3, cause beta is more stable than dev');
-
-        $best = $versionSelector->findBestCandidate($packageName, null, null);
-        $this->assertSame($package2, $best, 'Expecting 2.0.0-beta3, cause beta is more stable than dev');
-    }
-
     public function testHighestVersionIsReturned()
     {
         $packageName = 'foobar';
@@ -156,26 +129,6 @@ class VersionSelectorTest extends \PHPUnit_Framework_TestCase
         $this->assertSame($package2, $best, 'Latest version should be returned (1.1.0-beta)');
     }
 
-    public function testMostStableUnstableVersionIsReturned()
-    {
-        $packageName = 'foobar';
-
-        $package2 = $this->createPackage('1.1.0-beta');
-        $package3 = $this->createPackage('1.2.0-alpha');
-        $packages = array($package2, $package3);
-
-        $pool = $this->createMockPool();
-        $pool->expects($this->once())
-            ->method('whatProvides')
-            ->with($packageName, null, true)
-            ->will($this->returnValue($packages));
-
-        $versionSelector = new VersionSelector($pool);
-        $best = $versionSelector->findBestCandidate($packageName, null, null, 'stable');
-
-        $this->assertSame($package2, $best, 'Latest version should be returned (1.1.0-beta)');
-    }
-
     public function testFalseReturnedOnNoPackages()
     {
         $pool = $this->createMockPool();
@@ -198,26 +151,18 @@ class VersionSelectorTest extends \PHPUnit_Framework_TestCase
         $versionParser = new VersionParser();
 
         $package = $this->getMock('\Composer\Package\PackageInterface');
-        $package
-            ->expects($this->any())
+        $package->expects($this->any())
             ->method('getPrettyVersion')
             ->will($this->returnValue($prettyVersion));
-        $package
-            ->expects($this->any())
+        $package->expects($this->any())
             ->method('getVersion')
             ->will($this->returnValue($versionParser->normalize($prettyVersion)));
-        $package
-            ->expects($this->any())
+        $package->expects($this->any())
             ->method('isDev')
             ->will($this->returnValue($isDev));
-        $package
-            ->expects($this->any())
+        $package->expects($this->any())
             ->method('getStability')
             ->will($this->returnValue($stability));
-        $package
-            ->expects($this->any())
-            ->method('getTransportOptions')
-            ->will($this->returnValue(array()));
 
         $branchAlias = $branchAlias === null ? array() : array('branch-alias' => array($prettyVersion => $branchAlias));
         $package->expects($this->any())

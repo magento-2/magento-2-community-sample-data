@@ -27,13 +27,14 @@ use Magento\Mtf\TestCase\Injectable;
  * 5. Click Ok on popup window.
  * 6. Perform all asserts.
  *
- * @group Web_API_Framework
+ * @group Web_API_Framework_(PS)
  * @ZephyrId MAGETWO-29675
  */
 class RevokeAllAccessTokensForAdminWithoutTokensTest extends Injectable
 {
     /* tags */
     const MVP = 'no';
+    const DOMAIN = 'PS';
     /* end tags */
 
     /**

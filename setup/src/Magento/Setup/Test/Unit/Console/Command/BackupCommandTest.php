@@ -5,11 +5,10 @@
  */
 namespace Magento\Setup\Test\Unit\Console\Command;
 
-use Magento\Framework\App\Console\MaintenanceModeEnabler;
 use Magento\Setup\Console\Command\BackupCommand;
 use Symfony\Component\Console\Tester\CommandTester;
 
-class BackupCommandTest extends \PHPUnit\Framework\TestCase
+class BackupCommandTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\Framework\ObjectManagerInterface|\PHPUnit_Framework_MockObject_MockObject
@@ -38,24 +37,36 @@ class BackupCommandTest extends \PHPUnit\Framework\TestCase
 
     public function setUp()
     {
-        $maintenanceMode = $this->createMock(\Magento\Framework\App\MaintenanceMode::class);
-        $objectManagerProvider = $this->createMock(\Magento\Setup\Model\ObjectManagerProvider::class);
+        $maintenanceMode = $this->getMock('Magento\Framework\App\MaintenanceMode', [], [], '', false);
+        $objectManagerProvider = $this->getMock('Magento\Setup\Model\ObjectManagerProvider', [], [], '', false);
         $this->objectManager = $this->getMockForAbstractClass(
-            \Magento\Framework\ObjectManagerInterface::class,
+            'Magento\Framework\ObjectManagerInterface',
             [],
             '',
             false
         );
         $objectManagerProvider->expects($this->any())->method('get')->willReturn($this->objectManager);
-        $this->backupRollback = $this->createMock(\Magento\Framework\Setup\BackupRollback::class);
-        $this->backupRollbackFactory = $this->createMock(\Magento\Framework\Setup\BackupRollbackFactory::class);
+        $this->backupRollback = $this->getMock('Magento\Framework\Setup\BackupRollback', [], [], '', false);
+        $this->backupRollbackFactory = $this->getMock(
+            'Magento\Framework\Setup\BackupRollbackFactory',
+            [],
+            [],
+            '',
+            false
+        );
         $this->backupRollbackFactory->expects($this->any())
             ->method('create')
             ->willReturn($this->backupRollback);
-        $this->deploymentConfig = $this->createMock(\Magento\Framework\App\DeploymentConfig::class);
-        $appState = $this->createMock(\Magento\Framework\App\State::class);
+        $this->deploymentConfig = $this->getMock('Magento\Framework\App\DeploymentConfig', [], [], '', false);
+        $appState = $this->getMock(
+            'Magento\Framework\App\State',
+            [],
+            [],
+            '',
+            false
+        );
         $configLoader = $this->getMockForAbstractClass(
-            \Magento\Framework\ObjectManager\ConfigLoaderInterface::class,
+            'Magento\Framework\ObjectManager\ConfigLoaderInterface',
             [],
             '',
             false
@@ -66,16 +77,15 @@ class BackupCommandTest extends \PHPUnit\Framework\TestCase
             ->method('get')
             ->will(
                 $this->returnValueMap([
-                    [\Magento\Framework\Setup\BackupRollbackFactory::class, $this->backupRollbackFactory],
-                    [\Magento\Framework\App\State::class, $appState],
-                    [\Magento\Framework\ObjectManager\ConfigLoaderInterface::class, $configLoader],
+                    ['Magento\Framework\Setup\BackupRollbackFactory', $this->backupRollbackFactory],
+                    ['Magento\Framework\App\State', $appState],
+                    ['Magento\Framework\ObjectManager\ConfigLoaderInterface', $configLoader],
                 ])
             );
         $command = new BackupCommand(
             $objectManagerProvider,
             $maintenanceMode,
-            $this->deploymentConfig,
-            new MaintenanceModeEnabler($maintenanceMode)
+            $this->deploymentConfig
         );
         $this->tester = new CommandTester($command);
     }

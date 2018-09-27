@@ -5,7 +5,7 @@
  */
 namespace Magento\Braintree\Test\Unit\Gateway\Request\PayPal;
 
-use Magento\Braintree\Gateway\SubjectReader;
+use Magento\Braintree\Gateway\Helper\SubjectReader;
 use Magento\Braintree\Gateway\Request\PayPal\VaultDataBuilder;
 use Magento\Payment\Gateway\Data\PaymentDataObjectInterface;
 use Magento\Payment\Model\InfoInterface;
@@ -15,7 +15,7 @@ use PHPUnit_Framework_MockObject_MockObject as MockObject;
 /**
  * Class VaultDataBuilderTest
  */
-class VaultDataBuilderTest extends \PHPUnit\Framework\TestCase
+class VaultDataBuilderTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var PaymentDataObjectInterface|MockObject
@@ -34,9 +34,9 @@ class VaultDataBuilderTest extends \PHPUnit\Framework\TestCase
 
     protected function setUp()
     {
-        $this->paymentDO = $this->createMock(PaymentDataObjectInterface::class);
+        $this->paymentDO = $this->getMockForAbstractClass(PaymentDataObjectInterface::class);
 
-        $this->paymentInfo = $this->createMock(InfoInterface::class);
+        $this->paymentInfo = $this->getMock(InfoInterface::class);
 
         $this->builder = new VaultDataBuilder(new SubjectReader());
     }

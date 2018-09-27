@@ -5,7 +5,7 @@
  */
 
 /** @var \Magento\SalesRule\Model\Rule $rule */
-$rule = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->create(\Magento\SalesRule\Model\Rule::class);
+$rule = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->create('Magento\SalesRule\Model\Rule');
 $rule->setName(
     '#1'
 )->setIsActive(
@@ -22,13 +22,11 @@ $rule->setName(
     '1'
 )->setCustomerGroupIds(
     '0'
-)->setDiscountStep(
-    0
-)->setSortOrder(1)
+)->setDiscountStep(0)
     ->save();
 
 /** @var \Magento\SalesRule\Model\Rule $rule */
-$rule = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->create(\Magento\SalesRule\Model\Rule::class);
+$rule = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->create('Magento\SalesRule\Model\Rule');
 $rule->setName(
     '#2'
 )->setIsActive(
@@ -45,13 +43,11 @@ $rule->setName(
     '1'
 )->setCustomerGroupIds(
     '0'
-)->setDiscountStep(
-    0
-)->setSortOrder(2)
+)->setDiscountStep(0)
     ->save();
 
 /** @var \Magento\SalesRule\Model\Rule $rule */
-$rule = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->create(\Magento\SalesRule\Model\Rule::class);
+$rule = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->create('Magento\SalesRule\Model\Rule');
 $rule->setName(
     '#3'
 )->setIsActive(
@@ -68,13 +64,11 @@ $rule->setName(
     '1'
 )->setCustomerGroupIds(
     '0'
-)->setDiscountStep(
-    0
-)->setSortOrder(3)
+)->setDiscountStep(0)
     ->save();
 
 /** @var \Magento\SalesRule\Model\Rule $rule */
-$rule = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->create(\Magento\SalesRule\Model\Rule::class);
+$rule = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->create('Magento\SalesRule\Model\Rule');
 $rule->setName(
     '#4'
 )->setIsActive(
@@ -91,13 +85,11 @@ $rule->setName(
     '1'
 )->setCustomerGroupIds(
     '0'
-)->setDiscountStep(
-    0
-)->setSortOrder(4)
+)->setDiscountStep(0)
     ->save();
 
 /** @var \Magento\SalesRule\Model\Rule $rule */
-$rule = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->create(\Magento\SalesRule\Model\Rule::class);
+$rule = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->create('Magento\SalesRule\Model\Rule');
 $rule->setName(
     '#5'
 )->setIsActive(
@@ -114,7 +106,5 @@ $rule->setName(
     '1'
 )->setCustomerGroupIds(
     '0'
-)->setDiscountStep(
-    0
-)->setSortOrder(5)
+)->setDiscountStep(0)
     ->save();

@@ -23,7 +23,7 @@ class ComponentRegistrarFixture
     /**#@+
      * Properties of components registrar
      */
-    const REGISTRAR_CLASS = \Magento\Framework\Component\ComponentRegistrar::class;
+    const REGISTRAR_CLASS = 'Magento\Framework\Component\ComponentRegistrar';
     const PATHS_FIELD = 'paths';
     /**#@-*/
 
@@ -54,10 +54,10 @@ class ComponentRegistrarFixture
     /**
      * Handler for 'startTest' event
      *
-     * @param \PHPUnit\Framework\TestCase $test
+     * @param \PHPUnit_Framework_TestCase $test
      * @return void
      */
-    public function startTest(\PHPUnit\Framework\TestCase $test)
+    public function startTest(\PHPUnit_Framework_TestCase $test)
     {
         $this->registerComponents($test);
     }
@@ -65,12 +65,12 @@ class ComponentRegistrarFixture
     /**
      * Handler for 'endTest' event
      *
-     * @param \PHPUnit\Framework\TestCase $test
+     * @param \PHPUnit_Framework_TestCase $test
      * @return void
      *
      * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      */
-    public function endTest(\PHPUnit\Framework\TestCase $test)
+    public function endTest(\PHPUnit_Framework_TestCase $test)
     {
         $this->restoreComponents();
     }
@@ -78,9 +78,9 @@ class ComponentRegistrarFixture
     /**
      * Register fixture components
      *
-     * @param \PHPUnit\Framework\TestCase $test
+     * @param \PHPUnit_Framework_TestCase $test
      */
-    private function registerComponents(\PHPUnit\Framework\TestCase $test)
+    private function registerComponents(\PHPUnit_Framework_TestCase $test)
     {
         $annotations = $test->getAnnotations();
         $componentAnnotations = [];

@@ -10,7 +10,6 @@ namespace Magento\Integration\Api;
  * Interface providing token generation for Customers
  *
  * @api
- * @since 100.0.2
  */
 interface CustomerTokenServiceInterface
 {

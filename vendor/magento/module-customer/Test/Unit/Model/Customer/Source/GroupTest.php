@@ -12,7 +12,7 @@ use Magento\Framework\Api\SearchCriteriaBuilder;
 use Magento\Framework\Api\SearchCriteria;
 use Magento\Customer\Api\Data\GroupSearchResultsInterface;
 
-class GroupTest extends \PHPUnit\Framework\TestCase
+class GroupTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var Group
@@ -71,8 +71,8 @@ class GroupTest extends \PHPUnit\Framework\TestCase
     public function testToOptionArray()
     {
         $customerGroups = [
-            ['label' => __('ALL GROUPS'), 'value' => '32000'],
-            ['label' => __('NOT LOGGED IN'), 'value' => '0'],
+            ['label' => __('ALL GROUPS'), 'value' => 32000],
+            ['label' => __('NOT LOGGED IN'), 'value' => 0]
         ];
 
         $this->moduleManagerMock->expects($this->any())
@@ -90,22 +90,16 @@ class GroupTest extends \PHPUnit\Framework\TestCase
             ->with($this->searchCriteriaMock)
             ->willReturn($this->searchResultMock);
 
-        $groupTest = $this->getMockBuilder(\Magento\Customer\Api\Data\GroupInterface::class)
+        $groupTest = $this->getMockBuilder('\Magento\Customer\Api\Data\GroupInterface')
             ->disableOriginalConstructor()
             ->setMethods(['getCode', 'getId'])
             ->getMockForAbstractClass();
         $groupTest->expects($this->any())->method('getCode')->willReturn(__('NOT LOGGED IN'));
-        $groupTest->expects($this->any())->method('getId')->willReturn('0');
+        $groupTest->expects($this->any())->method('getId')->willReturn(0);
         $groups = [$groupTest];
 
         $this->searchResultMock->expects($this->any())->method('getItems')->willReturn($groups);
 
-        $actualCustomerGroups = $this->model->toOptionArray();
-
-        $this->assertEquals($customerGroups, $actualCustomerGroups);
-
-        foreach ($actualCustomerGroups as $actualCustomerGroup) {
-            $this->assertInternalType('string', $actualCustomerGroup['value']);
-        }
+        $this->assertEquals($customerGroups, $this->model->toOptionArray());
     }
 }

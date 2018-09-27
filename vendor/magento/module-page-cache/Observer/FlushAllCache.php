@@ -14,7 +14,7 @@ class FlushAllCache implements ObserverInterface
     /**
      * @var \Magento\Framework\App\PageCache\Cache
      *
-     * @deprecated 100.1.0
+     * @deprecated
      */
     protected $_cache;
 
@@ -61,7 +61,7 @@ class FlushAllCache implements ObserverInterface
     private function getCache()
     {
         if (!$this->fullPageCache) {
-            $this->fullPageCache = ObjectManager::getInstance()->get(\Magento\PageCache\Model\Cache\Type::class);
+            $this->fullPageCache = ObjectManager::getInstance()->get('\Magento\PageCache\Model\Cache\Type');
         }
         return $this->fullPageCache;
     }

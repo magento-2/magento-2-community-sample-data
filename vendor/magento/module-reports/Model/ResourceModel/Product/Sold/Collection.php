@@ -11,12 +11,8 @@
  */
 namespace Magento\Reports\Model\ResourceModel\Product\Sold;
 
-use Magento\Framework\DB\Select;
-
 /**
  * @SuppressWarnings(PHPMD.DepthOfInheritance)
- * @api
- * @since 100.0.2
  */
 class Collection extends \Magento\Reports\Model\ResourceModel\Order\Collection
 {
@@ -65,19 +61,17 @@ class Collection extends \Magento\Reports\Model\ResourceModel\Order\Collection
 
         $this->getSelect()->reset()->from(
             ['order_items' => $this->getTable('sales_order_item')],
-            [
-                'ordered_qty' => 'order_items.qty_ordered',
-                'order_items_name' => 'order_items.name',
-                'order_items_sku' => 'order_items.sku'
-            ]
+            ['ordered_qty' => 'SUM(order_items.qty_ordered)', 'order_items_name' => 'order_items.name']
         )->joinInner(
             ['order' => $this->getTable('sales_order')],
             implode(' AND ', $orderJoinCondition),
             []
         )->where(
-            'order_items.parent_item_id IS NULL'
+            'parent_item_id IS NULL'
+        )->group(
+            'order_items.product_id'
         )->having(
-            'order_items.qty_ordered > ?',
+            'SUM(order_items.qty_ordered) > ?',
             0
         );
         return $this;
@@ -113,20 +107,6 @@ class Collection extends \Magento\Reports\Model\ResourceModel\Order\Collection
         }
 
         return $this;
-    }
-
-    /**
-     * @return Select
-     * @since 100.2.0
-     */
-    public function getSelectCountSql()
-    {
-        $countSelect = clone parent::getSelectCountSql();
-
-        $countSelect->reset(Select::COLUMNS);
-        $countSelect->columns('COUNT(DISTINCT order_items.item_id)');
-
-        return $countSelect;
     }
 
     /**

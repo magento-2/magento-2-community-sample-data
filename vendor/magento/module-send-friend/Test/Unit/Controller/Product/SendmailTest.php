@@ -10,7 +10,7 @@ use Magento\Framework\TestFramework\Unit\Helper\ObjectManager as ObjectManagerHe
 /**
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  */
-class SendmailTest extends \PHPUnit\Framework\TestCase
+class SendmailTest extends \PHPUnit_Framework_TestCase
 {
     /** @var \Magento\SendFriend\Controller\Product\Sendmail */
     protected $model;
@@ -56,41 +56,41 @@ class SendmailTest extends \PHPUnit\Framework\TestCase
 
     protected function setUp()
     {
-        $this->requestMock = $this->getMockBuilder(\Magento\Framework\App\RequestInterface::class)
+        $this->requestMock = $this->getMockBuilder('Magento\Framework\App\RequestInterface')
             ->setMethods(['getPost', 'getPostValue', 'getParam'])
             ->getMockForAbstractClass();
-        $this->registryMock = $this->getMockBuilder(\Magento\Framework\Registry::class)
+        $this->registryMock = $this->getMockBuilder('Magento\Framework\Registry')
             ->disableOriginalConstructor()
             ->getMock();
-        $this->validatorMock = $this->getMockBuilder(\Magento\Framework\Data\Form\FormKey\Validator::class)
+        $this->validatorMock = $this->getMockBuilder('Magento\Framework\Data\Form\FormKey\Validator')
             ->disableOriginalConstructor()
             ->getMock();
-        $this->sendFriendMock = $this->getMockBuilder(\Magento\SendFriend\Model\SendFriend::class)
+        $this->sendFriendMock = $this->getMockBuilder('Magento\SendFriend\Model\SendFriend')
             ->disableOriginalConstructor()
             ->getMock();
-        $this->productRepositoryMock = $this->getMockBuilder(\Magento\Catalog\Api\ProductRepositoryInterface::class)
+        $this->productRepositoryMock = $this->getMockBuilder('Magento\Catalog\Api\ProductRepositoryInterface')
             ->getMockForAbstractClass();
-        $this->categoryRepositoryMock = $this->getMockBuilder(\Magento\Catalog\Api\CategoryRepositoryInterface::class)
+        $this->categoryRepositoryMock = $this->getMockBuilder('Magento\Catalog\Api\CategoryRepositoryInterface')
             ->getMockForAbstractClass();
-        $this->catalogSessionMock = $this->getMockBuilder(\Magento\Catalog\Model\Session::class)
+        $this->catalogSessionMock = $this->getMockBuilder('Magento\Catalog\Model\Session')
             ->setMethods(['getSendfriendFormData', 'setSendfriendFormData'])
             ->disableOriginalConstructor()
             ->getMock();
-        $this->messageManagerMock = $this->getMockBuilder(\Magento\Framework\Message\ManagerInterface::class)
+        $this->messageManagerMock = $this->getMockBuilder('Magento\Framework\Message\ManagerInterface')
             ->getMock();
-        $this->resultFactoryMock = $this->getMockBuilder(\Magento\Framework\Controller\ResultFactory::class)
+        $this->resultFactoryMock = $this->getMockBuilder('Magento\Framework\Controller\ResultFactory')
             ->disableOriginalConstructor()
             ->getMock();
-        $this->eventManagerMock = $this->getMockBuilder(\Magento\Framework\Event\ManagerInterface::class)
+        $this->eventManagerMock = $this->getMockBuilder('Magento\Framework\Event\ManagerInterface')
             ->getMock();
-        $this->redirectMock = $this->getMockBuilder(\Magento\Framework\App\Response\RedirectInterface::class)
+        $this->redirectMock = $this->getMockBuilder('Magento\Framework\App\Response\RedirectInterface')
             ->getMock();
-        $this->urlBuilderMock = $this->getMockBuilder(\Magento\Framework\UrlInterface::class)
+        $this->urlBuilderMock = $this->getMockBuilder('Magento\Framework\UrlInterface')
             ->getMock();
 
         $this->objectManagerHelper = new ObjectManagerHelper($this);
         $this->model = $this->objectManagerHelper->getObject(
-            \Magento\SendFriend\Controller\Product\Sendmail::class,
+            'Magento\SendFriend\Controller\Product\Sendmail',
             [
                 'request' => $this->requestMock,
                 'coreRegistry' => $this->registryMock,
@@ -124,7 +124,7 @@ class SendmailTest extends \PHPUnit\Framework\TestCase
         $productUrl = 'product_url';
 
         /** @var \Magento\Framework\Controller\Result\Redirect|\PHPUnit_Framework_MockObject_MockObject $redirectMock */
-        $redirectMock = $this->getMockBuilder(\Magento\Framework\Controller\Result\Redirect::class)
+        $redirectMock = $this->getMockBuilder('Magento\Framework\Controller\Result\Redirect')
             ->disableOriginalConstructor()
             ->getMock();
 
@@ -148,7 +148,7 @@ class SendmailTest extends \PHPUnit\Framework\TestCase
             );
 
         /** @var \Magento\Catalog\Api\Data\ProductInterface|\PHPUnit_Framework_MockObject_MockObject $productMock */
-        $productMock = $this->getMockBuilder(\Magento\Catalog\Api\Data\ProductInterface::class)
+        $productMock = $this->getMockBuilder('Magento\Catalog\Api\Data\ProductInterface')
             ->setMethods(['isVisibleInCatalog', 'setCategory', 'getProductUrl'])
             ->getMockForAbstractClass();
 
@@ -162,7 +162,7 @@ class SendmailTest extends \PHPUnit\Framework\TestCase
             ->willReturn(true);
 
         /** @var \Magento\Catalog\Api\Data\CategoryInterface|\PHPUnit_Framework_MockObject_MockObject $categoryMock */
-        $categoryMock = $this->getMockBuilder(\Magento\Catalog\Api\Data\CategoryInterface::class)
+        $categoryMock = $this->getMockBuilder('Magento\Catalog\Api\Data\CategoryInterface')
             ->getMockForAbstractClass();
 
         $this->categoryRepositoryMock->expects($this->once())
@@ -253,7 +253,7 @@ class SendmailTest extends \PHPUnit\Framework\TestCase
         $redirectUrl = 'redirect_url';
 
         /** @var \Magento\Framework\Controller\Result\Redirect|\PHPUnit_Framework_MockObject_MockObject $redirectMock */
-        $redirectMock = $this->getMockBuilder(\Magento\Framework\Controller\Result\Redirect::class)
+        $redirectMock = $this->getMockBuilder('Magento\Framework\Controller\Result\Redirect')
             ->disableOriginalConstructor()
             ->getMock();
 
@@ -277,7 +277,7 @@ class SendmailTest extends \PHPUnit\Framework\TestCase
             );
 
         /** @var \Magento\Catalog\Api\Data\ProductInterface|\PHPUnit_Framework_MockObject_MockObject $productMock */
-        $productMock = $this->getMockBuilder(\Magento\Catalog\Api\Data\ProductInterface::class)
+        $productMock = $this->getMockBuilder('Magento\Catalog\Api\Data\ProductInterface')
             ->setMethods(['isVisibleInCatalog', 'setCategory', 'getProductUrl'])
             ->getMockForAbstractClass();
 
@@ -380,7 +380,7 @@ class SendmailTest extends \PHPUnit\Framework\TestCase
         $redirectUrl = 'redirect_url';
 
         /** @var \Magento\Framework\Controller\Result\Redirect|\PHPUnit_Framework_MockObject_MockObject $redirectMock */
-        $redirectMock = $this->getMockBuilder(\Magento\Framework\Controller\Result\Redirect::class)
+        $redirectMock = $this->getMockBuilder('Magento\Framework\Controller\Result\Redirect')
             ->disableOriginalConstructor()
             ->getMock();
 
@@ -404,7 +404,7 @@ class SendmailTest extends \PHPUnit\Framework\TestCase
             );
 
         /** @var \Magento\Catalog\Api\Data\ProductInterface|\PHPUnit_Framework_MockObject_MockObject $productMock */
-        $productMock = $this->getMockBuilder(\Magento\Catalog\Api\Data\ProductInterface::class)
+        $productMock = $this->getMockBuilder('Magento\Catalog\Api\Data\ProductInterface')
             ->setMethods(['isVisibleInCatalog', 'setCategory', 'getProductUrl'])
             ->getMockForAbstractClass();
 
@@ -507,7 +507,7 @@ class SendmailTest extends \PHPUnit\Framework\TestCase
         $redirectUrl = 'redirect_url';
 
         /** @var \Magento\Framework\Controller\Result\Redirect|\PHPUnit_Framework_MockObject_MockObject $redirectMock */
-        $redirectMock = $this->getMockBuilder(\Magento\Framework\Controller\Result\Redirect::class)
+        $redirectMock = $this->getMockBuilder('Magento\Framework\Controller\Result\Redirect')
             ->disableOriginalConstructor()
             ->getMock();
 
@@ -531,7 +531,7 @@ class SendmailTest extends \PHPUnit\Framework\TestCase
             );
 
         /** @var \Magento\Catalog\Api\Data\ProductInterface|\PHPUnit_Framework_MockObject_MockObject $productMock */
-        $productMock = $this->getMockBuilder(\Magento\Catalog\Api\Data\ProductInterface::class)
+        $productMock = $this->getMockBuilder('Magento\Catalog\Api\Data\ProductInterface')
             ->setMethods(['isVisibleInCatalog', 'setCategory', 'getProductUrl'])
             ->getMockForAbstractClass();
 
@@ -634,7 +634,7 @@ class SendmailTest extends \PHPUnit\Framework\TestCase
         $redirectUrl = 'redirect_url';
 
         /** @var \Magento\Framework\Controller\Result\Redirect|\PHPUnit_Framework_MockObject_MockObject $redirectMock */
-        $redirectMock = $this->getMockBuilder(\Magento\Framework\Controller\Result\Redirect::class)
+        $redirectMock = $this->getMockBuilder('Magento\Framework\Controller\Result\Redirect')
             ->disableOriginalConstructor()
             ->getMock();
 
@@ -658,7 +658,7 @@ class SendmailTest extends \PHPUnit\Framework\TestCase
             );
 
         /** @var \Magento\Catalog\Api\Data\ProductInterface|\PHPUnit_Framework_MockObject_MockObject $productMock */
-        $productMock = $this->getMockBuilder(\Magento\Catalog\Api\Data\ProductInterface::class)
+        $productMock = $this->getMockBuilder('Magento\Catalog\Api\Data\ProductInterface')
             ->setMethods(['isVisibleInCatalog', 'setCategory', 'getProductUrl'])
             ->getMockForAbstractClass();
 
@@ -759,12 +759,12 @@ class SendmailTest extends \PHPUnit\Framework\TestCase
         ];
 
         /** @var \Magento\Framework\Controller\Result\Redirect|\PHPUnit_Framework_MockObject_MockObject $redirectMock */
-        $redirectMock = $this->getMockBuilder(\Magento\Framework\Controller\Result\Redirect::class)
+        $redirectMock = $this->getMockBuilder('Magento\Framework\Controller\Result\Redirect')
             ->disableOriginalConstructor()
             ->getMock();
 
         /** @var \Magento\Framework\Controller\Result\Forward|\PHPUnit_Framework_MockObject_MockObject $forwardMock */
-        $forwardMock = $this->getMockBuilder(\Magento\Framework\Controller\Result\Forward::class)
+        $forwardMock = $this->getMockBuilder('Magento\Framework\Controller\Result\Forward')
             ->disableOriginalConstructor()
             ->getMock();
 
@@ -811,12 +811,12 @@ class SendmailTest extends \PHPUnit\Framework\TestCase
         $formData = '';
 
         /** @var \Magento\Framework\Controller\Result\Redirect|\PHPUnit_Framework_MockObject_MockObject $redirectMock */
-        $redirectMock = $this->getMockBuilder(\Magento\Framework\Controller\Result\Redirect::class)
+        $redirectMock = $this->getMockBuilder('Magento\Framework\Controller\Result\Redirect')
             ->disableOriginalConstructor()
             ->getMock();
 
         /** @var \Magento\Framework\Controller\Result\Forward|\PHPUnit_Framework_MockObject_MockObject $forwardMock */
-        $forwardMock = $this->getMockBuilder(\Magento\Framework\Controller\Result\Forward::class)
+        $forwardMock = $this->getMockBuilder('Magento\Framework\Controller\Result\Forward')
             ->disableOriginalConstructor()
             ->getMock();
 
@@ -843,7 +843,7 @@ class SendmailTest extends \PHPUnit\Framework\TestCase
             );
 
         /** @var \Magento\Catalog\Api\Data\ProductInterface|\PHPUnit_Framework_MockObject_MockObject $productMock */
-        $productMock = $this->getMockBuilder(\Magento\Catalog\Api\Data\ProductInterface::class)
+        $productMock = $this->getMockBuilder('Magento\Catalog\Api\Data\ProductInterface')
             ->setMethods(['isVisibleInCatalog', 'setCategory', 'getProductUrl'])
             ->getMockForAbstractClass();
 
@@ -879,7 +879,7 @@ class SendmailTest extends \PHPUnit\Framework\TestCase
     public function testExecuteWithoutFormKey()
     {
         /** @var \Magento\Framework\Controller\Result\Redirect|\PHPUnit_Framework_MockObject_MockObject $redirectMock */
-        $redirectMock = $this->getMockBuilder(\Magento\Framework\Controller\Result\Redirect::class)
+        $redirectMock = $this->getMockBuilder('Magento\Framework\Controller\Result\Redirect')
             ->disableOriginalConstructor()
             ->getMock();
 

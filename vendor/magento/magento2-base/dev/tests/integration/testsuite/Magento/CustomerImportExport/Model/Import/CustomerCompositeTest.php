@@ -8,7 +8,7 @@ namespace Magento\CustomerImportExport\Model\Import;
 use Magento\Framework\App\Filesystem\DirectoryList;
 use Magento\ImportExport\Model\Import\ErrorProcessing\ProcessingErrorAggregatorInterface;
 
-class CustomerCompositeTest extends \PHPUnit\Framework\TestCase
+class CustomerCompositeTest extends \PHPUnit_Framework_TestCase
 {
     /**#@+
      * Attributes used in test assertions
@@ -83,7 +83,7 @@ class CustomerCompositeTest extends \PHPUnit\Framework\TestCase
     {
         $this->_objectManager = \Magento\TestFramework\Helper\Bootstrap::getObjectManager();
         $this->_entityAdapter = $this->_objectManager->create(
-            \Magento\CustomerImportExport\Model\Import\CustomerComposite::class
+            'Magento\CustomerImportExport\Model\Import\CustomerComposite'
         );
     }
 
@@ -95,7 +95,7 @@ class CustomerCompositeTest extends \PHPUnit\Framework\TestCase
     protected function _assertCustomerData(array $expectedData)
     {
         /** @var $collection \Magento\Customer\Model\ResourceModel\Customer\Collection */
-        $collection = $this->_objectManager->create(\Magento\Customer\Model\ResourceModel\Customer\Collection::class);
+        $collection = $this->_objectManager->create('Magento\Customer\Model\ResourceModel\Customer\Collection');
         $collection->addAttributeToSelect($this->_customerAttributes);
         $customers = $collection->getItems();
 
@@ -143,7 +143,7 @@ class CustomerCompositeTest extends \PHPUnit\Framework\TestCase
         // set entity adapter parameters
         $this->_entityAdapter->setParameters(['behavior' => $behavior]);
         /** @var \Magento\Framework\Filesystem $filesystem */
-        $filesystem = $this->_objectManager->create(\Magento\Framework\Filesystem::class);
+        $filesystem = $this->_objectManager->create('Magento\Framework\Filesystem');
         $rootDirectory = $filesystem->getDirectoryWrite(DirectoryList::ROOT);
 
         $this->_entityAdapter->getErrorAggregator()->initValidationStrategy(

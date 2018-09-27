@@ -49,6 +49,7 @@ class InterfaceValidator
         $plugin = new \ReflectionClass($pluginClass);
         $type = new \ReflectionClass($interceptedType);
 
+        $pluginMethods = [];
         foreach ($plugin->getMethods(\ReflectionMethod::IS_PUBLIC) as $pluginMethod) {
             /** @var  $pluginMethod \ReflectionMethod */
             $originMethodName = $this->getOriginMethodName($pluginMethod->getName());
@@ -112,14 +113,11 @@ class InterfaceValidator
                     break;
                 case self::METHOD_AFTER:
                     if (count($pluginMethodParameters) > 1) {
-                        // remove result
-                        array_shift($pluginMethodParameters);
-                        $matchedParameters = array_intersect_key($originMethodParameters, $pluginMethodParameters);
-                        $this->validateMethodsParameters(
-                            $pluginMethodParameters,
-                            $matchedParameters,
-                            $pluginClass,
-                            $pluginMethod->getName()
+                        throw new ValidatorException(
+                            new Phrase(
+                                'Invalid method signature. Detected extra parameters in %1::%2',
+                                [$pluginClass, $pluginMethod->getName()]
+                            )
                         );
                     }
                     break;

@@ -11,9 +11,6 @@ use Symfony\Component\Console\Output\OutputInterface;
 
 /**
  * Command for checking cache status
- *
- * @api
- * @since 100.0.2
  */
 class CacheStatusCommand extends AbstractCacheCommand
 {

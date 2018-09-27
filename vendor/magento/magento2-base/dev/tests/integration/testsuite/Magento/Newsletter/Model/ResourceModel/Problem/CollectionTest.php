@@ -8,7 +8,7 @@ namespace Magento\Newsletter\Model\ResourceModel\Problem;
 
 use Magento\TestFramework\Helper\Bootstrap;
 
-class CollectionTest extends \PHPUnit\Framework\TestCase
+class CollectionTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\Newsletter\Model\ResourceModel\Problem\Collection
@@ -18,7 +18,7 @@ class CollectionTest extends \PHPUnit\Framework\TestCase
     protected function setUp()
     {
         $this->_collection = Bootstrap::getObjectManager()
-            ->create(\Magento\Newsletter\Model\ResourceModel\Problem\Collection::class);
+            ->create('Magento\Newsletter\Model\ResourceModel\Problem\Collection');
     }
 
     /**
@@ -28,14 +28,14 @@ class CollectionTest extends \PHPUnit\Framework\TestCase
     {
         /** @var \Magento\Customer\Api\CustomerRepositoryInterface $customerRepository */
         $customerRepository = Bootstrap::getObjectManager()
-            ->create(\Magento\Customer\Api\CustomerRepositoryInterface::class);
+            ->create('Magento\Customer\Api\CustomerRepositoryInterface');
         $customer = $customerRepository->getById(1);
         /** @var \Magento\Newsletter\Model\Subscriber $subscriber */
         $subscriber = Bootstrap::getObjectManager()
-            ->create(\Magento\Newsletter\Model\Subscriber::class)->loadByEmail($customer->getEmail());
+            ->create('Magento\Newsletter\Model\Subscriber')->loadByEmail($customer->getEmail());
         /** @var \Magento\Newsletter\Model\Problem $problem */
         $problem = Bootstrap::getObjectManager()
-            ->create(\Magento\Newsletter\Model\Problem::class)->addSubscriberData($subscriber);
+            ->create('Magento\Newsletter\Model\Problem')->addSubscriberData($subscriber);
 
         $item = $this->_collection->addSubscriberInfo()->load()->getFirstItem();
 

@@ -5,13 +5,12 @@
  */
 namespace Magento\Sales\Model\ResourceModel;
 
+use Magento\Framework\App\ResourceConnection as AppResource;
 use Magento\Framework\DB\Adapter\AdapterInterface;
 use Magento\Framework\Model\ResourceModel\Db\AbstractDb;
 
 /**
  * Class AbstractGrid
- * @api
- * @since 100.0.2
  */
 abstract class AbstractGrid extends AbstractDb implements GridInterface
 {
@@ -48,6 +47,7 @@ abstract class AbstractGrid extends AbstractDb implements GridInterface
     /**
      * Returns connection
      *
+     * @todo: make method protected
      * @return AdapterInterface
      */
     public function getConnection()
@@ -67,7 +67,6 @@ abstract class AbstractGrid extends AbstractDb implements GridInterface
     {
         return $this->getTable($this->gridTableName);
     }
-
     /**
      * Purge grid row
      *
@@ -90,9 +89,6 @@ abstract class AbstractGrid extends AbstractDb implements GridInterface
      *
      * @param string $default
      * @return string
-     * @deprecated 100.2.0 this method is not used in abstract model but only in single child so
-     * this deprecation is a part of cleaning abstract classes.
-     * @see \Magento\Sales\Model\ResourceModel\Provider\UpdatedIdListProvider
      */
     protected function getLastUpdatedAtValue($default = '0000-00-00 00:00:00')
     {

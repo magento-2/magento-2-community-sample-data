@@ -9,9 +9,6 @@ use Magento\Sales\Model\Order\Item;
 
 /**
  * Adminhtml sales order item renderer
- *
- * @api
- * @since 100.0.2
  */
 class DefaultRenderer extends \Magento\Sales\Block\Adminhtml\Items\AbstractItems
 {

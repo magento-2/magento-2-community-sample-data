@@ -5,7 +5,7 @@
  */
 namespace Magento\CatalogInventory\Test\Unit\Model\Product\CopyConstructor;
 
-class CatalogInventoryTest extends \PHPUnit\Framework\TestCase
+class CatalogInventoryTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\CatalogInventory\Model\Product\CopyConstructor\CatalogInventory
@@ -39,18 +39,33 @@ class CatalogInventoryTest extends \PHPUnit\Framework\TestCase
 
     protected function setUp()
     {
-        $this->productMock = $this->createPartialMock(\Magento\Catalog\Model\Product::class, ['__wakeup', 'getStore']);
-        $store = $this->createPartialMock(\Magento\Store\Model\Store::class, ['getWebsiteId', '__wakeup']);
+        $this->productMock = $this->getMock(
+            '\Magento\Catalog\Model\Product',
+            ['__wakeup', 'getStore'],
+            [],
+            '',
+            false
+        );
+        $store = $this->getMock(
+            '\Magento\Store\Model\Store',
+            ['getWebsiteId', '__wakeup'],
+            [],
+            '',
+            false
+        );
         $store->expects($this->any())->method('getWebsiteId')->willReturn(0);
         $this->productMock->expects($this->any())->method('getStore')->willReturn($store);
 
-        $this->duplicateMock = $this->createPartialMock(
-            \Magento\Catalog\Model\Product::class,
-            ['setStockData', '__wakeup']
+        $this->duplicateMock = $this->getMock(
+            '\Magento\Catalog\Model\Product',
+            ['setStockData', '__wakeup'],
+            [],
+            '',
+            false
         );
 
         $this->stockItemDoMock = $this->getMockForAbstractClass(
-            \Magento\CatalogInventory\Api\Data\StockItemInterface::class,
+            'Magento\CatalogInventory\Api\Data\StockItemInterface',
             [
                 'getItemId',
                 'getUseConfigEnableQtyInc',
@@ -61,13 +76,13 @@ class CatalogInventoryTest extends \PHPUnit\Framework\TestCase
         );
 
         $this->stockRegistry = $this->getMockForAbstractClass(
-            \Magento\CatalogInventory\Api\StockRegistryInterface::class,
+            'Magento\CatalogInventory\Api\StockRegistryInterface',
             ['getStockItem']
         );
 
         $this->objectManager = new \Magento\Framework\TestFramework\Unit\Helper\ObjectManager($this);
         $this->model = $this->objectManager->getObject(
-            \Magento\CatalogInventory\Model\Product\CopyConstructor\CatalogInventory::class,
+            'Magento\CatalogInventory\Model\Product\CopyConstructor\CatalogInventory',
             ['stockRegistry' => $this->stockRegistry]
         );
     }

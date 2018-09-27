@@ -6,12 +6,10 @@
 
 namespace Magento\Config\Controller\Adminhtml\System;
 
-use Magento\Framework\Exception\LocalizedException;
+use Magento\Config\Controller\Adminhtml\System\ConfigSectionChecker;
 
 /**
  * System Configuration Abstract Controller
- * @api
- * @since 100.0.2
  */
 abstract class AbstractConfig extends \Magento\Backend\App\AbstractAction
 {
@@ -28,19 +26,19 @@ abstract class AbstractConfig extends \Magento\Backend\App\AbstractAction
     protected $_configStructure;
 
     /**
-     * @deprecated 100.2.0
+     * @var ConfigSectionChecker
      */
     protected $_sectionChecker;
 
     /**
      * @param \Magento\Backend\App\Action\Context $context
      * @param \Magento\Config\Model\Config\Structure $configStructure
-     * @param mixed $sectionChecker - deprecated
+     * @param ConfigSectionChecker $sectionChecker
      */
     public function __construct(
         \Magento\Backend\App\Action\Context $context,
         \Magento\Config\Model\Config\Structure $configStructure,
-        $sectionChecker
+        ConfigSectionChecker $sectionChecker
     ) {
         parent::__construct($context);
         $this->_configStructure = $configStructure;
@@ -56,12 +54,7 @@ abstract class AbstractConfig extends \Magento\Backend\App\AbstractAction
     public function dispatch(\Magento\Framework\App\RequestInterface $request)
     {
         if (!$request->getParam('section')) {
-            try {
-                $request->setParam('section', $this->_configStructure->getFirstSection()->getId());
-            } catch (LocalizedException $e) {
-                /** If visible section not found need to show only config index page without sections if it allow. */
-                $this->messageManager->addWarningMessage($e->getMessage());
-            }
+            $request->setParam('section', $this->_configStructure->getFirstSection()->getId());
         }
         return parent::dispatch($request);
     }
@@ -110,7 +103,6 @@ abstract class AbstractConfig extends \Magento\Backend\App\AbstractAction
      * @param array $configState
      * @return array
      * @SuppressWarnings(PHPMD.UnusedLocalVariable)
-     * @since 100.1.0
      */
     protected function sanitizeConfigState($configState)
     {

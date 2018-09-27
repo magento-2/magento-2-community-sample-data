@@ -35,10 +35,7 @@ class Collection extends \Magento\Framework\Model\ResourceModel\Db\Collection\Ab
      */
     protected function _construct()
     {
-        $this->_init(
-            \Magento\Quote\Model\Quote\Item\Option::class,
-            \Magento\Quote\Model\ResourceModel\Quote\Item\Option::class
-        );
+        $this->_init('Magento\Quote\Model\Quote\Item\Option', 'Magento\Quote\Model\ResourceModel\Quote\Item\Option');
     }
 
     /**

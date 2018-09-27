@@ -6,10 +6,6 @@
 
 namespace Magento\Framework\DataObject;
 
-/**
- * Interface \Magento\Framework\DataObject\KeyValueObjectInterface
- *
- */
 interface KeyValueObjectInterface
 {
     const KEY = 'key';

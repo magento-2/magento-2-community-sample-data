@@ -17,7 +17,7 @@ class Form extends \Magento\Backend\Block\Widget\Form\Generic
     /**
      * @var string
      */
-    protected $_template = 'rating/form.phtml';
+    protected $_template = 'Magento_Review::rating/form.phtml';
 
     /**
      * Session
@@ -212,7 +212,7 @@ class Form extends \Magento\Backend\Block\Widget\Form\Generic
                 ]
             );
             $renderer = $this->getLayout()->createBlock(
-                \Magento\Backend\Block\Store\Switcher\Form\Renderer\Fieldset\Element::class
+                'Magento\Backend\Block\Store\Switcher\Form\Renderer\Fieldset\Element'
             );
             $field->setRenderer($renderer);
             if ($this->_coreRegistry->registry('rating_data')) {
@@ -242,9 +242,7 @@ class Form extends \Magento\Backend\Block\Widget\Form\Generic
         if (!isset($this->fieldset[$formId])) {
             if (!$this->getForm()->getElement($formId)) {
                 $this->fieldset[$formId] = $this->getForm()->addFieldset($formId, $config);
-            } elseif ($this->getForm()->getElement($formId)) {
-                //do nothing
-            }
+            } elseif ($this->getForm()->getElement($formId));
         }
     }
 

@@ -5,7 +5,7 @@
  */
 namespace Magento\Sales\Test\Unit\Block\Adminhtml\Order\Create\Sidebar;
 
-class AbstractSidebarTest extends \PHPUnit\Framework\TestCase
+class AbstractSidebarTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\Sales\Block\Adminhtml\Order\Create\Sidebar\AbstractSidebar
@@ -20,9 +20,9 @@ class AbstractSidebarTest extends \PHPUnit\Framework\TestCase
     protected function setUp()
     {
         $helper = new \Magento\Framework\TestFramework\Unit\Helper\ObjectManager($this);
-        $this->itemMock = $this->createPartialMock(\Magento\Framework\DataObject::class, ['getQty']);
+        $this->itemMock = $this->getMock('Magento\Framework\DataObject', ['getQty'], [], '', false);
         $this->abstractSidebar = $helper->getObject(
-            \Magento\Sales\Block\Adminhtml\Order\Create\Sidebar\AbstractSidebar::class,
+            'Magento\Sales\Block\Adminhtml\Order\Create\Sidebar\AbstractSidebar',
             []
         );
     }
@@ -39,6 +39,9 @@ class AbstractSidebarTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals($expectedValue, $this->abstractSidebar->getItemQty($this->itemMock));
     }
 
+    /**
+     * @return array
+     */
     public function getItemQtyDataProvider()
     {
         return ['whenQtyIsset' => [2, 10, 10], 'whenQtyNotIsset' => [1, false, 1]];
@@ -46,7 +49,7 @@ class AbstractSidebarTest extends \PHPUnit\Framework\TestCase
 
     public function testIsConfigurationRequired()
     {
-        $productTypeMock = $this->createMock(\Magento\Catalog\Model\Product\Type::class);
+        $productTypeMock = $this->getMock('Magento\Catalog\Model\Product\Type', [], [], '', false);
         $this->assertEquals(false, $this->abstractSidebar->isConfigurationRequired($productTypeMock));
     }
 }

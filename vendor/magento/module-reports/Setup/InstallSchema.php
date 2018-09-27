@@ -874,5 +874,6 @@ class InstallSchema implements InstallSchemaInterface
          * Prepare database for tables install
          */
         $installer->endSetup();
+
     }
 }

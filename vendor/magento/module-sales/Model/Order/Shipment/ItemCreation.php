@@ -43,7 +43,6 @@ class ItemCreation implements ShipmentItemCreationInterface
     public function setOrderItemId($orderItemId)
     {
         $this->orderItemId = $orderItemId;
-        return $this;
     }
 
     /**
@@ -60,7 +59,6 @@ class ItemCreation implements ShipmentItemCreationInterface
     public function setQty($qty)
     {
         $this->qty = $qty;
-        return $this;
     }
 
     /**
@@ -85,6 +83,5 @@ class ItemCreation implements ShipmentItemCreationInterface
         $this->extensionAttributes = $extensionAttributes;
         return $this;
     }
-
     //@codeCoverageIgnoreEnd
 }

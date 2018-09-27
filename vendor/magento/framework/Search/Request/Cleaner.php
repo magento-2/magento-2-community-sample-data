@@ -9,9 +9,6 @@ use Magento\Framework\Exception\StateException;
 use Magento\Framework\Search\Request\Aggregation\StatusInterface as AggregationStatus;
 use Magento\Framework\Phrase;
 
-/**
- * @api
- */
 class Cleaner
 {
     /**

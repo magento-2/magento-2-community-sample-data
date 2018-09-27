@@ -9,7 +9,7 @@ namespace Magento\Setup\Test\Unit\Console\Command;
 use Magento\Setup\Console\Command\InfoCurrencyListCommand;
 use Symfony\Component\Console\Tester\CommandTester;
 
-class InfoCurrencyListCommandTest extends \PHPUnit\Framework\TestCase
+class InfoCurrencyListCommandTest extends \PHPUnit_Framework_TestCase
 {
     public function testExecute()
     {
@@ -17,16 +17,16 @@ class InfoCurrencyListCommandTest extends \PHPUnit\Framework\TestCase
             'CUR' => 'Currency description'
         ];
 
-        $table = $this->createMock(\Symfony\Component\Console\Helper\Table::class);
+        $table = $this->getMock('Symfony\Component\Console\Helper\Table', [], [], '', false);
         $table->expects($this->once())->method('setHeaders')->with(['Currency', 'Code']);
         $table->expects($this->once())->method('addRow')->with(['Currency description', 'CUR']);
 
         /** @var \Symfony\Component\Console\Helper\HelperSet|\PHPUnit_Framework_MockObject_MockObject $helperSet */
-        $helperSet = $this->createMock(\Symfony\Component\Console\Helper\HelperSet::class);
+        $helperSet = $this->getMock('Symfony\Component\Console\Helper\HelperSet', [], [], '', false);
         $helperSet->expects($this->once())->method('get')->with('table')->will($this->returnValue($table));
 
         /** @var \Magento\Framework\Setup\Lists|\PHPUnit_Framework_MockObject_MockObject $list */
-        $list = $this->createMock(\Magento\Framework\Setup\Lists::class);
+        $list = $this->getMock('Magento\Framework\Setup\Lists', [], [], '', false);
         $list->expects($this->once())->method('getCurrencyList')->will($this->returnValue($currencies));
         $command = new InfoCurrencyListCommand($list);
         $command->setHelperSet($helperSet);

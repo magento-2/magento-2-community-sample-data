@@ -12,14 +12,10 @@ use Magento\Framework\Phrase;
 
 class Xml implements \Magento\Framework\Webapi\Rest\Request\DeserializerInterface
 {
-    /**
-     * @var \Magento\Framework\Xml\Parser
-     */
+    /** @var \Magento\Framework\Xml\Parser */
     protected $_xmlParser;
 
-    /**
-     * @var \Magento\Framework\App\State
-     */
+    /** @var State */
     protected $_appState;
 
     /**

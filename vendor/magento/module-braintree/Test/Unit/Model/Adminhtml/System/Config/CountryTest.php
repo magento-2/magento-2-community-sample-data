@@ -14,7 +14,7 @@ use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
  * Class CountryTest
  *
  */
-class CountryTest extends \PHPUnit\Framework\TestCase
+class CountryTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\Braintree\Model\Adminhtml\System\Config\Country

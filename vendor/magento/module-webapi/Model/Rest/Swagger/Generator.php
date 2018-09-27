@@ -5,16 +5,16 @@
  */
 namespace Magento\Webapi\Model\Rest\Swagger;
 
-use Magento\Framework\Api\SimpleDataObjectConverter;
-use Magento\Framework\App\ProductMetadataInterface;
 use Magento\Framework\Reflection\TypeProcessor;
-use Magento\Framework\Webapi\Authorization;
-use Magento\Framework\Webapi\Exception as WebapiException;
 use Magento\Webapi\Controller\Rest;
 use Magento\Webapi\Model\AbstractSchemaGenerator;
 use Magento\Webapi\Model\Config\Converter;
 use Magento\Webapi\Model\Rest\Swagger;
 use Magento\Webapi\Model\Rest\SwaggerFactory;
+use Magento\Framework\Webapi\Authorization;
+use Magento\Framework\Webapi\Exception as WebapiException;
+use Magento\Framework\App\ProductMetadataInterface;
+use \Magento\Framework\Api\SimpleDataObjectConverter;
 use Magento\Webapi\Model\ServiceMetadata;
 
 /**
@@ -39,7 +39,7 @@ class Generator extends AbstractSchemaGenerator
     const UNAUTHORIZED_DESCRIPTION = '401 Unauthorized';
 
     /** Array signifier */
-    const ARRAY_SIGNIFIER = '[]';
+    const ARRAY_SIGNIFIER = '[0]';
 
     /**
      * Swagger factory instance.
@@ -280,7 +280,8 @@ class Generator extends AbstractSchemaGenerator
 
         $phpMethodData = $httpMethodData[Converter::KEY_METHOD];
         /** Return nothing if necessary fields are not set */
-        if (!isset($phpMethodData['interface']['in']['parameters'])
+        if (
+            !isset($phpMethodData['interface']['in']['parameters'])
             || !isset($httpMethodData['uri'])
             || !isset($httpMethodData['httpOperation'])
         ) {
@@ -289,7 +290,8 @@ class Generator extends AbstractSchemaGenerator
 
         foreach ($phpMethodData['interface']['in']['parameters'] as $parameterName => $parameterInfo) {
             /** Omit forced parameters */
-            if (isset($httpMethodData['parameters'][$parameterName]['force'])
+            if (
+                isset($httpMethodData['parameters'][$parameterName]['force'])
                 && $httpMethodData['parameters'][$parameterName]['force']
             ) {
                 continue;
@@ -317,6 +319,7 @@ class Generator extends AbstractSchemaGenerator
                     $description,
                     $bodySchema
                 );
+
             }
         }
 
@@ -749,8 +752,7 @@ class Generator extends AbstractSchemaGenerator
     private function convertPathParams($uri)
     {
         $parts = explode('/', $uri);
-        $count = count($parts);
-        for ($i=0; $i < $count; $i++) {
+        for ($i=0; $i < count($parts); $i++) {
             if (strpos($parts[$i], ':') === 0) {
                 $parts[$i] = '{' . substr($parts[$i], 1) . '}';
             }
@@ -882,13 +884,13 @@ class Generator extends AbstractSchemaGenerator
     {
         $httpCode = '500';
         $description = 'Internal Server error';
-        if (is_subclass_of($exceptionClass, \Magento\Framework\Exception\LocalizedException::class)) {
+        if (is_subclass_of($exceptionClass, '\Magento\Framework\Exception\LocalizedException')) {
             // Map HTTP codes for LocalizedExceptions according to exception type
-            if (is_subclass_of($exceptionClass, \Magento\Framework\Exception\NoSuchEntityException::class)) {
+            if (is_subclass_of($exceptionClass, '\Magento\Framework\Exception\NoSuchEntityException')) {
                 $httpCode = WebapiException::HTTP_NOT_FOUND;
                 $description = '404 Not Found';
-            } elseif (is_subclass_of($exceptionClass, \Magento\Framework\Exception\AuthorizationException::class)
-                || is_subclass_of($exceptionClass, \Magento\Framework\Exception\AuthenticationException::class)
+            } elseif (is_subclass_of($exceptionClass, '\Magento\Framework\Exception\AuthorizationException')
+                || is_subclass_of($exceptionClass, '\Magento\Framework\Exception\AuthenticationException')
             ) {
                 $httpCode = WebapiException::HTTP_UNAUTHORIZED;
                 $description = self::UNAUTHORIZED_DESCRIPTION;

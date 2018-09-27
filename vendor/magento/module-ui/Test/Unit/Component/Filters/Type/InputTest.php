@@ -5,16 +5,17 @@
  */
 namespace Magento\Ui\Test\Unit\Component\Filters\Type;
 
-use Magento\Framework\View\Element\UiComponent\ContextInterface;
 use Magento\Framework\View\Element\UiComponent\ContextInterface as UiContext;
+use Magento\Framework\View\Element\UiComponent\DataProvider\DataProviderInterface;
 use Magento\Framework\View\Element\UiComponentFactory;
-use Magento\Framework\View\Element\UiComponentInterface;
 use Magento\Ui\Component\Filters\Type\Input;
+use Magento\Framework\View\Element\UiComponent\ContextInterface;
+use Magento\Framework\View\Element\UiComponentInterface;
 
 /**
  * Class InputTest
  */
-class InputTest extends \PHPUnit\Framework\TestCase
+class InputTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var ContextInterface|\PHPUnit_Framework_MockObject_MockObject
@@ -42,19 +43,35 @@ class InputTest extends \PHPUnit\Framework\TestCase
     protected function setUp()
     {
         $this->contextMock = $this->getMockForAbstractClass(
-            \Magento\Framework\View\Element\UiComponent\ContextInterface::class,
+            'Magento\Framework\View\Element\UiComponent\ContextInterface',
             [],
             '',
             false
         );
-        $this->uiComponentFactory = $this->createPartialMock(
-            \Magento\Framework\View\Element\UiComponentFactory::class,
-            ['create']
+        $processor = $this->getMockBuilder('Magento\Framework\View\Element\UiComponent\Processor')
+            ->disableOriginalConstructor()
+            ->getMock();
+        $this->contextMock->expects($this->any())->method('getProcessor')->willReturn($processor);
+        $this->uiComponentFactory = $this->getMock(
+            'Magento\Framework\View\Element\UiComponentFactory',
+            ['create'],
+            [],
+            '',
+            false
         );
-        $this->filterBuilderMock = $this->createMock(\Magento\Framework\Api\FilterBuilder::class);
-        $this->filterModifierMock = $this->createPartialMock(
-            \Magento\Ui\Component\Filters\FilterModifier::class,
-            ['applyFilterModifier']
+        $this->filterBuilderMock = $this->getMock(
+            'Magento\Framework\Api\FilterBuilder',
+            [],
+            [],
+            '',
+            false
+        );
+        $this->filterModifierMock = $this->getMock(
+            'Magento\Ui\Component\Filters\FilterModifier',
+            ['applyFilterModifier'],
+            [],
+            '',
+            false
         );
     }
 
@@ -65,7 +82,6 @@ class InputTest extends \PHPUnit\Framework\TestCase
      */
     public function testGetComponentName()
     {
-        $this->contextMock->expects($this->never())->method('getProcessor');
         $date = new Input(
             $this->contextMock,
             $this->uiComponentFactory,
@@ -88,13 +104,9 @@ class InputTest extends \PHPUnit\Framework\TestCase
      */
     public function testPrepare($name, $filterData, $expectedCondition)
     {
-        $processor = $this->getMockBuilder(\Magento\Framework\View\Element\UiComponent\Processor::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $this->contextMock->expects($this->atLeastOnce())->method('getProcessor')->willReturn($processor);
         /** @var UiComponentInterface $uiComponent */
         $uiComponent = $this->getMockForAbstractClass(
-            \Magento\Framework\View\Element\UiComponentInterface::class,
+            'Magento\Framework\View\Element\UiComponentInterface',
             [],
             '',
             false
@@ -111,48 +123,28 @@ class InputTest extends \PHPUnit\Framework\TestCase
             ->method('addComponentDefinition')
             ->with(Input::NAME, ['extends' => Input::NAME]);
         $this->contextMock->expects($this->any())
-            ->method('getFiltersParams')
+            ->method('getRequestParam')
+            ->with(UiContext::FILTER_VAR)
             ->willReturn($filterData);
         $dataProvider = $this->getMockForAbstractClass(
-            \Magento\Framework\View\Element\UiComponent\DataProvider\DataProviderInterface::class,
+            'Magento\Framework\View\Element\UiComponent\DataProvider\DataProviderInterface',
             [],
             '',
             false
         );
-
         $this->contextMock->expects($this->any())
             ->method('getDataProvider')
             ->willReturn($dataProvider);
+        if ($expectedCondition !== null) {
+            $dataProvider->expects($this->any())
+                ->method('addFilter')
+                ->with($expectedCondition, $name);
+        }
 
         $this->uiComponentFactory->expects($this->any())
             ->method('create')
             ->with($name, Input::COMPONENT, ['context' => $this->contextMock])
             ->willReturn($uiComponent);
-
-        if ($expectedCondition !== null) {
-            $this->filterBuilderMock->expects($this->once())
-                ->method('setConditionType')
-                ->with('like')
-                ->willReturnSelf();
-
-            $this->filterBuilderMock->expects($this->once())
-                ->method('setField')
-                ->with($name)
-                ->willReturnSelf();
-
-            $this->filterBuilderMock->expects($this->once())
-                ->method('setValue')
-                ->with($expectedCondition['like'])
-                ->willReturnSelf();
-
-            $filterMock = $this->getMockBuilder(\Magento\Framework\Api\Filter::class)
-                ->disableOriginalConstructor()
-                ->getMock();
-
-            $this->filterBuilderMock->expects($this->once())
-                ->method('create')
-                ->willReturn($filterMock);
-        }
 
         $date = new Input(
             $this->contextMock,
@@ -180,12 +172,7 @@ class InputTest extends \PHPUnit\Framework\TestCase
             [
                 'test_date',
                 ['test_date' => 'some_value'],
-                ['like' => '%some\_value%'],
-            ],
-            [
-                'test_date',
-                ['test_date' => '%'],
-                ['like' => '%\%%'],
+                ['like' => '%some_value%'],
             ],
         ];
     }

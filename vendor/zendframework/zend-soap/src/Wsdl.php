@@ -41,7 +41,7 @@ class Wsdl
      * Map of PHP Class names to WSDL QNames.
      * @var array
      */
-    protected $classMap = [];
+    protected $classMap = array();
 
     /**
      * DOM Instance
@@ -53,7 +53,7 @@ class Wsdl
      * Types defined on schema
      * @var array
      */
-    protected $includedTypes = [];
+    protected $includedTypes = array();
 
     /**
      * @var DOMElement
@@ -88,7 +88,7 @@ class Wsdl
         $name,
         $uri,
         ComplexTypeStrategy $strategy = null,
-        array $classMap = []
+        array $classMap = array()
     ) {
         if ($uri instanceof Uri) {
             $uri = $uri->toString();
@@ -125,15 +125,15 @@ class Wsdl
         $dom->appendChild($definitions);
 
         $uri = $this->sanitizeUri($uri);
-        $this->setAttributeWithSanitization($definitions, 'name', $name);
-        $this->setAttributeWithSanitization($definitions, 'targetNamespace', $uri);
+        $this->setAttributeWithSanitization($definitions, 'name',               $name);
+        $this->setAttributeWithSanitization($definitions, 'targetNamespace',    $uri);
 
-        $definitions->setAttributeNS(self::XML_NS_URI, 'xmlns:'. self::WSDL_NS, self::WSDL_NS_URI);
-        $definitions->setAttributeNS(self::XML_NS_URI, 'xmlns:'. self::TYPES_NS, $uri);
-        $definitions->setAttributeNS(self::XML_NS_URI, 'xmlns:'. self::SOAP_11_NS, self::SOAP_11_NS_URI);
-        $definitions->setAttributeNS(self::XML_NS_URI, 'xmlns:'. self::XSD_NS, self::XSD_NS_URI);
-        $definitions->setAttributeNS(self::XML_NS_URI, 'xmlns:'. self::SOAP_ENC_NS, self::SOAP_ENC_URI);
-        $definitions->setAttributeNS(self::XML_NS_URI, 'xmlns:'. self::SOAP_12_NS, self::SOAP_12_NS_URI);
+        $definitions->setAttributeNS(self::XML_NS_URI, 'xmlns:'. self::WSDL_NS,      self::WSDL_NS_URI);
+        $definitions->setAttributeNS(self::XML_NS_URI, 'xmlns:'. self::TYPES_NS,     $uri);
+        $definitions->setAttributeNS(self::XML_NS_URI, 'xmlns:'. self::SOAP_11_NS,   self::SOAP_11_NS_URI);
+        $definitions->setAttributeNS(self::XML_NS_URI, 'xmlns:'. self::XSD_NS,       self::XSD_NS_URI);
+        $definitions->setAttributeNS(self::XML_NS_URI, 'xmlns:'. self::SOAP_ENC_NS,  self::SOAP_ENC_URI);
+        $definitions->setAttributeNS(self::XML_NS_URI, 'xmlns:'. self::SOAP_12_NS,   self::SOAP_12_NS_URI);
 
         return $dom;
     }
@@ -197,14 +197,14 @@ class Wsdl
             $this->dom->documentElement->setAttributeNS(self::XML_NS_URI, self::XML_NS . ':' . self::TYPES_NS, $uri);
 
             $xpath = new DOMXPath($this->dom);
-            $xpath->registerNamespace('default', self::WSDL_NS_URI);
+            $xpath->registerNamespace('default',            self::WSDL_NS_URI);
 
-            $xpath->registerNamespace(self::TYPES_NS, $uri);
-            $xpath->registerNamespace(self::SOAP_11_NS, self::SOAP_11_NS_URI);
-            $xpath->registerNamespace(self::SOAP_12_NS, self::SOAP_12_NS_URI);
-            $xpath->registerNamespace(self::XSD_NS, self::XSD_NS_URI);
-            $xpath->registerNamespace(self::SOAP_ENC_NS, self::SOAP_ENC_URI);
-            $xpath->registerNamespace(self::WSDL_NS, self::WSDL_NS_URI);
+            $xpath->registerNamespace(self::TYPES_NS,       $uri);
+            $xpath->registerNamespace(self::SOAP_11_NS,     self::SOAP_11_NS_URI);
+            $xpath->registerNamespace(self::SOAP_12_NS,     self::SOAP_12_NS_URI);
+            $xpath->registerNamespace(self::XSD_NS,         self::XSD_NS_URI);
+            $xpath->registerNamespace(self::SOAP_ENC_NS,    self::SOAP_ENC_URI);
+            $xpath->registerNamespace(self::WSDL_NS,        self::WSDL_NS_URI);
 
             // Select only attribute nodes. Data nodes does not contain uri
             // except for documentation node but this is for the user to decide.
@@ -314,8 +314,7 @@ class Wsdl
      * Add a {@link http://www.w3.org/TR/wsdl#_porttypes portType} element to the WSDL
      *
      * @param  string $name portType element's name
-     * @return DOMElement The new portType's XML_Tree_Node for use in
-     *     {@link addPortOperation} and {@link addDocumentation}
+     * @return DOMElement The new portType's XML_Tree_Node for use in {@link function addPortOperation} and <a href='psi_element://function'>addDocumentation</a>@link function addDocumentation}
      */
     public function addPortType($name)
     {
@@ -349,7 +348,7 @@ class Wsdl
         }
 
         if (is_string($output) && (strlen(trim($output)) >= 1)) {
-            $node = $this->dom->createElementNS(self::WSDL_NS_URI, 'output');
+            $node= $this->dom->createElementNS(self::WSDL_NS_URI, 'output');
             $operation->appendChild($node);
             $node->setAttribute('message', $output);
         }
@@ -368,8 +367,7 @@ class Wsdl
      *
      * @param  string $name Name of the Binding
      * @param  string $portType name of the portType to bind
-     * @return DOMElement The new binding's XML_Tree_Node for use with
-     *     {@link function addBindingOperation} and {@link function addDocumentation}
+     * @return DOMElement The new binding's XML_Tree_Node for use with {@link function addBindingOperation} and {@link function addDocumentation}
      */
     public function addBinding($name, $portType)
     {
@@ -385,36 +383,28 @@ class Wsdl
     /**
      * Add an operation to a binding element
      *
-     * @param  DOMElement $binding A binding XML_Tree_Node returned by
-     *     {@link function addBinding}
+     * @param  DOMElement $binding A binding XML_Tree_Node returned by {@link function addBinding}
      * @param  string $name
      * @param  array|bool $input  An array of attributes for the input element,
-     *     allowed keys are: 'use', 'namespace', 'encodingStyle'.
-     *     {@link http://www.w3.org/TR/wsdl#_soap:body More Information}
+     *                            allowed keys are: 'use', 'namespace', 'encodingStyle'.
+     *                            {@link http://www.w3.org/TR/wsdl#_soap:body More Information}
      * @param  array|bool $output An array of attributes for the output element,
-     *     allowed keys are: 'use', 'namespace', 'encodingStyle'.
-     *     {@link http://www.w3.org/TR/wsdl#_soap:body More Information}
+     *                            allowed keys are: 'use', 'namespace', 'encodingStyle'.
+     *                            {@link http://www.w3.org/TR/wsdl#_soap:body More Information}
      * @param  array|bool $fault  An array with attributes for the fault element,
-     *     allowed keys are: 'name', 'use', 'namespace', 'encodingStyle'.
-     *     {@link http://www.w3.org/TR/wsdl#_soap:body More Information}
+     *                            allowed keys are: 'name', 'use', 'namespace', 'encodingStyle'.
+     *                            {@link http://www.w3.org/TR/wsdl#_soap:body More Information}
      * @param  int $soapVersion SOAP version: SOAP_1_1 or SOAP_1_2, default: SOAP_1_1
-     * @return DOMElement The new Operation's XML_Tree_Node for use with {@link
-     *     function addSoapOperation} and {@link function addDocumentation}
+     * @return DOMElement The new Operation's XML_Tree_Node for use with {@link function addSoapOperation} and {@link function addDocumentation}
      */
-    public function addBindingOperation(
-        $binding,
-        $name,
-        $input = false,
-        $output = false,
-        $fault = false,
-        $soapVersion = SOAP_1_1
-    ) {
+    public function addBindingOperation($binding, $name, $input = false, $output = false, $fault = false, $soapVersion = SOAP_1_1)
+    {
         $operation = $this->dom->createElementNS(self::WSDL_NS_URI, 'operation');
         $binding->appendChild($operation);
 
         $this->setAttribute($operation, 'name', $name);
 
-        if (is_array($input) && ! empty($input)) {
+        if (is_array($input) && !empty($input)) {
             $node = $this->dom->createElementNS(self::WSDL_NS_URI, 'input');
             $operation->appendChild($node);
 
@@ -424,7 +414,7 @@ class Wsdl
             $this->arrayToAttributes($soapNode, $input);
         }
 
-        if (is_array($output) && ! empty($output)) {
+        if (is_array($output) && !empty($output)) {
             $node = $this->dom->createElementNS(self::WSDL_NS_URI, 'output');
             $operation->appendChild($node);
 
@@ -434,7 +424,7 @@ class Wsdl
             $this->arrayToAttributes($soapNode, $output);
         }
 
-        if (is_array($fault) && ! empty($fault)) {
+        if (is_array($fault) && !empty($fault)) {
             $node = $this->dom->createElementNS(self::WSDL_NS_URI, 'fault');
             $operation->appendChild($node);
 
@@ -453,12 +443,8 @@ class Wsdl
      * @param  int $soapVersion SOAP version: SOAP_1_1 or SOAP_1_2, default: SOAP_1_1
      * @return DOMElement
      */
-    public function addSoapBinding(
-        $binding,
-        $style = 'document',
-        $transport = 'http://schemas.xmlsoap.org/soap/http',
-        $soapVersion = SOAP_1_1
-    ) {
+    public function addSoapBinding($binding, $style = 'document', $transport = 'http://schemas.xmlsoap.org/soap/http', $soapVersion = SOAP_1_1)
+    {
         $soapBinding = $this->dom->createElementNS($this->getSoapNamespaceUriByVersion($soapVersion), 'binding');
         $binding->appendChild($soapBinding);
 
@@ -526,17 +512,11 @@ class Wsdl
     /**
      * Add a documentation element to any element in the WSDL.
      *
-     * Note that the WSDL specification uses 'document', but the WSDL schema
-     * uses 'documentation' instead.
+     * Note that the WSDL {@link http://www.w3.org/TR/wsdl#_documentation specification} uses 'document',
+     * but the WSDL {@link http://schemas.xmlsoap.org/wsdl/ schema} uses 'documentation' instead.
+     * The {@link http://www.ws-i.org/Profiles/BasicProfile-1.1-2004-08-24.html#WSDL_documentation_Element WS-I Basic Profile 1.1} recommends using 'documentation'.
      *
-     * The WS-I Basic Profile 1.1 recommends using 'documentation'.
-     *
-     * @see http://www.w3.org/TR/wsdl#_documentation WSDL specification
-     * @see http://schemas.xmlsoap.org/wsdl/ WSDL schema
-     * @see http://www.ws-i.org/Profiles/BasicProfile-1.1-2004-08-24.html#WSDL_documentation_Element WS-I Basic
-     *     Profile 1.1
-     * @param  DOMElement $inputNode An XML_Tree_Node returned by another
-     *     method to add the documentation to
+     * @param  DOMElement $inputNode An XML_Tree_Node returned by another method to add the documentation to
      * @param  string $documentation Human readable documentation for the node
      * @return DOMElement The documentation element
      */
@@ -555,7 +535,7 @@ class Wsdl
             $node->appendChild($doc);
         }
 
-        $docCData = $this->dom->createTextNode(str_replace(["\r\n", "\r"], "\n", $documentation));
+        $docCData = $this->dom->createTextNode(str_replace(array("\r\n", "\r"), "\n", $documentation));
         $doc->appendChild($docCData);
         return $doc;
     }
@@ -563,9 +543,7 @@ class Wsdl
     /**
      * Add WSDL Types element
      *
-     * @param  DOMDocument|DOMNode|DOMElement|DOMDocumentFragment $types A
-     *     DOMDocument|DOMNode|DOMElement|DOMDocumentFragment with all the XML
-     *     Schema types defined in it
+     * @param  DOMDocument|DOMNode|DOMElement|DOMDocumentFragment $types A DOMDocument|DOMNode|DOMElement|DOMDocumentFragment with all the XML Schema types defined in it
      */
     public function addTypes(DOMNode $types)
     {
@@ -587,7 +565,7 @@ class Wsdl
      */
     public function addType($type, $wsdlType)
     {
-        if (! isset($this->includedTypes[$type])) {
+        if (!isset($this->includedTypes[$type])) {
             $this->includedTypes[$type] = $wsdlType;
         }
         return $this;
@@ -648,7 +626,7 @@ class Wsdl
     {
         $this->dom->normalizeDocument();
 
-        if (! $filename) {
+        if (!$filename) {
             echo $this->toXML();
             return true;
         }
@@ -695,16 +673,13 @@ class Wsdl
             case 'mixed':
                 return self::XSD_NS . ':anyType';
 
-            case 'date':
-                return self::XSD_NS . ':date';
-
             case 'void':
                 return '';
 
             default:
                 // delegate retrieval of complex type to current strategy
                 return $this->addComplexType($type);
-        }
+            }
     }
 
     /**
@@ -744,7 +719,7 @@ class Wsdl
         // remove namespace,
         $pos = strrpos($type, '\\');
         if ($pos) {
-            $type = substr($type, $pos + 1);
+            $type = substr($type, $pos+1);
         }
 
         return $type;
@@ -777,21 +752,21 @@ class Wsdl
      * @return DOMElement parsed element
      * @throws Exception\RuntimeException if $element is not an array
      */
-    protected function parseElement($element)
+    protected function _parseElement($element)
     {
-        if (! is_array($element)) {
+        if (!is_array($element)) {
             throw new Exception\RuntimeException('The "element" parameter needs to be an associative array.');
         }
 
         $elementXML = $this->dom->createElementNS(self::XSD_NS_URI, 'element');
         foreach ($element as $key => $value) {
-            if (in_array($key, ['sequence', 'all', 'choice'])) {
+            if (in_array($key, array('sequence', 'all', 'choice'))) {
                 if (is_array($value)) {
                     $complexType = $this->dom->createElementNS(self::XSD_NS_URI, 'complexType');
                     if (count($value) > 0) {
                         $container = $this->dom->createElementNS(self::XSD_NS_URI, $key);
                         foreach ($value as $subElement) {
-                            $subElementXML = $this->parseElement($subElement);
+                            $subElementXML = $this->_parseElement($subElement);
                             $container->appendChild($subElementXML);
                         }
                         $complexType->appendChild($container);
@@ -828,9 +803,7 @@ class Wsdl
     }
 
     /**
-     * Convert associative array to attributes of given node
-     *
-     * Optionally uses {@link function sanitizeAttributeValueByName}.
+     * Convert associative array to attributes of given node using optional {@link function sanitizeAttributeValueByName}
      *
      * @param  DOMNode $node
      * @param  array $attributes
@@ -917,7 +890,7 @@ class Wsdl
     public function addElement($element)
     {
         $schema = $this->getSchema();
-        $elementXml = $this->parseElement($element);
+        $elementXml = $this->_parseElement($element);
         $schema->appendChild($elementXml);
 
         return self::TYPES_NS . ':' . $element['name'];

@@ -10,7 +10,7 @@ use \Magento\Framework\Registry;
 /**
  * Registry model test. Test cases for managing values in registry
  */
-class RegistryTest extends \PHPUnit\Framework\TestCase
+class RegistryTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\Framework\Registry
@@ -27,7 +27,7 @@ class RegistryTest extends \PHPUnit\Framework\TestCase
         $this->registry = new Registry();
         $this->data = [
             'key' => 'customer',
-            'value' => \Magento\Customer\Model\Customer::class,
+            'value' => '\Magento\Customer\Model\Customer',
         ];
         $this->registry->register($this->data['key'], $this->data['value']);
     }
@@ -65,7 +65,7 @@ class RegistryTest extends \PHPUnit\Framework\TestCase
     public function testUnregister()
     {
         $key = 'csv_adapter';
-        $valueObj = $this->createMock(\Magento\ImportExport\Model\Export\Adapter\Csv::class);
+        $valueObj = $this->getMock('\Magento\ImportExport\Model\Export\Adapter\Csv', [], [], '', false, false);
         $this->registry->register($key, $valueObj);
         $this->assertEquals($valueObj, $this->registry->registry($key));
         $this->registry->unregister($key);

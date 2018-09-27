@@ -10,7 +10,7 @@ use \Magento\Framework\Stdlib\StringUtils;
 /**
  * Magento\Framework\Stdlib\StringUtilsTest test case
  */
-class StringUtilsTest extends \PHPUnit\Framework\TestCase
+class StringUtilsTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\Framework\Stdlib\StringUtils

@@ -13,7 +13,7 @@ namespace Magento\Paypal\Test\Unit\Model;
 
 use Magento\Sales\Model\Order;
 
-class IpnTest extends \PHPUnit\Framework\TestCase
+class IpnTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\Paypal\Model\Ipn
@@ -56,7 +56,7 @@ class IpnTest extends \PHPUnit\Framework\TestCase
             'save',
             'getState',
         ];
-        $this->_orderMock = $this->createPartialMock(\Magento\Sales\Model\OrderFactory::class, $methods);
+        $this->_orderMock = $this->getMock('Magento\Sales\Model\OrderFactory', $methods, [], '', false);
         $this->_orderMock->expects($this->any())->method('create')->will($this->returnSelf());
         $this->_orderMock->expects($this->any())->method('loadByIncrementId')->will($this->returnSelf());
         $this->_orderMock->expects($this->any())->method('getId')->will($this->returnSelf());
@@ -64,8 +64,14 @@ class IpnTest extends \PHPUnit\Framework\TestCase
         $this->_orderMock->expects($this->any())->method('getStoreId')->will($this->returnSelf());
         $this->_orderMock->expects($this->any())->method('getEmailSent')->will($this->returnValue(true));
 
-        $this->configFactory = $this->createPartialMock(\Magento\Paypal\Model\ConfigFactory::class, ['create']);
-        $configMock = $this->getMockBuilder(\Magento\Paypal\Model\Config::class)
+        $this->configFactory = $this->getMock(
+            'Magento\Paypal\Model\ConfigFactory',
+            ['create'],
+            [],
+            '',
+            false
+        );
+        $configMock = $this->getMockBuilder('Magento\Paypal\Model\Config')
             ->disableOriginalConstructor()
             ->getMock();
         $this->configFactory->expects($this->any())->method('create')->willReturn($configMock);
@@ -75,7 +81,13 @@ class IpnTest extends \PHPUnit\Framework\TestCase
         $configMock->expects($this->any())->method('getPayPalIpnUrl')
             ->will($this->returnValue('https://ipnpb_paypal_url'));
 
-        $this->curlFactory = $this->createPartialMock(\Magento\Framework\HTTP\Adapter\CurlFactory::class, ['create', 'setConfig', 'write', 'read']);
+        $this->curlFactory = $this->getMock(
+            'Magento\Framework\HTTP\Adapter\CurlFactory',
+            ['create', 'setConfig', 'write', 'read'],
+            [],
+            '',
+            false
+        );
         $this->curlFactory->expects($this->any())->method('create')->will($this->returnSelf());
         $this->curlFactory->expects($this->any())->method('setConfig')->will($this->returnSelf());
         $this->curlFactory->expects($this->any())->method('write')->will($this->returnSelf());
@@ -83,11 +95,16 @@ class IpnTest extends \PHPUnit\Framework\TestCase
             '
                 VERIFIED'
         ));
-        $this->_paypalInfo = $this->createPartialMock(\Magento\Paypal\Model\Info::class, ['importToPayment', 'getMethod', 'getAdditionalInformation']);
+        $this->_paypalInfo = $this->getMock(
+            'Magento\Paypal\Model\Info',
+            ['importToPayment', 'getMethod', 'getAdditionalInformation'],
+            [],
+            '',
+            false
+        );
         $this->_paypalInfo->expects($this->any())->method('getMethod')->will($this->returnValue('some_method'));
         $objectHelper = new \Magento\Framework\TestFramework\Unit\Helper\ObjectManager($this);
-        $this->_ipn = $objectHelper->getObject(
-            \Magento\Paypal\Model\Ipn::class,
+        $this->_ipn = $objectHelper->getObject('Magento\Paypal\Model\Ipn',
             [
                 'configFactory' => $this->configFactory,
                 'curlFactory' => $this->curlFactory,
@@ -111,7 +128,7 @@ class IpnTest extends \PHPUnit\Framework\TestCase
             'setIsTransactionClosed',
             'registerAuthorizationNotification',
         ];
-        $payment = $this->createPartialMock(\Magento\Sales\Model\Order\Payment::class, $methods);
+        $payment = $this->getMock('Magento\Sales\Model\Order\Payment', $methods, [], '', false);
         $payment->expects($this->any())->method('setPreparedMessage')->will($this->returnSelf());
         $payment->expects($this->any())->method('setTransactionId')->will($this->returnSelf());
         $payment->expects($this->any())->method('setParentTransactionId')->will($this->returnSelf());
@@ -133,7 +150,13 @@ class IpnTest extends \PHPUnit\Framework\TestCase
 
     public function testPaymentReviewRegisterPaymentFraud()
     {
-        $paymentMock = $this->createPartialMock(\Magento\Sales\Model\Order\Payment::class, ['getAdditionalInformation', '__wakeup', 'registerCaptureNotification']);
+        $paymentMock = $this->getMock(
+            '\Magento\Sales\Model\Order\Payment',
+            ['getAdditionalInformation', '__wakeup', 'registerCaptureNotification'],
+            [],
+            '',
+            false
+        );
         $paymentMock->expects($this->any())
             ->method('getAdditionalInformation')
             ->will($this->returnValue([]));
@@ -156,8 +179,7 @@ class IpnTest extends \PHPUnit\Framework\TestCase
                 $paymentMock
             );
         $objectHelper = new \Magento\Framework\TestFramework\Unit\Helper\ObjectManager($this);
-        $this->_ipn = $objectHelper->getObject(
-            \Magento\Paypal\Model\Ipn::class,
+        $this->_ipn = $objectHelper->getObject('Magento\Paypal\Model\Ipn',
             [
                 'configFactory' => $this->configFactory,
                 'curlFactory' => $this->curlFactory,
@@ -177,7 +199,7 @@ class IpnTest extends \PHPUnit\Framework\TestCase
     public function testRegisterPaymentDenial()
     {
         /** @var \Magento\Sales\Model\Order\Payment $paymentMock */
-        $paymentMock = $this->getMockBuilder(\Magento\Sales\Model\Order\Payment::class)
+        $paymentMock = $this->getMockBuilder('\Magento\Sales\Model\Order\Payment')
             ->setMethods([
                 'getAdditionalInformation',
                 'setTransactionId',
@@ -201,8 +223,7 @@ class IpnTest extends \PHPUnit\Framework\TestCase
             ->with(['payment_status' => 'denied'], $paymentMock);
 
         $objectHelper = new \Magento\Framework\TestFramework\Unit\Helper\ObjectManager($this);
-        $this->_ipn = $objectHelper->getObject(
-            \Magento\Paypal\Model\Ipn::class,
+        $this->_ipn = $objectHelper->getObject('Magento\Paypal\Model\Ipn',
             [
                 'configFactory' => $this->configFactory,
                 'curlFactory' => $this->curlFactory,

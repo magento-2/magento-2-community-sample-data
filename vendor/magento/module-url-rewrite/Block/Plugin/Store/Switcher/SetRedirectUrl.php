@@ -14,24 +14,16 @@ use Magento\Framework\App\ActionInterface;
 
 class SetRedirectUrl
 {
-    /**
-     * @var \Magento\Framework\Url\Helper\Data
-     */
+    /** @var UrlHelper */
     private $urlHelper;
 
-    /**
-     * @var \Magento\Framework\UrlInterface
-     */
+    /** @var UrlInterface */
     private $urlBuilder;
 
-    /**
-     * @var \Magento\UrlRewrite\Model\UrlFinderInterface
-     */
+    /** @var UrlFinderInterface */
     private $urlFinder;
 
-    /**
-     * @var \Magento\Framework\App\RequestInterface
-     */
+    /** @var RequestInterface */
     private $request;
 
     /**

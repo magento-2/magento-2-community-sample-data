@@ -5,18 +5,18 @@
  */
 namespace Magento\Framework\DB\Test\Unit;
 
-class SelectFactoryTest extends \PHPUnit\Framework\TestCase
+class SelectFactoryTest extends \PHPUnit_Framework_TestCase
 {
     public function testCreate()
     {
-        $selectRenderer = $this->getMockBuilder(\Magento\Framework\DB\Select\SelectRenderer::class)
+        $selectRenderer = $this->getMockBuilder('Magento\Framework\DB\Select\SelectRenderer')
             ->disableOriginalConstructor()
             ->getMock();
         $parts = [];
-        $adapter = $this->getMockBuilder(\Magento\Framework\DB\Adapter\Pdo\Mysql::class)
+        $adapter = $this->getMockBuilder('Magento\Framework\DB\Adapter\Pdo\Mysql')
             ->disableOriginalConstructor()
             ->getMock();
         $model = new \Magento\Framework\DB\SelectFactory($selectRenderer, $parts);
-        $this->assertInstanceOf(\Magento\Framework\DB\Select::class, $model->create($adapter));
+        $this->assertInstanceOf('Magento\Framework\DB\Select', $model->create($adapter));
     }
 }

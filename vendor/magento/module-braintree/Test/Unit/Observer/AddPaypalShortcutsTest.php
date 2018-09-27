@@ -17,7 +17,7 @@ use Magento\Framework\View\LayoutInterface;
  *
  * @see \Magento\Braintree\Observer\AddPaypalShortcuts
  */
-class AddPaypalShortcutsTest extends \PHPUnit\Framework\TestCase
+class AddPaypalShortcutsTest extends \PHPUnit_Framework_TestCase
 {
     public function testExecute()
     {

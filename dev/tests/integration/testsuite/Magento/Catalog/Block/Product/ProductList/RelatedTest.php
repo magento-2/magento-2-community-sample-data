@@ -9,78 +9,47 @@ namespace Magento\Catalog\Block\Product\ProductList;
  * Test class for \Magento\Catalog\Block\Product\List\Related.
  *
  * @magentoDataFixture Magento/Catalog/_files/products_related.php
- * @magentoDbIsolation disabled
  */
-class RelatedTest extends \PHPUnit\Framework\TestCase
+class RelatedTest extends \PHPUnit_Framework_TestCase
 {
-    /**
-     * @var \Magento\Catalog\Block\Product\ProductList\Related
-     */
-    protected $block;
-
-    /**
-     * @var \Magento\Catalog\Api\Data\ProductInterface
-     */
-    protected $product;
-
-    /**
-     * @var \Magento\Catalog\Api\Data\ProductInterface
-     */
-    protected $relatedProduct;
-
-    protected function setUp()
+    public function testAll()
     {
         /** @var $objectManager \Magento\TestFramework\ObjectManager */
         $objectManager = \Magento\TestFramework\Helper\Bootstrap::getObjectManager();
         \Magento\TestFramework\Helper\Bootstrap::getInstance()->loadArea(\Magento\Framework\App\Area::AREA_FRONTEND);
 
         /** @var \Magento\Catalog\Api\ProductRepositoryInterface $productRepository */
-        $productRepository = $objectManager->create(\Magento\Catalog\Api\ProductRepositoryInterface::class);
+        $productRepository = $objectManager->create('Magento\Catalog\Api\ProductRepositoryInterface');
 
-        $this->relatedProduct = $productRepository->get('simple');
-        $this->product = $productRepository->get('simple_with_cross');
-        $objectManager->get(\Magento\Framework\Registry::class)->register('product', $this->product);
+        $product = $productRepository->get('simple');
+        $productWithCross = $productRepository->get('simple_with_cross');
+        $objectManager->get('Magento\Framework\Registry')->register('product', $productWithCross);
 
-        $this->block = $objectManager->get(\Magento\Framework\View\LayoutInterface::class)
-            ->createBlock(\Magento\Catalog\Block\Product\ProductList\Related::class);
+        /** @var $block \Magento\Catalog\Block\Product\ProductList\Related */
+        $block = $objectManager->get('Magento\Framework\View\LayoutInterface')
+            ->createBlock('Magento\Catalog\Block\Product\ProductList\Related');
 
-        $this->block->setLayout($objectManager->get(\Magento\Framework\View\LayoutInterface::class));
-        $this->block->setTemplate('Magento_Catalog::product/list/items.phtml');
-        $this->block->setType('related');
-        $this->block->addChild('addto', \Magento\Catalog\Block\Product\ProductList\Item\Container::class);
-        $this->block->getChildBlock(
+        $block->setLayout($objectManager->get('Magento\Framework\View\LayoutInterface'));
+        $block->setTemplate('Magento_Catalog::product/list/items.phtml');
+        $block->setType('related');
+        $block->addChild('addto', '\Magento\Catalog\Block\Product\ProductList\Item\Container');
+        $block->getChildBlock(
             'addto'
         )->addChild(
             'compare',
-            \Magento\Catalog\Block\Product\ProductList\Item\AddTo\Compare::class,
+            '\Magento\Catalog\Block\Product\ProductList\Item\AddTo\Compare',
             ['template' => 'Magento_Catalog::product/list/addto/compare.phtml']
         );
-    }
 
-    /**
-     * @magentoAppIsolation enabled
-     */
-    public function testAll()
-    {
-        $html = $this->block->toHtml();
+        $html = $block->toHtml();
         $this->assertNotEmpty($html);
         $this->assertContains('Simple Related Product', $html);
         /* name */
-        $this->assertContains('"product":"' . $this->relatedProduct->getId() . '"', $html);
+        $this->assertContains('"product":"' . $product->getId() .'"', $html);
         /* part of url */
         $this->assertInstanceOf(
-            \Magento\Catalog\Model\ResourceModel\Product\Link\Product\Collection::class,
-            $this->block->getItems()
+            'Magento\Catalog\Model\ResourceModel\Product\Link\Product\Collection',
+            $block->getItems()
         );
-    }
-
-    /**
-     * @magentoAppIsolation enabled
-     */
-    public function testGetIdentities()
-    {
-        $expectedTags = ['cat_p_' . $this->relatedProduct->getId(), 'cat_p'];
-        $tags = $this->block->getIdentities();
-        $this->assertEquals($expectedTags, $tags);
     }
 }

@@ -9,7 +9,7 @@ namespace Magento\Integration\Model\Config\Integration;
  * Service config data reader.
  *
  * @codeCoverageIgnore
- * @deprecated 100.1.0
+ * @deprecated
  */
 class Reader extends \Magento\Framework\Config\Reader\Filesystem
 {
@@ -40,7 +40,7 @@ class Reader extends \Magento\Framework\Config\Reader\Filesystem
         \Magento\Framework\Config\ValidationStateInterface $validationState,
         $fileName = 'integration/api.xml',
         $idAttributes = [],
-        $domDocumentClass = \Magento\Framework\Config\Dom::class,
+        $domDocumentClass = 'Magento\Framework\Config\Dom',
         $defaultScope = 'global'
     ) {
         parent::__construct(

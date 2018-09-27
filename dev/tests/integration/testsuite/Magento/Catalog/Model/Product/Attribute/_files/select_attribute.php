@@ -7,14 +7,12 @@
  */
 
 /** @var \Magento\Eav\Model\Entity\Type $entityType */
-$entityType = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->create(
-    \Magento\Eav\Model\Entity\Type::class
-);
+$entityType = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->create('Magento\Eav\Model\Entity\Type');
 $entityType->loadByCode('catalog_product');
 $defaultSetId = $entityType->getDefaultAttributeSetId();
 /** @var \Magento\Eav\Model\Entity\Attribute\Set $defaultSet */
 $defaultSet = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->create(
-    \Magento\Eav\Model\Entity\Attribute\Set::class
+    'Magento\Eav\Model\Entity\Attribute\Set'
 );
 $defaultSet->load($defaultSetId);
 $defaultGroupId = $defaultSet->getDefaultGroupId();
@@ -22,7 +20,7 @@ $optionData = ['value' => ['option_1' => [0 => 'Fixture Option']], 'order' => ['
 
 /** @var $attribute \Magento\Catalog\Model\ResourceModel\Eav\Attribute */
 $attribute = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->create(
-    \Magento\Catalog\Model\ResourceModel\Eav\Attribute::class
+    'Magento\Catalog\Model\ResourceModel\Eav\Attribute'
 );
 $attribute->setAttributeCode(
     'select_attribute'

@@ -7,11 +7,6 @@
  */
 namespace Magento\Framework\Webapi\Rest\Response;
 
-/**
- * Renderer interface allows REST response data rendering in a specific format (e.g. Json or Xml)
- *
- * @api
- */
 interface RendererInterface
 {
     /**

@@ -9,7 +9,6 @@ use Magento\Framework\Search\AbstractKeyValuePair;
 
 /**
  * Search Request Dimension
- * @api
  */
 class Dimension extends AbstractKeyValuePair
 {

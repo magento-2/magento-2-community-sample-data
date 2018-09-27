@@ -9,7 +9,7 @@
  */
 namespace Magento\Test;
 
-class BootstrapTest extends \PHPUnit\Framework\TestCase
+class BootstrapTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\TestFramework\Bootstrap|\PHPUnit_Framework_MockObject_MockObject
@@ -68,25 +68,25 @@ class BootstrapTest extends \PHPUnit\Framework\TestCase
     protected function setUp()
     {
         $this->_integrationTestsDir = realpath(__DIR__ . '/../../../../../../');
-        $this->_settings = $this->createMock(\Magento\TestFramework\Bootstrap\Settings::class);
-        $this->_envBootstrap = $this->createPartialMock(
-            \Magento\TestFramework\Bootstrap\Environment::class,
+        $this->_settings = $this->getMock('\Magento\TestFramework\Bootstrap\Settings', [], [], '', false);
+        $this->_envBootstrap = $this->getMock(
+            'Magento\TestFramework\Bootstrap\Environment',
             ['emulateHttpRequest', 'emulateSession']
         );
-        $this->_docBlockBootstrap = $this->getMockBuilder(\Magento\TestFramework\Bootstrap\DocBlock::class)
-            ->setMethods(['registerAnnotations'])
-            ->setConstructorArgs([__DIR__])
-            ->getMock();
-        $profilerDriver =
-            $this->createPartialMock(\Magento\Framework\Profiler\Driver\Standard::class, ['registerOutput']);
-        $this->_profilerBootstrap = $this->getMockBuilder(\Magento\TestFramework\Bootstrap\Profiler::class)
-            ->setMethods(['registerFileProfiler', 'registerBambooProfiler'])
-            ->setConstructorArgs([$profilerDriver])
-            ->getMock();
-
-        $this->_shell = $this->createPartialMock(\Magento\Framework\Shell::class, ['execute']);
-        $this->application = $this->createMock(\Magento\TestFramework\Application::class);
-        $this->memoryFactory = $this->createMock(\Magento\TestFramework\Bootstrap\MemoryFactory::class);
+        $this->_docBlockBootstrap = $this->getMock(
+            'Magento\TestFramework\Bootstrap\DocBlock',
+            ['registerAnnotations'],
+            [__DIR__]
+        );
+        $profilerDriver = $this->getMock('Magento\Framework\Profiler\Driver\Standard', ['registerOutput']);
+        $this->_profilerBootstrap = $this->getMock(
+            'Magento\TestFramework\Bootstrap\Profiler',
+            ['registerFileProfiler', 'registerBambooProfiler'],
+            [$profilerDriver]
+        );
+        $this->_shell = $this->getMock('Magento\Framework\Shell', ['execute'], [], '', false);
+        $this->application = $this->getMock('\Magento\TestFramework\Application', [], [], '', false);
+        $this->memoryFactory = $this->getMock('\Magento\TestFramework\Bootstrap\MemoryFactory', [], [], '', false);
         $this->_object = new \Magento\TestFramework\Bootstrap(
             $this->_settings,
             $this->_envBootstrap,
@@ -132,9 +132,12 @@ class BootstrapTest extends \PHPUnit\Framework\TestCase
         $this->_settings->expects($this->any())
             ->method('get')
             ->will($this->returnValueMap($settingsMap));
-        $memoryBootstrap = $this->createPartialMock(
-            \Magento\TestFramework\Bootstrap\Memory::class,
-            ['activateStatsDisplaying', 'activateLimitValidation']
+        $memoryBootstrap = $this->getMock(
+            'Magento\TestFramework\Bootstrap\Memory',
+            ['activateStatsDisplaying', 'activateLimitValidation'],
+            [],
+            '',
+            false
         );
         $memoryBootstrap->expects($this->once())->method('activateStatsDisplaying');
         $memoryBootstrap->expects($this->once())->method('activateLimitValidation');
@@ -145,7 +148,7 @@ class BootstrapTest extends \PHPUnit\Framework\TestCase
 
         $this->_docBlockBootstrap->expects($this->once())
             ->method('registerAnnotations')
-            ->with($this->isInstanceOf(\Magento\TestFramework\Application::class));
+            ->with($this->isInstanceOf('Magento\TestFramework\Application'));
 
         $this->_profilerBootstrap->expects($this->never())->method($this->anything());
 
@@ -154,9 +157,12 @@ class BootstrapTest extends \PHPUnit\Framework\TestCase
 
     public function testRunBootstrapProfilerEnabled()
     {
-        $memoryBootstrap = $this->createPartialMock(
-            \Magento\TestFramework\Bootstrap\Memory::class,
-            ['activateStatsDisplaying', 'activateLimitValidation']
+        $memoryBootstrap = $this->getMock(
+            'Magento\TestFramework\Bootstrap\Memory',
+            ['activateStatsDisplaying', 'activateLimitValidation'],
+            [],
+            '',
+            false
         );
         $memoryBootstrap->expects($this->once())->method('activateStatsDisplaying');
         $memoryBootstrap->expects($this->once())->method('activateLimitValidation');

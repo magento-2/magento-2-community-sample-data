@@ -13,17 +13,15 @@ use Magento\Framework\App\ObjectManager;
 
 class ChildrenUrlRewriteGenerator
 {
-    /**
-     * @var \Magento\CatalogUrlRewrite\Model\Category\ChildrenCategoriesProvider
-     */
+    /** @var \Magento\CatalogUrlRewrite\Model\Category\ChildrenCategoriesProvider */
     protected $childrenCategoriesProvider;
 
-    /**
-     * @var \Magento\CatalogUrlRewrite\Model\CategoryUrlRewriteGeneratorFactory
-     */
+    /** @var \Magento\CatalogUrlRewrite\Model\CategoryUrlRewriteGeneratorFactory */
     protected $categoryUrlRewriteGeneratorFactory;
 
     /**
+     * Container for new generated url rewrites.
+     *
      * @var \Magento\UrlRewrite\Model\MergeDataProvider
      */
     private $mergeDataProviderPrototype;
@@ -66,7 +64,6 @@ class ChildrenUrlRewriteGenerator
                 $categoryUrlRewriteGenerator->generate($childCategory, false, $rootCategoryId)
             );
         }
-
         return $mergeDataProvider->getData();
     }
 }

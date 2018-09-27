@@ -22,13 +22,14 @@ use Magento\Mtf\TestCase\Injectable;
  * 3. Fill in data according dataset
  * 4. Perform assertions
  *
- * @group Search_Core
+ * @group Search_Core_(MX)
  * @ZephyrId MAGETWO-28457
  */
 class GlobalSearchEntityTest extends Injectable
 {
     /* tags */
     const MVP = 'no';
+    const DOMAIN = 'MX';
     /* end tags */
 
     /**

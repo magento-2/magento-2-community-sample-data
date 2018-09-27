@@ -23,7 +23,11 @@ class ComponentRegistrar implements ComponentRegistrarInterface
     const LANGUAGE = 'language';
     /**#@- */
 
-    /**#@- */
+    /**
+     * All paths
+     *
+     * @var array
+     */
     private static $paths = [
         self::MODULE => [],
         self::LIBRARY => [],

@@ -914,15 +914,15 @@ class Nvp extends \Magento\Paypal\Model\Api\AbstractApi
     }
 
     /**
-     * Made additional request to PayPal to get authorization id
+     * Made additional request to paypal to get autharization id
      *
      * @return void
      */
     public function callDoReauthorization()
     {
-        $request = $this->_exportToRequest($this->_doReauthorizationRequest);
+        $request = $this->_export($this->_doReauthorizationRequest);
         $response = $this->call('DoReauthorization', $request);
-        $this->_importFromResponse($this->_doReauthorizationResponse, $response);
+        $this->_import($response, $this->_doReauthorizationResponse);
     }
 
     /**
@@ -991,7 +991,7 @@ class Nvp extends \Magento\Paypal\Model\Api\AbstractApi
     {
         $request = $this->_exportToRequest($this->_refundTransactionRequest);
         if ($this->getRefundType() === \Magento\Paypal\Model\Config::REFUND_TYPE_PARTIAL) {
-            $request['AMT'] = $this->formatPrice($this->getAmount());
+            $request['AMT'] = $this->getAmount();
         }
         $response = $this->call(self::REFUND_TRANSACTION, $request);
         $this->_importFromResponse($this->_refundTransactionResponse, $response);
@@ -1027,7 +1027,7 @@ class Nvp extends \Magento\Paypal\Model\Api\AbstractApi
     }
 
     /**
-     * Set Customer BillingA greement call
+     * Set Customer BillingAgreement call
      *
      * @return void
      * @link https://cms.paypal.com/us/cgi-bin/?&cmd=_render-content&content_ID=developer/e_howto_api_nvp_r_SetCustomerBillingAgreement
@@ -1285,15 +1285,6 @@ class Nvp extends \Magento\Paypal\Model\Api\AbstractApi
         );
         $this->_logger->critical($exceptionLogMessage);
 
-        /**
-         * The response code 10415 'Transaction has already been completed for this token'
-         * must not fails place order. The old Paypal interface does not lock 'Send' button
-         * it may result to re-send data.
-         */
-        if (in_array((string)ProcessableException::API_TRANSACTION_HAS_BEEN_COMPLETED, $this->_callErrors)) {
-            return;
-        }
-
         $exceptionPhrase = __('PayPal gateway has rejected request. %1', $errorMessages);
 
         /** @var \Magento\Framework\Exception\LocalizedException $exception */
@@ -1427,7 +1418,7 @@ class Nvp extends \Magento\Paypal\Model\Api\AbstractApi
         $nvpstr = strpos($nvpstr, "\r\n\r\n") !== false ? substr($nvpstr, strpos($nvpstr, "\r\n\r\n") + 4) : $nvpstr;
 
         while (strlen($nvpstr)) {
-            //postion of Key
+            //position of Key
             $keypos = strpos($nvpstr, '=');
             //position of value
             $valuepos = strpos($nvpstr, '&') ? strpos($nvpstr, '&') : strlen($nvpstr);
@@ -1435,7 +1426,7 @@ class Nvp extends \Magento\Paypal\Model\Api\AbstractApi
             /*getting the Key and Value values and storing in a Associative Array*/
             $keyval = substr($nvpstr, $intial, $keypos);
             $valval = substr($nvpstr, $keypos + 1, $valuepos - $keypos - 1);
-            //decoding the respose
+            //decoding the response
             $nvpArray[urldecode($keyval)] = urldecode($valval);
             $nvpstr = substr($nvpstr, $valuepos + 1, strlen($nvpstr));
         }
@@ -1491,9 +1482,9 @@ class Nvp extends \Magento\Paypal\Model\Api\AbstractApi
     protected function _applyStreetAndRegionWorkarounds(\Magento\Framework\DataObject $address)
     {
         // merge street addresses into 1
-        if ($address->getData('street2') !== null) {
-            $address->setStreet(implode("\n", [$address->getData('street'), $address->getData('street2')]));
-            $address->unsetData('street2');
+        if ($address->hasStreet2()) {
+            $address->setStreet(implode("\n", [$address->getStreet(), $address->getStreetLine(2)]));
+            $address->unsStreet2();
         }
         // attempt to fetch region_id from directory
         if ($address->getCountryId() && $address->getRegion()) {

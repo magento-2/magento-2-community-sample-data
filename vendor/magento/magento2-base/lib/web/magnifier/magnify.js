@@ -151,7 +151,6 @@ define([
          */
         function asyncToggleZoomButtons(path, $image) {
             var img = new Image();
-
             img.onload = function () {
                 this.height > $image.parent().height() || this.width > $image.parent().width() ?
                     hideZoomControls(false) : hideZoomControls(true);
@@ -456,33 +455,39 @@ define([
                             height: 'auto'
                         };
                         checkFullscreenImagePosition($image, dimentions, zoomWidthStep, zoomHeightStep);
-                    } else if (heightResult > parentHeight) {
+                    } else {
+                        if (heightResult > parentHeight) {
+                            dimentions = {
+                                width: widthResult,
+                                height: 'auto'
+                            };
+                            checkFullscreenImagePosition($image, dimentions, zoomWidthStep, zoomHeightStep);
+                        } else {
+                            allowZoomOut = dragFlag = false;
+                            toggleStandartNavigation();
+                            fitIntoParent();
+                        }
+                    }
+                } else {
+                    if (heightResult > parentHeight) {
                         dimentions = {
-                            width: widthResult,
-                            height: 'auto'
+                            width: 'auto',
+                            height: heightResult
                         };
                         checkFullscreenImagePosition($image, dimentions, zoomWidthStep, zoomHeightStep);
                     } else {
-                        allowZoomOut = dragFlag = false;
-                        toggleStandartNavigation();
-                        fitIntoParent();
+                        if (widthResult > parentWidth) {
+                            dimentions = {
+                                width: 'auto',
+                                height: heightResult
+                            };
+                            checkFullscreenImagePosition($image, dimentions, zoomWidthStep, zoomHeightStep);
+                        } else {
+                            allowZoomOut = dragFlag = false;
+                            toggleStandartNavigation();
+                            fitIntoParent();
+                        }
                     }
-                } else if (heightResult > parentHeight) {
-                    dimentions = {
-                        width: 'auto',
-                        height: heightResult
-                    };
-                    checkFullscreenImagePosition($image, dimentions, zoomWidthStep, zoomHeightStep);
-                } else if (widthResult > parentWidth) {
-                    dimentions = {
-                        width: 'auto',
-                        height: heightResult
-                    };
-                    checkFullscreenImagePosition($image, dimentions, zoomWidthStep, zoomHeightStep);
-                } else {
-                    allowZoomOut = dragFlag = false;
-                    toggleStandartNavigation();
-                    fitIntoParent();
                 }
             }
 
@@ -510,10 +515,12 @@ define([
                         } else {
                             zoomIn(ev);
                         }
-                    } else if (delta > 0) {
-                        zoomIn(ev);
                     } else {
-                        zoomOut(ev);
+                        if (delta > 0) {
+                            zoomIn(ev);
+                        } else {
+                            zoomOut(ev);
+                        }
                     }
 
                     e.preventDefault ? e.preventDefault() : e.returnValue = false;
@@ -564,19 +571,18 @@ define([
 
                 dragFlag = true;
 
-                if ($image.offset().left === $imageContainer.offset().left + $imageContainer.width() - $image.width() && e.keyCode === 39 ||
-                    endX - 1 < $imageContainer.offset().left + $imageContainer.width() - $image.width() && dx < 0 &&
+                if (($image.offset().left === $imageContainer.offset().left + $imageContainer.width() - $image.width() && e.keyCode === 39) ||
+                    (endX - 1 < $imageContainer.offset().left + $imageContainer.width() - $image.width() && dx < 0 && 
                     _.isNumber(endX) &&
-                    (e.type === 'mousemove' || e.type === 'touchmove' || e.type === 'pointermove' || e.type === 'MSPointerMove')) {
+                    (e.type === 'mousemove' || e.type === 'touchmove' || e.type === 'pointermove' || e.type === 'MSPointerMove'))) {
                     endX = null;
                     swipeSlide('>');
-
                     return;
                 }
 
-                if ($image.offset().left === $imageContainer.offset().left && dx !== 0 && e.keyCode === 37 ||
-                    endX === $imageContainer.offset().left && dx > 0 &&
-                    (e.type === 'mousemove' || e.type === 'touchmove' || e.type === 'pointermove' || e.type === 'MSPointerMove')) {
+                if (($image.offset().left === $imageContainer.offset().left && dx !== 0 && e.keyCode === 37) ||
+                    (endX === $imageContainer.offset().left && dx > 0 &&
+                    (e.type === 'mousemove' || e.type === 'touchmove' || e.type === 'pointermove' || e.type === 'MSPointerMove'))) {
                     endX = null;
                     swipeSlide('<');
 
@@ -613,7 +619,7 @@ define([
                 }
 
                 if ($image.width() <= $imageContainer.width() && allowZoomOut &&
-                    (e.type === 'mousemove' || e.type === 'touchmove' || e.type === 'pointermove' || e.type === 'MSPointerMove') &&
+                    (e.type === 'mousemove' || e.type === 'touchmove' || e.type === 'pointermove' || e.type === 'MSPointerMove') && 
                     Math.abs(dx) > Math.abs(dy) && Math.abs(dx) > swipeCondition) {
                     dx < 0 ? swipeSlide('>') : swipeSlide('<');
                 }
@@ -635,10 +641,12 @@ define([
 
                 if (allowZoomIn) {
                     zoomIn(e, imgOriginalSize.rw - $image.width(), imgOriginalSize.rh - $image.height());
-                } else if (proportions > $imageContainer.width() / $imageContainer.height()) {
-                    zoomOut(e, imgOriginalSize.rw - $imageContainer.width(), imgOriginalSize.rw / proportions);
                 } else {
-                    zoomOut(e, imgOriginalSize.rw * proportions, imgOriginalSize.rh - $imageContainer.height());
+                    if (proportions > $imageContainer.width() / $imageContainer.height()) {
+                        zoomOut(e, imgOriginalSize.rw - $imageContainer.width(), imgOriginalSize.rw / proportions);
+                    } else {
+                        zoomOut(e, imgOriginalSize.rw * proportions, imgOriginalSize.rh - $imageContainer.height());
+                    }
                 }
             }
 
@@ -687,23 +695,25 @@ define([
                     if ($image.hasClass(imageDraggableClass)) {
                         $image.removeClass(imageDraggableClass);
                     }
-                } else if (gallery.fullScreen && (!transitionEnabled || !transitionActive)) {
-                    e.preventDefault();
+                } else {
+                    if (gallery.fullScreen && (!transitionEnabled || !transitionActive)) {
+                        e.preventDefault();
 
-                    imagePosY = $image.offset().top;
-                    imagePosX = $image.offset().left;
+                        imagePosY = $image.offset().top;
+                        imagePosX = $image.offset().left;
 
-                    if (isTouchEnabled) {
-                        touch = e.originalEvent.touches[0] || e.originalEvent.changedTouches[0];
-                        e.clientX = touch.pageX;
-                        e.clientY = touch.pageY;
+                        if (isTouchEnabled) {
+                            touch = e.originalEvent.touches[0] || e.originalEvent.changedTouches[0];
+                            e.clientX = touch.pageX;
+                            e.clientY = touch.pageY;
+                        }
+                        startX = e.clientX || e.originalEvent.clientX;
+                        startY = e.clientY || e.originalEvent.clientY;
+                        isDragActive = true;
                     }
-                    startX = e.clientX || e.originalEvent.clientX;
-                    startY = e.clientY || e.originalEvent.clientY;
-                    isDragActive = true;
                 }
 
-                if ($image.offset() && $image.width() > $imageContainer.width()) {
+                if ($image.offset() && ($image.width() > $imageContainer.width())) {
                     endX = $image.offset().left;
                 }
             });
@@ -717,7 +727,6 @@ define([
                     if ($image.hasClass(imageDraggableClass)) {
                         $image.removeClass(imageDraggableClass);
                     }
-
                     if (currentDimention < pinchDimention) {
                         zoomOut(e);
                         pinchDimention = currentDimention;
@@ -932,7 +941,7 @@ define([
 
                     if (!$zoomIn.hasClass(zoomInLoaded)) {
                         $zoomIn.on('click touchstart', zoomIn);
-                        $zoomIn.on('mousedown', function (e) {
+                        $zoomIn.on('mousedown', function(e) {
                             e.stopPropagation();
                         });
 
@@ -955,7 +964,7 @@ define([
 
                     if (!$zoomOut.hasClass(zoomOutLoaded)) {
                         $zoomOut.on('click touchstart', zoomOut);
-                        $zoomOut.on('mousedown', function (e) {
+                        $zoomOut.on('mousedown', function(e) {
                             e.stopPropagation();
                         });
 

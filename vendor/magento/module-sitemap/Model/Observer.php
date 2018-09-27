@@ -19,6 +19,8 @@ class Observer
 
     /**
      * Cronjob expression configuration
+     *
+     * @deprecated Use \Magento\Cron\Model\Config\Backend\Sitemap::CRON_STRING_PATH instead.
      */
     const XML_PATH_CRON_EXPR = 'crontab/default/jobs/generate_sitemaps/schedule/cron_expr';
 
@@ -89,7 +91,6 @@ class Observer
      * Generate sitemaps
      *
      * @return void
-     * @throws \Exception
      * @SuppressWarnings(PHPMD.UnusedLocalVariable)
      */
     public function scheduledGenerateSitemaps()
@@ -109,6 +110,7 @@ class Observer
         /* @var $collection \Magento\Sitemap\Model\ResourceModel\Sitemap\Collection */
         foreach ($collection as $sitemap) {
             /* @var $sitemap \Magento\Sitemap\Model\Sitemap */
+
             try {
                 $sitemap->generateXml();
             } catch (\Exception $e) {
@@ -121,7 +123,8 @@ class Observer
             \Magento\Store\Model\ScopeInterface::SCOPE_STORE
         )
         ) {
-            $this->inlineTranslation->suspend();
+            $translate = $this->_translateModel->getTranslateInline();
+            $this->_translateModel->setTranslateInline(false);
 
             $this->_transportBuilder->setTemplateIdentifier(
                 $this->_scopeConfig->getValue(

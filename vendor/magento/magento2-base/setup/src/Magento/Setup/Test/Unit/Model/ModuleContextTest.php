@@ -7,7 +7,7 @@ namespace Magento\Setup\Test\Unit\Model;
 
 use Magento\Setup\Model\ModuleContext;
 
-class ModuleContextTest extends \PHPUnit\Framework\TestCase
+class ModuleContextTest extends \PHPUnit_Framework_TestCase
 {
     public function testGetVersion()
     {

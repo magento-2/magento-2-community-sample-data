@@ -6,7 +6,8 @@
 namespace Magento\Framework\App\Rss;
 
 /**
- * @api
+ * Interface DataProviderInterface
+ * @package Magento\Framework\App\Rss
  */
 interface DataProviderInterface
 {

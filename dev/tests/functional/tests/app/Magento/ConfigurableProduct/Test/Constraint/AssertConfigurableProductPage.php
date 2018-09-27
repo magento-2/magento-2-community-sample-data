@@ -50,9 +50,6 @@ class AssertConfigurableProductPage extends AssertProductPage
     protected function verifyPrice()
     {
         $priceBlock = $this->productView->getPriceBlock();
-        if (!$priceBlock->isVisible()) {
-            return "Price block for '{$this->product->getName()}' product' is not visible.";
-        }
         $formPrice = $priceBlock->isOldPriceVisible() ? $priceBlock->getOldPrice() : $priceBlock->getPrice();
         $fixturePrice = $this->getLowestConfigurablePrice();
 
@@ -134,23 +131,18 @@ class AssertConfigurableProductPage extends AssertProductPage
     protected function getLowestConfigurablePrice()
     {
         $price = null;
-        $priceDataConfig = $this->product->getDataFieldConfig('price');
-        if (isset($priceDataConfig['source'])) {
-            $priceData = $priceDataConfig['source']->getPriceData();
-            if (isset($priceData['price_from'])) {
-                $price = $priceData['price_from'];
+        $configurableOptions = $this->product->getConfigurableAttributesData();
+
+        foreach ($configurableOptions['matrix'] as $option) {
+            $price = $price === null ? $option['price'] : $price;
+            if ($price > $option['price']) {
+                $price = $option['price'];
+            }
+            if (isset($option['special_price']) && $price > $option['special_price']) {
+                $price = $option['special_price'];
             }
         }
 
-        if (null === $price) {
-            $configurableOptions = $this->product->getConfigurableAttributesData();
-            foreach ($configurableOptions['matrix'] as $option) {
-                $price = $price === null ? $option['price'] : $price;
-                if ($price > $option['price']) {
-                    $price = $option['price'];
-                }
-            }
-        }
         return $price;
     }
 

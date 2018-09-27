@@ -14,7 +14,6 @@ use Magento\Catalog\Pricing\Price\ConfiguredPriceInterface;
 
 /**
  * Configured price model
- * @api
  */
 class ConfiguredPrice extends CatalogPrice\FinalPrice implements ConfiguredPriceInterface
 {
@@ -34,41 +33,20 @@ class ConfiguredPrice extends CatalogPrice\FinalPrice implements ConfiguredPrice
     protected $item;
 
     /**
-     * Serializer interface instance.
-     *
-     * @var \Magento\Framework\Serialize\Serializer\Json
-     */
-    private $serializer;
-
-    /**
-     * @var \Magento\Catalog\Pricing\Price\ConfiguredPriceSelection
-     */
-    private $configuredPriceSelection;
-
-    /**
      * @param Product $saleableItem
      * @param float $quantity
      * @param BundleCalculatorInterface $calculator
      * @param \Magento\Framework\Pricing\PriceCurrencyInterface $priceCurrency
      * @param ItemInterface $item
-     * @param \Magento\Framework\Serialize\Serializer\Json|null $serializer
-     * @param \Magento\Catalog\Pricing\Price\ConfiguredPriceSelection|null $configuredPriceSelection
      */
     public function __construct(
         Product $saleableItem,
         $quantity,
         BundleCalculatorInterface $calculator,
         \Magento\Framework\Pricing\PriceCurrencyInterface $priceCurrency,
-        ItemInterface $item = null,
-        \Magento\Framework\Serialize\Serializer\Json $serializer = null,
-        \Magento\Catalog\Pricing\Price\ConfiguredPriceSelection $configuredPriceSelection = null
+        ItemInterface $item = null
     ) {
         $this->item = $item;
-        $this->serializer = $serializer ?: \Magento\Framework\App\ObjectManager::getInstance()
-            ->get(\Magento\Framework\Serialize\Serializer\Json::class);
-        $this->configuredPriceSelection = $configuredPriceSelection
-            ?: \Magento\Framework\App\ObjectManager::getInstance()
-                ->get(\Magento\Catalog\Pricing\Price\ConfiguredPriceSelection::class);
         parent::__construct($saleableItem, $quantity, $calculator, $priceCurrency);
     }
 
@@ -93,20 +71,16 @@ class ConfiguredPrice extends CatalogPrice\FinalPrice implements ConfiguredPrice
         $bundleOptions = [];
         /** @var \Magento\Bundle\Model\Product\Type $typeInstance */
         $typeInstance = $bundleProduct->getTypeInstance();
-        $bundleOptionsIds = [];
-        if ($this->item) {
-            // get bundle options
-            $optionsQuoteItemOption = $this->item->getOptionByCode('bundle_option_ids');
-            if ($optionsQuoteItemOption && $optionsQuoteItemOption->getValue()) {
-                $bundleOptionsIds = $this->serializer->unserialize($optionsQuoteItemOption->getValue());
-            }
-        }
+
+        // get bundle options
+        $optionsQuoteItemOption = $this->item->getOptionByCode('bundle_option_ids');
+        $bundleOptionsIds = $optionsQuoteItemOption ? unserialize($optionsQuoteItemOption->getValue()) : [];
         if ($bundleOptionsIds) {
             /** @var \Magento\Bundle\Model\ResourceModel\Option\Collection $optionsCollection */
             $optionsCollection = $typeInstance->getOptionsByIds($bundleOptionsIds, $bundleProduct);
             // get and add bundle selections collection
             $selectionsQuoteItemOption = $this->item->getOptionByCode('bundle_selection_ids');
-            $bundleSelectionIds = $this->serializer->unserialize($selectionsQuoteItemOption->getValue());
+            $bundleSelectionIds = unserialize($selectionsQuoteItemOption->getValue());
             if ($bundleSelectionIds) {
                 $selectionsCollection = $typeInstance->getSelectionsByIds($bundleSelectionIds, $bundleProduct);
                 $bundleOptions = $optionsCollection->appendSelections($selectionsCollection, true);
@@ -123,7 +97,13 @@ class ConfiguredPrice extends CatalogPrice\FinalPrice implements ConfiguredPrice
      */
     public function getConfiguredAmount($baseValue = 0.)
     {
-        $selectionPriceList = $this->configuredPriceSelection->getSelectionPriceList($this);
+        $selectionPriceList = [];
+        foreach ($this->getOptions() as $option) {
+            $selectionPriceList = array_merge(
+                $selectionPriceList,
+                $this->calculator->createSelectionPriceList($option, $this->product)
+            );
+        }
         return $this->calculator->calculateBundleAmount(
             $baseValue,
             $this->product,

@@ -9,7 +9,7 @@ namespace Magento\UrlRewrite\Block\Edit;
  * Test for \Magento\UrlRewrite\Block\Edit\FormTest
  * @magentoAppArea adminhtml
  */
-class FormTest extends \PHPUnit\Framework\TestCase
+class FormTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * Get form instance
@@ -21,10 +21,10 @@ class FormTest extends \PHPUnit\Framework\TestCase
     {
         /** @var $layout \Magento\Framework\View\Layout */
         $layout = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->get(
-            \Magento\Framework\View\LayoutInterface::class
+            'Magento\Framework\View\LayoutInterface'
         );
         /** @var $block \Magento\UrlRewrite\Block\Edit\Form */
-        $block = $layout->createBlock(\Magento\UrlRewrite\Block\Edit\Form::class, 'block', ['data' => $args]);
+        $block = $layout->createBlock('Magento\UrlRewrite\Block\Edit\Form', 'block', ['data' => $args]);
         $block->setTemplate(null);
         $block->toHtml();
         return $block->getForm();
@@ -38,7 +38,7 @@ class FormTest extends \PHPUnit\Framework\TestCase
     {
         // Test form was configured correctly
         $form = $this->_getFormInstance(['url_rewrite' => new \Magento\Framework\DataObject(['id' => 3])]);
-        $this->assertInstanceOf(\Magento\Framework\Data\Form::class, $form);
+        $this->assertInstanceOf('Magento\Framework\Data\Form', $form);
         $this->assertNotEmpty($form->getAction());
         $this->assertEquals('edit_form', $form->getId());
         $this->assertEquals('post', $form->getMethod());
@@ -77,7 +77,7 @@ class FormTest extends \PHPUnit\Framework\TestCase
             'description' => 'description',
         ];
         \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->create(
-            \Magento\Backend\Model\Session::class
+            'Magento\Backend\Model\Session'
         )->setUrlRewriteData(
             $sessionValues
         );
@@ -101,11 +101,11 @@ class FormTest extends \PHPUnit\Framework\TestCase
         $form = $this->_getFormInstance(['url_rewrite' => new \Magento\Framework\DataObject(['id' => 3])]);
         /** @var $storeElement \Magento\Framework\Data\Form\Element\AbstractElement */
         $storeElement = $form->getElement('store_id');
-        $this->assertInstanceOf(\Magento\Framework\Data\Form\Element\Hidden::class, $storeElement);
+        $this->assertInstanceOf('Magento\Framework\Data\Form\Element\Hidden', $storeElement);
 
         // Check that store value set correctly
         $defaultStore = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->get(
-            \Magento\Store\Model\StoreManagerInterface::class
+            'Magento\Store\Model\StoreManagerInterface'
         )->getStore(
             true
         )->getId();
@@ -125,17 +125,17 @@ class FormTest extends \PHPUnit\Framework\TestCase
         $storeElement = $form->getElement('store_id');
 
         // Check store selection elements has correct type
-        $this->assertInstanceOf(\Magento\Framework\Data\Form\Element\Select::class, $storeElement);
+        $this->assertInstanceOf('Magento\Framework\Data\Form\Element\Select', $storeElement);
 
         // Check store selection elements has correct renderer
         $this->assertInstanceOf(
-            \Magento\Backend\Block\Store\Switcher\Form\Renderer\Fieldset\Element::class,
+            'Magento\Backend\Block\Store\Switcher\Form\Renderer\Fieldset\Element',
             $storeElement->getRenderer()
         );
 
         // Check store elements has expected values
         $storesList = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->get(
-            \Magento\Store\Model\System\Store::class
+            'Magento\Store\Model\System\Store'
         )->getStoreValuesForForm();
         $this->assertInternalType('array', $storeElement->getValues());
         $this->assertNotEmpty($storeElement->getValues());

@@ -9,7 +9,7 @@
  */
 namespace Magento\Test\Legacy;
 
-class ConfigTest extends \PHPUnit\Framework\TestCase
+class ConfigTest extends \PHPUnit_Framework_TestCase
 {
     public function testConfigFiles()
     {

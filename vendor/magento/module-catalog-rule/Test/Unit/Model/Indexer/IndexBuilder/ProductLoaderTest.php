@@ -13,7 +13,7 @@ use Magento\Catalog\Api\Data\ProductSearchResultsInterface;
 use Magento\Catalog\Model\Product;
 use Magento\Framework\Api\SearchCriteria;
 
-class ProductLoaderTest extends \PHPUnit\Framework\TestCase
+class ProductLoaderTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var ProductLoader

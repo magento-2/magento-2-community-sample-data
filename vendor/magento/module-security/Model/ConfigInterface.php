@@ -7,9 +7,6 @@ namespace Magento\Security\Model;
 
 /**
  * Password security config Interface
- *
- * @api
- * @since 100.1.0
  */
 interface ConfigInterface
 {
@@ -17,7 +14,6 @@ interface ConfigInterface
      * Get customer service email address
      *
      * @return string
-     * @since 100.1.0
      */
     public function getCustomerServiceEmail();
 
@@ -25,7 +21,6 @@ interface ConfigInterface
      * Get time period limitation of password reset requests
      *
      * @return int
-     * @since 100.1.0
      */
     public function getLimitationTimePeriod();
 
@@ -33,7 +28,6 @@ interface ConfigInterface
      * Check if admin account sharing is enabled
      *
      * @return bool
-     * @since 100.1.0
      */
     public function isAdminAccountSharingEnabled();
 
@@ -41,7 +35,6 @@ interface ConfigInterface
      * Get admin session lifetime
      *
      * @return int
-     * @since 100.1.0
      */
     public function getAdminSessionLifetime();
 
@@ -49,7 +42,6 @@ interface ConfigInterface
      * Get password reset protection type
      *
      * @return int
-     * @since 100.1.0
      */
     public function getPasswordResetProtectionType();
 
@@ -57,7 +49,6 @@ interface ConfigInterface
      * Get max number password reset requests per time period
      *
      * @return int
-     * @since 100.1.0
      */
     public function getMaxNumberPasswordResetRequests();
 
@@ -65,7 +56,6 @@ interface ConfigInterface
      * Get minimum time between password reset requests
      *
      * @return int
-     * @since 100.1.0
      */
     public function getMinTimeBetweenPasswordResetRequests();
 }

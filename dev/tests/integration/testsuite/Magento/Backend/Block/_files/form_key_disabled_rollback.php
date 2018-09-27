@@ -5,5 +5,5 @@
  */
 
 \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->get(
-    \Magento\Backend\Model\UrlInterface::class
+    'Magento\Backend\Model\UrlInterface'
 )->turnOnSecretKey();

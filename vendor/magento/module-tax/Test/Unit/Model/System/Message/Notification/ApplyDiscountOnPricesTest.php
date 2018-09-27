@@ -21,7 +21,7 @@ use Magento\Store\Api\Data\WebsiteInterface;
  *
  * @SuppressWarnings(PHPMD)
  */
-class ApplyDiscountOnPricesTest extends \PHPUnit\Framework\TestCase
+class ApplyDiscountOnPricesTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var ApplyDiscountOnPricesNotification
@@ -29,17 +29,17 @@ class ApplyDiscountOnPricesTest extends \PHPUnit\Framework\TestCase
     private $applyDiscountOnPricesNotification;
 
     /**
-     * @var StoreManagerInterface | \PHPUnit_Framework_MockObject_MockObject
+     * @var StoreManagerInterface|\PHPUnit_Framework_MockObject_MockObject
      */
     private $storeManagerMock;
 
     /**
-     * @var UrlInterface | \PHPUnit_Framework_MockObject_MockObject
+     * @var UrlInterface|\PHPUnit_Framework_MockObject_MockObject
      */
     private $urlBuilderMock;
 
     /**
-     * @var TaxConfig | \PHPUnit_Framework_MockObject_MockObject
+     * @var TaxConfig|\PHPUnit_Framework_MockObject_MockObject
      */
     private $taxConfigMock;
 
@@ -47,7 +47,7 @@ class ApplyDiscountOnPricesTest extends \PHPUnit\Framework\TestCase
     {
         parent::setUp();
 
-        $websiteMock = $this->createMock(WebsiteInterface::class);
+        $websiteMock = $this->getMock(WebsiteInterface::class, [], [], '', false);
         $websiteMock->expects($this->any())->method('getName')->willReturn('testWebsiteName');
         $storeMock = $this->getMockForAbstractClass(
             StoreInterface::class,
@@ -60,11 +60,11 @@ class ApplyDiscountOnPricesTest extends \PHPUnit\Framework\TestCase
         );
         $storeMock->expects($this->any())->method('getName')->willReturn('testStoreName');
         $storeMock->expects($this->any())->method('getWebsite')->willReturn($websiteMock);
-        $this->storeManagerMock = $this->createMock(StoreManagerInterface::class);
+        $this->storeManagerMock = $this->getMock(StoreManagerInterface::class, [], [], '', false);
         $this->storeManagerMock->expects($this->any())->method('getStores')->willReturn([$storeMock]);
 
-        $this->urlBuilderMock = $this->createMock(UrlInterface::class);
-        $this->taxConfigMock = $this->createMock(TaxConfig::class);
+        $this->urlBuilderMock = $this->getMock(UrlInterface::class, [], [], '', false);
+        $this->taxConfigMock = $this->getMock(TaxConfig::class, [], [], '', false);
         $this->applyDiscountOnPricesNotification = (new ObjectManager($this))->getObject(
             ApplyDiscountOnPricesNotification::class,
             [
@@ -95,6 +95,9 @@ class ApplyDiscountOnPricesTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals($expectedResult, $this->applyDiscountOnPricesNotification->isDisplayed());
     }
 
+    /**
+     * @return array
+     */
     public function dataProviderIsDisplayed()
     {
         return [

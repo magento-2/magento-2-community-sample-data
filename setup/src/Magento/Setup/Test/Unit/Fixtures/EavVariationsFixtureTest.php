@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2018 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 
@@ -18,7 +18,7 @@ use Magento\Store\Model\StoreManager;
 /**
  * Unit test for \Magento\Setup\Fixtures\EavVariationsFixture.
  */
-class EavVariationsFixtureTest extends \PHPUnit\Framework\TestCase
+class EavVariationsFixtureTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var FixtureModel|\PHPUnit_Framework_MockObject_MockObject
@@ -60,19 +60,12 @@ class EavVariationsFixtureTest extends \PHPUnit\Framework\TestCase
      */
     public function setUp()
     {
-        $this->fixtureModelMock = $this->getMockBuilder(FixtureModel::class)
-            ->disableOriginalConstructor()->getMock();
-        $this->eavConfigMock = $this->getMockBuilder(Config::class)
-            ->disableOriginalConstructor()->getMock();
-        $this->storeManagerMock = $this->getMockBuilder(StoreManager::class)
-            ->disableOriginalConstructor()->getMock();
-        $this->attributeSetMock = $this->getMockBuilder(Set::class)
-            ->disableOriginalConstructor()->getMock();
-        $this->cacheMock = $this->getMockBuilder(CacheInterface::class)
-            ->disableOriginalConstructor()->getMock();
-        $this->attributeFactoryMock = $this->getMockBuilder(AttributeFactory::class)
-            ->setMethods(['create'])
-            ->disableOriginalConstructor()->getMock();
+        $this->fixtureModelMock = $this->getMock(FixtureModel::class, [], [], '', false);
+        $this->eavConfigMock = $this->getMock(Config::class, [], [], '', false);
+        $this->storeManagerMock = $this->getMock(StoreManager::class, [], [], '', false);
+        $this->attributeSetMock = $this->getMock(Set::class, [], [], '', false);
+        $this->cacheMock = $this->getMock(CacheInterface::class, [], [], '', false);
+        $this->attributeFactoryMock = $this->getMock(AttributeFactory::class, ['create'], [], '', false);
 
         $this->model = (new \Magento\Framework\TestFramework\Unit\Helper\ObjectManager($this))->getObject(
             EavVariationsFixture::class,

@@ -13,7 +13,12 @@ use Magento\Catalog\Model\Product;
 use Magento\CatalogImportExport\Model\Import\Product as ImportProduct;
 use Magento\ImportExport\Model\Import;
 
-class RowCustomizerTest extends \PHPUnit\Framework\TestCase
+/**
+ * Tests \Magento\ConfigurableImportExport\Model\Export\RowCustomizer
+ *
+ * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
+ */
+class RowCustomizerTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var ExportRowCustomizer

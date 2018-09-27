@@ -8,7 +8,7 @@ namespace Magento\Reports\Block\Adminhtml\Shopcart;
 use Magento\TestFramework\Helper\Bootstrap;
 use Magento\Quote\Model\Quote;
 
-abstract class GridTestAbstract extends \PHPUnit\Framework\TestCase
+abstract class GridTestAbstract extends \PHPUnit_Framework_TestCase
 {
     /**
      * {@inheritDoc}
@@ -19,11 +19,11 @@ abstract class GridTestAbstract extends \PHPUnit\Framework\TestCase
         $objectManager = Bootstrap::getObjectManager();
 
         /** @var \Magento\Customer\Api\CustomerRepositoryInterface $customerRepository */
-        $customerRepository = $objectManager->create(\Magento\Customer\Api\CustomerRepositoryInterface::class);
+        $customerRepository = $objectManager->create('Magento\Customer\Api\CustomerRepositoryInterface');
         $customerData = $customerRepository->getById(1);
 
         /** @var Quote $quoteFixture */
-        $quoteFixture = $objectManager->create(\Magento\Quote\Model\Quote::class);
+        $quoteFixture = $objectManager->create('Magento\Quote\Model\Quote');
         $quoteFixture->load('test01', 'reserved_order_id');
         $quoteFixture->setIsActive(true);
         $quoteFixture->setCustomer($customerData);

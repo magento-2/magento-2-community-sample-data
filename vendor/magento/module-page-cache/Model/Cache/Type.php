@@ -6,10 +6,7 @@
 
 namespace Magento\PageCache\Model\Cache;
 
-/**
- * System / Cache Management / Cache type "Full Page Cache"
- *
- */
+/** System / Cache Management / Cache type "Full Page Cache" */
 class Type extends \Magento\Framework\Cache\Frontend\Decorator\TagScope
 {
     /**

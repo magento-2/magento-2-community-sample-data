@@ -11,10 +11,6 @@
  */
 namespace Magento\ProductVideo\Block\Product\View;
 
-/**
- * @api
- * @since 100.0.2
- */
 class Gallery extends \Magento\Catalog\Block\Product\View\Gallery
 {
     /**
@@ -81,7 +77,6 @@ class Gallery extends \Magento\Catalog\Block\Product\View\Gallery
     /**
      * Return media gallery for product options
      * @return string
-     * @since 100.1.0
      */
     public function getOptionsMediaGalleryDataJson()
     {

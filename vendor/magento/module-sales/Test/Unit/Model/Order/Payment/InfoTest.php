@@ -9,7 +9,7 @@ namespace Magento\Sales\Test\Unit\Model\Order\Payment;
 use Magento\Payment\Model\Method;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager as ObjectManagerHelper;
 
-class InfoTest extends \PHPUnit\Framework\TestCase
+class InfoTest extends \PHPUnit_Framework_TestCase
 {
     /** @var \Magento\Sales\Model\Order\Payment\Info */
     protected $info;
@@ -34,16 +34,22 @@ class InfoTest extends \PHPUnit\Framework\TestCase
 
     protected function setUp()
     {
-        $this->contextMock = $this->createMock(\Magento\Framework\Model\Context::class);
-        $this->registryMock = $this->createMock(\Magento\Framework\Registry::class);
-        $this->paymentHelperMock = $this->createPartialMock(\Magento\Payment\Helper\Data::class, ['getMethodInstance']);
-        $this->encryptorInterfaceMock = $this->createMock(\Magento\Framework\Encryption\EncryptorInterface::class);
-        $this->methodInstanceMock = $this->getMockBuilder(\Magento\Payment\Model\MethodInterface::class)
+        $this->contextMock = $this->getMock('Magento\Framework\Model\Context', [], [], '', false);
+        $this->registryMock = $this->getMock('Magento\Framework\Registry');
+        $this->paymentHelperMock = $this->getMock('Magento\Payment\Helper\Data', ['getMethodInstance'], [], '', false);
+        $this->encryptorInterfaceMock = $this->getMock(
+            'Magento\Framework\Encryption\EncryptorInterface',
+            [],
+            [],
+            '',
+            false
+        );
+        $this->methodInstanceMock = $this->getMockBuilder('Magento\Payment\Model\MethodInterface')
             ->getMockForAbstractClass();
 
         $this->objectManagerHelper = new ObjectManagerHelper($this);
         $this->info = $this->objectManagerHelper->getObject(
-            \Magento\Sales\Model\Order\Payment\Info::class,
+            'Magento\Sales\Model\Order\Payment\Info',
             [
                 'context' => $this->contextMock,
                 'registry' => $this->registryMock,
@@ -83,7 +89,7 @@ class InfoTest extends \PHPUnit\Framework\TestCase
             ['cc_cid', 'cc_cid_enc']
         ];
     }
-
+    
     public function testGetMethodInstanceWithRealMethod()
     {
         $method = 'real_method';
@@ -179,7 +185,7 @@ class InfoTest extends \PHPUnit\Framework\TestCase
      */
     public function testSetAdditionalInformationException()
     {
-        $this->info->setAdditionalInformation('object', new \stdClass());
+        $this->info->setAdditionalInformation('object', new \StdClass());
     }
 
     /**

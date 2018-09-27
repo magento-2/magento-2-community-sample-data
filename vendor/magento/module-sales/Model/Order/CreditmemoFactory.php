@@ -3,10 +3,8 @@
  * Copyright © Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
-namespace Magento\Sales\Model\Order;
 
-use Magento\Bundle\Ui\DataProvider\Product\Listing\Collector\BundlePrice;
-use Magento\Sales\Api\Data\OrderItemInterface;
+namespace Magento\Sales\Model\Order;
 
 /**
  * Factory class for @see \Magento\Sales\Model\Order\Creditmemo
@@ -14,7 +12,7 @@ use Magento\Sales\Api\Data\OrderItemInterface;
 class CreditmemoFactory
 {
     /**
-     * Order convert object
+     * Quote convert object
      *
      * @var \Magento\Sales\Model\Convert\Order
      */
@@ -26,33 +24,17 @@ class CreditmemoFactory
     protected $taxConfig;
 
     /**
-     * @var \Magento\Framework\Unserialize\Unserialize
-     * @deprecated 100.2.0
-     */
-    protected $unserialize;
-
-    /**
-     * @var \Magento\Framework\Serialize\Serializer\Json
-     */
-    private $serializer;
-
-    /**
      * Factory constructor
      *
      * @param \Magento\Sales\Model\Convert\OrderFactory $convertOrderFactory
      * @param \Magento\Tax\Model\Config $taxConfig
-     * @param \Magento\Framework\Serialize\Serializer\Json $serializer
      */
     public function __construct(
         \Magento\Sales\Model\Convert\OrderFactory $convertOrderFactory,
-        \Magento\Tax\Model\Config $taxConfig,
-        \Magento\Framework\Serialize\Serializer\Json $serializer = null
+        \Magento\Tax\Model\Config $taxConfig
     ) {
         $this->convertor = $convertOrderFactory->create();
         $this->taxConfig = $taxConfig;
-        $this->serializer = $serializer ?: \Magento\Framework\App\ObjectManager::getInstance()->get(
-            \Magento\Framework\Serialize\Serializer\Json::class
-        );
     }
 
     /**
@@ -66,15 +48,26 @@ class CreditmemoFactory
     {
         $totalQty = 0;
         $creditmemo = $this->convertor->toCreditmemo($order);
-        $qtyList = isset($data['qtys']) ? $data['qtys'] : [];
+        $qtys = isset($data['qtys']) ? $data['qtys'] : [];
 
         foreach ($order->getAllItems() as $orderItem) {
-            if (!$this->canRefundItem($orderItem, $qtyList)) {
+            if (!$this->canRefundItem($orderItem, $qtys)) {
                 continue;
             }
 
             $item = $this->convertor->itemToCreditmemoItem($orderItem);
-            $qty = $this->getQtyToRefund($orderItem, $qtyList);
+            if ($orderItem->isDummy()) {
+                $qty = 1;
+                $orderItem->setLockedDoShip(true);
+            } else {
+                if (isset($qtys[$orderItem->getId()])) {
+                    $qty = (double)$qtys[$orderItem->getId()];
+                } elseif (!count($qtys)) {
+                    $qty = $orderItem->getQtyToRefund();
+                } else {
+                    continue;
+                }
+            }
             $totalQty += $qty;
             $item->setQty($qty);
             $creditmemo->addItem($item);
@@ -93,31 +86,67 @@ class CreditmemoFactory
      * @param \Magento\Sales\Model\Order\Invoice $invoice
      * @param array $data
      * @return Creditmemo
+     * @SuppressWarnings(PHPMD.CyclomaticComplexity)
+     * @SuppressWarnings(PHPMD.NPathComplexity)
      */
     public function createByInvoice(\Magento\Sales\Model\Order\Invoice $invoice, array $data = [])
     {
         $order = $invoice->getOrder();
         $totalQty = 0;
-        $qtyList = isset($data['qtys']) ? $data['qtys'] : [];
+        $qtys = isset($data['qtys']) ? $data['qtys'] : [];
         $creditmemo = $this->convertor->toCreditmemo($order);
         $creditmemo->setInvoice($invoice);
 
-        $invoiceRefundLimitsQtyList = $this->getInvoiceRefundLimitsQtyList($invoice);
+        $invoiceQtysRefunded = [];
+        foreach ($invoice->getOrder()->getCreditmemosCollection() as $createdCreditmemo) {
+            if ($createdCreditmemo->getState() != Creditmemo::STATE_CANCELED &&
+                $createdCreditmemo->getInvoiceId() == $invoice->getId()
+            ) {
+                foreach ($createdCreditmemo->getAllItems() as $createdCreditmemoItem) {
+                    $orderItemId = $createdCreditmemoItem->getOrderItem()->getId();
+                    if (isset($invoiceQtysRefunded[$orderItemId])) {
+                        $invoiceQtysRefunded[$orderItemId] += $createdCreditmemoItem->getQty();
+                    } else {
+                        $invoiceQtysRefunded[$orderItemId] = $createdCreditmemoItem->getQty();
+                    }
+                }
+            }
+        }
+
+        $invoiceQtysRefundLimits = [];
         foreach ($invoice->getAllItems() as $invoiceItem) {
-            /** @var OrderItemInterface $orderItem */
+            $invoiceQtyCanBeRefunded = $invoiceItem->getQty();
+            $orderItemId = $invoiceItem->getOrderItem()->getId();
+            if (isset($invoiceQtysRefunded[$orderItemId])) {
+                $invoiceQtyCanBeRefunded = $invoiceQtyCanBeRefunded - $invoiceQtysRefunded[$orderItemId];
+            }
+            $invoiceQtysRefundLimits[$orderItemId] = $invoiceQtyCanBeRefunded;
+        }
+
+        foreach ($invoice->getAllItems() as $invoiceItem) {
             $orderItem = $invoiceItem->getOrderItem();
 
-            if (!$this->canRefundItem($orderItem, $qtyList, $invoiceRefundLimitsQtyList)) {
+            if (!$this->canRefundItem($orderItem, $qtys, $invoiceQtysRefundLimits)) {
                 continue;
             }
 
-            $qty = min(
-                $this->getQtyToRefund($orderItem, $qtyList, $invoiceRefundLimitsQtyList),
-                $invoiceItem->getQty()
-            );
-            $totalQty += $qty;
-
             $item = $this->convertor->itemToCreditmemoItem($orderItem);
+            if ($orderItem->isDummy()) {
+                $qty = 1;
+            } else {
+                if (isset($qtys[$orderItem->getId()])) {
+                    $qty = (double)$qtys[$orderItem->getId()];
+                } elseif (!count($qtys)) {
+                    $qty = $orderItem->getQtyToRefund();
+                } else {
+                    continue;
+                }
+                if (isset($invoiceQtysRefundLimits[$orderItem->getId()])) {
+                    $qty = min($qty, $invoiceQtysRefundLimits[$orderItem->getId()]);
+                }
+            }
+            $qty = min($qty, $invoiceItem->getQty());
+            $totalQty += $qty;
             $item->setQty($qty);
             $creditmemo->addItem($item);
         }
@@ -125,7 +154,15 @@ class CreditmemoFactory
 
         $this->initData($creditmemo, $data);
         if (!isset($data['shipping_amount'])) {
-            $baseAllowedAmount = $this->getShippingAmount($invoice);
+            $isShippingInclTax = $this->taxConfig->displaySalesShippingInclTax($order->getStoreId());
+            if ($isShippingInclTax) {
+                $baseAllowedAmount = $order->getBaseShippingInclTax() -
+                    $order->getBaseShippingRefunded() -
+                    $order->getBaseShippingTaxRefunded();
+            } else {
+                $baseAllowedAmount = $order->getBaseShippingAmount() - $order->getBaseShippingRefunded();
+                $baseAllowedAmount = min($baseAllowedAmount, $invoice->getBaseShippingAmount());
+            }
             $creditmemo->setBaseShippingAmount($baseAllowedAmount);
         }
 
@@ -207,134 +244,5 @@ class CreditmemoFactory
         if (isset($data['adjustment_negative'])) {
             $creditmemo->setAdjustmentNegative($data['adjustment_negative']);
         }
-    }
-
-    /**
-     * @param Item $orderItem
-     * @param int $parentQty
-     * @return int
-     */
-    private function calculateProductOptions(Item $orderItem, $parentQty)
-    {
-        $qty = $parentQty;
-        $productOptions = $orderItem->getProductOptions();
-        if (isset($productOptions['bundle_selection_attributes'])) {
-            $bundleSelectionAttributes = $this->serializer->unserialize(
-                $productOptions['bundle_selection_attributes']
-            );
-            if ($bundleSelectionAttributes) {
-                $qty = $bundleSelectionAttributes['qty'] * $parentQty;
-            }
-        }
-        return $qty;
-    }
-
-    /**
-     * Gets list of quantities based on invoice refunded items.
-     *
-     * @param Invoice $invoice
-     * @return array
-     */
-    private function getInvoiceRefundedQtyList(Invoice $invoice): array
-    {
-        $invoiceRefundedQtyList = [];
-        foreach ($invoice->getOrder()->getCreditmemosCollection() as $creditmemo) {
-            if ($creditmemo->getState() !== Creditmemo::STATE_CANCELED &&
-                $creditmemo->getInvoiceId() === $invoice->getId()
-            ) {
-                foreach ($creditmemo->getAllItems() as $creditmemoItem) {
-                    $orderItemId = $creditmemoItem->getOrderItem()->getId();
-                    if (isset($invoiceRefundedQtyList[$orderItemId])) {
-                        $invoiceRefundedQtyList[$orderItemId] += $creditmemoItem->getQty();
-                    } else {
-                        $invoiceRefundedQtyList[$orderItemId] = $creditmemoItem->getQty();
-                    }
-                }
-            }
-        }
-
-        return $invoiceRefundedQtyList;
-    }
-
-    /**
-     * Gets limits of refund based on invoice items.
-     *
-     * @param Invoice $invoice
-     * @return array
-     */
-    private function getInvoiceRefundLimitsQtyList(Invoice $invoice): array
-    {
-        $invoiceRefundLimitsQtyList = [];
-        $invoiceRefundedQtyList = $this->getInvoiceRefundedQtyList($invoice);
-
-        foreach ($invoice->getAllItems() as $invoiceItem) {
-            $qtyCanBeRefunded = $invoiceItem->getQty();
-            $orderItemId = $invoiceItem->getOrderItem()->getId();
-            if (isset($invoiceRefundedQtyList[$orderItemId])) {
-                $qtyCanBeRefunded = $qtyCanBeRefunded - $invoiceRefundedQtyList[$orderItemId];
-            }
-            $invoiceRefundLimitsQtyList[$orderItemId] = $qtyCanBeRefunded;
-        }
-
-        return $invoiceRefundLimitsQtyList;
-    }
-
-    /**
-     * Gets quantity of items to refund based on order item.
-     *
-     * @param Item $orderItem
-     * @param array $qtyList
-     * @param array $refundLimits
-     * @return float
-     */
-    private function getQtyToRefund(Item $orderItem, array $qtyList, array $refundLimits = []): float
-    {
-        $qty = 0;
-        if ($orderItem->isDummy()) {
-            if (isset($qtyList[$orderItem->getParentItemId()])) {
-                $parentQty = $qtyList[$orderItem->getParentItemId()];
-            } elseif ($orderItem->getProductType() === BundlePrice::PRODUCT_TYPE) {
-                $parentQty = $orderItem->getQtyInvoiced();
-            } else {
-                $parentQty = $orderItem->getParentItem() ? $orderItem->getParentItem()->getQtyToRefund() : 1;
-            }
-            $qty = $this->calculateProductOptions($orderItem, $parentQty);
-        } else {
-            if (isset($qtyList[$orderItem->getId()])) {
-                $qty = $qtyList[$orderItem->getId()];
-            } elseif (!count($qtyList)) {
-                $qty = $orderItem->getQtyToRefund();
-            } else {
-                return (float)$qty;
-            }
-
-            if (isset($refundLimits[$orderItem->getId()])) {
-                $qty = min($qty, $refundLimits[$orderItem->getId()]);
-            }
-        }
-
-        return (float)$qty;
-    }
-
-    /**
-     * Gets shipping amount based on invoice.
-     *
-     * @param Invoice $invoice
-     * @return float
-     */
-    private function getShippingAmount(Invoice $invoice): float
-    {
-        $order = $invoice->getOrder();
-        $isShippingInclTax = $this->taxConfig->displaySalesShippingInclTax($order->getStoreId());
-        if ($isShippingInclTax) {
-            $amount = $order->getBaseShippingInclTax() -
-                $order->getBaseShippingRefunded() -
-                $order->getBaseShippingTaxRefunded();
-        } else {
-            $amount = $order->getBaseShippingAmount() - $order->getBaseShippingRefunded();
-            $amount = min($amount, $invoice->getBaseShippingAmount());
-        }
-
-        return (float)$amount;
     }
 }

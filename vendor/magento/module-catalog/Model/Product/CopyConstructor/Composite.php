@@ -8,12 +8,6 @@ namespace Magento\Catalog\Model\Product\CopyConstructor;
 use Magento\Catalog\Model\Product\CopyConstructorFactory;
 use Magento\Catalog\Model\Product\CopyConstructorInterface;
 
-/**
- * Performs duplication process by applying product type convertors
- *
- * @api
- * @since 100.0.2
- */
 class Composite implements CopyConstructorInterface
 {
     /**

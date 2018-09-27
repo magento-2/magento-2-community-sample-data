@@ -5,7 +5,7 @@
  */
 namespace Magento\Catalog\Block\Adminhtml\Product\Helper\Form;
 
-class CategoryTest extends \PHPUnit\Framework\TestCase
+class CategoryTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @magentoAppArea adminhtml
@@ -14,21 +14,21 @@ class CategoryTest extends \PHPUnit\Framework\TestCase
     {
         $objectManager = \Magento\TestFramework\Helper\Bootstrap::getObjectManager();
         $layout = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->create(
-            \Magento\Framework\View\Layout::class,
+            'Magento\Framework\View\Layout',
             ['area' => \Magento\Backend\App\Area\FrontNameResolver::AREA_CODE]
         );
         $authorization = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->create(
-            \Magento\Framework\AuthorizationInterface::class,
+            'Magento\Framework\AuthorizationInterface',
             ['aclPolicy' =>  new \Magento\Framework\Authorization\Policy\DefaultPolicy()]
         );
 
         $block = $objectManager->create(
-            \Magento\Catalog\Block\Adminhtml\Product\Helper\Form\Category::class,
+            'Magento\Catalog\Block\Adminhtml\Product\Helper\Form\Category',
             ['layout' => $layout, 'authorization' => $authorization]
         );
 
         /** @var $formFactory \Magento\Framework\Data\FormFactory */
-        $formFactory = $objectManager->get(\Magento\Framework\Data\FormFactory::class);
+        $formFactory = $objectManager->get('Magento\Framework\Data\FormFactory');
         $form = $formFactory->create();
         $block->setForm($form);
 

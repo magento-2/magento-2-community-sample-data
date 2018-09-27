@@ -5,7 +5,7 @@
  */
 namespace Magento\Test\Workaround\Cleanup\TestCasePropertiesTest;
 
-class DummyTestCase extends \PHPUnit\Framework\TestCase
+class DummyTestCase extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var string

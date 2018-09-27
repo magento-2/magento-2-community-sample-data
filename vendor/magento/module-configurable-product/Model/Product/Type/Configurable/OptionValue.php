@@ -60,6 +60,5 @@ class OptionValue extends \Magento\Framework\Model\AbstractExtensibleModel imple
     ) {
         return $this->_setExtensionAttributes($extensionAttributes);
     }
-
     //@codeCoverageIgnoreEnd
 }

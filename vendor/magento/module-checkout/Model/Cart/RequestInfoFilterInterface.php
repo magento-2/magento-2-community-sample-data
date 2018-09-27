@@ -8,8 +8,6 @@ namespace Magento\Checkout\Model\Cart;
 
 /**
  * Interface RequestInfoFilterInterface used by composite and leafs to implement filtering
- * @api
- * @since 100.1.2
  */
 interface RequestInfoFilterInterface
 {
@@ -18,7 +16,6 @@ interface RequestInfoFilterInterface
      *
      * @param \Magento\Framework\DataObject $params
      * @return RequestInfoFilterInterface
-     * @since 100.1.2
      */
     public function filter(\Magento\Framework\DataObject $params);
 }

@@ -10,7 +10,6 @@ use Magento\Catalog\Test\Block\Adminhtml\Product\Edit\Section\AdvancedPricing\Op
 use Magento\Mtf\Client\Element\SimpleElement;
 use Magento\Ui\Test\Block\Adminhtml\Section;
 use Magento\Catalog\Test\Block\Adminhtml\Product\Edit\Section\Options\AbstractOptions;
-use Magento\Mtf\Client\Locator;
 
 /**
  * Product advanced pricing section.
@@ -37,13 +36,6 @@ class AdvancedPricing extends Section
      * @var string
      */
     protected $doneButton = '.action-primary[data-role="action"]';
-
-    /**
-     * Selector for field.
-     *
-     * @var string
-     */
-    private $fieldByName = '//*[contains(text(),"%s")]/preceding::div[2]/ancestor::div[1]';
 
     /**
      * Fill 'Advanced price' product form on tab.
@@ -108,19 +100,8 @@ class AdvancedPricing extends Section
     {
         $element = $element ?: $this->browser->find($this->advancedPricingRootElement);
         return $this->blockFactory->create(
-            \Magento\Catalog\Test\Block\Adminhtml\Product\Edit\Section\AdvancedPricing\OptionTier::class,
+            'Magento\Catalog\Test\Block\Adminhtml\Product\Edit\Section\AdvancedPricing\OptionTier',
             ['element' => $element]
         );
-    }
-
-    /**
-     * Check if the field is displayed correctly.
-     *
-     * @param string $fieldName
-     * @return bool
-     */
-    public function checkField($fieldName)
-    {
-        return $this->_rootElement->find(sprintf($this->fieldByName, $fieldName), Locator::SELECTOR_XPATH)->isVisible();
     }
 }

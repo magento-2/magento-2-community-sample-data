@@ -10,9 +10,7 @@ namespace Magento\Cookie\Model\Config\Backend;
  */
 class Path extends \Magento\Framework\App\Config\Value
 {
-    /**
-     * @var \Magento\Framework\Session\Config\Validator\CookiePathValidator
-     */
+    /** @var \Magento\Framework\Session\Config\Validator\CookiePathValidator */
     protected $configValidator;
 
     /**

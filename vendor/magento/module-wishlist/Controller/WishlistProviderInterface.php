@@ -6,10 +6,6 @@
  */
 namespace Magento\Wishlist\Controller;
 
-/**
- * Interface \Magento\Wishlist\Controller\WishlistProviderInterface
- *
- */
 interface WishlistProviderInterface
 {
     /**

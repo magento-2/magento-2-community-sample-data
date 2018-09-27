@@ -6,6 +6,7 @@ namespace Braintree;
  *
  * @package    Braintree
  * @category   Resources
+ * @copyright  2015 Braintree, a division of PayPal, Inc.
  */
 class Gateway
 {
@@ -39,15 +40,6 @@ class Gateway
     public function address()
     {
         return new AddressGateway($this);
-    }
-
-    /**
-     *
-     * @return ApplePayGateway
-     */
-    public function applePay()
-    {
-        return new ApplePayGateway($this);
     }
 
     /**
@@ -93,24 +85,6 @@ class Gateway
     public function discount()
     {
         return new DiscountGateway($this);
-    }
-
-    /**
-     *
-     * @return DisputeGateway
-     */
-    public function dispute()
-    {
-        return new DisputeGateway($this);
-    }
-
-    /**
-     *
-     * @return DocumentUploadGateway
-     */
-    public function documentUpload()
-    {
-        return new DocumentUploadGateway($this);
     }
 
     /**
@@ -214,47 +188,11 @@ class Gateway
 
     /**
      *
-     * @return TransactionLineItemGateway
-     */
-    public function transactionLineItem()
-    {
-        return new TransactionLineItemGateway($this);
-    }
-
-    /**
-     *
      * @return TransparentRedirectGateway
      */
     public function transparentRedirect()
     {
         return new TransparentRedirectGateway($this);
-    }
-
-    /**
-     *
-     * @return UsBankAccountGateway
-     */
-    public function usBankAccount()
-    {
-        return new UsBankAccountGateway($this);
-    }
-
-    /**
-     *
-     * @return IdealPaymentGateway
-     */
-    public function idealPayment()
-    {
-        return new IdealPaymentGateway($this);
-    }
-
-    /**
-     *
-     * @return WebhookNotificationGateway
-     */
-    public function webhookNotification()
-    {
-        return new WebhookNotificationGateway($this);
     }
 }
 class_alias('Braintree\Gateway', 'Braintree_Gateway');

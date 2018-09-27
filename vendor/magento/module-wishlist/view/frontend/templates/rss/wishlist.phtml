@@ -6,10 +6,10 @@
 
 // @codingStandardsIgnoreFile
 
-/** @var \Magento\Wishlist\Block\Rss\Link $block */
+/* @var $block \Magento\Wishlist\Block\Rss\Link */
 ?>
 <?php if ($block->isRssAllowed() && $block->getLink() && $this->helper('Magento\Wishlist\Helper\Data')->getWishlist()->getItemsCount()): ?>
-    <a href="<?= $block->escapeUrl($block->getLink()) ?>" class="action rss wishlist">
-        <span><?= $block->escapeHtml(__('RSS Feed')) ?></span>
+    <a href="<?php /* @escapeNotVerified */ echo $block->getLink(); ?>" class="action rss wishlist">
+        <span><?php /* @escapeNotVerified */ echo __('RSS Feed') ?></span>
     </a>
 <?php endif; ?>

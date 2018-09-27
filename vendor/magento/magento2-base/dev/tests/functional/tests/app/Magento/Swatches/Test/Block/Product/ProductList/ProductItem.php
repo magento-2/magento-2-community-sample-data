@@ -6,8 +6,10 @@
 
 namespace Magento\Swatches\Test\Block\Product\ProductList;
 
-use Magento\Mtf\Client\Locator;
 use Magento\Catalog\Test\Block\Product\ProductList\ProductItem as CatalogProductItem;
+use Magento\ConfigurableProduct\Test\Fixture\ConfigurableProduct;
+use Magento\Mtf\Client\Locator;
+use Magento\Swatches\Test\Fixture\SwatchesProductAttribute;
 
 /**
  * Product item block on frontend category view.
@@ -15,44 +17,62 @@ use Magento\Catalog\Test\Block\Product\ProductList\ProductItem as CatalogProduct
 class ProductItem extends CatalogProductItem
 {
     /**
-     * Selector for the swatches of the product.
-     *
-     * @var string
-     */
-    protected $swatchSelector = 'div[option-id="%s"]';
-
-    /**
-     * Selector for the swatches of the product.
+     * Selector for the swatches blocks of the product.
      *
      * @var string
      */
     protected $swatchBlockSelector = '.swatch-attribute-options';
 
     /**
+     * Selector for the swatches items of the product.
+     *
+     * @var string
+     */
+    private $swatchItemSelector = 'div[option-id="%s"]';
+
+    /**
+     * Check swatches visibility.
+     *
+     * @return bool
+     */
+    public function isSwatchesBlockVisible()
+    {
+        return $this->_rootElement->find($this->swatchBlockSelector)->isVisible();
+    }
+
+    /**
      * Fill product options on category page.
      *
-     * @param \Magento\ConfigurableProduct\Test\Fixture\ConfigurableProduct $product
+     * @param ConfigurableProduct $product
      * @return void
      */
-    public function fillData(\Magento\ConfigurableProduct\Test\Fixture\ConfigurableProduct $product)
+    public function fillData(ConfigurableProduct $product)
     {
+        /** @var array $checkoutData */
         $checkoutData = $product->getCheckoutData();
+        /** @var array $options */
         $options = $checkoutData['options']['configurable_options'];
+        /** @var array $confAttrData */
         $confAttrData = $product->getDataFieldConfig('configurable_attributes_data');
+        /** @var ConfigurableProduct\ConfigurableAttributesData $confAttrSource */
         $confAttrSource = $confAttrData['source'];
+        /** @var SwatchesProductAttribute[] $attributes */
         $attributes = $confAttrSource->getAttributes();
 
         foreach ($options as $option) {
-            if (!isset($attributes[$option['title']])
-                || stripos($attributes[$option['title']]->getFrontendInput(), "swatch") === false
-            ) {
+            if (!isset($attributes[$option['title']])) {
                 continue;
             }
+            /** @var array $availableOptions */
             $availableOptions = $attributes[$option['title']]->getOptions();
+            /** @var string $optionKey */
             $optionKey = str_replace('option_key_', '', $option['value']);
+
             if (!isset($availableOptions[$optionKey])) {
                 continue;
             }
+
+            /** @var array $optionForSelect */
             $optionForSelect = $availableOptions[$optionKey];
             $this->clickOnSwatch($optionForSelect['id']);
         }
@@ -65,8 +85,9 @@ class ProductItem extends CatalogProductItem
      */
     private function clickOnSwatch($optionId)
     {
-        $selector = sprintf($this->swatchSelector, $optionId);
-        $this->_rootElement->find($selector)->click();
+        /** @var string $selector */
+        $selector = sprintf($this->swatchItemSelector, $optionId);
+        $this->_rootElement->find($selector, Locator::SELECTOR_CSS)->click();
     }
 
     /**
@@ -76,15 +97,5 @@ class ProductItem extends CatalogProductItem
     {
         $this->_rootElement->hover();
         parent::clickAddToCart();
-    }
-
-    /**
-     * Check swatches visibility.
-     *
-     * @return bool
-     */
-    public function isSwatchesBlockVisible()
-    {
-        return $this->_rootElement->find($this->swatchBlockSelector)->isVisible();
     }
 }

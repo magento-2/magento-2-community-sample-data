@@ -6,7 +6,7 @@
 
 namespace Magento\Quote\Test\Unit\Model\Quote\Address;
 
-class TotalTest extends \PHPUnit\Framework\TestCase
+class TotalTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\Quote\Model\Quote\Address\Total
@@ -15,23 +15,7 @@ class TotalTest extends \PHPUnit\Framework\TestCase
 
     protected function setUp()
     {
-        $serializer = $this->getMockBuilder(\Magento\Framework\Serialize\Serializer\Json::class)
-            ->setMethods(['unserialize'])
-            ->disableOriginalConstructor()
-            ->getMockForAbstractClass();
-        $serializer->expects($this->any())
-            ->method('unserialize')
-            ->willReturnCallback(function ($value) {
-                return json_decode($value, true);
-            });
-
-        $objectManagerHelper = new \Magento\Framework\TestFramework\Unit\Helper\ObjectManager($this);
-        $this->model = $objectManagerHelper->getObject(
-            \Magento\Quote\Model\Quote\Address\Total::class,
-            [
-                'serializer' => $serializer
-            ]
-        );
+        $this->model = new \Magento\Quote\Model\Quote\Address\Total();
     }
 
     /**
@@ -49,6 +33,9 @@ class TotalTest extends \PHPUnit\Framework\TestCase
         $this->assertSame($this->model, $result);
     }
 
+    /**
+     * @return array
+     */
     public function setTotalAmountDataProvider()
     {
         return [
@@ -80,6 +67,9 @@ class TotalTest extends \PHPUnit\Framework\TestCase
         $this->assertSame($this->model, $result);
     }
 
+    /**
+     * @return array
+     */
     public function setBaseTotalAmountDataProvider()
     {
         return [
@@ -111,6 +101,9 @@ class TotalTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals($updatedAmount, $this->model->getTotalAmount($code));
     }
 
+    /**
+     * @return array
+     */
     public function addTotalAmountDataProvider()
     {
         return [
@@ -142,6 +135,9 @@ class TotalTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals($updatedAmount, $this->model->getBaseTotalAmount($code));
     }
 
+    /**
+     * @return array
+     */
     public function addBaseTotalAmountDataProvider()
     {
         return [
@@ -187,7 +183,6 @@ class TotalTest extends \PHPUnit\Framework\TestCase
     /**
      * Verify handling of serialized, non-serialized input into and out of getFullInfo()
      *
-     * @covers \Magento\Quote\Model\Quote\Address\Total::getFullInfo()
      * @param $input
      * @param $expected
      * @dataProvider getFullInfoDataProvider
@@ -204,7 +199,7 @@ class TotalTest extends \PHPUnit\Framework\TestCase
     public function getFullInfoDataProvider()
     {
         $myArray = ['team' => 'kiwis'];
-        $serializedInput = json_encode($myArray);
+        $serializedInput = serialize($myArray);
 
         return [
             'simple array' => [

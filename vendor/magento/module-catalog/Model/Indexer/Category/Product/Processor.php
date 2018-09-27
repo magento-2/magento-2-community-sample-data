@@ -5,12 +5,6 @@
  */
 namespace Magento\Catalog\Model\Indexer\Category\Product;
 
-/**
- * Category product link indexer
- *
- * @api
- * @since 100.0.2
- */
 class Processor extends \Magento\Framework\Indexer\AbstractProcessor
 {
     /**

@@ -1,12 +1,11 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2018 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Catalog\Block\Product;
 
 use Magento\Catalog\Helper\ImageFactory as HelperFactory;
-use Magento\Catalog\Model\Product;
 use Magento\Catalog\Model\Product\Image\NotLoadInfoImageException;
 
 class ImageBuilder
@@ -22,7 +21,7 @@ class ImageBuilder
     protected $helperFactory;
 
     /**
-     * @var Product
+     * @var \Magento\Catalog\Model\Product
      */
     protected $product;
 
@@ -51,10 +50,10 @@ class ImageBuilder
     /**
      * Set product
      *
-     * @param Product $product
+     * @param \Magento\Catalog\Model\Product $product
      * @return $this
      */
-    public function setProduct(Product $product)
+    public function setProduct(\Magento\Catalog\Model\Product $product)
     {
         $this->product = $product;
         return $this;
@@ -80,7 +79,9 @@ class ImageBuilder
      */
     public function setAttributes(array $attributes)
     {
-        $this->attributes = $attributes;
+        if ($attributes) {
+            $this->attributes = $attributes;
+        }
         return $this;
     }
 
@@ -121,14 +122,6 @@ class ImageBuilder
      */
     public function create()
     {
-        /** @var \Magento\Catalog\Model\Product\Configuration\Item\Option\OptionInterface $simpleOption */
-        $simpleOption = $this->product->getCustomOption('simple_product');
-
-        if ($simpleOption !== null) {
-            $optionProduct = $simpleOption->getProduct();
-            $this->setProduct($optionProduct);
-        }
-
         /** @var \Magento\Catalog\Helper\Image $helper */
         $helper = $this->helperFactory->create()
             ->init($this->product, $this->imageId);
@@ -154,7 +147,6 @@ class ImageBuilder
                 'custom_attributes' => $this->getCustomAttributes(),
                 'resized_image_width' => $imagesize[0],
                 'resized_image_height' => $imagesize[1],
-                'product_id' => $this->product->getId()
             ],
         ];
 

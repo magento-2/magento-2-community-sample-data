@@ -10,7 +10,7 @@ use Magento\Setup\Module\Di\App\Task\Operation\ProxyGenerator;
 use Magento\Setup\Module\Di\Code\Scanner;
 use Magento\Setup\Module\Di\Code\Reader\ClassesScanner;
 
-class ProxyGeneratorTest extends \PHPUnit\Framework\TestCase
+class ProxyGeneratorTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var Scanner\XmlScanner | \PHPUnit_Framework_MockObject_MockObject
@@ -29,18 +29,18 @@ class ProxyGeneratorTest extends \PHPUnit\Framework\TestCase
 
     protected function setUp()
     {
-        $this->proxyScannerMock = $this->getMockBuilder(\Magento\Setup\Module\Di\Code\Scanner\XmlScanner::class)
+        $this->proxyScannerMock = $this->getMockBuilder('Magento\Setup\Module\Di\Code\Scanner\XmlScanner')
             ->disableOriginalConstructor()
             ->getMock();
 
         $this->configurationScannerMock = $this->getMockBuilder(
-            \Magento\Setup\Module\Di\Code\Scanner\ConfigurationScanner::class
+            'Magento\Setup\Module\Di\Code\Scanner\ConfigurationScanner'
         )->disableOriginalConstructor()
             ->getMock();
 
         $objectManagerHelper = new \Magento\Framework\TestFramework\Unit\Helper\ObjectManager($this);
         $this->model = $objectManagerHelper->getObject(
-            \Magento\Setup\Module\Di\App\Task\Operation\ProxyGenerator::class,
+            'Magento\Setup\Module\Di\App\Task\Operation\ProxyGenerator',
             [
                 'proxyScanner' => $this->proxyScannerMock,
                 'configurationScanner' => $this->configurationScannerMock,

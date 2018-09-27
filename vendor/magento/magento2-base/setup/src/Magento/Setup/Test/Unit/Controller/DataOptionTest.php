@@ -8,7 +8,7 @@ namespace Magento\Setup\Test\Unit\Controller;
 
 use Magento\Setup\Controller\DataOption;
 
-class DataOptionTest extends \PHPUnit\Framework\TestCase
+class DataOptionTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \PHPUnit_Framework_MockObject_MockObject|Magento\Setup\Model\UninstallCollector
@@ -37,14 +37,14 @@ class DataOptionTest extends \PHPUnit\Framework\TestCase
 
     public function setUp()
     {
-        $this->request = $this->createMock(\Zend\Http\PhpEnvironment\Request::class);
-        $this->response = $this->createMock(\Zend\Http\PhpEnvironment\Response::class);
-        $routeMatch = $this->createMock(\Zend\Mvc\Router\RouteMatch::class);
+        $this->request = $this->getMock('\Zend\Http\PhpEnvironment\Request', [], [], '', false);
+        $this->response = $this->getMock('\Zend\Http\PhpEnvironment\Response', [], [], '', false);
+        $routeMatch = $this->getMock('\Zend\Mvc\Router\RouteMatch', [], [], '', false);
 
-        $this->uninstallCollector = $this->createMock(\Magento\Setup\Model\UninstallCollector::class);
+        $this->uninstallCollector = $this->getMock('Magento\Setup\Model\UninstallCollector', [], [], '', false);
         $this->controller = new DataOption($this->uninstallCollector);
 
-        $this->mvcEvent = $this->createMock(\Zend\Mvc\MvcEvent::class);
+        $this->mvcEvent = $this->getMock('\Zend\Mvc\MvcEvent', [], [], '', false);
         $this->mvcEvent->expects($this->any())
             ->method('setRequest')
             ->with($this->request)
@@ -63,7 +63,7 @@ class DataOptionTest extends \PHPUnit\Framework\TestCase
     public function testIndexAction()
     {
         $viewModel = $this->controller->indexAction();
-        $this->assertInstanceOf(\Zend\View\Model\ViewModel::class, $viewModel);
+        $this->assertInstanceOf('\Zend\View\Model\ViewModel', $viewModel);
         $this->assertTrue($viewModel->terminate());
     }
 
@@ -75,7 +75,6 @@ class DataOptionTest extends \PHPUnit\Framework\TestCase
         $this->uninstallCollector->expects($this->never())->method('collectUninstall')->with(["some_module"]);
         $this->assertFalse($this->controller->hasUninstallAction()->getVariable("hasUninstall"));
     }
-
     /**
      * @param string $content
      * @param array $expected

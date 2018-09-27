@@ -6,12 +6,11 @@
 
 namespace Magento\Developer\Model\XmlCatalog\Format;
 
-use Magento\Framework\App\ObjectManager;
-use Magento\Framework\DomDocument\DomDocumentFactory;
 use Magento\Framework\Exception\FileSystemException;
 use Magento\Framework\Filesystem\Directory\ReadFactory;
 use Magento\Framework\Filesystem\Directory\ReadInterface;
-use Magento\Framework\Filesystem\File\WriteFactory;
+use Magento\Framework\Filesystem\Directory\WriteFactory;
+use Magento\Framework\Filesystem\Directory\WriteInterface;
 
 /**
  * Class PhpStorm generates URN catalog for PhpStorm 9
@@ -24,28 +23,20 @@ class PhpStorm implements FormatInterface
     private $currentDirRead;
 
     /**
-     * @var WriteFactory
+     * @var \Magento\Framework\Filesystem\File\WriteFactory
      */
     private $fileWriteFactory;
 
     /**
-     * @var DomDocumentFactory
-     */
-    private $domDocumentFactory;
-
-    /**
      * @param ReadFactory $readFactory
-     * @param WriteFactory $fileWriteFactory
-     * @param DomDocumentFactory $domDocumentFactory
+     * @param \Magento\Framework\Filesystem\File\WriteFactory $fileWriteFactory
      */
     public function __construct(
         ReadFactory $readFactory,
-        WriteFactory $fileWriteFactory,
-        DomDocumentFactory $domDocumentFactory = null
+        \Magento\Framework\Filesystem\File\WriteFactory $fileWriteFactory
     ) {
         $this->currentDirRead = $readFactory->create(getcwd());
         $this->fileWriteFactory = $fileWriteFactory;
-        $this->domDocumentFactory = $domDocumentFactory ?: ObjectManager::getInstance()->get(DomDocumentFactory::class);
     }
 
     /**
@@ -66,21 +57,26 @@ class PhpStorm implements FormatInterface
                 \Magento\Framework\Filesystem\DriverPool::FILE,
                 'r'
             );
-            $dom = $this->domDocumentFactory->create();
-            $fileContent = $file->readAll();
-            if (!empty($fileContent)) {
-                $dom->loadXML($fileContent);
-            } else {
-                $this->initEmptyFile($dom);
-            }
+            $dom = new \DOMDocument();
+            $dom->loadXML($file->readAll());
             $xpath = new \DOMXPath($dom);
             $nodeList = $xpath->query('/project');
             $projectNode = $nodeList->item(0);
             $file->close();
         } catch (FileSystemException $f) {
             //create file if does not exists
-            $dom = $this->domDocumentFactory->create();
-            $projectNode = $this->initEmptyFile($dom);
+            $dom = new \DOMDocument();
+            $projectNode = $dom->createElement('project');
+
+            //PhpStorm 9 version for component is "4"
+            $projectNode->setAttribute('version', '4');
+            $dom->appendChild($projectNode);
+            $rootComponentNode = $dom->createElement('component');
+
+            //PhpStorm 9 version for ProjectRootManager is "2"
+            $rootComponentNode->setAttribute('version', '2');
+            $rootComponentNode->setAttribute('name', 'ProjectRootManager');
+            $projectNode->appendChild($rootComponentNode);
         }
 
         $xpath = new \DOMXPath($dom);
@@ -106,27 +102,5 @@ class PhpStorm implements FormatInterface
         );
         $file->write($dom->saveXML());
         $file->close();
-    }
-
-    /**
-     * Setup basic empty dom elements
-     *
-     * @param \DOMDocument $dom
-     * @return \DOMElement
-     */
-    private function initEmptyFile(\DOMDocument $dom)
-    {
-        $projectNode = $dom->createElement('project');
-
-        //PhpStorm 9 version for component is "4"
-        $projectNode->setAttribute('version', '4');
-        $dom->appendChild($projectNode);
-        $rootComponentNode = $dom->createElement('component');
-
-        //PhpStorm 9 version for ProjectRootManager is "2"
-        $rootComponentNode->setAttribute('version', '2');
-        $rootComponentNode->setAttribute('name', 'ProjectRootManager');
-        $projectNode->appendChild($rootComponentNode);
-        return $projectNode;
     }
 }

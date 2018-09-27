@@ -7,10 +7,8 @@ namespace Magento\Shipping\Test\Unit\Controller\Adminhtml\Order\Shipment;
 
 /**
  * Class RemoveTrackTest
- *
- * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  */
-class RemoveTrackTest extends \PHPUnit\Framework\TestCase
+class RemoveTrackTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\Shipping\Controller\Adminhtml\Order\ShipmentLoader|\PHPUnit_Framework_MockObject_MockObject
@@ -69,43 +67,64 @@ class RemoveTrackTest extends \PHPUnit\Framework\TestCase
 
     protected function setUp()
     {
-        $this->requestMock = $this->createPartialMock(\Magento\Framework\App\Request\Http::class, ['getParam']);
-        $this->objectManagerMock = $this->createMock(\Magento\Framework\ObjectManagerInterface::class);
-        $this->shipmentTrackMock = $this->createPartialMock(
-            \Magento\Sales\Model\Order\Shipment\Track::class,
-            ['load', 'getId', 'delete', '__wakeup']
+        $this->requestMock = $this->getMock('Magento\Framework\App\Request\Http', ['getParam'], [], '', false);
+        $this->objectManagerMock = $this->getMock('Magento\Framework\ObjectManagerInterface');
+        $this->shipmentTrackMock = $this->getMock(
+            'Magento\Sales\Model\Order\Shipment\Track',
+            ['load', 'getId', 'delete', '__wakeup'],
+            [],
+            '',
+            false
         );
-        $this->shipmentMock = $this->createPartialMock(
-            \Magento\Sales\Model\Order\Shipment::class,
-            ['getIncrementId', '__wakeup']
+        $this->shipmentMock = $this->getMock(
+            'Magento\Sales\Model\Order\Shipment',
+            ['getIncrementId', '__wakeup'],
+            [],
+            '',
+            false
         );
-        $this->viewMock = $this->createPartialMock(
-            \Magento\Framework\App\View::class,
-            ['loadLayout', 'getLayout', 'getPage']
+        $this->viewMock = $this->getMock(
+            'Magento\Framework\App\View',
+            ['loadLayout', 'getLayout', 'getPage'],
+            [],
+            '',
+            false
         );
-        $this->responseMock = $this->createMock(\Magento\Framework\App\Response\Http::class);
-        $this->shipmentLoaderMock = $this->createPartialMock(
-            \Magento\Shipping\Controller\Adminhtml\Order\ShipmentLoader::class,
-            ['setOrderId', 'setShipmentId', 'setShipment', 'setTracking', 'load']
+        $this->responseMock = $this->getMock(
+            'Magento\Framework\App\Response\Http',
+            [],
+            [],
+            '',
+            false
         );
-        $this->resultPageMock = $this->getMockBuilder(\Magento\Framework\View\Result\Page::class)
+        $this->shipmentLoaderMock = $this->getMock(
+            'Magento\Shipping\Controller\Adminhtml\Order\ShipmentLoader',
+            ['setOrderId', 'setShipmentId', 'setShipment', 'setTracking', 'load'],
+            [],
+            '',
+            false
+        );
+        $this->resultPageMock = $this->getMockBuilder('Magento\Framework\View\Result\Page')
             ->disableOriginalConstructor()
             ->getMock();
-        $this->pageConfigMock = $this->getMockBuilder(\Magento\Framework\View\Page\Config::class)
+        $this->pageConfigMock = $this->getMockBuilder('Magento\Framework\View\Page\Config')
             ->disableOriginalConstructor()
             ->getMock();
-        $this->pageTitleMock = $this->getMockBuilder(\Magento\Framework\View\Page\Title::class)
+        $this->pageTitleMock = $this->getMockBuilder('Magento\Framework\View\Page\Title')
             ->disableOriginalConstructor()
             ->getMock();
 
-        $contextMock = $this->createPartialMock(
-            \Magento\Backend\App\Action\Context::class,
-            ['getRequest', 'getObjectManager', 'getTitle', 'getView', 'getResponse']
+        $contextMock = $this->getMock(
+            'Magento\Backend\App\Action\Context',
+            ['getRequest', 'getObjectManager', 'getTitle', 'getView', 'getResponse'],
+            [],
+            '',
+            false
         );
 
         $this->objectManagerMock->expects($this->once())
             ->method('create')
-            ->with(\Magento\Sales\Model\Order\Shipment\Track::class)
+            ->with('Magento\Sales\Model\Order\Shipment\Track')
             ->will($this->returnValue($this->shipmentTrackMock));
 
         $contextMock->expects($this->any())->method('getRequest')->will($this->returnValue($this->requestMock));
@@ -185,14 +204,14 @@ class RemoveTrackTest extends \PHPUnit\Framework\TestCase
      */
     protected function representJson(array $errors)
     {
-        $jsonHelper = $this->createPartialMock(\Magento\Framework\Json\Helper\Data::class, ['jsonEncode']);
+        $jsonHelper = $this->getMock('Magento\Framework\Json\Helper\Data', ['jsonEncode'], [], '', false);
         $jsonHelper->expects($this->once())
             ->method('jsonEncode')
             ->with($errors)
             ->will($this->returnValue('{json}'));
         $this->objectManagerMock->expects($this->once())
             ->method('get')
-            ->with(\Magento\Framework\Json\Helper\Data::class)
+            ->with('Magento\Framework\Json\Helper\Data')
             ->will($this->returnValue($jsonHelper));
         $this->responseMock->expects($this->once())
             ->method('representJson')
@@ -214,10 +233,13 @@ class RemoveTrackTest extends \PHPUnit\Framework\TestCase
             ->method('delete')
             ->will($this->returnSelf());
 
-        $layoutMock = $this->createPartialMock(\Magento\Framework\View\Layout::class, ['getBlock']);
-        $trackingBlockMock = $this->createPartialMock(
-            \Magento\Shipping\Block\Adminhtml\Order\Tracking::class,
-            ['toHtml']
+        $layoutMock = $this->getMock('Magento\Framework\View\Layout', ['getBlock'], [], '', false);
+        $trackingBlockMock = $this->getMock(
+            'Magento\Shipping\Block\Adminhtml\Order\Tracking',
+            ['toHtml'],
+            [],
+            '',
+            false
         );
 
         $trackingBlockMock->expects($this->once())

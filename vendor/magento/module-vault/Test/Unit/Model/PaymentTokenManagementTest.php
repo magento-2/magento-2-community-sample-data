@@ -13,12 +13,14 @@ use Magento\Framework\Encryption\EncryptorInterface;
 use Magento\Framework\Intl\DateTimeFactory;
 use Magento\Framework\TestFramework\Unit\Matcher\MethodInvokedAtIndex;
 use Magento\Sales\Api\Data\OrderPaymentInterface;
+use Magento\Sales\Model\Order\Payment;
 use Magento\Vault\Api\Data\PaymentTokenInterface;
 use Magento\Vault\Api\Data\PaymentTokenSearchResultsInterface;
 use Magento\Vault\Api\Data\PaymentTokenSearchResultsInterfaceFactory;
 use Magento\Vault\Api\PaymentTokenRepositoryInterface;
 use Magento\Vault\Model\PaymentTokenFactory;
 use Magento\Vault\Model\PaymentTokenManagement;
+use Magento\Vault\Model\ResourceModel\PaymentToken;
 use Magento\Vault\Model\ResourceModel\PaymentToken as PaymentTokenResourceModel;
 
 /**
@@ -27,7 +29,7 @@ use Magento\Vault\Model\ResourceModel\PaymentToken as PaymentTokenResourceModel;
  * @see \Magento\Vault\Model\PaymentTokenManagement
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  */
-class PaymentTokenManagementTest extends \PHPUnit\Framework\TestCase
+class PaymentTokenManagementTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var PaymentTokenManagement
@@ -106,7 +108,7 @@ class PaymentTokenManagementTest extends \PHPUnit\Framework\TestCase
         $this->searchCriteriaBuilder = $this->getMockBuilder(SearchCriteriaBuilder::class)
             ->disableOriginalConstructor()
             ->getMock();
-        $this->encryptor = $this->createMock(EncryptorInterface::class);
+        $this->encryptor = $this->getMock(EncryptorInterface::class);
         $this->dateTimeFactory = $this->getMockBuilder(DateTimeFactory::class)
             ->disableOriginalConstructor()
             ->getMock();
@@ -271,9 +273,9 @@ class PaymentTokenManagementTest extends \PHPUnit\Framework\TestCase
     public function testSaveTokenWithPaymentLinkNoDuplicate()
     {
         /** @var OrderPaymentInterface|\PHPUnit_Framework_MockObject_MockObject $paymentMock */
-        $paymentMock = $this->createMock(OrderPaymentInterface::class);
+        $paymentMock = $this->getMock(OrderPaymentInterface::class);
         /** @var PaymentTokenInterface|\PHPUnit_Framework_MockObject_MockObject $tokenMock */
-        $tokenMock = $this->createMock(PaymentTokenInterface::class);
+        $tokenMock = $this->getMock(PaymentTokenInterface::class);
 
         $customerId = 1;
         $entityId = 1;
@@ -319,11 +321,11 @@ class PaymentTokenManagementTest extends \PHPUnit\Framework\TestCase
     public function testSaveTokenWithPaymentLinkWithDuplicateTokenVisible()
     {
         /** @var OrderPaymentInterface|\PHPUnit_Framework_MockObject_MockObject $paymentMock */
-        $paymentMock = $this->createMock(OrderPaymentInterface::class);
+        $paymentMock = $this->getMock(OrderPaymentInterface::class);
         /** @var PaymentTokenInterface|\PHPUnit_Framework_MockObject_MockObject $tokenMock */
-        $tokenMock = $this->createMock(PaymentTokenInterface::class);
+        $tokenMock = $this->getMock(PaymentTokenInterface::class);
         /** @var PaymentTokenInterface|\PHPUnit_Framework_MockObject_MockObject $duplicateToken */
-        $duplicateToken = $this->createMock(PaymentTokenInterface::class);
+        $duplicateToken = $this->getMock(PaymentTokenInterface::class);
 
         $entityId = 1;
         $customerId = 1;
@@ -379,11 +381,11 @@ class PaymentTokenManagementTest extends \PHPUnit\Framework\TestCase
     public function testSaveTokenWithPaymentLinkWithDuplicateTokenNotVisible()
     {
         /** @var OrderPaymentInterface|\PHPUnit_Framework_MockObject_MockObject $paymentMock */
-        $paymentMock = $this->createMock(OrderPaymentInterface::class);
+        $paymentMock = $this->getMock(OrderPaymentInterface::class);
         /** @var PaymentTokenInterface|\PHPUnit_Framework_MockObject_MockObject $tokenMock */
-        $tokenMock = $this->createMock(PaymentTokenInterface::class);
+        $tokenMock = $this->getMock(PaymentTokenInterface::class);
         /** @var PaymentTokenInterface|\PHPUnit_Framework_MockObject_MockObject $duplicateToken */
-        $duplicateToken = $this->createMock(PaymentTokenInterface::class);
+        $duplicateToken = $this->getMock(PaymentTokenInterface::class);
 
         $entityId = 1;
         $newEntityId = 1;
@@ -506,6 +508,7 @@ class PaymentTokenManagementTest extends \PHPUnit\Framework\TestCase
             [$token],
             $this->paymentTokenManagement->getVisibleAvailableTokens($customerId)
         );
+
     }
 
     /**

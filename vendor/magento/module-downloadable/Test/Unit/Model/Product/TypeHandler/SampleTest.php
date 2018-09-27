@@ -10,10 +10,8 @@ use Magento\Framework\TestFramework\Unit\Helper\ObjectManager as ObjectManagerHe
 
 /**
  * Test for \Magento\Downloadable\Model\Product\TypeHandler\Sample
- *
- * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  */
-class SampleTest extends \PHPUnit\Framework\TestCase
+class SampleTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \PHPUnit_Framework_MockObject_MockObject
@@ -43,25 +41,25 @@ class SampleTest extends \PHPUnit\Framework\TestCase
     protected function setUp()
     {
         $objectManagerHelper = new ObjectManagerHelper($this);
-        $this->sampleFactory = $this->getMockBuilder(\Magento\Downloadable\Model\SampleFactory::class)
+        $this->sampleFactory = $this->getMockBuilder('\Magento\Downloadable\Model\SampleFactory')
             ->disableOriginalConstructor()
             ->setMethods(['create'])
             ->getMock();
-        $this->sampleResource = $this->getMockBuilder(\Magento\Downloadable\Model\ResourceModel\Sample::class)
+        $this->sampleResource = $this->getMockBuilder('\Magento\Downloadable\Model\ResourceModel\Sample')
             ->disableOriginalConstructor()
             ->setMethods(['deleteItems'])
             ->getMock();
-        $sampleResourceFactory = $this->getMockBuilder(\Magento\Downloadable\Model\ResourceModel\SampleFactory::class)
+        $sampleResourceFactory = $this->getMockBuilder('\Magento\Downloadable\Model\ResourceModel\SampleFactory')
             ->disableOriginalConstructor()
             ->setMethods(['create'])
             ->getMock();
         $sampleResourceFactory->expects($this->any())
             ->method('create')
             ->will($this->returnValue($this->sampleResource));
-        $this->metadataPoolMock = $this->getMockBuilder(\Magento\Framework\EntityManager\MetadataPool::class)
+        $this->metadataPoolMock = $this->getMockBuilder('Magento\Framework\EntityManager\MetadataPool')
             ->disableOriginalConstructor()
             ->getMock();
-        $this->metadataMock = $this->createMock(\Magento\Framework\EntityManager\EntityMetadata::class);
+        $this->metadataMock = $this->getMock('Magento\Framework\EntityManager\EntityMetadata', [], [], '', false);
         $this->metadataPoolMock->expects($this->any())->method('getMetadata')->willReturn($this->metadataMock);
         $this->target = $objectManagerHelper->getObject(
             Sample::class,
@@ -181,7 +179,7 @@ class SampleTest extends \PHPUnit\Framework\TestCase
      */
     private function createSampleModel($product, array $modelData)
     {
-        $sample = $this->getMockBuilder(\Magento\Downloadable\Model\Sample::class)
+        $sample = $this->getMockBuilder('\Magento\Downloadable\Model\Sample')
             ->disableOriginalConstructor()
             ->setMethods(
                 [
@@ -228,9 +226,9 @@ class SampleTest extends \PHPUnit\Framework\TestCase
      */
     private function createProductMock($id, $storeId, $storeWebsiteId, array $websiteIds)
     {
-        $product = $this->getMockBuilder(\Magento\Catalog\Model\Product::class)
+        $product = $this->getMockBuilder('\Magento\Catalog\Model\Product')
             ->disableOriginalConstructor()
-            ->setMethods(['getId', 'getStoreId', 'getStore', 'getWebsiteIds', 'getData'])
+            ->setMethods(['getId', 'getStoreId', 'getStore', 'getWebsiteIds'])
             ->getMock();
         $product->expects($this->any())
             ->method('getId')
@@ -241,7 +239,7 @@ class SampleTest extends \PHPUnit\Framework\TestCase
         $product->expects($this->any())
             ->method('getWebsiteIds')
             ->will($this->returnValue($websiteIds));
-        $store = $this->getMockBuilder(\Magento\Store\Model\Store::class)
+        $store = $this->getMockBuilder('\Magento\Store\Model\Store')
             ->disableOriginalConstructor()
             ->setMethods(['getWebsiteId'])
             ->getMock();

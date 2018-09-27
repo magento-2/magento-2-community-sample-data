@@ -53,7 +53,7 @@ class Links extends Form
     {
         $element = $element ?: $this->_rootElement;
         return $this->blockFactory->create(
-            \Magento\Downloadable\Test\Block\Adminhtml\Catalog\Product\Edit\Section\Downloadable\LinkRow::class,
+            'Magento\Downloadable\Test\Block\Adminhtml\Catalog\Product\Edit\Section\Downloadable\LinkRow',
             ['element' => $element->find(sprintf($this->rowBlock, ++$index))]
         );
     }
@@ -79,7 +79,7 @@ class Links extends Form
             }
 
             if (isset($link['sort_order'])) {
-                $currentSortOrder = (int)$link['sort_order'] - 1;
+                $currentSortOrder = (int)$link['sort_order'];
                 unset($link['sort_order']);
             } else {
                 $currentSortOrder = 0;
@@ -109,7 +109,7 @@ class Links extends Form
             unset($link['sort_order']);
             $processedLink = $this->getRowBlock($index, $element)
                 ->getDataLinkRow($link);
-            $processedLink['sort_order'] = $index + 1;
+            $processedLink['sort_order'] = $index;
             $newFields['downloadable']['link'][$index] = $processedLink;
         }
         return $newFields;

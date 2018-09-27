@@ -51,7 +51,7 @@ class Grid extends \Magento\Catalog\Controller\Adminhtml\Category
         $resultRaw = $this->resultRawFactory->create();
         return $resultRaw->setContents(
             $this->layoutFactory->create()->createBlock(
-                \Magento\Catalog\Block\Adminhtml\Category\Tab\Product::class,
+                'Magento\Catalog\Block\Adminhtml\Category\Tab\Product',
                 'category.product.grid'
             )->toHtml()
         );

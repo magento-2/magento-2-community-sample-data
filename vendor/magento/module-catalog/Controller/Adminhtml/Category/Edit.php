@@ -99,10 +99,9 @@ class Edit extends \Magento\Catalog\Controller\Adminhtml\Category
             return $this->ajaxRequestResponse($category, $resultPage);
         }
 
-        $resultPageTitle = $categoryId ? $category->getName() . ' (ID: ' . $categoryId . ')' : __('Categories');
         $resultPage->setActiveMenu('Magento_Catalog::catalog_categories');
         $resultPage->getConfig()->getTitle()->prepend(__('Categories'));
-        $resultPage->getConfig()->getTitle()->prepend($resultPageTitle);
+        $resultPage->getConfig()->getTitle()->prepend($categoryId ? $category->getName() : __('Categories'));
         $resultPage->addBreadcrumb(__('Manage Catalog Categories'), __('Manage Categories'));
 
         $block = $resultPage->getLayout()->getBlock('catalog.wysiwyg.js');
@@ -120,7 +119,7 @@ class Edit extends \Magento\Catalog\Controller\Adminhtml\Category
     {
         if (null === $this->storeManager) {
             $this->storeManager = \Magento\Framework\App\ObjectManager::getInstance()
-                ->get(\Magento\Store\Model\StoreManagerInterface::class);
+                ->get('Magento\Store\Model\StoreManagerInterface');
         }
         return $this->storeManager;
     }

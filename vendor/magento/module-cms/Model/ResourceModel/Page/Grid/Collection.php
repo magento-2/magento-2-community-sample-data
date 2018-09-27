@@ -28,7 +28,7 @@ class Collection extends PageCollection implements SearchResultInterface
      * @param \Magento\Store\Model\StoreManagerInterface $storeManager
      * @param \Magento\Framework\EntityManager\MetadataPool $metadataPool
      * @param mixed|null $mainTable
-     * @param string $eventPrefix
+     * @param \Magento\Framework\Model\ResourceModel\Db\AbstractDb $eventPrefix
      * @param mixed $eventObject
      * @param mixed $resourceModel
      * @param string $model
@@ -48,7 +48,7 @@ class Collection extends PageCollection implements SearchResultInterface
         $eventPrefix,
         $eventObject,
         $resourceModel,
-        $model = \Magento\Framework\View\Element\UiComponent\DataProvider\Document::class,
+        $model = 'Magento\Framework\View\Element\UiComponent\DataProvider\Document',
         $connection = null,
         \Magento\Framework\Model\ResourceModel\Db\AbstractDb $resource = null
     ) {
@@ -83,6 +83,7 @@ class Collection extends PageCollection implements SearchResultInterface
     public function setAggregations($aggregations)
     {
         $this->aggregations = $aggregations;
+        return $this;
     }
 
     /**

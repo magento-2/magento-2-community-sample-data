@@ -76,7 +76,7 @@ class CategoryRepository implements \Magento\Catalog\Api\CategoryRepositoryInter
     {
         $storeId = (int)$this->storeManager->getStore()->getId();
         $existingData = $this->getExtensibleDataObjectConverter()
-            ->toNestedArray($category, [], \Magento\Catalog\Api\Data\CategoryInterface::class);
+            ->toNestedArray($category, [], 'Magento\Catalog\Api\Data\CategoryInterface');
         $existingData = array_diff_key($existingData, array_flip(['path', 'level', 'parent_id']));
         $existingData['store_id'] = $storeId;
 
@@ -129,7 +129,7 @@ class CategoryRepository implements \Magento\Catalog\Api\CategoryRepositoryInter
      */
     public function get($categoryId, $storeId = null)
     {
-        $cacheKey = $storeId ?? 'all';
+        $cacheKey = null !== $storeId ? $storeId : 'all';
         if (!isset($this->instances[$categoryId][$cacheKey])) {
             /** @var Category $category */
             $category = $this->categoryFactory->create();
@@ -210,13 +210,13 @@ class CategoryRepository implements \Magento\Catalog\Api\CategoryRepositoryInter
     /**
      * @return \Magento\Framework\Api\ExtensibleDataObjectConverter
      *
-     * @deprecated 101.0.0
+     * @deprecated
      */
     private function getExtensibleDataObjectConverter()
     {
         if ($this->extensibleDataObjectConverter === null) {
             $this->extensibleDataObjectConverter = \Magento\Framework\App\ObjectManager::getInstance()
-                ->get(\Magento\Framework\Api\ExtensibleDataObjectConverter::class);
+                ->get('Magento\Framework\Api\ExtensibleDataObjectConverter');
         }
         return $this->extensibleDataObjectConverter;
     }
@@ -228,7 +228,7 @@ class CategoryRepository implements \Magento\Catalog\Api\CategoryRepositoryInter
     {
         if (null === $this->metadataPool) {
             $this->metadataPool = \Magento\Framework\App\ObjectManager::getInstance()
-                ->get(\Magento\Framework\EntityManager\MetadataPool::class);
+                ->get('Magento\Framework\EntityManager\MetadataPool');
         }
         return $this->metadataPool;
     }

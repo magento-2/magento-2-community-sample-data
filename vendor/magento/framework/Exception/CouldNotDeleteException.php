@@ -5,9 +5,6 @@
  */
 namespace Magento\Framework\Exception;
 
-/**
- * @api
- */
 class CouldNotDeleteException extends LocalizedException
 {
 }

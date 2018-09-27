@@ -5,7 +5,7 @@
  */
 namespace Magento\Paypal\Model\Report;
 
-class SettlementTest extends \PHPUnit\Framework\TestCase
+class SettlementTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @magentoDbIsolation enabled
@@ -14,9 +14,9 @@ class SettlementTest extends \PHPUnit\Framework\TestCase
     {
         /** @var $model \Magento\Paypal\Model\Report\Settlement; */
         $model = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->create(
-            \Magento\Paypal\Model\Report\Settlement::class
+            'Magento\Paypal\Model\Report\Settlement'
         );
-        $connection = $this->createPartialMock(\Magento\Framework\Filesystem\Io\Sftp::class, ['rawls', 'read']);
+        $connection = $this->getMock('Magento\Framework\Filesystem\Io\Sftp', ['rawls', 'read'], [], '', false);
         $filename = 'STL-00000000.00.abc.CSV';
         $connection->expects($this->once())->method('rawls')->will($this->returnValue([$filename => []]));
         $connection->expects($this->once())->method('read')->with($filename, $this->anything());
@@ -34,34 +34,6 @@ class SettlementTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * @param array $automaticMode
-     * @param array $expectedResult
-     *
-     * @dataProvider createAutomaticModeDataProvider
-     *
-     * @magentoConfigFixture default_store paypal/fetch_reports/active 0
-     * @magentoConfigFixture default_store paypal/fetch_reports/ftp_ip 192.168.0.1
-     * @magentoConfigFixture current_store paypal/fetch_reports/active 1
-     * @magentoConfigFixture current_store paypal/fetch_reports/ftp_ip 127.0.0.1
-     * @magentoConfigFixture current_store paypal/fetch_reports/ftp_path /tmp
-     * @magentoConfigFixture current_store paypal/fetch_reports/ftp_login login
-     * @magentoConfigFixture current_store paypal/fetch_reports/ftp_password password
-     * @magentoConfigFixture current_store paypal/fetch_reports/ftp_sandbox 0
-     * @magentoDbIsolation enabled
-     */
-    public function testGetSftpCredentials($automaticMode, $expectedResult)
-    {
-        /** @var $model \Magento\Paypal\Model\Report\Settlement; */
-        $model = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->create(
-            \Magento\Paypal\Model\Report\Settlement::class
-        );
-
-        $result = $model->getSftpCredentials($automaticMode);
-
-        $this->assertEquals($expectedResult, $result);
-    }
-
-    /**
      * @return array
      */
     public function createConnectionExceptionDataProvider()
@@ -72,39 +44,6 @@ class SettlementTest extends \PHPUnit\Framework\TestCase
             [['hostname' => 'example.com', 'password' => 'test', 'path' => '/']],
             [['hostname' => 'example.com', 'username' => 'test', 'path' => '/']],
             [['hostname' => 'example.com', 'username' => 'test', 'password' => 'test']]
-        ];
-    }
-
-    /**
-     * @return array
-     */
-    public function createAutomaticModeDataProvider()
-    {
-        return [
-            [
-                true,
-                [
-                    [
-                        'hostname' => '127.0.0.1',
-                        'path' => '/tmp',
-                        'username' => 'login',
-                        'password' => 'password',
-                        'sandbox' => '0'
-                    ]
-                ]
-            ],
-            [
-                false,
-                [
-                    [
-                        'hostname' => '127.0.0.1',
-                        'path' => '/tmp',
-                        'username' => 'login',
-                        'password' => 'password',
-                        'sandbox' => '0'
-                    ]
-                ]
-            ],
         ];
     }
 }

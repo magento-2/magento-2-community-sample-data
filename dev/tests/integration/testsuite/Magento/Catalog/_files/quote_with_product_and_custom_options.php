@@ -23,21 +23,21 @@ $optionValue = [
 
 $objectManager = \Magento\TestFramework\Helper\Bootstrap::getObjectManager();
 
-$productRepository = $objectManager->create(\Magento\Catalog\Api\ProductRepositoryInterface::class);
+$productRepository = $objectManager->create('Magento\Catalog\Api\ProductRepositoryInterface');
 /** @var \Magento\Catalog\Api\Data\ProductInterface $product */
 $product = $productRepository->get('simple');
 
 /** @var \Magento\Quote\Model\Quote $quote */
-$quote = $objectManager->create(\Magento\Quote\Model\Quote::class);
+$quote = $objectManager->create('Magento\Quote\Model\Quote');
 /** @var \Magento\Quote\Api\CartItemRepositoryInterface  $quoteItemRepository */
-$quoteItemRepository = $objectManager->create(\Magento\Quote\Api\CartItemRepositoryInterface::class);
+$quoteItemRepository = $objectManager->create('\Magento\Quote\Api\CartItemRepositoryInterface');
 /** @var \Magento\Quote\Api\Data\CartItemInterface $cartItem */
-$cartItem = $objectManager->create(\Magento\Quote\Api\Data\CartItemInterface::class);
+$cartItem = $objectManager->create('Magento\Quote\Api\Data\CartItemInterface');
 /** @var \Magento\Quote\Model\Quote\ProductOption $productOption */
-$productOption = $objectManager->create(\Magento\Quote\Model\Quote\ProductOptionFactory::class)->create();
+$productOption = $objectManager->create('Magento\Quote\Model\Quote\ProductOptionFactory')->create();
 /** @var  \Magento\Quote\Api\Data\ProductOptionExtensionInterface $extensionAttributes */
-$extensionAttributes = $objectManager->create(\Magento\Quote\Api\Data\ProductOptionExtensionFactory::class)->create();
-$customOptionFactory = $objectManager->create(\Magento\Catalog\Model\CustomOptions\CustomOptionFactory::class);
+$extensionAttributes = $objectManager->create('Magento\Quote\Api\Data\ProductOptionExtensionFactory')->create();
+$customOptionFactory = $objectManager->create('Magento\Catalog\Model\CustomOptions\CustomOptionFactory');
 $options = [];
 /** @var \Magento\Catalog\Api\Data\ProductCustomOptionInterface $option */
 foreach ($product->getOptions() as $option) {
@@ -47,6 +47,7 @@ foreach ($product->getOptions() as $option) {
     $customOption->setOptionValue($optionValue[$option->getType()]);
     $options[] = $customOption;
 }
+
 
 $quote->load('test_order_1', 'reserved_order_id');
 $cartItem->setQty(1);

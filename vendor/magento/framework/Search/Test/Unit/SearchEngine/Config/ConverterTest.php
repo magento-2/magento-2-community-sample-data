@@ -7,7 +7,7 @@ namespace Magento\Framework\Search\Test\Unit\SearchEngine\Config;
 
 use Magento\Framework\Search\SearchEngine\Config\Converter;
 
-class ConverterTest extends \PHPUnit\Framework\TestCase
+class ConverterTest extends \PHPUnit_Framework_TestCase
 {
     public function testConvert()
     {

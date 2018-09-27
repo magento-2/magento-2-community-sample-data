@@ -8,7 +8,7 @@ namespace Magento\Setup\Test\Unit\Model;
 
 use Magento\Setup\Model\ModuleStatusFactory;
 
-class ModuleStatusFactoryTest extends \PHPUnit\Framework\TestCase
+class ModuleStatusFactoryTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var ModuleStatusFactory
@@ -27,9 +27,9 @@ class ModuleStatusFactoryTest extends \PHPUnit\Framework\TestCase
 
     public function setUp()
     {
-        $this->objectManagerProvider = $this->createMock(\Magento\Setup\Model\ObjectManagerProvider::class);
+        $this->objectManagerProvider = $this->getMock('Magento\Setup\Model\ObjectManagerProvider', [], [], '', false);
         $this->objectManager = $this->getMockForAbstractClass(
-            \Magento\Framework\ObjectManagerInterface::class,
+            'Magento\Framework\ObjectManagerInterface',
             [],
             '',
             false
@@ -41,7 +41,7 @@ class ModuleStatusFactoryTest extends \PHPUnit\Framework\TestCase
         $this->objectManagerProvider->expects($this->once())->method('get')->willReturn($this->objectManager);
         $this->objectManager->expects($this->once())
             ->method('get')
-            ->with(\Magento\Framework\Module\Status::class);
+            ->with('Magento\Framework\Module\Status');
         $this->moduleStatusFactory = new ModuleStatusFactory($this->objectManagerProvider);
         $this->moduleStatusFactory->create();
     }

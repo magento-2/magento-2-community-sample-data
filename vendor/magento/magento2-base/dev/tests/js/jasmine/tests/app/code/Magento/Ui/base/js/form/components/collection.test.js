@@ -4,6 +4,9 @@
  */
 
 /*eslint max-nested-callbacks: 0*/
+/*jscs:disable requirePaddingNewLinesInObjects*/
+/*jscs:disable jsDoc*/
+
 define([
     'underscore',
     'uiRegistry',
@@ -20,14 +23,12 @@ define([
         });
 
         registry.set('provName', {
-            /** Stub */
-            on: function () {},
-
-            /** Stub */
-            get: function () {},
-
-            /** Stub */
-            set: function () {}
+            on: function () {
+            },
+            get: function () {
+            },
+            set: function () {
+            }
         });
 
         describe('"initElement" method', function () {
@@ -41,22 +42,21 @@ define([
             });
             it('Check returned value if method called with object arguments', function () {
                 var arg = {
-                    /** Stub */
-                    initContainer: function () {},
+                    initContainer: function () {
+                    },
+                    activate: function () {
 
-                    /** Stub */
-                    activate: function () {}
+                    }
                 };
 
                 expect(obj.initElement(arg)).toBeDefined();
             });
             it('Check returned value type if method called object arguments', function () {
                 var arg = {
-                        /** Stub */
-                        initContainer: function () {},
-
-                        /** Stub */
-                        activate: function () {}
+                        initContainer: function () {
+                        },
+                        activate: function () {
+                        }
                     },
                     type = typeof obj.initElement(arg);
 
@@ -64,13 +64,11 @@ define([
             });
             it('Check call method "this.bubble" inner initElement method', function () {
                 var arg = {
-                    /** Stub */
-                    initContainer: function () {},
-
-                    /** Stub */
-                    activate: function () {}
+                    initContainer: function () {
+                    },
+                    activate: function () {
+                    }
                 };
-
                 obj.bubble = jasmine.createSpy();
                 obj.initElement(arg);
                 expect(obj.bubble).toHaveBeenCalled();

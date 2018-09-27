@@ -16,15 +16,10 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Composer\Downloader\ChangeReportInterface;
-use Composer\Downloader\DvcsDownloaderInterface;
-use Composer\Downloader\VcsCapableDownloaderInterface;
-use Composer\Package\Dumper\ArrayDumper;
-use Composer\Package\Version\VersionGuesser;
-use Composer\Package\Version\VersionParser;
 use Composer\Plugin\CommandEvent;
 use Composer\Plugin\PluginEvents;
 use Composer\Script\ScriptEvents;
-use Composer\Util\ProcessExecutor;
+use Composer\Downloader\DvcsDownloaderInterface;
 
 /**
  * @author Tiago Ribeiro <tiago.ribeiro@seegno.com>
@@ -32,15 +27,11 @@ use Composer\Util\ProcessExecutor;
  */
 class StatusCommand extends BaseCommand
 {
-    const EXIT_CODE_ERRORS = 1;
-    const EXIT_CODE_UNPUSHED_CHANGES = 2;
-    const EXIT_CODE_VERSION_CHANGES = 4;
-
     protected function configure()
     {
         $this
             ->setName('status')
-            ->setDescription('Show a list of locally modified packages.')
+            ->setDescription('Show a list of locally modified packages')
             ->setDefinition(array(
                 new InputOption('verbose', 'v|vv|vvv', InputOption::VALUE_NONE, 'Show modified files for each directory that contains changes.'),
             ))
@@ -72,18 +63,14 @@ EOT
         $errors = array();
         $io = $this->getIO();
         $unpushedChanges = array();
-        $vcsVersionChanges = array();
-
-        $parser = new VersionParser;
-        $guesser = new VersionGuesser($composer->getConfig(), new ProcessExecutor($io), $parser);
-        $dumper = new ArrayDumper;
 
         // list packages
         foreach ($installedRepo->getCanonicalPackages() as $package) {
             $downloader = $dm->getDownloaderForInstalledPackage($package);
-            $targetDir = $im->getInstallPath($package);
 
             if ($downloader instanceof ChangeReportInterface) {
+                $targetDir = $im->getInstallPath($package);
+
                 if (is_link($targetDir)) {
                     $errors[$targetDir] = $targetDir . ' is a symbolic link.';
                 }
@@ -91,65 +78,31 @@ EOT
                 if ($changes = $downloader->getLocalChanges($package, $targetDir)) {
                     $errors[$targetDir] = $changes;
                 }
-            }
 
-            if ($downloader instanceof VcsCapableDownloaderInterface) {
-                if ($currentRef = $downloader->getVcsReference($package, $targetDir)) {
-                    switch ($package->getInstallationSource()) {
-                        case 'source':
-                            $previousRef = $package->getSourceReference();
-                            break;
-                        case 'dist':
-                            $previousRef = $package->getDistReference();
-                            break;
-                        default:
-                            $previousRef = null;
+                if ($downloader instanceof DvcsDownloaderInterface) {
+                    if ($unpushed = $downloader->getUnpushedChanges($package, $targetDir)) {
+                        $unpushedChanges[$targetDir] = $unpushed;
                     }
-
-                    $currentVersion = $guesser->guessVersion($dumper->dump($package), $targetDir);
-
-                    if ($previousRef && $currentVersion && $currentVersion['commit'] !== $previousRef) {
-                        $vcsVersionChanges[$targetDir] = array(
-                            'previous' => array(
-                                'version' => $package->getPrettyVersion(),
-                                'ref' => $previousRef,
-                            ),
-                            'current' => array(
-                                'version' => $currentVersion['pretty_version'],
-                                'ref' => $currentVersion['commit'],
-                            ),
-                        );
-                    }
-                }
-            }
-
-            if ($downloader instanceof DvcsDownloaderInterface) {
-                if ($unpushed = $downloader->getUnpushedChanges($package, $targetDir)) {
-                    $unpushedChanges[$targetDir] = $unpushed;
                 }
             }
         }
 
         // output errors/warnings
-        if (!$errors && !$unpushedChanges && !$vcsVersionChanges) {
+        if (!$errors && !$unpushedChanges) {
             $io->writeError('<info>No local changes</info>');
-
-            return 0;
+        } elseif ($errors) {
+            $io->writeError('<error>You have changes in the following dependencies:</error>');
         }
 
-        if ($errors) {
-            $io->writeError('<error>You have changes in the following dependencies:</error>');
-
-            foreach ($errors as $path => $changes) {
-                if ($input->getOption('verbose')) {
-                    $indentedChanges = implode("\n", array_map(function ($line) {
-                        return '    ' . ltrim($line);
-                    }, explode("\n", $changes)));
-                    $io->write('<info>'.$path.'</info>:');
-                    $io->write($indentedChanges);
-                } else {
-                    $io->write($path);
-                }
+        foreach ($errors as $path => $changes) {
+            if ($input->getOption('verbose')) {
+                $indentedChanges = implode("\n", array_map(function ($line) {
+                    return '    ' . ltrim($line);
+                }, explode("\n", $changes)));
+                $io->write('<info>'.$path.'</info>:');
+                $io->write($indentedChanges);
+            } else {
+                $io->write($path);
             }
         }
 
@@ -169,36 +122,13 @@ EOT
             }
         }
 
-        if ($vcsVersionChanges) {
-            $io->writeError('<warning>You have version variations in the following dependencies:</warning>');
-
-            foreach ($vcsVersionChanges as $path => $changes) {
-                if ($input->getOption('verbose')) {
-                    // If we don't can't find a version, use the ref instead.
-                    $currentVersion = $changes['current']['version'] ?: $changes['current']['ref'];
-                    $previousVersion = $changes['previous']['version'] ?: $changes['previous']['ref'];
-
-                    if ($io->isVeryVerbose()) {
-                        // Output the ref regardless of whether or not it's being used as the version
-                        $currentVersion .= sprintf(' (%s)', $changes['current']['ref']);
-                        $previousVersion .= sprintf(' (%s)', $changes['previous']['ref']);
-                    }
-
-                    $io->write('<info>'.$path.'</info>:');
-                    $io->write(sprintf('    From <comment>%s</comment> to <comment>%s</comment>', $previousVersion, $currentVersion));
-                } else {
-                    $io->write($path);
-                }
-            }
-        }
-
-        if (($errors || $unpushedChanges || $vcsVersionChanges) && !$input->getOption('verbose')) {
+        if (($errors || $unpushedChanges) && !$input->getOption('verbose')) {
             $io->writeError('Use --verbose (-v) to see a list of files');
         }
 
         // Dispatch post-status-command
         $composer->getEventDispatcher()->dispatchScript(ScriptEvents::POST_STATUS_CMD, true);
 
-        return ($errors ? self::EXIT_CODE_ERRORS : 0) + ($unpushedChanges ? self::EXIT_CODE_UNPUSHED_CHANGES : 0) + ($vcsVersionChanges ? self::EXIT_CODE_VERSION_CHANGES : 0);
+        return ($errors ? 1 : 0) + ($unpushedChanges ? 2 : 0);
     }
 }

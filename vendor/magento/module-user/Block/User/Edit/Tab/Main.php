@@ -8,9 +8,6 @@
 
 namespace Magento\User\Block\User\Edit\Tab;
 
-use Magento\Framework\App\ObjectManager;
-use Magento\Framework\Locale\OptionInterface;
-
 /**
  * Cms page edit form main tab
  *
@@ -31,20 +28,12 @@ class Main extends \Magento\Backend\Block\Widget\Form\Generic
     protected $_LocaleLists;
 
     /**
-     * Operates with deployed locales.
-     *
-     * @var OptionInterface
-     */
-    private $deployedLocales;
-
-    /**
      * @param \Magento\Backend\Block\Template\Context $context
      * @param \Magento\Framework\Registry $registry
      * @param \Magento\Framework\Data\FormFactory $formFactory
      * @param \Magento\Backend\Model\Auth\Session $authSession
      * @param \Magento\Framework\Locale\ListsInterface $localeLists
      * @param array $data
-     * @param OptionInterface $deployedLocales Operates with deployed locales.
      */
     public function __construct(
         \Magento\Backend\Block\Template\Context $context,
@@ -52,13 +41,10 @@ class Main extends \Magento\Backend\Block\Widget\Form\Generic
         \Magento\Framework\Data\FormFactory $formFactory,
         \Magento\Backend\Model\Auth\Session $authSession,
         \Magento\Framework\Locale\ListsInterface $localeLists,
-        array $data = [],
-        OptionInterface $deployedLocales = null
+        array $data = []
     ) {
         $this->_authSession = $authSession;
         $this->_LocaleLists = $localeLists;
-        $this->deployedLocales = $deployedLocales
-            ?: ObjectManager::getInstance()->get(OptionInterface::class);
         parent::__construct($context, $registry, $formFactory, $data);
     }
 
@@ -152,7 +138,7 @@ class Main extends \Magento\Backend\Block\Widget\Form\Generic
                 'name' => 'interface_locale',
                 'label' => __('Interface Locale'),
                 'title' => __('Interface Locale'),
-                'values' => $this->deployedLocales->getOptionLocales(),
+                'values' => $this->_LocaleLists->getTranslatedOptionLocales(),
                 'class' => 'select'
             ]
         );

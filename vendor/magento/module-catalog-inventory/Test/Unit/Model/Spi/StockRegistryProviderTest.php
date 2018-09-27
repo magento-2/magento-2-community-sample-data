@@ -13,7 +13,7 @@ use Magento\Framework\TestFramework\Unit\Helper\ObjectManager as ObjectManagerHe
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  * @SuppressWarnings(PHPMD.TooManyFields)
  */
-class StockRegistryProviderTest extends \PHPUnit\Framework\TestCase
+class StockRegistryProviderTest extends \PHPUnit_Framework_TestCase
 {
     /** @var ObjectManagerHelper */
     protected $objectManagerHelper;
@@ -110,93 +110,109 @@ class StockRegistryProviderTest extends \PHPUnit\Framework\TestCase
         $this->objectManagerHelper = new ObjectManagerHelper($this);
 
         $this->stock = $this->getMockForAbstractClass(
-            \Magento\CatalogInventory\Api\Data\StockInterface::class,
+            'Magento\CatalogInventory\Api\Data\StockInterface',
             ['__wakeup', 'getStockId'],
             '',
             false
         );
         $this->stockItem = $this->getMockForAbstractClass(
-            \Magento\CatalogInventory\Api\Data\StockItemInterface::class,
+            'Magento\CatalogInventory\Api\Data\StockItemInterface',
             ['__wakeup', 'getItemId'],
             '',
             false
         );
         $this->stockStatus = $this->getMockForAbstractClass(
-            \Magento\CatalogInventory\Api\Data\StockStatusInterface::class,
+            'Magento\CatalogInventory\Api\Data\StockStatusInterface',
             ['__wakeup', 'getProductId'],
             '',
             false
         );
 
-        $this->stockFactory = $this->createPartialMock(
-            \Magento\CatalogInventory\Api\Data\StockInterfaceFactory::class,
-            ['create']
+        $this->stockFactory = $this->getMock(
+            '\Magento\CatalogInventory\Api\Data\StockInterfaceFactory',
+            ['create'],
+            [],
+            '',
+            false
         );
         $this->stockFactory->expects($this->any())->method('create')->willReturn($this->stock);
 
-        $this->stockItemFactory = $this->createPartialMock(
-            \Magento\CatalogInventory\Api\Data\StockItemInterfaceFactory::class,
-            ['create']
+        $this->stockItemFactory = $this->getMock(
+            '\Magento\CatalogInventory\Api\Data\StockItemInterfaceFactory',
+            ['create'],
+            [],
+            '',
+            false
         );
         $this->stockItemFactory->expects($this->any())->method('create')->willReturn($this->stockItem);
 
-        $this->stockStatusFactory = $this->createPartialMock(
-            \Magento\CatalogInventory\Api\Data\StockStatusInterfaceFactory::class,
-            ['create']
+        $this->stockStatusFactory = $this->getMock(
+            '\Magento\CatalogInventory\Api\Data\StockStatusInterfaceFactory',
+            ['create'],
+            [],
+            '',
+            false
         );
         $this->stockStatusFactory->expects($this->any())->method('create')->willReturn($this->stockStatus);
 
-        $this->stockRepository = $this->getMockBuilder(\Magento\CatalogInventory\Api\StockRepositoryInterface::class)
+        $this->stockRepository = $this->getMockBuilder('\Magento\CatalogInventory\Api\StockRepositoryInterface')
             ->disableOriginalConstructor()
             ->getMock();
 
-        $this->stockItemRepository = $this->getMockBuilder(
-            \Magento\CatalogInventory\Api\StockItemRepositoryInterface::class
-        )
+        $this->stockItemRepository = $this->getMockBuilder('\Magento\CatalogInventory\Api\StockItemRepositoryInterface')
             ->disableOriginalConstructor()
             ->getMock();
 
         $this->stockStatusRepository = $this->getMockBuilder(
-            \Magento\CatalogInventory\Api\StockStatusRepositoryInterface::class
+            '\Magento\CatalogInventory\Api\StockStatusRepositoryInterface'
         )
             ->disableOriginalConstructor()
             ->getMock();
 
-        $this->stockCriteriaFactory = $this->createPartialMock(
-            \Magento\CatalogInventory\Api\StockCriteriaInterfaceFactory::class,
-            ['create']
+        $this->stockCriteriaFactory = $this->getMock(
+            'Magento\CatalogInventory\Api\StockCriteriaInterfaceFactory',
+            ['create'],
+            [],
+            '',
+            false
         );
         $this->stockCriteria = $this->getMockForAbstractClass(
-            \Magento\CatalogInventory\Api\StockCriteriaInterface::class,
+            'Magento\CatalogInventory\Api\StockCriteriaInterface',
             ['setScopeFilter'],
             '',
             false
         );
 
-        $this->stockItemCriteriaFactory = $this->createPartialMock(
-            \Magento\CatalogInventory\Api\StockItemCriteriaInterfaceFactory::class,
-            ['create']
+        $this->stockItemCriteriaFactory = $this->getMock(
+            'Magento\CatalogInventory\Api\StockItemCriteriaInterfaceFactory',
+            ['create'],
+            [],
+            '',
+            false
         );
         $this->stockItemCriteria = $this->getMockForAbstractClass(
-            \Magento\CatalogInventory\Api\StockItemCriteriaInterface::class,
+            'Magento\CatalogInventory\Api\StockItemCriteriaInterface',
             ['setProductsFilter', 'setScopeFilter'],
             '',
             false
         );
 
-        $this->stockStatusCriteriaFactory = $this->createPartialMock(
-            \Magento\CatalogInventory\Api\StockStatusCriteriaInterfaceFactory::class,
-            ['create']
+        $this->stockStatusCriteriaFactory = $this->getMock(
+            'Magento\CatalogInventory\Api\StockStatusCriteriaInterfaceFactory',
+            ['create'],
+            [],
+            '',
+            false
         );
         $this->stockStatusCriteria = $this->getMockForAbstractClass(
-            \Magento\CatalogInventory\Api\StockStatusCriteriaInterface::class,
+            'Magento\CatalogInventory\Api\StockStatusCriteriaInterface',
             ['setProductsFilter', 'setScopeFilter'],
             '',
             false
         );
 
         $this->stockRegistryProvider = $this->objectManagerHelper->getObject(
-            \Magento\CatalogInventory\Model\StockRegistryProvider::class,
+            '\Magento\CatalogInventory\Model\StockRegistryProvider',
             [
                 'stockRepository' => $this->stockRepository,
                 'stockFactory' => $this->stockFactory,
@@ -208,7 +224,7 @@ class StockRegistryProviderTest extends \PHPUnit\Framework\TestCase
                 'stockCriteriaFactory' => $this->stockCriteriaFactory,
                 'stockItemCriteriaFactory' => $this->stockItemCriteriaFactory,
                 'stockStatusCriteriaFactory' => $this->stockStatusCriteriaFactory,
-                'stockRegistryStorage' => $this->createMock(\Magento\CatalogInventory\Model\StockRegistryStorage::class)
+                'stockRegistryStorage' => $this->getMock('Magento\CatalogInventory\Model\StockRegistryStorage')
             ]
         );
     }
@@ -222,9 +238,12 @@ class StockRegistryProviderTest extends \PHPUnit\Framework\TestCase
     {
         $this->stockCriteriaFactory->expects($this->once())->method('create')->willReturn($this->stockCriteria);
         $this->stockCriteria->expects($this->once())->method('setScopeFilter')->willReturn(null);
-        $stockCollection = $this->createPartialMock(
-            \Magento\CatalogInventory\Model\ResourceModel\Stock\Collection::class,
-            ['getFirstItem', '__wakeup', 'getItems']
+        $stockCollection = $this->getMock(
+            '\Magento\CatalogInventory\Model\ResourceModel\Stock\Collection',
+            ['getFirstItem', '__wakeup', 'getItems'],
+            [],
+            '',
+            false
         );
         $stockCollection->expects($this->once())->method('getItems')->willReturn([$this->stock]);
         $this->stockRepository->expects($this->once())->method('getList')->willReturn($stockCollection);
@@ -236,9 +255,12 @@ class StockRegistryProviderTest extends \PHPUnit\Framework\TestCase
     {
         $this->stockItemCriteriaFactory->expects($this->once())->method('create')->willReturn($this->stockItemCriteria);
         $this->stockItemCriteria->expects($this->once())->method('setProductsFilter')->willReturn(null);
-        $stockItemCollection = $this->createPartialMock(
-            \Magento\CatalogInventory\Model\ResourceModel\Stock\Item\Collection::class,
-            ['getFirstItem', '__wakeup', 'getItems']
+        $stockItemCollection = $this->getMock(
+            '\Magento\CatalogInventory\Model\ResourceModel\Stock\Item\Collection',
+            ['getFirstItem', '__wakeup', 'getItems'],
+            [],
+            '',
+            false
         );
         $stockItemCollection->expects($this->once())->method('getItems')->willReturn([$this->stockItem]);
         $this->stockItemRepository->expects($this->once())->method('getList')->willReturn($stockItemCollection);
@@ -256,9 +278,12 @@ class StockRegistryProviderTest extends \PHPUnit\Framework\TestCase
             ->willReturn($this->stockStatusCriteria);
         $this->stockStatusCriteria->expects($this->once())->method('setScopeFilter')->willReturn(null);
         $this->stockStatusCriteria->expects($this->once())->method('setProductsFilter')->willReturn(null);
-        $stockStatusCollection = $this->createPartialMock(
-            \Magento\CatalogInventory\Model\ResourceModel\Stock\Status\Collection::class,
-            ['getFirstItem', '__wakeup', 'getItems']
+        $stockStatusCollection = $this->getMock(
+            '\Magento\CatalogInventory\Model\ResourceModel\Stock\Status\Collection',
+            ['getFirstItem', '__wakeup', 'getItems'],
+            [],
+            '',
+            false
         );
         $stockStatusCollection->expects($this->once())->method('getItems')->willReturn([$this->stockStatus]);
         $this->stockStatusRepository->expects($this->once())->method('getList')->willReturn($stockStatusCollection);

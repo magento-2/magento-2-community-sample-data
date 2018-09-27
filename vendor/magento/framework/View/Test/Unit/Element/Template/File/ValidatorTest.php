@@ -13,7 +13,7 @@ use \Magento\Framework\Filesystem\DriverPool;
  * Class ValidatorTest
  * @package Magento\Framework\View\Test\Unit\Element\Template\File
  */
-class ValidatorTest extends \PHPUnit\Framework\TestCase
+class ValidatorTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * Resolver object
@@ -62,17 +62,17 @@ class ValidatorTest extends \PHPUnit\Framework\TestCase
      */
     protected function setUp()
     {
-        $this->_fileSystemMock = $this->createMock(\Magento\Framework\Filesystem::class);
-        $this->_scopeConfigMock = $this->createMock(\Magento\Framework\App\Config\ScopeConfigInterface::class);
-        $this->rootDirectoryMock = $this->createMock(\Magento\Framework\Filesystem\Directory\ReadInterface::class);
-        $this->compiledDirectoryMock = $this->createMock(\Magento\Framework\Filesystem\Directory\ReadInterface::class);
+        $this->_fileSystemMock = $this->getMock('\Magento\Framework\Filesystem', [], [], '', false);
+        $this->_scopeConfigMock = $this->getMock('\Magento\Framework\App\Config\ScopeConfigInterface');
+        $this->rootDirectoryMock = $this->getMock('\Magento\Framework\Filesystem\Directory\ReadInterface');
+        $this->compiledDirectoryMock = $this->getMock('\Magento\Framework\Filesystem\Directory\ReadInterface');
 
         $this->_fileSystemMock->expects($this->any())
             ->method('getDirectoryRead')
             ->will($this->returnValueMap(
                 [
                     [DirectoryList::ROOT, DriverPool::FILE, $this->rootDirectoryMock],
-                    [DirectoryList::TMP_MATERIALIZATION_DIR, DriverPool::FILE, $this->compiledDirectoryMock],
+                    [DirectoryList::TEMPLATE_MINIFICATION_DIR, DriverPool::FILE, $this->compiledDirectoryMock],
                 ]
             ));
 
@@ -80,7 +80,7 @@ class ValidatorTest extends \PHPUnit\Framework\TestCase
             ->method('getAbsolutePath')
             ->will($this->returnValue('/magento/var/compiled'));
 
-        $this->componentRegistrar = $this->createMock(\Magento\Framework\Component\ComponentRegistrar::class);
+        $this->componentRegistrar = $this->getMock('Magento\Framework\Component\ComponentRegistrar', [], [], '', false);
         $this->componentRegistrar->expects($this->any())
             ->method('getPaths')
             ->will(

@@ -18,7 +18,9 @@ class Queue
     const KEY_JOB_PARAMS = 'params';
     /**#@-*/
 
-    /**#@-*/
+    /**
+     * @var Queue\Reader
+     */
     protected $reader;
 
     /**

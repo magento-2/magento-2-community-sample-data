@@ -13,7 +13,6 @@ use Magento\Framework\Escaper;
 /**
  * Data form abstract class
  *
- * @api
  * @author     Magento Core Team <core@magentocommerce.com>
  * @SuppressWarnings(PHPMD.NumberOfChildren)
  */

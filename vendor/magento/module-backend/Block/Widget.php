@@ -8,9 +8,9 @@ namespace Magento\Backend\Block;
 /**
  * Base widget class
  *
- * @api
+ * @author     Magento Core Team <core@magentocommerce.com>
+ *
  * @SuppressWarnings(PHPMD.NumberOfChildren)
- * @since 100.0.2
  */
 class Widget extends \Magento\Backend\Block\Template
 {
@@ -82,7 +82,7 @@ class Widget extends \Magento\Backend\Block\Template
     public function getButtonHtml($label, $onclick, $class = '', $buttonId = null, $dataAttr = [])
     {
         return $this->getLayout()->createBlock(
-            \Magento\Backend\Block\Widget\Button::class
+            'Magento\Backend\Block\Widget\Button'
         )->setData(
             ['label' => $label, 'onclick' => $onclick, 'class' => $class, 'type' => 'button', 'id' => $buttonId]
         )->setDataAttribute(

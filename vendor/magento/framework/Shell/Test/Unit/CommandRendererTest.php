@@ -7,7 +7,7 @@ namespace Magento\Framework\Shell\Test\Unit;
 
 use Magento\Framework\Shell\CommandRenderer;
 
-class CommandRendererTest extends \PHPUnit\Framework\TestCase
+class CommandRendererTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @param $expectedCommand
@@ -24,6 +24,9 @@ class CommandRendererTest extends \PHPUnit\Framework\TestCase
         );
     }
 
+    /**
+     * @return array
+     */
     public function commandsDataProvider()
     {
         $testArgument  = 'argument';

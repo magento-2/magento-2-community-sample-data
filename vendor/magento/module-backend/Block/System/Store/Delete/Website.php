@@ -23,18 +23,18 @@ class Website extends \Magento\Backend\Block\Template
         $this->setAction($this->getUrl('adminhtml/*/deleteWebsitePost', ['website_id' => $itemId]));
         $this->addChild(
             'confirm_deletion_button',
-            \Magento\Backend\Block\Widget\Button::class,
+            'Magento\Backend\Block\Widget\Button',
             ['label' => __('Delete Web Site'), 'onclick' => "deleteForm.submit()", 'class' => 'cancel']
         );
         $onClick = "setLocation('" . $this->getUrl('adminhtml/*/editWebsite', ['website_id' => $itemId]) . "')";
         $this->addChild(
             'cancel_button',
-            \Magento\Backend\Block\Widget\Button::class,
+            'Magento\Backend\Block\Widget\Button',
             ['label' => __('Cancel'), 'onclick' => $onClick, 'class' => 'cancel']
         );
         $this->addChild(
             'back_button',
-            \Magento\Backend\Block\Widget\Button::class,
+            'Magento\Backend\Block\Widget\Button',
             ['label' => __('Back'), 'onclick' => $onClick, 'class' => 'cancel']
         );
         return parent::_prepareLayout();

@@ -7,10 +7,6 @@ namespace Magento\Backend\Block\Widget\Grid\Column\Renderer;
 
 /**
  * Backend grid item renderer currency
- *
- * @api
- * @deprecated 100.2.0 in favour of UI component implementation
- * @since 100.0.2
  */
 class Price extends \Magento\Backend\Block\Widget\Grid\Column\Renderer\AbstractRenderer
 {

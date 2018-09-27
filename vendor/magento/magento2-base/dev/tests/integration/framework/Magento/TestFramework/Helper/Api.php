@@ -19,14 +19,14 @@ class Api
     /**
      * Call API method via API handler.
      *
-     * @param \PHPUnit\Framework\TestCase $testCase Active test case
+     * @param \PHPUnit_Framework_TestCase $testCase Active test case
      * @param string $path
      * @param array $params Order of items matters as they are passed to call_user_func_array
      * @return mixed
      */
-    public static function call(\PHPUnit\Framework\TestCase $testCase, $path, $params = [])
+    public static function call(\PHPUnit_Framework_TestCase $testCase, $path, $params = [])
     {
-        $soapAdapterMock = $testCase->getMock(\stdClass::class, ['fault']);
+        $soapAdapterMock = $testCase->getMock('Magento\Api\Model\Server\Adapter\Soap', ['fault']);
         $soapAdapterMock->expects(
             $testCase->any()
         )->method(
@@ -35,14 +35,26 @@ class Api
             $testCase->returnCallback([__CLASS__, 'soapAdapterFaultCallback'])
         );
 
-        $serverMock = $testCase->getMock(\stdClass::class, ['getAdapter']);
+        $serverMock = $testCase->getMock('Magento\Api\Model\Server', ['getAdapter']);
         $serverMock->expects($testCase->any())->method('getAdapter')->will($testCase->returnValue($soapAdapterMock));
 
-        $apiSessionMock = $testCase->createPartialMock(\stdClass::class, ['isAllowed', 'isLoggedIn']);
+        $apiSessionMock = $testCase->getMock(
+            'Magento\Api\Model\Session',
+            ['isAllowed', 'isLoggedIn'],
+            [],
+            '',
+            false
+        );
         $apiSessionMock->expects($testCase->any())->method('isAllowed')->will($testCase->returnValue(true));
         $apiSessionMock->expects($testCase->any())->method('isLoggedIn')->will($testCase->returnValue(true));
 
-        $handlerMock = $testCase->createPartialMock(\stdClass::class, ['_getServer', '_getSession']);
+        $handlerMock = $testCase->getMock(
+            'Magento\Api\Model\Server\Handler\Soap',
+            ['_getServer', '_getSession'],
+            [],
+            '',
+            false
+        );
         self::$_previousHandler = set_error_handler([$handlerMock, 'handlePhpError']);
 
         $handlerMock->expects($testCase->any())->method('_getServer')->will($testCase->returnValue($serverMock));
@@ -52,11 +64,11 @@ class Api
         /** @var $objectManager \Magento\TestFramework\ObjectManager */
         $objectManager = \Magento\TestFramework\Helper\Bootstrap::getObjectManager();
 
-        $objectManager->get(\Magento\Framework\Registry::class)->unregister('isSecureArea');
-        $objectManager->get(\Magento\Framework\Registry::class)->register('isSecureArea', true);
+        $objectManager->get('Magento\Framework\Registry')->unregister('isSecureArea');
+        $objectManager->get('Magento\Framework\Registry')->register('isSecureArea', true);
         $result = call_user_func_array([$handlerMock, $path], $params);
-        $objectManager->get(\Magento\Framework\Registry::class)->unregister('isSecureArea');
-        $objectManager->get(\Magento\Framework\Registry::class)->register('isSecureArea', false);
+        $objectManager->get('Magento\Framework\Registry')->unregister('isSecureArea');
+        $objectManager->get('Magento\Framework\Registry')->register('isSecureArea', false);
 
         self::restoreErrorHandler();
         return $result;
@@ -65,14 +77,14 @@ class Api
     /**
      * Call API method via API handler that raises SoapFault exception
      *
-     * @param \PHPUnit\Framework\TestCase $testCase Active test case
+     * @param \PHPUnit_Framework_TestCase $testCase Active test case
      * @param string $path
      * @param array $params Order of items matters as they are passed to call_user_func_array
      * @param string $expectedMessage exception message
      * @return \SoapFault
      */
     public static function callWithException(
-        \PHPUnit\Framework\TestCase $testCase,
+        \PHPUnit_Framework_TestCase $testCase,
         $path,
         $params = [],
         $expectedMessage = ''
@@ -170,7 +182,7 @@ class Api
     /**
      * Check specific fields value in some entity data.
      *
-     * @param \PHPUnit\Framework\TestCase $testCase
+     * @param \PHPUnit_Framework_TestCase $testCase
      * @param array $expectedData
      * @param array $actualData
      * @param array $fieldsToCompare To be able to compare fields from loaded model with fields from API response
@@ -188,7 +200,7 @@ class Api
      *     );
      */
     public static function checkEntityFields(
-        \PHPUnit\Framework\TestCase $testCase,
+        \PHPUnit_Framework_TestCase $testCase,
         array $expectedData,
         array $actualData,
         array $fieldsToCompare = []

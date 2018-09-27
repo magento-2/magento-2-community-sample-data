@@ -14,7 +14,11 @@ use Magento\Sales\Model\Order;
 use Magento\Customer\Block\Address\Renderer\RendererInterface as CustomerAddressBlockRenderer;
 use Magento\Framework\DataObject;
 
-class RendererTest extends \PHPUnit\Framework\TestCase
+/**
+ * Order address render test
+ * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
+ */
+class RendererTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var OrderAddressRenderer

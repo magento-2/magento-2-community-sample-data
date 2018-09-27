@@ -8,10 +8,10 @@ namespace Magento\ImportExport\Model;
 /**
  * Import history model
  *
- * @api
+ * @method \Magento\ImportExport\Model\ResourceModel\History _getResource()
+ * @method \Magento\ImportExport\Model\ResourceModel\History getResource()
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  * @SuppressWarnings(PHPMD.LongVariable)
- * @since 100.0.2
  */
 class History extends \Magento\Framework\Model\AbstractModel
 {
@@ -75,7 +75,7 @@ class History extends \Magento\Framework\Model\AbstractModel
      */
     protected function _construct()
     {
-        $this->_init(\Magento\ImportExport\Model\ResourceModel\History::class);
+        $this->_init('Magento\ImportExport\Model\ResourceModel\History');
     }
 
     /**
@@ -269,7 +269,6 @@ class History extends \Magento\Framework\Model\AbstractModel
     {
         return $this->setData(self::ERROR_FILE, $errorFile);
     }
-
     /**
      * Set Execution Time
      *

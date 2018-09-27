@@ -11,10 +11,6 @@
  */
 namespace Magento\Wishlist\Block\Share;
 
-/**
- * @api
- * @since 100.0.2
- */
 class Wishlist extends \Magento\Wishlist\Block\AbstractBlock
 {
     /**

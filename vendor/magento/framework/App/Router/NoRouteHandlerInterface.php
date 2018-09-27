@@ -7,10 +7,6 @@
  */
 namespace Magento\Framework\App\Router;
 
-/**
- * Interface \Magento\Framework\App\Router\NoRouteHandlerInterface
- *
- */
 interface NoRouteHandlerInterface
 {
     /**

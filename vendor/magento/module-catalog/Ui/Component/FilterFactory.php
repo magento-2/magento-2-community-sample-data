@@ -5,10 +5,6 @@
  */
 namespace Magento\Catalog\Ui\Component;
 
-/**
- * @api
- * @since 100.0.2
- */
 class FilterFactory
 {
     /**

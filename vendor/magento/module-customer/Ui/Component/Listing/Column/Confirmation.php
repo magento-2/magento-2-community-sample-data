@@ -5,42 +5,35 @@
  */
 namespace Magento\Customer\Ui\Component\Listing\Column;
 
+use Magento\Customer\Model\AccountManagement;
 use Magento\Framework\App\Config\ScopeConfigInterface;
 use Magento\Framework\View\Element\UiComponent\ContextInterface;
 use Magento\Framework\View\Element\UiComponentFactory;
+use Magento\Store\Model\ScopeInterface;
 use Magento\Ui\Component\Listing\Columns\Column;
-use Magento\Framework\App\ObjectManager;
-use Magento\Customer\Model\AccountConfirmation;
 
-/**
- * Class Confirmation column.
- */
 class Confirmation extends Column
 {
     /**
-     * @var AccountConfirmation
+     * @var ScopeConfigInterface
      */
-    private $accountConfirmation;
+    private $scopeConfig;
 
     /**
      * @param ContextInterface $context
      * @param UiComponentFactory $uiComponentFactory
-     * @param ScopeConfigInterface $scopeConfig @deprecated
+     * @param ScopeConfigInterface $scopeConfig
      * @param array $components
      * @param array $data
-     * @param AccountConfirmation $accountConfirmation
-     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      */
     public function __construct(
         ContextInterface $context,
         UiComponentFactory $uiComponentFactory,
         ScopeConfigInterface $scopeConfig,
         array $components,
-        array $data,
-        AccountConfirmation $accountConfirmation = null
+        array $data
     ) {
-        $this->accountConfirmation = $accountConfirmation ?: ObjectManager::getInstance()
-            ->get(AccountConfirmation::class);
+        $this->scopeConfig = $scopeConfig;
         parent::__construct($context, $uiComponentFactory, $components, $data);
     }
 
@@ -65,18 +58,27 @@ class Confirmation extends Column
      */
     private function getFieldLabel(array $item)
     {
-        $isConfirmationRequired = $this->accountConfirmation->isConfirmationRequired(
-            $item['website_id'][0],
-            $item[$item['id_field_name']],
-            $item['email']
-        );
-
-        if ($isConfirmationRequired) {
+        if ($this->isConfirmationRequired($item)) {
             if ($item[$this->getData('name')] === null) {
                 return __('Confirmed');
             }
             return __('Confirmation Required');
         }
         return __('Confirmation Not Required');
+    }
+
+    /**
+     * Check if confirmation is required
+     *
+     * @param array $item
+     * @return bool
+     */
+    private function isConfirmationRequired(array $item)
+    {
+        return (bool)$this->scopeConfig->getValue(
+            AccountManagement::XML_PATH_IS_CONFIRM,
+            ScopeInterface::SCOPE_WEBSITES,
+            $item['website_id'][0]
+        );
     }
 }

@@ -7,7 +7,7 @@ namespace Magento\Authorizenet\Test\Unit\Model\Directpost\Request;
 
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
 
-class FactoryTest extends \PHPUnit\Framework\TestCase
+class FactoryTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\Authorizenet\Model\Directpost\Request\Factory
@@ -28,16 +28,16 @@ class FactoryTest extends \PHPUnit\Framework\TestCase
     {
         $objectManager = new ObjectManager($this);
 
-        $this->requestMock = $this->createMock(\Magento\Authorizenet\Model\Directpost\Request::class);
+        $this->requestMock = $this->getMock('Magento\Authorizenet\Model\Directpost\Request', [], [], '', false);
 
-        $this->objectManagerMock = $this->createMock(\Magento\Framework\ObjectManagerInterface::class);
+        $this->objectManagerMock = $this->getMock('Magento\Framework\ObjectManagerInterface', [], [], '', false);
         $this->objectManagerMock->expects($this->once())
             ->method('create')
-            ->with(\Magento\Authorizenet\Model\Directpost\Request::class, [])
+            ->with('Magento\Authorizenet\Model\Directpost\Request', [])
             ->willReturn($this->requestMock);
 
         $this->requestFactory = $objectManager->getObject(
-            \Magento\Authorizenet\Model\Directpost\Request\Factory::class,
+            'Magento\Authorizenet\Model\Directpost\Request\Factory',
             ['objectManager' => $this->objectManagerMock]
         );
     }

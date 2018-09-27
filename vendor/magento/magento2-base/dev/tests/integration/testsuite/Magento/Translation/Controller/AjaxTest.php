@@ -12,14 +12,14 @@ class AjaxTest extends \Magento\TestFramework\TestCase\AbstractController
     {
         /* Called getConfig as workaround for setConfig bug */
         \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->get(
-            \Magento\Store\Model\StoreManagerInterface::class
+            'Magento\Store\Model\StoreManagerInterface'
         )->getStore(
             'default'
         )->getConfig(
             'dev/translate_inline/active'
         );
         \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->get(
-            \Magento\Framework\App\Config\MutableScopeConfigInterface::class
+            'Magento\Framework\App\Config\MutableScopeConfigInterface'
         )->setValue(
             'dev/translate_inline/active',
             true,

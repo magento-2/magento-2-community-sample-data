@@ -8,7 +8,7 @@ namespace Magento\Setup\Test\Unit\Controller;
 
 use \Magento\Setup\Controller\WebConfiguration;
 
-class WebConfigurationTest extends \PHPUnit\Framework\TestCase
+class WebConfigurationTest extends \PHPUnit_Framework_TestCase
 {
     public function testIndexAction()
     {
@@ -16,7 +16,7 @@ class WebConfigurationTest extends \PHPUnit\Framework\TestCase
         $controller = new WebConfiguration();
         $_SERVER['DOCUMENT_ROOT'] = 'some/doc/root/value';
         $viewModel = $controller->indexAction();
-        $this->assertInstanceOf(\Zend\View\Model\ViewModel::class, $viewModel);
+        $this->assertInstanceOf('Zend\View\Model\ViewModel', $viewModel);
         $this->assertTrue($viewModel->terminate());
         $this->assertArrayHasKey('autoBaseUrl', $viewModel->getVariables());
     }

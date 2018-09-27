@@ -6,7 +6,7 @@
  */
 namespace Magento\Framework\App\Test\Unit\Console;
 
-class ResponseTest extends \PHPUnit\Framework\TestCase
+class ResponseTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\Framework\App\Console\Response
@@ -34,6 +34,9 @@ class ResponseTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals($expectedCode, $result);
     }
 
+    /**
+     * @return array
+     */
     public static function setCodeProvider()
     {
         $largeCode = 256;

@@ -5,7 +5,7 @@
  */
 namespace Magento\Webapi\Test\Unit\Controller\Rest;
 
-class RouterTest extends \PHPUnit\Framework\TestCase
+class RouterTest extends \PHPUnit_Framework_TestCase
 {
     /** @var \Magento\Webapi\Controller\Rest\Router\Route */
     protected $_routeMock;
@@ -23,16 +23,16 @@ class RouterTest extends \PHPUnit\Framework\TestCase
     {
         /** Prepare mocks for SUT constructor. */
         $this->_apiConfigMock = $this->getMockBuilder(
-            \Magento\Webapi\Model\Rest\Config::class
+            'Magento\Webapi\Model\Rest\Config'
         )->disableOriginalConstructor()->getMock();
 
         $this->_routeMock = $this->getMockBuilder(
-            \Magento\Webapi\Controller\Rest\Router\Route::class
+            'Magento\Webapi\Controller\Rest\Router\Route'
         )->disableOriginalConstructor()->setMethods(
             ['match']
         )->getMock();
 
-        $areaListMock = $this->createMock(\Magento\Framework\App\AreaList::class);
+        $areaListMock = $this->getMock('Magento\Framework\App\AreaList', [], [], '', false);
 
         $areaListMock->expects($this->once())
             ->method('getFrontName')
@@ -40,7 +40,7 @@ class RouterTest extends \PHPUnit\Framework\TestCase
 
         $objectManager = new \Magento\Framework\TestFramework\Unit\Helper\ObjectManager($this);
         $this->_request = $objectManager->getObject(
-            \Magento\Framework\Webapi\Rest\Request::class,
+            'Magento\Framework\Webapi\Rest\Request',
             [
                 'areaList' => $areaListMock,
             ]
@@ -48,7 +48,7 @@ class RouterTest extends \PHPUnit\Framework\TestCase
 
         /** Initialize SUT. */
         $this->_router = $objectManager->getObject(
-            \Magento\Webapi\Controller\Rest\Router::class,
+            'Magento\Webapi\Controller\Rest\Router',
             [
                 'apiConfig' => $this->_apiConfigMock
             ]

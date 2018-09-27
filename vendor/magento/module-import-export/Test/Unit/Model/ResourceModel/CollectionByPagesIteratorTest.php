@@ -10,7 +10,7 @@ use \Magento\Framework\Data\Collection\AbstractDb;
 /**
  * Test class for \Magento\ImportExport\Model\ResourceModel\CollectionByPagesIterator
  */
-class CollectionByPagesIteratorTest extends \PHPUnit\Framework\TestCase
+class CollectionByPagesIteratorTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\ImportExport\Model\ResourceModel\CollectionByPagesIterator
@@ -36,19 +36,17 @@ class CollectionByPagesIteratorTest extends \PHPUnit\Framework\TestCase
         $pageCount = 3;
 
         /** @var $callbackMock \PHPUnit_Framework_MockObject_MockObject */
-        $callbackMock = $this->createPartialMock(\stdClass::class, ['callback']);
+        $callbackMock = $this->getMock('stdClass', ['callback']);
 
-        $fetchStrategy = $this->getMockForAbstractClass(
-            \Magento\Framework\Data\Collection\Db\FetchStrategyInterface::class
-        );
+        $fetchStrategy = $this->getMockForAbstractClass('Magento\Framework\Data\Collection\Db\FetchStrategyInterface');
 
-        $select = $this->createMock(\Magento\Framework\DB\Select::class);
+        $select = $this->getMock('Magento\Framework\DB\Select', [], [], '', false);
 
-        $entityFactory = $this->createMock(\Magento\Framework\Data\Collection\EntityFactory::class);
-        $logger = $this->createMock(\Psr\Log\LoggerInterface::class);
+        $entityFactory = $this->getMock('Magento\Framework\Data\Collection\EntityFactory', [], [], '', false);
+        $logger = $this->getMock('Psr\Log\LoggerInterface');
 
         /** @var $collectionMock AbstractDb|\PHPUnit_Framework_MockObject_MockObject */
-        $collectionMock = $this->getMockBuilder(\Magento\Framework\Data\Collection\AbstractDb::class)
+        $collectionMock = $this->getMockBuilder('Magento\Framework\Data\Collection\AbstractDb')
             ->setConstructorArgs([$entityFactory, $logger, $fetchStrategy])
             ->setMethods(['clear', 'setPageSize', 'setCurPage', 'count', 'getLastPageNumber', 'getSelect'])
             ->getMockForAbstractClass();

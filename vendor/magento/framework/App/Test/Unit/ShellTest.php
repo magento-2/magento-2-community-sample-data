@@ -9,7 +9,7 @@ use Magento\Framework\App\Shell;
 use Magento\Framework\Exception\LocalizedException;
 use Magento\Framework\Shell\Response;
 
-class ShellTest extends \PHPUnit\Framework\TestCase
+class ShellTest extends \PHPUnit_Framework_TestCase
 {
     /** @var  \PHPUnit_Framework_MockObject_MockObject | \Psr\Log\LoggerInterface */
     private $loggerMock;
@@ -22,10 +22,10 @@ class ShellTest extends \PHPUnit\Framework\TestCase
 
     public function setUp()
     {
-        $this->loggerMock = $this->getMockBuilder(\Psr\Log\LoggerInterface::class)
+        $this->loggerMock = $this->getMockBuilder('\Psr\Log\LoggerInterface')
             ->disableOriginalConstructor()
             ->getMock();
-        $this->driverMock = $this->getMockBuilder(\Magento\Framework\Shell\Driver::class)
+        $this->driverMock = $this->getMockBuilder('\Magento\Framework\Shell\Driver')
             ->disableOriginalConstructor()
             ->getMock();
         $this->model = new Shell(
@@ -69,8 +69,7 @@ class ShellTest extends \PHPUnit\Framework\TestCase
         );
         $this->driverMock->expects($this->once())->method('execute')->willReturn($response);
         $this->loggerMock->expects($this->once())->method('error')->with($logEntry);
-        $this->expectException(LocalizedException::class);
-        $this->expectExceptionMessage("Command returned non-zero exit code:\n`$command`");
+        $this->setExpectedException(LocalizedException::class, "Command returned non-zero exit code:\n`$command`");
         $this->model->execute($command, []);
     }
 }

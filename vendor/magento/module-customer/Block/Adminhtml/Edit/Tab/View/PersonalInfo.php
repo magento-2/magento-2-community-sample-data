@@ -154,7 +154,7 @@ class PersonalInfo extends \Magento\Backend\Block\Template
      *
      * @param \Magento\Framework\Registry $coreRegistry
      * @return void
-     * @deprecated 100.1.0
+     * @deprecated
      */
     public function setCustomerRegistry(\Magento\Customer\Model\CustomerRegistry $customerRegistry)
     {
@@ -166,15 +166,13 @@ class PersonalInfo extends \Magento\Backend\Block\Template
      * Get customer registry
      *
      * @return \Magento\Customer\Model\CustomerRegistry
-     * @deprecated 100.1.0
+     * @deprecated
      */
     public function getCustomerRegistry()
     {
 
         if (!($this->customerRegistry instanceof \Magento\Customer\Model\CustomerRegistry)) {
-            return \Magento\Framework\App\ObjectManager::getInstance()->get(
-                \Magento\Customer\Model\CustomerRegistry::class
-            );
+            return \Magento\Framework\App\ObjectManager::getInstance()->get('Magento\Customer\Model\CustomerRegistry');
         } else {
             return $this->customerRegistry;
         }
@@ -189,11 +187,10 @@ class PersonalInfo extends \Magento\Backend\Block\Template
     {
         if (!$this->customer) {
             $this->customer = $this->customerDataFactory->create();
-            $data = $this->_backendSession->getCustomerData();
             $this->dataObjectHelper->populateWithArray(
                 $this->customer,
-                $data['account'],
-                \Magento\Customer\Api\Data\CustomerInterface::class
+                $this->_backendSession->getCustomerData()['account'],
+                '\Magento\Customer\Api\Data\CustomerInterface'
             );
         }
         return $this->customer;

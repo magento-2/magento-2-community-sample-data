@@ -7,18 +7,16 @@
  */
 namespace Magento\Framework\Profiler\Test\Unit\Driver\Standard;
 
-class OutputAbstractTest extends \PHPUnit\Framework\TestCase
+class OutputAbstractTest extends \PHPUnit_Framework_TestCase
 {
     /**
-     * @var \Magento\Framework\Profiler\Driver\Standard\AbstractOutput|\PHPUnit_Framework_MockObject_MockObject
+     * @var \Magento\Framework\Profiler\Driver\Standard\AbstractOutput|PHPUnit_Framework_MockObject_MockObject
      */
     protected $_output;
 
     protected function setUp()
     {
-        $this->_output = $this->getMockForAbstractClass(
-            \Magento\Framework\Profiler\Driver\Standard\AbstractOutput::class
-        );
+        $this->_output = $this->getMockForAbstractClass('Magento\Framework\Profiler\Driver\Standard\AbstractOutput');
     }
 
     /**
@@ -41,7 +39,7 @@ class OutputAbstractTest extends \PHPUnit\Framework\TestCase
         $this->_output->setThreshold($thresholdKey, 100);
         $thresholds = class_exists('PHPUnit_Util_Class')
             ? \PHPUnit_Util_Class::getObjectAttribute($this->_output, '_thresholds')
-            : \PHPUnit\Framework\Assert::readAttribute($this->_output, '_thresholds');
+            : \PHPUnit_Framework_Assert::readAttribute($this->_output, '_thresholds');
         $this->assertArrayHasKey($thresholdKey, $thresholds);
         $this->assertEquals(100, $thresholds[$thresholdKey]);
 
@@ -57,7 +55,7 @@ class OutputAbstractTest extends \PHPUnit\Framework\TestCase
         $configuration = ['filterPattern' => '/filter pattern/', 'thresholds' => ['fetchKey' => 100]];
         /** @var $output \Magento\Framework\Profiler\Driver\Standard\AbstractOutput  */
         $output = $this->getMockForAbstractClass(
-            \Magento\Framework\Profiler\Driver\Standard\AbstractOutput::class,
+            'Magento\Framework\Profiler\Driver\Standard\AbstractOutput',
             [$configuration]
         );
         $this->assertEquals('/filter pattern/', $output->getFilterPattern());
@@ -115,7 +113,7 @@ class OutputAbstractTest extends \PHPUnit\Framework\TestCase
     {
         $this->_output->setFilterPattern('/filter pattern/');
 
-        $mockStat = $this->createMock(\Magento\Framework\Profiler\Driver\Standard\Stat::class);
+        $mockStat = $this->getMock('Magento\Framework\Profiler\Driver\Standard\Stat');
         $expectedTimerIds = ['test'];
         $mockStat->expects(
             $this->once()

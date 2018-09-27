@@ -11,13 +11,12 @@ use Magento\Catalog\Model\ResourceModel\Product\CollectionFactory;
 use Magento\ConfigurableProduct\Api\LinkManagementInterface;
 use Magento\ConfigurableProduct\Api\OptionRepositoryInterface;
 use Magento\Framework\ObjectManager\ObjectManager;
-use Magento\Framework\Serialize\SerializerInterface;
 use Magento\Sales\Model\ResourceModel\Order;
 use Magento\Setup\Fixtures\FixtureModel;
 use Magento\Setup\Fixtures\OrdersFixture;
 use Magento\Store\Model\StoreManagerInterface;
 
-class OrdersFixtureTest extends \PHPUnit\Framework\TestCase
+class OrdersFixtureTest extends \PHPUnit_Framework_TestCase
 {
 
     /**
@@ -54,10 +53,6 @@ class OrdersFixtureTest extends \PHPUnit\Framework\TestCase
             ->disableOriginalConstructor()
             ->getMockForAbstractClass();
 
-        $serializerMock = $this->getMockBuilder(SerializerInterface::class)
-            ->disableOriginalConstructor()
-            ->getMockForAbstractClass();
-
         $this->fixtureModelMock = $this->getMockBuilder(FixtureModel::class)
             ->disableOriginalConstructor()
             ->getMock();
@@ -68,13 +63,15 @@ class OrdersFixtureTest extends \PHPUnit\Framework\TestCase
             $productRepositoryMock,
             $optionRepositoryMock,
             $linkManagementMock,
-            $serializerMock,
             $this->fixtureModelMock
         );
 
-        $orderMock = $this->createPartialMock(
+        $orderMock = $this->getMock(
             Order::class,
-            ['getTable', 'getConnection', 'getTableName', 'query', 'fetchColumn']
+            ['getTable', 'getConnection', 'getTableName', 'query', 'fetchColumn'],
+            [],
+            '',
+            false
         );
 
         $path = explode('\\', Order::class);
@@ -93,7 +90,7 @@ class OrdersFixtureTest extends \PHPUnit\Framework\TestCase
             ->method('getTableName')
             ->willReturn(strtolower($name) . '_table_name');
 
-        $objectManagerMock = $this->createMock(ObjectManager::class);
+        $objectManagerMock = $this->getMock(ObjectManager::class, [], [], '', false);
         $objectManagerMock->expects($this->atLeastOnce())
             ->method('get')
             ->willReturn($orderMock);

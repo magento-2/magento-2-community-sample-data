@@ -2,7 +2,6 @@
  * Copyright © Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
-
 define([
     'underscore',
     'jquery',
@@ -121,7 +120,8 @@ define([
         submit: function (options, attrs) {
             var form        = document.createElement('form'),
                 data        = this.serialize(options.data),
-                attributes  = _.extend({}, defaultAttributes, attrs || {});
+                attributes  = _.extend({}, defaultAttributes, attrs || {}),
+                field;
 
             if (!attributes.action) {
                 attributes.action = options.url;
@@ -133,17 +133,17 @@ define([
                 form.setAttribute(name, value);
             });
 
-            data = _.map(
-                data,
-                function (value, name) {
-                    return '<input type="hidden" ' +
-                        'name="' + _.escape(name) + '" ' +
-                        'value="' + _.escape(value) + '"' +
-                        ' />';
-                }
-            ).join('');
+            _.each(data, function (value, name) {
+                field = document.createElement('input');
 
-            form.insertAdjacentHTML('afterbegin', data);
+                field.setAttribute('name', name);
+                field.setAttribute('type', 'hidden');
+
+                field.value = value;
+
+                form.appendChild(field);
+            });
+
             document.body.appendChild(form);
 
             form.submit();
@@ -164,32 +164,26 @@ define([
             options.data = this.prepareFormData(options.data, config.ajaxSaveType);
             settings = _.extend({}, ajaxSettings[config.ajaxSaveType], options || {});
 
-            if (!config.ignoreProcessEvents) {
-                $('body').trigger('processStart');
-            }
+            $('body').trigger('processStart');
 
             return $.ajax(settings)
                 .done(function (data) {
-                    if (config.response) {
-                        data.t = t;
-                        config.response.data(data);
-                        config.response.status(undefined);
-                        config.response.status(!data.error);
-                    }
+                    data.t = t;
+                    config.response.data(data);
+                    config.response.status(undefined);
+                    config.response.status(!data.error);
                 })
-                .fail(function () {
+                .fail(function (xhr) {
                     config.response.status(undefined);
                     config.response.status(false);
                     config.response.data({
                         error: true,
-                        messages: 'Something went wrong.',
+                        messages: xhr.statusText,
                         t: t
                     });
                 })
                 .always(function () {
-                    if (!config.ignoreProcessEvents) {
-                        $('body').trigger('processStop');
-                    }
+                    $('body').trigger('processStop');
                 });
         },
 
@@ -251,42 +245,10 @@ define([
         convertToMomentFormat: function (format) {
             var newFormat;
 
-            newFormat = format.replace(/yy|y/gi, 'YYYY'); // replace the year
-            newFormat = newFormat.replace(/dd|d/g, 'DD'); // replace the date
+            newFormat = format.replace(/yyyy|yy|y/, 'YYYY'); // replace the year
+            newFormat = newFormat.replace(/dd|d/g, 'DD'); // replace the day
 
             return newFormat;
-        },
-
-        /**
-         * Get Url Parameters.
-         *
-         * @param {String} url - Url string
-         * @returns {Object}
-         */
-        getUrlParameters: function (url) {
-            var params = {},
-                queries = url.split('?'),
-                temp,
-                i,
-                l;
-
-            if (!queries[1]) {
-                return params;
-            }
-
-            queries = queries[1].split('&');
-
-            for (i = 0, l = queries.length; i < l; i++) {
-                temp = queries[i].split('=');
-
-                if (temp[1]) {
-                    params[temp[0]] = decodeURIComponent(temp[1].replace(/\+/g, '%20'));
-                } else {
-                    params[temp[0]] = '';
-                }
-            }
-
-            return params;
         }
     };
 });

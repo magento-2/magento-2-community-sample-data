@@ -7,6 +7,7 @@ namespace Magento\ConfigurableProduct\Test\Unit\Controller\Adminhtml\Product\Ini
 
 use Magento\Catalog\Controller\Adminhtml\Product\Initialization\Helper;
 use Magento\Catalog\Model\Product;
+use Magento\Catalog\Model\ResourceModel\Product as ProductResource;
 use Magento\ConfigurableProduct\Controller\Adminhtml\Product\Initialization\Helper\Plugin\Configurable;
 use Magento\ConfigurableProduct\Helper\Product\Options\Factory;
 use Magento\ConfigurableProduct\Model\Product\Type\Configurable as ConfigurableProduct;
@@ -18,7 +19,7 @@ use PHPUnit_Framework_MockObject_MockObject as MockObject;
 /**
  * Class ConfigurableTest
  */
-class ConfigurableTest extends \PHPUnit\Framework\TestCase
+class ConfigurableTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var Magento\ConfigurableProduct\Model\Product\VariationHandler|MockObject
@@ -74,7 +75,7 @@ class ConfigurableTest extends \PHPUnit\Framework\TestCase
             ->disableOriginalConstructor()
             ->setMethods([
                 'getTypeId', 'setAttributeSetId', 'getExtensionAttributes', 'setNewVariationsAttributeSetId',
-                'setCanSaveConfigurableAttributes', 'setExtensionAttributes'
+                'setCanSaveConfigurableAttributes', 'setExtensionAttributes', 'hasData', 'getData', 'getResource'
             ])
             ->getMock();
 
@@ -94,16 +95,15 @@ class ConfigurableTest extends \PHPUnit\Framework\TestCase
      */
     public function testAfterInitializeWithAttributesAndVariations()
     {
+        $postValue = 24;
+        $productResourceMock = $this->getProductResource($postValue);
+
         $attributes = [
             ['attribute_id' => 90, 'values' => [
                 ['value_index' => 12], ['value_index' => 13]
             ]]
         ];
-        $valueMap = [
-            ['new-variations-attribute-set-id', null, 24],
-            ['associated_product_ids_serialized', '[]', []],
-            ['product', [], ['configurable_attributes_data' => $attributes]],
-        ];
+
         $simpleProductsIds = [1, 2, 3];
         $simpleProducts = [
             [
@@ -149,14 +149,42 @@ class ConfigurableTest extends \PHPUnit\Framework\TestCase
                 'quantity_and_stock_status' => ['qty' => '3']
             ]
         ];
+
+        $productData = [
+            'configurable_attributes_data' => $attributes,
+            'associated_product_ids' => [],
+            'configurable-matrix' => $simpleProducts
+        ];
+        $valueMap = [
+            ['new-variations-attribute-set-id', null, $postValue],
+            ['product', [], $productData]
+        ];
+
         $paramValueMap = [
-            ['configurable-matrix-serialized', "[]", json_encode($simpleProducts)],
-            ['attributes', null, $attributes],
+            ['attributes', null, $attributes]
         ];
 
         $this->product->expects(static::once())
             ->method('getTypeId')
             ->willReturn(ConfigurableProduct::TYPE_CODE);
+
+        $this->product->expects(static::at(5))
+            ->method('hasData')
+            ->with('associated_product_ids')
+            ->willReturn(false);
+        $this->product->expects(static::at(6))
+            ->method('hasData')
+            ->with('configurable-matrix')
+            ->willReturn(true);
+
+        $this->product->expects(static::at(7))
+            ->method('getData')
+            ->with('configurable-matrix')
+            ->willReturn($simpleProducts);
+
+        $this->product->expects(static::once())
+            ->method('getResource')
+            ->willReturn($productResourceMock);
 
         $this->request->expects(static::any())
             ->method('getPost')
@@ -205,24 +233,41 @@ class ConfigurableTest extends \PHPUnit\Framework\TestCase
 
     public function testAfterInitializeWithAttributesAndWithoutVariations()
     {
+        $postValue = 24;
+        $productResourceMock = $this->getProductResource($postValue);
+
         $attributes = [
             ['attribute_id' => 90, 'values' => [
                 ['value_index' => 12], ['value_index' => 13]
             ]]
         ];
+
+        $productData = [
+            'configurable_attributes_data' => $attributes,
+            'associated_product_ids' => [],
+            'configurable-matrix' => []
+        ];
+
         $valueMap = [
-            ['new-variations-attribute-set-id', null, 24],
-            ['associated_product_ids_serialized', "[]", "[]"],
-            ['product', [], ['configurable_attributes_data' => $attributes]],
+            ['new-variations-attribute-set-id', null, $postValue],
+            ['product', [], $productData],
         ];
         $paramValueMap = [
-            ['configurable-matrix-serialized', "[]", "[]"],
             ['attributes', null, $attributes],
         ];
 
         $this->product->expects(static::once())
             ->method('getTypeId')
             ->willReturn(ConfigurableProduct::TYPE_CODE);
+        $this->product->expects(static::any())
+            ->method('hasData')
+            ->willReturn(false);
+        $this->product->expects(static::at(0))
+            ->method('getData')
+            ->willReturn(ConfigurableProduct::TYPE_CODE);
+        $this->product->expects(static::once())
+            ->method('getResource')
+            ->willReturn($productResourceMock);
 
         $this->request->expects(static::any())
             ->method('getPost')
@@ -299,5 +344,22 @@ class ConfigurableTest extends \PHPUnit\Framework\TestCase
         $this->variationHandler->expects(static::never())
             ->method('generateSimpleProducts');
         $this->plugin->afterInitialize($this->subject, $this->product);
+    }
+
+    /**
+     * generate product resource model mock
+     * @param $postValue
+     * @return \PHPUnit_Framework_MockObject_MockObject
+     */
+    private function getProductResource($postValue)
+    {
+        $productResourceMock = $this->getMockBuilder(ProductResource::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+        $productResourceMock->expects(static::once())
+            ->method('getSortedAttributes')
+            ->with($postValue);
+
+        return $productResourceMock;
     }
 }

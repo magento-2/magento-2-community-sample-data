@@ -103,8 +103,7 @@
             "preset": "jsdoc3",
             "extra": {
                 "override": true,
-                "inheritdoc": true,
-                "api": true
+                "inheritdoc": true
             }
         },
         "checkParamNames": true,

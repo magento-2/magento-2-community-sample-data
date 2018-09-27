@@ -10,8 +10,7 @@ use Magento\Framework\View\Element\UiComponent\ContextInterface;
 use Magento\Framework\View\Element\UiComponentInterface;
 
 /**
- * @api
- * @since 100.0.2
+ * Class Form
  */
 class Form extends AbstractComponent
 {

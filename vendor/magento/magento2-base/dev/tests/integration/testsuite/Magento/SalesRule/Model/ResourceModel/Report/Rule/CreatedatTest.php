@@ -10,7 +10,7 @@ namespace Magento\SalesRule\Model\ResourceModel\Report\Rule;
  *
  * @magentoDataFixture Magento/SalesRule/_files/order_with_coupon.php
  */
-class CreatedatTest extends \PHPUnit\Framework\TestCase
+class CreatedatTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @dataProvider orderParamsDataProvider()
@@ -19,7 +19,7 @@ class CreatedatTest extends \PHPUnit\Framework\TestCase
     public function testTotals($orderParams)
     {
         /** @var \Magento\Sales\Model\Order $order */
-        $order = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->create(\Magento\Sales\Model\Order::class);
+        $order = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->create('Magento\Sales\Model\Order');
         $order->loadByIncrementId('100000001')
             ->setBaseGrandTotal($orderParams['base_subtotal'])
             ->setSubtotal($orderParams['base_subtotal'])
@@ -37,12 +37,12 @@ class CreatedatTest extends \PHPUnit\Framework\TestCase
         // refresh report statistics
         /** @var \Magento\SalesRule\Model\ResourceModel\Report\Rule $reportResource */
         $reportResource = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->create(
-            \Magento\SalesRule\Model\ResourceModel\Report\Rule::class
+            'Magento\SalesRule\Model\ResourceModel\Report\Rule'
         );
         $reportResource->aggregate();
         /** @var \Magento\SalesRule\Model\ResourceModel\Report\Collection $reportCollection */
         $reportCollection = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->create(
-            \Magento\SalesRule\Model\ResourceModel\Report\Collection::class
+            'Magento\SalesRule\Model\ResourceModel\Report\Collection'
         );
         $salesRuleReportItem = $reportCollection->getFirstItem();
         $this->assertEquals($this->getTotalAmount($order), $salesRuleReportItem['total_amount']);

@@ -6,12 +6,12 @@
 
 namespace Magento\Setup\Test\Unit\Model;
 
-use Magento\Framework\Config\ConfigOptionsListConstants;
 use Magento\Setup\Model\ConfigGenerator;
 use Magento\Setup\Model\ConfigOptionsList;
 use Magento\Setup\Validator\DbValidator;
+use Magento\Framework\Config\ConfigOptionsListConstants;
 
-class ConfigOptionsListTest extends \PHPUnit\Framework\TestCase
+class ConfigOptionsListTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var ConfigOptionsList
@@ -35,69 +35,73 @@ class ConfigOptionsListTest extends \PHPUnit\Framework\TestCase
 
     protected function setUp()
     {
-        $this->generator = $this->createMock(\Magento\Setup\Model\ConfigGenerator::class);
-        $this->deploymentConfig = $this->createMock(\Magento\Framework\App\DeploymentConfig::class);
-        $this->dbValidator = $this->createMock(\Magento\Setup\Validator\DbValidator::class);
+        $this->generator = $this->getMock('Magento\Setup\Model\ConfigGenerator', [], [], '', false);
+        $this->deploymentConfig = $this->getMock('Magento\Framework\App\DeploymentConfig', [], [], '', false);
+        $this->dbValidator = $this->getMock('Magento\Setup\Validator\DbValidator', [], [], '', false);
         $this->object = new ConfigOptionsList($this->generator, $this->dbValidator);
     }
 
     public function testGetOptions()
     {
         $options = $this->object->getOptions();
-        $this->assertInstanceOf(\Magento\Framework\Setup\Option\TextConfigOption::class, $options[0]);
+        $this->assertInstanceOf('Magento\Framework\Setup\Option\TextConfigOption', $options[0]);
         $this->assertSame('Encryption key', $options[0]->getDescription());
-        $this->assertInstanceOf(\Magento\Framework\Setup\Option\TextConfigOption::class, $options[1]);
-        $this->assertSame('Database server host', $options[1]->getDescription());
-        $this->assertInstanceOf(\Magento\Framework\Setup\Option\TextConfigOption::class, $options[2]);
-        $this->assertSame('Database name', $options[2]->getDescription());
-        $this->assertInstanceOf(\Magento\Framework\Setup\Option\TextConfigOption::class, $options[3]);
-        $this->assertSame('Database server username', $options[3]->getDescription());
-        $this->assertInstanceOf(\Magento\Framework\Setup\Option\TextConfigOption::class, $options[4]);
-        $this->assertSame('Database server engine', $options[4]->getDescription());
-        $this->assertInstanceOf(\Magento\Framework\Setup\Option\TextConfigOption::class, $options[5]);
-        $this->assertSame('Database server password', $options[5]->getDescription());
-        $this->assertInstanceOf(\Magento\Framework\Setup\Option\TextConfigOption::class, $options[6]);
-        $this->assertSame('Database table prefix', $options[6]->getDescription());
-        $this->assertInstanceOf(\Magento\Framework\Setup\Option\TextConfigOption::class, $options[7]);
-        $this->assertSame('Database type', $options[7]->getDescription());
-        $this->assertInstanceOf(\Magento\Framework\Setup\Option\TextConfigOption::class, $options[8]);
-        $this->assertSame('Database  initial set of commands', $options[8]->getDescription());
-        $this->assertInstanceOf(\Magento\Framework\Setup\Option\FlagConfigOption::class, $options[9]);
+        $this->assertInstanceOf('Magento\Framework\Setup\Option\SelectConfigOption', $options[1]);
+        $this->assertSame('Session save handler', $options[1]->getDescription());
+        $this->assertInstanceOf('Magento\Framework\Setup\Option\SelectConfigOption', $options[2]);
+        $this->assertSame('Type of definitions used by Object Manager', $options[2]->getDescription());
+        $this->assertInstanceOf('Magento\Framework\Setup\Option\TextConfigOption', $options[3]);
+        $this->assertSame('Database server host', $options[3]->getDescription());
+        $this->assertInstanceOf('Magento\Framework\Setup\Option\TextConfigOption', $options[4]);
+        $this->assertSame('Database name', $options[4]->getDescription());
+        $this->assertInstanceOf('Magento\Framework\Setup\Option\TextConfigOption', $options[5]);
+        $this->assertSame('Database server username', $options[5]->getDescription());
+        $this->assertInstanceOf('Magento\Framework\Setup\Option\TextConfigOption', $options[6]);
+        $this->assertSame('Database server engine', $options[6]->getDescription());
+        $this->assertInstanceOf('Magento\Framework\Setup\Option\TextConfigOption', $options[7]);
+        $this->assertSame('Database server password', $options[7]->getDescription());
+        $this->assertInstanceOf('Magento\Framework\Setup\Option\TextConfigOption', $options[8]);
+        $this->assertSame('Database table prefix', $options[8]->getDescription());
+        $this->assertInstanceOf('Magento\Framework\Setup\Option\TextConfigOption', $options[9]);
+        $this->assertSame('Database type', $options[9]->getDescription());
+        $this->assertInstanceOf('Magento\Framework\Setup\Option\TextConfigOption', $options[10]);
+        $this->assertSame('Database  initial set of commands', $options[10]->getDescription());
+        $this->assertInstanceOf('Magento\Framework\Setup\Option\FlagConfigOption', $options[11]);
         $this->assertSame(
             'If specified, then db connection validation will be skipped',
-            $options[9]->getDescription()
+            $options[11]->getDescription()
         );
-        $this->assertInstanceOf(\Magento\Framework\Setup\Option\TextConfigOption::class, $options[10]);
-        $this->assertSame('http Cache hosts', $options[10]->getDescription());
-        $this->assertGreaterThanOrEqual(11, count($options));
+        $this->assertInstanceOf('Magento\Framework\Setup\Option\TextConfigOption', $options[12]);
+        $this->assertSame('http Cache hosts', $options[12]->getDescription());
+        $this->assertEquals(13, count($options));
     }
 
     public function testCreateOptions()
     {
-        $configDataMock = $this->createMock(\Magento\Framework\Config\Data\ConfigData::class);
+        $configDataMock = $this->getMock('Magento\Framework\Config\Data\ConfigData', [], [], '', false);
         $this->generator->expects($this->once())->method('createCryptConfig')->willReturn($configDataMock);
+        $this->generator->expects($this->once())->method('createSessionConfig')->willReturn($configDataMock);
         $this->generator->expects($this->once())->method('createDefinitionsConfig')->willReturn($configDataMock);
         $this->generator->expects($this->once())->method('createDbConfig')->willReturn($configDataMock);
         $this->generator->expects($this->once())->method('createResourceConfig')->willReturn($configDataMock);
         $this->generator->expects($this->once())->method('createXFrameConfig')->willReturn($configDataMock);
         $this->generator->expects($this->once())->method('createCacheHostsConfig')->willReturn($configDataMock);
-
         $configData = $this->object->createConfig([], $this->deploymentConfig);
-        $this->assertGreaterThanOrEqual(6, count($configData));
+        $this->assertEquals(8, count($configData));
     }
 
     public function testCreateOptionsWithOptionalNull()
     {
-        $configDataMock = $this->createMock(\Magento\Framework\Config\Data\ConfigData::class);
+        $configDataMock = $this->getMock('Magento\Framework\Config\Data\ConfigData', [], [], '', false);
         $this->generator->expects($this->once())->method('createCryptConfig')->willReturn($configDataMock);
+        $this->generator->expects($this->once())->method('createSessionConfig')->willReturn($configDataMock);
         $this->generator->expects($this->once())->method('createDefinitionsConfig')->willReturn(null);
         $this->generator->expects($this->once())->method('createDbConfig')->willReturn($configDataMock);
         $this->generator->expects($this->once())->method('createResourceConfig')->willReturn($configDataMock);
         $this->generator->expects($this->once())->method('createXFrameConfig')->willReturn($configDataMock);
         $this->generator->expects($this->once())->method('createCacheHostsConfig')->willReturn($configDataMock);
-
         $configData = $this->object->createConfig([], $this->deploymentConfig);
-        $this->assertGreaterThanOrEqual(6, count($configData));
+        $this->assertEquals(7, count($configData));
     }
 
     public function testValidateSuccess()
@@ -112,7 +116,6 @@ class ConfigOptionsListTest extends \PHPUnit\Framework\TestCase
             ConfigOptionsListConstants::INPUT_KEY_DB_PASSWORD => 'pass'
         ];
         $this->prepareValidationMocks();
-
         $this->assertEquals([], $this->object->validate($options, $this->deploymentConfig));
     }
 
@@ -130,28 +133,15 @@ class ConfigOptionsListTest extends \PHPUnit\Framework\TestCase
             ConfigOptionsListConstants::INPUT_KEY_DB_PASSWORD => 'pass'
         ];
         $this->prepareValidationMocks();
-
         $this->assertEquals(
-            ["Invalid session handler '{$invalidSaveHandler}'"],
-            $this->object->validate($options, $this->deploymentConfig)
-        );
-    }
-
-    public function testValidateEmptyEncryptionKey()
-    {
-        $options = [
-            ConfigOptionsListConstants::INPUT_KEY_SKIP_DB_VALIDATION => true,
-            ConfigOptionsListConstants::INPUT_KEY_ENCRYPTION_KEY => ''
-        ];
-        $this->assertEquals(
-            ['Invalid encryption key'],
+            ["Invalid session handler '$invalidSaveHandler'"],
             $this->object->validate($options, $this->deploymentConfig)
         );
     }
 
     private function prepareValidationMocks()
     {
-        $configDataMock = $this->getMockBuilder(\Magento\Framework\Config\Data\ConfigData::class)
+        $configDataMock = $this->getMockBuilder('Magento\Framework\Config\Data\ConfigData')
             ->disableOriginalConstructor()
             ->getMock();
         $this->dbValidator->expects($this->once())->method('checkDatabaseTablePrefix')->willReturn($configDataMock);
@@ -176,8 +166,12 @@ class ConfigOptionsListTest extends \PHPUnit\Framework\TestCase
         } else {
             $this->assertCount(0, $result);
         }
+
     }
 
+    /**
+     * @return array
+     */
     public function validateCacheHostsDataProvider()
     {
         return [

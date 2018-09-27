@@ -13,13 +13,10 @@ namespace Magento\Framework\App\Config;
 interface ConfigTypeInterface
 {
     /**
-     * Retrieve configuration data.
-     *
-     * Returns full configuration array in case $path is empty.
-     * In case $path is not empty return value can be either array or scalar
+     * Retrieve configuration raw data array.
      *
      * @param string $path
-     * @return array|int|string|boolean
+     * @return mixed
      */
     public function get($path = '');
 

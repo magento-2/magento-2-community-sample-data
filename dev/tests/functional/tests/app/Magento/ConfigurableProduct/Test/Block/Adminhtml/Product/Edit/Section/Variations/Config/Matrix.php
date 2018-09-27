@@ -46,13 +46,6 @@ class Matrix extends Form
     ];
 
     /**
-     * Selector for product attribute.
-     *
-     * @var string
-     */
-    protected $attribute = 'div[data-index="attributes"] span[data-index="attributes"]';
-
-    /**
      * Selector for variation row by number.
      *
      * @var string
@@ -165,16 +158,6 @@ class Matrix extends Form
     }
 
     /**
-     * Get product attribute.
-     *
-     * @return string
-     */
-    public function getProductAttribute()
-    {
-        return $this->_rootElement->find($this->attribute)->getText();
-    }
-
-    /**
      * Get variation fields.
      *
      * @param SimpleElement $context
@@ -203,7 +186,7 @@ class Matrix extends Form
     public function getTemplateBlock()
     {
         return $this->blockFactory->create(
-            \Magento\Backend\Test\Block\Template::class,
+            'Magento\Backend\Test\Block\Template',
             ['element' => $this->_rootElement->find($this->template, Locator::SELECTOR_XPATH)]
         );
     }
@@ -230,7 +213,7 @@ class Matrix extends Form
     public function getAssociatedProductGrid()
     {
         return $this->blockFactory->create(
-            \Magento\ConfigurableProduct\Test\Block\Adminhtml\Product\AssociatedProductGrid::class,
+            'Magento\ConfigurableProduct\Test\Block\Adminhtml\Product\AssociatedProductGrid',
             ['element' => $this->browser->find($this->associatedProductGrid)]
         );
     }

@@ -18,7 +18,7 @@ class FormEmail extends FormInput
      *
      * @var array
      */
-    protected $validTagAttributes = [
+    protected $validTagAttributes = array(
         'name'           => true,
         'autocomplete'   => true,
         'autofocus'      => true,
@@ -34,7 +34,7 @@ class FormEmail extends FormInput
         'size'           => true,
         'type'           => true,
         'value'          => true,
-    ];
+    );
 
     /**
      * Determine input type to use

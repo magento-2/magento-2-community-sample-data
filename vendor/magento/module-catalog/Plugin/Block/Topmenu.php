@@ -79,25 +79,14 @@ class Topmenu
         $currentCategory = $this->getCurrentCategory();
         $mapping = [$rootId => $subject->getMenu()];  // use nodes stack to avoid recursion
         foreach ($collection as $category) {
-            $categoryParentId = $category->getParentId();
-            if (!isset($mapping[$categoryParentId])) {
-                $parentIds = $category->getParentIds();
-                foreach ($parentIds as $parentId) {
-                    if (isset($mapping[$parentId])) {
-                        $categoryParentId = $parentId;
-                    }
-                }
+            if (!isset($mapping[$category->getParentId()])) {
+                continue;
             }
-
             /** @var Node $parentCategoryNode */
-            $parentCategoryNode = $mapping[$categoryParentId];
+            $parentCategoryNode = $mapping[$category->getParentId()];
 
             $categoryNode = new Node(
-                $this->getCategoryAsArray(
-                    $category,
-                    $currentCategory,
-                    $category->getParentId() == $categoryParentId
-                ),
+                $this->getCategoryAsArray($category, $currentCategory),
                 'id',
                 $parentCategoryNode->getTree(),
                 $parentCategoryNode
@@ -151,18 +140,16 @@ class Topmenu
      *
      * @param \Magento\Catalog\Model\Category $category
      * @param \Magento\Catalog\Model\Category $currentCategory
-     * @param bool $isParentActive
      * @return array
      */
-    private function getCategoryAsArray($category, $currentCategory, $isParentActive)
+    private function getCategoryAsArray($category, $currentCategory)
     {
         return [
             'name' => $category->getName(),
             'id' => 'category-node-' . $category->getId(),
             'url' => $this->catalogCategory->getCategoryUrl($category),
             'has_active' => in_array((string)$category->getId(), explode('/', $currentCategory->getPath()), true),
-            'is_active' => $category->getId() == $currentCategory->getId(),
-            'is_parent_active' => $isParentActive
+            'is_active' => $category->getId() == $currentCategory->getId()
         ];
     }
 

@@ -8,7 +8,7 @@ namespace Magento\Framework\App\Test\Unit;
 use Magento\Framework\App\ProductMetadata;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
 
-class ProductMetadataTest extends \PHPUnit\Framework\TestCase
+class ProductMetadataTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var ProductMetadata
@@ -45,6 +45,9 @@ class ProductMetadataTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals($expectedVersion, $productVersion);
     }
 
+    /**
+     * @return array
+     */
     public function testGetVersionGitInstallationDataProvider()
     {
         return [

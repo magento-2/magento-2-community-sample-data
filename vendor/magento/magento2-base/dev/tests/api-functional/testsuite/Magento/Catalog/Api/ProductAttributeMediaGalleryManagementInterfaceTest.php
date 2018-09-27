@@ -86,7 +86,7 @@ class ProductAttributeMediaGalleryManagementInterfaceTest extends \Magento\TestF
     protected function getTargetSimpleProduct()
     {
         $objectManager = Bootstrap::getObjectManager();
-        return $objectManager->get(\Magento\Catalog\Model\ProductFactory::class)->create()->load(1);
+        return $objectManager->get('Magento\Catalog\Model\ProductFactory')->create()->load(1);
     }
 
     /**
@@ -237,8 +237,8 @@ class ProductAttributeMediaGalleryManagementInterfaceTest extends \Magento\TestF
 
         $targetProduct = $this->getTargetSimpleProduct();
         $this->assertEquals('/m/a/magento_image.jpg', $targetProduct->getData('thumbnail'));
-        $this->assertEquals('no_selection', $targetProduct->getData('image'));
-        $this->assertEquals('no_selection', $targetProduct->getData('small_image'));
+        $this->assertNull($targetProduct->getData('image'));
+        $this->assertNull($targetProduct->getData('small_image'));
         $mediaGallery = $targetProduct->getData('media_gallery');
         $this->assertCount(1, $mediaGallery['images']);
         $updatedImage = array_shift($mediaGallery['images']);
@@ -519,7 +519,7 @@ class ProductAttributeMediaGalleryManagementInterfaceTest extends \Magento\TestF
 
         $objectManager = \Magento\TestFramework\ObjectManager::getInstance();
         /** @var \Magento\Catalog\Model\ProductRepository $repository */
-        $repository = $objectManager->create(\Magento\Catalog\Model\ProductRepository::class);
+        $repository = $objectManager->create('Magento\Catalog\Model\ProductRepository');
         $product = $repository->get($productSku);
         $image = current($product->getMediaGallery('images'));
         $imageId = $image['value_id'];
@@ -609,11 +609,9 @@ class ProductAttributeMediaGalleryManagementInterfaceTest extends \Magento\TestF
             'sku' => $productSku,
         ];
         if (TESTS_WEB_API_ADAPTER == self::ADAPTER_SOAP) {
-            $this->expectException('SoapFault');
-            $this->expectExceptionMessage('Requested product doesn\'t exist');
+            $this->setExpectedException('SoapFault', 'Requested product doesn\'t exist');
         } else {
-            $this->expectException('Exception');
-            $this->expectExceptionCode(404);
+            $this->setExpectedException('Exception', '', 404);
         }
         $this->_webApiCall($serviceInfo, $requestData);
     }

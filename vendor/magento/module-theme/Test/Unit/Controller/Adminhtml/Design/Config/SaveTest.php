@@ -11,7 +11,7 @@ use Magento\Theme\Controller\Adminhtml\Design\Config\Save;
 /**
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  */
-class SaveTest extends \PHPUnit\Framework\TestCase
+class SaveTest extends \PHPUnit_Framework_TestCase
 {
     /** @var \Magento\Theme\Model\DesignConfigRepository|\PHPUnit_Framework_MockObject_MockObject */
     protected $designConfigRepository;
@@ -52,12 +52,21 @@ class SaveTest extends \PHPUnit\Framework\TestCase
     public function setUp()
     {
         $objectManager = new ObjectManager($this);
-        $this->designConfigRepository = $this->createMock(\Magento\Theme\Model\DesignConfigRepository::class);
-        $this->redirectFactory = $this->createMock(\Magento\Backend\Model\View\Result\RedirectFactory::class);
-        $this->redirect = $this->createMock(\Magento\Backend\Model\View\Result\Redirect::class);
-        $this->configFactory = $this->createMock(\Magento\Theme\Model\Data\Design\ConfigFactory::class);
+        $this->designConfigRepository = $this->getMock('Magento\Theme\Model\DesignConfigRepository', [], [], '', false);
+        $this->redirectFactory = $this->getMock(
+            'Magento\Backend\Model\View\Result\RedirectFactory',
+            [],
+            [],
+            '',
+            false,
+            false,
+            true,
+            ['create']
+        );
+        $this->redirect = $this->getMock('Magento\Backend\Model\View\Result\Redirect', [], [], '', false);
+        $this->configFactory = $this->getMock('Magento\Theme\Model\Data\Design\ConfigFactory', [], [], '', false);
         $this->messageManager = $this->getMockForAbstractClass(
-            \Magento\Framework\Message\ManagerInterface::class,
+            'Magento\Framework\Message\ManagerInterface',
             [],
             '',
             false
@@ -65,12 +74,12 @@ class SaveTest extends \PHPUnit\Framework\TestCase
         $this->request = $this->getMockBuilder(\Magento\Framework\App\Request\Http::class)
             ->disableOriginalConstructor()->getMock();
 
-        $this->request->expects($this->any())
+        $this->request->expects($this->atLeastOnce())
             ->method('isPost')
             ->willReturn(true);
 
         $this->context = $objectManager->getObject(
-            \Magento\Backend\App\Action\Context::class,
+            'Magento\Backend\App\Action\Context',
             [
                 'request' => $this->request,
                 'messageManager' => $this->messageManager,
@@ -78,13 +87,13 @@ class SaveTest extends \PHPUnit\Framework\TestCase
             ]
         );
         $this->designConfig = $this->getMockForAbstractClass(
-            \Magento\Theme\Api\Data\DesignConfigInterface::class,
+            'Magento\Theme\Api\Data\DesignConfigInterface',
             [],
             '',
             false
         );
-        $this->fileParams = $this->createMock(\Zend\Stdlib\Parameters::class);
-        $this->dataPersistor = $this->getMockBuilder(\Magento\Framework\App\Request\DataPersistorInterface::class)
+        $this->fileParams = $this->getMock('Zend\Stdlib\Parameters', [], [], '', false);
+        $this->dataPersistor = $this->getMockBuilder('Magento\Framework\App\Request\DataPersistorInterface')
             ->getMockForAbstractClass();
         $this->controller = new Save(
             $this->context,

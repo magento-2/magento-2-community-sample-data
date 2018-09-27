@@ -5,7 +5,7 @@
  */
 namespace Magento\AdminNotification\Test\Unit\Model\System\Message;
 
-class SecurityTest extends \PHPUnit\Framework\TestCase
+class SecurityTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \PHPUnit_Framework_MockObject_MockObject
@@ -35,11 +35,14 @@ class SecurityTest extends \PHPUnit\Framework\TestCase
     protected function setUp()
     {
         //Prepare objects for constructor
-        $this->_cacheMock = $this->createMock(\Magento\Framework\App\CacheInterface::class);
-        $this->_scopeConfigMock = $this->createMock(\Magento\Framework\App\Config\ScopeConfigInterface::class);
-        $this->_curlFactoryMock = $this->createPartialMock(
-            \Magento\Framework\HTTP\Adapter\CurlFactory::class,
-            ['create']
+        $this->_cacheMock = $this->getMock('Magento\Framework\App\CacheInterface');
+        $this->_scopeConfigMock = $this->getMock('Magento\Framework\App\Config\ScopeConfigInterface');
+        $this->_curlFactoryMock = $this->getMock(
+            'Magento\Framework\HTTP\Adapter\CurlFactory',
+            ['create'],
+            [],
+            '',
+            false
         );
 
         $objectManagerHelper = new \Magento\Framework\TestFramework\Unit\Helper\ObjectManager($this);
@@ -49,7 +52,7 @@ class SecurityTest extends \PHPUnit\Framework\TestCase
             'curlFactory' => $this->_curlFactoryMock,
         ];
         $this->_messageModel = $objectManagerHelper->getObject(
-            \Magento\AdminNotification\Model\System\Message\Security::class,
+            'Magento\AdminNotification\Model\System\Message\Security',
             $arguments
         );
     }
@@ -67,7 +70,7 @@ class SecurityTest extends \PHPUnit\Framework\TestCase
         $this->_cacheMock->expects($this->any())->method('load')->will($this->returnValue($cached));
         $this->_cacheMock->expects($this->any())->method('save')->will($this->returnValue(null));
 
-        $httpAdapterMock = $this->createMock(\Magento\Framework\HTTP\Adapter\Curl::class);
+        $httpAdapterMock = $this->getMock('Magento\Framework\HTTP\Adapter\Curl', [], [], '', false);
         $httpAdapterMock->expects($this->any())->method('read')->will($this->returnValue($response));
         $this->_curlFactoryMock->expects($this->any())->method('create')->will($this->returnValue($httpAdapterMock));
 
@@ -76,6 +79,9 @@ class SecurityTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals($expectedResult, $this->_messageModel->isDisplayed());
     }
 
+    /**
+     * @return array
+     */
     public function isDisplayedDataProvider()
     {
         return [

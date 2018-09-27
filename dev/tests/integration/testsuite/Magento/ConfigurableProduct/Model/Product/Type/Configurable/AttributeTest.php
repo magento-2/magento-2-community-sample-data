@@ -5,7 +5,7 @@
  */
 namespace Magento\ConfigurableProduct\Model\Product\Type\Configurable;
 
-class AttributeTest extends \PHPUnit\Framework\TestCase
+class AttributeTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\ConfigurableProduct\Model\Product\Type\Configurable\Attribute
@@ -15,7 +15,7 @@ class AttributeTest extends \PHPUnit\Framework\TestCase
     protected function setUp()
     {
         $this->_model = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->create(
-            \Magento\ConfigurableProduct\Model\Product\Type\Configurable\Attribute::class
+            'Magento\ConfigurableProduct\Model\Product\Type\Configurable\Attribute'
         );
     }
 

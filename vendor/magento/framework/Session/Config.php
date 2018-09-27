@@ -15,8 +15,6 @@ use Magento\Framework\Session\SaveHandlerInterface;
 
 /**
  * Magento session configuration
- *
- * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  */
 class Config implements ConfigInterface
 {
@@ -51,19 +49,13 @@ class Config implements ConfigInterface
      */
     protected $options = [];
 
-    /**
-     * @var \Magento\Framework\App\Config\ScopeConfigInterface
-     */
+    /** @var \Magento\Framework\App\Config\ScopeConfigInterface */
     protected $_scopeConfig;
 
-    /**
-     * @var \Magento\Framework\Stdlib\StringUtils
-     */
+    /** @var \Magento\Framework\Stdlib\StringUtils */
     protected $_stringHelper;
 
-    /**
-     * @var \Magento\Framework\App\RequestInterface
-     */
+    /** @var \Magento\Framework\App\RequestInterface */
     protected $_httpRequest;
 
     /**
@@ -78,19 +70,13 @@ class Config implements ConfigInterface
         'session.cookie_httponly',
     ];
 
-    /**
-     * @var string
-     */
+    /** @var string */
     protected $_scopeType;
 
-    /**
-     * @var string
-     */
+    /** @var string */
     protected $lifetimePath;
 
-    /**
-     * @var \Magento\Framework\ValidatorFactory
-     */
+    /** @var \Magento\Framework\ValidatorFactory */
     protected $_validatorFactory;
 
     /**
@@ -135,14 +121,6 @@ class Config implements ConfigInterface
         }
 
         /**
-        * Session save handler - memcache, files, etc
-        */
-        $saveHandler = $deploymentConfig->get(self::PARAM_SESSION_SAVE_METHOD);
-        if ($saveHandler) {
-            $this->setOption('session.save_handler', $saveHandler);
-        }
-
-        /**
          * Session cache limiter
          */
         $cacheLimiter = $deploymentConfig->get(self::PARAM_SESSION_CACHE_LIMITER);
@@ -153,8 +131,7 @@ class Config implements ConfigInterface
         /**
          * Cookie settings: lifetime, path, domain, httpOnly. These govern settings for the session cookie.
          */
-        $lifetime = $this->_scopeConfig->getValue($this->lifetimePath, $this->_scopeType);
-        $this->setCookieLifetime($lifetime, self::COOKIE_LIFETIME_DEFAULT);
+        $this->configureCookieLifetime();
 
         $path = $this->_scopeConfig->getValue(self::XML_PATH_COOKIE_PATH, $this->_scopeType);
         $path = empty($path) ? $this->_httpRequest->getBasePath() : $path;
@@ -315,7 +292,7 @@ class Config implements ConfigInterface
     {
         $validator = $this->_validatorFactory->create(
             [],
-            \Magento\Framework\Session\Config\Validator\CookieLifetimeValidator::class
+            'Magento\Framework\Session\Config\Validator\CookieLifetimeValidator'
         );
         if ($validator->isValid($cookieLifetime)) {
             $this->setOption('session.cookie_lifetime', (int)$cookieLifetime);
@@ -348,7 +325,7 @@ class Config implements ConfigInterface
         $cookiePath = (string)$cookiePath;
         $validator = $this->_validatorFactory->create(
             [],
-            \Magento\Framework\Session\Config\Validator\CookiePathValidator::class
+            'Magento\Framework\Session\Config\Validator\CookiePathValidator'
         );
         if ($validator->isValid($cookiePath)) {
             $this->setOption('session.cookie_path', $cookiePath);
@@ -380,7 +357,7 @@ class Config implements ConfigInterface
     {
         $validator = $this->_validatorFactory->create(
             [],
-            \Magento\Framework\Session\Config\Validator\CookieDomainValidator::class
+            'Magento\Framework\Session\Config\Validator\CookieDomainValidator'
         );
         if ($validator->isValid($cookieDomain)) {
             $this->setOption('session.cookie_domain', $cookieDomain);
@@ -535,5 +512,16 @@ class Config implements ConfigInterface
         } else {
             throw new \BadMethodCallException(sprintf('Method "%s" does not exist in %s', $method, get_class($this)));
         }
+    }
+
+    /**
+     * Set session cookie lifetime according to configuration
+     *
+     * @return $this
+     */
+    protected function configureCookieLifetime()
+    {
+        $lifetime = $this->_scopeConfig->getValue($this->lifetimePath, $this->_scopeType);
+        return $this->setCookieLifetime($lifetime, self::COOKIE_LIFETIME_DEFAULT);
     }
 }

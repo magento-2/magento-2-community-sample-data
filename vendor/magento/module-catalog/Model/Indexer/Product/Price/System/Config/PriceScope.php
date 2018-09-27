@@ -10,9 +10,7 @@ namespace Magento\Catalog\Model\Indexer\Product\Price\System\Config;
  */
 class PriceScope extends \Magento\Framework\App\Config\Value
 {
-    /**
-     * @var \Magento\Framework\Indexer\IndexerRegistry
-     */
+    /** @var \Magento\Framework\Indexer\IndexerRegistry */
     protected $indexerRegistry;
 
     /**

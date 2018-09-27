@@ -78,6 +78,7 @@ class ConfigTest extends \Magento\TestFramework\Integrity\AbstractConfig
     protected function _getFileXsd()
     {
         return $this->urnResolver->getRealPath('urn:magento:framework:Indexer/etc/indexer.xsd');
+
     }
 
     /**

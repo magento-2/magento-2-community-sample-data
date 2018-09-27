@@ -8,7 +8,7 @@
 $tomorrow = new \DateTime();
 $tomorrow->add(\DateInterval::createFromDateString('+1 day'));
 
-$rule = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->create(\Magento\SalesRule\Model\Rule::class);
+$rule = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->create('Magento\SalesRule\Model\Rule');
 $rule->setName(
     '#1'
 )->setIsActive(

@@ -60,10 +60,10 @@ EOT;
     /**
      * {@inheritDoc}
      */
-    public function attach(EventManagerInterface $events, $priority = 1)
+    public function attach(EventManagerInterface $events)
     {
-        $this->listeners[] = $events->attach(MvcEvent::EVENT_DISPATCH_ERROR, [$this, 'prepareExceptionViewModel']);
-        $this->listeners[] = $events->attach(MvcEvent::EVENT_RENDER_ERROR, [$this, 'prepareExceptionViewModel']);
+        $this->listeners[] = $events->attach(MvcEvent::EVENT_DISPATCH_ERROR, array($this, 'prepareExceptionViewModel'));
+        $this->listeners[] = $events->attach(MvcEvent::EVENT_RENDER_ERROR, array($this, 'prepareExceptionViewModel'));
     }
 
     /**
@@ -184,30 +184,27 @@ EOT;
                 if (is_callable($this->message)) {
                     $callback = $this->message;
                     $message = (string) $callback($exception, $this->displayExceptions);
-                } elseif ($this->displayExceptions
-                    // @TODO clean up once PHP 7 requirement is enforced
-                    && ($exception instanceof \Exception || $exception instanceof \Throwable)
-                ) {
+                } elseif ($this->displayExceptions && $exception instanceof \Exception) {
                     $previous = '';
                     $previousException = $exception->getPrevious();
                     while ($previousException) {
                         $previous .= str_replace(
-                            [
+                            array(
                                 ':className',
                                 ':message',
                                 ':code',
                                 ':file',
                                 ':line',
                                 ':stack',
-                            ],
-                            [
+                            ),
+                            array(
                                 get_class($previousException),
                                 $previousException->getMessage(),
                                 $previousException->getCode(),
                                 $previousException->getFile(),
                                 $previousException->getLine(),
                                 $exception->getTraceAsString(),
-                            ],
+                            ),
                             $this->previousMessage
                         );
                         $previousException = $previousException->getPrevious();
@@ -215,7 +212,7 @@ EOT;
 
                     /* @var $exception \Exception */
                     $message = str_replace(
-                        [
+                        array(
                             ':className',
                             ':message',
                             ':code',
@@ -223,8 +220,7 @@ EOT;
                             ':line',
                             ':stack',
                             ':previous',
-                        ],
-                        [
+                        ), array(
                             get_class($exception),
                             $exception->getMessage(),
                             $exception->getCode(),
@@ -232,12 +228,12 @@ EOT;
                             $exception->getLine(),
                             $exception->getTraceAsString(),
                             $previous
-                        ],
+                        ),
                         $this->message
                     );
                 } else {
                     $message = str_replace(
-                        [
+                        array(
                             ':className',
                             ':message',
                             ':code',
@@ -245,8 +241,7 @@ EOT;
                             ':line',
                             ':stack',
                             ':previous',
-                        ],
-                        [
+                        ), array(
                             '',
                             '',
                             '',
@@ -254,7 +249,7 @@ EOT;
                             '',
                             '',
                             '',
-                        ],
+                        ),
                         $this->message
                     );
                 }

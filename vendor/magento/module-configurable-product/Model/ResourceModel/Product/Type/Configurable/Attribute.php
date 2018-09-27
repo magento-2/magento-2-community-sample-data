@@ -8,8 +8,8 @@
 namespace Magento\ConfigurableProduct\Model\ResourceModel\Product\Type\Configurable;
 
 use Magento\ConfigurableProduct\Model\Product\Type\Configurable\Attribute as ConfigurableAttribute;
-use Magento\Framework\DB\Adapter\AdapterInterface;
 use Magento\Store\Model\Store;
+use Magento\Store\Model\StoreManagerInterface;
 
 class Attribute extends \Magento\Framework\Model\ResourceModel\Db\AbstractDb
 {
@@ -85,30 +85,22 @@ class Attribute extends \Magento\Framework\Model\ResourceModel\Db\AbstractDb
             'store_id' => \Magento\Store\Model\Store::DEFAULT_STORE_ID,
         ];
         $valueId = $connection->fetchOne($select, $bind);
-
         if ($valueId) {
-            $connection->insertOnDuplicate(
-                $this->_labelTable,
-                [
-                    'product_super_attribute_id' => (int)$attribute->getId(),
-                    'store_id' => (int)$attribute->getStoreId() ?: $this->_storeManager->getStore()->getId(),
-                    'use_default' => (int)$attribute->getUseDefault(),
-                    'value' => $attribute->getLabel(),
-                ],
-                ['value', 'use_default']
-            );
+            $storeId = (int)$attribute->getStoreId() ?: $this->_storeManager->getStore()->getId();
         } else {
             // if attribute label not exists, always store on default store (0)
-            $connection->insert(
-                $this->_labelTable,
-                [
-                    'product_super_attribute_id' => (int)$attribute->getId(),
-                    'store_id' => Store::DEFAULT_STORE_ID,
-                    'use_default' => (int)$attribute->getUseDefault(),
-                    'value' => $attribute->getLabel(),
-                ]
-            );
+            $storeId = Store::DEFAULT_STORE_ID;
         }
+        $connection->insertOnDuplicate(
+            $this->_labelTable,
+            [
+                'product_super_attribute_id' => (int)$attribute->getId(),
+                'use_default' => (int)$attribute->getUseDefault(),
+                'store_id' => $storeId,
+                'value' => $attribute->getLabel(),
+            ],
+            ['value', 'use_default']
+        );
 
         return $this;
     }

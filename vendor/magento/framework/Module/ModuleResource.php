@@ -4,14 +4,14 @@
  * See COPYING.txt for license details.
  */
 
-namespace Magento\Framework\Module;
+// @codingStandardsIgnoreFile
 
-use \Magento\Framework\Model\ResourceModel\Db\AbstractDb;
+namespace Magento\Framework\Module;
 
 /**
  * Resource Model
  */
-class ModuleResource extends AbstractDb implements ResourceInterface
+class ModuleResource extends \Magento\Framework\Model\ResourceModel\Db\AbstractDb implements \Magento\Framework\Module\ResourceInterface
 {
     /**
      * Database versions
@@ -49,9 +49,7 @@ class ModuleResource extends AbstractDb implements ResourceInterface
      */
     protected function _loadVersion($needType)
     {
-        if ($needType == 'db' && self::$schemaVersions === null ||
-            $needType == 'data' && self::$dataVersions === null
-        ) {
+        if ($needType == 'db' && is_null(self::$schemaVersions) || $needType == 'data' && is_null(self::$dataVersions)) {
             self::$schemaVersions = [];
             // Db version column always exists
             self::$dataVersions = null;
@@ -63,7 +61,7 @@ class ModuleResource extends AbstractDb implements ResourceInterface
                 foreach ($rowset as $row) {
                     self::$schemaVersions[$row['module']] = $row['schema_version'];
                     if (array_key_exists('data_version', $row)) {
-                        if (self::$dataVersions === null) {
+                        if (is_null(self::$dataVersions)) {
                             self::$dataVersions = [];
                         }
                         self::$dataVersions[$row['module']] = $row['data_version'];

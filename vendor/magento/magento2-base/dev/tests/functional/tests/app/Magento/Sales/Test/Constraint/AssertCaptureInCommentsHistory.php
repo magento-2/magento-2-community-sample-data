@@ -6,10 +6,9 @@
 
 namespace Magento\Sales\Test\Constraint;
 
-use Magento\Mtf\Constraint\AbstractConstraint;
-use Magento\Sales\Test\Fixture\OrderInjectable;
-use Magento\Sales\Test\Page\Adminhtml\OrderIndex;
 use Magento\Sales\Test\Page\Adminhtml\SalesOrderView;
+use Magento\Sales\Test\Page\Adminhtml\OrderIndex;
+use Magento\Mtf\Constraint\AbstractConstraint;
 
 /**
  * Assert that comment about captured amount exists in Comments History section on order page in Admin.
@@ -17,44 +16,33 @@ use Magento\Sales\Test\Page\Adminhtml\SalesOrderView;
 class AssertCaptureInCommentsHistory extends AbstractConstraint
 {
     /**
-     * Pattern of message about captured amount in order.
+     * Message about captured amount in order.
      */
-    const CAPTURED_AMOUNT_PATTERN = '/^Captured amount of .+?%s online\. Transaction ID: "[\w\-]*"/';
+    const CAPTURED_AMOUNT = 'Captured amount of $';
 
     /**
-     * Assert that comment about captured amount exists in Comments History section on order page in Admin.
+     * Assert that comment about captured amount exist in Comments History section on order page in Admin.
      *
      * @param SalesOrderView $salesOrderView
      * @param OrderIndex $salesOrder
-     * @param OrderInjectable $order
      * @param string $orderId
+     * @param array $capturedPrices
      * @return void
      */
     public function processAssert(
         SalesOrderView $salesOrderView,
         OrderIndex $salesOrder,
-        OrderInjectable $order,
-        $orderId
+        $orderId,
+        array $capturedPrices
     ) {
-        $capturedPrices = $order->getPrice()['captured_prices'];
         $salesOrder->open();
         $salesOrder->getSalesOrderGrid()->searchAndOpen(['id' => $orderId]);
 
-        /** @var \Magento\Sales\Test\Block\Adminhtml\Order\View\Tab\Info $infoTab */
-        $infoTab = $salesOrderView->getOrderForm()->openTab('info')->getTab('info');
-        $comments = $infoTab->getCommentsHistoryBlock()->getComments();
-
-        foreach ($comments as $key => $comment) {
-            if (strstr($comment['comment'], 'Captured') === false) {
-                unset($comments[$key]);
-            }
-        }
-        $comments = array_values($comments);
-
+        $actualCapturedAmount = $salesOrderView->getOrderHistoryBlock()->getCapturedAmount();
         foreach ($capturedPrices as $key => $capturedPrice) {
-            \PHPUnit_Framework_Assert::assertRegExp(
-                sprintf(self::CAPTURED_AMOUNT_PATTERN, preg_quote(number_format($capturedPrice, 2, '.', ''))),
-                $comments[$key]['comment'],
+            \PHPUnit_Framework_Assert::assertContains(
+                self::CAPTURED_AMOUNT . $capturedPrice,
+                $actualCapturedAmount[$key],
                 'Incorrect captured amount value for the order #' . $orderId
             );
         }

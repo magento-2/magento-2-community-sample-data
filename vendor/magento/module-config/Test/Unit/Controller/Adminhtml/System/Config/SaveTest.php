@@ -5,10 +5,7 @@
  */
 namespace Magento\Config\Test\Unit\Controller\Adminhtml\System\Config;
 
-/**
- * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
- */
-class SaveTest extends \PHPUnit\Framework\TestCase
+class SaveTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\Config\Controller\Adminhtml\System\Config\Save
@@ -68,25 +65,63 @@ class SaveTest extends \PHPUnit\Framework\TestCase
      */
     protected function setUp()
     {
-        $this->_requestMock = $this->createMock(\Magento\Framework\App\Request\Http::class);
-        $this->_responseMock = $this->createMock(\Magento\Framework\App\Response\Http::class);
-
-        $configStructureMock = $this->createMock(\Magento\Config\Model\Config\Structure::class);
-        $this->_configFactoryMock = $this->createMock(\Magento\Config\Model\Config\Factory::class);
-        $this->_eventManagerMock = $this->createMock(\Magento\Framework\Event\ManagerInterface::class);
-
-        $helperMock = $this->createMock(\Magento\Backend\Helper\Data::class);
-
-        $this->messageManagerMock = $this->createPartialMock(
-            \Magento\Framework\Message\Manager::class,
-            ['addSuccess', 'addException']
+        $this->_requestMock = $this->getMock('Magento\Framework\App\Request\Http', [], [], '', false, false);
+        $this->_responseMock = $this->getMock(
+            'Magento\Framework\App\Response\Http',
+            [],
+            [],
+            '',
+            false,
+            false
         );
 
-        $this->_authMock = $this->createPartialMock(\Magento\Backend\Model\Auth::class, ['getUser']);
+        $configStructureMock = $this->getMock(
+            'Magento\Config\Model\Config\Structure',
+            [],
+            [],
+            '',
+            false,
+            false
+        );
+        $this->_configFactoryMock = $this->getMock(
+            'Magento\Config\Model\Config\Factory',
+            [],
+            [],
+            '',
+            false,
+            false
+        );
+        $this->_eventManagerMock = $this->getMock(
+            'Magento\Framework\Event\ManagerInterface',
+            [],
+            [],
+            '',
+            false,
+            false
+        );
 
-        $this->_sectionMock = $this->createMock(\Magento\Config\Model\Config\Structure\Element\Section::class);
+        $helperMock = $this->getMock('Magento\Backend\Helper\Data', [], [], '', false, false);
 
-        $this->_cacheMock = $this->createMock(\Magento\Framework\App\Cache\Type\Layout::class);
+        $this->messageManagerMock = $this->getMock(
+            'Magento\Framework\Message\Manager',
+            ['addSuccess', 'addException'],
+            [],
+            '',
+            false,
+            false
+        );
+
+        $this->_authMock = $this->getMock('Magento\Backend\Model\Auth', ['getUser'], [], '', false, false);
+
+        $this->_sectionMock = $this->getMock(
+            'Magento\Config\Model\Config\Structure\Element\Section',
+            [],
+            [],
+            '',
+            false
+        );
+
+        $this->_cacheMock = $this->getMock('Magento\Framework\App\Cache\Type\Layout', [], [], '', false);
 
         $configStructureMock->expects($this->any())->method('getElement')->willReturn($this->_sectionMock);
         $configStructureMock->expects($this->any())->method('getSectionList')->willReturn(
@@ -100,14 +135,14 @@ class SaveTest extends \PHPUnit\Framework\TestCase
 
         $helper = new \Magento\Framework\TestFramework\Unit\Helper\ObjectManager($this);
 
-        $this->resultRedirect = $this->getMockBuilder(\Magento\Backend\Model\View\Result\Redirect::class)
+        $this->resultRedirect = $this->getMockBuilder('Magento\Backend\Model\View\Result\Redirect')
             ->disableOriginalConstructor()
             ->getMock();
         $this->resultRedirect->expects($this->atLeastOnce())
             ->method('setPath')
             ->with('adminhtml/system_config/edit')
             ->willReturnSelf();
-        $resultRedirectFactory = $this->getMockBuilder(\Magento\Backend\Model\View\Result\RedirectFactory::class)
+        $resultRedirectFactory = $this->getMockBuilder('Magento\Backend\Model\View\Result\RedirectFactory')
             ->disableOriginalConstructor()
             ->setMethods(['create'])
             ->getMock();
@@ -125,24 +160,27 @@ class SaveTest extends \PHPUnit\Framework\TestCase
             'resultRedirectFactory' => $resultRedirectFactory
         ];
 
-        $this->_sectionCheckerMock = $this->createMock(
-            \Magento\Config\Controller\Adminhtml\System\ConfigSectionChecker::class
+        $this->_sectionCheckerMock = $this->getMock(
+            'Magento\Config\Controller\Adminhtml\System\ConfigSectionChecker',
+            [],
+            [],
+            '',
+            false
         );
 
-        $context = $helper->getObject(\Magento\Backend\App\Action\Context::class, $arguments);
-        $this->_controller = $this->getMockBuilder(\Magento\Config\Controller\Adminhtml\System\Config\Save::class)
-            ->setMethods(['deniedAction'])
-            ->setConstructorArgs(
-                [
-                    $context,
-                    $configStructureMock,
-                    $this->_sectionCheckerMock,
-                    $this->_configFactoryMock,
-                    $this->_cacheMock,
-                    new \Magento\Framework\Stdlib\StringUtils(),
-                ]
-            )
-            ->getMock();
+        $context = $helper->getObject('Magento\Backend\App\Action\Context', $arguments);
+        $this->_controller = $this->getMock(
+            'Magento\Config\Controller\Adminhtml\System\Config\Save',
+            ['deniedAction'],
+            [
+                $context,
+                $configStructureMock,
+                $this->_sectionCheckerMock,
+                $this->_configFactoryMock,
+                $this->_cacheMock,
+                new \Magento\Framework\Stdlib\StringUtils(),
+            ]
+        );
     }
 
     public function testIndexActionWithAllowedSection()
@@ -162,7 +200,7 @@ class SaveTest extends \PHPUnit\Framework\TestCase
         $this->_requestMock->expects($this->any())->method('getPost')->will($this->returnValueMap($requestPostMap));
         $this->_requestMock->expects($this->any())->method('getParam')->will($this->returnValueMap($requestParamMap));
 
-        $backendConfigMock = $this->createMock(\Magento\Config\Model\Config::class);
+        $backendConfigMock = $this->getMock('Magento\Config\Model\Config', [], [], '', false, false);
         $backendConfigMock->expects($this->once())->method('save');
 
         $params = [
@@ -197,7 +235,7 @@ class SaveTest extends \PHPUnit\Framework\TestCase
             'some_key_1' => '1',
         ];
 
-        $userMock = $this->createMock(\Magento\User\Model\User::class);
+        $userMock = $this->getMock('Magento\User\Model\User', [], [], '', false, false);
         $userMock->expects($this->once())->method('saveExtra')->with(['configState' => $extraData]);
         $this->_authMock->expects($this->once())->method('getUser')->will($this->returnValue($userMock));
         $this->_requestMock->expects(
@@ -249,7 +287,7 @@ class SaveTest extends \PHPUnit\Framework\TestCase
             'store' => 'test_store',
             'groups' => $groupToSave,
         ];
-        $backendConfigMock = $this->createMock(\Magento\Config\Model\Config::class);
+        $backendConfigMock = $this->getMock('Magento\Config\Model\Config', [], [], '', false, false);
         $this->_configFactoryMock->expects(
             $this->once()
         )->method(
@@ -276,7 +314,7 @@ class SaveTest extends \PHPUnit\Framework\TestCase
 
         $this->_requestMock->expects($this->any())->method('getParam')->will($this->returnValueMap($requestParamMap));
 
-        $backendConfigMock = $this->createMock(\Magento\Config\Model\Config::class);
+        $backendConfigMock = $this->getMock('Magento\Config\Model\Config', [], [], '', false, false);
         $this->_configFactoryMock->expects(
             $this->once()
         )->method(

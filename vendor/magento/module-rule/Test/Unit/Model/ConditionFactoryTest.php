@@ -8,7 +8,7 @@ namespace Magento\Rule\Test\Unit\Model;
 
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager as ObjectManagerHelper;
 
-class ConditionFactoryTest extends \PHPUnit\Framework\TestCase
+class ConditionFactoryTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\Rule\Model\ConditionFactory
@@ -27,7 +27,7 @@ class ConditionFactoryTest extends \PHPUnit\Framework\TestCase
 
     protected function setUp()
     {
-        $this->objectManagerMock = $this->createMock(\Magento\Framework\ObjectManagerInterface::class);
+        $this->objectManagerMock = $this->getMock(\Magento\Framework\ObjectManagerInterface::class);
 
         $this->objectManagerHelper = new ObjectManagerHelper($this);
         $this->conditionFactory = $this->objectManagerHelper->getObject(
@@ -70,7 +70,7 @@ class ConditionFactoryTest extends \PHPUnit\Framework\TestCase
 
         $this->assertNotSame($cloned, $origin);
     }
-
+    
     public function testCreateExceptionClass()
     {
         $type = 'type';
@@ -78,8 +78,7 @@ class ConditionFactoryTest extends \PHPUnit\Framework\TestCase
             ->expects($this->never())
             ->method('create');
 
-        $this->expectException(\InvalidArgumentException::class);
-        $this->expectExceptionMessage('Class does not exist');
+        $this->setExpectedException(\InvalidArgumentException::class, 'Class does not exist');
 
         $this->conditionFactory->create($type);
     }
@@ -93,8 +92,7 @@ class ConditionFactoryTest extends \PHPUnit\Framework\TestCase
             ->method('create')
             ->with($type)
             ->willReturn(new \stdClass());
-        $this->expectException(\InvalidArgumentException::class);
-        $this->expectExceptionMessage('Class does not implement condition interface');
+        $this->setExpectedException(\InvalidArgumentException::class, 'Class does not implement condition interface');
         $this->conditionFactory->create($type);
     }
 }

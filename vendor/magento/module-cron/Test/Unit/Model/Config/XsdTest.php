@@ -5,7 +5,7 @@
  */
 namespace Magento\Cron\Test\Unit\Model\Config;
 
-class XsdTest extends \PHPUnit\Framework\TestCase
+class XsdTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var string

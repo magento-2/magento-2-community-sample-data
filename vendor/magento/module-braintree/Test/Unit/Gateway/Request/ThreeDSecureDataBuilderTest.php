@@ -6,7 +6,7 @@
 namespace Magento\Braintree\Test\Unit\Gateway\Request;
 
 use Magento\Braintree\Gateway\Config\Config;
-use Magento\Braintree\Gateway\SubjectReader;
+use Magento\Braintree\Gateway\Helper\SubjectReader;
 use Magento\Braintree\Gateway\Request\ThreeDSecureDataBuilder;
 use Magento\Payment\Gateway\Data\Order\AddressAdapter;
 use Magento\Payment\Gateway\Data\Order\OrderAdapter;
@@ -16,7 +16,7 @@ use PHPUnit_Framework_MockObject_MockObject as MockObject;
 /**
  * Class ThreeDSecureDataBuilderTest
  */
-class ThreeDSecureDataBuilderTest extends \PHPUnit\Framework\TestCase
+class ThreeDSecureDataBuilderTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var int

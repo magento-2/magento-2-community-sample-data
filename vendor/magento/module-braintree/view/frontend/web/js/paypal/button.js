@@ -105,11 +105,7 @@ define(
                                 event.preventDefault();
 
                                 registry.get(self.integrationName, function (integration) {
-                                    try {
-                                        integration.paypal.initAuthFlow();
-                                    } catch (e) {
-                                        $this.attr('disabled', 'disabled');
-                                    }
+                                    integration.paypal.initAuthFlow();
                                 });
                             });
                     }.bind(this);

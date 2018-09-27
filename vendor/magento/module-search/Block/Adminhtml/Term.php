@@ -5,10 +5,6 @@
  */
 namespace Magento\Search\Block\Adminhtml;
 
-/**
- * @api
- * @since 100.0.2
- */
 class Term extends \Magento\Backend\Block\Widget\Grid\Container
 {
     /**

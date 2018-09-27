@@ -8,7 +8,7 @@ namespace Magento\Sales\Test\Unit\Model\Order\Address;
 /**
  * Class ValidatorTest
  */
-class ValidatorTest extends \PHPUnit\Framework\TestCase
+class ValidatorTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\Sales\Model\Order\Address\Validator
@@ -35,24 +35,30 @@ class ValidatorTest extends \PHPUnit\Framework\TestCase
      */
     protected function setUp()
     {
-        $this->addressMock = $this->createPartialMock(
-            \Magento\Sales\Model\Order\Address::class,
-            ['hasData', 'getEmail', 'getAddressType', '__wakeup']
+        $this->addressMock = $this->getMock(
+            'Magento\Sales\Model\Order\Address',
+            ['hasData', 'getEmail', 'getAddressType', '__wakeup'],
+            [],
+            '',
+            false
         );
-        $this->directoryHelperMock = $this->createMock(\Magento\Directory\Helper\Data::class);
-        $this->countryFactoryMock = $this->createMock(\Magento\Directory\Model\CountryFactory::class);
-        $eavConfigMock = $this->createMock(\Magento\Eav\Model\Config::class);
-        $attributeMock = $this->createMock(\Magento\Eav\Model\Entity\Attribute::class);
-        $attributeMock->expects($this->any())
-            ->method('getIsRequired')
-            ->willReturn(true);
-        $eavConfigMock->expects($this->any())
-            ->method('getAttribute')
-            ->will($this->returnValue($attributeMock));
+        $this->directoryHelperMock = $this->getMock(
+            'Magento\Directory\Helper\Data',
+            [],
+            [],
+            '',
+            false
+        );
+        $this->countryFactoryMock = $this->getMock(
+            'Magento\Directory\Model\CountryFactory',
+            [],
+            [],
+            '',
+            false
+        );
         $this->validator = new \Magento\Sales\Model\Order\Address\Validator(
             $this->directoryHelperMock,
-            $this->countryFactoryMock,
-            $eavConfigMock
+            $this->countryFactoryMock
         );
     }
 
@@ -100,8 +106,6 @@ class ValidatorTest extends \PHPUnit\Framework\TestCase
                     ['country_id', true],
                     ['firstname', true],
                     ['address_type', true],
-                    ['company', 'Magento'],
-                    ['fax', '222-22-22'],
                 ],
                 'co@co.co',
                 'billing',
@@ -119,8 +123,6 @@ class ValidatorTest extends \PHPUnit\Framework\TestCase
                     ['country_id', true],
                     ['firstname', true],
                     ['address_type', true],
-                    ['company', 'Magento'],
-                    ['fax', '222-22-22'],
                 ],
                 'co.co.co',
                 'coco-shipping',

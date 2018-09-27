@@ -9,7 +9,6 @@ namespace Magento\Cms\Controller\Adminhtml\Page;
 use Magento\Cms\Model\Page\DomValidationState;
 use Magento\Framework\App\ObjectManager;
 use Magento\Framework\Config\Dom\ValidationException;
-use Magento\Framework\Config\Dom\ValidationSchemaException;
 
 /**
  * Class PostDataProcessor
@@ -147,10 +146,8 @@ class PostDataProcessor
             }
         } catch (ValidationException $e) {
             return false;
-        } catch (ValidationSchemaException $e) {
-            return false;
         } catch (\Exception $e) {
-            $this->messageManager->addExceptionMessage($e);
+            $this->messageManager->addExceptionMessage($e, $e->getMessage());
             return false;
         }
 

@@ -472,7 +472,7 @@ class Config
     /**
      * @param null|string|bool|int|Store $store
      * @return bool
-     * @deprecated 100.1.3
+     * @deprecated
      */
     public function displayCartDiscountInclTax($store = null)
     {
@@ -486,7 +486,7 @@ class Config
     /**
      * @param null|string|bool|int|Store $store
      * @return bool
-     * @deprecated 100.1.3
+     * @deprecated
      */
     public function displayCartDiscountExclTax($store = null)
     {
@@ -500,7 +500,7 @@ class Config
     /**
      * @param null|string|bool|int|Store $store
      * @return bool
-     * @deprecated 100.1.3
+     * @deprecated
      */
     public function displayCartDiscountBoth($store = null)
     {
@@ -670,7 +670,7 @@ class Config
     /**
      * @param null|string|bool|int|Store $store
      * @return bool
-     * @deprecated 100.1.3
+     * @deprecated
      */
     public function displaySalesDiscountInclTax($store = null)
     {
@@ -684,7 +684,7 @@ class Config
     /**
      * @param null|string|bool|int|Store $store
      * @return bool
-     * @deprecated 100.1.3
+     * @deprecated
      */
     public function displaySalesDiscountExclTax($store = null)
     {
@@ -698,7 +698,7 @@ class Config
     /**
      * @param null|string|bool|int|Store $store
      * @return bool
-     * @deprecated 100.1.3
+     * @deprecated
      */
     public function displaySalesDiscountBoth($store = null)
     {
@@ -765,7 +765,6 @@ class Config
 
     /**
      * Check if admin notification related to misconfiguration of "Apply Discount On Prices" should be ignored.
-     *
      * Warning is displayed in case when "Catalog Prices" = "Excluding Tax"
      * AND "Apply Discount On Prices" = "Including Tax"
      * AND "Apply Customer Tax" = "After Discount"
@@ -832,12 +831,12 @@ class Config
      * If it necessary will be returned conversion type (minus or plus)
      *
      * @param null|int|string|Store $store
-     * @return bool
+     * @return bool|int
      * @SuppressWarnings(PHPMD.CyclomaticComplexity)
      */
     public function needPriceConversion($store = null)
     {
-        $res = false;
+        $res = 0;
         $priceIncludesTax = $this->priceIncludesTax($store) || $this->getNeedUseShippingExcludeTax();
         if ($priceIncludesTax) {
             switch ($this->getPriceDisplayType($store)) {
@@ -845,7 +844,7 @@ class Config
                 case self::DISPLAY_TYPE_BOTH:
                     return self::PRICE_CONVERSION_MINUS;
                 case self::DISPLAY_TYPE_INCLUDING_TAX:
-                    $res = true;
+                    $res = false;
                     break;
                 default:
                     break;

@@ -5,21 +5,22 @@
  */
 namespace Magento\Paypal\Model\Payment\Method\Billing;
 
+
 use Magento\Quote\Api\Data\PaymentInterface;
 
-class AbstractAgreementTest extends \PHPUnit\Framework\TestCase
+class AbstractAgreementTest extends \PHPUnit_Framework_TestCase
 {
     /** @var \Magento\Paypal\Model\Method\Agreement */
     protected $_model;
 
     protected function setUp()
     {
-        $config = $this->getMockBuilder(\Magento\Paypal\Model\Config::class)->disableOriginalConstructor()->getMock();
+        $config = $this->getMockBuilder('\Magento\Paypal\Model\Config')->disableOriginalConstructor()->getMock();
         $config->expects($this->any())->method('isMethodAvailable')->will($this->returnValue(true));
-        $proMock = $this->getMockBuilder(\Magento\Paypal\Model\Pro::class)->disableOriginalConstructor()->getMock();
+        $proMock = $this->getMockBuilder('Magento\Paypal\Model\Pro')->disableOriginalConstructor()->getMock();
         $proMock->expects($this->any())->method('getConfig')->will($this->returnValue($config));
         $this->_model = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->create(
-            \Magento\Paypal\Model\Method\Agreement::class,
+            'Magento\Paypal\Model\Method\Agreement',
             ['data' => [$proMock]]
         );
     }
@@ -31,7 +32,7 @@ class AbstractAgreementTest extends \PHPUnit\Framework\TestCase
     public function testIsActive()
     {
         $quote = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->create(
-            \Magento\Quote\Model\ResourceModel\Quote\Collection::class
+            'Magento\Quote\Model\ResourceModel\Quote\Collection'
         )->getFirstItem();
         $this->assertTrue($this->_model->isAvailable($quote));
     }
@@ -44,20 +45,20 @@ class AbstractAgreementTest extends \PHPUnit\Framework\TestCase
     {
         /** @var \Magento\Quote\Model\ResourceModel\Quote\Collection $collection */
         $collection = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->create(
-            \Magento\Quote\Model\ResourceModel\Quote\Collection::class
+            'Magento\Quote\Model\ResourceModel\Quote\Collection'
         );
         /** @var \Magento\Quote\Model\Quote $quote */
         $quote = $collection->getFirstItem();
 
         /** @var \Magento\Payment\Model\Info $info */
         $info = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->create(
-            \Magento\Payment\Model\Info::class
+            'Magento\Payment\Model\Info'
         )->setQuote(
             $quote
         );
         $this->_model->setData('info_instance', $info);
         $billingAgreement = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->create(
-            \Magento\Paypal\Model\ResourceModel\Billing\Agreement\Collection::class
+            'Magento\Paypal\Model\ResourceModel\Billing\Agreement\Collection'
         )->getFirstItem();
         $data = new \Magento\Framework\DataObject(
             [

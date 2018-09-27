@@ -5,7 +5,7 @@
  */
 namespace Magento\Eav\Test\Unit\Model;
 
-class AttributeFactoryTest extends \PHPUnit\Framework\TestCase
+class AttributeFactoryTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\Eav\Model\AttributeFactory
@@ -25,7 +25,7 @@ class AttributeFactoryTest extends \PHPUnit\Framework\TestCase
     protected function setUp()
     {
         /** @var $objectManagerMock \Magento\Framework\ObjectManagerInterface */
-        $objectManagerMock = $this->createMock(\Magento\Framework\ObjectManagerInterface::class);
+        $objectManagerMock = $this->getMock('Magento\Framework\ObjectManagerInterface');
         $objectManagerMock->expects(
             $this->any()
         )->method(
@@ -50,6 +50,11 @@ class AttributeFactoryTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals($this->_className, $this->_factory->createAttribute($this->_className, $this->_arguments));
     }
 
+    /**
+     * @param $className
+     * @param $arguments
+     * @return mixed
+     */
     public function getModelInstance($className, $arguments)
     {
         $this->assertInternalType('array', $arguments);

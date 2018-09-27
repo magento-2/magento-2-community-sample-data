@@ -11,7 +11,6 @@ use Magento\Framework\Escaper;
 /**
  * Form fieldset
  *
- * @api
  * @author      Magento Core Team <core@magentocommerce.com>
  */
 class Fieldset extends AbstractElement

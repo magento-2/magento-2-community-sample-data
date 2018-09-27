@@ -19,7 +19,7 @@ use Magento\Eav\Api\Data\AttributeOptionInterface;
 /**
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  */
-class AttributesTest extends \PHPUnit\Framework\TestCase
+class AttributesTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var AttributesColumn
@@ -79,7 +79,7 @@ class AttributesTest extends \PHPUnit\Framework\TestCase
         $this->searchResultsMock = $this->getMockBuilder(ProductAttributeSearchResultsInterface::class)
             ->getMockForAbstractClass();
 
-        $this->contextMock->expects(static::never())
+        $this->contextMock->expects(static::any())
             ->method('getProcessor')
             ->willReturn($this->uiElementProcessorMock);
         $this->searchCriteriaBuilderMock->expects(static::any())

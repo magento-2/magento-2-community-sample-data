@@ -98,7 +98,7 @@ class Save extends \Magento\Catalog\Controller\Adminhtml\Product\Action\Attribut
         $websiteAddData = $this->getRequest()->getParam('add_website_ids', []);
 
         /* Prepare inventory data item options (use config settings) */
-        $options = $this->_objectManager->get(\Magento\CatalogInventory\Api\StockConfigurationInterface::class)
+        $options = $this->_objectManager->get('Magento\CatalogInventory\Api\StockConfigurationInterface')
             ->getConfigItemOptions();
         foreach ($options as $option) {
             if (isset($inventoryData[$option]) && !isset($inventoryData['use_config_' . $option])) {
@@ -109,11 +109,11 @@ class Save extends \Magento\Catalog\Controller\Adminhtml\Product\Action\Attribut
         try {
             $storeId = $this->attributeHelper->getSelectedStoreId();
             if ($attributesData) {
-                $dateFormat = $this->_objectManager->get(\Magento\Framework\Stdlib\DateTime\TimezoneInterface::class)
+                $dateFormat = $this->_objectManager->get('Magento\Framework\Stdlib\DateTime\TimezoneInterface')
                     ->getDateFormat(\IntlDateFormatter::SHORT);
 
                 foreach ($attributesData as $attributeCode => $value) {
-                    $attribute = $this->_objectManager->get(\Magento\Eav\Model\Config::class)
+                    $attribute = $this->_objectManager->get('Magento\Eav\Model\Config')
                         ->getAttribute(\Magento\Catalog\Model\Product::ENTITY, $attributeCode);
                     if (!$attribute->getAttributeId()) {
                         unset($attributesData[$attributeCode]);
@@ -144,7 +144,7 @@ class Save extends \Magento\Catalog\Controller\Adminhtml\Product\Action\Attribut
                     }
                 }
 
-                $this->_objectManager->get(\Magento\Catalog\Model\Product\Action::class)
+                $this->_objectManager->get('Magento\Catalog\Model\Product\Action')
                     ->updateAttributes($this->attributeHelper->getProductIds(), $attributesData, $storeId);
             }
 
@@ -152,24 +152,24 @@ class Save extends \Magento\Catalog\Controller\Adminhtml\Product\Action\Attribut
                 // TODO why use ObjectManager?
                 /** @var \Magento\CatalogInventory\Api\StockRegistryInterface $stockRegistry */
                 $stockRegistry = $this->_objectManager
-                    ->create(\Magento\CatalogInventory\Api\StockRegistryInterface::class);
+                    ->create('Magento\CatalogInventory\Api\StockRegistryInterface');
                 /** @var \Magento\CatalogInventory\Api\StockItemRepositoryInterface $stockItemRepository */
                 $stockItemRepository = $this->_objectManager
-                    ->create(\Magento\CatalogInventory\Api\StockItemRepositoryInterface::class);
+                    ->create('Magento\CatalogInventory\Api\StockItemRepositoryInterface');
                 foreach ($this->attributeHelper->getProductIds() as $productId) {
                     $stockItemDo = $stockRegistry->getStockItem(
                         $productId,
                         $this->attributeHelper->getStoreWebsiteId($storeId)
                     );
                     if (!$stockItemDo->getProductId()) {
-                        $inventoryData['product_id'] = $productId;
+                        $inventoryData[] = $productId;
                     }
 
                     $stockItemId = $stockItemDo->getId();
                     $this->dataObjectHelper->populateWithArray(
                         $stockItemDo,
                         $inventoryData,
-                        \Magento\CatalogInventory\Api\Data\StockItemInterface::class
+                        '\Magento\CatalogInventory\Api\Data\StockItemInterface'
                     );
                     $stockItemDo->setItemId($stockItemId);
                     $stockItemRepository->save($stockItemDo);
@@ -179,7 +179,7 @@ class Save extends \Magento\Catalog\Controller\Adminhtml\Product\Action\Attribut
 
             if ($websiteAddData || $websiteRemoveData) {
                 /* @var $actionModel \Magento\Catalog\Model\Product\Action */
-                $actionModel = $this->_objectManager->get(\Magento\Catalog\Model\Product\Action::class);
+                $actionModel = $this->_objectManager->get('Magento\Catalog\Model\Product\Action');
                 $productIds = $this->attributeHelper->getProductIds();
 
                 if ($websiteRemoveData) {

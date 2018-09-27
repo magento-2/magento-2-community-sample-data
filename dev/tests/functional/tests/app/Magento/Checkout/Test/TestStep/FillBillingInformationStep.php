@@ -37,14 +37,14 @@ class FillBillingInformationStep implements TestStepInterface
      *
      * @var Address
      */
-    protected $shippingAddress;
+    private $shippingAddress;
 
     /**
      * Customer fixture.
      *
      * @var Customer
      */
-    protected $customer;
+    private $customer;
 
     /**
      * "Same as Shipping" checkbox value assertion.
@@ -79,7 +79,7 @@ class FillBillingInformationStep implements TestStepInterface
      *
      * @var ObjectManager $objectManager
      */
-    protected $objectManager;
+    private $objectManager;
 
     /**
      * @constructor
@@ -123,6 +123,7 @@ class FillBillingInformationStep implements TestStepInterface
     public function run()
     {
         $billingAddress = $this->billingAddress;
+
         if ($this->billingCheckboxState) {
             $this->assertBillingAddressCheckbox->processAssert($this->checkoutOnepage, $this->billingCheckboxState);
         }

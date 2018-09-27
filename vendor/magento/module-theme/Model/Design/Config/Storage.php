@@ -15,19 +15,13 @@ use Magento\Theme\Model\Design\BackendModelFactory;
 
 class Storage
 {
-    /**
-     * @var \Magento\Framework\DB\TransactionFactory
-     */
+    /** @var TransactionFactory */
     protected $transactionFactory;
 
-    /**
-     * @var \Magento\Theme\Model\Design\BackendModelFactory
-     */
+    /** @var BackendModelFactory */
     protected $backendModelFactory;
 
-    /**
-     * @var \Magento\Theme\Model\Design\Config\ValueChecker
-     */
+    /** @var ValueChecker */
     protected $valueChecker;
 
     /**
@@ -87,13 +81,10 @@ class Storage
                 $scopeId,
                 $fieldData->getFieldConfig()
             );
-
-            if ($value === null) {
-                $value = '';
+            if ($value !== null) {
+                $fieldData->setValue($value);
             }
-            $fieldData->setValue($value);
         }
-
         return $designConfig;
     }
 

@@ -7,7 +7,7 @@ namespace Magento\Search\Test\Unit\Adapter\Query\Preprocessor;
 
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
 
-class SynonymsTest extends \PHPUnit\Framework\TestCase
+class SynonymsTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\Search\Api\SynonymAnalyzerInterface|\PHPUnit_Framework_MockObject_MockObject
@@ -23,13 +23,13 @@ class SynonymsTest extends \PHPUnit\Framework\TestCase
     {
         $objectManager = new ObjectManager($this);
 
-        $this->synonymAnalyzer = $this->getMockBuilder(\Magento\Search\Model\SynonymAnalyzer::class)
+        $this->synonymAnalyzer = $this->getMockBuilder('Magento\Search\Model\SynonymAnalyzer')
             ->setMethods(['getSynonymsForPhrase'])
             ->disableOriginalConstructor()
             ->getMock();
 
         $this->synonymPreprocessor = $objectManager->getObject(
-            \Magento\Search\Adapter\Query\Preprocessor\Synonyms::class,
+            'Magento\Search\Adapter\Query\Preprocessor\Synonyms',
             [
                 'synonymsAnalyzer' => $this->synonymAnalyzer
             ]

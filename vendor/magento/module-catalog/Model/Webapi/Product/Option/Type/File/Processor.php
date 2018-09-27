@@ -12,19 +12,13 @@ use Magento\Framework\Filesystem;
 
 class Processor
 {
-    /**
-     * @var \Magento\Framework\Filesystem
-     */
+    /** @var Filesystem */
     protected $filesystem;
 
-    /**
-     * @var \Magento\Framework\Api\ImageProcessor
-     */
+    /** @var ImageProcessor  */
     protected $imageProcessor;
 
-    /**
-     * @var string
-     */
+    /** @var string */
     protected $destinationFolder = 'custom_options/quote';
 
     /**

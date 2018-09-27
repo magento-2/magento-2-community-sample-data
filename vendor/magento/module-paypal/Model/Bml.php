@@ -18,7 +18,7 @@ class Bml extends Express
      * Checkout payment form
      * @var string
      */
-    protected $_formBlockType = \Magento\Paypal\Block\Bml\Form::class;
+    protected $_formBlockType = 'Magento\Paypal\Block\Bml\Form';
 
     /**
      * Checkout redirect URL getter for onepage checkout

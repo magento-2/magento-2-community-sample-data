@@ -15,7 +15,7 @@ use Magento\Framework\Css\PreProcessor\Adapter\Less\Processor;
 /**
  * Class ProcessorTest
  */
-class ProcessorTest extends \PHPUnit\Framework\TestCase
+class ProcessorTest extends \PHPUnit_Framework_TestCase
 {
     const TEST_CONTENT = 'test-content';
 
@@ -57,15 +57,15 @@ class ProcessorTest extends \PHPUnit\Framework\TestCase
      */
     protected function setUp()
     {
-        $this->loggerMock = $this->getMockBuilder(\Psr\Log\LoggerInterface::class)
+        $this->loggerMock = $this->getMockBuilder('Psr\Log\LoggerInterface')
             ->getMockForAbstractClass();
-        $this->appStateMock = $this->getMockBuilder(\Magento\Framework\App\State::class)
+        $this->appStateMock = $this->getMockBuilder('Magento\Framework\App\State')
             ->disableOriginalConstructor()
             ->getMock();
-        $this->assetSourceMock = $this->getMockBuilder(\Magento\Framework\View\Asset\Source::class)
+        $this->assetSourceMock = $this->getMockBuilder('Magento\Framework\View\Asset\Source')
             ->disableOriginalConstructor()
             ->getMock();
-        $this->temporaryFileMock = $this->getMockBuilder(\Magento\Framework\Css\PreProcessor\File\Temporary::class)
+        $this->temporaryFileMock = $this->getMockBuilder('Magento\Framework\Css\PreProcessor\File\Temporary')
             ->disableOriginalConstructor()
             ->getMock();
 
@@ -81,7 +81,7 @@ class ProcessorTest extends \PHPUnit\Framework\TestCase
      * Test for processContent method (exception)
      *
      * @expectedException \Magento\Framework\View\Asset\ContentProcessorException
-     * @expectedExceptionMessageRegExp (Test exception)
+     * @expectedExceptionMessageRegExp (Compilation from source:.*Test exception)
      */
     public function testProcessContentException()
     {
@@ -96,8 +96,11 @@ class ProcessorTest extends \PHPUnit\Framework\TestCase
             ->with($assetMock)
             ->willThrowException(new \Exception(self::ERROR_MESSAGE));
 
-        $this->loggerMock->expects(self::never())
-            ->method('critical');
+        $this->loggerMock->expects(self::once())
+            ->method('critical')
+            ->with(
+                PHP_EOL . Processor::ERROR_MESSAGE_PREFIX . PHP_EOL . self::ASSET_PATH  . PHP_EOL . self::ERROR_MESSAGE
+            );
 
         $this->temporaryFileMock->expects(self::never())
             ->method('createFile');
@@ -178,7 +181,7 @@ class ProcessorTest extends \PHPUnit\Framework\TestCase
      */
     private function getAssetMock()
     {
-        $assetMock = $this->getMockBuilder(\Magento\Framework\View\Asset\File::class)
+        $assetMock = $this->getMockBuilder('Magento\Framework\View\Asset\File')
             ->disableOriginalConstructor()
             ->getMock();
 

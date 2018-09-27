@@ -44,7 +44,7 @@ class FilterableAttributeList implements FilterableAttributeListInterface
     {
         /** @var $collection \Magento\Catalog\Model\ResourceModel\Product\Attribute\Collection */
         $collection = $this->collectionFactory->create();
-        $collection->setItemObjectClass(\Magento\Catalog\Model\ResourceModel\Eav\Attribute::class)
+        $collection->setItemObjectClass('Magento\Catalog\Model\ResourceModel\Eav\Attribute')
             ->addStoreLabel($this->storeManager->getStore()->getId())
             ->setOrder('position', 'ASC');
         $collection = $this->_prepareAttributeCollection($collection);

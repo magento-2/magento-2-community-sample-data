@@ -11,7 +11,7 @@ use Magento\Authorization\Model\UserContextInterface;
  * Role collection test
  * @magentoAppArea adminhtml
  */
-class CollectionTest extends \PHPUnit\Framework\TestCase
+class CollectionTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\Authorization\Model\ResourceModel\Role\Collection
@@ -21,13 +21,13 @@ class CollectionTest extends \PHPUnit\Framework\TestCase
     protected function setUp()
     {
         $this->_collection = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->create(
-            \Magento\Authorization\Model\ResourceModel\Role\Collection::class
+            'Magento\Authorization\Model\ResourceModel\Role\Collection'
         );
     }
 
     public function testSetUserFilter()
     {
-        $user = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->create(\Magento\User\Model\User::class);
+        $user = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->create('Magento\User\Model\User');
         $user->loadByUsername(\Magento\TestFramework\Bootstrap::ADMIN_NAME);
         $this->_collection->setUserFilter($user->getId(), UserContextInterface::USER_TYPE_ADMIN);
 

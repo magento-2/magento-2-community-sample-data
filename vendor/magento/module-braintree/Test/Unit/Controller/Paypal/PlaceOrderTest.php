@@ -5,16 +5,16 @@
  */
 namespace Magento\Braintree\Test\Unit\Controller\Paypal;
 
-use Magento\Braintree\Controller\Paypal\PlaceOrder;
-use Magento\Braintree\Gateway\Config\PayPal\Config;
-use Magento\Braintree\Model\Paypal\Helper\OrderPlace;
+use Magento\Quote\Model\Quote;
 use Magento\Checkout\Model\Session;
 use Magento\Framework\App\Action\Context;
 use Magento\Framework\App\RequestInterface;
+use Magento\Framework\Message\ManagerInterface;
 use Magento\Framework\Controller\ResultFactory;
 use Magento\Framework\Controller\ResultInterface;
-use Magento\Framework\Message\ManagerInterface;
-use Magento\Quote\Model\Quote;
+use Magento\Braintree\Controller\Paypal\PlaceOrder;
+use Magento\Braintree\Gateway\Config\PayPal\Config;
+use Magento\Braintree\Model\Paypal\Helper\OrderPlace;
 
 /**
  * Class PlaceOrderTest
@@ -23,7 +23,7 @@ use Magento\Quote\Model\Quote;
  *
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  */
-class PlaceOrderTest extends \PHPUnit\Framework\TestCase
+class PlaceOrderTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var OrderPlace|\PHPUnit_Framework_MockObject_MockObject
@@ -60,11 +60,6 @@ class PlaceOrderTest extends \PHPUnit\Framework\TestCase
      */
     private $placeOrder;
 
-    /**
-     * @var \PHPUnit_Framework_MockObject_MockObject
-     */
-    private $loggerMock;
-
     protected function setUp()
     {
         /** @var Context|\PHPUnit_Framework_MockObject_MockObject $contextMock */
@@ -99,15 +94,11 @@ class PlaceOrderTest extends \PHPUnit\Framework\TestCase
             ->method('getMessageManager')
             ->willReturn($this->messageManagerMock);
 
-        $this->loggerMock = $this->getMockBuilder(\Psr\Log\LoggerInterface::class)
-            ->disableOriginalConstructor()
-            ->getMock();
         $this->placeOrder = new PlaceOrder(
             $contextMock,
             $this->configMock,
             $this->checkoutSessionMock,
-            $this->orderPlaceMock,
-            $this->loggerMock
+            $this->orderPlaceMock
         );
     }
 

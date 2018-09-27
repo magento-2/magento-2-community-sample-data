@@ -5,10 +5,6 @@
  */
 namespace Magento\Reports\Model\Product\Index;
 
-/**
- * @api
- * @since 100.0.2
- */
 class Factory
 {
     const TYPE_COMPARED = 'compared';
@@ -19,8 +15,8 @@ class Factory
      * @var array
      */
     protected $_typeClasses = [
-        self::TYPE_COMPARED => \Magento\Reports\Model\Product\Index\Compared::class,
-        self::TYPE_VIEWED => \Magento\Reports\Model\Product\Index\Viewed::class,
+        self::TYPE_COMPARED => 'Magento\Reports\Model\Product\Index\Compared',
+        self::TYPE_VIEWED => 'Magento\Reports\Model\Product\Index\Viewed',
     ];
 
     /**

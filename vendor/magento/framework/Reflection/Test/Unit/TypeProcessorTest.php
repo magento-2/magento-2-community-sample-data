@@ -6,14 +6,13 @@
 // @codingStandardsIgnoreStart
 namespace Magento\Framework\Reflection\Test\Unit;
 
-use Magento\Framework\Exception\SerializationException;
-use Magento\Framework\Reflection\Test\Unit\Fixture\TSample;
 use Zend\Code\Reflection\ClassReflection;
+use Magento\Framework\Exception\SerializationException;
 
 /**
  * Type processor Test
  */
-class TypeProcessorTest extends \PHPUnit\Framework\TestCase
+class TypeProcessorTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\Framework\Reflection\TypeProcessor
@@ -150,7 +149,7 @@ class TypeProcessorTest extends \PHPUnit\Framework\TestCase
     {
         $this->assertEquals(
             'TestModule1V1EntityItem',
-            $this->_typeProcessor->translateTypeName(\Magento\TestModule1\Service\V1\Entity\Item::class)
+            $this->_typeProcessor->translateTypeName('\Magento\TestModule1\Service\V1\Entity\Item')
         );
         $this->assertEquals(
             'TestModule3V1EntityParameter[]',
@@ -212,12 +211,15 @@ class TypeProcessorTest extends \PHPUnit\Framework\TestCase
      */
     public function testProcessSimpleTypeException($value, $type)
     {
-        $this->expectException(
+        $this->setExpectedException(
             SerializationException::class, 'Invalid type for value: "' . $value . '". Expected Type: "' . $type . '"'
         );
         $this->_typeProcessor->processSimpleAndAnyType($value, $type);
     }
 
+    /**
+     * @return array
+     */
     public static function processSimpleTypeExceptionProvider()
     {
         return [
@@ -243,7 +245,7 @@ class TypeProcessorTest extends \PHPUnit\Framework\TestCase
      */
     public function testGetParamType()
     {
-        $class = new ClassReflection(\Magento\Framework\Reflection\Test\Unit\DataObject::class);
+        $class = new ClassReflection("\\Magento\\Framework\\Reflection\\Test\\Unit\\DataObject");
         $methodReflection = $class->getMethod('setName');
         $paramsReflection = $methodReflection->getParameters();
         $this->_typeProcessor->getParamType($paramsReflection[0]);
@@ -251,7 +253,7 @@ class TypeProcessorTest extends \PHPUnit\Framework\TestCase
 
     public function testGetParameterDescription()
     {
-        $class = new ClassReflection(\Magento\Framework\Reflection\Test\Unit\DataObject::class);
+        $class = new ClassReflection("\\Magento\\Framework\\Reflection\\Test\\Unit\\DataObject");
         $methodReflection = $class->getMethod('setName');
         $paramsReflection = $methodReflection->getParameters();
         $this->assertEquals('Name of the attribute', $this->_typeProcessor->getParamDescription($paramsReflection[0]));
@@ -260,36 +262,5 @@ class TypeProcessorTest extends \PHPUnit\Framework\TestCase
     public function testGetOperationName()
     {
         $this->assertEquals("resNameMethodName", $this->_typeProcessor->getOperationName("resName", "methodName"));
-    }
-
-    /**
-     * Checks a case when method has only `@inheritdoc` annotation.
-     */
-    public function testGetReturnTypeWithInheritDocBlock()
-    {
-        $expected = [
-            'type' => 'string',
-            'isRequired' => true,
-            'description' => null,
-            'parameterCount' => 0
-        ];
-
-        $classReflection = new ClassReflection(TSample::class);
-        $methodReflection = $classReflection->getMethod('getPropertyName');
-
-        self::assertEquals($expected, $this->_typeProcessor->getGetterReturnType($methodReflection));
-    }
-
-    /**
-     * Checks a case when method and parent interface don't have `@return` annotation.
-     *
-     * @expectedException \InvalidArgumentException
-     * @expectedExceptionMessage Getter return type must be specified using @return annotation. See Magento\Framework\Reflection\Test\Unit\Fixture\TSample::getName()
-     */
-    public function testGetReturnTypeWithoutReturnTag()
-    {
-        $classReflection = new ClassReflection(TSample::class);
-        $methodReflection = $classReflection->getMethod('getName');
-        $this->_typeProcessor->getGetterReturnType($methodReflection);
     }
 }

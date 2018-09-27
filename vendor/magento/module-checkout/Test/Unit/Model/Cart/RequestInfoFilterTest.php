@@ -8,7 +8,7 @@ namespace Magento\Checkout\Test\Unit\Model\Cart;
 /**
  * Class RequestInfoFilterTest
  */
-class RequestInfoFilterTest extends \PHPUnit\Framework\TestCase
+class RequestInfoFilterTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\Checkout\Model\Cart\RequestInfoFilter

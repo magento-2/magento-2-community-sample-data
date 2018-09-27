@@ -13,7 +13,7 @@ use Magento\Framework\Filesystem\DriverInterface;
  * ATTENTION! This class must be used like abstract class and must added
  * validation by protected file extension list to extended class
  *
- * @api
+ * @author     Magento Core Team <core@magentocommerce.com>
  */
 class Uploader
 {
@@ -210,7 +210,7 @@ class Uploader
         if ($this->_enableFilesDispersion) {
             $fileName = $this->correctFileNameCase($fileName);
             $this->setAllowCreateFolders(true);
-            $this->_dispretionPath = self::getDispersionPath($fileName);
+            $this->_dispretionPath = self::getDispretionPath($fileName);
             $destinationFile .= $this->_dispretionPath;
             $this->_createDestinationFolder($destinationFile);
         }
@@ -270,7 +270,7 @@ class Uploader
      * @param string $file
      * @return void
      *
-     * @deprecated 100.0.8
+     * @deprecated
      */
     protected function chmod($file)
     {
@@ -619,20 +619,8 @@ class Uploader
      *
      * @param string $fileName
      * @return string
-     * @deprecated
      */
     public static function getDispretionPath($fileName)
-    {
-        return self::getDispersionPath($fileName);
-    }
-
-    /**
-     * Get dispertion path
-     *
-     * @param string $fileName
-     * @return string
-     */
-    public static function getDispersionPath($fileName)
     {
         $char = 0;
         $dispertionPath = '';

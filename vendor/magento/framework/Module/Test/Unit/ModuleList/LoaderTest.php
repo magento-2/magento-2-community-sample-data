@@ -8,7 +8,7 @@ namespace Magento\Framework\Module\Test\Unit\ModuleList;
 
 use \Magento\Framework\Module\ModuleList\Loader;
 
-class LoaderTest extends \PHPUnit\Framework\TestCase
+class LoaderTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * A sample empty XML
@@ -49,11 +49,18 @@ class LoaderTest extends \PHPUnit\Framework\TestCase
 
     protected function setUp()
     {
-        $this->converter = $this->createMock(\Magento\Framework\Module\Declaration\Converter\Dom::class);
-        $this->parser = $this->createMock(\Magento\Framework\Xml\Parser::class);
+        $this->converter = $this->getMock('Magento\Framework\Module\Declaration\Converter\Dom', [], [], '', false);
+        $this->parser = $this->getMock('Magento\Framework\Xml\Parser', [], [], '', false);
         $this->parser->expects($this->once())->method('initErrorHandler');
-        $this->registry = $this->createMock(\Magento\Framework\Component\ComponentRegistrarInterface::class);
-        $this->driver = $this->createMock(\Magento\Framework\Filesystem\DriverInterface::class);
+        $this->registry = $this->getMock(
+            'Magento\Framework\Component\ComponentRegistrarInterface',
+            [],
+            [],
+            '',
+            false,
+            false
+        );
+        $this->driver = $this->getMock('Magento\Framework\Filesystem\DriverInterface', [], [], '', false, false);
         $this->loader = new Loader($this->converter, $this->parser, $this->registry, $this->driver);
     }
 
@@ -101,12 +108,14 @@ class LoaderTest extends \PHPUnit\Framework\TestCase
     public function testLoadDataProvider()
     {
         return [
-            'Ordered modules list returned by registrar' => [[
-                '/path/to/a', '/path/to/b', '/path/to/c', '/path/to/d', '/path/to/e'
-            ]],
-            'UnOrdered modules list returned by registrar' => [[
-                '/path/to/b', '/path/to/a', '/path/to/c', '/path/to/e', '/path/to/d'
-            ]],
+            'Ordered modules list returned by registrar' =>
+                [[
+                    '/path/to/a', '/path/to/b', '/path/to/c', '/path/to/d', '/path/to/e'
+                ]],
+            'UnOrdered modules list returned by registrar' =>
+                [[
+                    '/path/to/b', '/path/to/a', '/path/to/c', '/path/to/e', '/path/to/d'
+                ]],
         ];
     }
 

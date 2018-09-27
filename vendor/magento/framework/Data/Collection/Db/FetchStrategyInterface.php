@@ -11,10 +11,6 @@ namespace Magento\Framework\Data\Collection\Db;
 
 use Magento\Framework\DB\Select;
 
-/**
- * Interface \Magento\Framework\Data\Collection\Db\FetchStrategyInterface
- *
- */
 interface FetchStrategyInterface
 {
     /**

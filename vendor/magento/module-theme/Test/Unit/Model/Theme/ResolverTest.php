@@ -5,7 +5,7 @@
  */
 namespace Magento\Theme\Test\Unit\Model\Theme;
 
-class ResolverTest extends \PHPUnit\Framework\TestCase
+class ResolverTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\Theme\Model\Theme\Resolver
@@ -39,14 +39,29 @@ class ResolverTest extends \PHPUnit\Framework\TestCase
 
     protected function setUp()
     {
-        $this->designMock = $this->getMockForAbstractClass(\Magento\Framework\View\DesignInterface::class);
-        $this->themeCollectionFactoryMock = $this->createPartialMock(
-            \Magento\Theme\Model\ResourceModel\Theme\CollectionFactory::class,
-            ['create']
+        $this->designMock = $this->getMockForAbstractClass('Magento\Framework\View\DesignInterface');
+        $this->themeCollectionFactoryMock = $this->getMock(
+            'Magento\Theme\Model\ResourceModel\Theme\CollectionFactory',
+            ['create'],
+            [],
+            '',
+            false
         );
-        $this->themeCollectionMock = $this->createMock(\Magento\Theme\Model\ResourceModel\Theme\Collection::class);
-        $this->appStateMock = $this->createMock(\Magento\Framework\App\State::class);
-        $this->themeMock = $this->getMockForAbstractClass(\Magento\Framework\View\Design\ThemeInterface::class);
+        $this->themeCollectionMock = $this->getMock(
+            'Magento\Theme\Model\ResourceModel\Theme\Collection',
+            [],
+            [],
+            '',
+            false
+        );
+        $this->appStateMock = $this->getMock(
+            'Magento\Framework\App\State',
+            [],
+            [],
+            '',
+            false
+        );
+        $this->themeMock = $this->getMockForAbstractClass('Magento\Framework\View\Design\ThemeInterface');
 
         $this->model = new \Magento\Theme\Model\Theme\Resolver(
             $this->appStateMock,

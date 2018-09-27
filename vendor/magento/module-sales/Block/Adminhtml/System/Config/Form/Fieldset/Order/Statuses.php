@@ -91,7 +91,7 @@ class Statuses extends \Magento\Config\Block\System\Config\Form\Fieldset
     {
         if (empty($this->_fieldRenderer)) {
             $this->_fieldRenderer = $this->getLayout()->getBlockSingleton(
-                \Magento\Config\Block\System\Config\Form\Field::class
+                'Magento\Config\Block\System\Config\Form\Field'
             );
         }
         return $this->_fieldRenderer;

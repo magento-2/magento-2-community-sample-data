@@ -61,7 +61,7 @@ class ExpressRedirect extends \Magento\Framework\App\Helper\AbstractHelper
 
         $expressRedirect->getResponse()->setRedirect(
             $this->_objectManager->get(
-                \Magento\Framework\Url\Helper\Data::class
+                'Magento\Framework\Url\Helper\Data'
             )->addRequestParam(
                 $expressRedirect->getLoginUrl(),
                 ['context' => 'checkout']

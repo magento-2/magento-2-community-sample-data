@@ -6,7 +6,7 @@
 
 namespace Magento\Payment\Test\Unit\Model\ResourceModel\Grid;
 
-class GroupListTest extends \PHPUnit\Framework\TestCase
+class GroupListTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\Payment\Model\ResourceModel\Grid\GroupsList
@@ -20,7 +20,7 @@ class GroupListTest extends \PHPUnit\Framework\TestCase
 
     protected function setUp()
     {
-        $this->helperMock = $this->createMock(\Magento\Payment\Helper\Data::class);
+        $this->helperMock = $this->getMock(\Magento\Payment\Helper\Data::class, [], [], '', false);
         $this->groupArrayModel = new \Magento\Payment\Model\ResourceModel\Grid\GroupList($this->helperMock);
     }
 

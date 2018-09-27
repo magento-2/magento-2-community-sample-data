@@ -8,9 +8,7 @@ namespace Magento\Sales\Block\Adminhtml\Order\Create;
 /**
  * Adminhtml sales order create search block
  *
- * @api
  * @author      Magento Core Team <core@magentocommerce.com>
- * @since 100.0.2
  */
 class Search extends \Magento\Sales\Block\Adminhtml\Order\Create\AbstractCreate
 {
@@ -48,7 +46,7 @@ class Search extends \Magento\Sales\Block\Adminhtml\Order\Create\AbstractCreate
             'class' => 'action-add action-secondary',
         ];
         return $this->getLayout()->createBlock(
-            \Magento\Backend\Block\Widget\Button::class
+            'Magento\Backend\Block\Widget\Button'
         )->setData(
             $addButtonData
         )->toHtml();

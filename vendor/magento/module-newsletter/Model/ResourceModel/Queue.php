@@ -12,9 +12,6 @@ use Magento\Newsletter\Model\Queue as ModelQueue;
  * Newsletter queue resource model
  *
  * @author      Magento Core Team <core@magentocommerce.com>
- *
- * @api
- * @since 100.0.2
  */
 class Queue extends \Magento\Framework\Model\ResourceModel\Db\AbstractDb
 {
@@ -83,13 +80,13 @@ class Queue extends \Magento\Framework\Model\ResourceModel\Db\AbstractDb
             $subscriberIds
         );
 
-        $usedIds = array_flip($connection->fetchCol($select));
-        $subscriberIds = array_flip($subscriberIds);
-        $newIds = array_diff_key($subscriberIds, $usedIds);
-        
+        $usedIds = $connection->fetchCol($select);
         $connection->beginTransaction();
         try {
-            foreach (array_keys($newIds) as $subscriberId) {
+            foreach ($subscriberIds as $subscriberId) {
+                if (in_array($subscriberId, $usedIds)) {
+                    continue;
+                }
                 $data = [];
                 $data['queue_id'] = $queue->getId();
                 $data['subscriber_id'] = $subscriberId;

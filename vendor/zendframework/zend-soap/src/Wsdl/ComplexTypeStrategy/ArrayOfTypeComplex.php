@@ -28,8 +28,8 @@ class ArrayOfTypeComplex extends DefaultComplexType
             return $soapType;
         }
 
-        $singularType = $this->getSingularPhpType($type);
-        $nestingLevel = $this->getNestedCount($type);
+        $singularType = $this->_getSingularPhpType($type);
+        $nestingLevel = $this->_getNestedCount($type);
 
         if ($nestingLevel == 0) {
             return parent::addComplexType($singularType);
@@ -43,7 +43,7 @@ class ArrayOfTypeComplex extends DefaultComplexType
         }
 
         // The following blocks define the Array of Object structure
-        return $this->addArrayOfComplexType($singularType, $type);
+        return $this->_addArrayOfComplexType($singularType, $type);
     }
 
     /**
@@ -54,7 +54,7 @@ class ArrayOfTypeComplex extends DefaultComplexType
      * @param  string $type           e.g. '\MyNamespace\MyClassname[]'
      * @return string tns:xsd-type   e.g. 'tns:ArrayOfMyNamespace.MyClassname'
      */
-    protected function addArrayOfComplexType($singularType, $type)
+    protected function _addArrayOfComplexType($singularType, $type)
     {
         if (($soapType = $this->scanRegisteredTypes($type)) !== null) {
             return $soapType;
@@ -103,7 +103,7 @@ class ArrayOfTypeComplex extends DefaultComplexType
      * @param  string $type
      * @return string
      */
-    protected function getSingularPhpType($type)
+    protected function _getSingularPhpType($type)
     {
         return str_replace('[]', '', $type);
     }
@@ -114,7 +114,7 @@ class ArrayOfTypeComplex extends DefaultComplexType
      * @param  string $type
      * @return int
      */
-    protected function getNestedCount($type)
+    protected function _getNestedCount($type)
     {
         return substr_count($type, '[]');
     }

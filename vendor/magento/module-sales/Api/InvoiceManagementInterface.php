@@ -10,7 +10,6 @@ namespace Magento\Sales\Api;
  *
  * An invoice is a record of the receipt of payment for an order.
  * @api
- * @since 100.0.2
  */
 interface InvoiceManagementInterface
 {

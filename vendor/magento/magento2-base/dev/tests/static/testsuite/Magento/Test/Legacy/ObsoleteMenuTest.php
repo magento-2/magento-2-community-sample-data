@@ -9,7 +9,7 @@
  */
 namespace Magento\Test\Legacy;
 
-class ObsoleteMenuTest extends \PHPUnit\Framework\TestCase
+class ObsoleteMenuTest extends \PHPUnit_Framework_TestCase
 {
     public function testMenuDeclaration()
     {

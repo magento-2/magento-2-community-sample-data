@@ -5,7 +5,7 @@
  */
 namespace Magento\Quote\Test\Unit\Model\Quote\Item;
 
-class RelatedProductsTest extends \PHPUnit\Framework\TestCase
+class RelatedProductsTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\Quote\Model\Quote\Item\RelatedProducts
@@ -33,10 +33,13 @@ class RelatedProductsTest extends \PHPUnit\Framework\TestCase
      */
     public function testGetRelatedProductIds($optionValue, $productId, $expectedResult)
     {
-        $quoteItemMock = $this->createMock(\Magento\Quote\Model\Quote\Item::class);
-        $itemOptionMock = $this->createPartialMock(
-            \Magento\Quote\Model\Quote\Item\Option::class,
-            ['getValue', 'getProductId', '__wakeup']
+        $quoteItemMock = $this->getMock('\Magento\Quote\Model\Quote\Item', [], [], '', false);
+        $itemOptionMock = $this->getMock(
+            '\Magento\Quote\Model\Quote\Item\Option',
+            ['getValue', 'getProductId', '__wakeup'],
+            [],
+            '',
+            false
         );
 
         $quoteItemMock->expects(
@@ -76,7 +79,7 @@ class RelatedProductsTest extends \PHPUnit\Framework\TestCase
      */
     public function testGetRelatedProductIdsNoOptions()
     {
-        $quoteItemMock = $this->createMock(\Magento\Quote\Model\Quote\Item::class);
+        $quoteItemMock = $this->getMock('\Magento\Quote\Model\Quote\Item', [], [], '', false);
 
         $quoteItemMock->expects(
             $this->once()

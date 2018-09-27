@@ -76,7 +76,7 @@ abstract class Transactions extends \Magento\Backend\App\Action
     protected function _initTransaction()
     {
         $txn = $this->_objectManager->create(
-            \Magento\Sales\Model\Order\Payment\Transaction::class
+            'Magento\Sales\Model\Order\Payment\Transaction'
         )->load(
             $this->getRequest()->getParam('txn_id')
         );

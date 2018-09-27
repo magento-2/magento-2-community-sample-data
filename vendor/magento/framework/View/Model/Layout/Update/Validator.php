@@ -7,7 +7,6 @@ namespace Magento\Framework\View\Model\Layout\Update;
 
 use Magento\Framework\App\ObjectManager;
 use Magento\Framework\Config\Dom\UrnResolver;
-use Magento\Framework\Config\Dom\ValidationSchemaException;
 use Magento\Framework\Config\DomFactory;
 use Magento\Framework\Config\ValidationStateInterface;
 
@@ -19,8 +18,6 @@ use Magento\Framework\Config\ValidationStateInterface;
 class Validator extends \Zend_Validate_Abstract
 {
     const XML_INVALID = 'invalidXml';
-
-    const XSD_INVALID = 'invalidXsd';
 
     const HELPER_ARGUMENT_TYPE = 'helperArgumentType';
 
@@ -108,9 +105,6 @@ class Validator extends \Zend_Validate_Abstract
                 self::XML_INVALID => (string)new \Magento\Framework\Phrase(
                     'Please correct the XML data and try again. %value%'
                 ),
-                self::XSD_INVALID => (string)new \Magento\Framework\Phrase(
-                    'Please correct the XSD data and try again. %value%'
-                ),
             ];
         }
         return $this;
@@ -119,7 +113,7 @@ class Validator extends \Zend_Validate_Abstract
     /**
      * Returns true if and only if $value meets the validation requirements
      *
-     * If $value fails validation, then this method throws exception, and
+     * If $value fails validation, then this method returns false, and
      * getMessages() will return an array of messages that explain why the
      * validation failed.
      *
@@ -127,7 +121,6 @@ class Validator extends \Zend_Validate_Abstract
      * @param string $schema
      * @param bool $isSecurityCheck
      * @return bool
-     * @throws \Exception
      */
     public function isValid($value, $schema = self::LAYOUT_SCHEMA_PAGE_HANDLE, $isSecurityCheck = true)
     {
@@ -157,13 +150,10 @@ class Validator extends \Zend_Validate_Abstract
             }
         } catch (\Magento\Framework\Config\Dom\ValidationException $e) {
             $this->_error(self::XML_INVALID, $e->getMessage());
-            throw $e;
-        } catch (ValidationSchemaException $e) {
-            $this->_error(self::XSD_INVALID, $e->getMessage());
-            throw $e;
+            return false;
         } catch (\Exception $e) {
             $this->_error(self::XML_INVALID);
-            throw $e;
+            return false;
         }
         return true;
     }

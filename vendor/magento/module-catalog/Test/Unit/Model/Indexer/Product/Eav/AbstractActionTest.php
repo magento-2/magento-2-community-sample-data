@@ -5,7 +5,7 @@
  */
 namespace Magento\Catalog\Test\Unit\Model\Indexer\Product\Eav;
 
-class AbstractActionTest extends \PHPUnit\Framework\TestCase
+class AbstractActionTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\Catalog\Model\Indexer\Product\Eav\AbstractAction|\PHPUnit_Framework_MockObject_MockObject
@@ -24,17 +24,24 @@ class AbstractActionTest extends \PHPUnit\Framework\TestCase
 
     protected function setUp()
     {
-        $this->_eavDecimalFactoryMock = $this->createPartialMock(
-            \Magento\Catalog\Model\ResourceModel\Product\Indexer\Eav\DecimalFactory::class,
-            ['create']
+        $this->_eavDecimalFactoryMock = $this->getMock(
+            'Magento\Catalog\Model\ResourceModel\Product\Indexer\Eav\DecimalFactory',
+            ['create'],
+            [],
+            '',
+            false
         );
-        $this->_eavSourceFactoryMock = $this->createPartialMock(
-            \Magento\Catalog\Model\ResourceModel\Product\Indexer\Eav\SourceFactory::class,
-            ['create']
+        $this->_eavSourceFactoryMock = $this->getMock(
+            'Magento\Catalog\Model\ResourceModel\Product\Indexer\Eav\SourceFactory',
+            ['create'],
+            [],
+            '',
+            false
         );
+
         $this->_model = $this->getMockForAbstractClass(
-            \Magento\Catalog\Model\Indexer\Product\Eav\AbstractAction::class,
-            [$this->_eavDecimalFactoryMock, $this->_eavSourceFactoryMock, []]
+            'Magento\Catalog\Model\Indexer\Product\Eav\AbstractAction',
+            [$this->_eavDecimalFactoryMock, $this->_eavSourceFactoryMock]
         );
     }
 
@@ -88,11 +95,11 @@ class AbstractActionTest extends \PHPUnit\Framework\TestCase
 
     public function testReindexWithoutArgumentsExecutesReindexAll()
     {
-        $eavSource = $this->getMockBuilder(\Magento\Catalog\Model\ResourceModel\Product\Indexer\Eav\Source::class)
+        $eavSource = $this->getMockBuilder('Magento\Catalog\Model\ResourceModel\Product\Indexer\Eav\Source')
             ->disableOriginalConstructor()
             ->getMock();
 
-        $eavDecimal = $this->getMockBuilder(\Magento\Catalog\Model\ResourceModel\Product\Indexer\Eav\Decimal::class)
+        $eavDecimal = $this->getMockBuilder('Magento\Catalog\Model\ResourceModel\Product\Indexer\Eav\Decimal')
             ->disableOriginalConstructor()
             ->getMock();
 
@@ -113,58 +120,25 @@ class AbstractActionTest extends \PHPUnit\Framework\TestCase
         $this->_model->reindex();
     }
 
-    /**
-     * @param array $ids
-     * @param array $parentIds
-     * @param array $childIds
-     * @throws \Exception
-     * @dataProvider reindexEntitiesDataProvider
-     */
-    public function testReindexWithNotNullArgumentExecutesReindexEntities(
-        array $ids,
-        array $parentIds,
-        array $childIds
-    ) {
-        $reindexIds = array_unique(array_merge($ids, $parentIds, $childIds));
+    public function testReindexWithNotNullArgumentExecutesReindexEntities()
+    {
+        $ids = [1, 2, 3];
 
-        $connectionMock = $this->getMockBuilder(\Magento\Framework\DB\Adapter\AdapterInterface::class)
-            ->getMockForAbstractClass();
-
-        $eavSource = $this->getMockBuilder(\Magento\Catalog\Model\ResourceModel\Product\Indexer\Eav\Source::class)
+        $eavSource = $this->getMockBuilder('Magento\Catalog\Model\ResourceModel\Product\Indexer\Eav\Source')
             ->disableOriginalConstructor()
             ->getMock();
 
-        $eavDecimal = $this->getMockBuilder(\Magento\Catalog\Model\ResourceModel\Product\Indexer\Eav\Decimal::class)
+        $eavDecimal = $this->getMockBuilder('Magento\Catalog\Model\ResourceModel\Product\Indexer\Eav\Decimal')
             ->disableOriginalConstructor()
             ->getMock();
 
-        $eavSource->expects($this->once())
-            ->method('getRelationsByChild')
-            ->with($ids)
-            ->willReturn($parentIds);
-        $eavSource->expects($this->once())
-            ->method('getRelationsByParent')
-            ->with(array_unique(array_merge($parentIds, $ids)))
-            ->willReturn($childIds);
-
-        $eavDecimal->expects($this->once())
-            ->method('getRelationsByChild')
-            ->with($reindexIds)
-            ->willReturn($parentIds);
-        $eavDecimal->expects($this->once())
-            ->method('getRelationsByParent')
-            ->with(array_unique(array_merge($parentIds, $reindexIds)))
-            ->willReturn($childIds);
-
-        $eavSource->expects($this->once())->method('getConnection')->willReturn($connectionMock);
-        $eavDecimal->expects($this->once())->method('getConnection')->willReturn($connectionMock);
         $eavDecimal->expects($this->once())
             ->method('reindexEntities')
-            ->with($reindexIds);
+            ->with($ids);
 
         $eavSource->expects($this->once())
             ->method('reindexEntities')
-            ->with($reindexIds);
+            ->with($ids);
 
         $this->_eavSourceFactoryMock->expects($this->once())
             ->method('create')
@@ -175,14 +149,5 @@ class AbstractActionTest extends \PHPUnit\Framework\TestCase
             ->will($this->returnValue($eavDecimal));
 
         $this->_model->reindex($ids);
-    }
-
-    public function reindexEntitiesDataProvider()
-    {
-        return [
-            [[4], [], [1, 2, 3]],
-            [[3], [4], []],
-            [[5], [], []]
-        ];
     }
 }

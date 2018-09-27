@@ -37,9 +37,11 @@ namespace Magento\Framework\Session {
     }
 
     /**
+     * Class to test session manager.
+     *
      * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
      */
-    class SessionManagerTest extends \PHPUnit\Framework\TestCase
+    class SessionManagerTest extends \PHPUnit_Framework_TestCase
     {
         /**
          * @var \Magento\Framework\Session\SessionManagerInterface
@@ -107,12 +109,6 @@ namespace Magento\Framework\Session {
                     $this->objectManager->get(\Magento\Framework\Session\StorageInterface::class)
                 ]
             );
-        }
-
-        protected function tearDown()
-        {
-            global $mockPHPFunctions;
-            $mockPHPFunctions = false;
         }
 
         public function testSessionNameFromIni()
@@ -223,7 +219,7 @@ namespace Magento\Framework\Session {
          */
         public function testStartAreaNotSet()
         {
-            $scope = $this->objectManager->get(\Magento\Framework\Config\ScopeInterface::class);
+            $scope = $this->objectManager->get('Magento\Framework\Config\ScopeInterface');
             $appState = new \Magento\Framework\App\State($scope);
 
             /**

@@ -7,7 +7,7 @@ namespace Magento\Framework\Config\Test\Unit\Dom;
 
 use \Magento\Framework\Config\Dom\NodePathMatcher;
 
-class NodePathMatcherTest extends \PHPUnit\Framework\TestCase
+class NodePathMatcherTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var NodePathMatcher
@@ -32,6 +32,9 @@ class NodePathMatcherTest extends \PHPUnit\Framework\TestCase
         $this->assertSame($expectedResult, $actualResult);
     }
 
+    /**
+     * @return array
+     */
     public function getNodeInfoDataProvider()
     {
         return [

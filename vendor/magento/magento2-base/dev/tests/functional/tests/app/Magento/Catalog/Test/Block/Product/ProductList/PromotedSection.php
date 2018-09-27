@@ -50,7 +50,7 @@ class PromotedSection extends Block
         $locator = sprintf($this->productItemByName, $product->getName());
 
         return $this->blockFactory->create(
-            \Magento\Catalog\Test\Block\Product\ProductList\ProductItem::class,
+            'Magento\Catalog\Test\Block\Product\ProductList\ProductItem',
             ['element' => $this->_rootElement->find($locator, Locator::SELECTOR_XPATH)]
         );
     }
@@ -71,7 +71,7 @@ class PromotedSection extends Block
 
         foreach ($elements as $element) {
             $result[] = $this->blockFactory->create(
-                \Magento\Catalog\Test\Block\Product\ProductList\ProductItem::class,
+                'Magento\Catalog\Test\Block\Product\ProductList\ProductItem',
                 ['element' => $element]
             );
         }

@@ -7,13 +7,15 @@ namespace Magento\Captcha\Block\Captcha;
 
 /**
  * Captcha block
+ *
+ * @author     Magento Core Team <core@magentocommerce.com>
  */
 class DefaultCaptcha extends \Magento\Framework\View\Element\Template
 {
     /**
      * @var string
      */
-    protected $_template = 'default.phtml';
+    protected $_template = 'Magento_Captcha::default.phtml';
 
     /**
      * @var string

@@ -12,7 +12,7 @@ use PHPUnit_Framework_MockObject_MockObject as MockObject;
 /**
  * Test for \Magento\Catalog\Model\Layer\Filter\DataProvider\Category
  */
-class CategoryTest extends \PHPUnit\Framework\TestCase
+class CategoryTest extends \PHPUnit_Framework_TestCase
 {
     /** @var  \Magento\Catalog\Model\Category|MockObject */
     private $category;
@@ -40,26 +40,26 @@ class CategoryTest extends \PHPUnit\Framework\TestCase
     protected function setUp()
     {
         /** @var \Magento\Framework\Registry $var */
-        $this->coreRegistry = $var = $this->getMockBuilder(\Magento\Framework\Registry::class)
+        $this->coreRegistry = $var = $this->getMockBuilder('\Magento\Framework\Registry')
             ->disableOriginalConstructor()
             ->setMethods(['register'])
             ->getMock();
-        $this->category = $this->getMockBuilder(\Magento\Catalog\Model\Category::class)
+        $this->category = $this->getMockBuilder('Magento\Catalog\Model\Category')
             ->disableOriginalConstructor()
             ->setMethods(['getId', 'setStoreId', 'load', 'getPathIds'])
             ->getMock();
-        $this->categoryFactory = $this->getMockBuilder(\Magento\Catalog\Model\CategoryFactory::class)
+        $this->categoryFactory = $this->getMockBuilder('Magento\Catalog\Model\CategoryFactory')
             ->disableOriginalConstructor()
             ->setMethods(['create'])
             ->getMock();
         $this->categoryFactory->expects($this->any())
             ->method('create')
             ->will($this->returnValue($this->category));
-        $this->store = $this->getMockBuilder(\Magento\Store\Model\Store::class)
+        $this->store = $this->getMockBuilder('\Magento\Store\Model\Store')
             ->disableOriginalConstructor()
             ->setMethods(['getId'])
             ->getMock();
-        $this->layer = $this->getMockBuilder(\Magento\Catalog\Model\Layer::class)
+        $this->layer = $this->getMockBuilder('Magento\Catalog\Model\Layer')
             ->disableOriginalConstructor()
             ->setMethods(['getCurrentStore', 'getCurrentCategory'])
             ->getMock();
@@ -68,7 +68,7 @@ class CategoryTest extends \PHPUnit\Framework\TestCase
             ->will($this->returnValue($this->store));
         $objectManagerHelper = new ObjectManagerHelper($this);
         $this->target = $objectManagerHelper->getObject(
-            \Magento\Catalog\Model\Layer\Filter\DataProvider\Category::class,
+            'Magento\Catalog\Model\Layer\Filter\DataProvider\Category',
             [
                 'coreRegistry' => $this->coreRegistry,
                 'categoryFactory' => $this->categoryFactory,
@@ -77,6 +77,9 @@ class CategoryTest extends \PHPUnit\Framework\TestCase
         );
     }
 
+    /**
+     * @return \Magento\Catalog\Model\Layer\Filter\DataProvider\Category
+     */
     public function testGetCategoryWithAppliedId()
     {
         $storeId = 1234;

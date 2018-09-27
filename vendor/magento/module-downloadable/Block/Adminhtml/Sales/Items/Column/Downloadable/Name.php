@@ -14,9 +14,6 @@ use Magento\Store\Model\ScopeInterface;
 
 /**
  * Sales Order downloadable items name column renderer
- *
- * @api
- * @since 100.0.2
  */
 class Name extends \Magento\Sales\Block\Adminhtml\Items\Column\Name
 {

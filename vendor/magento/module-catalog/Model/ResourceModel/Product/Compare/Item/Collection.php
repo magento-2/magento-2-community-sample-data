@@ -8,11 +8,9 @@ namespace Magento\Catalog\Model\ResourceModel\Product\Compare\Item;
 /**
  * Catalog Product Compare Items Resource Collection
  *
- * @api
  * @author      Magento Core Team <core@magentocommerce.com>
  * @SuppressWarnings(PHPMD.LongVariable)
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
- * @since 100.0.2
  */
 class Collection extends \Magento\Catalog\Model\ResourceModel\Product\Collection
 {
@@ -135,10 +133,7 @@ class Collection extends \Magento\Catalog\Model\ResourceModel\Product\Collection
      */
     protected function _construct()
     {
-        $this->_init(
-            \Magento\Catalog\Model\Product\Compare\Item::class,
-            \Magento\Catalog\Model\ResourceModel\Product::class
-        );
+        $this->_init('Magento\Catalog\Model\Product\Compare\Item', 'Magento\Catalog\Model\ResourceModel\Product');
         $this->_initTables();
     }
 
@@ -365,7 +360,7 @@ class Collection extends \Magento\Catalog\Model\ResourceModel\Product\Collection
      */
     public function useProductItem()
     {
-        $this->setObject(\Magento\Catalog\Model\Product::class);
+        $this->setObject('Magento\Catalog\Model\Product');
 
         $this->setFlag('url_data_object', true);
         $this->setFlag('do_not_use_category_id', true);

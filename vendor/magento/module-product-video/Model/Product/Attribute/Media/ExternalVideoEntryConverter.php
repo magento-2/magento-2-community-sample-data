@@ -30,7 +30,6 @@ class ExternalVideoEntryConverter extends ImageEntryConverter
      * @var \Magento\Catalog\Api\Data\ProductAttributeMediaGalleryEntryExtensionFactory
      */
     protected $mediaGalleryEntryExtensionFactory;
-
     /**
      * @param \Magento\Catalog\Api\Data\ProductAttributeMediaGalleryEntryInterfaceFactory $mediaGalleryEntryFactory
      * @param \Magento\Framework\Api\DataObjectHelper $dataObjectHelper
@@ -68,7 +67,7 @@ class ExternalVideoEntryConverter extends ImageEntryConverter
         $this->dataObjectHelper->populateWithArray(
             $videoEntry,
             $rowData,
-            \Magento\Framework\Api\Data\VideoContentInterface::class
+            'Magento\Framework\Api\Data\VideoContentInterface'
         );
         $entryExtension = $this->mediaGalleryEntryExtensionFactory->create();
         $entryExtension->setVideoContent($videoEntry);

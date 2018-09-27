@@ -8,17 +8,17 @@ namespace Magento\Catalog\Block\Adminhtml\Product\Edit\Tab\Options\Type;
 /**
  * @magentoAppArea adminhtml
  */
-class SelectTest extends \PHPUnit\Framework\TestCase
+class SelectTest extends \PHPUnit_Framework_TestCase
 {
     public function testToHtmlFormId()
     {
         /** @var $layout \Magento\Framework\View\Layout */
         $layout = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->get(
-            \Magento\Framework\View\LayoutInterface::class
+            'Magento\Framework\View\LayoutInterface'
         );
         /** @var $block \Magento\Catalog\Block\Adminhtml\Product\Edit\Tab\Options\Type\Select */
         $block = $layout->createBlock(
-            \Magento\Catalog\Block\Adminhtml\Product\Edit\Tab\Options\Type\Select::class,
+            'Magento\Catalog\Block\Adminhtml\Product\Edit\Tab\Options\Type\Select',
             'select'
         );
         $html = $block->getPriceTypeSelectHtml();

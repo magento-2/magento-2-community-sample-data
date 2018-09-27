@@ -10,7 +10,6 @@ namespace Magento\Sales\Api;
  * Class InvoiceOrderInterface
  *
  * @api
- * @since 100.1.2
  */
 interface InvoiceOrderInterface
 {
@@ -23,7 +22,6 @@ interface InvoiceOrderInterface
      * @param Data\InvoiceCommentCreationInterface|null $comment
      * @param Data\InvoiceCreationArgumentsInterface|null $arguments
      * @return int
-     * @since 100.1.2
      */
     public function execute(
         $orderId,

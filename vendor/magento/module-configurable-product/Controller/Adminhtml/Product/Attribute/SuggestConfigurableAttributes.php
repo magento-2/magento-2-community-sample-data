@@ -16,7 +16,7 @@ class SuggestConfigurableAttributes extends Action
      *
      * @see _isAllowed()
      */
-    const ADMIN_RESOURCE = 'Magento_Catalog::products';
+    const ADMIN_RESOURCE = 'Magento_Catalog::attributes_attributes';
 
     /**
      * @var \Magento\ConfigurableProduct\Model\SuggestedAttributeList

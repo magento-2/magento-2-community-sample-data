@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2018 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 
@@ -12,7 +12,7 @@ use Magento\Setup\Fixtures\ImagesGenerator\ImagesGeneratorFactory;
 use Magento\Swatches\Helper\Media;
 use Magento\Swatches\Model\Swatch;
 
-class SwatchesGeneratorTest extends \PHPUnit\Framework\TestCase
+class SwatchesGeneratorTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var SwatchesGenerator

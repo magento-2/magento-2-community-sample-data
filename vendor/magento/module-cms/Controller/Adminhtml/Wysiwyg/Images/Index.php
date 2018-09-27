@@ -37,7 +37,7 @@ class Index extends \Magento\Cms\Controller\Adminhtml\Wysiwyg\Images
         $storeId = (int)$this->getRequest()->getParam('store');
 
         try {
-            $this->_objectManager->get(\Magento\Cms\Helper\Wysiwyg\Images::class)->getCurrentPath();
+            $this->_objectManager->get('Magento\Cms\Helper\Wysiwyg\Images')->getCurrentPath();
         } catch (\Exception $e) {
             $this->messageManager->addError($e->getMessage());
         }

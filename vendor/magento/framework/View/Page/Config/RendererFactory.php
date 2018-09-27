@@ -33,7 +33,7 @@ class RendererFactory
      */
     public function __construct(
         \Magento\Framework\ObjectManagerInterface $objectManager,
-        $instanceName = \Magento\Framework\View\Page\Config\Renderer::class
+        $instanceName = 'Magento\Framework\View\Page\Config\Renderer'
     ) {
         $this->objectManager = $objectManager;
         $this->instanceName = $instanceName;

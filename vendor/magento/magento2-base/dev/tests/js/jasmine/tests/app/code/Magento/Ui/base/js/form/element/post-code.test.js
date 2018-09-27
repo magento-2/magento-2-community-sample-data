@@ -4,6 +4,7 @@
  */
 
 /*eslint max-nested-callbacks: 0*/
+
 define([
     'uiRegistry',
     'Magento_Ui/js/form/element/post-code'

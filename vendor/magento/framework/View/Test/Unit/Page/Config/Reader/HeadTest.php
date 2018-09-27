@@ -10,7 +10,7 @@ use Magento\Framework\View\Layout\Element;
 use Magento\Framework\View\Page\Config;
 use Magento\Framework\View\Page\Config\Reader\Head;
 
-class HeadTest extends \PHPUnit\Framework\TestCase
+class HeadTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var Head
@@ -24,10 +24,10 @@ class HeadTest extends \PHPUnit\Framework\TestCase
 
     public function testInterpret()
     {
-        $readerContextMock = $this->getMockBuilder(\Magento\Framework\View\Layout\Reader\Context::class)
+        $readerContextMock = $this->getMockBuilder('Magento\Framework\View\Layout\Reader\Context')
             ->disableOriginalConstructor()
             ->getMock();
-        $structureMock = $this->getMockBuilder(\Magento\Framework\View\Page\Config\Structure::class)
+        $structureMock = $this->getMockBuilder('Magento\Framework\View\Page\Config\Structure')
             ->disableOriginalConstructor()
             ->getMock();
         $readerContextMock->expects($this->once())

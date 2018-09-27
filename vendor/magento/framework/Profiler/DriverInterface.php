@@ -9,9 +9,6 @@
  */
 namespace Magento\Framework\Profiler;
 
-/**
- * @api
- */
 interface DriverInterface
 {
     /**

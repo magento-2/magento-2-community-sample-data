@@ -3,7 +3,6 @@
  * See COPYING.txt for license details.
  */
 
-/* eslint-disable max-nested-callbacks */
 define([
     'Magento_Ui/js/lib/core/events'
 ], function (EventBus) {

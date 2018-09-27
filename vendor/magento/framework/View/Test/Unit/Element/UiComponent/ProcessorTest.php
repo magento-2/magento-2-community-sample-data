@@ -13,7 +13,7 @@ use Magento\Framework\View\Element\UiComponent\Processor;
 use Magento\Framework\View\Element\UiComponentInterface;
 use Magento\Framework\View\Element\UiComponent\ObserverInterface;
 
-class ProcessorTest extends \PHPUnit\Framework\TestCase
+class ProcessorTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var UiComponentInterface|\PHPUnit_Framework_MockObject_MockObject
@@ -32,9 +32,9 @@ class ProcessorTest extends \PHPUnit\Framework\TestCase
 
     protected function setUp()
     {
-        $this->component = $this->getMockBuilder(\Magento\Framework\View\Element\UiComponentInterface::class)
+        $this->component = $this->getMockBuilder('Magento\Framework\View\Element\UiComponentInterface')
             ->getMockForAbstractClass();
-        $this->observer = $this->getMockBuilder(\Magento\Framework\View\Element\UiComponent\ObserverInterface::class)
+        $this->observer = $this->getMockBuilder('Magento\Framework\View\Element\UiComponent\ObserverInterface')
             ->getMockForAbstractClass();
         $this->processor = new Processor();
     }
@@ -56,7 +56,7 @@ class ProcessorTest extends \PHPUnit\Framework\TestCase
             ->method('update')
             ->with($this->component);
         /** @var UiComponentInterface $component2 */
-        $component2 = $this->getMockBuilder(\Magento\Framework\View\Element\UiComponentInterface::class)
+        $component2 = $this->getMockBuilder('Magento\Framework\View\Element\UiComponentInterface')
             ->getMockForAbstractClass();
         $component2->expects($this->any())
             ->method('getComponentName')

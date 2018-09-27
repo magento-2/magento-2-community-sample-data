@@ -7,21 +7,16 @@ namespace Magento\Security\Model\ResourceModel\PasswordResetRequestEvent;
 
 /**
  * Password reset request event collection
- *
- * @api
- * @since 100.1.0
  */
 class Collection extends \Magento\Framework\Model\ResourceModel\Db\Collection\AbstractCollection
 {
     /**
      * @var string
-     * @since 100.1.0
      */
     protected $_idFieldName = 'id';
 
     /**
      * @var \Magento\Framework\Stdlib\DateTime\DateTime
-     * @since 100.1.0
      */
     protected $dateTime;
 
@@ -51,13 +46,12 @@ class Collection extends \Magento\Framework\Model\ResourceModel\Db\Collection\Ab
      * Define resource model
      *
      * @return void
-     * @since 100.1.0
      */
     protected function _construct()
     {
         $this->_init(
-            \Magento\Security\Model\PasswordResetRequestEvent::class,
-            \Magento\Security\Model\ResourceModel\PasswordResetRequestEvent::class
+            'Magento\Security\Model\PasswordResetRequestEvent',
+            'Magento\Security\Model\ResourceModel\PasswordResetRequestEvent'
         );
     }
 
@@ -66,7 +60,6 @@ class Collection extends \Magento\Framework\Model\ResourceModel\Db\Collection\Ab
      *
      * @param string $reference
      * @return $this
-     * @since 100.1.0
      */
     public function filterByAccountReference($reference)
     {
@@ -80,7 +73,6 @@ class Collection extends \Magento\Framework\Model\ResourceModel\Db\Collection\Ab
      *
      * @param string $ip
      * @return $this
-     * @since 100.1.0
      */
     public function filterByIp($ip)
     {
@@ -94,7 +86,6 @@ class Collection extends \Magento\Framework\Model\ResourceModel\Db\Collection\Ab
      *
      * @param int $requestType
      * @return $this
-     * @since 100.1.0
      */
     public function filterByRequestType($requestType)
     {
@@ -108,7 +99,6 @@ class Collection extends \Magento\Framework\Model\ResourceModel\Db\Collection\Ab
      *
      * @param int $lifetime
      * @return $this
-     * @since 100.1.0
      */
     public function filterByLifetime($lifetime)
     {
@@ -126,7 +116,6 @@ class Collection extends \Magento\Framework\Model\ResourceModel\Db\Collection\Ab
      * Filter last item
      *
      * @return $this
-     * @since 100.1.0
      */
     public function filterLastItem()
     {
@@ -141,7 +130,6 @@ class Collection extends \Magento\Framework\Model\ResourceModel\Db\Collection\Ab
      * @param int $ip
      * @param string $accountReference
      * @return $this
-     * @since 100.1.0
      */
     public function filterByIpOrAccountReference($ip, $accountReference)
     {
@@ -161,7 +149,6 @@ class Collection extends \Magento\Framework\Model\ResourceModel\Db\Collection\Ab
      *
      * @param int $timestamp
      * @return $this
-     * @since 100.1.0
      */
     public function deleteRecordsOlderThen($timestamp)
     {

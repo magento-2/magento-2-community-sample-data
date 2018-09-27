@@ -5,7 +5,7 @@
  */
 namespace Magento\Catalog\Test\Unit\Helper;
 
-class ProductTest extends \PHPUnit\Framework\TestCase
+class ProductTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\Catalog\Helper\Product
@@ -22,7 +22,7 @@ class ProductTest extends \PHPUnit\Framework\TestCase
         ];
 
         $objectManager = new \Magento\Framework\TestFramework\Unit\Helper\ObjectManager($this);
-        $this->_productHelper = $objectManager->getObject(\Magento\Catalog\Helper\Product::class, $arguments);
+        $this->_productHelper = $objectManager->getObject('Magento\Catalog\Helper\Product', $arguments);
     }
 
     /**
@@ -41,14 +41,9 @@ class ProductTest extends \PHPUnit\Framework\TestCase
      */
     public function getData()
     {
-        $product1 = $this->getMockBuilder(
-            \Magento\Catalog\Model\Product::class
-        )->disableOriginalConstructor()->getMock();
+        $product1 = $this->getMockBuilder('Magento\Catalog\Model\Product')->disableOriginalConstructor()->getMock();
 
-        $product2 = $this->getMockBuilder(
-            \Magento\Catalog\Model\Product::class
-        )->disableOriginalConstructor()->getMock();
-
+        $product2 = $this->getMockBuilder('Magento\Catalog\Model\Product')->disableOriginalConstructor()->getMock();
         $product2->expects(
             $this->once()
         )->method(
@@ -59,9 +54,7 @@ class ProductTest extends \PHPUnit\Framework\TestCase
             $this->returnValue(true)
         );
 
-        $product3 = $this->getMockBuilder(
-            \Magento\Catalog\Model\Product::class
-        )->disableOriginalConstructor()->getMock();
+        $product3 = $this->getMockBuilder('Magento\Catalog\Model\Product')->disableOriginalConstructor()->getMock();
         $product3->expects(
             $this->once()
         )->method(

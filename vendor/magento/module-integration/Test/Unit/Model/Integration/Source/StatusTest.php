@@ -5,7 +5,7 @@
  */
 namespace Magento\Integration\Test\Unit\Model\Integration\Source;
 
-class StatusTest extends \PHPUnit\Framework\TestCase
+class StatusTest extends \PHPUnit_Framework_TestCase
 {
     public function testToOptionArray()
     {

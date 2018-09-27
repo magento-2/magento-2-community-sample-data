@@ -18,6 +18,14 @@ use Magento\Framework\Model\AbstractExtensibleModel;
 class Status extends AbstractExtensibleModel implements StockStatusInterface
 {
     /**#@+
+     * Stock Status values
+     */
+    const STATUS_OUT_OF_STOCK = 0;
+
+    const STATUS_IN_STOCK = 1;
+    /**#@-*/
+
+    /**#@+
      * Field name
      */
     const KEY_PRODUCT_ID = 'product_id';
@@ -66,7 +74,7 @@ class Status extends AbstractExtensibleModel implements StockStatusInterface
      */
     protected function _construct()
     {
-        $this->_init(\Magento\CatalogInventory\Model\ResourceModel\Stock\Status::class);
+        $this->_init('Magento\CatalogInventory\Model\ResourceModel\Stock\Status');
     }
 
     //@codeCoverageIgnoreStart
@@ -110,7 +118,6 @@ class Status extends AbstractExtensibleModel implements StockStatusInterface
     {
         return $this->getData(self::KEY_STOCK_STATUS);
     }
-
     //@codeCoverageIgnoreEnd
 
     /**
@@ -189,6 +196,5 @@ class Status extends AbstractExtensibleModel implements StockStatusInterface
     ) {
         return $this->_setExtensionAttributes($extensionAttributes);
     }
-
     //@codeCoverageIgnoreEnd
 }

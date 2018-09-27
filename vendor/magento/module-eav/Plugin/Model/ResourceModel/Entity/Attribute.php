@@ -5,13 +5,6 @@
  */
 namespace Magento\Eav\Plugin\Model\ResourceModel\Entity;
 
-use Magento\Eav\Model\Cache\Type;
-use Magento\Eav\Model\Entity\Attribute as EntityAttribute;
-use Magento\Eav\Model\ResourceModel\Entity\Attribute as AttributeResource;
-use Magento\Framework\App\Cache\StateInterface;
-use Magento\Framework\App\CacheInterface;
-use Magento\Framework\Serialize\SerializerInterface;
-
 class Attribute
 {
     /**
@@ -19,74 +12,52 @@ class Attribute
      */
     const STORE_LABEL_ATTRIBUTE = 'EAV_STORE_LABEL_ATTRIBUTE';
 
-    /**
-     * @var CacheInterface
-     */
-    private $cache;
+    /** @var \Magento\Framework\App\CacheInterface */
+    protected $cache;
+
+    /** @var bool|null */
+    protected $isCacheEnabled = null;
 
     /**
-     * @var StateInterface
-     */
-    private $cacheState;
-
-    /**
-     * @var SerializerInterface
-     */
-    private $serializer;
-
-    /**
-     * @param CacheInterface $cache
-     * @param StateInterface $cacheState
-     * @param SerializerInterface $serializer
+     * @param \Magento\Framework\App\CacheInterface $cache
+     * @param \Magento\Framework\App\Cache\StateInterface $cacheState
      * @codeCoverageIgnore
      */
     public function __construct(
-        CacheInterface $cache,
-        StateInterface $cacheState,
-        SerializerInterface $serializer
+        \Magento\Framework\App\CacheInterface $cache,
+        \Magento\Framework\App\Cache\StateInterface $cacheState
     ) {
         $this->cache = $cache;
-        $this->serializer = $serializer;
-        $this->cacheState = $cacheState;
+        $this->isCacheEnabled = $cacheState->isEnabled(\Magento\Eav\Model\Cache\Type::TYPE_IDENTIFIER);
     }
 
     /**
-     * @param AttributeResource $subject
+     * @param \Magento\Eav\Model\ResourceModel\Entity\Attribute $subject
      * @param callable $proceed
      * @param int $attributeId
      * @return array
      * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      */
     public function aroundGetStoreLabelsByAttributeId(
-        AttributeResource $subject,
+        \Magento\Eav\Model\ResourceModel\Entity\Attribute $subject,
         \Closure $proceed,
         $attributeId
     ) {
         $cacheId = self::STORE_LABEL_ATTRIBUTE . $attributeId;
-        if ($this->isCacheEnabled() && ($storeLabels = $this->cache->load($cacheId))) {
-            return $this->serializer->unserialize($storeLabels);
+        if ($this->isCacheEnabled && ($storeLabels = $this->cache->load($cacheId))) {
+            return unserialize($storeLabels);
         }
         $storeLabels = $proceed($attributeId);
-        if ($this->isCacheEnabled()) {
+        if ($this->isCacheEnabled) {
             $this->cache->save(
-                $this->serializer->serialize($storeLabels),
+                serialize($storeLabels),
                 $cacheId,
                 [
-                    Type::CACHE_TAG,
-                    EntityAttribute::CACHE_TAG
+                    \Magento\Eav\Model\Cache\Type::CACHE_TAG,
+                    \Magento\Eav\Model\Entity\Attribute::CACHE_TAG
                 ]
             );
         }
         return $storeLabels;
-    }
-
-    /**
-     * Check if cache is enabled
-     *
-     * @return bool
-     */
-    private function isCacheEnabled()
-    {
-        return $this->cacheState->isEnabled(Type::TYPE_IDENTIFIER);
     }
 }

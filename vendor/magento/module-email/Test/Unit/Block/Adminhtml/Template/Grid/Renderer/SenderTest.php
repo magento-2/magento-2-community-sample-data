@@ -8,7 +8,7 @@ namespace Magento\Email\Test\Unit\Block\Adminhtml\Template\Grid\Renderer;
 /**
  * @covers Magento\Email\Block\Adminhtml\Template\Grid\Renderer\Sender
  */
-class SenderTest extends \PHPUnit\Framework\TestCase
+class SenderTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\Email\Block\Adminhtml\Template\Grid\Renderer\Sender
@@ -18,7 +18,7 @@ class SenderTest extends \PHPUnit\Framework\TestCase
     protected function setUp()
     {
         $objectManager = new \Magento\Framework\TestFramework\Unit\Helper\ObjectManager($this);
-        $this->sender = $objectManager->getObject(\Magento\Email\Block\Adminhtml\Template\Grid\Renderer\Sender::class);
+        $this->sender = $objectManager->getObject('Magento\Email\Block\Adminhtml\Template\Grid\Renderer\Sender');
     }
 
     /**

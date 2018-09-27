@@ -15,7 +15,7 @@ use PHPUnit_Framework_MockObject_MockObject as MockObject;
 /**
  * Class TokenUiComponentProviderTest
  */
-class TokenUiComponentProviderTest extends \PHPUnit\Framework\TestCase
+class TokenUiComponentProviderTest extends \PHPUnit_Framework_TestCase
 {
 
     /**
@@ -40,7 +40,7 @@ class TokenUiComponentProviderTest extends \PHPUnit\Framework\TestCase
             ->setMethods(['create'])
             ->getMock();
 
-        $this->urlBuilder = $this->createMock(UrlInterface::class);
+        $this->urlBuilder = $this->getMock(UrlInterface::class);
 
         $this->tokenUiComponentProvider = new TokenUiComponentProvider(
             $this->componentFactory,
@@ -69,7 +69,7 @@ class TokenUiComponentProviderTest extends \PHPUnit\Framework\TestCase
             'template' => 'vault.phtml'
         ];
 
-        $paymentToken = $this->createMock(PaymentTokenInterface::class);
+        $paymentToken = $this->getMock(PaymentTokenInterface::class);
         $paymentToken->expects(static::once())
             ->method('getTokenDetails')
             ->willReturn('{"type":"VI","maskedCC":"1111","expirationDate":"12\/2015"}');
@@ -81,7 +81,7 @@ class TokenUiComponentProviderTest extends \PHPUnit\Framework\TestCase
             ->method('getUrl')
             ->willReturn($nonceUrl);
 
-        $tokenComponent = $this->createMock(TokenUiComponentInterface::class);
+        $tokenComponent = $this->getMock(TokenUiComponentInterface::class);
         $tokenComponent->expects(static::once())
             ->method('getConfig')
             ->willReturn($expected);

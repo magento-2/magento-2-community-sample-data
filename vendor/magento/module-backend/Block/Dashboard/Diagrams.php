@@ -36,9 +36,7 @@ class Diagrams extends \Magento\Backend\Block\Widget\Tabs
             'orders',
             [
                 'label' => __('Orders'),
-                'content' => $this->getLayout()->createBlock(
-                    \Magento\Backend\Block\Dashboard\Tab\Orders::class
-                )->toHtml(),
+                'content' => $this->getLayout()->createBlock('Magento\Backend\Block\Dashboard\Tab\Orders')->toHtml(),
                 'active' => true
             ]
         );
@@ -47,9 +45,7 @@ class Diagrams extends \Magento\Backend\Block\Widget\Tabs
             'amounts',
             [
                 'label' => __('Amounts'),
-                'content' => $this->getLayout()->createBlock(
-                    \Magento\Backend\Block\Dashboard\Tab\Amounts::class
-                )->toHtml()
+                'content' => $this->getLayout()->createBlock('Magento\Backend\Block\Dashboard\Tab\Amounts')->toHtml()
             ]
         );
         return parent::_prepareLayout();

@@ -7,12 +7,10 @@ namespace Magento\Tax\Model\Sales\Total\Quote;
 
 use Magento\Customer\Api\Data\AddressInterfaceFactory as CustomerAddressFactory;
 use Magento\Customer\Api\Data\RegionInterfaceFactory as CustomerAddressRegionFactory;
-use Magento\Framework\App\ObjectManager;
-use Magento\Framework\Serialize\Serializer\Json;
-use Magento\Quote\Api\Data\ShippingAssignmentInterface;
 use Magento\Quote\Model\Quote\Address;
 use Magento\Tax\Api\Data\TaxClassKeyInterface;
 use Magento\Tax\Model\Calculation;
+use Magento\Quote\Api\Data\ShippingAssignmentInterface;
 
 /**
  * Tax totals calculation model
@@ -49,11 +47,6 @@ class Tax extends CommonTaxCollector
     protected $_discountTaxCompensationes = [];
 
     /**
-     * @var Json
-     */
-    private $serializer;
-
-    /**
      * Class constructor
      *
      * @param \Magento\Tax\Model\Config $taxConfig
@@ -64,7 +57,6 @@ class Tax extends CommonTaxCollector
      * @param CustomerAddressFactory $customerAddressFactory
      * @param CustomerAddressRegionFactory $customerAddressRegionFactory
      * @param \Magento\Tax\Helper\Data $taxData
-     * @param Json $serializer
      */
     public function __construct(
         \Magento\Tax\Model\Config $taxConfig,
@@ -74,12 +66,10 @@ class Tax extends CommonTaxCollector
         \Magento\Tax\Api\Data\TaxClassKeyInterfaceFactory $taxClassKeyDataObjectFactory,
         CustomerAddressFactory $customerAddressFactory,
         CustomerAddressRegionFactory $customerAddressRegionFactory,
-        \Magento\Tax\Helper\Data $taxData,
-        Json $serializer = null
+        \Magento\Tax\Helper\Data $taxData
     ) {
         $this->setCode('tax');
         $this->_taxData = $taxData;
-        $this->serializer = $serializer ?: ObjectManager::getInstance()->get(Json::class);
         parent::__construct(
             $taxConfig,
             $taxCalculationService,
@@ -152,12 +142,23 @@ class Tax extends CommonTaxCollector
         $total->setBaseTotalAmount('subtotal', 0);
         $total->setTotalAmount('tax', 0);
         $total->setBaseTotalAmount('tax', 0);
+        $total->setTotalAmount('shipping', 0);
+        $total->setBaseTotalAmount('shipping', 0);
         $total->setTotalAmount('discount_tax_compensation', 0);
         $total->setBaseTotalAmount('discount_tax_compensation', 0);
         $total->setTotalAmount('shipping_discount_tax_compensation', 0);
         $total->setBaseTotalAmount('shipping_discount_tax_compensation', 0);
         $total->setSubtotalInclTax(0);
         $total->setBaseSubtotalInclTax(0);
+        $total->setShippingInclTax(0);
+        $total->setBaseShippingInclTax(0);
+        $total->setShippingTaxAmount(0);
+        $total->setBaseShippingTaxAmount(0);
+        $total->setShippingAmountForDiscount(0);
+        $total->setBaseShippingAmountForDiscount(0);
+        $total->setBaseShippingAmountForDiscount(0);
+        $total->setTotalAmount('extra_tax', 0);
+        $total->setBaseTotalAmount('extra_tax', 0);
     }
 
     /**
@@ -250,7 +251,7 @@ class Tax extends CommonTaxCollector
      * @return $this
      * @SuppressWarnings(PHPMD.UnusedLocalVariable)
      */
-    protected function processExtraTaxables(Address\Total $total, array $itemsByType)
+    protected function processExtraTaxables(Address\Total $total, Array $itemsByType)
     {
         $extraTaxableDetails = [];
         foreach ($itemsByType as $itemType => $itemTaxDetails) {
@@ -310,7 +311,7 @@ class Tax extends CommonTaxCollector
         $store = $quote->getStore();
         $applied = $total->getAppliedTaxes();
         if (is_string($applied)) {
-            $applied = $this->serializer->unserialize($applied);
+            $applied = unserialize($applied);
         }
         $amount = $total->getTaxAmount();
         if ($amount === null) {

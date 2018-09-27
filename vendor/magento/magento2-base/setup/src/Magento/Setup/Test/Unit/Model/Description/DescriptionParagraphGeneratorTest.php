@@ -5,7 +5,7 @@
  */
 namespace Magento\Setup\Test\Unit\Model\Description;
 
-class DescriptionParagraphGeneratorTest extends \PHPUnit\Framework\TestCase
+class DescriptionParagraphGeneratorTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \PHPUnit_Framework_MockObject_MockObject|\Magento\Setup\Model\Description\DescriptionSentenceGenerator
@@ -29,8 +29,13 @@ class DescriptionParagraphGeneratorTest extends \PHPUnit\Framework\TestCase
 
     public function setUp()
     {
-        $this->sentenceGeneratorMock =
-            $this->createMock(\Magento\Setup\Model\Description\DescriptionSentenceGenerator::class);
+        $this->sentenceGeneratorMock = $this->getMock(
+            \Magento\Setup\Model\Description\DescriptionSentenceGenerator::class,
+            [],
+            [],
+            '',
+            false
+        );
         $this->paragraphGenerator = new \Magento\Setup\Model\Description\DescriptionParagraphGenerator(
             $this->sentenceGeneratorMock,
             $this->paragraphConfig

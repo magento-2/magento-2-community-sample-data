@@ -7,7 +7,7 @@ namespace Magento\Framework\Module\Test\Unit;
 
 use \Magento\Framework\Module\ModuleList;
 
-class ModuleListTest extends \PHPUnit\Framework\TestCase
+class ModuleListTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * Fixture for all modules' meta-information
@@ -40,8 +40,8 @@ class ModuleListTest extends \PHPUnit\Framework\TestCase
 
     protected function setUp()
     {
-        $this->config = $this->createMock(\Magento\Framework\App\DeploymentConfig::class);
-        $this->loader = $this->createMock(\Magento\Framework\Module\ModuleList\Loader::class);
+        $this->config = $this->getMock('Magento\Framework\App\DeploymentConfig', [], [], '', false);
+        $this->loader = $this->getMock('Magento\Framework\Module\ModuleList\Loader', [], [], '', false);
         $this->model = new ModuleList($this->config, $this->loader);
     }
 

@@ -8,7 +8,7 @@ namespace Magento\Framework\HTTP\Test\Unit\Adapter;
 
 use \Magento\Framework\HTTP\Adapter\Curl;
 
-class CurlTest extends \PHPUnit\Framework\TestCase
+class CurlTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var Curl
@@ -38,6 +38,9 @@ class CurlTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals(file_get_contents(__DIR__ . '/_files/curl_response_expected.txt'), $this->model->read());
     }
 
+    /**
+     * @return array
+     */
     public function readDataProvider()
     {
         return [

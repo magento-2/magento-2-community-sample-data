@@ -13,9 +13,7 @@
 namespace Composer\Package\Archiver;
 
 use Composer\Util\Filesystem;
-use FilesystemIterator;
 use Symfony\Component\Finder\Finder;
-use Symfony\Component\Finder\SplFileInfo;
 
 /**
  * A Symfony Finder wrapper which locates files that should go into archives
@@ -35,25 +33,20 @@ class ArchivableFilesFinder extends \FilterIterator
     /**
      * Initializes the internal Symfony Finder with appropriate filters
      *
-     * @param string $sources       Path to source files to be archived
-     * @param array  $excludes      Composer's own exclude rules from composer.json
-     * @param bool   $ignoreFilters Ignore filters when looking for files
+     * @param string $sources  Path to source files to be archived
+     * @param array  $excludes Composer's own exclude rules from composer.json
      */
-    public function __construct($sources, array $excludes, $ignoreFilters = false)
+    public function __construct($sources, array $excludes)
     {
         $fs = new Filesystem();
 
         $sources = $fs->normalizePath($sources);
 
-        if ($ignoreFilters) {
-            $filters = array();
-        } else {
-            $filters = array(
-                new HgExcludeFilter($sources),
-                new GitExcludeFilter($sources),
-                new ComposerExcludeFilter($sources, $excludes),
-            );
-        }
+        $filters = array(
+            new HgExcludeFilter($sources),
+            new GitExcludeFilter($sources),
+            new ComposerExcludeFilter($sources, $excludes),
+        );
 
         $this->finder = new Finder();
 
@@ -91,15 +84,6 @@ class ArchivableFilesFinder extends \FilterIterator
 
     public function accept()
     {
-        /** @var SplFileInfo $current */
-        $current = $this->getInnerIterator()->current();
-
-        if (!$current->isDir()) {
-            return true;
-        }
-
-        $iterator = new FilesystemIterator($current, FilesystemIterator::SKIP_DOTS);
-
-        return !$iterator->valid();
+        return !$this->getInnerIterator()->current()->isDir();
     }
 }

@@ -8,7 +8,7 @@
 
 namespace Magento\Eav\Test\Unit\Model\Attribute\Data;
 
-class ImageTest extends \PHPUnit\Framework\TestCase
+class ImageTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\Eav\Model\Attribute\Data\File
@@ -18,12 +18,14 @@ class ImageTest extends \PHPUnit\Framework\TestCase
     protected function setUp()
     {
         $this->markTestSkipped('MAGETWO-34751: Test fails after being moved.  Might have hidden dependency.');
-        $timezoneMock = $this->createMock(\Magento\Framework\Stdlib\DateTime\TimezoneInterface::class);
-        $loggerMock = $this->createMock(\Psr\Log\LoggerInterface::class);
-        $localeResolverMock = $this->createMock(\Magento\Framework\Locale\ResolverInterface::class);
-        $urlEncoder = $this->createMock(\Magento\Framework\Url\EncoderInterface::class);
-        $fileValidatorMock = $this->createMock(\Magento\MediaStorage\Model\File\Validator\NotProtectedExtension::class);
-        $filesystemMock = $this->createMock(\Magento\Framework\Filesystem::class);
+        $timezoneMock = $this->getMock('\Magento\Framework\Stdlib\DateTime\TimezoneInterface');
+        $loggerMock = $this->getMock('\Psr\Log\LoggerInterface', [], [], '', false);
+        $localeResolverMock = $this->getMock('\Magento\Framework\Locale\ResolverInterface');
+        $urlEncoder = $this->getMock('Magento\Framework\Url\EncoderInterface', [], [], '', false);
+        $fileValidatorMock = $this->getMock(
+            '\Magento\MediaStorage\Model\File\Validator\NotProtectedExtension', [], [], '', false
+        );
+        $filesystemMock = $this->getMock('\Magento\Framework\Filesystem', [], [], '', false);
 
         $this->model = new \Magento\Eav\Model\Attribute\Data\Image(
             $timezoneMock, $loggerMock, $localeResolverMock, $urlEncoder, $fileValidatorMock, $filesystemMock
@@ -47,10 +49,10 @@ class ImageTest extends \PHPUnit\Framework\TestCase
     public function testValidateValue(
         $value, $originalValue, $isRequired, $isAjaxRequest, $rules, $expectedResult
     ) {
-        $entityMock = $this->createMock(\Magento\Framework\Model\AbstractModel::class);
+        $entityMock = $this->getMock('\Magento\Framework\Model\AbstractModel', [], [], '', false);
         $entityMock->expects($this->any())->method('getData')->will($this->returnValue($originalValue));
 
-        $attributeMock = $this->createMock(\Magento\Eav\Model\Attribute::class);
+        $attributeMock = $this->getMock('\Magento\Eav\Model\Attribute', [], [], '', false);
         $attributeMock->expects($this->any())->method('getStoreLabel')->will($this->returnValue('Label'));
         $attributeMock->expects($this->any())->method('getIsRequired')->will($this->returnValue($isRequired));
         $attributeMock->expects($this->any())->method('getIsAjaxRequest')->will($this->returnValue($isAjaxRequest));

@@ -6,24 +6,15 @@
 namespace Magento\Weee\Model\Total\Invoice;
 
 use Magento\Weee\Helper\Data as WeeeHelper;
-use Magento\Framework\Serialize\Serializer\Json;
-use Magento\Framework\App\ObjectManager;
 
 class Weee extends \Magento\Sales\Model\Order\Invoice\Total\AbstractTotal
 {
     /**
      * Weee data
      *
-     * @var WeeeHelper
+     * @var \Magento\Weee\Helper\Data
      */
     protected $_weeeData = null;
-
-    /**
-     * Instance of serializer.
-     *
-     * @var Json
-     */
-    private $serializer;
 
     /**
      * Constructor
@@ -31,17 +22,12 @@ class Weee extends \Magento\Sales\Model\Order\Invoice\Total\AbstractTotal
      * By default is looking for first argument as array and assigns it as object
      * attributes This behavior may change in child classes
      *
-     * @param WeeeHelper $weeeData
-     * @param array $data
-     * @param Json|null $serializer
+     * @param \Magento\Weee\Helper\Data $weeeData
+     * @param array                     $data
      */
-    public function __construct(
-        WeeeHelper $weeeData,
-        array $data = [],
-        Json $serializer = null
-    ) {
+    public function __construct(\Magento\Weee\Helper\Data $weeeData, array $data = [])
+    {
         $this->_weeeData = $weeeData;
-        $this->serializer = $serializer ?: ObjectManager::getInstance()->get(Json::class);
         parent::__construct($data);
     }
 
@@ -108,10 +94,10 @@ class Weee extends \Magento\Sales\Model\Order\Invoice\Total\AbstractTotal
             if ($orderItemWeeeTax != 0) {
                 $taxRatio = [];
                 if ($item->getTaxRatio()) {
-                    $taxRatio = $this->serializer->unserialize($item->getTaxRatio());
+                    $taxRatio = unserialize($item->getTaxRatio());
                 }
                 $taxRatio[\Magento\Weee\Model\Total\Quote\Weee::ITEM_TYPE] = $itemWeeeTax / $orderItemWeeeTax;
-                $item->setTaxRatio($this->serializer->serialize($taxRatio));
+                $item->setTaxRatio(serialize($taxRatio));
             }
 
             $item->setWeeeTaxAppliedRowAmount($weeeAmount);

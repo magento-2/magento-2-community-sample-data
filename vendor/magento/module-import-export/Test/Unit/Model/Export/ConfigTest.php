@@ -5,38 +5,38 @@
  */
 namespace Magento\ImportExport\Test\Unit\Model\Export;
 
-class ConfigTest extends \PHPUnit\Framework\TestCase
+class ConfigTest extends \PHPUnit_Framework_TestCase
 {
     /**
-     * @var \Magento\ImportExport\Model\Export\Config\Reader|\PHPUnit_Framework_MockObject_MockObject
+     * @var \PHPUnit_Framework_MockObject_MockObject
      */
-    private $readerMock;
+    protected $_readerMock;
 
     /**
-     * @var \Magento\Framework\Config\CacheInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @var \PHPUnit_Framework_MockObject_MockObject
      */
-    private $cacheMock;
-
-    /**
-     * @var \Magento\Framework\Serialize\SerializerInterface|\PHPUnit_Framework_MockObject_MockObject
-     */
-    private $serializerMock;
+    protected $_configScopeMock;
 
     /**
      * @var string
      */
-    private $cacheId = 'some_id';
+    protected $_cacheId = 'some_id';
 
     /**
      * @var \Magento\ImportExport\Model\Export\Config
      */
-    private $model;
+    protected $_model;
 
     protected function setUp()
     {
-        $this->readerMock = $this->createMock(\Magento\ImportExport\Model\Export\Config\Reader::class);
-        $this->cacheMock = $this->createMock(\Magento\Framework\Config\CacheInterface::class);
-        $this->serializerMock = $this->createMock(\Magento\Framework\Serialize\SerializerInterface::class);
+        $this->_readerMock = $this->getMock(
+            'Magento\ImportExport\Model\Export\Config\Reader',
+            [],
+            [],
+            '',
+            false
+        );
+        $this->_configScopeMock = $this->getMock('Magento\Framework\Config\CacheInterface');
     }
 
     /**
@@ -46,25 +46,27 @@ class ConfigTest extends \PHPUnit\Framework\TestCase
      */
     public function testGetEntities($value, $expected)
     {
-        $this->cacheMock->expects(
+        $this->_configScopeMock->expects(
             $this->any()
         )->method(
             'load'
         )->with(
-            $this->cacheId
+            $this->_cacheId
         )->will(
             $this->returnValue(false)
         );
-        $this->readerMock->expects($this->any())->method('read')->will($this->returnValue($value));
-        $this->model = new \Magento\ImportExport\Model\Export\Config(
-            $this->readerMock,
-            $this->cacheMock,
-            $this->cacheId,
-            $this->serializerMock
+        $this->_readerMock->expects($this->any())->method('read')->will($this->returnValue($value));
+        $this->_model = new \Magento\ImportExport\Model\Export\Config(
+            $this->_readerMock,
+            $this->_configScopeMock,
+            $this->_cacheId
         );
-        $this->assertEquals($expected, $this->model->getEntities('entities'));
+        $this->assertEquals($expected, $this->_model->getEntities('entities'));
     }
 
+    /**
+     * @return array
+     */
     public function getEntitiesDataProvider()
     {
         return [
@@ -81,25 +83,27 @@ class ConfigTest extends \PHPUnit\Framework\TestCase
      */
     public function testGetEntityTypes($configData, $entity, $expectedResult)
     {
-        $this->cacheMock->expects(
+        $this->_configScopeMock->expects(
             $this->any()
         )->method(
             'load'
         )->with(
-            $this->cacheId
+            $this->_cacheId
         )->will(
             $this->returnValue(false)
         );
-        $this->readerMock->expects($this->any())->method('read')->will($this->returnValue($configData));
-        $this->model = new \Magento\ImportExport\Model\Export\Config(
-            $this->readerMock,
-            $this->cacheMock,
-            $this->cacheId,
-            $this->serializerMock
+        $this->_readerMock->expects($this->any())->method('read')->will($this->returnValue($configData));
+        $this->_model = new \Magento\ImportExport\Model\Export\Config(
+            $this->_readerMock,
+            $this->_configScopeMock,
+            $this->_cacheId
         );
-        $this->assertEquals($expectedResult, $this->model->getEntityTypes($entity));
+        $this->assertEquals($expectedResult, $this->_model->getEntityTypes($entity));
     }
 
+    /**
+     * @return array
+     */
     public function getEntityTypesDataProvider()
     {
         return [
@@ -135,25 +139,27 @@ class ConfigTest extends \PHPUnit\Framework\TestCase
      */
     public function testGetFileFormats($value, $expected)
     {
-        $this->cacheMock->expects(
+        $this->_configScopeMock->expects(
             $this->any()
         )->method(
             'load'
         )->with(
-            $this->cacheId
+            $this->_cacheId
         )->will(
             $this->returnValue(false)
         );
-        $this->readerMock->expects($this->any())->method('read')->will($this->returnValue($value));
-        $this->model = new \Magento\ImportExport\Model\Export\Config(
-            $this->readerMock,
-            $this->cacheMock,
-            $this->cacheId,
-            $this->serializerMock
+        $this->_readerMock->expects($this->any())->method('read')->will($this->returnValue($value));
+        $this->_model = new \Magento\ImportExport\Model\Export\Config(
+            $this->_readerMock,
+            $this->_configScopeMock,
+            $this->_cacheId
         );
-        $this->assertEquals($expected, $this->model->getFileFormats('fileFormats'));
+        $this->assertEquals($expected, $this->_model->getFileFormats('fileFormats'));
     }
 
+    /**
+     * @return array
+     */
     public function getFileFormatsDataProvider()
     {
         return [

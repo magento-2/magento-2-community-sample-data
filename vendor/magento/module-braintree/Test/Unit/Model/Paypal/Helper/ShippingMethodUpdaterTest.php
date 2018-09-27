@@ -16,7 +16,7 @@ use Magento\Braintree\Model\Paypal\Helper\ShippingMethodUpdater;
  *
  * @see \Magento\Braintree\Model\Paypal\Helper\ShippingMethodUpdater
  */
-class ShippingMethodUpdaterTest extends \PHPUnit\Framework\TestCase
+class ShippingMethodUpdaterTest extends \PHPUnit_Framework_TestCase
 {
     const TEST_SHIPPING_METHOD = 'test-shipping-method';
 
@@ -146,7 +146,7 @@ class ShippingMethodUpdaterTest extends \PHPUnit\Framework\TestCase
     {
         if (!isset($this->billingAddressMock)) {
             $this->billingAddressMock = $this->getMockBuilder(Address::class)
-                ->setMethods(['setShouldIgnoreValidation', 'getEmail', 'setSameAsBilling'])
+                ->setMethods(['setShouldIgnoreValidation', 'getEmail'])
                 ->disableOriginalConstructor()
                 ->getMock();
         }

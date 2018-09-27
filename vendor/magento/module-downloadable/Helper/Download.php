@@ -94,9 +94,7 @@ class Download extends \Magento\Framework\App\Helper\AbstractHelper
      */
     protected $_filesystem;
 
-    /**
-     * @var \Magento\Framework\Filesystem\File\ReadFactory
-     */
+    /** @var Filesystem\File\ReadFactory */
     protected $fileReadFactory;
 
     /**

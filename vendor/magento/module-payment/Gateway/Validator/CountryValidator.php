@@ -13,7 +13,6 @@ use Magento\Payment\Gateway\Validator\ResultInterfaceFactory;
  * Class CountryValidator
  * @package Magento\Payment\Gateway\Validator
  * @api
- * @since 100.0.2
  */
 class CountryValidator extends AbstractValidator
 {

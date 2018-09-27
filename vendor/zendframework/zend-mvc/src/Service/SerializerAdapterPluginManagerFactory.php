@@ -9,9 +9,7 @@
 
 namespace Zend\Mvc\Service;
 
-use Zend\Serializer\AdapterPluginManager as SerializerAdapterPluginManager;
-
 class SerializerAdapterPluginManagerFactory extends AbstractPluginManagerFactory
 {
-    const PLUGIN_MANAGER_CLASS = SerializerAdapterPluginManager::class;
+    const PLUGIN_MANAGER_CLASS = 'Zend\Serializer\AdapterPluginManager';
 }

@@ -5,160 +5,75 @@
  */
 namespace Magento\Framework\App\Test\Unit\Config;
 
-use Magento\Framework\App\Config\ConfigPathResolver;
-use Magento\Framework\App\Config\ConfigSourceInterface;
-use Magento\Framework\App\Config\Data\ProcessorFactory;
-use Magento\Framework\App\Config\Data\ProcessorInterface;
-use Magento\Framework\App\Config\Initial;
-use Magento\Framework\App\Config\MetadataConfigTypeProcessor;
-use \PHPUnit_Framework_MockObject_MockObject as MockObject;
-
-class MetadataConfigTypeProcessorTest extends \PHPUnit\Framework\TestCase
+class MetadataConfigTypeProcessorTest extends \PHPUnit_Framework_TestCase
 {
     /**
-     * @var MetadataConfigTypeProcessor
+     * @var \Magento\Framework\App\Config\MetadataProcessor
      */
     protected $_model;
 
     /**
-     * @var Initial|MockObject
+     * @var \PHPUnit_Framework_MockObject_MockObject
      */
     protected $_initialConfigMock;
 
     /**
-     * @var ProcessorFactory|MockObject
+     * @var \PHPUnit_Framework_MockObject_MockObject
      */
     protected $_modelPoolMock;
 
     /**
-     * @var ProcessorInterface|MockObject
+     * @var \PHPUnit_Framework_MockObject_MockObject
      */
     protected $_backendModelMock;
 
-    /**
-     * @var ConfigSourceInterface|MockObject
-     */
-    private $configSourceMock;
-
-    /**
-     * @var ConfigPathResolver|MockObject
-     */
-    private $configPathResolverMock;
-
     protected function setUp()
     {
-        $this->_modelPoolMock = $this->getMockBuilder(ProcessorFactory::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $this->_initialConfigMock = $this->getMockBuilder(Initial::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $this->_backendModelMock= $this->getMockBuilder(ProcessorInterface::class)
-            ->getMockForAbstractClass();
-        $this->configSourceMock = $this->getMockBuilder(ConfigSourceInterface::class)
-            ->getMockForAbstractClass();
-        $this->configPathResolverMock = $this->getMockBuilder(ConfigPathResolver::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $this->_initialConfigMock->expects($this->once())
-            ->method('getMetadata')
-            ->willReturn([
-                'some/config/path1' => ['backendModel' => 'Custom_Backend_Model'],
-                'some/config/path2' => ['backendModel' => 'Custom_Backend_Model'],
-                'some/config/path3' => ['backendModel' => 'Custom_Backend_Model']
-            ]);
-
-        $this->_model = new MetadataConfigTypeProcessor(
+        $this->_modelPoolMock = $this->getMock(
+            'Magento\Framework\App\Config\Data\ProcessorFactory',
+            [],
+            [],
+            '',
+            false
+        );
+        $this->_initialConfigMock = $this->getMock('Magento\Framework\App\Config\Initial', [], [], '', false);
+        $this->_backendModelMock = $this->getMock('Magento\Framework\App\Config\Data\ProcessorInterface');
+        $this->_initialConfigMock->expects(
+            $this->any()
+        )->method(
+            'getMetadata'
+        )->will(
+            $this->returnValue(['some/config/path' => ['backendModel' => 'Custom_Backend_Model']])
+        );
+        $this->_model = new \Magento\Framework\App\Config\MetadataConfigTypeProcessor(
             $this->_modelPoolMock,
-            $this->_initialConfigMock,
-            $this->configSourceMock,
-            $this->configPathResolverMock
+            $this->_initialConfigMock
         );
     }
 
     public function testProcess()
     {
-        $this->configPathResolverMock->expects($this->exactly(6))
-            ->method('resolve')
-            ->withConsecutive(
-                ['some/config/path1', 'default'],
-                ['some/config/path2', 'default'],
-                ['some/config/path3', 'default'],
-                ['some/config/path1', 'websites', 'website_one'],
-                ['some/config/path2', 'websites', 'website_one'],
-                ['some/config/path3', 'websites', 'website_one']
-            )
-            ->willReturnOnConsecutiveCalls(
-                'default/some/config/path1',
-                'default/some/config/path2',
-                'default/some/config/path3',
-                'websites/website_one/some/config/path1',
-                'websites/website_one/some/config/path2',
-                'websites/website_one/some/config/path3'
-            );
-        $this->configSourceMock->expects($this->exactly(6))
-            ->method('get')
-            ->withConsecutive(
-                ['default/some/config/path1'],
-                ['default/some/config/path2'],
-                ['default/some/config/path3'],
-                ['websites/website_one/some/config/path1'],
-                ['websites/website_one/some/config/path2'],
-                ['websites/website_one/some/config/path3']
-            )
-            ->willReturnOnConsecutiveCalls(
-                'someValue',
-                [],
-                'someValue',
-                [],
-                'someValue',
-                []
-            );
-        $this->_modelPoolMock->expects($this->exactly(3))
-            ->method('get')
-            ->with('Custom_Backend_Model')
-            ->willReturn($this->_backendModelMock);
-        $this->_backendModelMock->expects($this->exactly(3))
-            ->method('processValue')
-            ->withConsecutive(
-                ['value2'],
-                ['value1'],
-                ['value3']
-            )
-            ->willReturnOnConsecutiveCalls(
-                'default_processed_value_path2',
-                'website_one_processed_value_path1',
-                'website_one_processed_value_path3'
-            );
-
-        $data = [
-            'default' => [
-                'some' => [
-                    'config' => [
-                        'path1' => 'value1',
-                        'path2' => 'value2',
-                        'path3' => 'value3'
-                    ]
-                ]
-            ],
-            'websites' => [
-                'website_one' => [
-                    'some' => [
-                        'config' => [
-                            'path1' => 'value1',
-                            'path2' => 'value2',
-                            'path3' => 'value3',
-                        ]
-                    ]
-                ]
-            ]
-        ];
-
+        $this->_modelPoolMock->expects(
+            $this->once()
+        )->method(
+            'get'
+        )->with(
+            'Custom_Backend_Model'
+        )->will(
+            $this->returnValue($this->_backendModelMock)
+        );
+        $this->_backendModelMock->expects(
+            $this->once()
+        )->method(
+            'processValue'
+        )->with(
+            'value'
+        )->will(
+            $this->returnValue('processed_value')
+        );
+        $data = ['default' => [ 'some' => ['config' => ['path' => 'value']], 'active' => 1]];
         $expectedResult = $data;
-        $expectedResult['default']['some']['config']['path2'] = 'default_processed_value_path2';
-        $expectedResult['websites']['website_one']['some']['config']['path1'] = 'website_one_processed_value_path1';
-        $expectedResult['websites']['website_one']['some']['config']['path3'] = 'website_one_processed_value_path3';
-
+        $expectedResult['default']['some']['config']['path'] = 'processed_value';
         $this->assertEquals($expectedResult, $this->_model->process($data));
     }
 }

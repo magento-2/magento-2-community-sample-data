@@ -1,6 +1,5 @@
 <?php
 /**
- *
  * Copyright © Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
@@ -12,7 +11,7 @@ use Magento\Framework\Exception\LocalizedException;
 class Save extends \Magento\Newsletter\Controller\Adminhtml\Template
 {
     /**
-     * Save Newsletter Template
+     * Save Newsletter Template.
      *
      * @return void
      */
@@ -21,6 +20,7 @@ class Save extends \Magento\Newsletter\Controller\Adminhtml\Template
         $request = $this->getRequest();
         if (!$request->isPost()) {
             $this->getResponse()->setRedirect($this->getUrl('*/template'));
+
             return;
         }
         $template = $this->_objectManager->create(\Magento\Newsletter\Model\Template::class);
@@ -66,6 +66,7 @@ class Save extends \Magento\Newsletter\Controller\Adminhtml\Template
             $this->_getSession()->setFormData(false);
             $this->_getSession()->unsPreviewData();
             $this->_redirect('*/template');
+
             return;
         } catch (LocalizedException $e) {
             $this->messageManager->addError(nl2br($e->getMessage()));

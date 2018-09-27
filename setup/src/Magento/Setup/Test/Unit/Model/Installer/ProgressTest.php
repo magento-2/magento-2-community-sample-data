@@ -8,7 +8,7 @@ namespace Magento\Setup\Test\Unit\Model\Installer;
 
 use \Magento\Setup\Model\Installer\Progress;
 
-class ProgressTest extends \PHPUnit\Framework\TestCase
+class ProgressTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @param int $total

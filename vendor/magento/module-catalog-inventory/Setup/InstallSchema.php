@@ -249,15 +249,15 @@ class InstallSchema implements InstallSchemaInterface
                 \Magento\Framework\DB\Ddl\Table::TYPE_SMALLINT,
                 5,
                 ['unsigned' => true, 'nullable' => false, 'default' => 0],
-                'Website ID'
+                'Is Divided into Multiple Boxes for Shipping'
             )
             ->addIndex(
                 $installer->getIdxName(
                     'cataloginventory_stock_item',
-                    ['product_id', 'stock_id'],
+                    ['product_id', 'website_id'],
                     \Magento\Framework\DB\Adapter\AdapterInterface::INDEX_TYPE_UNIQUE
                 ),
-                ['product_id', 'stock_id'],
+                ['product_id', 'website_id'],
                 ['type' => \Magento\Framework\DB\Adapter\AdapterInterface::INDEX_TYPE_UNIQUE]
             )
             ->addIndex(
@@ -343,10 +343,6 @@ class InstallSchema implements InstallSchemaInterface
             ->addIndex(
                 $installer->getIdxName('cataloginventory_stock_status', ['website_id']),
                 ['website_id']
-            )
-            ->addIndex(
-                $installer->getIdxName('cataloginventory_stock_status', ['stock_status']),
-                ['stock_status']
             )
             ->setComment('Cataloginventory Stock Status');
         $installer->getConnection()
@@ -461,5 +457,6 @@ class InstallSchema implements InstallSchemaInterface
             ->createTable($table);
 
         $installer->endSetup();
+
     }
 }

@@ -11,7 +11,6 @@ use Magento\Framework\Api\ExtensibleDataInterface;
 /**
  * Tax rule interface.
  * @api
- * @since 100.0.2
  */
 interface TaxRuleInterface extends ExtensibleDataInterface
 {

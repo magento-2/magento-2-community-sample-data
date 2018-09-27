@@ -7,8 +7,6 @@ namespace Magento\Framework\View\Asset;
 
 /**
  * An interface for "preprocessing" asset contents
- *
- * @api
  */
 interface PreProcessorInterface
 {

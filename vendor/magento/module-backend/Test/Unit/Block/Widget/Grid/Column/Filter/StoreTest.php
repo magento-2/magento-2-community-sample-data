@@ -8,7 +8,7 @@ namespace Magento\Backend\Test\Unit\Block\Widget\Grid\Column\Filter;
 
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager as ObjectManagerHelper;
 
-class StoreTest extends \PHPUnit\Framework\TestCase
+class StoreTest extends \PHPUnit_Framework_TestCase
 {
     /** @var \Magento\Backend\Block\Widget\Grid\Column\Filter\Store */
     protected $object;
@@ -27,13 +27,13 @@ class StoreTest extends \PHPUnit\Framework\TestCase
 
     protected function setUp()
     {
-        $this->context = $this->createMock(\Magento\Backend\Block\Context::class);
-        $this->helper = $this->createMock(\Magento\Framework\DB\Helper::class);
-        $this->store = $this->createMock(\Magento\Store\Model\System\Store::class);
+        $this->context = $this->getMock('Magento\Backend\Block\Context', [], [], '', false);
+        $this->helper = $this->getMock('Magento\Framework\DB\Helper', [], [], '', false);
+        $this->store = $this->getMock('Magento\Store\Model\System\Store', [], [], '', false);
 
         $this->objectManagerHelper = new ObjectManagerHelper($this);
         $this->store = $this->objectManagerHelper->getObject(
-            \Magento\Backend\Block\Widget\Grid\Column\Filter\Store::class,
+            'Magento\Backend\Block\Widget\Grid\Column\Filter\Store',
             [
                 'context' => $this->context,
                 'resourceHelper' => $this->helper,

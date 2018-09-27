@@ -10,9 +10,6 @@ use Magento\Quote\Model\Quote;
 
 /**
  * Specification checks interface
- *
- * @api
- * @since 100.0.2
  */
 interface SpecificationInterface
 {

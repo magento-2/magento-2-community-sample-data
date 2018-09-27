@@ -39,7 +39,7 @@ class AssertOrderNotVisibleOnMyAccount extends AbstractConstraint
             'status' => $status,
         ];
         $this->objectManager->create(
-            \Magento\Customer\Test\TestStep\LoginCustomerOnFrontendStep::class,
+            'Magento\Customer\Test\TestStep\LoginCustomerOnFrontendStep',
             ['customer' => $customer]
         )->run();
         $customerAccountIndex->getAccountMenuBlock()->openMenuItem('My Orders');

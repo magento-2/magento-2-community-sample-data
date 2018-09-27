@@ -22,7 +22,7 @@ class HtmlTag extends AbstractHtmlElement
      *
      * @var array
      */
-    protected $attributes = [];
+    protected $attributes = array();
 
     /**
      * Whether to pre-set appropriate attributes in accordance
@@ -43,9 +43,9 @@ class HtmlTag extends AbstractHtmlElement
      * @param array $attribs
      * @return self
      */
-    public function __invoke(array $attribs = [])
+    public function __invoke(array $attribs = array())
     {
-        if (! empty($attribs)) {
+        if (!empty($attribs)) {
             $this->setAttributes($attribs);
         }
 
@@ -119,15 +119,15 @@ class HtmlTag extends AbstractHtmlElement
 
     protected function handleNamespaceAttributes()
     {
-        if ($this->useNamespaces && ! $this->handledNamespaces) {
+        if ($this->useNamespaces && !$this->handledNamespaces) {
             if (method_exists($this->view, 'plugin')) {
-                $doctypeAttributes = [];
+                $doctypeAttributes = array();
 
                 if ($this->view->plugin('doctype')->isXhtml()) {
-                    $doctypeAttributes = ['xmlns' => 'http://www.w3.org/1999/xhtml'];
+                    $doctypeAttributes = array('xmlns' => 'http://www.w3.org/1999/xhtml');
                 }
 
-                if (! empty($doctypeAttributes)) {
+                if (!empty($doctypeAttributes)) {
                     $this->attributes = array_merge($doctypeAttributes, $this->attributes);
                 }
             }

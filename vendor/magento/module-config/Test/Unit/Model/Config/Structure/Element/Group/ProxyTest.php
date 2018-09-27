@@ -5,7 +5,7 @@
  */
 namespace Magento\Config\Test\Unit\Model\Config\Structure\Element\Group;
 
-class ProxyTest extends \PHPUnit\Framework\TestCase
+class ProxyTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\Config\Model\Config\Structure\Element\Group\Proxy
@@ -19,7 +19,7 @@ class ProxyTest extends \PHPUnit\Framework\TestCase
 
     protected function setUp()
     {
-        $this->_objectManagerMock = $this->createMock(\Magento\Framework\ObjectManagerInterface::class);
+        $this->_objectManagerMock = $this->getMock('Magento\Framework\ObjectManagerInterface');
         $this->_model = new \Magento\Config\Model\Config\Structure\Element\Group\Proxy($this->_objectManagerMock);
     }
 
@@ -31,7 +31,13 @@ class ProxyTest extends \PHPUnit\Framework\TestCase
 
     public function testProxyInitializesProxiedObjectOnFirstCall()
     {
-        $groupMock = $this->createMock(\Magento\Config\Model\Config\Structure\Element\Group::class);
+        $groupMock = $this->getMock(
+            'Magento\Config\Model\Config\Structure\Element\Group',
+            [],
+            [],
+            '',
+            false
+        );
 
         $groupMock->expects($this->once())->method('setData');
         $groupMock->expects($this->once())->method('getId')->will($this->returnValue('group_id'));
@@ -40,7 +46,7 @@ class ProxyTest extends \PHPUnit\Framework\TestCase
         )->method(
             'create'
         )->with(
-            \Magento\Config\Model\Config\Structure\Element\Group::class
+            'Magento\Config\Model\Config\Structure\Element\Group'
         )->will(
             $this->returnValue($groupMock)
         );

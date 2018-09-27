@@ -1120,7 +1120,7 @@ tinymce.create('tinymce.util.Dispatcher', {
 
 		set : function(n, v, e, p, d, s) {
 			document.cookie = n + "=" + escape(v) +
-				((e) ? "; expires=" + e.toUTCString() : "") +
+				((e) ? "; expires=" + e.toGMTString() : "") +
 				((p) ? "; path=" + escape(p) : "") +
 				((d) ? "; domain=" + d : "") +
 				((s) ? "; secure" : "");
@@ -14451,7 +14451,7 @@ tinymce.create('tinymce.ui.Toolbar:tinymce.ui.Container', {
 					childCount = getChildCount(node);
 
 					// Remove empty nodes but only if there is multiple wrappers and they are not block
-					// elements so never remove single <h1></h1> since that would remove the currrent empty block element where the caret is at
+					// elements so never remove single <h1></h1> since that would remove the current empty block element where the caret is at
 					if ((newWrappers.length > 1 || !isBlock(node)) && childCount === 0) {
 						dom.remove(node, 1);
 						return;

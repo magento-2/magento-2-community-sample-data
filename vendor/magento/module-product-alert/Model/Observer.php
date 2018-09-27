@@ -157,7 +157,6 @@ class Observer
      * Retrieve website collection array
      *
      * @return array
-     * @throws \Exception
      */
     protected function _getWebsites()
     {
@@ -166,7 +165,6 @@ class Observer
                 $this->_websites = $this->_storeManager->getWebsites();
             } catch (\Exception $e) {
                 $this->_errors[] = $e->getMessage();
-                throw $e;
             }
         }
         return $this->_websites;
@@ -177,7 +175,6 @@ class Observer
      *
      * @param \Magento\ProductAlert\Model\Email $email
      * @return $this
-     * @throws \Exception
      * @SuppressWarnings(PHPMD.CyclomaticComplexity)
      * @SuppressWarnings(PHPMD.NPathComplexity)
      */
@@ -186,6 +183,7 @@ class Observer
         $email->setType('price');
         foreach ($this->_getWebsites() as $website) {
             /* @var $website \Magento\Store\Model\Website */
+
             if (!$website->getDefaultGroup() || !$website->getDefaultGroup()->getDefaultStore()) {
                 continue;
             }
@@ -203,7 +201,7 @@ class Observer
                 )->setCustomerOrder();
             } catch (\Exception $e) {
                 $this->_errors[] = $e->getMessage();
-                throw $e;
+                return $this;
             }
 
             $previousCustomer = null;
@@ -246,7 +244,6 @@ class Observer
                     }
                 } catch (\Exception $e) {
                     $this->_errors[] = $e->getMessage();
-                    throw $e;
                 }
             }
             if ($previousCustomer) {
@@ -254,7 +251,6 @@ class Observer
                     $email->send();
                 } catch (\Exception $e) {
                     $this->_errors[] = $e->getMessage();
-                    throw $e;
                 }
             }
         }
@@ -266,7 +262,6 @@ class Observer
      *
      * @param \Magento\ProductAlert\Model\Email $email
      * @return $this
-     * @throws \Exception
      * @SuppressWarnings(PHPMD.CyclomaticComplexity)
      * @SuppressWarnings(PHPMD.NPathComplexity)
      */
@@ -296,7 +291,7 @@ class Observer
                 )->setCustomerOrder();
             } catch (\Exception $e) {
                 $this->_errors[] = $e->getMessage();
-                throw $e;
+                return $this;
             }
 
             $previousCustomer = null;
@@ -336,7 +331,6 @@ class Observer
                     }
                 } catch (\Exception $e) {
                     $this->_errors[] = $e->getMessage();
-                    throw $e;
                 }
             }
 
@@ -345,7 +339,6 @@ class Observer
                     $email->send();
                 } catch (\Exception $e) {
                     $this->_errors[] = $e->getMessage();
-                    throw $e;
                 }
             }
         }

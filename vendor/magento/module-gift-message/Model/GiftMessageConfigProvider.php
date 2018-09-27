@@ -119,7 +119,9 @@ class GiftMessageConfigProvider implements ConfigProviderInterface
         $configuration['isCustomerLoggedIn'] = $this->isCustomerLoggedIn();
         $configuration['formKey'] = $this->formKey->getFormKey();
         $store = $this->storeManager->getStore();
-        $configuration['baseUrl'] = $store->getBaseUrl(UrlInterface::URL_TYPE_LINK);
+        $configuration['baseUrl'] = $store->isFrontUrlSecure()
+                ? $store->getBaseUrl(UrlInterface::URL_TYPE_LINK, true)
+                : $store->getBaseUrl(UrlInterface::URL_TYPE_LINK, false);
         return $configuration;
     }
 
@@ -150,7 +152,7 @@ class GiftMessageConfigProvider implements ConfigProviderInterface
      */
     protected function isQuoteVirtual()
     {
-        return $this->checkoutSession->getQuote()->getIsVirtual();
+        return $this->checkoutSession->loadCustomerQuote()->getQuote()->getIsVirtual();
     }
 
     /**

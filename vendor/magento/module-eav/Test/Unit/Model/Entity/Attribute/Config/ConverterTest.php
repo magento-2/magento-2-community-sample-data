@@ -5,7 +5,7 @@
  */
 namespace Magento\Eav\Test\Unit\Model\Entity\Attribute\Config;
 
-class ConverterTest extends \PHPUnit\Framework\TestCase
+class ConverterTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\Eav\Model\Entity\Attribute\Config\Converter

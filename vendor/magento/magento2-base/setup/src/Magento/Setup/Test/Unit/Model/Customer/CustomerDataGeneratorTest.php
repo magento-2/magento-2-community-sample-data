@@ -5,7 +5,7 @@
  */
 namespace Magento\Setup\Test\Unit\Model\Customer;
 
-class CustomerDataGeneratorTest extends \PHPUnit\Framework\TestCase
+class CustomerDataGeneratorTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var array
@@ -34,11 +34,13 @@ class CustomerDataGeneratorTest extends \PHPUnit\Framework\TestCase
 
     public function setUp()
     {
-        $this->groupCollectionFactoryMock =
-            $this->createPartialMock(
-                \Magento\Customer\Model\ResourceModel\Group\CollectionFactory::class,
-                ['create', 'getAllIds']
-            );
+        $this->groupCollectionFactoryMock = $this->getMock(
+            \Magento\Customer\Model\ResourceModel\Group\CollectionFactory::class,
+            ['create', 'getAllIds'],
+            [],
+            '',
+            false
+        );
 
         $this->groupCollectionFactoryMock
             ->expects($this->once())
@@ -50,7 +52,13 @@ class CustomerDataGeneratorTest extends \PHPUnit\Framework\TestCase
             ->method('getAllIds')
             ->willReturn([1]);
 
-        $this->addressGeneratorMock = $this->createMock(\Magento\Setup\Model\Address\AddressDataGenerator::class);
+        $this->addressGeneratorMock = $this->getMock(
+            \Magento\Setup\Model\Address\AddressDataGenerator::class,
+            [],
+            [],
+            '',
+            false
+        );
 
         $this->customerGenerator = new \Magento\Setup\Model\Customer\CustomerDataGenerator(
             $this->groupCollectionFactoryMock,

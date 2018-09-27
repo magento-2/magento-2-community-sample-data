@@ -5,7 +5,7 @@
  */
 namespace Magento\Framework\Encryption;
 
-class EncryptorTest extends \PHPUnit\Framework\TestCase
+class EncryptorTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\Framework\Encryption\Encryptor
@@ -15,7 +15,7 @@ class EncryptorTest extends \PHPUnit\Framework\TestCase
     protected function setUp()
     {
         $this->_model = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->create(
-            \Magento\Framework\Encryption\Encryptor::class
+            'Magento\Framework\Encryption\Encryptor'
         );
     }
 

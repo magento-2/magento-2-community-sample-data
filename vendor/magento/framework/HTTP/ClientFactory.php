@@ -35,7 +35,7 @@ class ClientFactory
      */
     public function __construct(
         \Magento\Framework\ObjectManagerInterface $objectManager,
-        $instanceName = \Magento\Framework\HTTP\Client\Curl::class
+        $instanceName = 'Magento\Framework\HTTP\Client\Curl'
     ) {
         $this->_objectManager = $objectManager;
         $this->_instanceName = $instanceName;

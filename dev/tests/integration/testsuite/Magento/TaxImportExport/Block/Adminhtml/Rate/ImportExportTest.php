@@ -5,10 +5,10 @@
  */
 namespace Magento\TaxImportExport\Block\Adminhtml\Rate;
 
-class ImportExportTest extends \PHPUnit\Framework\TestCase
+class ImportExportTest extends \PHPUnit_Framework_TestCase
 {
     /**
-     * @var \Magento\TaxImportExport\Block\Adminhtml\Rate\ImportExport
+     * @var \Magento\Tax\Block\Adminhtml\Rate\ImportExport
      */
     protected $_block = null;
 
@@ -17,8 +17,8 @@ class ImportExportTest extends \PHPUnit\Framework\TestCase
         \Magento\TestFramework\Helper\Bootstrap::getInstance()
             ->loadArea(\Magento\Backend\App\Area\FrontNameResolver::AREA_CODE);
         $this->_block = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->get(
-            \Magento\Framework\View\LayoutInterface::class
-        )->createBlock(\Magento\TaxImportExport\Block\Adminhtml\Rate\ImportExport::class);
+            'Magento\Framework\View\LayoutInterface'
+        )->createBlock('Magento\TaxImportExport\Block\Adminhtml\Rate\ImportExport');
     }
 
     protected function tearDown()
@@ -28,7 +28,7 @@ class ImportExportTest extends \PHPUnit\Framework\TestCase
 
     public function testCreateBlock()
     {
-        $this->assertInstanceOf(\Magento\TaxImportExport\Block\Adminhtml\Rate\ImportExport::class, $this->_block);
+        $this->assertInstanceOf('Magento\TaxImportExport\Block\Adminhtml\Rate\ImportExport', $this->_block);
     }
 
     public function testFormExists()

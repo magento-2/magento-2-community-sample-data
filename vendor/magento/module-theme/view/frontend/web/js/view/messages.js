@@ -2,17 +2,13 @@
  * Copyright © Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
-
-/**
- * @api
- */
 define([
     'jquery',
     'uiComponent',
-    'Magento_Customer/js/customer-data',
     'underscore',
+    'Magento_Customer/js/customer-data',
     'jquery/jquery-storageapi'
-], function ($, Component, customerData, _) {
+], function ($, Component, _, customerData) {
     'use strict';
 
     return Component.extend({
@@ -21,9 +17,7 @@ define([
             messages: []
         },
 
-        /**
-         * Extends Component object by storage observable messages.
-         */
+        /** @inheritdoc */
         initialize: function () {
             this._super();
 
@@ -32,7 +26,6 @@ define([
                 disposableCustomerData: 'messages'
             });
 
-            // Force to clean obsolete messages
             if (!_.isEmpty(this.messages().messages)) {
                 customerData.set('messages', {});
             }

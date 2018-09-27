@@ -11,13 +11,7 @@ namespace Magento\Checkout\Controller;
 
 use Magento\Catalog\Api\ProductRepositoryInterface;
 use Magento\Checkout\Model\Session;
-use Magento\Customer\Model\ResourceModel\CustomerRepository;
 use Magento\Framework\Data\Form\FormKey;
-use Magento\TestFramework\Helper\Bootstrap;
-use Magento\TestFramework\Request;
-use Magento\Customer\Model\Session as CustomerSession;
-use Magento\Sales\Model\ResourceModel\Order\Collection as OrderCollection;
-use Magento\Sales\Model\ResourceModel\Order\Item\Collection as OrderItemCollection;
 
 /**
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
@@ -32,8 +26,8 @@ class CartTest extends \Magento\TestFramework\TestCase\AbstractController
      */
     public function testConfigureActionWithSimpleProduct()
     {
-        /** @var $session \Magento\Checkout\Model\Session  */
-        $session = $this->_objectManager->create(\Magento\Checkout\Model\Session::class);
+        /** @var $session Session  */
+        $session = $this->_objectManager->create(Session::class);
 
         /** @var ProductRepositoryInterface $productRepository */
         $productRepository = $this->_objectManager->create(ProductRepositoryInterface::class);
@@ -50,12 +44,10 @@ class CartTest extends \Magento\TestFramework\TestCase\AbstractController
 
         $this->assertSessionMessages($this->isEmpty(), \Magento\Framework\Message\MessageInterface::TYPE_ERROR);
 
-        $this->assertEquals(
+        $this->assertSelectCount(
+            'button[type="submit"][title="Update Cart"]',
             1,
-            \Magento\TestFramework\Helper\Xpath::getElementsCountForXpath(
-                '//button[@type="submit" and @title="Update Cart"]',
-                $response->getBody()
-            ),
+            $response->getBody(),
             'Response for simple product doesn\'t contain "Update Cart" button'
         );
     }
@@ -67,8 +59,8 @@ class CartTest extends \Magento\TestFramework\TestCase\AbstractController
      */
     public function testConfigureActionWithSimpleProductAndCustomOption()
     {
-        /** @var $session \Magento\Checkout\Model\Session  */
-        $session = $this->_objectManager->create(\Magento\Checkout\Model\Session::class);
+        /** @var $session Session  */
+        $session = $this->_objectManager->create(Session::class);
 
         /** @var ProductRepositoryInterface $productRepository */
         $productRepository = $this->_objectManager->create(ProductRepositoryInterface::class);
@@ -85,21 +77,17 @@ class CartTest extends \Magento\TestFramework\TestCase\AbstractController
 
         $this->assertSessionMessages($this->isEmpty(), \Magento\Framework\Message\MessageInterface::TYPE_ERROR);
 
-        $this->assertEquals(
+        $this->assertSelectCount(
+            'button[type="submit"][title="Update Cart"]',
             1,
-            \Magento\TestFramework\Helper\Xpath::getElementsCountForXpath(
-                '//button[@type="submit" and @title="Update Cart"]',
-                $response->getBody()
-            ),
+            $response->getBody(),
             'Response for simple product with custom option doesn\'t contain "Update Cart" button'
         );
 
-        $this->assertEquals(
+        $this->assertSelectCount(
+            'input.product-custom-option[type="text"]',
             1,
-            \Magento\TestFramework\Helper\Xpath::getElementsCountForXpath(
-                '//input[contains(@class,"product-custom-option") and @type="text"]',
-                $response->getBody()
-            ),
+            $response->getBody(),
             'Response for simple product with custom option doesn\'t contain custom option input field'
         );
     }
@@ -111,8 +99,8 @@ class CartTest extends \Magento\TestFramework\TestCase\AbstractController
      */
     public function testConfigureActionWithBundleProduct()
     {
-        /** @var $session \Magento\Checkout\Model\Session  */
-        $session = $this->_objectManager->create(\Magento\Checkout\Model\Session::class);
+        /** @var $session Session  */
+        $session = $this->_objectManager->create(Session::class);
 
         /** @var ProductRepositoryInterface $productRepository */
         $productRepository = $this->_objectManager->create(ProductRepositoryInterface::class);
@@ -129,12 +117,10 @@ class CartTest extends \Magento\TestFramework\TestCase\AbstractController
 
         $this->assertSessionMessages($this->isEmpty(), \Magento\Framework\Message\MessageInterface::TYPE_ERROR);
 
-        $this->assertEquals(
+        $this->assertSelectCount(
+            'button[type="submit"][title="Update Cart"]',
             1,
-            \Magento\TestFramework\Helper\Xpath::getElementsCountForXpath(
-                '//button[@type="submit" and @title="Update Cart"]',
-                $response->getBody()
-            ),
+            $response->getBody(),
             'Response for bundle product doesn\'t contain "Update Cart" button'
         );
     }
@@ -146,8 +132,8 @@ class CartTest extends \Magento\TestFramework\TestCase\AbstractController
      */
     public function testConfigureActionWithDownloadableProduct()
     {
-        /** @var $session \Magento\Checkout\Model\Session  */
-        $session = $this->_objectManager->create(\Magento\Checkout\Model\Session::class);
+        /** @var $session Session  */
+        $session = $this->_objectManager->create(Session::class);
 
         /** @var ProductRepositoryInterface $productRepository */
         $productRepository = $this->_objectManager->create(ProductRepositoryInterface::class);
@@ -164,21 +150,17 @@ class CartTest extends \Magento\TestFramework\TestCase\AbstractController
 
         $this->assertSessionMessages($this->isEmpty(), \Magento\Framework\Message\MessageInterface::TYPE_ERROR);
 
-        $this->assertEquals(
+        $this->assertSelectCount(
+            'button[type="submit"][title="Update Cart"]',
             1,
-            \Magento\TestFramework\Helper\Xpath::getElementsCountForXpath(
-                '//button[@type="submit" and @title="Update Cart"]',
-                $response->getBody()
-            ),
+            $response->getBody(),
             'Response for downloadable product doesn\'t contain "Update Cart" button'
         );
 
-        $this->assertEquals(
+        $this->assertSelectCount(
+            '#downloadable-links-list',
             1,
-            \Magento\TestFramework\Helper\Xpath::getElementsCountForXpath(
-                '//*[@id="downloadable-links-list"]',
-                $response->getBody()
-            ),
+            $response->getBody(),
             'Response for downloadable product doesn\'t contain links for download'
         );
     }
@@ -200,8 +182,8 @@ class CartTest extends \Magento\TestFramework\TestCase\AbstractController
         $productId = $product->getId();
         $originalQuantity = 1;
         $updatedQuantity = 2;
-        /** @var $checkoutSession \Magento\Checkout\Model\Session  */
-        $checkoutSession = $this->_objectManager->create(\Magento\Checkout\Model\Session::class);
+        /** @var $checkoutSession Session  */
+        $checkoutSession = $this->_objectManager->create(Session::class);
         $quoteItem = $this->_getQuoteItemIdByProductId($checkoutSession->getQuote(), $productId);
 
         /** @var FormKey $formKey */
@@ -212,8 +194,8 @@ class CartTest extends \Magento\TestFramework\TestCase\AbstractController
             'form_key' => $formKey->getFormKey(),
         ];
         $this->getRequest()->setPostValue($postData);
-        /** @var $customerSession \Magento\Customer\Model\Session */
-        $customerSession = $this->_objectManager->create(\Magento\Customer\Model\Session::class);
+        /** @var $customerSession Session */
+        $customerSession = $this->_objectManager->create(Session::class);
         $customerSession->setCustomerId($customerFromFixture);
 
         $this->assertNotNull($quoteItem, 'Cannot get quote item for simple product');
@@ -298,101 +280,5 @@ class CartTest extends \Magento\TestFramework\TestCase\AbstractController
             'frontend' => ['frontend', 'expected_price' => 10],
             'adminhtml' => ['adminhtml', 'expected_price' => 1]
         ];
-    }
-
-    /**
-     * @covers \Magento\Checkout\Controller\Cart\Addgroup::execute()
-     *
-     * Test customer can add items to cart only if they belong to him.
-     *
-     * @param bool $loggedIn
-     * @param string $request
-     * @magentoAppArea frontend
-     * @magentoDataFixture Magento/Checkout/_files/order_items.php
-     * @dataProvider reorderItemsDataProvider
-     * @return void
-     */
-    public function testReorderItems(bool $loggedIn, string $request)
-    {
-        // Make sure test starts without logged in customer.
-        $customerSession = $this->_objectManager->get(CustomerSession::class);
-        $customerSession->logout();
-
-        $checkoutSession = Bootstrap::getObjectManager()->get(Session::class);
-        $expected = [];
-        if ($loggedIn && $request == Request::METHOD_POST) {
-            $customer = $this->_objectManager->create(CustomerRepository::class)->get('customer2@example.com');
-            $customerSession->setCustomerDataObject($customer);
-            $orderCollection = $this->_objectManager->create(OrderCollection::class);
-            $orderCollection->addFieldToFilter('customer_id', $customer->getId());
-            $orderItemCollection = $this->_objectManager->create(OrderItemCollection::class);
-            $orderItemCollection->addFieldToFilter('order_id', ['in' => $orderCollection->getAllIds()]);
-            $expected = $orderItemCollection->getColumnValues('product_id');
-        }
-        $this->prepareRequest($request);
-        $this->dispatch('checkout/cart/addGroup');
-
-        $this->assertEquals(
-            $expected,
-            $checkoutSession->getQuote()->getItemsCollection()->getColumnValues('product_id')
-        );
-
-        // Make sure test doesn't left logged in customer after execution.
-        $customerSession->logout();
-    }
-
-    /**
-     * Data provider for testReorderItems.
-     *
-     * @return array
-     */
-    public function reorderItemsDataProvider()
-    {
-        return [
-            [
-                'logged_in' => false,
-                'request_type' => Request::METHOD_POST,
-            ],
-            [
-                'logged_in' => false,
-                'request_type' => Request::METHOD_GET,
-            ],
-            [
-                'logged_in' => true,
-                'request_type' => Request::METHOD_POST,
-            ],
-            [
-                'logged_in' => true,
-                'request_type' => Request::METHOD_GET,
-            ],
-        ];
-    }
-
-    /**
-     * Prepare request for testReorderItems.
-     *
-     * @param string $method
-     * @return void
-     */
-    private function prepareRequest(string $method)
-    {
-        /** @var OrderItemCollection $orderItems */
-        $orderItems = $this->_objectManager->create(OrderItemCollection::class);
-        /** @var FormKey $key */
-        $key = $this->_objectManager->get(FormKey::class);
-        $data = [
-            'form_key' => $key->getFormKey(),
-            'order_items' => $orderItems->getAllIds(),
-        ];
-        $this->getRequest()->setMethod($method);
-        switch ($method) {
-            case Request::METHOD_POST:
-                $this->getRequest()->setPostValue($data);
-                break;
-            case Request::METHOD_GET:
-            default:
-                $this->getRequest()->setParams($data);
-                break;
-        }
     }
 }

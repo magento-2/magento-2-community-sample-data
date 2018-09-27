@@ -12,7 +12,6 @@ class ShippingAssignment extends \Magento\Framework\Model\AbstractExtensibleMode
 {
     const SHIPPING = 'shipping';
     const ITEMS = 'items';
-
     /**
      * @inheritDoc
      */

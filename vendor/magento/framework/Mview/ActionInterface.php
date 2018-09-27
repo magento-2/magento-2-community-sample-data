@@ -5,10 +5,6 @@
  */
 namespace Magento\Framework\Mview;
 
-/**
- * Interface \Magento\Framework\Mview\ActionInterface
- *
- */
 interface ActionInterface
 {
     /**

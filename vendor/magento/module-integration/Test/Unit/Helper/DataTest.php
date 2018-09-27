@@ -7,7 +7,7 @@ namespace Magento\Integration\Test\Unit\Helper;
 
 use Magento\Integration\Model\Integration;
 
-class DataTest extends \PHPUnit\Framework\TestCase
+class DataTest extends \PHPUnit_Framework_TestCase
 {
     /** @var \Magento\Integration\Helper\Data */
     protected $dataHelper;
@@ -15,7 +15,7 @@ class DataTest extends \PHPUnit\Framework\TestCase
     protected function setUp()
     {
         $helper = new \Magento\Framework\TestFramework\Unit\Helper\ObjectManager($this);
-        $this->dataHelper = $helper->getObject(\Magento\Integration\Helper\Data::class);
+        $this->dataHelper = $helper->getObject('Magento\Integration\Helper\Data');
     }
 
     public function testMapResources()
@@ -33,6 +33,9 @@ class DataTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals($expectedResult, $this->dataHelper->isConfigType($integrationsData));
     }
 
+    /**
+     * @return array
+     */
     public function integrationDataProvider()
     {
         return [

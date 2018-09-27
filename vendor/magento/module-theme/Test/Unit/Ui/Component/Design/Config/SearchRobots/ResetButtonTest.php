@@ -12,7 +12,7 @@ use Magento\Theme\Ui\Component\Design\Config\SearchRobots\ResetButton;
 use Magento\Framework\View\Element\UiComponent\Processor;
 use Magento\Ui\Component\Form\Field;
 
-class ResetButtonTest extends \PHPUnit\Framework\TestCase
+class ResetButtonTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \PHPUnit_Framework_MockObject_MockObject | ContextInterface

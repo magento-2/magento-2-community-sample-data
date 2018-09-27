@@ -10,7 +10,6 @@ use Magento\Framework\Api\ExtensibleDataInterface;
 
 /**
  * @api
- * @since 100.0.2
  */
 interface ProductLinkAttributeInterface extends ExtensibleDataInterface
 {

@@ -7,7 +7,7 @@
 
 namespace Magento\Persistent\Test\Unit\Observer;
 
-class RenewCookieObserverTest extends \PHPUnit\Framework\TestCase
+class RenewCookieObserverTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\Persistent\Observer\RenewCookieObserver
@@ -48,7 +48,6 @@ class RenewCookieObserverTest extends \PHPUnit\Framework\TestCase
      * @var \PHPUnit_Framework_MockObject_MockObject
      */
     protected $sessionMock;
-
     /**
      * @var \PHPUnit_Framework_MockObject_MockObject
      */
@@ -56,16 +55,16 @@ class RenewCookieObserverTest extends \PHPUnit\Framework\TestCase
 
     protected function setUp()
     {
-        $this->requestMock = $this->createMock(\Magento\Framework\App\Request\Http::class);
-        $this->helperMock = $this->createMock(\Magento\Persistent\Helper\Data::class);
-        $this->sessionHelperMock = $this->createMock(\Magento\Persistent\Helper\Session::class);
-        $this->customerSessionMock = $this->createMock(\Magento\Customer\Model\Session::class);
+        $this->requestMock = $this->getMock('\Magento\Framework\App\Request\Http', [], [], '', false);
+        $this->helperMock = $this->getMock('Magento\Persistent\Helper\Data', [], [], '', false);
+        $this->sessionHelperMock = $this->getMock('Magento\Persistent\Helper\Session', [], [], '', false);
+        $this->customerSessionMock = $this->getMock('Magento\Customer\Model\Session', [], [], '', false);
         $this->sessionFactoryMock =
-            $this->createPartialMock(\Magento\Persistent\Model\SessionFactory::class, ['create']);
-        $this->observerMock = $this->createMock(\Magento\Framework\Event\Observer::class);
+            $this->getMock('Magento\Persistent\Model\SessionFactory', ['create'], [], '', false);
+        $this->observerMock = $this->getMock('Magento\Framework\Event\Observer', [], [], '', false);
         $eventMethods = ['getRequest', '__wakeUp'];
-        $this->eventManagerMock = $this->createPartialMock(\Magento\Framework\Event::class, $eventMethods);
-        $this->sessionMock = $this->createMock(\Magento\Persistent\Model\Session::class);
+        $this->eventManagerMock = $this->getMock('\Magento\Framework\Event', $eventMethods, [], '', false);
+        $this->sessionMock = $this->getMock('Magento\Persistent\Model\Session', [], [], '', false);
         $this->model = new \Magento\Persistent\Observer\RenewCookieObserver(
             $this->helperMock,
             $this->sessionHelperMock,

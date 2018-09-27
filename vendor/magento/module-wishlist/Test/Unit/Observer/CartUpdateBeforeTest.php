@@ -8,10 +8,7 @@ namespace Magento\Wishlist\Test\Unit\Observer;
 
 use \Magento\Wishlist\Observer\CartUpdateBefore as Observer;
 
-/**
- * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
- */
-class CartUpdateBeforeTest extends \PHPUnit\Framework\TestCase
+class CartUpdateBeforeTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var Observer
@@ -50,14 +47,14 @@ class CartUpdateBeforeTest extends \PHPUnit\Framework\TestCase
 
     protected function setUp()
     {
-        $this->helper = $this->getMockBuilder(\Magento\Wishlist\Helper\Data::class)
+        $this->helper = $this->getMockBuilder('Magento\Wishlist\Helper\Data')
             ->disableOriginalConstructor()
             ->getMock();
-        $this->wishlistFactory = $this->getMockBuilder(\Magento\Wishlist\Model\WishlistFactory::class)
+        $this->wishlistFactory = $this->getMockBuilder('Magento\Wishlist\Model\WishlistFactory')
             ->disableOriginalConstructor()
             ->setMethods(['create'])
             ->getMock();
-        $this->wishlist = $this->getMockBuilder(\Magento\Wishlist\Model\Wishlist::class)
+        $this->wishlist = $this->getMockBuilder('Magento\Wishlist\Model\Wishlist')
             ->disableOriginalConstructor()
             ->getMock();
         $this->wishlistFactory->expects($this->any())
@@ -81,11 +78,11 @@ class CartUpdateBeforeTest extends \PHPUnit\Framework\TestCase
         $itemQty = 123;
         $productId = 321;
 
-        $eventObserver = $this->getMockBuilder(\Magento\Framework\Event\Observer::class)
+        $eventObserver = $this->getMockBuilder('Magento\Framework\Event\Observer')
             ->disableOriginalConstructor()
             ->getMock();
 
-        $event = $this->getMockBuilder(\Magento\Framework\Event::class)
+        $event = $this->getMockBuilder('Magento\Framework\Event')
             ->setMethods(['getCart', 'getInfo'])
             ->disableOriginalConstructor()
             ->getMock();
@@ -94,17 +91,17 @@ class CartUpdateBeforeTest extends \PHPUnit\Framework\TestCase
             ->method('getEvent')
             ->willReturn($event);
 
-        $quoteItem = $this->getMockBuilder(\Magento\Quote\Model\Quote\Item::class)
+        $quoteItem = $this->getMockBuilder('Magento\Quote\Model\Quote\Item')
             ->setMethods(['getProductId', 'getBuyRequest', '__wakeup'])
             ->disableOriginalConstructor()
             ->getMock();
 
-        $buyRequest = $this->getMockBuilder(\Magento\Framework\DataObject::class)
+        $buyRequest = $this->getMockBuilder('Magento\Framework\DataObject')
             ->setMethods(['setQty'])
             ->disableOriginalConstructor()
             ->getMock();
 
-        $infoData = $this->getMockBuilder(\Magento\Framework\DataObject::class)
+        $infoData = $this->getMockBuilder('Magento\Framework\DataObject')
             ->setMethods(['toArray'])
             ->disableOriginalConstructor()
             ->getMock();
@@ -113,8 +110,8 @@ class CartUpdateBeforeTest extends \PHPUnit\Framework\TestCase
             ->method('toArray')
             ->willReturn([$itemId => ['qty' => $itemQty, 'wishlist' => true]]);
 
-        $cart = $this->getMockBuilder(\Magento\Checkout\Model\Cart::class)->disableOriginalConstructor()->getMock();
-        $quote = $this->getMockBuilder(\Magento\Quote\Model\Quote::class)
+        $cart = $this->getMockBuilder('Magento\Checkout\Model\Cart')->disableOriginalConstructor()->getMock();
+        $quote = $this->getMockBuilder('Magento\Quote\Model\Quote')
             ->setMethods(['getCustomerId', 'getItemById', 'removeItem', '__wakeup'])
             ->disableOriginalConstructor()
             ->getMock();

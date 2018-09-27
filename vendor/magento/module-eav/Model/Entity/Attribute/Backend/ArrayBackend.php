@@ -8,8 +8,7 @@ namespace Magento\Eav\Model\Entity\Attribute\Backend;
 /**
  * Backend model for attribute with multiple values
  *
- * @api
- * @since 100.0.2
+ * @author      Magento Core Team <core@magentocommerce.com>
  */
 class ArrayBackend extends \Magento\Eav\Model\Entity\Attribute\Backend\AbstractBackend
 {
@@ -24,9 +23,7 @@ class ArrayBackend extends \Magento\Eav\Model\Entity\Attribute\Backend\AbstractB
         $attributeCode = $this->getAttribute()->getAttributeCode();
         $data = $object->getData($attributeCode);
         if (is_array($data)) {
-            $data = array_filter($data, function ($value) {
-                return $value === '0' || !empty($value);
-            });
+            $data = array_filter($data);
             $object->setData($attributeCode, implode(',', $data));
         }
 
@@ -41,13 +38,16 @@ class ArrayBackend extends \Magento\Eav\Model\Entity\Attribute\Backend\AbstractB
      */
     public function validate($object)
     {
-        $attributeCode = $this->getAttribute()->getAttributeCode();
+        $attribute = $this->getAttribute();
+        $attributeCode = $attribute->getAttributeCode();
         $data = $object->getData($attributeCode);
+        $assigned = $object->hasData($attributeCode);
         if (is_array($data)) {
             $object->setData($attributeCode, implode(',', array_filter($data)));
-        } elseif (empty($data)) {
+        } elseif (empty($data) && $assigned) {
             $object->setData($attributeCode, null);
         }
+
         return parent::validate($object);
     }
 }

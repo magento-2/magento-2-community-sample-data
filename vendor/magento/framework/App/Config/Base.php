@@ -18,11 +18,11 @@ class Base extends \Magento\Framework\Simplexml\Config
     public static $instances = [];
 
     /**
-     * @param \Magento\Framework\Simplexml\Element|string $sourceData $sourceData
+     * @param string|\Magento\Framework\Simplexml\Element $sourceData $sourceData
      */
     public function __construct($sourceData = null)
     {
-        $this->_elementClass = \Magento\Framework\App\Config\Element::class;
+        $this->_elementClass = 'Magento\Framework\App\Config\Element';
         parent::__construct($sourceData);
         self::$instances[] = $this;
     }

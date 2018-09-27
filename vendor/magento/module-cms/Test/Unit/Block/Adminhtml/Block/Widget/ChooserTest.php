@@ -8,7 +8,7 @@ namespace Magento\Cms\Test\Unit\Block\Adminhtml\Block\Widget;
 /**
  * @covers \Magento\Cms\Block\Adminhtml\Block\Widget\Chooser
  */
-class ChooserTest extends \PHPUnit\Framework\TestCase
+class ChooserTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\Cms\Block\Adminhtml\Block\Widget\Chooser
@@ -62,16 +62,16 @@ class ChooserTest extends \PHPUnit\Framework\TestCase
 
     protected function setUp()
     {
-        $this->layoutMock = $this->getMockBuilder(\Magento\Framework\View\LayoutInterface::class)
+        $this->layoutMock = $this->getMockBuilder('Magento\Framework\View\LayoutInterface')
             ->disableOriginalConstructor()
             ->getMock();
-        $this->mathRandomMock = $this->getMockBuilder(\Magento\Framework\Math\Random::class)
+        $this->mathRandomMock = $this->getMockBuilder('Magento\Framework\Math\Random')
             ->disableOriginalConstructor()
             ->getMock();
-        $this->urlBuilderMock = $this->getMockBuilder(\Magento\Framework\UrlInterface::class)
+        $this->urlBuilderMock = $this->getMockBuilder('Magento\Framework\UrlInterface')
             ->disableOriginalConstructor()
             ->getMock();
-        $this->escaper = $this->getMockBuilder(\Magento\Framework\Escaper::class)
+        $this->escaper = $this->getMockBuilder('Magento\Framework\Escaper')
             ->disableOriginalConstructor()
             ->setMethods(
                 [
@@ -79,7 +79,7 @@ class ChooserTest extends \PHPUnit\Framework\TestCase
                 ]
             )
             ->getMock();
-        $this->blockFactoryMock = $this->getMockBuilder(\Magento\Cms\Model\BlockFactory::class)
+        $this->blockFactoryMock = $this->getMockBuilder('Magento\Cms\Model\BlockFactory')
             ->setMethods(
                 [
                     'create',
@@ -87,7 +87,7 @@ class ChooserTest extends \PHPUnit\Framework\TestCase
             )
             ->disableOriginalConstructor()
             ->getMock();
-        $this->elementMock = $this->getMockBuilder(\Magento\Framework\Data\Form\Element\AbstractElement::class)
+        $this->elementMock = $this->getMockBuilder('Magento\Framework\Data\Form\Element\AbstractElement')
             ->disableOriginalConstructor()
             ->setMethods(
                 [
@@ -97,7 +97,7 @@ class ChooserTest extends \PHPUnit\Framework\TestCase
                 ]
             )
             ->getMock();
-        $this->modelBlockMock = $this->getMockBuilder(\Magento\Cms\Model\Block::class)
+        $this->modelBlockMock = $this->getMockBuilder('Magento\Cms\Model\Block')
             ->disableOriginalConstructor()
             ->setMethods(
                 [
@@ -107,7 +107,7 @@ class ChooserTest extends \PHPUnit\Framework\TestCase
                 ]
             )
             ->getMock();
-        $this->chooserMock = $this->getMockBuilder(\Magento\Framework\View\Element\BlockInterface::class)
+        $this->chooserMock = $this->getMockBuilder('Magento\Framework\View\Element\BlockInterface')
             ->disableOriginalConstructor()
             ->setMethods(
                 [
@@ -124,7 +124,7 @@ class ChooserTest extends \PHPUnit\Framework\TestCase
 
         $objectManager = new \Magento\Framework\TestFramework\Unit\Helper\ObjectManager($this);
         $this->context = $objectManager->getObject(
-            \Magento\Backend\Block\Template\Context::class,
+            'Magento\Backend\Block\Template\Context',
             [
                 'layout'     => $this->layoutMock,
                 'mathRandom' => $this->mathRandomMock,
@@ -133,7 +133,7 @@ class ChooserTest extends \PHPUnit\Framework\TestCase
             ]
         );
         $this->this = $objectManager->getObject(
-            \Magento\Cms\Block\Adminhtml\Block\Widget\Chooser::class,
+            'Magento\Cms\Block\Adminhtml\Block\Widget\Chooser',
             [
                 'context'      => $this->context,
                 'blockFactory' => $this->blockFactoryMock
@@ -175,7 +175,7 @@ class ChooserTest extends \PHPUnit\Framework\TestCase
             ->willReturn($sourceUrl);
         $this->layoutMock->expects($this->atLeastOnce())
             ->method('createBlock')
-            ->with(\Magento\Widget\Block\Adminhtml\Widget\Chooser::class)
+            ->with('Magento\Widget\Block\Adminhtml\Widget\Chooser')
             ->willReturn($this->chooserMock);
         $this->chooserMock->expects($this->atLeastOnce())
             ->method('setElement')
@@ -233,6 +233,9 @@ class ChooserTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals($this->elementMock, $this->this->prepareElementHtml($this->elementMock));
     }
 
+    /**
+     * @return array
+     */
     public function prepareElementHtmlDataProvider()
     {
         return [

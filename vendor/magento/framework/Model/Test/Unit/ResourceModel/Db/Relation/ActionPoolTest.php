@@ -7,7 +7,7 @@ namespace Magento\Framework\Model\Test\Unit\ResourceModel\Db\Relation;
 
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
 
-class ActionPoolTest extends \PHPUnit\Framework\TestCase
+class ActionPoolTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\Framework\Model\ResourceModel\Db\Relation\ActionPool
@@ -21,7 +21,7 @@ class ActionPoolTest extends \PHPUnit\Framework\TestCase
 
     protected function setUp()
     {
-        $this->objectManagerMock = $this->getMockBuilder(\Magento\Framework\ObjectManagerInterface::class)
+        $this->objectManagerMock = $this->getMockBuilder('Magento\Framework\ObjectManagerInterface')
             ->disableOriginalConstructor()
             ->getMock();
         $objectManager = new ObjectManager($this);
@@ -31,7 +31,7 @@ class ActionPoolTest extends \PHPUnit\Framework\TestCase
 
         $relationActions = [$entityType => $actionName];
         $this->model = $objectManager->getObject(
-            \Magento\Framework\Model\ResourceModel\Db\Relation\ActionPool::class,
+            'Magento\Framework\Model\ResourceModel\Db\Relation\ActionPool',
             [
                 'objectManager' => $this->objectManagerMock,
                 'relationActions' => $relationActions

@@ -5,7 +5,7 @@
  */
 namespace Magento\Framework\Cache\Test\Unit\Frontend\Adapter;
 
-class ZendTest extends \PHPUnit\Framework\TestCase
+class ZendTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @param string $method
@@ -16,7 +16,7 @@ class ZendTest extends \PHPUnit\Framework\TestCase
      */
     public function testProxyMethod($method, $params, $expectedParams, $expectedResult)
     {
-        $frontendMock = $this->createMock(\Zend_Cache_Core::class);
+        $frontendMock = $this->getMock('Zend_Cache_Core');
         $object = new \Magento\Framework\Cache\Frontend\Adapter\Zend($frontendMock);
         $helper = new \Magento\Framework\TestFramework\Unit\Helper\ProxyTesting();
         $result = $helper->invokeWithExpectations(
@@ -68,7 +68,7 @@ class ZendTest extends \PHPUnit\Framework\TestCase
                 'getBackend',
                 [],
                 [],
-                $this->createMock(\Zend_Cache_Backend::class),
+                $this->getMock('Zend_Cache_Backend'),
             ]
         ];
     }
@@ -80,12 +80,14 @@ class ZendTest extends \PHPUnit\Framework\TestCase
      */
     public function testCleanException($cleaningMode, $expectedErrorMessage)
     {
-        $this->expectException('InvalidArgumentException');
-        $this->expectExceptionMessage($expectedErrorMessage);
-        $object = new \Magento\Framework\Cache\Frontend\Adapter\Zend($this->createMock(\Zend_Cache_Core::class));
+        $this->setExpectedException('InvalidArgumentException', $expectedErrorMessage);
+        $object = new \Magento\Framework\Cache\Frontend\Adapter\Zend($this->getMock('Zend_Cache_Core'));
         $object->clean($cleaningMode);
     }
 
+    /**
+     * @return array
+     */
     public function cleanExceptionDataProvider()
     {
         return [
@@ -106,7 +108,7 @@ class ZendTest extends \PHPUnit\Framework\TestCase
 
     public function testGetLowLevelFrontend()
     {
-        $frontendMock = $this->createMock(\Zend_Cache_Core::class);
+        $frontendMock = $this->getMock('Zend_Cache_Core');
         $object = new \Magento\Framework\Cache\Frontend\Adapter\Zend($frontendMock);
         $this->assertSame($frontendMock, $object->getLowLevelFrontend());
     }

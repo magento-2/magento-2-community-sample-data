@@ -8,18 +8,18 @@ namespace Magento\SalesRule\Block\Adminhtml\Promo\Quote\Edit\Tab;
 /**
  * @magentoAppArea adminhtml
  */
-class LabelsTest extends \PHPUnit\Framework\TestCase
+class LabelsTest extends \PHPUnit_Framework_TestCase
 {
     public function testConstruct()
     {
         $this->assertInstanceOf(
-            \Magento\SalesRule\Block\Adminhtml\Promo\Quote\Edit\Tab\Labels::class,
+            'Magento\SalesRule\Block\Adminhtml\Promo\Quote\Edit\Tab\Labels',
             \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->get(
-                \Magento\Framework\View\Element\UiComponent\Argument\Interpreter\ConfigurableObject::class
+                'Magento\Framework\View\Element\UiComponent\Argument\Interpreter\ConfigurableObject'
             )->evaluate(
                 [
                     'name' => 'block',
-                    'value' => \Magento\SalesRule\Block\Adminhtml\Promo\Quote\Edit\Tab\Labels::class
+                    'value' => 'Magento\SalesRule\Block\Adminhtml\Promo\Quote\Edit\Tab\Labels'
                 ]
             )
         );

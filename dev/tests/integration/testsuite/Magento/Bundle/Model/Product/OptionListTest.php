@@ -9,7 +9,7 @@ namespace Magento\Bundle\Model\Product;
 /**
  * Integration test for Magento\Bundle\Model\OptionList
  */
-class OptionListTest extends \PHPUnit\Framework\TestCase
+class OptionListTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\Catalog\Model\Product
@@ -32,12 +32,12 @@ class OptionListTest extends \PHPUnit\Framework\TestCase
     public function testGetItems()
     {
         /** @var \Magento\Catalog\Api\ProductRepositoryInterface $productRepository */
-        $productRepository = $this->objectManager->create(\Magento\Catalog\Api\ProductRepositoryInterface::class);
+        $productRepository = $this->objectManager->create('Magento\Catalog\Api\ProductRepositoryInterface');
         $this->product = $productRepository->get('bundle-product');
         /**
          * @var \Magento\Bundle\Model\Product\OptionList $optionList
          */
-        $optionList = $this->objectManager->create(\Magento\Bundle\Model\Product\OptionList::class);
+        $optionList = $this->objectManager->create('\Magento\Bundle\Model\Product\OptionList');
         $options = $optionList->getItems($this->product);
         $this->assertEquals(1, count($options));
         $this->assertEquals('Bundle Product Items', $options[0]->getTitle());

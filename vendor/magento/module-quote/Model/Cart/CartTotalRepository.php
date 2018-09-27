@@ -10,9 +10,9 @@ use Magento\Quote\Api\CartRepositoryInterface;
 use Magento\Quote\Api\CartTotalRepositoryInterface;
 use Magento\Catalog\Helper\Product\ConfigurationPool;
 use Magento\Framework\Api\DataObjectHelper;
-use Magento\Framework\Api\ExtensibleDataInterface;
 use Magento\Quote\Model\Cart\Totals\ItemConverter;
 use Magento\Quote\Api\CouponManagementInterface;
+use Magento\Framework\Api\ExtensibleDataInterface;
 
 /**
  * Cart totals data object.
@@ -102,7 +102,7 @@ class CartTotalRepository implements CartTotalRepositoryInterface
         $this->dataObjectHelper->populateWithArray(
             $quoteTotals,
             $addressTotalsData,
-            \Magento\Quote\Api\Data\TotalsInterface::class
+            '\Magento\Quote\Api\Data\TotalsInterface'
         );
         $items = [];
         foreach ($quote->getAllVisibleItems() as $index => $item) {

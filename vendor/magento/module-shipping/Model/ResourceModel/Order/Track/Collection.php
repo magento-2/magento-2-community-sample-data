@@ -19,9 +19,6 @@ class Collection extends \Magento\Sales\Model\ResourceModel\Order\Shipment\Track
      */
     protected function _construct()
     {
-        $this->_init(
-            \Magento\Shipping\Model\Order\Track::class,
-            \Magento\Sales\Model\ResourceModel\Order\Shipment\Track::class
-        );
+        $this->_init('Magento\Shipping\Model\Order\Track', 'Magento\Sales\Model\ResourceModel\Order\Shipment\Track');
     }
 }

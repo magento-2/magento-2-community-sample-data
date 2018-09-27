@@ -5,7 +5,7 @@
  */
 namespace Magento\Framework\Search\Request\Config;
 
-class ConverterTest extends \PHPUnit\Framework\TestCase
+class ConverterTest extends \PHPUnit_Framework_TestCase
 {
     /** @var  Converter */
     protected $object;
@@ -13,7 +13,7 @@ class ConverterTest extends \PHPUnit\Framework\TestCase
     protected function setUp()
     {
         $this->object = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()
-            ->create(\Magento\Framework\Search\Request\Config\Converter::class);
+            ->create('Magento\Framework\Search\Request\Config\Converter');
     }
 
     public function testConvert()

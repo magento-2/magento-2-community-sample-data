@@ -2,15 +2,15 @@
  * Copyright © Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
-
 define([
     'jquery',
     'mage/translate',
     'jquery/ui'
-], function ($, $t) {
-    'use strict';
+], function($, $t) {
+    "use strict";
 
     $.widget('mage.catalogAddToCart', {
+
         options: {
             processStart: null,
             processStop: null,
@@ -25,29 +25,25 @@ define([
             addToCartButtonTextDefault: ''
         },
 
-        /** @inheritdoc */
-        _create: function () {
+        _create: function() {
             if (this.options.bindSubmit) {
                 this._bindSubmit();
             }
         },
 
-        /**
-         * @private
-         */
-        _bindSubmit: function () {
+        _bindSubmit: function() {
             var self = this;
-
-            this.element.on('submit', function (e) {
+            if (this.element.data('catalog-addtocart-initialized')) {
+                return;
+            }
+            this.element.data('catalog-addtocart-initialized', 1);
+            this.element.on('submit', function(e) {
                 e.preventDefault();
                 self.submitForm($(this));
             });
         },
 
-        /**
-         * @return {Boolean}
-         */
-        isLoaderEnabled: function () {
+        isLoaderEnabled: function() {
             return this.options.processStart && this.options.processStop;
         },
 
@@ -71,12 +67,8 @@ define([
             }
         },
 
-        /**
-         * @param {String} form
-         */
-        ajaxSubmit: function (form) {
+        ajaxSubmit: function(form) {
             var self = this;
-
             $(self.options.minicartSelector).trigger('contentLoading');
             self.disableAddToCartButton(form);
 
@@ -85,55 +77,40 @@ define([
                 data: form.serialize(),
                 type: 'post',
                 dataType: 'json',
-
-                /** @inheritdoc */
-                beforeSend: function () {
+                beforeSend: function() {
                     if (self.isLoaderEnabled()) {
                         $('body').trigger(self.options.processStart);
                     }
                 },
-
-                /** @inheritdoc */
-                success: function (res) {
-                    var eventData, parameters;
-
-                    $(document).trigger('ajax:addToCart', {
-                        'sku': form.data().productSku,
-                        'form': form,
-                        'response': res
-                    });
+                success: function(res) {
+                    $(document).trigger('ajax:addToCart', form.data().productSku);
 
                     if (self.isLoaderEnabled()) {
                         $('body').trigger(self.options.processStop);
                     }
 
                     if (res.backUrl) {
-                        eventData = {
+                        var eventData = {
                             'form': form,
                             'redirectParameters': []
-                        };
+                        }
                         // trigger global event, so other modules will be able add parameters to redirect url
                         $('body').trigger('catalogCategoryAddToCartRedirect', eventData);
-
                         if (eventData.redirectParameters.length > 0) {
-                            parameters = res.backUrl.split('#');
+                            var parameters = res.backUrl.split('#');
                             parameters.push(eventData.redirectParameters.join('&'));
                             res.backUrl = parameters.join('#');
                         }
                         window.location = res.backUrl;
-
                         return;
                     }
-
                     if (res.messages) {
                         $(self.options.messagesSelector).html(res.messages);
                     }
-
                     if (res.minicart) {
                         $(self.options.minicartSelector).replaceWith(res.minicart);
                         $(self.options.minicartSelector).trigger('contentUpdated');
                     }
-
                     if (res.product && res.product.statusText) {
                         $(self.options.productStatusSelector)
                             .removeClass('available')
@@ -146,32 +123,24 @@ define([
             });
         },
 
-        /**
-         * @param {String} form
-         */
-        disableAddToCartButton: function (form) {
-            var addToCartButtonTextWhileAdding = this.options.addToCartButtonTextWhileAdding || $t('Adding...'),
-                addToCartButton = $(form).find(this.options.addToCartButtonSelector);
-
+        disableAddToCartButton: function(form) {
+            var addToCartButtonTextWhileAdding = this.options.addToCartButtonTextWhileAdding || $t('Adding...');
+            var addToCartButton = $(form).find(this.options.addToCartButtonSelector);
             addToCartButton.addClass(this.options.addToCartButtonDisabledClass);
             addToCartButton.find('span').text(addToCartButtonTextWhileAdding);
             addToCartButton.attr('title', addToCartButtonTextWhileAdding);
         },
 
-        /**
-         * @param {String} form
-         */
-        enableAddToCartButton: function (form) {
-            var addToCartButtonTextAdded = this.options.addToCartButtonTextAdded || $t('Added'),
-                self = this,
+        enableAddToCartButton: function(form) {
+            var addToCartButtonTextAdded = this.options.addToCartButtonTextAdded || $t('Added');
+            var self = this,
                 addToCartButton = $(form).find(this.options.addToCartButtonSelector);
 
             addToCartButton.find('span').text(addToCartButtonTextAdded);
             addToCartButton.attr('title', addToCartButtonTextAdded);
 
-            setTimeout(function () {
+            setTimeout(function() {
                 var addToCartButtonTextDefault = self.options.addToCartButtonTextDefault || $t('Add to Cart');
-
                 addToCartButton.removeClass(self.options.addToCartButtonDisabledClass);
                 addToCartButton.find('span').text(addToCartButtonTextDefault);
                 addToCartButton.attr('title', addToCartButtonTextDefault);

@@ -7,7 +7,6 @@ namespace Magento\Customer\Api;
 
 /**
  * @api
- * @since 100.0.2
  */
 interface CustomerManagementInterface
 {

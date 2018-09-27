@@ -9,10 +9,7 @@ use \Magento\Tax\Model\Sales\Order\TaxManagement;
 
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
 
-/**
- * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
- */
-class TaxManagementTest extends \PHPUnit\Framework\TestCase
+class TaxManagementTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var TaxManagement
@@ -41,50 +38,50 @@ class TaxManagementTest extends \PHPUnit\Framework\TestCase
 
     protected function setUp()
     {
-        $this->orderMock = $this->createPartialMock(\Magento\Sales\Model\Order::class, ['load']);
+        $this->orderMock = $this->getMock('Magento\Sales\Model\Order', ['load'], [], '', false);
 
         $methods = ['create'];
-        $orderFactoryMock = $this->createPartialMock(\Magento\Sales\Model\OrderFactory::class, $methods);
+        $orderFactoryMock = $this->getMock('Magento\Sales\Model\OrderFactory', $methods, [], '', false);
         $orderFactoryMock->expects($this->atLeastOnce())
             ->method('create')
             ->will($this->returnValue($this->orderMock));
 
-        $className = \Magento\Sales\Model\ResourceModel\Order\Tax\Item::class;
-        $this->taxItemResourceMock = $this->createPartialMock($className, ['getTaxItemsByOrderId']);
+        $className = 'Magento\Sales\Model\ResourceModel\Order\Tax\Item';
+        $this->taxItemResourceMock = $this->getMock($className, ['getTaxItemsByOrderId'], [], '', false);
 
-        $className = \Magento\Sales\Model\ResourceModel\Order\Tax\ItemFactory::class;
-        $taxItemFactoryMock = $this->createPartialMock($className, $methods, []);
+        $className = 'Magento\Sales\Model\ResourceModel\Order\Tax\ItemFactory';
+        $taxItemFactoryMock = $this->getMock($className, $methods, [], '', false);
         $taxItemFactoryMock->expects($this->once())
             ->method('create')
             ->willReturn($this->taxItemResourceMock);
 
         $objectManager = new ObjectManager($this);
-        $this->appliedTaxDataObject = $objectManager->getObject(\Magento\Tax\Model\Sales\Order\Tax::class);
+        $this->appliedTaxDataObject = $objectManager->getObject('Magento\Tax\Model\Sales\Order\Tax');
 
-        $className = \Magento\Tax\Api\Data\OrderTaxDetailsAppliedTaxInterfaceFactory::class;
-        $appliedTaxDataObjectFactoryMock = $this->createPartialMock($className, $methods);
+        $className = 'Magento\Tax\Api\Data\OrderTaxDetailsAppliedTaxInterfaceFactory';
+        $appliedTaxDataObjectFactoryMock = $this->getMock($className, $methods, [], '', false);
         $appliedTaxDataObjectFactoryMock->expects($this->any())
             ->method('create')
             ->willReturn($this->appliedTaxDataObject);
 
-        $itemDataObject = $objectManager->getObject(\Magento\Sales\Model\Order\Tax\Item::class);
+        $itemDataObject = $objectManager->getObject('Magento\Sales\Model\Order\Tax\Item');
 
-        $className = \Magento\Tax\Api\Data\OrderTaxDetailsItemInterfaceFactory::class;
-        $itemDataObjectFactoryMock = $this->createPartialMock($className, $methods);
+        $className = 'Magento\Tax\Api\Data\OrderTaxDetailsItemInterfaceFactory';
+        $itemDataObjectFactoryMock = $this->getMock($className, $methods, [], '', false);
         $itemDataObjectFactoryMock->expects($this->atLeastOnce())
             ->method('create')
             ->willReturn($itemDataObject);
 
-        $this->orderTaxDetailsDataObject = $objectManager->getObject(\Magento\Tax\Model\Sales\Order\Details::class);
+        $this->orderTaxDetailsDataObject = $objectManager->getObject('Magento\Tax\Model\Sales\Order\Details');
 
-        $className = \Magento\Tax\Api\Data\OrderTaxDetailsInterfaceFactory::class;
-        $orderTaxDetailsDataObjectFactoryMock = $this->createPartialMock($className, $methods);
+        $className = 'Magento\Tax\Api\Data\OrderTaxDetailsInterfaceFactory';
+        $orderTaxDetailsDataObjectFactoryMock = $this->getMock($className, $methods, [], '', false);
         $orderTaxDetailsDataObjectFactoryMock->expects($this->any())
             ->method('create')
             ->willReturn($this->orderTaxDetailsDataObject);
 
         $this->taxManagement = $objectManager->getObject(
-            \Magento\Tax\Model\Sales\Order\TaxManagement::class,
+            'Magento\Tax\Model\Sales\Order\TaxManagement',
             [
                 'orderFactory' => $orderFactoryMock,
                 'orderItemTaxFactory' => $taxItemFactoryMock,

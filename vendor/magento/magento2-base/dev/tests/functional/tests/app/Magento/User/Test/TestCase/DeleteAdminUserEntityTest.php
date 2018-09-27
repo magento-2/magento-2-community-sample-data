@@ -27,13 +27,14 @@ use Magento\Mtf\TestCase\Injectable;
  * 4. Click "Delete User" button
  * 5. Perform all assertions
  *
- * @group ACL
+ * @group ACL_(PS)
  * @ZephyrId MAGETWO-23416
  */
 class DeleteAdminUserEntityTest extends Injectable
 {
     /* tags */
     const MVP = 'no';
+    const DOMAIN = 'PS';
     /* end tags */
 
     /**
@@ -82,7 +83,7 @@ class DeleteAdminUserEntityTest extends Injectable
      * @param UserEdit $userEdit
      * @param Dashboard $dashboard
      * @param AdminAuthLogin $adminAuthLogin
-     * @return array
+     * @return void
      */
     public function __inject(
         UserIndex $userIndex,
@@ -101,13 +102,11 @@ class DeleteAdminUserEntityTest extends Injectable
      *
      * @param User $user
      * @param string $isDefaultUser
-     * @param User $systemAdmin
      * @return void
      */
     public function testDeleteAdminUserEntity(
         User $user,
-        $isDefaultUser,
-        User $systemAdmin = null
+        $isDefaultUser
     ) {
         $filter = [
             'username' => $user->getUsername(),
@@ -120,7 +119,6 @@ class DeleteAdminUserEntityTest extends Injectable
         }
         $this->userIndex->open();
         $this->userIndex->getUserGrid()->searchAndOpen($filter);
-        $this->userEdit->getUserForm()->fill($systemAdmin);
         $this->userEdit->getPageActions()->delete();
         $this->userEdit->getModalBlock()->acceptAlert();
     }

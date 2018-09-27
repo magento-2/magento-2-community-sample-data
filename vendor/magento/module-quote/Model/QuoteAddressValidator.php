@@ -7,10 +7,7 @@ namespace Magento\Quote\Model;
 
 use Magento\Framework\Exception\NoSuchEntityException;
 
-/**
- * Quote shipping/billing address validator service.
- *
- */
+/** Quote shipping/billing address validator service. */
 class QuoteAddressValidator
 {
     /**

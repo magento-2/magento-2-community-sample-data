@@ -6,7 +6,7 @@
 
 namespace Magento\Payment\Test\Unit\Model\Method;
 
-class SubstitutionTest extends \PHPUnit\Framework\TestCase
+class SubstitutionTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\Framework\TestFramework\Unit\Helper\ObjectManager

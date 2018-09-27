@@ -7,7 +7,7 @@ namespace Magento\Framework\Test\Unit;
 
 use Magento\Framework\Phrase;
 
-class PhraseTest extends \PHPUnit\Framework\TestCase
+class PhraseTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\Framework\Phrase\RendererInterface
@@ -27,7 +27,7 @@ class PhraseTest extends \PHPUnit\Framework\TestCase
     protected function setUp()
     {
         $this->defaultRenderer = Phrase::getRenderer();
-        $this->rendererMock = $this->getMockBuilder(\Magento\Framework\Phrase\RendererInterface::class)
+        $this->rendererMock = $this->getMockBuilder('Magento\Framework\Phrase\RendererInterface')
             ->getMock();
     }
 
@@ -143,6 +143,6 @@ class PhraseTest extends \PHPUnit\Framework\TestCase
      */
     public function testDefaultRenderer()
     {
-        $this->assertInstanceOf(\Magento\Framework\Phrase\Renderer\Placeholder::class, Phrase::getRenderer());
+        $this->assertInstanceOf('Magento\Framework\Phrase\Renderer\Placeholder', Phrase::getRenderer());
     }
 }

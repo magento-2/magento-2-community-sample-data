@@ -9,10 +9,8 @@ use Magento\Framework\Api\AttributeValueFactory;
 
 /**
  * Abstract model for catalog entities
- * @api
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  * @author      Magento Core Team <core@magentocommerce.com>
- * @since 100.0.2
  */
 abstract class AbstractModel extends \Magento\Framework\Model\AbstractExtensibleModel
 {
@@ -223,7 +221,6 @@ abstract class AbstractModel extends \Magento\Framework\Model\AbstractExtensible
      * Get collection instance
      *
      * @return \Magento\Catalog\Model\ResourceModel\Collection\AbstractCollection
-     * @deprecated 101.1.0 because collections should be used directly via factory
      */
     public function getResourceCollection()
     {
@@ -286,7 +283,7 @@ abstract class AbstractModel extends \Magento\Framework\Model\AbstractExtensible
      * @param   mixed  $value
      * @return  $this
      *
-     * @deprecated 101.0.0
+     * @deprecated
      */
     public function setAttributeDefaultValue($attributeCode, $value)
     {
@@ -299,13 +296,13 @@ abstract class AbstractModel extends \Magento\Framework\Model\AbstractExtensible
      *
      * @return \Magento\Catalog\Model\Attribute\ScopeOverriddenValue
      *
-     * @deprecated 101.0.0
+     * @deprecated
      */
     private function getAttributeScopeOverriddenValue()
     {
         if ($this->scopeOverriddenValue === null) {
             $this->scopeOverriddenValue = \Magento\Framework\App\ObjectManager::getInstance()
-                ->get(\Magento\Catalog\Model\Attribute\ScopeOverriddenValue::class);
+                ->get('Magento\Catalog\Model\Attribute\ScopeOverriddenValue');
         }
         return $this->scopeOverriddenValue;
     }
@@ -316,7 +313,7 @@ abstract class AbstractModel extends \Magento\Framework\Model\AbstractExtensible
      * @param   string $attributeCode
      * @return  array|boolean
      *
-     * @deprecated 101.0.0
+     * @deprecated
      */
     public function getAttributeDefaultValue($attributeCode)
     {
@@ -338,7 +335,7 @@ abstract class AbstractModel extends \Magento\Framework\Model\AbstractExtensible
      * @param   string $attributeCode
      * @return  $this
      *
-     * @deprecated 101.0.0
+     * @deprecated
      */
     public function setExistsStoreValueFlag($attributeCode)
     {
@@ -353,7 +350,7 @@ abstract class AbstractModel extends \Magento\Framework\Model\AbstractExtensible
      * @return  bool
      * @SuppressWarnings(PHPMD.BooleanGetMethodName)
      *
-     * @deprecated 101.0.0
+     * @deprecated
      */
     public function getExistsStoreValueFlag($attributeCode)
     {

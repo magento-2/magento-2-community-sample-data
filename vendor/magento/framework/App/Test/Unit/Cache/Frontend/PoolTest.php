@@ -8,7 +8,7 @@ namespace Magento\Framework\App\Test\Unit\Cache\Frontend;
 use Magento\Framework\App\Cache\Frontend\Pool;
 use Magento\Framework\App\Cache\Type\FrontendPool;
 
-class PoolTest extends \PHPUnit\Framework\TestCase
+class PoolTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\Framework\App\Cache\Frontend\Pool
@@ -25,9 +25,9 @@ class PoolTest extends \PHPUnit\Framework\TestCase
     protected function setUp()
     {
         $this->_frontendInstances = [
-            Pool::DEFAULT_FRONTEND_ID => $this->createMock(\Magento\Framework\Cache\FrontendInterface::class),
-            'resource1' => $this->createMock(\Magento\Framework\Cache\FrontendInterface::class),
-            'resource2' => $this->createMock(\Magento\Framework\Cache\FrontendInterface::class),
+            Pool::DEFAULT_FRONTEND_ID => $this->getMock('Magento\Framework\Cache\FrontendInterface'),
+            'resource1' => $this->getMock('Magento\Framework\Cache\FrontendInterface'),
+            'resource2' => $this->getMock('Magento\Framework\Cache\FrontendInterface'),
         ];
 
         $frontendFactoryMap = [
@@ -38,10 +38,10 @@ class PoolTest extends \PHPUnit\Framework\TestCase
             [['r1d1' => 'value1', 'r1d2' => 'value2'], $this->_frontendInstances['resource1']],
             [['r2d1' => 'value1', 'r2d2' => 'value2'], $this->_frontendInstances['resource2']],
         ];
-        $frontendFactory = $this->createMock(\Magento\Framework\App\Cache\Frontend\Factory::class);
+        $frontendFactory = $this->getMock('Magento\Framework\App\Cache\Frontend\Factory', [], [], '', false);
         $frontendFactory->expects($this->any())->method('create')->will($this->returnValueMap($frontendFactoryMap));
 
-        $deploymentConfig = $this->createMock(\Magento\Framework\App\DeploymentConfig::class);
+        $deploymentConfig = $this->getMock('Magento\Framework\App\DeploymentConfig', [], [], '', false);
         $deploymentConfig->expects(
             $this->any()
         )->method(
@@ -69,8 +69,8 @@ class PoolTest extends \PHPUnit\Framework\TestCase
      */
     public function testConstructorNoInitialization()
     {
-        $deploymentConfig = $this->createMock(\Magento\Framework\App\DeploymentConfig::class);
-        $frontendFactory = $this->createMock(\Magento\Framework\App\Cache\Frontend\Factory::class);
+        $deploymentConfig = $this->getMock('Magento\Framework\App\DeploymentConfig', [], [], '', false);
+        $frontendFactory = $this->getMock('Magento\Framework\App\Cache\Frontend\Factory', [], [], '', false);
         $frontendFactory->expects($this->never())->method('create');
         new \Magento\Framework\App\Cache\Frontend\Pool($deploymentConfig, $frontendFactory);
     }
@@ -87,7 +87,7 @@ class PoolTest extends \PHPUnit\Framework\TestCase
         array $frontendSettings,
         array $expectedFactoryArg
     ) {
-        $deploymentConfig = $this->createMock(\Magento\Framework\App\DeploymentConfig::class);
+        $deploymentConfig = $this->getMock('Magento\Framework\App\DeploymentConfig', [], [], '', false);
         $deploymentConfig->expects(
             $this->once()
         )->method(
@@ -98,13 +98,16 @@ class PoolTest extends \PHPUnit\Framework\TestCase
             $this->returnValue($fixtureCacheConfig)
         );
 
-        $frontendFactory = $this->createMock(\Magento\Framework\App\Cache\Frontend\Factory::class);
+        $frontendFactory = $this->getMock('Magento\Framework\App\Cache\Frontend\Factory', [], [], '', false);
         $frontendFactory->expects($this->at(0))->method('create')->with($expectedFactoryArg);
 
         $model = new \Magento\Framework\App\Cache\Frontend\Pool($deploymentConfig, $frontendFactory, $frontendSettings);
         $model->current();
     }
 
+    /**
+     * @return array
+     */
     public function initializationParamsDataProvider()
     {
         return [

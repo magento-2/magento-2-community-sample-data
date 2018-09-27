@@ -5,10 +5,6 @@
  */
 namespace Magento\Quote\Model\Quote\Address;
 
-/**
- * @api
- * @since 100.0.2
- */
 interface RateCollectorInterface
 {
     /**

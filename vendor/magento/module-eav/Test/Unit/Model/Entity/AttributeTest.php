@@ -5,7 +5,7 @@
  */
 namespace Magento\Eav\Test\Unit\Model\Entity;
 
-class AttributeTest extends \PHPUnit\Framework\TestCase
+class AttributeTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * Attribute model to be tested
@@ -15,7 +15,7 @@ class AttributeTest extends \PHPUnit\Framework\TestCase
 
     protected function setUp()
     {
-        $this->_model = $this->createPartialMock(\Magento\Eav\Model\Entity\Attribute::class, ['__wakeup']);
+        $this->_model = $this->getMock('Magento\Eav\Model\Entity\Attribute', ['__wakeup'], [], '', false);
     }
 
     protected function tearDown()
@@ -33,6 +33,9 @@ class AttributeTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals($expectedBackendType, $this->_model->getBackendTypeByInput($givenFrontendInput));
     }
 
+    /**
+     * @return array
+     */
     public static function dataGetBackendTypeByInput()
     {
         return [
@@ -61,6 +64,9 @@ class AttributeTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals($expectedDefaultValue, $this->_model->getDefaultValueByInput($givenFrontendInput));
     }
 
+    /**
+     * @return array
+     */
     public static function dataGetDefaultValueByInput()
     {
         return [

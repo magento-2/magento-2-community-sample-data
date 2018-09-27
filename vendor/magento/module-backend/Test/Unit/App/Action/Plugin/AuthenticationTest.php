@@ -5,13 +5,13 @@
  */
 namespace Magento\Backend\Test\Unit\App\Action\Plugin;
 
-use Magento\Backend\App\Action\Plugin\Authentication;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
+use Magento\Backend\App\Action\Plugin\Authentication;
 
 /**
  * Class AuthenticationTest
  */
-class AuthenticationTest extends \PHPUnit\Framework\TestCase
+class AuthenticationTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\Backend\Model\Auth | \PHPUnit_Framework_MockObject_MockObject
@@ -25,13 +25,16 @@ class AuthenticationTest extends \PHPUnit\Framework\TestCase
 
     protected function setUp()
     {
-        $this->auth = $this->createPartialMock(
-            \Magento\Backend\Model\Auth::class,
-            ['getUser', 'isLoggedIn', 'getAuthStorage']
+        $this->auth = $this->getMock(
+            'Magento\Backend\Model\Auth',
+            ['getUser', 'isLoggedIn', 'getAuthStorage'],
+            [],
+            '',
+            false
         );
         $objectManager = new ObjectManager($this);
         $this->plugin = $objectManager->getObject(
-            \Magento\Backend\App\Action\Plugin\Authentication::class,
+            'Magento\Backend\App\Action\Plugin\Authentication',
             ['auth' => $this->auth]
         );
     }
@@ -44,10 +47,10 @@ class AuthenticationTest extends \PHPUnit\Framework\TestCase
 
     public function testAroundDispatchProlongStorage()
     {
-        $subject = $this->createMock(\Magento\Backend\Controller\Adminhtml\Index::class);
-        $request = $this->createPartialMock(\Magento\Framework\App\Request\Http::class, ['getActionName']);
-        $user = $this->createPartialMock(\Magento\User\Model\User::class, ['reload', '__wakeup']);
-        $storage = $this->createPartialMock(\Magento\Backend\Model\Auth\Session::class, ['prolong', 'refreshAcl']);
+        $subject = $this->getMock('Magento\Backend\Controller\Adminhtml\Index', [], [], '', false);
+        $request = $this->getMock('\Magento\Framework\App\Request\Http', ['getActionName'], [], '', false);
+        $user = $this->getMock('Magento\User\Model\User', ['reload', '__wakeup'], [], '', false);
+        $storage = $this->getMock('Magento\Backend\Model\Auth\Session', ['prolong', 'refreshAcl'], [], '', false);
 
         $expectedResult = 'expectedResult';
         $action = 'index';
@@ -90,13 +93,13 @@ class AuthenticationTest extends \PHPUnit\Framework\TestCase
      */
     public function testProcessNotLoggedInUser($isIFrameParam, $isAjaxParam, $isForwardedFlag)
     {
-        $subject = $this->getMockBuilder(\Magento\Backend\Controller\Adminhtml\Index::class)
+        $subject = $this->getMockBuilder('Magento\Backend\Controller\Adminhtml\Index')
             ->disableOriginalConstructor()
             ->getMock();
-        $request = $this->getMockBuilder(\Magento\Framework\App\Request\Http::class)
+        $request = $this->getMockBuilder('Magento\Framework\App\Request\Http')
             ->disableOriginalConstructor()
             ->getMock();
-        $storage = $this->getMockBuilder(\Magento\Backend\Model\Auth\Session::class)
+        $storage = $this->getMockBuilder('Magento\Backend\Model\Auth\Session')
             ->disableOriginalConstructor()
             ->getMock();
 
@@ -117,7 +120,7 @@ class AuthenticationTest extends \PHPUnit\Framework\TestCase
             if ($isIFrameParam) {
                 $getParamCalls = 1;
                 $actionName = 'deniedIframe';
-            } elseif ($isAjaxParam) {
+            } else if ($isAjaxParam) {
                 $getParamCalls = 2;
                 $actionName = 'deniedJson';
             } else {
@@ -146,6 +149,9 @@ class AuthenticationTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals($expectedResult, $this->plugin->aroundDispatch($subject, $proceed, $request));
     }
 
+    /**
+     * @return array
+     */
     public function processNotLoggedInUserDataProvider()
     {
         return [

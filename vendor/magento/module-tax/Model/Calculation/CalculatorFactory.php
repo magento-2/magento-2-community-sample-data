@@ -62,13 +62,13 @@ class CalculatorFactory
     ) {
         switch ($type) {
             case self::CALC_UNIT_BASE:
-                $className = \Magento\Tax\Model\Calculation\UnitBaseCalculator::class;
+                $className = 'Magento\Tax\Model\Calculation\UnitBaseCalculator';
                 break;
             case self::CALC_ROW_BASE:
-                $className = \Magento\Tax\Model\Calculation\RowBaseCalculator::class;
+                $className = 'Magento\Tax\Model\Calculation\RowBaseCalculator';
                 break;
             case self::CALC_TOTAL_BASE:
-                $className = \Magento\Tax\Model\Calculation\TotalBaseCalculator::class;
+                $className = 'Magento\Tax\Model\Calculation\TotalBaseCalculator';
                 break;
             default:
                 throw new \InvalidArgumentException('Unknown calculation type: ' . $type);

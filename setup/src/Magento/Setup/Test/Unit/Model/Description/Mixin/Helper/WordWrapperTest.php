@@ -5,7 +5,7 @@
  */
 namespace Magento\Setup\Test\Unit\Model\Description\Mixin\Helper;
 
-class WordWrapperTest extends \PHPUnit\Framework\TestCase
+class WordWrapperTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\Setup\Model\Description\Mixin\Helper\WordWrapper
@@ -30,6 +30,9 @@ class WordWrapperTest extends \PHPUnit\Framework\TestCase
         );
     }
 
+    /**
+     * @return array
+     */
     public function getTestData()
     {
         return [

@@ -9,8 +9,6 @@ namespace Magento\ProductAlert\Model\ResourceModel\Price;
  * Product alert for changed price collection
  *
  * @author      Magento Core Team <core@magentocommerce.com>
- * @api
- * @since 100.0.2
  */
 class Collection extends \Magento\Framework\Model\ResourceModel\Db\Collection\AbstractCollection
 {
@@ -21,7 +19,7 @@ class Collection extends \Magento\Framework\Model\ResourceModel\Db\Collection\Ab
      */
     protected function _construct()
     {
-        $this->_init(\Magento\ProductAlert\Model\Price::class, \Magento\ProductAlert\Model\ResourceModel\Price::class);
+        $this->_init('Magento\ProductAlert\Model\Price', 'Magento\ProductAlert\Model\ResourceModel\Price');
     }
 
     /**

@@ -20,7 +20,6 @@ class SuggestedAttributeList
      * @var \Magento\Catalog\Model\ResourceModel\Helper
      */
     protected $_resourceHelper;
-
     /**
      * @param ConfigurableAttributeHandler $configurableAttributeHandler
      * @param \Magento\Catalog\Model\ResourceModel\Helper $resourceHelper
@@ -32,7 +31,6 @@ class SuggestedAttributeList
         $this->configurableAttributeHandler = $configurableAttributeHandler;
         $this->_resourceHelper = $resourceHelper;
     }
-
     /**
      * Retrieve list of attributes with admin store label containing $labelPart
      *

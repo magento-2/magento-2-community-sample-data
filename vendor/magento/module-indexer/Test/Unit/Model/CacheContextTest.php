@@ -6,7 +6,7 @@
 
 namespace Magento\Indexer\Test\Unit\Model;
 
-class CacheContextTest extends \PHPUnit\Framework\TestCase
+class CacheContextTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\Framework\Indexer\CacheContext

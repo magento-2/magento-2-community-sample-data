@@ -76,7 +76,7 @@ class GzipDownloader extends ArchiveDownloader
         $archiveFile = gzopen($file, 'rb');
         $targetFile = fopen($targetFilepath, 'wb');
         while ($string = gzread($archiveFile, 4096)) {
-            fwrite($targetFile, $string, Platform::strlen($string));
+            fwrite($targetFile, $string, strlen($string));
         }
         gzclose($archiveFile);
         fclose($targetFile);

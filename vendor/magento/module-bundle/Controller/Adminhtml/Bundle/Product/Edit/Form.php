@@ -38,7 +38,7 @@ class Form extends \Magento\Catalog\Controller\Adminhtml\Product
         $product = $this->initializationHelper->initialize($this->productBuilder->build($this->getRequest()));
         $this->getResponse()->setBody(
             $this->_view->getLayout()->createBlock(
-                \Magento\Bundle\Block\Adminhtml\Catalog\Product\Edit\Tab\Bundle::class,
+                'Magento\Bundle\Block\Adminhtml\Catalog\Product\Edit\Tab\Bundle',
                 'admin.product.bundle.items'
             )->setProductId(
                 $product->getId()

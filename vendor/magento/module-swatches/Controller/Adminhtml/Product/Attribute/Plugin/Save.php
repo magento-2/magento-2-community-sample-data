@@ -12,6 +12,7 @@ use Magento\Swatches\Model\Swatch;
 
 /**
  * Class Save
+ * @package Magento\Swatches\Controller\Adminhtml\Product\Attribute\Plugin
  */
 class Save
 {

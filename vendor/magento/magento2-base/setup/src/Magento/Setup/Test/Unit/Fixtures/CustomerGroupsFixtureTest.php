@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2018 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 
@@ -15,7 +15,7 @@ use Magento\Setup\Fixtures\CustomerGroupsFixture;
 /**
  * Test Customer Groups generation
  */
-class CustomerGroupsFixtureTest extends \PHPUnit\Framework\TestCase
+class CustomerGroupsFixtureTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \PHPUnit_Framework_MockObject_MockObject|\Magento\Setup\Fixtures\FixtureModel

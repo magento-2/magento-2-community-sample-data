@@ -70,7 +70,7 @@ class PluginInstallerTest extends TestCase
         $loader = new JsonLoader(new ArrayLoader());
         $this->packages = array();
         $this->directory = $this->getUniqueTmpDirectory();
-        for ($i = 1; $i <= 8; $i++) {
+        for ($i = 1; $i <= 7; $i++) {
             $filename = '/Fixtures/plugin-v'.$i.'/composer.json';
             mkdir(dirname($this->directory . $filename), 0777, true);
             $this->packages[] = $loader->load(__DIR__ . $filename);
@@ -243,7 +243,7 @@ class PluginInstallerTest extends TestCase
              ->expects($this->any())
              ->method('getPackages')
              ->will($this->returnCallback(function () use ($plugApiInternalPackage, $plugins) {
-                 return array_merge(array($plugApiInternalPackage), $plugins);
+                return array_merge(array($plugApiInternalPackage), $plugins);
              }));
 
         $this->pm->loadInstalledPlugins();
@@ -297,24 +297,6 @@ class PluginInstallerTest extends TestCase
         $this->assertCount(0, $this->pm->getPlugins());
     }
 
-    public function testCommandProviderCapability()
-    {
-        $this->repository
-            ->expects($this->exactly(2))
-            ->method('getPackages')
-            ->will($this->returnValue(array($this->packages[7])));
-        $installer = new PluginInstaller($this->io, $this->composer);
-        $this->pm->loadInstalledPlugins();
-
-        $caps = $this->pm->getPluginCapabilities('Composer\Plugin\Capability\CommandProvider', array('composer' => $this->composer, 'io' => $this->io));
-        $this->assertCount(1, $caps);
-        $this->assertInstanceOf('Composer\Plugin\Capability\CommandProvider', $caps[0]);
-
-        $commands = $caps[0]->getCommands();
-        $this->assertCount(1, $commands);
-        $this->assertInstanceOf('Composer\Command\BaseCommand', $commands[0]);
-    }
-
     public function testIncapablePluginIsCorrectlyDetected()
     {
         $plugin = $this->getMockBuilder('Composer\Plugin\PluginInterface')
@@ -341,7 +323,7 @@ class PluginInstallerTest extends TestCase
 
         $this->assertInstanceOf($capabilityApi, $capability);
         $this->assertInstanceOf($capabilityImplementation, $capability);
-        $this->assertSame(array('a' => 1, 'b' => 2, 'plugin' => $plugin), $capability->args);
+        $this->assertSame(array('a' => 1, 'b' => 2), $capability->args);
     }
 
     public function invalidImplementationClassNames()

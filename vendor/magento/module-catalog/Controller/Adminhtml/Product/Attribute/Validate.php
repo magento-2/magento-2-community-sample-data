@@ -100,22 +100,13 @@ class Validate extends \Magento\Catalog\Controller\Adminhtml\Product\Attribute
             }
         }
 
-        $multipleOption = $this->getRequest()->getParam("frontend_input");
-        $multipleOption = null == $multipleOption ? 'select' : $multipleOption;
-
-        if (isset($this->multipleAttributeList[$multipleOption]) && !(null == ($multipleOption))) {
-            $options = $this->getRequest()->getParam($this->multipleAttributeList[$multipleOption]);
+        $multipleOption = $this->getRequest()->getParam('frontend_input');
+        $multipleOption = null === $multipleOption ? 'select' : $multipleOption;
+        if (isset($this->multipleAttributeList[$multipleOption]) && null !== $multipleOption) {
             $this->checkUniqueOption(
                 $response,
-                $options
+                $this->getRequest()->getParam($this->multipleAttributeList[$multipleOption])
             );
-            $valueOptions = (isset($options['value']) && is_array($options['value'])) ? $options['value'] : [];
-            foreach (array_keys($valueOptions) as $key) {
-                if (!empty($options['delete'][$key])) {
-                    unset($valueOptions[$key]);
-                }
-            }
-            $this->checkEmptyOption($response, $valueOptions);
         }
 
         return $this->resultJsonFactory->create()->setJsonData($response->toJson());
@@ -158,35 +149,18 @@ class Validate extends \Magento\Catalog\Controller\Adminhtml\Product\Attribute
     /**
      * @param DataObject $response
      * @param array|null $options
-     * @return $this
+     *
+     * @return void
      */
     private function checkUniqueOption(DataObject $response, array $options = null)
     {
         if (is_array($options)
-            && isset($options['value'])
-            && isset($options['delete'])
+            && !empty($options['value'])
+            && !empty($options['delete'])
             && !$this->isUniqueAdminValues($options['value'], $options['delete'])
         ) {
-            $this->setMessageToResponse($response, [__("The value of Admin must be unique.")]);
+            $this->setMessageToResponse($response, [__('The value of Admin must be unique.')]);
             $response->setError(true);
-        }
-        return $this;
-    }
-
-    /**
-     * Check that admin does not try to create option with empty admin scope option.
-     *
-     * @param DataObject $response
-     * @param array $optionsForCheck
-     * @return void
-     */
-    private function checkEmptyOption(DataObject $response, array $optionsForCheck = null)
-    {
-        foreach ($optionsForCheck as $optionValues) {
-            if (isset($optionValues[0]) && $optionValues[0] == '') {
-                $this->setMessageToResponse($response, [__("The value of Admin scope can't be empty.")]);
-                $response->setError(true);
-            }
         }
     }
 }

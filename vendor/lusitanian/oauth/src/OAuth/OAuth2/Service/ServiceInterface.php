@@ -29,11 +29,10 @@ interface ServiceInterface extends BaseServiceInterface
      * Retrieves and stores/returns the OAuth2 access token after a successful authorization.
      *
      * @param string $code The access code from the callback.
-     * @param string $state
      *
      * @return TokenInterface $token
      *
      * @throws TokenResponseException
      */
-    public function requestAccessToken($code, $state = null);
+    public function requestAccessToken($code);
 }

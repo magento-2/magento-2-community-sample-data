@@ -5,7 +5,7 @@
  */
 namespace Magento\Eav\Test\Unit\Model\Entity\Attribute\Backend;
 
-class ArrayBackendTest extends \PHPUnit\Framework\TestCase
+class ArrayBackendTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\Eav\Model\Entity\Attribute\Backend\ArrayBackend
@@ -19,11 +19,14 @@ class ArrayBackendTest extends \PHPUnit\Framework\TestCase
 
     protected function setUp()
     {
-        $this->_attribute = $this->createPartialMock(
+        $this->_attribute = $this->getMock(
             \Magento\Eav\Model\Entity\Attribute::class,
-            ['getAttributeCode', '__wakeup']
+            ['getAttributeCode', '__wakeup'],
+            [],
+            '',
+            false
         );
-        $logger = $this->createMock(\Psr\Log\LoggerInterface::class);
+        $logger = $this->getMock(\Psr\Log\LoggerInterface::class);
         $this->_model = new \Magento\Eav\Model\Entity\Attribute\Backend\ArrayBackend($logger);
         $this->_model->setAttribute($this->_attribute);
     }
@@ -40,6 +43,9 @@ class ArrayBackendTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals(null, $product->getEmpty());
     }
 
+    /**
+     * @return array
+     */
     public static function attributeValueDataProvider()
     {
         return [[[1, 2, 3]], ['1,2,3']];

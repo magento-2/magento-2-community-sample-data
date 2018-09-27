@@ -18,7 +18,7 @@ use Magento\Catalog\Ui\AllowedProductTypes;
 /**
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  */
-class CompositeTest extends \PHPUnit\Framework\TestCase
+class CompositeTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var ObjectManagerHelper
@@ -61,7 +61,7 @@ class CompositeTest extends \PHPUnit\Framework\TestCase
             ->getMock();
         $this->productMock = $this->getMockBuilder(ProductInterface::class)
             ->getMockForAbstractClass();
-        $this->allowedProductTypesMock = $this->createMock(AllowedProductTypes::class);
+        $this->allowedProductTypesMock = $this->getMock(AllowedProductTypes::class, [], [], '', false);
 
         $this->productLocatorMock->expects(static::any())
             ->method('getProduct')

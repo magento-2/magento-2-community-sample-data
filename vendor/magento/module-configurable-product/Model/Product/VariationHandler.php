@@ -11,45 +11,30 @@ use Magento\Framework\Exception\LocalizedException;
 /**
  * Variation Handler
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
- * @api
- * @since 100.0.2
  */
 class VariationHandler
 {
-    /**
-     * @var \Magento\Catalog\Model\Product\Gallery\Processor
-     * @since 100.1.0
-     */
+    /** @var \Magento\Catalog\Model\Product\Gallery\Processor */
     protected $mediaGalleryProcessor;
 
-    /**
-     * @var \Magento\ConfigurableProduct\Model\Product\Type\Configurable
-     */
+    /** @var \Magento\ConfigurableProduct\Model\Product\Type\Configurable */
     protected $configurableProduct;
 
-    /**
-     * @var \Magento\Eav\Model\Entity\Attribute\SetFactory
-     */
+    /** @var \Magento\Eav\Model\Entity\Attribute\SetFactory */
     protected $attributeSetFactory;
 
-    /**
-     * @var \Magento\Eav\Model\EntityFactory
-     */
+    /** @var \Magento\Eav\Model\EntityFactory */
     protected $entityFactory;
 
-    /**
-     * @var \Magento\Catalog\Model\ProductFactory
-     */
+    /** @var \Magento\Catalog\Model\ProductFactory */
     protected $productFactory;
 
-    /**
-     * @var \Magento\Eav\Model\Entity\Attribute\AbstractAttribute[]
-     */
+    /** @var \Magento\Eav\Model\Entity\Attribute\AbstractAttribute[] */
     private $attributes;
 
     /**
      * @var \Magento\CatalogInventory\Api\StockConfigurationInterface
-     * @deprecated 100.1.0
+     * @deprecated
      */
     protected $stockConfiguration;
 
@@ -114,7 +99,7 @@ class VariationHandler
     /**
      * Prepare attribute set comprising all selected configurable attributes
      *
-     * @deprecated 100.1.0
+     * @deprecated since 2.1.0
      * @param \Magento\Catalog\Model\Product $product
      * @return void
      */
@@ -128,7 +113,6 @@ class VariationHandler
      *
      * @param \Magento\Catalog\Model\Product $product
      * @return void
-     * @since 100.1.0
      */
     public function prepareAttributeSet(\Magento\Catalog\Model\Product $product)
     {
@@ -168,7 +152,7 @@ class VariationHandler
         \Magento\Catalog\Model\Product $parentProduct,
         $postData
     ) {
-        $typeId = isset($postData['weight']) && !empty($postData['weight'])
+        $typeId = !empty($postData['weight'])
             ? ProductType::TYPE_SIMPLE
             : ProductType::TYPE_VIRTUAL;
 

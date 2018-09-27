@@ -17,7 +17,7 @@ use Magento\TestFramework\Helper\Bootstrap;
 
 Bootstrap::getInstance()->reinitialize();
 
-require __DIR__ . '/../../../Magento/Framework/Search/_files/configurable_attribute.php';
+require __DIR__ . '/../../../Magento/ConfigurableProduct/_files/configurable_attribute.php';
 
 /** @var ProductRepositoryInterface $productRepository */
 $productRepository = Bootstrap::getObjectManager()

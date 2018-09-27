@@ -29,6 +29,7 @@ class Thumbnail extends \Magento\Cms\Controller\Adminhtml\Wysiwyg\Images
         parent::__construct($context, $coreRegistry);
     }
 
+
     /**
      * Generate image thumbnail on the fly
      *
@@ -37,13 +38,13 @@ class Thumbnail extends \Magento\Cms\Controller\Adminhtml\Wysiwyg\Images
     public function execute()
     {
         $file = $this->getRequest()->getParam('file');
-        $file = $this->_objectManager->get(\Magento\Cms\Helper\Wysiwyg\Images::class)->idDecode($file);
+        $file = $this->_objectManager->get('Magento\Cms\Helper\Wysiwyg\Images')->idDecode($file);
         $thumb = $this->getStorage()->resizeOnTheFly($file);
         /** @var \Magento\Framework\Controller\Result\Raw $resultRaw */
         $resultRaw = $this->resultRawFactory->create();
         if ($thumb !== false) {
             /** @var \Magento\Framework\Image\Adapter\AdapterInterface $image */
-            $image = $this->_objectManager->get(\Magento\Framework\Image\AdapterFactory::class)->create();
+            $image = $this->_objectManager->get('Magento\Framework\Image\AdapterFactory')->create();
             $image->open($thumb);
             $resultRaw->setHeader('Content-Type', $image->getMimeType());
             $resultRaw->setContents($image->getImage());

@@ -17,9 +17,6 @@
             <email />
             <password />
             <password_confirmation />
-            <interface_locale>
-                <input>select</input>
-            </interface_locale>
             <current_password />
             <is_active>
                 <input>select</input>

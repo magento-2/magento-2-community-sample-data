@@ -6,9 +6,7 @@
 $customers = [];
 
 //Create customer
-$customer = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->create(
-    \Magento\Customer\Model\Customer::class
-);
+$customer = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->create('Magento\Customer\Model\Customer');
 $customer->setWebsiteId(
     1
 )->setEntityId(
@@ -37,7 +35,7 @@ $customer->setWebsiteId(
 $customer->isObjectNew(true);
 
 // Create address
-$address = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->create(\Magento\Customer\Model\Address::class);
+$address = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->create('Magento\Customer\Model\Address');
 //  default_billing and default_shipping information would not be saved, it is needed only for simple check
 $address->addData(
     [
@@ -65,9 +63,7 @@ $customer->save();
 
 $customers[] = $customer;
 
-$customer = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->create(
-    \Magento\Customer\Model\Customer::class
-);
+$customer = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->create('Magento\Customer\Model\Customer');
 $customer->setWebsiteId(
     1
 )->setEntityId(
@@ -95,7 +91,7 @@ $customer->setWebsiteId(
 );
 $customer->isObjectNew(true);
 
-$address = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->create(\Magento\Customer\Model\Address::class);
+$address = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->create('Magento\Customer\Model\Address');
 $address->addData(
     [
         'firstname' => 'Anthony',
@@ -112,7 +108,7 @@ $address->addData(
 );
 $customer->addAddress($address);
 
-$address = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->create(\Magento\Customer\Model\Address::class);
+$address = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->create('Magento\Customer\Model\Address');
 $address->addData(
     [
         'firstname' => 'Anthony',
@@ -137,9 +133,7 @@ $customer->save();
 
 $customers[] = $customer;
 
-$customer = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->create(
-    \Magento\Customer\Model\Customer::class
-);
+$customer = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->create('Magento\Customer\Model\Customer');
 $customer->setWebsiteId(
     1
 )->setEntityId(
@@ -167,7 +161,7 @@ $customer->setWebsiteId(
 );
 $customer->isObjectNew(true);
 
-$address = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->create(\Magento\Customer\Model\Address::class);
+$address = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->create('Magento\Customer\Model\Address');
 $address->addData(
     [
         'firstname' => 'Lori',
@@ -193,7 +187,7 @@ $customers[] = $customer;
 
 /** @var $objectManager \Magento\TestFramework\ObjectManager */
 $objectManager = \Magento\TestFramework\Helper\Bootstrap::getObjectManager();
-$objectManager->get(\Magento\Framework\Registry::class)
+$objectManager->get('Magento\Framework\Registry')
     ->unregister('_fixture/Magento_ImportExport_Customers_Array');
-$objectManager->get(\Magento\Framework\Registry::class)
+$objectManager->get('Magento\Framework\Registry')
     ->register('_fixture/Magento_ImportExport_Customers_Array', $customers);

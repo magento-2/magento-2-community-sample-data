@@ -24,7 +24,7 @@ class Chooser extends \Magento\Catalog\Block\Adminhtml\Category\Tree
      *
      * @var string
      */
-    protected $_template = 'catalog/category/widget/tree.phtml';
+    protected $_template = 'Magento_Catalog::catalog/category/widget/tree.phtml';
 
     /**
      * @return void
@@ -73,7 +73,7 @@ class Chooser extends \Magento\Catalog\Block\Adminhtml\Category\Tree
         );
 
         $chooser = $this->getLayout()->createBlock(
-            \Magento\Widget\Block\Adminhtml\Widget\Chooser::class
+            'Magento\Widget\Block\Adminhtml\Widget\Chooser'
         )->setElement(
             $element
         )->setConfig(
@@ -121,7 +121,7 @@ class Chooser extends \Magento\Catalog\Block\Adminhtml\Category\Tree
                 }
             ';
         } else {
-            $chooserJsObject = $this->escapeJs($this->getId());
+            $chooserJsObject = $this->getId();
             $js = '
                 function (node, e) {
                     ' .
@@ -144,7 +144,7 @@ class Chooser extends \Magento\Catalog\Block\Adminhtml\Category\Tree
      *
      * @param \Magento\Framework\Data\Tree\Node|array $node
      * @param int $level
-     * @return string
+     * @return array
      */
     protected function _getNodeJson($node, $level = 0)
     {

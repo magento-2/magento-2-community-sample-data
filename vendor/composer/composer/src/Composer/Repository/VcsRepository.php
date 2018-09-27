@@ -39,23 +39,20 @@ class VcsRepository extends ArrayRepository implements ConfigurableRepositoryInt
     protected $repoConfig;
     protected $branchErrorOccurred = false;
     private $drivers;
-    /** @var VcsDriverInterface */
-    private $driver;
 
     public function __construct(array $repoConfig, IOInterface $io, Config $config, EventDispatcher $dispatcher = null, array $drivers = null)
     {
         parent::__construct();
         $this->drivers = $drivers ?: array(
-            'github' => 'Composer\Repository\Vcs\GitHubDriver',
-            'gitlab' => 'Composer\Repository\Vcs\GitLabDriver',
+            'github'        => 'Composer\Repository\Vcs\GitHubDriver',
+            'gitlab'        => 'Composer\Repository\Vcs\GitLabDriver',
             'git-bitbucket' => 'Composer\Repository\Vcs\GitBitbucketDriver',
-            'git' => 'Composer\Repository\Vcs\GitDriver',
-            'hg-bitbucket' => 'Composer\Repository\Vcs\HgBitbucketDriver',
-            'hg' => 'Composer\Repository\Vcs\HgDriver',
-            'perforce' => 'Composer\Repository\Vcs\PerforceDriver',
-            'fossil' => 'Composer\Repository\Vcs\FossilDriver',
+            'git'           => 'Composer\Repository\Vcs\GitDriver',
+            'hg-bitbucket'  => 'Composer\Repository\Vcs\HgBitbucketDriver',
+            'hg'            => 'Composer\Repository\Vcs\HgDriver',
+            'perforce'      => 'Composer\Repository\Vcs\PerforceDriver',
             // svn must be last because identifying a subversion server for sure is practically impossible
-            'svn' => 'Composer\Repository\Vcs\SvnDriver',
+            'svn'           => 'Composer\Repository\Vcs\SvnDriver',
         );
 
         $this->url = $repoConfig['url'];
@@ -78,33 +75,32 @@ class VcsRepository extends ArrayRepository implements ConfigurableRepositoryInt
 
     public function getDriver()
     {
-        if ($this->driver) {
-            return $this->driver;
-        }
-
         if (isset($this->drivers[$this->type])) {
             $class = $this->drivers[$this->type];
-            $this->driver = new $class($this->repoConfig, $this->io, $this->config);
-            $this->driver->initialize();
+            $driver = new $class($this->repoConfig, $this->io, $this->config);
+            /** @var VcsDriverInterface $driver */
+            $driver->initialize();
 
-            return $this->driver;
+            return $driver;
         }
 
         foreach ($this->drivers as $driver) {
             if ($driver::supports($this->io, $this->config, $this->url)) {
-                $this->driver = new $driver($this->repoConfig, $this->io, $this->config);
-                $this->driver->initialize();
+                $driver = new $driver($this->repoConfig, $this->io, $this->config);
+                /** @var VcsDriverInterface $driver */
+                $driver->initialize();
 
-                return $this->driver;
+                return $driver;
             }
         }
 
         foreach ($this->drivers as $driver) {
             if ($driver::supports($this->io, $this->config, $this->url, true)) {
-                $this->driver = new $driver($this->repoConfig, $this->io, $this->config);
-                $this->driver->initialize();
+                $driver = new $driver($this->repoConfig, $this->io, $this->config);
+                /** @var VcsDriverInterface $driver */
+                $driver->initialize();
 
-                return $this->driver;
+                return $driver;
             }
         }
     }

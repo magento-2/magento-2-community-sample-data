@@ -23,7 +23,7 @@
  *                      'zend' => 'StringToUpper',
  *                      'args' => array('encoding' => 'utf-8'))),
  *              'item2' => array(
- *                  array('model' => \Magento\Framework\Filter\Input\MaliciousCode::class)
+ *                  array('model' => 'Magento\Framework\Filter\Input\MaliciousCode')
  *              ),
  *              'item3' => array(
  *                  array(

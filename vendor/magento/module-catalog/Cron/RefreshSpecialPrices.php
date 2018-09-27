@@ -5,10 +5,10 @@
  */
 namespace Magento\Catalog\Cron;
 
-use Magento\Catalog\Api\Data\CategoryInterface;
-use Magento\Framework\App\ObjectManager;
 use Magento\Framework\App\ResourceConnection;
+use Magento\Catalog\Api\Data\CategoryInterface;
 use Magento\Framework\EntityManager\MetadataPool;
+use Magento\Framework\App\ObjectManager;
 
 class RefreshSpecialPrices
 {
@@ -169,13 +169,14 @@ class RefreshSpecialPrices
         if (!empty($selectData)) {
             $this->_processor->getIndexer()->reindexList($selectData);
         }
+
     }
 
     /**
      * Get MetadataPool instance
      * @return MetadataPool
      *
-     * @deprecated 101.0.0
+     * @deprecated
      */
     private function getMetadataPool()
     {

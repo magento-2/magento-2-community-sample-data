@@ -11,26 +11,26 @@ use Magento\Sales\Api\CreditmemoRepositoryInterface;
 use Magento\Sales\Api\Data\CreditmemoCommentCreationInterface;
 use Magento\Sales\Api\Data\CreditmemoCreationArgumentsInterface;
 use Magento\Sales\Api\Data\CreditmemoInterface;
-use Magento\Sales\Api\Data\CreditmemoItemCreationInterface;
 use Magento\Sales\Api\Data\OrderInterface;
 use Magento\Sales\Api\OrderRepositoryInterface;
 use Magento\Sales\Model\Order;
 use Magento\Sales\Model\Order\Config as OrderConfig;
-use Magento\Sales\Model\Order\Creditmemo\NotifierInterface;
 use Magento\Sales\Model\Order\CreditmemoDocumentFactory;
 use Magento\Sales\Model\Order\OrderStateResolverInterface;
-use Magento\Sales\Model\Order\RefundAdapterInterface;
 use Magento\Sales\Model\Order\Validation\RefundOrderInterface;
+use Magento\Sales\Model\Order\RefundAdapterInterface;
+use Magento\Sales\Model\Order\Creditmemo\NotifierInterface;
 use Magento\Sales\Model\RefundOrder;
 use Magento\Sales\Model\ValidatorResultInterface;
 use Psr\Log\LoggerInterface;
+use Magento\Sales\Api\Data\CreditmemoItemCreationInterface;
 
 /**
  * Class RefundOrderTest
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  * @SuppressWarnings(PHPMD.TooManyFields)
  */
-class RefundOrderTest extends \PHPUnit\Framework\TestCase
+class RefundOrderTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var ResourceConnection|\PHPUnit_Framework_MockObject_MockObject
@@ -407,6 +407,9 @@ class RefundOrderTest extends \PHPUnit\Framework\TestCase
         );
     }
 
+    /**
+     * @return array
+     */
     public function dataProvider()
     {
         return [

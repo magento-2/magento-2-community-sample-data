@@ -11,9 +11,6 @@ use Magento\Framework\Phrase\Renderer\Placeholder as RendererPlaceholder;
 use Magento\Framework\Phrase\RendererInterface;
 use Zend\Stdlib\JsonSerializable;
 
-/**
- * @api
- */
 class Phrase implements JsonSerializable
 {
     /**

@@ -24,7 +24,7 @@ use PHPUnit_Framework_MockObject_MockObject as MockObject;
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
  */
-class TokensConfigProviderTest extends \PHPUnit\Framework\TestCase
+class TokensConfigProviderTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var StoreManagerInterface|MockObject
@@ -59,10 +59,10 @@ class TokensConfigProviderTest extends \PHPUnit\Framework\TestCase
     protected function setUp()
     {
         $this->objectManager = new ObjectManager($this);
-        $this->vaultPaymentList = $this->createMock(PaymentMethodListInterface::class);
+        $this->vaultPaymentList = $this->getMock(PaymentMethodListInterface::class);
         $this->vaultPayment = $this->getMockForAbstractClass(VaultPaymentInterface::class);
-        $this->storeManager = $this->createMock(StoreManagerInterface::class);
-        $this->store = $this->createMock(StoreInterface::class);
+        $this->storeManager = $this->getMock(StoreManagerInterface::class);
+        $this->store = $this->getMock(StoreInterface::class);
 
         $this->customerTokenManagement = $this->getMockBuilder(CustomerTokenManagement::class)
             ->disableOriginalConstructor()

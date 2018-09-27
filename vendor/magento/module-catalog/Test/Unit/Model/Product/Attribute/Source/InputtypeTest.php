@@ -8,7 +8,7 @@ namespace Magento\Catalog\Test\Unit\Model\Product\Attribute\Source;
 
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager as ObjectManagerHelper;
 
-class InputtypeTest extends \PHPUnit\Framework\TestCase
+class InputtypeTest extends \PHPUnit_Framework_TestCase
 {
     /** @var \Magento\Catalog\Model\Product\Attribute\Source\Inputtype */
     protected $inputtypeModel;
@@ -21,11 +21,11 @@ class InputtypeTest extends \PHPUnit\Framework\TestCase
 
     protected function setUp()
     {
-        $this->registry = $this->createMock(\Magento\Framework\Registry::class);
+        $this->registry = $this->getMock('Magento\Framework\Registry');
 
         $this->objectManagerHelper = new ObjectManagerHelper($this);
         $this->inputtypeModel = $this->objectManagerHelper->getObject(
-            \Magento\Catalog\Model\Product\Attribute\Source\Inputtype::class,
+            'Magento\Catalog\Model\Product\Attribute\Source\Inputtype',
             [
                 'coreRegistry' => $this->registry
             ]

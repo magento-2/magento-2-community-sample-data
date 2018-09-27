@@ -6,9 +6,7 @@
 namespace Magento\Checkout\Block\Checkout;
 
 use Magento\Directory\Helper\Data as DirectoryHelper;
-use Magento\Store\Model\StoreManagerInterface;
 use Magento\Store\Api\StoreResolverInterface;
-use Magento\Framework\App\ObjectManager;
 
 /**
  * Directory data processor.
@@ -39,9 +37,9 @@ class DirectoryDataProcessor implements \Magento\Checkout\Block\Checkout\LayoutP
     private $countryCollectionFactory;
 
     /**
-     * @var StoreManagerInterface
+     * @var StoreResolverInterface
      */
-    private $storeManager;
+    private $storeResolver;
 
     /**
      * @var DirectoryHelper
@@ -51,22 +49,19 @@ class DirectoryDataProcessor implements \Magento\Checkout\Block\Checkout\LayoutP
     /**
      * @param \Magento\Directory\Model\ResourceModel\Country\CollectionFactory $countryCollection
      * @param \Magento\Directory\Model\ResourceModel\Region\CollectionFactory $regionCollection
-     * @param StoreResolverInterface $storeResolver @deprecated
+     * @param StoreResolverInterface $storeResolver
      * @param DirectoryHelper $directoryHelper
-     * @param StoreManagerInterface $storeManager
-     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      */
     public function __construct(
         \Magento\Directory\Model\ResourceModel\Country\CollectionFactory $countryCollection,
         \Magento\Directory\Model\ResourceModel\Region\CollectionFactory $regionCollection,
         StoreResolverInterface $storeResolver,
-        DirectoryHelper $directoryHelper,
-        StoreManagerInterface $storeManager = null
+        DirectoryHelper $directoryHelper
     ) {
         $this->countryCollectionFactory = $countryCollection;
         $this->regionCollectionFactory = $regionCollection;
+        $this->storeResolver = $storeResolver;
         $this->directoryHelper = $directoryHelper;
-        $this->storeManager = $storeManager ?: ObjectManager::getInstance()->get(StoreManagerInterface::class);
     }
 
     /**
@@ -96,7 +91,7 @@ class DirectoryDataProcessor implements \Magento\Checkout\Block\Checkout\LayoutP
     {
         if (!isset($this->countryOptions)) {
             $this->countryOptions = $this->countryCollectionFactory->create()->loadByStore(
-                $this->storeManager->getStore()->getId()
+                $this->storeResolver->getCurrentStoreId()
             )->toOptionArray();
             $this->countryOptions = $this->orderCountryOptions($this->countryOptions);
         }
@@ -113,7 +108,7 @@ class DirectoryDataProcessor implements \Magento\Checkout\Block\Checkout\LayoutP
     {
         if (!isset($this->regionOptions)) {
             $this->regionOptions = $this->regionCollectionFactory->create()->addAllowedCountriesFilter(
-                $this->storeManager->getStore()->getId()
+                $this->storeResolver->getCurrentStoreId()
             )->toOptionArray();
         }
 
@@ -141,9 +136,9 @@ class DirectoryDataProcessor implements \Magento\Checkout\Block\Checkout\LayoutP
         ]];
         foreach ($countryOptions as $countryOption) {
             if (empty($countryOption['value']) || in_array($countryOption['value'], $topCountryCodes)) {
-                array_push($headOptions, $countryOption);
+                $headOptions[] = $countryOption;
             } else {
-                array_push($tailOptions, $countryOption);
+                $tailOptions[] = $countryOption;
             }
         }
         return array_merge($headOptions, $tailOptions);

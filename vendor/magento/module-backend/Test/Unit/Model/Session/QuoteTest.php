@@ -10,13 +10,8 @@ namespace Magento\Backend\Test\Unit\Model\Session;
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  * @SuppressWarnings(PHPMD.TooManyFields)
  */
-class QuoteTest extends \PHPUnit\Framework\TestCase
+class QuoteTest extends \PHPUnit_Framework_TestCase
 {
-    /**
-     * @var \Magento\Framework\TestFramework\Unit\Helper\ObjectManager
-     */
-    private $objectManager;
-
     /**
      * @var \Magento\Store\Model\StoreManagerInterface|\PHPUnit_Framework_MockObject_MockObject
      */
@@ -98,6 +93,11 @@ class QuoteTest extends \PHPUnit\Framework\TestCase
     protected $quoteFactoryMock;
 
     /**
+     * @var \PHPUnit_Framework_MockObject_MockObject
+     */
+    protected $cartManagementMock;
+
+    /**
      * Set up
      *
      * @return void
@@ -105,9 +105,8 @@ class QuoteTest extends \PHPUnit\Framework\TestCase
      */
     protected function setUp()
     {
-        $this->objectManager = new \Magento\Framework\TestFramework\Unit\Helper\ObjectManager($this);
         $this->customerRepositoryMock = $this->getMockForAbstractClass(
-            \Magento\Customer\Api\CustomerRepositoryInterface::class,
+            'Magento\Customer\Api\CustomerRepositoryInterface',
             [],
             '',
             false,
@@ -116,7 +115,7 @@ class QuoteTest extends \PHPUnit\Framework\TestCase
             ['getCustomer']
         );
         $this->groupManagementMock = $this->getMockForAbstractClass(
-            \Magento\Customer\Api\GroupManagementInterface::class,
+            'Magento\Customer\Api\GroupManagementInterface',
             [],
             '',
             false,
@@ -126,7 +125,7 @@ class QuoteTest extends \PHPUnit\Framework\TestCase
         );
 
         $this->scopeConfigMock = $this->getMockForAbstractClass(
-            \Magento\Framework\App\Config\ScopeConfigInterface::class,
+            'Magento\Framework\App\Config\ScopeConfigInterface',
             [],
             '',
             false,
@@ -134,71 +133,103 @@ class QuoteTest extends \PHPUnit\Framework\TestCase
             true,
             ['getValue']
         );
-        $this->quoteRepositoryMock = $this->createMock(\Magento\Quote\Api\CartRepositoryInterface::class);
+        $this->quoteRepositoryMock = $this->getMock('Magento\Quote\Api\CartRepositoryInterface');
 
-        $this->requestMock = $this->createMock(\Magento\Framework\App\Request\Http::class);
+        $this->requestMock = $this->getMock(
+            'Magento\Framework\App\Request\Http',
+            [],
+            [],
+            '',
+            false
+        );
         $this->sidResolverMock = $this->getMockForAbstractClass(
-            \Magento\Framework\Session\SidResolverInterface::class,
+            'Magento\Framework\Session\SidResolverInterface',
             [],
             '',
             false
         );
         $this->sessionConfigMock = $this->getMockForAbstractClass(
-            \Magento\Framework\Session\Config\ConfigInterface::class,
+            'Magento\Framework\Session\Config\ConfigInterface',
             [],
             '',
             false
         );
         $this->saveHandlerMock = $this->getMockForAbstractClass(
-            \Magento\Framework\Session\SaveHandlerInterface::class,
+            'Magento\Framework\Session\SaveHandlerInterface',
             [],
             '',
             false
         );
         $this->validatorMock = $this->getMockForAbstractClass(
-            \Magento\Framework\Session\ValidatorInterface::class,
+            'Magento\Framework\Session\ValidatorInterface',
             [],
             '',
             false
         );
         $this->storage = new \Magento\Framework\Session\Storage();
-        $this->cookieManagerMock = $this->createMock(\Magento\Framework\Stdlib\CookieManagerInterface::class);
-        $this->cookieMetadataFactoryMock = $this->createMock(
-            \Magento\Framework\Stdlib\Cookie\CookieMetadataFactory::class
+        $this->cookieManagerMock = $this->getMock('Magento\Framework\Stdlib\CookieManagerInterface');
+        $this->cookieMetadataFactoryMock = $this->getMock(
+            'Magento\Framework\Stdlib\Cookie\CookieMetadataFactory',
+            [],
+            [],
+            '',
+            false
         );
-        $this->orderFactoryMock = $this->createPartialMock(\Magento\Sales\Model\OrderFactory::class, ['create']);
-        $appStateMock = $this->createMock(\Magento\Framework\App\State::class);
+        $this->orderFactoryMock = $this->getMock(
+            'Magento\Sales\Model\OrderFactory',
+            ['create'],
+            [],
+            '',
+            false
+        );
+        $appStateMock = $this->getMock(
+            'Magento\Framework\App\State',
+            [],
+            [],
+            '',
+            false
+        );
         $this->storeManagerMock = $this->getMockForAbstractClass(
-            \Magento\Store\Model\StoreManagerInterface::class,
+            'Magento\Store\Model\StoreManagerInterface',
             [],
             '',
             false
         );
 
-        $this->quoteFactoryMock = $this->createPartialMock(\Magento\Quote\Model\QuoteFactory::class, ['create']);
+        $this->quoteFactoryMock = $this->getMock('\Magento\Quote\Model\QuoteFactory', ['create'], [], '', false);
+        $this->cartManagementMock = $this->getMock(
+            \Magento\Quote\Api\CartManagementInterface::class,
+            [],
+            [],
+            '',
+            false
+        );
 
-        $this->quote = $this->getMockBuilder(\Magento\Backend\Model\Session\Quote::class)
-            ->setMethods(['getStoreId', 'getQuoteId', 'setQuoteId', 'hasCustomerId', 'getCustomerId'])
-            ->setConstructorArgs(
-                [
-                    'request' => $this->requestMock,
-                    'sidResolver' => $this->sidResolverMock,
-                    'sessionConfig' => $this->sessionConfigMock,
-                    'saveHandler' => $this->saveHandlerMock,
-                    'validator' => $this->validatorMock,
-                    'storage' => $this->storage,
-                    'cookieManager' => $this->cookieManagerMock,
-                    'cookieMetadataFactory' => $this->cookieMetadataFactoryMock,
-                    'appState' => $appStateMock,
-                    'customerRepository' => $this->customerRepositoryMock,
-                    'quoteRepository' => $this->quoteRepositoryMock,
-                    'orderFactory' => $this->orderFactoryMock,
-                    'storeManager' => $this->storeManagerMock,
-                    'groupManagement' => $this->groupManagementMock,
-                    'quoteFactory' => $this->quoteFactoryMock
-                ]
-            )
-            ->getMock();
+        $this->quote = $this->getMock(
+            \Magento\Backend\Model\Session\Quote::class,
+            ['getStoreId', 'getQuoteId', 'setQuoteId', 'hasCustomerId', 'getCustomerId'],
+            [
+                'request' => $this->requestMock,
+                'sidResolver' => $this->sidResolverMock,
+                'sessionConfig' => $this->sessionConfigMock,
+                'saveHandler' => $this->saveHandlerMock,
+                'validator' => $this->validatorMock,
+                'storage' => $this->storage,
+                'cookieManager' => $this->cookieManagerMock,
+                'cookieMetadataFactory' => $this->cookieMetadataFactoryMock,
+                'appState' => $appStateMock,
+                'customerRepository' => $this->customerRepositoryMock,
+                'quoteRepository' => $this->quoteRepositoryMock,
+                'orderFactory' => $this->orderFactoryMock,
+                'storeManager' => $this->storeManagerMock,
+                'groupManagement' => $this->groupManagementMock,
+                'quoteFactory' => $this->quoteFactoryMock
+            ]
+        );
+
+        $this->prepareObjectManager([
+            [\Magento\Quote\Api\CartManagementInterface::class, $this->cartManagementMock]
+        ]);
     }
 
     /**
@@ -212,10 +243,15 @@ class QuoteTest extends \PHPUnit\Framework\TestCase
         $storeId = 10;
         $customerId = 66;
         $customerGroupId = 77;
-        $this->quote->expects($this->any())->method('getQuoteId')->will($this->returnValue(null));
-        $this->quote->expects($this->any())->method('setQuoteId')->with($quoteId);
-        $cartInterfaceMock = $this->createPartialMock(
-            \Magento\Quote\Api\Data\CartInterface::class,
+
+        $this->quote->expects($this->any())
+            ->method('getQuoteId')
+            ->will($this->returnValue(null));
+        $this->quote->expects($this->any())
+            ->method('setQuoteId')
+            ->with($quoteId);
+        $cartInterfaceMock = $this->getMock(
+            '\Magento\Quote\Api\Data\CartInterface',
             [
                 'getId',
                 'setId',
@@ -261,15 +297,30 @@ class QuoteTest extends \PHPUnit\Framework\TestCase
                 'setCustomerGroupId'
             ]
         );
-        $this->quoteFactoryMock->expects($this->once())->method('create')->willReturn($cartInterfaceMock);
-        $this->quote->expects($this->any())->method('getStoreId')->will($this->returnValue($storeId));
-        $this->quote->expects($this->any())->method('getCustomerId')->will($this->returnValue($customerId));
-        $cartInterfaceMock->expects($this->atLeastOnce())->method('getId')->willReturn($quoteId);
-        $defaultGroup = $this->getMockBuilder(\Magento\Customer\Api\Data\GroupInterface::class)->getMock();
-        $defaultGroup->expects($this->any())->method('getId')->will($this->returnValue($customerGroupId));
-        $this->groupManagementMock->expects($this->any())->method('getDefaultGroup')->willReturn($defaultGroup);
+        $this->quoteFactoryMock->expects($this->once())
+            ->method('create')
+            ->willReturn($cartInterfaceMock);
+        $this->quote->expects($this->any())
+            ->method('getStoreId')
+            ->will($this->returnValue($storeId));
+        $this->quote->expects($this->any())
+            ->method('getCustomerId')
+            ->will($this->returnValue($customerId));
+        $cartInterfaceMock->expects($this->atLeastOnce())
+            ->method('getId')
+            ->willReturn($quoteId);
 
-        $dataCustomerMock = $this->getMockBuilder(\Magento\Customer\Api\Data\CustomerInterface::class)
+
+        $defaultGroup = $this->getMockBuilder('Magento\Customer\Api\Data\GroupInterface')
+            ->getMock();
+        $defaultGroup->expects($this->any())
+            ->method('getId')
+            ->will($this->returnValue($customerGroupId));
+        $this->groupManagementMock->expects($this->any())
+            ->method('getDefaultGroup')
+            ->will($this->returnValue($defaultGroup));
+
+        $dataCustomerMock = $this->getMockBuilder('Magento\Customer\Api\Data\CustomerInterface')
             ->disableOriginalConstructor()
             ->getMock();
         $this->customerRepositoryMock->expects($this->once())
@@ -277,7 +328,9 @@ class QuoteTest extends \PHPUnit\Framework\TestCase
             ->with($customerId)
             ->willReturn($dataCustomerMock);
 
-        $quoteMock = $this->createPartialMock(\Magento\Quote\Model\Quote::class, [
+        $quoteMock = $this->getMock(
+            'Magento\Quote\Model\Quote',
+            [
                 'setStoreId',
                 'setCustomerGroupId',
                 'setIsActive',
@@ -285,14 +338,26 @@ class QuoteTest extends \PHPUnit\Framework\TestCase
                 'setIgnoreOldQty',
                 'setIsSuperMode',
                 '__wakeup'
-            ]);
+            ],
+            [],
+            '',
+            false
+        );
 
         $this->quoteRepositoryMock->expects($this->once())->method('get')->willReturn($quoteMock);
-        $cartInterfaceMock->expects($this->once())->method('setCustomerGroupId')->with($customerGroupId)
-            ->willReturnSelf();
-        $quoteMock->expects($this->once())->method('assignCustomer')->with($dataCustomerMock);
-        $quoteMock->expects($this->once())->method('setIgnoreOldQty')->with(true);
-        $quoteMock->expects($this->once())->method('setIsSuperMode')->with(true);
+        $cartInterfaceMock->expects($this->once())
+            ->method('setCustomerGroupId')
+            ->with($customerGroupId)
+            ->will($this->returnSelf());
+        $quoteMock->expects($this->once())
+            ->method('assignCustomer')
+            ->with($dataCustomerMock);
+        $quoteMock->expects($this->once())
+            ->method('setIgnoreOldQty')
+            ->with(true);
+        $quoteMock->expects($this->once())
+            ->method('setIsSuperMode')
+            ->with(true);
         $this->assertEquals($quoteMock, $this->quote->getQuote());
     }
 
@@ -320,7 +385,7 @@ class QuoteTest extends \PHPUnit\Framework\TestCase
             ->method('getCustomerId')
             ->will($this->returnValue($customerId));
 
-        $dataCustomerMock = $this->getMockBuilder(\Magento\Customer\Api\Data\CustomerInterface::class)
+        $dataCustomerMock = $this->getMockBuilder('Magento\Customer\Api\Data\CustomerInterface')
             ->disableOriginalConstructor()
             ->getMock();
         $this->customerRepositoryMock->expects($this->$expectedNumberOfInvokes())
@@ -328,7 +393,9 @@ class QuoteTest extends \PHPUnit\Framework\TestCase
             ->with($customerId)
             ->willReturn($dataCustomerMock);
 
-        $quoteMock = $this->createPartialMock(\Magento\Quote\Model\Quote::class, [
+        $quoteMock = $this->getMock(
+            'Magento\Quote\Model\Quote',
+            [
                 'setStoreId',
                 'setCustomerGroupId',
                 'setIsActive',
@@ -338,7 +405,11 @@ class QuoteTest extends \PHPUnit\Framework\TestCase
                 'setIsSuperMode',
                 'getCustomerId',
                 '__wakeup'
-            ]);
+            ],
+            [],
+            '',
+            false
+        );
         $quoteMock->expects($this->once())
             ->method('setStoreId')
             ->with($storeId);
@@ -372,5 +443,20 @@ class QuoteTest extends \PHPUnit\Framework\TestCase
             'customer ids different' => [66, null, 'once'],
             'customer ids same' => [66, 66, 'never'],
         ];
+    }
+
+    /**
+     * @param array $map
+     * @deprecated
+     */
+    private function prepareObjectManager($map)
+    {
+        $objectManagerMock = $this->getMock('Magento\Framework\ObjectManagerInterface');
+        $objectManagerMock->expects($this->any())->method('getInstance')->willReturnSelf();
+        $objectManagerMock->expects($this->any())->method('get')->will($this->returnValueMap($map));
+        $reflectionClass = new \ReflectionClass('Magento\Framework\App\ObjectManager');
+        $reflectionProperty = $reflectionClass->getProperty('_instance');
+        $reflectionProperty->setAccessible(true);
+        $reflectionProperty->setValue($objectManagerMock);
     }
 }

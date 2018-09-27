@@ -11,7 +11,7 @@ use Magento\Framework\Api\SortOrder;
 /**
  * @covers \Magento\Framework\Api\SortOrder
  */
-class SortOrderTest extends \PHPUnit\Framework\TestCase
+class SortOrderTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var SortOrder
@@ -37,6 +37,9 @@ class SortOrderTest extends \PHPUnit\Framework\TestCase
         $this->assertSame($sortOrder, $this->sortOrder->getDirection());
     }
 
+    /**
+     * @return array
+     */
     public function sortOrderDirectionProvider()
     {
         return [[SortOrder::SORT_ASC], [SortOrder::SORT_DESC]];
@@ -52,6 +55,9 @@ class SortOrderTest extends \PHPUnit\Framework\TestCase
         $this->sortOrder->setDirection($invalidDirection);
     }
 
+    /**
+     * @return array
+     */
     public function invalidSortDirectionProvider()
     {
         return [
@@ -89,11 +95,24 @@ class SortOrderTest extends \PHPUnit\Framework\TestCase
 
     /**
      * @expectedException \Magento\Framework\Exception\InputException
+     * @expectedExceptionMessage Sort order field invalid field (value); contains restricted symbols
+     */
+    public function testSetFieldValidateException()
+    {
+        $this->sortOrder = new SortOrder([
+            SortOrder::FIELD => 'value',
+        ]);
+        $this->sortOrder->setField('invalid field (value);');
+    }
+
+    /**
+     * @expectedException \Magento\Framework\Exception\InputException
+     * @expectedExceptionMessage Sort order field invalid field (value); contains restricted symbols
      */
     public function testValidateField()
     {
         $this->sortOrder = new SortOrder([
-            SortOrder::FIELD => 'invalid field (value);'
+            SortOrder::FIELD => 'invalid field (value);',
         ]);
     }
 }

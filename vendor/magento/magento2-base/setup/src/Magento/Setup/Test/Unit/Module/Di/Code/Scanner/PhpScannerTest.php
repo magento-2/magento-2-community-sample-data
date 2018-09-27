@@ -8,11 +8,8 @@ namespace Magento\Setup\Test\Unit\Module\Di\Code\Scanner;
 require_once __DIR__ . '/../../_files/app/code/Magento/SomeModule/Helper/Test.php';
 require_once __DIR__ . '/../../_files/app/code/Magento/SomeModule/ElementFactory.php';
 require_once __DIR__ . '/../../_files/app/code/Magento/SomeModule/Model/DoubleColon.php';
-require_once __DIR__ . '/../../_files/app/code/Magento/SomeModule/Api/Data/SomeInterface.php';
 
-use Magento\Framework\Reflection\TypeProcessor;
-
-class PhpScannerTest extends \PHPUnit\Framework\TestCase
+class PhpScannerTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\Setup\Module\Di\Code\Scanner\PhpScanner
@@ -36,19 +33,18 @@ class PhpScannerTest extends \PHPUnit\Framework\TestCase
 
     protected function setUp()
     {
-        $this->_logMock = $this->createMock(\Magento\Setup\Module\Di\Compiler\Log\Log::class);
-        $this->_model = new \Magento\Setup\Module\Di\Code\Scanner\PhpScanner($this->_logMock, new TypeProcessor());
+        $this->_model = new \Magento\Setup\Module\Di\Code\Scanner\PhpScanner(
+            $this->_logMock = $this->getMock('\Magento\Setup\Module\Di\Compiler\Log\Log', [], [], '', false)
+        );
         $this->_testDir = str_replace('\\', '/', realpath(__DIR__ . '/../../') . '/_files');
+        $this->_testFiles = [
+            $this->_testDir . '/app/code/Magento/SomeModule/Helper/Test.php',
+            $this->_testDir . '/app/code/Magento/SomeModule/Model/DoubleColon.php'
+        ];
     }
 
     public function testCollectEntities()
     {
-        $this->_testFiles = [
-            $this->_testDir . '/app/code/Magento/SomeModule/Helper/Test.php',
-            $this->_testDir . '/app/code/Magento/SomeModule/Model/DoubleColon.php',
-            $this->_testDir . '/app/code/Magento/SomeModule/Api/Data/SomeInterface.php'
-        ];
-
         $this->_logMock->expects(
             $this->at(0)
         )->method(
@@ -68,9 +64,6 @@ class PhpScannerTest extends \PHPUnit\Framework\TestCase
             'Invalid Factory declaration for class Magento\SomeModule\Element in file ' . $this->_testFiles[0]
         );
 
-        $this->assertEquals(
-            ['\Magento\Eav\Api\Data\AttributeExtensionInterface'],
-            $this->_model->collectEntities($this->_testFiles)
-        );
+        $this->assertEquals([], $this->_model->collectEntities($this->_testFiles));
     }
 }

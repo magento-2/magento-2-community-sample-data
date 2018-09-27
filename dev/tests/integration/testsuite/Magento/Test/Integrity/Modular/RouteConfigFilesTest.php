@@ -7,14 +7,13 @@ namespace Magento\Test\Integrity\Modular;
 
 use Magento\Framework\Component\ComponentRegistrar;
 
-class RouteConfigFilesTest extends \PHPUnit\Framework\TestCase
+class RouteConfigFilesTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\Framework\Config\ValidationStateInterface
      */
 
     protected $validationStateMock;
-
     /**
      * attributes represent merging rules
      * copied from original class \Magento\Framework\App\Route\Config\Reader
@@ -42,7 +41,13 @@ class RouteConfigFilesTest extends \PHPUnit\Framework\TestCase
 
     protected function setUp()
     {
-        $this->validationStateMock = $this->createMock(\Magento\Framework\Config\ValidationStateInterface::class);
+        $this->validationStateMock = $this->getMock(
+            '\Magento\Framework\Config\ValidationStateInterface',
+            [],
+            [],
+            '',
+            false
+        );
         $this->validationStateMock->method('isValidationRequired')
             ->willReturn(true);
         $urnResolver = new \Magento\Framework\Config\Dom\UrnResolver();
@@ -61,7 +66,7 @@ class RouteConfigFilesTest extends \PHPUnit\Framework\TestCase
             $files = array_merge($files, glob($mask));
         }
         $mergedConfig = new \Magento\Framework\Config\Dom(
-            '<config><router/></config>',
+            '<config></config>',
             $this->validationStateMock,
             $this->_idAttributes
         );

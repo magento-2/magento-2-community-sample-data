@@ -15,14 +15,10 @@ class CmsPageUrlRewriteGenerator
      */
     const ENTITY_TYPE = 'cms-page';
 
-    /**
-     * @var \Magento\UrlRewrite\Service\V1\Data\UrlRewriteFactory
-     */
+    /** @var \Magento\UrlRewrite\Service\V1\Data\UrlRewriteFactory */
     protected $urlRewriteFactory;
 
-    /**
-     * @var \Magento\CmsUrlRewrite\Model\CmsPageUrlPathGenerator
-     */
+    /** @var \Magento\CmsUrlRewrite\Model\CmsPageUrlPathGenerator */
     protected $cmsPageUrlPathGenerator;
 
     /**

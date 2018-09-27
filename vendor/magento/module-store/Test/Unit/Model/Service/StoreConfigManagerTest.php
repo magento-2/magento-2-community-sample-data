@@ -10,10 +10,7 @@ namespace Magento\Store\Test\Unit\Model\Service;
 
 use Magento\Store\Model\ScopeInterface;
 
-/**
- * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
- */
-class StoreConfigManagerTest extends \PHPUnit\Framework\TestCase
+class StoreConfigManagerTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\Store\Model\Service\StoreConfigManager
@@ -37,16 +34,16 @@ class StoreConfigManagerTest extends \PHPUnit\Framework\TestCase
 
     protected function setUp()
     {
-        $this->storeConfigFactoryMock = $this->getMockBuilder(\Magento\Store\Model\Data\StoreConfigFactory::class)
+        $this->storeConfigFactoryMock = $this->getMockBuilder('\Magento\Store\Model\Data\StoreConfigFactory')
             ->disableOriginalConstructor()
             ->setMethods(['create'])
             ->getMock();
         $this->storeCollectionFactoryMock = $this->getMockBuilder(
-            \Magento\Store\Model\ResourceModel\Store\CollectionFactory::class
+            '\Magento\Store\Model\ResourceModel\Store\CollectionFactory'
         )->disableOriginalConstructor()
             ->setMethods(['create'])
             ->getMock();
-        $this->scopeConfigMock = $this->createMock(\Magento\Framework\App\Config\ScopeConfigInterface::class);
+        $this->scopeConfigMock = $this->getMock('\Magento\Framework\App\Config\ScopeConfigInterface');
 
         $this->model = new \Magento\Store\Model\Service\StoreConfigManager(
             $this->storeCollectionFactoryMock,
@@ -55,9 +52,13 @@ class StoreConfigManagerTest extends \PHPUnit\Framework\TestCase
         );
     }
 
+    /**
+     * @param array $storeConfig
+     * @return \PHPUnit_Framework_MockObject_MockObject
+     */
     protected function getStoreMock(array $storeConfig)
     {
-        $storeMock = $this->getMockBuilder(\Magento\Store\Model\Store::class)
+        $storeMock = $this->getMockBuilder('Magento\Store\Model\Store')
             ->disableOriginalConstructor()
             ->getMock();
 
@@ -88,14 +89,17 @@ class StoreConfigManagerTest extends \PHPUnit\Framework\TestCase
         return $storeMock;
     }
 
+    /**
+     * @return \Magento\Store\Model\Data\StoreConfig
+     */
     protected function createStoreConfigDataObject()
     {
         /** @var \Magento\Framework\Api\ExtensionAttributesFactory $extensionFactoryMock */
-        $extensionFactoryMock = $this->getMockBuilder(\Magento\Framework\Api\ExtensionAttributesFactory::class)
+        $extensionFactoryMock = $this->getMockBuilder('\Magento\Framework\Api\ExtensionAttributesFactory')
             ->disableOriginalConstructor()
             ->getMock();
         /** @var \Magento\Framework\Api\AttributeValueFactory $attributeValueFactoryMock */
-        $attributeValueFactoryMock = $this->getMockBuilder(\Magento\Framework\Api\AttributeValueFactory::class)
+        $attributeValueFactoryMock = $this->getMockBuilder('\Magento\Framework\Api\AttributeValueFactory')
             ->disableOriginalConstructor()
             ->getMock();
 
@@ -142,7 +146,7 @@ class StoreConfigManagerTest extends \PHPUnit\Framework\TestCase
         ];
         $storeMocks[] = $this->getStoreMock($storeConfigs);
 
-        $storeCollectionMock = $this->getMockBuilder(\Magento\Store\Model\ResourceModel\Store\Collection::class)
+        $storeCollectionMock = $this->getMockBuilder('\Magento\Store\Model\ResourceModel\Store\Collection')
             ->disableOriginalConstructor()
             ->getMock();
         $storeCollectionMock->expects($this->once())

@@ -7,8 +7,6 @@ namespace Magento\Backend\Model\Menu\Filter;
 
 /**
  * Menu filter iterator
- * @api
- * @since 100.0.2
  */
 class Iterator extends \FilterIterator
 {

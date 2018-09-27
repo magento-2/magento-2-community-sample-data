@@ -11,7 +11,7 @@ use Magento\Framework\App\TemplateTypesInterface;
 /**
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  */
-class TemplateTest extends \PHPUnit\Framework\TestCase
+class TemplateTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\Framework\Model\Context|\PHPUnit_Framework_MockObject_MockObject
@@ -90,27 +90,27 @@ class TemplateTest extends \PHPUnit\Framework\TestCase
 
     protected function setUp()
     {
-        $this->context = $this->getMockBuilder(\Magento\Framework\Model\Context::class)
+        $this->context = $this->getMockBuilder('Magento\Framework\Model\Context')
             ->disableOriginalConstructor()
             ->getMock();
 
-        $this->design = $this->getMockBuilder(\Magento\Framework\View\DesignInterface::class)
+        $this->design = $this->getMockBuilder('Magento\Framework\View\DesignInterface')
             ->disableOriginalConstructor()
             ->getMock();
 
-        $this->registry = $this->getMockBuilder(\Magento\Framework\Registry::class)
+        $this->registry = $this->getMockBuilder('Magento\Framework\Registry')
             ->disableOriginalConstructor()
             ->getMock();
 
-        $this->appEmulation = $this->getMockBuilder(\Magento\Store\Model\App\Emulation::class)
+        $this->appEmulation = $this->getMockBuilder('Magento\Store\Model\App\Emulation')
             ->disableOriginalConstructor()
             ->getMock();
 
-        $this->storeManager = $this->getMockBuilder(\Magento\Store\Model\StoreManagerInterface::class)
+        $this->storeManager = $this->getMockBuilder('Magento\Store\Model\StoreManagerInterface')
             ->disableOriginalConstructor()
             ->getMock();
 
-        $this->store = $this->getMockBuilder(\Magento\Store\Model\Store::class)
+        $this->store = $this->getMockBuilder('Magento\Store\Model\Store')
             ->setMethods(['getFrontendName', 'getId'])
             ->disableOriginalConstructor()
             ->getMock();
@@ -127,39 +127,39 @@ class TemplateTest extends \PHPUnit\Framework\TestCase
             ->method('getStore')
             ->will($this->returnValue($this->store));
 
-        $this->assetRepo = $this->getMockBuilder(\Magento\Framework\View\Asset\Repository::class)
+        $this->assetRepo = $this->getMockBuilder('Magento\Framework\View\Asset\Repository')
             ->disableOriginalConstructor()
             ->getMock();
 
-        $this->filesystem = $this->getMockBuilder(\Magento\Framework\Filesystem::class)
+        $this->filesystem = $this->getMockBuilder('Magento\Framework\Filesystem')
             ->disableOriginalConstructor()
             ->getMock();
 
-        $this->scopeConfig = $this->getMockBuilder(\Magento\Framework\App\Config\ScopeConfigInterface::class)
+        $this->scopeConfig = $this->getMockBuilder('Magento\Framework\App\Config\ScopeConfigInterface')
             ->disableOriginalConstructor()
             ->getMock();
 
-        $this->emailConfig = $this->getMockBuilder(\Magento\Email\Model\Template\Config::class)
+        $this->emailConfig = $this->getMockBuilder('Magento\Email\Model\Template\Config')
             ->disableOriginalConstructor()
             ->getMock();
 
-        $this->templateFactory = $this->getMockBuilder(\Magento\Email\Model\TemplateFactory::class)
+        $this->templateFactory = $this->getMockBuilder('Magento\Email\Model\TemplateFactory')
             ->disableOriginalConstructor()
             ->getMock();
 
-        $this->filterManager = $this->getMockBuilder(\Magento\Framework\Filter\FilterManager::class)
+        $this->filterManager = $this->getMockBuilder('Magento\Framework\Filter\FilterManager')
             ->disableOriginalConstructor()
             ->getMock();
 
-        $this->urlModel = $this->getMockBuilder(\Magento\Framework\Url::class)
+        $this->urlModel = $this->getMockBuilder('Magento\Framework\Url')
             ->disableOriginalConstructor()
             ->getMock();
 
-        $this->request = $this->getMockBuilder(\Magento\Framework\App\RequestInterface::class)
+        $this->request = $this->getMockBuilder('Magento\Framework\App\RequestInterface')
             ->disableOriginalConstructor()
             ->getMock();
 
-        $this->filterFactory = $this->getMockBuilder(\Magento\Newsletter\Model\Template\FilterFactory::class)
+        $this->filterFactory = $this->getMockBuilder('Magento\Newsletter\Model\Template\FilterFactory')
             ->disableOriginalConstructor()
             ->getMock();
     }
@@ -172,7 +172,7 @@ class TemplateTest extends \PHPUnit\Framework\TestCase
      */
     protected function getModelMock(array $mockedMethods = [])
     {
-        return $this->getMockBuilder(\Magento\Newsletter\Model\Template::class)
+        return $this->getMockBuilder('Magento\Newsletter\Model\Template')
             ->setMethods(array_merge($mockedMethods, ['__wakeup', '__sleep', '_init']))
             ->setConstructorArgs(
                 [
@@ -207,7 +207,7 @@ class TemplateTest extends \PHPUnit\Framework\TestCase
         $templateSubject = 'templateSubject';
         $model->setTemplateSubject($templateSubject);
 
-        $filterTemplate = $this->getMockBuilder(\Magento\Framework\Filter\Template::class)
+        $filterTemplate = $this->getMockBuilder('Magento\Framework\Filter\Template')
             ->setMethods(['setVariables', 'setStoreId', 'filter'])
             ->disableOriginalConstructor()
             ->getMock();
@@ -245,7 +245,7 @@ class TemplateTest extends \PHPUnit\Framework\TestCase
      */
     public function testGetProcessedTemplate($variables, $templateType, $storeId, $expectedVariables, $expectedResult)
     {
-        $filterTemplate = $this->getMockBuilder(\Magento\Newsletter\Model\Template\Filter::class)
+        $filterTemplate = $this->getMockBuilder('Magento\Newsletter\Model\Template\Filter')
             ->setMethods([
                 'setUseSessionInUrl',
                 'setPlainTemplateMode',
@@ -283,7 +283,7 @@ class TemplateTest extends \PHPUnit\Framework\TestCase
 
         // The following block of code tests to ensure that the store id of the subscriber will be used, if the
         // 'subscriber' variable is set.
-        $subscriber = $this->getMockBuilder(\Magento\Newsletter\Model\Subscriber::class)
+        $subscriber = $this->getMockBuilder('Magento\Newsletter\Model\Subscriber')
             ->setMethods([
                 'getStoreId',
             ])
@@ -336,6 +336,8 @@ class TemplateTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
+     * Get processed template data provider.
+     *
      * @return array
      */
     public function getProcessedTemplateDataProvider()
@@ -384,6 +386,7 @@ class TemplateTest extends \PHPUnit\Framework\TestCase
      * @param $senderName string
      * @param $senderEmail string
      * @param $templateSubject string
+     * @param $expectedValue
      * @dataProvider isValidForSendDataProvider
      */
     public function testIsValidForSend($senderName, $senderEmail, $templateSubject, $expectedValue)
@@ -401,6 +404,9 @@ class TemplateTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals($expectedValue, $model->isValidForSend());
     }
 
+    /**
+     * @return array
+     */
     public function isValidForSendDataProvider()
     {
         return [

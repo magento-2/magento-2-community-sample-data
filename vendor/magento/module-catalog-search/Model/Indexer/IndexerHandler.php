@@ -7,16 +7,14 @@ namespace Magento\CatalogSearch\Model\Indexer;
 
 use Magento\Eav\Model\Config;
 use Magento\Framework\App\ResourceConnection;
+use Magento\Framework\DB\Adapter\AdapterInterface;
 use Magento\Framework\Indexer\SaveHandler\IndexerInterface;
 use Magento\Framework\Indexer\IndexStructureInterface;
 use Magento\Framework\Search\Request\Dimension;
 use Magento\Framework\Search\Request\IndexScopeResolverInterface;
 use Magento\Framework\Indexer\SaveHandler\Batch;
+use Magento\Framework\Indexer\ScopeResolver\IndexScopeResolver;
 
-/**
- * @api
- * @since 100.0.2
- */
 class IndexerHandler implements IndexerInterface
 {
     /**
@@ -64,7 +62,7 @@ class IndexerHandler implements IndexerInterface
      * @param ResourceConnection $resource
      * @param Config $eavConfig
      * @param Batch $batch
-     * @param IndexScopeResolverInterface $indexScopeResolver
+     * @param \Magento\Framework\Indexer\ScopeResolver\IndexScopeResolver $indexScopeResolver
      * @param array $data
      * @param int $batchSize
      */
@@ -73,9 +71,9 @@ class IndexerHandler implements IndexerInterface
         ResourceConnection $resource,
         Config $eavConfig,
         Batch $batch,
-        IndexScopeResolverInterface $indexScopeResolver,
+        IndexScopeResolver $indexScopeResolver,
         array $data,
-        $batchSize = 500
+        $batchSize = 100
     ) {
         $this->indexScopeResolver = $indexScopeResolver;
         $this->indexStructure = $indexStructure;

@@ -7,9 +7,7 @@
 require __DIR__ . '/../../../Magento/Customer/_files/customer.php';
 require __DIR__ . '/../../../Magento/Catalog/_files/product_simple.php';
 
-$wishlist = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->create(
-    \Magento\Wishlist\Model\Wishlist::class
-);
+$wishlist = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->create('Magento\Wishlist\Model\Wishlist');
 $wishlist->loadByCustomerId($customer->getId(), true);
 $item = $wishlist->addNewItem($product, new \Magento\Framework\DataObject([]));
 //    'product' => '1',

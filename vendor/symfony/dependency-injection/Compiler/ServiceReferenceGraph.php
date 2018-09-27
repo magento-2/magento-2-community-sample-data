@@ -20,8 +20,6 @@ use Symfony\Component\DependencyInjection\Exception\InvalidArgumentException;
  * it themselves which improves performance quite a lot.
  *
  * @author Johannes M. Schmitt <schmittjoh@gmail.com>
- *
- * @final since version 3.4
  */
 class ServiceReferenceGraph
 {
@@ -75,9 +73,6 @@ class ServiceReferenceGraph
      */
     public function clear()
     {
-        foreach ($this->nodes as $node) {
-            $node->clear();
-        }
         $this->nodes = array();
     }
 
@@ -85,25 +80,16 @@ class ServiceReferenceGraph
      * Connects 2 nodes together in the Graph.
      *
      * @param string $sourceId
-     * @param mixed  $sourceValue
+     * @param string $sourceValue
      * @param string $destId
-     * @param mixed  $destValue
+     * @param string $destValue
      * @param string $reference
-     * @param bool   $lazy
-     * @param bool   $weak
      */
-    public function connect($sourceId, $sourceValue, $destId, $destValue = null, $reference = null/*, bool $lazy = false, bool $weak = false*/)
+    public function connect($sourceId, $sourceValue, $destId, $destValue = null, $reference = null)
     {
-        $lazy = func_num_args() >= 6 ? func_get_arg(5) : false;
-        $weak = func_num_args() >= 7 ? func_get_arg(6) : false;
-
-        if (null === $sourceId || null === $destId) {
-            return;
-        }
-
         $sourceNode = $this->createNode($sourceId, $sourceValue);
         $destNode = $this->createNode($destId, $destValue);
-        $edge = new ServiceReferenceGraphEdge($sourceNode, $destNode, $reference, $lazy, $weak);
+        $edge = new ServiceReferenceGraphEdge($sourceNode, $destNode, $reference);
 
         $sourceNode->addOutEdge($edge);
         $destNode->addInEdge($edge);
@@ -113,7 +99,7 @@ class ServiceReferenceGraph
      * Creates a graph node.
      *
      * @param string $id
-     * @param mixed  $value
+     * @param string $value
      *
      * @return ServiceReferenceGraphNode
      */

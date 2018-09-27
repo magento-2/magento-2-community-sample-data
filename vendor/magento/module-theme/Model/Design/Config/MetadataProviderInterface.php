@@ -5,10 +5,6 @@
  */
 namespace Magento\Theme\Model\Design\Config;
 
-/**
- * Interface \Magento\Theme\Model\Design\Config\MetadataProviderInterface
- *
- */
 interface MetadataProviderInterface
 {
     /**

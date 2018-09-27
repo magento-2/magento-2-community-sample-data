@@ -5,7 +5,7 @@
  */
 namespace Magento\Sales\Test\Unit\Model\Order\Shipment;
 
-class OrderRegistrarTest extends \PHPUnit\Framework\TestCase
+class OrderRegistrarTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\Sales\Model\Order\Shipment\OrderRegistrar
@@ -37,20 +37,23 @@ class OrderRegistrarTest extends \PHPUnit\Framework\TestCase
     public function testRegister()
     {
         $item1 = $this->getShipmentItemMock();
-        $item1->expects($this->once())->method('getQty')->willReturn(0);
-        $item1->expects($this->never())->method('register');
-        $item1->expects($this->never())->method('getOrderItem');
+        $item1->expects($this->once())
+            ->method('getQty')
+            ->willReturn(0);
+        $item1->expects($this->never())
+            ->method('register');
 
         $item2 = $this->getShipmentItemMock();
-        $item2->expects($this->atLeastOnce())->method('getQty')->willReturn(0.5);
-        $item2->expects($this->once())->method('register');
-
-        $orderItemMock = $this->createMock(\Magento\Sales\Model\Order\Item::class);
-        $orderItemMock->expects($this->once())->method('isDummy')->with(true)->willReturn(false);
-        $item2->expects($this->once())->method('getOrderItem')->willReturn($orderItemMock);
+        $item2->expects($this->once())
+            ->method('getQty')
+            ->willReturn(0.5);
+        $item2->expects($this->once())
+            ->method('register');
 
         $items = [$item1, $item2];
-        $this->shipmentMock->expects($this->once())->method('getItems')->willReturn($items);
+        $this->shipmentMock->expects($this->once())
+            ->method('getItems')
+            ->willReturn($items);
         $this->assertEquals(
             $this->orderMock,
             $this->model->register($this->orderMock, $this->shipmentMock)
@@ -64,7 +67,7 @@ class OrderRegistrarTest extends \PHPUnit\Framework\TestCase
     {
         return $this->getMockBuilder(\Magento\Sales\Api\Data\ShipmentItemInterface::class)
             ->disableOriginalConstructor()
-            ->setMethods(['register', 'getOrderItem'])
+            ->setMethods(['register'])
             ->getMockForAbstractClass();
     }
 }

@@ -10,10 +10,7 @@ namespace Magento\Multishipping\Test\Unit\Controller\Checkout\Address;
 
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
 
-/**
- * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
- */
-class NewShippingTest extends \PHPUnit\Framework\TestCase
+class NewShippingTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\Multishipping\Controller\Checkout\Address\NewShipping
@@ -73,29 +70,29 @@ class NewShippingTest extends \PHPUnit\Framework\TestCase
     protected function setUp()
     {
         $objectManager = new ObjectManager($this);
-        $this->configMock = $this->createMock(\Magento\Framework\View\Page\Config::class);
+        $this->configMock = $this->getMock('Magento\Framework\View\Page\Config', [], [], '', false);
         $this->checkoutMock =
-            $this->createMock(\Magento\Multishipping\Model\Checkout\Type\Multishipping::class);
-        $this->titleMock = $this->createMock(\Magento\Framework\View\Page\Title::class);
-        $this->layoutMock = $this->createMock(\Magento\Framework\View\Layout::class);
-        $this->viewMock = $this->createMock(\Magento\Framework\App\ViewInterface::class);
-        $this->objectManagerMock = $this->createMock(\Magento\Framework\ObjectManagerInterface::class);
+            $this->getMock('Magento\Multishipping\Model\Checkout\Type\Multishipping', [], [], '', false);
+        $this->titleMock = $this->getMock('Magento\Framework\View\Page\Title', [], [], '', false);
+        $this->layoutMock = $this->getMock('Magento\Framework\View\Layout', [], [], '', false);
+        $this->viewMock = $this->getMock('Magento\Framework\App\ViewInterface');
+        $this->objectManagerMock = $this->getMock('Magento\Framework\ObjectManagerInterface');
         $this->stateMock =
-            $this->createMock(\Magento\Multishipping\Model\Checkout\Type\Multishipping\State::class);
+            $this->getMock('Magento\Multishipping\Model\Checkout\Type\Multishipping\State', [], [], '', false);
         $valueMap = [
-            [\Magento\Multishipping\Model\Checkout\Type\Multishipping\State::class, $this->stateMock],
-            [\Magento\Multishipping\Model\Checkout\Type\Multishipping::class, $this->checkoutMock]
+            ['Magento\Multishipping\Model\Checkout\Type\Multishipping\State', $this->stateMock],
+            ['Magento\Multishipping\Model\Checkout\Type\Multishipping', $this->checkoutMock]
         ];
         $this->objectManagerMock->expects($this->any())->method('get')->willReturnMap($valueMap);
-        $request = $this->getMockBuilder(\Magento\Framework\App\RequestInterface::class)
+        $request = $this->getMockBuilder('\Magento\Framework\App\RequestInterface')
             ->disableOriginalConstructor()
             ->setMethods([])
             ->getMockForAbstractClass();
-        $response = $this->getMockBuilder(\Magento\Framework\App\ResponseInterface::class)
+        $response = $this->getMockBuilder('\Magento\Framework\App\ResponseInterface')
             ->disableOriginalConstructor()
             ->setMethods([])
             ->getMockForAbstractClass();
-        $contextMock = $this->createMock(\Magento\Framework\App\Action\Context::class);
+        $contextMock = $this->getMock('\Magento\Framework\App\Action\Context', [], [], '', false);
         $contextMock->expects($this->atLeastOnce())
             ->method('getRequest')
             ->will($this->returnValue($request));
@@ -106,15 +103,14 @@ class NewShippingTest extends \PHPUnit\Framework\TestCase
         $contextMock->expects($this->any())->method('getObjectManager')->willReturn($this->objectManagerMock);
         $methods = ['setTitle', 'getTitle', 'setSuccessUrl', 'setBackUrl', 'setErrorUrl', '__wakeUp'];
         $this->addressFormMock =
-            $this->createPartialMock(\Magento\Customer\Block\Address\Edit::class, $methods);
-        $this->urlMock = $this->createMock(\Magento\Framework\UrlInterface::class);
+            $this->getMock('Magento\Customer\Block\Address\Edit', $methods, [], '', false);
+        $this->urlMock = $this->getMock('Magento\Framework\UrlInterface');
         $contextMock->expects($this->any())->method('getUrl')->willReturn($this->urlMock);
-        $this->pageMock = $this->createMock(\Magento\Framework\View\Result\Page::class);
+        $this->pageMock = $this->getMock('Magento\Framework\View\Result\Page', [], [], '', false);
         $this->pageMock->expects($this->any())->method('getConfig')->willReturn($this->configMock);
         $this->configMock->expects($this->any())->method('getTitle')->willReturn($this->titleMock);
         $this->viewMock->expects($this->any())->method('getPage')->willReturn($this->pageMock);
-        $this->controller = $objectManager->getObject(
-            \Magento\Multishipping\Controller\Checkout\Address\NewShipping::class,
+        $this->controller = $objectManager->getObject('Magento\Multishipping\Controller\Checkout\Address\NewShipping',
             ['context' => $contextMock]);
     }
 
@@ -142,7 +138,7 @@ class NewShippingTest extends \PHPUnit\Framework\TestCase
             ->method('setTitle')
             ->with('Create Shipping Address')
             ->willReturnSelf();
-        $helperMock = $this->createPartialMock(\Magento\Multishipping\Helper\Data::class, ['__']);
+        $helperMock = $this->getMock('Magento\Multishipping\Helper\Data', [], [], '', false);
         $helperMock->expects($this->any())->method('__')->willReturn('Create Shipping Address');
         $this->addressFormMock->expects($this->once())->method('setSuccessUrl')->with('success/url')->willReturnSelf();
         $this->addressFormMock->expects($this->once())->method('setErrorUrl')->with('error/url')->willReturnSelf();
@@ -164,6 +160,9 @@ class NewShippingTest extends \PHPUnit\Framework\TestCase
         $this->controller->execute();
     }
 
+    /**
+     * @return array
+     */
     public function executeDataProvider()
     {
         return [
@@ -171,6 +170,7 @@ class NewShippingTest extends \PHPUnit\Framework\TestCase
             'shipping_address_not_exist' => ['*/cart/', null, 'back/cart']
         ];
     }
+
 
     public function testExecuteWhenCustomerAddressBlockNotExist()
     {

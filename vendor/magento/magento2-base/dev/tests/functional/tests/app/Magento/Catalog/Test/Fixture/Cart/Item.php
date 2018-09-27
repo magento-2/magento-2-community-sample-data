@@ -8,6 +8,7 @@ namespace Magento\Catalog\Test\Fixture\Cart;
 
 use Magento\Mtf\Fixture\DataSource;
 use Magento\Mtf\Fixture\FixtureInterface;
+use Magento\Catalog\Test\Fixture\CatalogProductSimple;
 
 /**
  * Data for verify cart item block on checkout page.
@@ -20,31 +21,15 @@ use Magento\Mtf\Fixture\FixtureInterface;
 class Item extends DataSource
 {
     /**
-     * Product fixture.
-     *
-     * @var FixtureInterface
-     */
-    protected $product;
-
-    /**
+     * @constructor
      * @param FixtureInterface $product
      */
     public function __construct(FixtureInterface $product)
     {
-        $this->product = $product;
-    }
-
-    /**
-     * Return prepared dataset.
-     *
-     * @param null|string $key
-     * @return array
-     */
-    public function getData($key = null)
-    {
-        $checkoutData = $this->product->getCheckoutData();
+        /** @var CatalogProductSimple $product */
+        $checkoutData = $product->getCheckoutData();
         $cartItem = isset($checkoutData['cartItem']) ? $checkoutData['cartItem'] : [];
-        $customOptions = $this->product->hasData('custom_options') ? $this->product->getCustomOptions() : [];
+        $customOptions = $product->hasData('custom_options') ? $product->getCustomOptions() : [];
         $checkoutCustomOptions = isset($checkoutData['options']['custom_options'])
             ? $checkoutData['options']['custom_options']
             : [];
@@ -67,12 +52,9 @@ class Item extends DataSource
             ? $cartItem['options'] + $checkoutCustomOptions
             : $checkoutCustomOptions;
         $cartItem['qty'] = isset($checkoutData['qty'])
-            ? $checkoutData['qty']
-            : 1;
-        $cartItem['sku'] = $this->product->getSku();
-        $cartItem['name'] = $this->product->getName();
-        $this->data = $cartItem;
+                ? $checkoutData['qty']
+                : 1;
 
-        return parent::getData($key);
+        $this->data = $cartItem;
     }
 }

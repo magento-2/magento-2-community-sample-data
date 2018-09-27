@@ -6,9 +6,9 @@
 namespace Magento\Quote\Model\Cart\Totals;
 
 use Magento\Catalog\Helper\Product\ConfigurationPool;
+use Magento\Framework\Event\ManagerInterface as EventManager;
 use Magento\Framework\Api\DataObjectHelper;
 use Magento\Framework\Api\ExtensibleDataInterface;
-use Magento\Framework\Event\ManagerInterface as EventManager;
 
 /**
  * Cart item totals converter.
@@ -38,33 +38,23 @@ class ItemConverter
     private $dataObjectHelper;
 
     /**
-     * @var \Magento\Framework\Serialize\Serializer\Json
-     */
-    private $serializer;
-
-    /**
      * Constructs a totals item converter object.
      *
      * @param ConfigurationPool $configurationPool
      * @param EventManager $eventManager
      * @param \Magento\Quote\Api\Data\TotalsItemInterfaceFactory $totalsItemFactory
      * @param DataObjectHelper $dataObjectHelper
-     * @param \Magento\Framework\Serialize\Serializer\Json|null $serializer
-     * @throws \RuntimeException
      */
     public function __construct(
         ConfigurationPool $configurationPool,
         EventManager $eventManager,
         \Magento\Quote\Api\Data\TotalsItemInterfaceFactory $totalsItemFactory,
-        DataObjectHelper $dataObjectHelper,
-        \Magento\Framework\Serialize\Serializer\Json $serializer = null
+        DataObjectHelper $dataObjectHelper
     ) {
         $this->configurationPool = $configurationPool;
         $this->eventManager = $eventManager;
         $this->totalsItemFactory = $totalsItemFactory;
         $this->dataObjectHelper = $dataObjectHelper;
-        $this->serializer = $serializer ?: \Magento\Framework\App\ObjectManager::getInstance()
-            ->get(\Magento\Framework\Serialize\Serializer\Json::class);
     }
 
     /**
@@ -85,7 +75,7 @@ class ItemConverter
         $this->dataObjectHelper->populateWithArray(
             $itemsData,
             $items,
-            \Magento\Quote\Api\Data\TotalsItemInterface::class
+            '\Magento\Quote\Api\Data\TotalsItemInterface'
         );
         return $itemsData;
     }
@@ -113,6 +103,6 @@ class ItemConverter
             $optionsData[$index] = $option;
             $optionsData[$index]['label'] = $optionValue['label'];
         }
-        return $this->serializer->serialize($optionsData);
+        return \Zend_Json::encode($optionsData);
     }
 }

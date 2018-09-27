@@ -171,9 +171,6 @@ class ArrayLoader implements LoaderInterface
                 foreach ($config['scripts'] as $event => $listeners) {
                     $config['scripts'][$event] = (array) $listeners;
                 }
-                if (isset($config['scripts']['composer'])) {
-                    trigger_error('The `composer` script name is reserved for internal use, please avoid defining it', E_USER_DEPRECATED);
-                }
                 $package->setScripts($config['scripts']);
             }
 
@@ -232,9 +229,6 @@ class ArrayLoader implements LoaderInterface
     {
         $res = array();
         foreach ($links as $target => $constraint) {
-            if (!is_string($constraint)) {
-                throw new \UnexpectedValueException('Link constraint in '.$source.' '.$description.' > '.$target.' should be a string, got '.gettype($constraint) . ' (' . var_export($constraint, true) . ')');
-            }
             if ('self.version' === $constraint) {
                 $parsedConstraint = $this->versionParser->parseConstraints($sourceVersion);
             } else {

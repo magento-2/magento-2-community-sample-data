@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2018 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\CatalogSearch\Model\ResourceModel\Fulltext;
@@ -9,7 +9,7 @@ namespace Magento\CatalogSearch\Model\ResourceModel\Fulltext;
  * Test class for \Magento\CatalogSearch\Model\ResourceModel\Fulltext\Collection.
  * @magentoDbIsolation disabled
  */
-class CollectionTest extends \PHPUnit\Framework\TestCase
+class CollectionTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @dataProvider filtersDataProviderSearch
@@ -20,7 +20,7 @@ class CollectionTest extends \PHPUnit\Framework\TestCase
         $objManager = \Magento\TestFramework\Helper\Bootstrap::getObjectManager();
         /** @var  \Magento\CatalogSearch\Model\ResourceModel\Fulltext\Collection $fulltextCollection */
         $fulltextCollection = $objManager->create(
-            \Magento\CatalogSearch\Model\ResourceModel\Fulltext\Collection::class,
+            '\Magento\CatalogSearch\Model\ResourceModel\Fulltext\Collection',
             ['searchRequestName' => $request]
         );
         foreach ($filters as $field => $value) {
@@ -79,6 +79,7 @@ class CollectionTest extends \PHPUnit\Framework\TestCase
             ['catalog_view_container', ['category_ids' => 100001], 0],
             ['catalog_view_container', ['category_ids' => []], 0],
             ['catalog_view_container', [], 0],
+            ['catalog_view_container', ['visibility' => [2, 4]], 5],
         ];
     }
 }

@@ -12,8 +12,7 @@ use Magento\Framework\View\Element\Message\InterpretationStrategyInterface;
 /**
  * Shopping cart item render block
  *
- * @api
- * @since 100.0.2
+ * @author      Magento Core Team <core@magentocommerce.com>
  */
 class Renderer extends \Magento\Checkout\Block\Cart\Item\Renderer
 {

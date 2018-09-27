@@ -16,7 +16,7 @@ use Magento\TestFramework\Helper\Bootstrap;
 /**
  * @magentoAppArea adminhtml
  */
-class ConfigurableTest extends \PHPUnit\Framework\TestCase
+class ConfigurableTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var StoreManagerInterface
@@ -36,15 +36,15 @@ class ConfigurableTest extends \PHPUnit\Framework\TestCase
 
     /**
      * @magentoDataFixture Magento/ConfigurableProduct/_files/product_configurable.php
-     * @magentoDbIsolation disabled
      */
     public function testGetProductFinalPriceIfOneOfChildIsDisabled()
     {
+        $product = $this->productRepository->get('configurable');
         /** @var Collection $collection */
         $collection = Bootstrap::getObjectManager()->get(CollectionFactory::class)
             ->create();
         $configurableProduct = $collection
-            ->addIdFilter([1])
+            ->addIdFilter([$product->getId()])
             ->addMinimalPrice()
             ->load()
             ->getFirstItem();
@@ -62,7 +62,7 @@ class ConfigurableTest extends \PHPUnit\Framework\TestCase
         $collection = Bootstrap::getObjectManager()->get(CollectionFactory::class)
             ->create();
         $configurableProduct = $collection
-            ->addIdFilter([1])
+            ->addIdFilter([$product->getId()])
             ->addMinimalPrice()
             ->load()
             ->getFirstItem();
@@ -71,15 +71,15 @@ class ConfigurableTest extends \PHPUnit\Framework\TestCase
 
     /**
      * @magentoDataFixture Magento/ConfigurableProduct/_files/product_configurable.php
-     * @magentoDbIsolation disabled
      */
     public function testGetProductFinalPriceIfOneOfChildIsDisabledPerStore()
     {
+        $product = $this->productRepository->get('configurable');
         /** @var Collection $collection */
         $collection = Bootstrap::getObjectManager()->get(CollectionFactory::class)
             ->create();
         $configurableProduct = $collection
-            ->addIdFilter([1])
+            ->addIdFilter([$product->getId()])
             ->addMinimalPrice()
             ->load()
             ->getFirstItem();
@@ -99,7 +99,7 @@ class ConfigurableTest extends \PHPUnit\Framework\TestCase
         $collection = Bootstrap::getObjectManager()->get(CollectionFactory::class)
             ->create();
         $configurableProduct = $collection
-            ->addIdFilter([1])
+            ->addIdFilter([$product->getId()])
             ->addMinimalPrice()
             ->load()
             ->getFirstItem();

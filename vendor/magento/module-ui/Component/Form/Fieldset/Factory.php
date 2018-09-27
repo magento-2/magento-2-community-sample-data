@@ -16,7 +16,7 @@ class Factory
     /**
      * @var string
      */
-    protected $className = \Magento\Ui\Component\Form\Fieldset::class;
+    protected $className = 'Magento\Ui\Component\Form\Fieldset';
 
     /**
      * @var ObjectManagerInterface

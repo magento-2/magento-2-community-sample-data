@@ -7,33 +7,45 @@ namespace Magento\CatalogUrlRewrite\Model\Map;
 
 use Magento\Framework\App\ResourceConnection;
 use Magento\Framework\DB\TemporaryTableService;
-use Magento\Framework\DB\Select;
 use Magento\UrlRewrite\Model\MergeDataProvider;
 
 /**
- * Map that holds data for category url rewrites entity
+ * Map that holds data for category url rewrites entity.
  */
 class DataCategoryUrlRewriteDatabaseMap implements DatabaseMapInterface
 {
-    const ENTITY_TYPE = 'category';
+    /**
+     * Entity type for queries.
+     *
+     * @var string
+     */
+    private $entityType = 'category';
 
     /**
+     * Names of the temporary tables.
+     *
      * @var string[]
      */
     private $createdTableAdapters = [];
 
     /**
-     * @var \Magento\CatalogUrlRewrite\Model\Map\HashMapPool
+     * Pool for hash maps.
+     *
+     * @var HashMapPool
      */
     private $hashMapPool;
 
     /**
-     * @var \Magento\Framework\App\ResourceConnection
+     * Resource connection.
+     *
+     * @var ResourceConnection
      */
     private $connection;
 
     /**
-     * @var \Magento\Framework\DB\TemporaryTableService
+     * Creates a temporary table in mysql.
+     *
+     * @var TemporaryTableService
      */
     private $temporaryTableService;
 
@@ -53,7 +65,7 @@ class DataCategoryUrlRewriteDatabaseMap implements DatabaseMapInterface
     }
 
     /**
-     * Generates data from categoryId and stores it into a temporary table
+     * Generates data from categoryId and stores it into a temporary table.
      *
      * @param int $categoryId
      * @return void
@@ -66,8 +78,8 @@ class DataCategoryUrlRewriteDatabaseMap implements DatabaseMapInterface
     }
 
     /**
-     * Queries the database for all category url rewrites that are affected by the category identified by $categoryId
-     * It returns the name of the temporary table where the resulting data is stored
+     * Queries the database for all category url rewrites that are affected by the category identified by $categoryId.
+     * It returns the name of the temporary table where the resulting data is stored.
      *
      * @param int $categoryId
      * @return string
@@ -83,7 +95,7 @@ class DataCategoryUrlRewriteDatabaseMap implements DatabaseMapInterface
                 )
                 ]
             )
-            ->where('entity_type = ?', self::ENTITY_TYPE)
+            ->where('entity_type = ?', $this->entityType)
             ->where(
                 $urlRewritesConnection->prepareSqlCondition(
                     'entity_id',
@@ -106,6 +118,7 @@ class DataCategoryUrlRewriteDatabaseMap implements DatabaseMapInterface
                 'ENTITY_STORE' => ['entity_id', 'store_id']
             ]
         );
+
         return $mapName;
     }
 
@@ -123,7 +136,7 @@ class DataCategoryUrlRewriteDatabaseMap implements DatabaseMapInterface
     }
 
     /**
-     * Gets data by criteria from a map identified by a category Id
+     * Gets data by criteria from a map identified by a category Id.
      *
      * @param int $categoryId
      * @param string $key

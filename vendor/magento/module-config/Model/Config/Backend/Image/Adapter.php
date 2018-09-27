@@ -11,10 +11,6 @@
  */
 namespace Magento\Config\Model\Config\Backend\Image;
 
-/**
- * @api
- * @since 100.0.2
- */
 class Adapter extends \Magento\Framework\App\Config\Value
 {
     /**

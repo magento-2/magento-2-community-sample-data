@@ -19,6 +19,6 @@ class StockCriteriaMapper extends GenericMapper
      */
     protected function init()
     {
-        $this->initResource(\Magento\CatalogInventory\Model\ResourceModel\Stock::class);
+        $this->initResource('Magento\CatalogInventory\Model\ResourceModel\Stock');
     }
 }

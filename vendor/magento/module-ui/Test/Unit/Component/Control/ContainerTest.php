@@ -7,7 +7,7 @@ namespace Magento\Ui\Test\Unit\Component\Control;
 
 use \Magento\Ui\Component\Control\Container;
 
-class ContainerTest extends \PHPUnit\Framework\TestCase
+class ContainerTest extends \PHPUnit_Framework_TestCase
 {
     public function testToHtml()
     {
@@ -17,30 +17,30 @@ class ContainerTest extends \PHPUnit\Framework\TestCase
         $blockName = $nameInLayout . '-' . $id . '-button';
         $expectedHtml = 'test html';
 
-        $blockButtonMock = $this->createMock(Container::DEFAULT_CONTROL);
+        $blockButtonMock = $this->getMock(Container::DEFAULT_CONTROL, [], [], '', false);
         $blockButtonMock->expects($this->once())->method('toHtml')->willReturn($expectedHtml);
 
-        $contextMock = $this->createMock(\Magento\Framework\View\Element\Template\Context::class);
+        $contextMock = $this->getMock('Magento\Framework\View\Element\Template\Context', [], [], '', false);
 
-        $eventManagerMock = $this->getMockForAbstractClass(\Magento\Framework\Event\ManagerInterface::class);
+        $eventManagerMock = $this->getMockForAbstractClass('Magento\Framework\Event\ManagerInterface');
         $contextMock->expects($this->any())->method('getEventManager')->willReturn($eventManagerMock);
 
-        $scopeConfigMock = $this->getMockForAbstractClass(\Magento\Framework\App\Config\ScopeConfigInterface::class);
+        $scopeConfigMock = $this->getMockForAbstractClass('Magento\Framework\App\Config\ScopeConfigInterface');
         $scopeConfigMock->expects($this->any())->method('getValue')->withAnyParameters()->willReturn(false);
         $contextMock->expects($this->any())->method('getScopeConfig')->willReturn($scopeConfigMock);
 
-        $layoutMock = $this->createMock(\Magento\Framework\View\Layout::class);
+        $layoutMock = $this->getMock('Magento\Framework\View\Layout', [], [], '', false);
         $layoutMock->expects($this->once())
             ->method('createBlock')
             ->with(Container::DEFAULT_CONTROL, $blockName)
             ->willReturn($blockButtonMock);
         $contextMock->expects($this->any())->method('getLayout')->willReturn($layoutMock);
 
-        $itemMock = $this->createPartialMock(\Magento\Ui\Component\Control\Item::class, ['getId', 'getData']);
+        $itemMock = $this->getMock('Magento\Ui\Component\Control\Item', ['getId', 'getData'], [], '', false);
         $itemMock->expects($this->any())->method('getData')->willReturn($data);
         $itemMock->expects($this->any())->method('getId')->willReturn($id);
 
-        $abstractContextMock = $this->getMockBuilder(\Magento\Framework\View\Element\AbstractBlock::class)
+        $abstractContextMock = $this->getMockBuilder('Magento\Framework\View\Element\AbstractBlock')
             ->disableOriginalConstructor()
             ->setMethods(['getNameInLayout'])
             ->getMockForAbstractClass();

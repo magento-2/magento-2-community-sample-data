@@ -11,21 +11,21 @@ require __DIR__ . '/../../../Magento/Catalog/_files/products.php';
 $objectManager = \Magento\TestFramework\Helper\Bootstrap::getObjectManager();
 
 /** @var \Magento\Quote\Model\Quote\Address $quoteShippingAddress */
-$quoteShippingAddress = $objectManager->create(\Magento\Quote\Model\Quote\Address::class);
+$quoteShippingAddress = $objectManager->create('Magento\Quote\Model\Quote\Address');
 
 /** @var \Magento\Customer\Api\AccountManagementInterface $accountManagement */
-$accountManagement = $objectManager->create(\Magento\Customer\Api\AccountManagementInterface::class);
+$accountManagement = $objectManager->create('Magento\Customer\Api\AccountManagementInterface');
 
 /** @var \Magento\Customer\Api\CustomerRepositoryInterface $customerRepository */
-$customerRepository = $objectManager->create(\Magento\Customer\Api\CustomerRepositoryInterface::class);
+$customerRepository = $objectManager->create('Magento\Customer\Api\CustomerRepositoryInterface');
 $customer = $customerRepository->getById(1);
 
 /** @var \Magento\Customer\Api\AddressRepositoryInterface $addressRepository */
-$addressRepository = $objectManager->create(\Magento\Customer\Api\AddressRepositoryInterface::class);
+$addressRepository = $objectManager->create('Magento\Customer\Api\AddressRepositoryInterface');
 $quoteShippingAddress->importCustomerAddressData($addressRepository->getById(1));
 
 /** @var \Magento\Quote\Model\Quote $quote */
-$quote = $objectManager->create(\Magento\Quote\Model\Quote::class);
+$quote = $objectManager->create('Magento\Quote\Model\Quote');
 $quote->setStoreId(
     1
 )->setIsActive(

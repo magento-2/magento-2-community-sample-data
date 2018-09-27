@@ -7,7 +7,6 @@ namespace Magento\Indexer\Model;
 
 use Magento\Framework\Indexer\ConfigInterface;
 use Magento\Framework\Indexer\IndexerInterface;
-use Magento\Framework\Indexer\IndexerInterfaceFactory;
 use Magento\Framework\Indexer\StateInterface;
 
 class Processor
@@ -18,7 +17,7 @@ class Processor
     protected $config;
 
     /**
-     * @var IndexerInterfaceFactory
+     * @var IndexerFactory
      */
     protected $indexerFactory;
 
@@ -34,13 +33,13 @@ class Processor
 
     /**
      * @param ConfigInterface $config
-     * @param IndexerInterfaceFactory $indexerFactory
+     * @param IndexerFactory $indexerFactory
      * @param Indexer\CollectionFactory $indexersFactory
      * @param \Magento\Framework\Mview\ProcessorInterface $mviewProcessor
      */
     public function __construct(
         ConfigInterface $config,
-        IndexerInterfaceFactory $indexerFactory,
+        IndexerFactory $indexerFactory,
         Indexer\CollectionFactory $indexersFactory,
         \Magento\Framework\Mview\ProcessorInterface $mviewProcessor
     ) {

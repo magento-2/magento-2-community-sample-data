@@ -6,7 +6,7 @@
 
 // @codingStandardsIgnoreFile
 
-class ConfigDomMock extends \PHPUnit\Framework\TestCase
+class ConfigDomMock extends \PHPUnit_Framework_TestCase
 {
     /**
      * @param null|string $initialContents
@@ -32,6 +32,9 @@ class ConfigDomMock extends \PHPUnit\Framework\TestCase
         return true;
     }
 
+    /**
+     * @return string
+     */
     public function getDom()
     {
         return 'reader dom result';

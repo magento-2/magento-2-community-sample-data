@@ -10,8 +10,6 @@ namespace Magento\Bundle\Block\Catalog\Product\View\Type\Bundle;
 
 /**
  * Bundle option renderer
- * @api
- * @since 100.0.2
  */
 class Option extends \Magento\Bundle\Block\Catalog\Product\Price
 {
@@ -142,38 +140,23 @@ class Option extends \Magento\Bundle\Block\Catalog\Product\Price
      */
     protected function _getSelectedOptions()
     {
-        if ($this->_selectedOptions === null) {
+        if (is_null($this->_selectedOptions)) {
             $this->_selectedOptions = [];
-
-            /** @var \Magento\Bundle\Model\Option $option */
             $option = $this->getOption();
 
             if ($this->getProduct()->hasPreconfiguredValues()) {
-                $selectionId = $this->getProduct()->getPreconfiguredValues()->getData(
+                $configValue = $this->getProduct()->getPreconfiguredValues()->getData(
                     'bundle_option/' . $option->getId()
                 );
-                $this->assignSelection($option, $selectionId);
+                if ($configValue) {
+                    $this->_selectedOptions = $configValue;
+                } elseif (!$option->getRequired()) {
+                    $this->_selectedOptions = 'None';
+                }
             }
         }
 
         return $this->_selectedOptions;
-    }
-
-    /**
-     * Set selected options.
-     *
-     * @param \Magento\Bundle\Model\Option $option
-     * @param mixed $selectionId
-     * @return void
-     * @since 100.2.0
-     */
-    protected function assignSelection(\Magento\Bundle\Model\Option $option, $selectionId)
-    {
-        if ($selectionId && $option->getSelectionById($selectionId)) {
-            $this->_selectedOptions = $selectionId;
-        } elseif (!$option->getRequired()) {
-            $this->_selectedOptions = 'None';
-        }
     }
 
     /**

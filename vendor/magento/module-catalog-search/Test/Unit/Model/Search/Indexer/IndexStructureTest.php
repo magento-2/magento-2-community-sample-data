@@ -13,7 +13,7 @@ use \Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
 /**
  * Test for \Magento\Framework\Indexer\IndexStructure
  */
-class IndexStructureTest extends \PHPUnit\Framework\TestCase
+class IndexStructureTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\Framework\Indexer\ScopeResolver\IndexScopeResolver|\PHPUnit_Framework_MockObject_MockObject
@@ -37,19 +37,19 @@ class IndexStructureTest extends \PHPUnit\Framework\TestCase
 
     protected function setUp()
     {
-        $this->connection = $this->getMockBuilder(\Magento\Framework\DB\Adapter\AdapterInterface::class)
+        $this->connection = $this->getMockBuilder('\Magento\Framework\DB\Adapter\AdapterInterface')
             ->disableOriginalConstructor()
             ->getMockForAbstractClass();
-        $this->resource = $this->getMockBuilder(\Magento\Framework\App\ResourceConnection::class)
+        $this->resource = $this->getMockBuilder('\Magento\Framework\App\ResourceConnection')
             ->setMethods(['getConnection'])
             ->disableOriginalConstructor()
             ->getMock();
         $this->resource->expects($this->atLeastOnce())
             ->method('getConnection')
             ->willReturn($this->connection);
-        $this->indexScopeResolver = $this->getMockBuilder(
-            \Magento\Framework\Search\Request\IndexScopeResolverInterface::class
-        )->setMethods(['resolve'])
+        $this->indexScopeResolver = $this->getMockBuilder('\Magento\Framework\Indexer\ScopeResolver\IndexScopeResolver')
+            ->setMethods(['resolve'])
+            ->disableOriginalConstructor()
             ->getMock();
 
         $objectManager = new ObjectManager($this);
@@ -63,6 +63,11 @@ class IndexStructureTest extends \PHPUnit\Framework\TestCase
         );
     }
 
+    /**
+     * @param string $table
+     * @param array $dimensions
+     * @param bool $isTableExist
+     */
     public function testDelete()
     {
         $index = 'index_name';
@@ -107,7 +112,7 @@ class IndexStructureTest extends \PHPUnit\Framework\TestCase
      */
     private function createDimensionMock($name, $value)
     {
-        $dimension = $this->getMockBuilder(\Magento\Framework\Search\Request\Dimension::class)
+        $dimension = $this->getMockBuilder('\Magento\Framework\Search\Request\Dimension')
             ->setMethods(['getName', 'getValue'])
             ->disableOriginalConstructor()
             ->getMock();
@@ -120,6 +125,12 @@ class IndexStructureTest extends \PHPUnit\Framework\TestCase
         return $dimension;
     }
 
+    /**
+     * @param $callNumber
+     * @param $tableName
+     * @param $isTableExist
+     * @return mixed
+     */
     private function mockDropTable($callNumber, $tableName, $isTableExist)
     {
         $this->connection->expects($this->at($callNumber++))
@@ -135,9 +146,14 @@ class IndexStructureTest extends \PHPUnit\Framework\TestCase
         return $callNumber;
     }
 
+    /**
+     * @param $callNumber
+     * @param $tableName
+     * @return mixed
+     */
     private function mockFulltextTable($callNumber, $tableName)
     {
-        $table = $this->getMockBuilder(\Magento\Framework\DB\Ddl\Table::class)
+        $table = $this->getMockBuilder('\Magento\Framework\DB\Ddl\Table')
             ->setMethods(['addColumn', 'addIndex'])
             ->disableOriginalConstructor()
             ->getMock();

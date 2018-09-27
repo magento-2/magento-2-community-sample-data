@@ -15,7 +15,7 @@ class EditShippingPost extends \Magento\Multishipping\Controller\Checkout\Addres
     {
         if ($addressId = $this->getRequest()->getParam('id')) {
             $this->_objectManager->create(
-                \Magento\Multishipping\Model\Checkout\Type\Multishipping::class
+                'Magento\Multishipping\Model\Checkout\Type\Multishipping'
             )->updateQuoteCustomerShippingAddress(
                 $addressId
             );

@@ -13,6 +13,7 @@
 namespace Composer\Util;
 
 use Composer\Config;
+use Composer\Downloader\TransportException;
 use Composer\IO\IOInterface;
 
 /**
@@ -72,7 +73,7 @@ class Svn
     public function __construct($url, IOInterface $io, Config $config, ProcessExecutor $process = null)
     {
         $this->url = $url;
-        $this->io = $io;
+        $this->io  = $io;
         $this->config = $config;
         $this->process = $process ?: new ProcessExecutor;
     }
@@ -99,8 +100,9 @@ class Svn
      */
     public function execute($command, $url, $cwd = null, $path = null, $verbose = false)
     {
-        // Ensure we are allowed to use this URL by config
-        $this->config->prohibitUrlByConfig($url, $this->io);
+        if (preg_match('{^(http|svn):}i', $url) && $this->config->get('secure-http')) {
+            throw new TransportException("Your configuration does not allow connection to $url. See https://getcomposer.org/doc/06-config.md#secure-http for details.");
+        }
 
         $svnCommand = $this->getCommand($command, $url, $path);
         $output = null;

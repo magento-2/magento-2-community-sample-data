@@ -27,8 +27,8 @@ class HtmlObject extends AbstractHtmlElement
     public function __invoke(
         $data = null,
         $type = null,
-        array $attribs = [],
-        array $params = [],
+        array $attribs = array(),
+        array $params = array(),
         $content = null
     ) {
         if ($data === null || $type === null) {
@@ -39,18 +39,18 @@ class HtmlObject extends AbstractHtmlElement
         }
 
         // Merge data and type
-        $attribs = array_merge(['data' => $data, 'type' => $type], $attribs);
+        $attribs = array_merge(array('data' => $data, 'type' => $type), $attribs);
 
         // Params
-        $paramHtml = [];
+        $paramHtml = array();
         $closingBracket = $this->getClosingBracket();
 
         foreach ($params as $param => $options) {
             if (is_string($options)) {
-                $options = ['value' => $options];
+                $options = array('value' => $options);
             }
 
-            $options = array_merge(['name' => $param], $options);
+            $options = array_merge(array('name' => $param), $options);
 
             $paramHtml[] = '<param' . $this->htmlAttribs($options) . $closingBracket;
         }

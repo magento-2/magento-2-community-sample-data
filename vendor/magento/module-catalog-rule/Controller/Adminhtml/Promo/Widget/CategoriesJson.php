@@ -32,21 +32,21 @@ class CategoriesJson extends \Magento\CatalogRule\Controller\Adminhtml\Promo\Wid
     /**
      * Initialize category object in registry
      *
-     * @return Category
+     * @return Category|bool
      */
     protected function _initCategory()
     {
         $categoryId = (int)$this->getRequest()->getParam('id', false);
         $storeId = (int)$this->getRequest()->getParam('store');
 
-        $category = $this->_objectManager->create(\Magento\Catalog\Model\Category::class);
+        $category = $this->_objectManager->create('Magento\Catalog\Model\Category');
         $category->setStoreId($storeId);
 
         if ($categoryId) {
             $category->load($categoryId);
             if ($storeId) {
                 $rootId = $this->_objectManager->get(
-                    \Magento\Store\Model\StoreManager::class
+                    'Magento\Store\Model\StoreManager'
                 )->getStore(
                     $storeId
                 )->getRootCategoryId();
@@ -78,7 +78,7 @@ class CategoriesJson extends \Magento\CatalogRule\Controller\Adminhtml\Promo\Wid
                 return;
             }
             $block = $this->_view->getLayout()->createBlock(
-                \Magento\Catalog\Block\Adminhtml\Category\Checkboxes\Tree::class
+                'Magento\Catalog\Block\Adminhtml\Category\Checkboxes\Tree'
             )->setCategoryIds(
                 [$categoryId]
             );

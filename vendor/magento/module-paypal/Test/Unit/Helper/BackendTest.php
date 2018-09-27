@@ -12,7 +12,7 @@ use Magento\Framework\App\Helper\Context;
 use Magento\Paypal\Helper\Backend;
 use Magento\Paypal\Model\Config\StructurePlugin;
 
-class BackendTest extends \PHPUnit\Framework\TestCase
+class BackendTest extends \PHPUnit_Framework_TestCase
 {
     const SCOPE = 'website';
 
@@ -50,20 +50,20 @@ class BackendTest extends \PHPUnit\Framework\TestCase
 
     protected function setUp()
     {
-        $this->context = $this->getMockBuilder(\Magento\Framework\App\Helper\Context::class)
+        $this->context = $this->getMockBuilder('Magento\Framework\App\Helper\Context')
             ->disableOriginalConstructor()
             ->getMock();
-        $this->request = $this->createMock(\Magento\Framework\App\RequestInterface::class);
+        $this->request = $this->getMock('Magento\Framework\App\RequestInterface');
         $this->context->expects(static::once())
             ->method('getRequest')
             ->willReturn($this->request);
-        $this->directoryHelperMock = $this->getMockBuilder(\Magento\Directory\Helper\Data::class)
+        $this->directoryHelperMock = $this->getMockBuilder('Magento\Directory\Helper\Data')
             ->disableOriginalConstructor()
             ->getMock();
-        $this->backendConfig = $this->getMockBuilder(\Magento\Config\Model\Config::class)
+        $this->backendConfig = $this->getMockBuilder('Magento\Config\Model\Config')
             ->disableOriginalConstructor()
             ->getMock();
-        $this->scopeDefiner = $this->getMockBuilder(\Magento\Config\Model\Config\ScopeDefiner::class)
+        $this->scopeDefiner = $this->getMockBuilder('Magento\Config\Model\Config\ScopeDefiner')
             ->disableOriginalConstructor()
             ->getMock();
 
@@ -92,6 +92,9 @@ class BackendTest extends \PHPUnit\Framework\TestCase
         $this->configurationCountryCodeAssertResult('GB');
     }
 
+    /**
+     * @return array
+     */
     public function getConfigurationCountryCodeFromConfigDataProvider()
     {
         return [
@@ -116,6 +119,9 @@ class BackendTest extends \PHPUnit\Framework\TestCase
         $this->configurationCountryCodeAssertResult($default);
     }
 
+    /**
+     * @return array
+     */
     public function getConfigurationCountryCodeFromDefaultDataProvider()
     {
         return [

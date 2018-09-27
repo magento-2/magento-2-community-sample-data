@@ -8,7 +8,7 @@ namespace Magento\ConfigurableProduct\Test\Unit\Model\Product\Type\Configurable;
 
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager as ObjectManagerHelper;
 
-class PriceTest extends \PHPUnit\Framework\TestCase
+class PriceTest extends \PHPUnit_Framework_TestCase
 {
     /** @var \Magento\ConfigurableProduct\Model\Product\Type\Configurable\Price */
     protected $model;
@@ -21,7 +21,7 @@ class PriceTest extends \PHPUnit\Framework\TestCase
         $this->objectManagerHelper = new ObjectManagerHelper($this);
 
         $this->model = $this->objectManagerHelper->getObject(
-            \Magento\ConfigurableProduct\Model\Product\Type\Configurable\Price::class
+            '\Magento\ConfigurableProduct\Model\Product\Type\Configurable\Price'
         );
     }
 
@@ -29,22 +29,22 @@ class PriceTest extends \PHPUnit\Framework\TestCase
     {
         $finalPrice = 10;
         $qty = 1;
-        $configurableProduct = $this->getMockBuilder(\Magento\Catalog\Model\Product::class)
+        $configurableProduct = $this->getMockBuilder('Magento\Catalog\Model\Product')
             ->disableOriginalConstructor()
             ->setMethods(['getCustomOption', 'getPriceInfo', 'setFinalPrice', '__wakeUp'])
             ->getMock();
-        $customOption = $this->getMockBuilder(\Magento\Catalog\Model\Product\Configuration\Item\Option::class)
+        $customOption = $this->getMockBuilder('Magento\Catalog\Model\Product\Configuration\Item\Option')
             ->disableOriginalConstructor()
             ->setMethods(['getProduct'])
             ->getMock();
-        $priceInfo = $this->getMockBuilder(\Magento\Framework\Pricing\PriceInfo\Base::class)
+        $priceInfo = $this->getMockBuilder('Magento\Framework\Pricing\PriceInfo\Base')
             ->disableOriginalConstructor()
             ->setMethods(['getPrice'])
             ->getMock();
-        $price = $this->getMockBuilder(\Magento\Framework\Pricing\Price\PriceInterface::class)
+        $price = $this->getMockBuilder('Magento\Framework\Pricing\Price\PriceInterface')
             ->disableOriginalConstructor()
             ->getMock();
-        $amount = $this->getMockBuilder(\Magento\Framework\Pricing\Amount\AmountInterface::class)
+        $amount = $this->getMockBuilder('Magento\Framework\Pricing\Amount\AmountInterface')
             ->disableOriginalConstructor()
             ->getMock();
 

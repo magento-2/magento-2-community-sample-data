@@ -3,8 +3,6 @@
  * Copyright © Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
-declare(strict_types=1);
-
 namespace Magento\Catalog\Model;
 
 /**
@@ -67,7 +65,7 @@ class ImageUploader
     protected $allowedExtensions;
 
     /**
-     * List of allowed image mime types
+     * List of allowed image mime types.
      *
      * @var array
      */
@@ -75,7 +73,7 @@ class ImageUploader
         'image/jpg',
         'image/jpeg',
         'image/gif',
-        'image/png'
+        'image/png',
     ];
 
     /**
@@ -242,9 +240,11 @@ class ImageUploader
         $uploader = $this->uploaderFactory->create(['fileId' => $fileId]);
         $uploader->setAllowedExtensions($this->getAllowedExtensions());
         $uploader->setAllowRenameFiles(true);
+
         if (!$uploader->checkMimeType($this->allowedMimeTypes)) {
             throw new \Magento\Framework\Exception\LocalizedException(__('File validation failed.'));
         }
+
         $result = $uploader->save($this->mediaDirectory->getAbsolutePath($baseTmpPath));
         unset($result['path']);
 

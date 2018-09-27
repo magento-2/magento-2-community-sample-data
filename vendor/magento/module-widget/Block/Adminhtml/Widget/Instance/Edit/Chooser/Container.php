@@ -24,7 +24,9 @@ class Container extends \Magento\Framework\View\Element\Html\Select
     const PAGE_LAYOUT_3COLUMNS = '3columns';
     /**#@-*/
 
-    /**#@-*/
+    /**
+     * @var \Magento\Framework\View\Layout\ProcessorFactory
+     */
     protected $_layoutProcessorFactory;
 
     /**

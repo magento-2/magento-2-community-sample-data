@@ -16,7 +16,7 @@ use Magento\Framework\Model\ResourceModel\AbstractResource;
  * @covers \Magento\Cms\Model\Page
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  */
-class PageTest extends \PHPUnit\Framework\TestCase
+class PageTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\Cms\Model\Page
@@ -58,7 +58,7 @@ class PageTest extends \PHPUnit\Framework\TestCase
             ->getMock();
         $this->resourcePageMock = $this->getMockBuilder(PageResource::class)
             ->disableOriginalConstructor()
-            ->setMethods(['getIdFieldName', 'checkIdentifier', 'getResources'])
+            ->setMethods(['getIdFieldName', 'checkIdentifier'])
             ->getMock();
         $this->eventManagerMock = $this->getMockBuilder(ManagerInterface::class)
             ->disableOriginalConstructor()

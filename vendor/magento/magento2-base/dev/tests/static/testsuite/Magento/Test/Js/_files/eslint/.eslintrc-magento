@@ -3,11 +3,10 @@
         "amd": true,
         "browser": true,
         "jasmine": true,
-        "jquery": true,
-        "prototypejs": true,
         "node": true
     },
     "rules": {
+        "consistent-return": 2,
         "eqeqeq": [2, "smart"],
         "guard-for-in": 2,
         "lines-around-comment": [
@@ -63,8 +62,7 @@
             2,
             {
                 "args": "after-used",
-                "vars": "all",
-                "varsIgnorePattern": "config"
+                "vars": "all"
             }
         ],
         "no-use-before-define": 2,
@@ -73,7 +71,7 @@
         "radix": 2,
         "semi": [2, "always"],
         "semi-spacing": 2,
-        "strict": ["error", "function"],
+        "strict": 2,
         "use-isnan": 2,
         "valid-typeof": 2,
         "vars-on-top": 2

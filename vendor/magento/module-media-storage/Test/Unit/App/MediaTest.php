@@ -7,11 +7,7 @@ namespace Magento\MediaStorage\Test\Unit\App;
 
 use Magento\Framework\App\Filesystem\DirectoryList;
 
-/**
- * Class MediaTest
- * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
- */
-class MediaTest extends \PHPUnit\Framework\TestCase
+class MediaTest extends \PHPUnit_Framework_TestCase
 {
     const MEDIA_DIRECTORY = 'mediaDirectory';
     const RELATIVE_FILE_PATH = 'test/file.png';
@@ -67,34 +63,38 @@ class MediaTest extends \PHPUnit\Framework\TestCase
         $this->closure = function () {
             return true;
         };
-        $this->configMock = $this->createMock(\Magento\MediaStorage\Model\File\Storage\Config::class);
-        $this->sync = $this->createMock(\Magento\MediaStorage\Model\File\Storage\Synchronization::class);
-        $this->configFactoryMock = $this->createPartialMock(
-            \Magento\MediaStorage\Model\File\Storage\ConfigFactory::class,
-            ['create']
+        $this->configMock = $this->getMock('Magento\MediaStorage\Model\File\Storage\Config', [], [], '', false);
+        $this->sync = $this->getMock('Magento\MediaStorage\Model\File\Storage\Synchronization', [], [], '', false);
+        $this->configFactoryMock = $this->getMock(
+            'Magento\MediaStorage\Model\File\Storage\ConfigFactory',
+            ['create'],
+            [],
+            '',
+            false
         );
         $this->configFactoryMock->expects($this->any())
             ->method('create')
             ->will($this->returnValue($this->configMock));
-        $this->syncFactoryMock = $this->createPartialMock(
-            \Magento\MediaStorage\Model\File\Storage\SynchronizationFactory::class,
-            ['create']
+        $this->syncFactoryMock = $this->getMock(
+            'Magento\MediaStorage\Model\File\Storage\SynchronizationFactory',
+            ['create'],
+            [],
+            '',
+            false
         );
         $this->syncFactoryMock->expects($this->any())
             ->method('create')
             ->will($this->returnValue($this->sync));
 
-        $this->filesystemMock = $this->createMock(\Magento\Framework\Filesystem::class);
-        $this->directoryMock = $this->getMockForAbstractClass(
-            \Magento\Framework\Filesystem\Directory\WriteInterface::class
-        );
+        $this->filesystemMock = $this->getMock('Magento\Framework\Filesystem', [], [], '', false);
+        $this->directoryMock = $this->getMockForAbstractClass('Magento\Framework\Filesystem\Directory\WriteInterface');
 
         $this->filesystemMock->expects($this->any())
             ->method('getDirectoryWrite')
             ->with(DirectoryList::MEDIA)
             ->will($this->returnValue($this->directoryMock));
 
-        $this->responseMock = $this->createMock(\Magento\MediaStorage\Model\File\Storage\Response::class);
+        $this->responseMock = $this->getMock('Magento\MediaStorage\Model\File\Storage\Response', [], [], '', false);
 
         $this->model = new \Magento\MediaStorage\App\Media(
             $this->configFactoryMock,
@@ -214,8 +214,8 @@ class MediaTest extends \PHPUnit\Framework\TestCase
      */
     public function testCatchException($isDeveloper, $setBodyCalls)
     {
-        $bootstrap = $this->createMock(\Magento\Framework\App\Bootstrap::class);
-        $exception = $this->createMock(\Exception::class);
+        $bootstrap = $this->getMock('Magento\Framework\App\Bootstrap', [], [], '', false);
+        $exception = $this->getMock('Exception', [], [], '', false);
         $this->responseMock->expects($this->once())
             ->method('setHttpResponseCode')
             ->with(404);
@@ -229,6 +229,9 @@ class MediaTest extends \PHPUnit\Framework\TestCase
         $this->model->catchException($bootstrap, $exception);
     }
 
+    /**
+     * @return array
+     */
     public function catchExceptionDataProvider()
     {
         return [

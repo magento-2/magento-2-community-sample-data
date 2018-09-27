@@ -3,9 +3,6 @@
  * See COPYING.txt for license details.
  */
 
-/**
- * @api
- */
 define([
     'ko',
     'jquery',
@@ -138,8 +135,7 @@ define([
             drEl.instance = recordNode = this.processingStyles(recordNode, elem);
             drEl.instanceCtx = this.getRecord(originRecord[0]);
             drEl.eventMousedownY = isTouchDevice ? event.originalEvent.touches[0].pageY : event.pageY;
-            drEl.minYpos =
-                $table.offset().top - originRecord.offset().top + $table.children('thead').outerHeight();
+            drEl.minYpos = $table.offset().top - originRecord.offset().top + $table.children('thead').outerHeight();
             drEl.maxYpos = drEl.minYpos + $table.children('tbody').outerHeight() - originRecord.outerHeight();
             $tableWrapper.append(recordNode);
 
@@ -233,11 +229,34 @@ define([
         setPosition: function (depElem, depElementCtx, dragData) {
             var depElemPosition = ~~depElementCtx.position;
 
+            this.cacheElementsPosition();
+
             if (dragData.depElement.insert === 'after') {
                 dragData.instanceCtx.position = depElemPosition + 1;
             } else if (dragData.depElement.insert === 'before') {
                 dragData.instanceCtx.position = depElemPosition;
             }
+
+            this.normalizePositions();
+        },
+
+        /**
+         * Saves elements position from current elements
+         */
+        cacheElementsPosition: function () {
+            this.elemPositions = [];
+            this.parentComponent().elems.each(function (elem) {
+                this.elemPositions.push(elem.position);
+            }, this);
+        },
+
+        /**
+         * Normalize position, uses start elements position
+         */
+        normalizePositions: function () {
+            this.parentComponent().elems.each(function (item, index) {
+                item.position = this.elemPositions[index];
+            }, this);
         },
 
         /**
@@ -245,7 +264,6 @@ define([
          *
          * @param {Object} curInstance - current element instance
          * @param {Number} position
-         * @param {Object} row
          */
         getDepElement: function (curInstance, position, row) {
             var tableSelector = this.tableClass + ' tr',

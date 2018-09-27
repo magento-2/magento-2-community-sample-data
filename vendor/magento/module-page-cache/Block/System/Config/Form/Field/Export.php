@@ -7,9 +7,6 @@ namespace Magento\PageCache\Block\System\Config\Form\Field;
 
 /**
  * Class Export
- *
- * @api
- * @since 100.0.2
  */
 class Export extends \Magento\Config\Block\System\Config\Form\Field
 {
@@ -23,7 +20,7 @@ class Export extends \Magento\Config\Block\System\Config\Form\Field
     protected function _getElementHtml(\Magento\Framework\Data\Form\Element\AbstractElement $element)
     {
         /** @var \Magento\Backend\Block\Widget\Button $buttonBlock  */
-        $buttonBlock = $this->getForm()->getLayout()->createBlock(\Magento\Backend\Block\Widget\Button::class);
+        $buttonBlock = $this->getForm()->getLayout()->createBlock('Magento\Backend\Block\Widget\Button');
 
         $params = [
             'website' => $buttonBlock->getRequest()->getParam('website'),
@@ -73,7 +70,7 @@ class Export extends \Magento\Config\Block\System\Config\Form\Field
      * to avoid saving empty field
      *
      * @return string
-     * @deprecated 100.1.0
+     * @deprecated
      */
     public function getTtlValue()
     {

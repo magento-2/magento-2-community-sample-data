@@ -12,9 +12,8 @@ require __DIR__ . '/multiselect_attribute.php';
 /** Create product with options and multiselect attribute */
 
 /** @var $installer \Magento\Catalog\Setup\CategorySetup */
-$installer = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->create(
-    \Magento\Catalog\Setup\CategorySetup::class
-);
+$installer = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()
+    ->create(\Magento\Catalog\Setup\CategorySetup::class);
 
 /** @var $options \Magento\Eav\Model\ResourceModel\Entity\Attribute\Option\Collection */
 $options = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->create(
@@ -36,7 +35,14 @@ $product->setTypeId(\Magento\Catalog\Model\Product\Type::TYPE_SIMPLE)
     ->setVisibility(\Magento\Catalog\Model\Product\Visibility::VISIBILITY_BOTH)
     ->setMultiselectAttribute([$optionIds[0]])
     ->setStatus(\Magento\Catalog\Model\Product\Attribute\Source\Status::STATUS_ENABLED)
-    ->setStockData(['use_config_manage_stock' => 1, 'qty' => 100, 'is_qty_decimal' => 0, 'is_in_stock' => 1])
+    ->setStockData(
+        [
+            'use_config_manage_stock' => 1,
+            'qty' => 100,
+            'is_qty_decimal' => 0,
+            'is_in_stock' => 1
+        ]
+    )
     ->save();
 
 $product = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->create(\Magento\Catalog\Model\Product::class);
@@ -50,5 +56,12 @@ $product->setTypeId(\Magento\Catalog\Model\Product\Type::TYPE_SIMPLE)
     ->setVisibility(\Magento\Catalog\Model\Product\Visibility::VISIBILITY_BOTH)
     ->setMultiselectAttribute([$optionIds[1], $optionIds[2], $optionIds[3]])
     ->setStatus(\Magento\Catalog\Model\Product\Attribute\Source\Status::STATUS_ENABLED)
-    ->setStockData(['use_config_manage_stock' => 1, 'qty' => 100, 'is_qty_decimal' => 0, 'is_in_stock' => 1])
+    ->setStockData(
+        [
+            'use_config_manage_stock' => 1,
+            'qty' => 100,
+            'is_qty_decimal' => 0,
+            'is_in_stock' => 1
+        ]
+    )
     ->save();

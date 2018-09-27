@@ -31,7 +31,6 @@ class Config implements \Magento\Framework\Locale\ConfigInterface
         'de_AT', /*German (Austria)*/
         'de_CH', /*German (Switzerland)*/
         'de_DE', /*German (Germany)*/
-        'de_LU', /*German (Luxembourg)*/
         'el_GR', /*Greek (Greece)*/
         'en_AU', /*English (Australian)*/
         'en_CA', /*English (Canadian)*/
@@ -53,9 +52,7 @@ class Config implements \Magento\Framework\Locale\ConfigInterface
         'fil_PH', /*Filipino (Philippines)*/
         'fr_BE', /*French (Belgium)*/
         'fr_CA', /*French (Canada)*/
-        'fr_CH', /*French (Switzerland)*/
         'fr_FR', /*French (France)*/
-        'fr_LU', /*French (Luxembourg)*/
         'gu_IN', /*Gujarati (India)*/
         'he_IL', /*Hebrew (Israel)*/
         'hi_IN', /*Hindi (India)*/
@@ -90,7 +87,6 @@ class Config implements \Magento\Framework\Locale\ConfigInterface
         'sq_AL', /*Albanian (Albania)*/
         'sr_Cyrl_RS', /*Serbian (Serbia)*/
         'sv_SE', /*Swedish (Sweden)*/
-        'sv_FI', /*Swedish (Finland)*/
         'sw_KE', /*Swahili (Kenya)*/
         'th_TH', /*Thai (Thailand)*/
         'tr_TR', /*Turkish (Turkey)*/

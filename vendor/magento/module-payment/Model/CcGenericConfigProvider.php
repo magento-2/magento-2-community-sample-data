@@ -8,14 +8,6 @@ namespace Magento\Payment\Model;
 use Magento\Checkout\Model\ConfigProviderInterface;
 use Magento\Payment\Helper\Data as PaymentHelper;
 
-/**
- * Default implementation of credits card configuration provider.
- * Use this class to register payment method that supports credit cards.
- * Direct injection as a dependency or extending of this class is not recommended.
- *
- * @api
- * @since 100.0.2
- */
 class CcGenericConfigProvider implements ConfigProviderInterface
 {
     /**
@@ -72,7 +64,7 @@ class CcGenericConfigProvider implements ConfigProviderInterface
      * Solo/switch card start years
      *
      * @return array
-     * @deprecated 100.1.0 unused
+     * @deprecated unused
      */
     protected function getSsStartYears()
     {
@@ -151,7 +143,7 @@ class CcGenericConfigProvider implements ConfigProviderInterface
      *
      * @param string $methodCode
      * @return bool
-     * @deprecated 100.1.0 unused
+     * @deprecated unused
      */
     protected function hasSsCardType($methodCode)
     {

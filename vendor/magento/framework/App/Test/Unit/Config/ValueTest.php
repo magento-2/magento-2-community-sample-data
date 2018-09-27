@@ -5,7 +5,7 @@
  */
 namespace Magento\Framework\App\Test\Unit\Config;
 
-class ValueTest extends \PHPUnit\Framework\TestCase
+class ValueTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\Framework\App\Config\Value
@@ -32,15 +32,15 @@ class ValueTest extends \PHPUnit\Framework\TestCase
      */
     protected function setUp()
     {
-        $this->configMock = $this->createMock(\Magento\Framework\App\Config\ScopeConfigInterface::class);
-        $this->eventManagerMock = $this->createMock(\Magento\Framework\Event\ManagerInterface::class);
-        $this->cacheTypeListMock = $this->getMockBuilder(\Magento\Framework\App\Cache\TypeListInterface::class)
+        $this->configMock = $this->getMock('Magento\Framework\App\Config\ScopeConfigInterface');
+        $this->eventManagerMock = $this->getMock('Magento\Framework\Event\ManagerInterface');
+        $this->cacheTypeListMock = $this->getMockBuilder('Magento\Framework\App\Cache\TypeListInterface')
             ->disableOriginalConstructor()
             ->getMock();
 
         $objectManager = new \Magento\Framework\TestFramework\Unit\Helper\ObjectManager($this);
         $this->model = $objectManager->getObject(
-            \Magento\Framework\App\Config\Value::class,
+            'Magento\Framework\App\Config\Value',
             [
                 'config' => $this->configMock,
                 'eventDispatcher' => $this->eventManagerMock,
@@ -184,6 +184,9 @@ class ValueTest extends \PHPUnit\Framework\TestCase
         $this->assertInstanceOf(get_class($this->model), $this->model->afterSave());
     }
 
+    /**
+     * @return array
+     */
     public function afterSaveDataProvider()
     {
         return [

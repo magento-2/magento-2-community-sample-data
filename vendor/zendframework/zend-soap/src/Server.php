@@ -42,7 +42,7 @@ class Server implements ZendServerServer
      * Arguments to pass to {@link $class} constructor
      * @var array
      */
-    protected $classArgs = [];
+    protected $classArgs = array();
 
     /**
      * Array of SOAP type => PHP class pairings for handling return/incoming values
@@ -60,7 +60,7 @@ class Server implements ZendServerServer
      * Registered fault exceptions
      * @var array
      */
-    protected $faultExceptions = [];
+    protected $faultExceptions = array();
 
     /**
      * Container for caught exception during business code execution
@@ -78,7 +78,7 @@ class Server implements ZendServerServer
      * Functions registered with this server; may be either an array or the SOAP_FUNCTIONS_ALL constant
      * @var array|int
      */
-    protected $functions = [];
+    protected $functions = array();
 
     /**
      * Object registered with this server
@@ -146,18 +146,6 @@ class Server implements ZendServerServer
     protected $wsdlCache;
 
     /**
-     * The send_errors Options of SOAP Server
-     * @var bool
-     */
-    protected $sendErrors;
-
-    /**
-     * Allows LIBXML_PARSEHUGE Options of DOMDocument->loadXML( string $source [, int $options = 0 ] ) to be set
-     * @var bool
-     */
-    protected $parseHuge;
-
-    /**
      * Constructor
      *
      * Sets display_errors INI setting to off (prevent client errors due to bad
@@ -173,7 +161,7 @@ class Server implements ZendServerServer
      */
     public function __construct($wsdl = null, array $options = null)
     {
-        if (! extension_loaded('soap')) {
+        if (!extension_loaded('soap')) {
             throw new Exception\ExtensionNotLoadedException('SOAP extension is not loaded.');
         }
 
@@ -241,14 +229,6 @@ class Server implements ZendServerServer
                     $this->setSoapFeatures($value);
                     break;
 
-                case 'send_errors':
-                    $this->setSendErrors($value);
-                    break;
-
-                case 'parse_huge':
-                    $this->setParseHuge($value);
-                    break;
-
                 default:
                     break;
             }
@@ -264,7 +244,7 @@ class Server implements ZendServerServer
      */
     public function getOptions()
     {
-        $options = [];
+        $options = array();
         if (null !== $this->actor) {
             $options['actor'] = $this->getActor();
         }
@@ -297,14 +277,6 @@ class Server implements ZendServerServer
             $options['cache_wsdl'] = $this->getWSDLCache();
         }
 
-        if (null !== $this->sendErrors) {
-            $options['send_errors'] = $this->getSendErrors();
-        }
-
-        if (null !== $this->parseHuge) {
-            $options['parse_huge'] = $this->getParseHuge();
-        }
-
         return $options;
     }
 
@@ -317,7 +289,7 @@ class Server implements ZendServerServer
      */
     public function setEncoding($encoding)
     {
-        if (! is_string($encoding)) {
+        if (!is_string($encoding)) {
             throw new Exception\InvalidArgumentException('Invalid encoding specified');
         }
 
@@ -344,7 +316,7 @@ class Server implements ZendServerServer
      */
     public function setSoapVersion($version)
     {
-        if (! in_array($version, [SOAP_1_1, SOAP_1_2])) {
+        if (!in_array($version, array(SOAP_1_1, SOAP_1_2))) {
             throw new Exception\InvalidArgumentException('Invalid soap version specified');
         }
 
@@ -438,11 +410,11 @@ class Server implements ZendServerServer
      */
     public function setClassmap($classmap)
     {
-        if (! is_array($classmap)) {
+        if (!is_array($classmap)) {
             throw new Exception\InvalidArgumentException('Classmap must be an array');
         }
         foreach ($classmap as $class) {
-            if (! class_exists($class)) {
+            if (!class_exists($class)) {
                 throw new Exception\InvalidArgumentException('Invalid class in class map');
             }
         }
@@ -470,18 +442,18 @@ class Server implements ZendServerServer
      */
     public function setTypemap($typeMap)
     {
-        if (! is_array($typeMap)) {
+        if (!is_array($typeMap)) {
             throw new Exception\InvalidArgumentException('Typemap must be an array');
         }
 
         foreach ($typeMap as $type) {
-            if (! is_callable($type['from_xml'])) {
+            if (!is_callable($type['from_xml'])) {
                 throw new Exception\InvalidArgumentException(sprintf(
                     'Invalid from_xml callback for type: %s',
                     $type['type_name']
                 ));
             }
-            if (! is_callable($type['to_xml'])) {
+            if (!is_callable($type['to_xml'])) {
                 throw new Exception\InvalidArgumentException('Invalid to_xml callback for type: ' . $type['type_name']);
             }
         }
@@ -565,50 +537,6 @@ class Server implements ZendServerServer
     }
 
     /**
-     * Set the SOAP send_errors Option
-     *
-     * @param  bool $sendErrors
-     * @return self
-     */
-    public function setSendErrors($sendErrors)
-    {
-        $this->sendErrors = (bool) $sendErrors;
-        return $this;
-    }
-
-    /**
-     * Get current SOAP send_errors option
-     *
-     * @return bool
-     */
-    public function getSendErrors()
-    {
-        return $this->sendErrors;
-    }
-
-    /**
-     * Set flag to allow DOMDocument->loadXML() to parse huge nodes
-     *
-     * @param  bool $parseHuge
-     * @return self
-     */
-    public function setParseHuge($parseHuge)
-    {
-        $this->parseHuge = (bool) $parseHuge;
-        return $this;
-    }
-
-    /**
-     * Get flag to allow DOMDocument->loadXML() to parse huge nodes
-     *
-     * @return bool
-     */
-    public function getParseHuge()
-    {
-        return $this->parseHuge;
-    }
-
-    /**
      * Attach a function as a server method
      *
      * @param  array|string $function Function name, array of function names to attach,
@@ -674,14 +602,14 @@ class Server implements ZendServerServer
             return $this->setObject($class);
         }
 
-        if (! is_string($class)) {
+        if (!is_string($class)) {
             throw new Exception\InvalidArgumentException(sprintf(
                 'Invalid class argument (%s)',
                 gettype($class)
             ));
         }
 
-        if (! class_exists($class)) {
+        if (!class_exists($class)) {
             throw new Exception\InvalidArgumentException(sprintf(
                 'Class "%s" does not exist',
                 $class
@@ -708,7 +636,7 @@ class Server implements ZendServerServer
      */
     public function setObject($object)
     {
-        if (! is_object($object)) {
+        if (!is_object($object)) {
             throw new Exception\InvalidArgumentException(sprintf(
                 'Invalid object argument (%s)',
                 gettype($object)
@@ -736,7 +664,7 @@ class Server implements ZendServerServer
      */
     public function getFunctions()
     {
-        $functions = [];
+        $functions = array();
         if (null !== $this->class) {
             $functions = get_class_methods($this->class);
         } elseif (null !== $this->object) {
@@ -766,7 +694,7 @@ class Server implements ZendServerServer
      */
     public function setPersistence($mode)
     {
-        if (! in_array($mode, [SOAP_PERSISTENCE_SESSION, SOAP_PERSISTENCE_REQUEST])) {
+        if (!in_array($mode, array(SOAP_PERSISTENCE_SESSION, SOAP_PERSISTENCE_REQUEST))) {
             throw new Exception\InvalidArgumentException('Invalid persistence mode specified');
         }
 
@@ -798,7 +726,7 @@ class Server implements ZendServerServer
      * @return self
      * @throws Exception\InvalidArgumentException
      */
-    protected function setRequest($request)
+    protected function _setRequest($request)
     {
         $xml = null;
 
@@ -816,24 +744,15 @@ class Server implements ZendServerServer
             }
             $xml = trim($xml);
 
-            if (strlen($xml) === 0) {
-                throw new Exception\InvalidArgumentException('Empty request');
-            }
-
             $loadEntities = libxml_disable_entity_loader(true);
 
             $dom = new DOMDocument();
-
-            if (true === $this->getParseHuge()) {
-                $loadStatus = $dom->loadXML($xml, LIBXML_PARSEHUGE);
-            } else {
-                $loadStatus = $dom->loadXML($xml);
-            }
+            $loadStatus = $dom->loadXML($xml);
 
             libxml_disable_entity_loader($loadEntities);
 
             // @todo check libxml errors ? validate document ?
-            if (! $loadStatus) {
+            if (strlen($xml) == 0 || !$loadStatus) {
                 throw new Exception\InvalidArgumentException('Invalid XML');
             }
 
@@ -913,17 +832,17 @@ class Server implements ZendServerServer
         $options = $this->getOptions();
         $server  = new SoapServer($this->wsdl, $options);
 
-        if (! empty($this->functions)) {
+        if (!empty($this->functions)) {
             $server->addFunction($this->functions);
         }
 
-        if (! empty($this->class)) {
+        if (!empty($this->class)) {
             $args = $this->classArgs;
             array_unshift($args, $this->class);
-            call_user_func_array([$server, 'setClass'], $args);
+            call_user_func_array(array($server, 'setClass'), $args);
         }
 
-        if (! empty($this->object)) {
+        if (!empty($this->object)) {
             $server->setObject($this->object);
         }
 
@@ -971,11 +890,11 @@ class Server implements ZendServerServer
         }
 
         // Set Server error handler
-        $displayErrorsOriginalState = $this->initializeSoapErrorContext();
+        $displayErrorsOriginalState = $this->_initializeSoapErrorContext();
 
         $setRequestException = null;
         try {
-            $this->setRequest($request);
+            $this->_setRequest($request);
         } catch (\Exception $e) {
             $setRequestException = $e;
         }
@@ -1003,14 +922,14 @@ class Server implements ZendServerServer
         ini_set('display_errors', (string) $displayErrorsOriginalState);
 
         // Send a fault, if we have one
-        if ($fault instanceof SoapFault && ! $this->returnResponse) {
+        if ($fault instanceof SoapFault && !$this->returnResponse) {
             $soap->fault($fault->faultcode, $fault->getMessage());
 
             return;
         }
 
         // Echo the response, if we're not returning it
-        if (! $this->returnResponse) {
+        if (!$this->returnResponse) {
             echo $this->response;
 
             return;
@@ -1030,11 +949,11 @@ class Server implements ZendServerServer
      *
      * @return bool display_errors original value
      */
-    protected function initializeSoapErrorContext()
+    protected function _initializeSoapErrorContext()
     {
         $displayErrorsOriginalState = ini_get('display_errors');
         ini_set('display_errors', '0');
-        set_error_handler([$this, 'handlePhpErrors'], E_USER_ERROR);
+        set_error_handler(array($this, 'handlePhpErrors'), E_USER_ERROR);
         return $displayErrorsOriginalState;
     }
 
@@ -1167,15 +1086,15 @@ class Server implements ZendServerServer
             $message = 'Unknown error';
         }
 
-        $allowedFaultModes = [
+        $allowedFaultModes = array(
             'VersionMismatch',
             'MustUnderstand',
             'DataEncodingUnknown',
             'Sender',
             'Receiver',
             'Server'
-        ];
-        if (! in_array($code, $allowedFaultModes)) {
+        );
+        if (!in_array($code, $allowedFaultModes)) {
             $code = 'Receiver';
         }
 
@@ -1187,9 +1106,12 @@ class Server implements ZendServerServer
      *
      * @param  int $errno
      * @param  string $errstr
+     * @param  string $errfile
+     * @param  int $errline
+     * @param  array $errcontext
      * @throws SoapFault
      */
-    public function handlePhpErrors($errno, $errstr)
+    public function handlePhpErrors($errno, $errstr, $errfile = null, $errline = null, array $errcontext = null)
     {
         throw $this->fault($errstr, 'Receiver');
     }

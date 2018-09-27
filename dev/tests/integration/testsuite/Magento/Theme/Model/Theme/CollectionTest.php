@@ -15,7 +15,7 @@ use Magento\Framework\App\Filesystem\DirectoryList;
 /**
  * @magentoComponentsDir Magento/Theme/Model/_files/design
  */
-class CollectionTest extends \PHPUnit\Framework\TestCase
+class CollectionTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\Theme\Model\Theme\Collection
@@ -25,17 +25,17 @@ class CollectionTest extends \PHPUnit\Framework\TestCase
     protected function setUp()
     {
         $directoryList = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->create(
-            \Magento\Framework\App\Filesystem\DirectoryList::class,
+            'Magento\Framework\App\Filesystem\DirectoryList',
             [
                 'root' => DirectoryList::ROOT,
             ]
         );
         $filesystem = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->create(
-            \Magento\Framework\Filesystem::class,
+            'Magento\Framework\Filesystem',
             ['directoryList' => $directoryList]
         );
         $this->_model = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->create(
-            \Magento\Theme\Model\Theme\Collection::class,
+            'Magento\Theme\Model\Theme\Collection',
             ['filesystem' => $filesystem]
         );
     }
@@ -100,7 +100,7 @@ class CollectionTest extends \PHPUnit\Framework\TestCase
     {
         /** @var $themeModel \Magento\Framework\View\Design\ThemeInterface */
         $themeModel = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->create(
-            \Magento\Framework\View\Design\ThemeInterface::class
+            'Magento\Framework\View\Design\ThemeInterface'
         );
         $themeModel->setData(
             [

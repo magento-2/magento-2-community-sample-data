@@ -10,8 +10,7 @@
 @currency-addon-symbol__border-color: @field-control__border-color;
 @currency-addon-symbol__color: @color-gray52;
 @currency-addon-symbol__height: @field-control__height;
-@currency-addon-symbol__width: 2.6rem;
-
+@currency-addon-symbol__width: 1.6rem;
 
 //
 //  Common
@@ -28,7 +27,6 @@
     display: inline-flex;
     flex-flow: row nowrap;
     width: 100%;
-    position: relative;
 
     .admin__control-text {
         appearence: none;
@@ -64,8 +62,8 @@
         color: @currency-addon-symbol__color;
         height: @currency-addon-symbol__height;
         padding: 7px 0 0 @indent__xs;
-        position: static;
         transition: @smooth__border-color;
+        position: static;
         -webkit-flex-basis: auto;
         flex-basis: auto;
         -webkit-flex-grow: 0;

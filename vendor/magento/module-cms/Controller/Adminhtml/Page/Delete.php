@@ -30,7 +30,7 @@ class Delete extends \Magento\Backend\App\Action
             $title = "";
             try {
                 // init model and delete
-                $model = $this->_objectManager->create(\Magento\Cms\Model\Page::class);
+                $model = $this->_objectManager->create('Magento\Cms\Model\Page');
                 $model->load($id);
                 $title = $model->getTitle();
                 $model->delete();

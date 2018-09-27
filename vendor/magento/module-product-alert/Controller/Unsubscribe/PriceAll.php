@@ -16,10 +16,10 @@ class PriceAll extends UnsubscribeController
     public function execute()
     {
         try {
-            $this->_objectManager->create(\Magento\ProductAlert\Model\Price::class)
+            $this->_objectManager->create('Magento\ProductAlert\Model\Price')
                 ->deleteCustomer(
                     $this->customerSession->getCustomerId(),
-                    $this->_objectManager->get(\Magento\Store\Model\StoreManagerInterface::class)
+                    $this->_objectManager->get('Magento\Store\Model\StoreManagerInterface')
                         ->getStore()
                         ->getWebsiteId()
                 );

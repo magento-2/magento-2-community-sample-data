@@ -5,9 +5,9 @@
  */
 namespace Magento\CatalogRule\Test\Unit\Model\Rule;
 
-use Magento\CatalogRule\Model\Rule\Job;
+use \Magento\CatalogRule\Model\Rule\Job;
 
-class JobTest extends \PHPUnit\Framework\TestCase
+class JobTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * Test for method applyAll
@@ -18,9 +18,12 @@ class JobTest extends \PHPUnit\Framework\TestCase
      */
     public function testApplyAll()
     {
-        $ruleProcessorMock = $this->createPartialMock(
-            \Magento\CatalogRule\Model\Indexer\Rule\RuleProductProcessor::class,
-            ['markIndexerAsInvalid']
+        $ruleProcessorMock = $this->getMock(
+            'Magento\CatalogRule\Model\Indexer\Rule\RuleProductProcessor',
+            ['markIndexerAsInvalid'],
+            [],
+            '',
+            false
         );
         $ruleProcessorMock->expects($this->once())->method('markIndexerAsInvalid');
         $jobModel = new Job($ruleProcessorMock);
@@ -32,9 +35,12 @@ class JobTest extends \PHPUnit\Framework\TestCase
      */
     public function testExceptionApplyAll()
     {
-        $ruleProcessorMock = $this->createPartialMock(
-            \Magento\CatalogRule\Model\Indexer\Rule\RuleProductProcessor::class,
-            ['markIndexerAsInvalid']
+        $ruleProcessorMock = $this->getMock(
+            'Magento\CatalogRule\Model\Indexer\Rule\RuleProductProcessor',
+            ['markIndexerAsInvalid'],
+            [],
+            '',
+            false
         );
         $exceptionMessage = 'Test exception message';
         $exceptionCallback = function () use ($exceptionMessage) {

@@ -10,7 +10,7 @@ namespace Magento\Integration\Test\Unit\Helper\Oauth;
  *
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  */
-class ConsumerTest extends \PHPUnit\Framework\TestCase
+class ConsumerTest extends \PHPUnit_Framework_TestCase
 {
     /** @var \Magento\Store\Model\StoreManagerInterface */
     protected $_storeManagerMock;
@@ -44,12 +44,12 @@ class ConsumerTest extends \PHPUnit\Framework\TestCase
 
     protected function setUp()
     {
-        $this->_consumerFactory = $this->getMockBuilder(\Magento\Integration\Model\Oauth\ConsumerFactory::class)
+        $this->_consumerFactory = $this->getMockBuilder('Magento\Integration\Model\Oauth\ConsumerFactory')
             ->disableOriginalConstructor()
             ->setMethods(['create'])
             ->getMock();
         $this->_consumerMock = $this->getMockBuilder(
-            \Magento\Integration\Model\Oauth\Consumer::class
+            'Magento\Integration\Model\Oauth\Consumer'
         )->disableOriginalConstructor()->getMock();
         $this->_consumerFactory->expects(
             $this->any()
@@ -60,18 +60,18 @@ class ConsumerTest extends \PHPUnit\Framework\TestCase
         );
 
         $this->_tokenFactory = $this->getMockBuilder(
-            \Magento\Integration\Model\Oauth\TokenFactory::class
+            'Magento\Integration\Model\Oauth\TokenFactory'
         )->disableOriginalConstructor()->setMethods(['create'])->getMock();
         $this->_tokenMock = $this->getMockBuilder(
-            \Magento\Integration\Model\Oauth\Token::class
+            'Magento\Integration\Model\Oauth\Token'
         )->disableOriginalConstructor()->getMock();
         $this->_tokenFactory->expects($this->any())->method('create')->will($this->returnValue($this->_tokenMock));
 
         $this->_storeManagerMock = $this->getMockBuilder(
-            \Magento\Store\Model\StoreManagerInterface::class
+            'Magento\Store\Model\StoreManagerInterface'
         )->disableOriginalConstructor()->getMockForAbstractClass();
         $this->_storeMock = $this->getMockBuilder(
-            \Magento\Store\Model\Store::class
+            'Magento\Store\Model\Store'
         )->disableOriginalConstructor()->getMock();
         $this->_storeManagerMock->expects(
             $this->any()
@@ -82,22 +82,22 @@ class ConsumerTest extends \PHPUnit\Framework\TestCase
         );
 
         $this->_dataHelper = $this->getMockBuilder(
-            \Magento\Integration\Helper\Oauth\Data::class
+            'Magento\Integration\Helper\Oauth\Data'
         )->disableOriginalConstructor()->getMock();
 
         $oauthHelperMock = $this->getMockBuilder(
-            \Magento\Framework\Oauth\Helper\Oauth::class
+            'Magento\Framework\Oauth\Helper\Oauth'
         )->disableOriginalConstructor()->getMock();
 
         $tokenProviderMock = $this->getMockBuilder(
-            \Magento\Integration\Model\Oauth\Token\Provider::class
+            'Magento\Integration\Model\Oauth\Token\Provider'
         )->disableOriginalConstructor()->getMock();
 
         $this->_httpClientMock = $this->getMockBuilder(
-            \Magento\Framework\HTTP\ZendClient::class
+            'Magento\Framework\HTTP\ZendClient'
         )->disableOriginalConstructor()->getMock();
         $this->_loggerMock = $this->getMockBuilder(
-            \Psr\Log\LoggerInterface::class
+            'Psr\Log\LoggerInterface'
         )->getMock();
 
         $this->_oauthService = new \Magento\Integration\Model\OauthService(
@@ -158,12 +158,12 @@ class ConsumerTest extends \PHPUnit\Framework\TestCase
             $this->returnSelf()
         );
 
-        $dateHelperMock = $this->getMockBuilder(\Magento\Framework\Stdlib\DateTime\DateTime::class)
+        $dateHelperMock = $this->getMockBuilder('Magento\Framework\Stdlib\DateTime\DateTime')
             ->disableOriginalConstructor()
             ->getMock();
         $dateHelperMock->expects($this->any())->method('gmtDate');
 
-        $dateHelper = new \ReflectionProperty(\Magento\Integration\Model\OauthService::class, '_dateHelper');
+        $dateHelper = new \ReflectionProperty('Magento\Integration\Model\OauthService', '_dateHelper');
         $dateHelper->setAccessible(true);
         $dateHelper->setValue($this->_oauthService, $dateHelperMock);
 
@@ -197,6 +197,10 @@ class ConsumerTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals($oauthVerifier, $verifier, 'Checking Oauth Verifier');
     }
 
+    /**
+     * @param $length
+     * @return bool|string
+     */
     private function _generateRandomString($length)
     {
         return substr(

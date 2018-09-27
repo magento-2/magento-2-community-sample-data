@@ -6,9 +6,9 @@
 
 namespace Magento\Ui\Test\TestCase;
 
-use Magento\Mtf\Fixture\FixtureFactory;
 use Magento\Mtf\Fixture\FixtureInterface;
 use Magento\Mtf\Page\PageFactory;
+use Magento\Mtf\Fixture\FixtureFactory;
 use Magento\Mtf\TestCase\Injectable;
 use Magento\Ui\Test\Block\Adminhtml\DataGrid;
 
@@ -22,14 +22,14 @@ use Magento\Ui\Test\Block\Adminhtml\DataGrid;
  * 3. Sort grid using provided columns
  * 5. Perform Asserts
  *
- * @group Ui
+ * @group Ui_(CS)
  * @ZephyrId MAGETWO-41328
  */
 class GridSortingTest extends Injectable
 {
     /* tags */
-    const SEVERITY = 'S2';
     const MVP = 'no';
+    const DOMAIN = 'CS';
     /* end tags */
 
     /**
@@ -134,10 +134,7 @@ class GridSortingTest extends Injectable
             $steps = [];
         }
         foreach ($steps as $step) {
-            $products = $item->getEntityId()['products'];
-            $cart['data']['items'] = ['products' => $products];
-            $cart = $this->fixtureFactory->createByCode('cart', $cart);
-            $processStep = $this->objectManager->create($step, ['order' => $item, 'cart' => $cart]);
+            $processStep = $this->objectManager->create($step, ['order' => $item]);
             $processStep->run();
         }
     }

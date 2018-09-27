@@ -136,7 +136,6 @@
                         <app>/app/*/*</app>
                         <bin>/bin/*/*</bin>
                         <dev>/dev/*/*</dev>
-                        <generated>/generated/*/*</generated>
                         <lib>/lib/*/*</lib>
                         <setup>/setup/*/*</setup>
                         <update>/update/*/*</update>

@@ -27,13 +27,14 @@ use Magento\Mtf\Fixture\FixtureFactory;
  * 5. Save
  * 6. Perform asserts
  *
- * @group Category_Management
+ * @group Category_Management_(MX)
  * @ZephyrId MAGETWO-23290
  */
 class UpdateCategoryEntityTest extends Injectable
 {
     /* tags */
     const MVP = 'yes';
+    const DOMAIN = 'MX';
     /* end tags */
 
     /**
@@ -89,6 +90,7 @@ class UpdateCategoryEntityTest extends Injectable
         $this->catalogCategoryIndex->getTreeCategories()->selectCategory($initialCategory);
         $this->catalogCategoryEdit->getEditForm()->fill($category);
         $this->catalogCategoryEdit->getFormPageActions()->save();
+
         return ['category' => $this->prepareCategory($category, $initialCategory)];
     }
 

@@ -26,7 +26,7 @@ class ExportDownloadsCsv extends \Magento\Reports\Controller\Adminhtml\Report\Pr
     {
         $fileName = 'products_downloads.csv';
         $content = $this->_view->getLayout()->createBlock(
-            \Magento\Reports\Block\Adminhtml\Product\Downloads\Grid::class
+            'Magento\Reports\Block\Adminhtml\Product\Downloads\Grid'
         )->setSaveParametersInSession(
             true
         )->getCsv();

@@ -21,6 +21,9 @@ class NodeBuilder implements NodeParentInterface
     protected $parent;
     protected $nodeMapping;
 
+    /**
+     * Constructor.
+     */
     public function __construct()
     {
         $this->nodeMapping = array(
@@ -36,6 +39,8 @@ class NodeBuilder implements NodeParentInterface
 
     /**
      * Set the parent node.
+     *
+     * @param ParentNodeDefinitionInterface $parent The parent node
      *
      * @return $this
      */
@@ -61,7 +66,7 @@ class NodeBuilder implements NodeParentInterface
     /**
      * Creates a child scalar node.
      *
-     * @param string $name The name of the node
+     * @param string $name the name of the node
      *
      * @return ScalarNodeDefinition The child node
      */
@@ -85,7 +90,7 @@ class NodeBuilder implements NodeParentInterface
     /**
      * Creates a child integer node.
      *
-     * @param string $name The name of the node
+     * @param string $name the name of the node
      *
      * @return IntegerNodeDefinition The child node
      */
@@ -97,7 +102,7 @@ class NodeBuilder implements NodeParentInterface
     /**
      * Creates a child float node.
      *
-     * @param string $name The name of the node
+     * @param string $name the name of the node
      *
      * @return FloatNodeDefinition The child node
      */
@@ -143,8 +148,8 @@ class NodeBuilder implements NodeParentInterface
     /**
      * Creates a child node.
      *
-     * @param string|null $name The name of the node
-     * @param string      $type The type of the node
+     * @param string $name The name of the node
+     * @param string $type The type of the node
      *
      * @return NodeDefinition The child node
      *
@@ -174,6 +179,8 @@ class NodeBuilder implements NodeParentInterface
      *             ->append($this->getBarNodeDefinition())
      *         ->end()
      *     ;
+     *
+     * @param NodeDefinition $node
      *
      * @return $this
      */

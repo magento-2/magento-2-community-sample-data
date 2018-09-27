@@ -75,7 +75,7 @@ class Wishlist extends Block
     {
         $this->waitFormToLoad();
         return $this->blockFactory->create(
-            \Magento\Wishlist\Test\Block\Customer\Wishlist\Items::class,
+            'Magento\Wishlist\Test\Block\Customer\Wishlist\Items',
             ['element' => $this->_rootElement->find($this->productItems)]
         );
     }
@@ -99,7 +99,6 @@ class Wishlist extends Block
     public function clickUpdateWishlist()
     {
         $this->waitFormToLoad();
-        $this->_rootElement->hover();
         $this->_rootElement->find($this->updateButton)->click();
     }
 

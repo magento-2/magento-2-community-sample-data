@@ -18,7 +18,7 @@ use Magento\TestFramework\Helper\Bootstrap;
  * Class HostedproTest
  * @package Magento\Paypal\Model
  */
-class HostedproTest extends \PHPUnit\Framework\TestCase
+class HostedproTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\Framework\ObjectManagerInterface

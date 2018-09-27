@@ -10,7 +10,7 @@ namespace Magento\EncryptionKey\Test\Unit\Controller\Adminhtml\Crypt\Key;
 /**
  * Test class for Magento\EncryptionKey\Controller\Adminhtml\Crypt\Key\Save
  */
-class SaveTest extends \PHPUnit\Framework\TestCase
+class SaveTest extends \PHPUnit_Framework_TestCase
 {
     /** @var \Magento\Framework\Encryption\EncryptorInterface|\PHPUnit_Framework_MockObject_MockObject */
     protected $encryptMock;
@@ -35,27 +35,27 @@ class SaveTest extends \PHPUnit\Framework\TestCase
 
     protected function setUp()
     {
-        $this->encryptMock = $this->getMockBuilder(\Magento\Framework\Encryption\EncryptorInterface::class)
+        $this->encryptMock = $this->getMockBuilder('Magento\Framework\Encryption\EncryptorInterface')
             ->disableOriginalConstructor()
             ->setMethods([])
             ->getMock();
-        $this->changeMock = $this->getMockBuilder(\Magento\EncryptionKey\Model\ResourceModel\Key\Change::class)
+        $this->changeMock = $this->getMockBuilder('Magento\EncryptionKey\Model\ResourceModel\Key\Change')
             ->disableOriginalConstructor()
             ->setMethods([])
             ->getMock();
-        $this->cacheMock = $this->getMockBuilder(\Magento\Framework\App\CacheInterface::class)
+        $this->cacheMock = $this->getMockBuilder('Magento\Framework\App\CacheInterface')
             ->disableOriginalConstructor()
             ->setMethods([])
             ->getMock();
-        $this->requestMock = $this->getMockBuilder(\Magento\Framework\App\RequestInterface::class)
+        $this->requestMock = $this->getMockBuilder('Magento\Framework\App\RequestInterface')
             ->disableOriginalConstructor()
             ->setMethods(['getPost'])
             ->getMockForAbstractClass();
-        $this->managerMock = $this->getMockBuilder(\Magento\Framework\Message\ManagerInterface::class)
+        $this->managerMock = $this->getMockBuilder('\Magento\Framework\Message\ManagerInterface')
             ->disableOriginalConstructor()
             ->setMethods([])
             ->getMock();
-        $this->responseMock = $this->getMockBuilder(\Magento\Framework\App\ResponseInterface::class)
+        $this->responseMock = $this->getMockBuilder('Magento\Framework\App\ResponseInterface')
             ->disableOriginalConstructor()
             ->setMethods(['setRedirect'])
             ->getMockForAbstractClass();
@@ -63,7 +63,7 @@ class SaveTest extends \PHPUnit\Framework\TestCase
         $helper = new \Magento\Framework\TestFramework\Unit\Helper\ObjectManager($this);
 
         $this->model = $helper->getObject(
-            \Magento\EncryptionKey\Controller\Adminhtml\Crypt\Key\Save::class,
+            'Magento\EncryptionKey\Controller\Adminhtml\Crypt\Key\Save',
             [
                 'encryptor' => $this->encryptMock,
                 'change' => $this->changeMock,

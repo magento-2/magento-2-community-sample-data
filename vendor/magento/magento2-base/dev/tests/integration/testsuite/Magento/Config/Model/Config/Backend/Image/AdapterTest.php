@@ -5,7 +5,7 @@
  */
 namespace Magento\Config\Model\Config\Backend\Image;
 
-class AdapterTest extends \PHPUnit\Framework\TestCase
+class AdapterTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\Config\Model\Config\Backend\Image\Adapter
@@ -16,7 +16,7 @@ class AdapterTest extends \PHPUnit\Framework\TestCase
     {
         parent::setUp();
         $this->_model = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->create(
-            \Magento\Config\Model\Config\Backend\Image\Adapter::class
+            'Magento\Config\Model\Config\Backend\Image\Adapter'
         );
         $this->_model->setPath('path');
     }

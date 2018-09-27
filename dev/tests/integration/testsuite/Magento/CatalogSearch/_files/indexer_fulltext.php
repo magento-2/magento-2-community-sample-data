@@ -8,7 +8,7 @@
 $objectManager = \Magento\TestFramework\Helper\Bootstrap::getObjectManager();
 
 /** @var $productFirst \Magento\Catalog\Model\Product */
-$productFirst = $objectManager->create(\Magento\Catalog\Model\Product::class);
+$productFirst = $objectManager->create('Magento\Catalog\Model\Product');
 $productFirst->setTypeId('simple')
     ->setAttributeSetId(4)
     ->setWebsiteIds([1])
@@ -24,7 +24,7 @@ $productFirst->setTypeId('simple')
     ->save();
 
 /** @var $productFirst \Magento\Catalog\Model\Product */
-$productSecond = $objectManager->create(\Magento\Catalog\Model\Product::class);
+$productSecond = $objectManager->create('Magento\Catalog\Model\Product');
 $productSecond->setTypeId('simple')
     ->setAttributeSetId(4)
     ->setWebsiteIds([1])
@@ -40,7 +40,7 @@ $productSecond->setTypeId('simple')
     ->save();
 
 /** @var $productFirst \Magento\Catalog\Model\Product */
-$productThird = $objectManager->create(\Magento\Catalog\Model\Product::class);
+$productThird = $objectManager->create('Magento\Catalog\Model\Product');
 $productThird->setTypeId('simple')
     ->setAttributeSetId(4)
     ->setWebsiteIds([1])
@@ -56,7 +56,7 @@ $productThird->setTypeId('simple')
     ->save();
 
 /** @var $productFirst \Magento\Catalog\Model\Product */
-$productFourth = $objectManager->create(\Magento\Catalog\Model\Product::class);
+$productFourth = $objectManager->create('Magento\Catalog\Model\Product');
 $productFourth->setTypeId('simple')
     ->setAttributeSetId(4)
     ->setWebsiteIds([1])
@@ -72,7 +72,7 @@ $productFourth->setTypeId('simple')
     ->save();
 
 /** @var $productFirst \Magento\Catalog\Model\Product */
-$productFifth = $objectManager->create(\Magento\Catalog\Model\Product::class);
+$productFifth = $objectManager->create('Magento\Catalog\Model\Product');
 $productFifth->setTypeId('simple')
     ->setAttributeSetId(4)
     ->setWebsiteIds([1])

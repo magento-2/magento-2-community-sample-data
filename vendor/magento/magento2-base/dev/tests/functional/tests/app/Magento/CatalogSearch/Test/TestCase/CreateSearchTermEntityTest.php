@@ -23,13 +23,14 @@ use Magento\Mtf\TestCase\Injectable;
  * 7. Save the Search Term.
  * 8. Perform all assertions.
  *
- * @group Search_Terms
+ * @group Search_Terms_(MX)
  * @ZephyrId MAGETWO-26165
  */
 class CreateSearchTermEntityTest extends Injectable
 {
     /* tags */
     const MVP = 'yes';
+    const DOMAIN = 'MX';
     /* end tags */
 
     /**

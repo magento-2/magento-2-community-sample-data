@@ -8,8 +8,7 @@ namespace Magento\Cms\Block\Adminhtml\Wysiwyg\Images\Content;
 /**
  * Directory contents block for Wysiwyg Images
  *
- * @api
- * @since 100.0.2
+ * @author     Magento Core Team <core@magentocommerce.com>
  */
 class Files extends \Magento\Backend\Block\Template
 {

@@ -19,7 +19,7 @@ class RouteMatch
      *
      * @var array
      */
-    protected $params = [];
+    protected $params = array();
 
     /**
      * Matched route name.

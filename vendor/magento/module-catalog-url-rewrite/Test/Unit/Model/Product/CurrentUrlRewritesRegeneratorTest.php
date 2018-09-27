@@ -13,7 +13,7 @@ use Magento\UrlRewrite\Service\V1\Data\UrlRewrite;
 /**
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  */
-class CurrentUrlRewritesRegeneratorTest extends \PHPUnit\Framework\TestCase
+class CurrentUrlRewritesRegeneratorTest extends \PHPUnit_Framework_TestCase
 {
     /** @var \Magento\CatalogUrlRewrite\Model\Product\CurrentUrlRewritesRegenerator */
     private $currentUrlRewritesRegenerator;
@@ -62,11 +62,14 @@ class CurrentUrlRewritesRegeneratorTest extends \PHPUnit\Framework\TestCase
         $this->productUrlPathGenerator = $this->getMockBuilder(
             \Magento\CatalogUrlRewrite\Model\ProductUrlPathGenerator::class
         )->disableOriginalConstructor()->getMock();
-        $mergeDataProviderFactory = $this->createPartialMock(
+        $mergeDataProviderFactory = $this->getMock(
             \Magento\UrlRewrite\Model\MergeDataProviderFactory::class,
-            ['create']
+            ['create'],
+            [],
+            '',
+            false
         );
-        $this->mergeDataProvider = new \Magento\UrlRewrite\Model\MergeDataProvider();
+        $this->mergeDataProvider = new \Magento\UrlRewrite\Model\MergeDataProvider;
         $mergeDataProviderFactory->expects($this->once())->method('create')->willReturn($this->mergeDataProvider);
         $this->currentUrlRewritesRegenerator = (new ObjectManager($this))->getObject(
             \Magento\CatalogUrlRewrite\Model\Product\CurrentUrlRewritesRegenerator::class,

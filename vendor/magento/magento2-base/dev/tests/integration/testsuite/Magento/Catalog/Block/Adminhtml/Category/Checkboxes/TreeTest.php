@@ -10,7 +10,7 @@ namespace Magento\Catalog\Block\Adminhtml\Category\Checkboxes;
  * @magentoDbIsolation enabled
  * @magentoAppIsolation enabled
  */
-class TreeTest extends \PHPUnit\Framework\TestCase
+class TreeTest extends \PHPUnit_Framework_TestCase
 {
     /** @var \Magento\Catalog\Block\Adminhtml\Category\Checkboxes\Tree */
     protected $block;
@@ -18,7 +18,7 @@ class TreeTest extends \PHPUnit\Framework\TestCase
     protected function setUp()
     {
         $this->block = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->create(
-            \Magento\Catalog\Block\Adminhtml\Category\Checkboxes\Tree::class
+            'Magento\Catalog\Block\Adminhtml\Category\Checkboxes\Tree'
         );
     }
 

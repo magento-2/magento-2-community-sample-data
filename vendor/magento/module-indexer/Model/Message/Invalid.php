@@ -48,7 +48,6 @@ class Invalid implements \Magento\Framework\Notification\MessageInterface
     }
 
     //@codeCoverageIgnoreStart
-
     /**
      * Retrieve unique message identity
      *
@@ -71,7 +70,7 @@ class Invalid implements \Magento\Framework\Notification\MessageInterface
         return __(
             'One or more <a href="%1">indexers are invalid</a>. Make sure your <a href="%2" target="_blank">Magento cron job</a> is running.',
             $url,
-            'http://devdocs.magento.com/guides/v2.2/config-guide/cli/config-cli-subcommands-cron.html#create-or-remove-the-magento-crontab'
+            'http://devdocs.magento.com/guides/v2.0/config-guide/cli/config-cli-subcommands-cron.html#config-cli-cron-bkg'
         );
         //@codingStandardsIgnoreEnd
     }
@@ -85,6 +84,5 @@ class Invalid implements \Magento\Framework\Notification\MessageInterface
     {
         return self::SEVERITY_MAJOR;
     }
-
     //@codeCoverageIgnoreEnd
 }

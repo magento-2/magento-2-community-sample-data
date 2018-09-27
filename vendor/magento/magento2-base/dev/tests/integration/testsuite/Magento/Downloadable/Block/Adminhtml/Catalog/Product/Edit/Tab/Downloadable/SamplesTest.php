@@ -5,14 +5,14 @@
  */
 namespace Magento\Downloadable\Block\Adminhtml\Catalog\Product\Edit\Tab\Downloadable;
 
-class SamplesTest extends \PHPUnit\Framework\TestCase
+class SamplesTest extends \PHPUnit_Framework_TestCase
 {
     public function testGetUploadButtonsHtml()
     {
         $block = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->get(
-            \Magento\Framework\View\LayoutInterface::class
+            'Magento\Framework\View\LayoutInterface'
         )->createBlock(
-            \Magento\Downloadable\Block\Adminhtml\Catalog\Product\Edit\Tab\Downloadable\Samples::class
+            'Magento\Downloadable\Block\Adminhtml\Catalog\Product\Edit\Tab\Downloadable\Samples'
         );
         \Magento\Downloadable\Block\Adminhtml\Catalog\Product\Edit\Tab\Downloadable\LinksTest::performUploadButtonTest(
             $block
@@ -27,15 +27,15 @@ class SamplesTest extends \PHPUnit\Framework\TestCase
         /** @var $objectManager \Magento\TestFramework\ObjectManager */
         $objectManager = \Magento\TestFramework\Helper\Bootstrap::getObjectManager();
         $objectManager->get(
-            \Magento\Framework\Registry::class
+            'Magento\Framework\Registry'
         )->register(
             'current_product',
             new \Magento\Framework\DataObject(['type_id' => 'simple'])
         );
         $block = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->get(
-            \Magento\Framework\View\LayoutInterface::class
+            'Magento\Framework\View\LayoutInterface'
         )->createBlock(
-            \Magento\Downloadable\Block\Adminhtml\Catalog\Product\Edit\Tab\Downloadable\Samples::class
+            'Magento\Downloadable\Block\Adminhtml\Catalog\Product\Edit\Tab\Downloadable\Samples'
         );
         $this->assertEmpty($block->getSampleData());
     }
@@ -56,7 +56,7 @@ class SamplesTest extends \PHPUnit\Framework\TestCase
         /** @var $objectManager \Magento\TestFramework\ObjectManager */
         $objectManager = \Magento\TestFramework\Helper\Bootstrap::getObjectManager();
         $objectManager->get(
-            \Magento\Framework\Registry::class
+            'Magento\Framework\Registry'
         )->register(
             'current_product',
             new \Magento\Framework\DataObject(
@@ -68,9 +68,9 @@ class SamplesTest extends \PHPUnit\Framework\TestCase
             )
         );
         $block = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->get(
-            \Magento\Framework\View\LayoutInterface::class
+            'Magento\Framework\View\LayoutInterface'
         )->createBlock(
-            \Magento\Downloadable\Block\Adminhtml\Catalog\Product\Edit\Tab\Downloadable\Samples::class
+            'Magento\Downloadable\Block\Adminhtml\Catalog\Product\Edit\Tab\Downloadable\Samples'
         );
         $this->assertEquals($expectedResult, $block->getSamplesTitle());
     }

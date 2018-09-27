@@ -16,8 +16,7 @@ use Magento\Framework\Phrase;
 use Magento\Framework\Pricing\PriceCurrencyInterface;
 
 /**
- * @api
- * @since 100.0.2
+ * Product attributes block.
  */
 class Attributes extends \Magento\Framework\View\Element\Template
 {
@@ -63,6 +62,7 @@ class Attributes extends \Magento\Framework\View\Element\Template
         if (!$this->_product) {
             $this->_product = $this->_coreRegistry->registry('product');
         }
+
         return $this->_product;
     }
 
@@ -81,15 +81,18 @@ class Attributes extends \Magento\Framework\View\Element\Template
         $attributes = $product->getAttributes();
         foreach ($attributes as $attribute) {
             if ($attribute->getIsVisibleOnFront() && !in_array($attribute->getAttributeCode(), $excludeAttr)) {
-                $value = $attribute->getFrontend()->getValue($product);
-
-                if ($value instanceof Phrase) {
-                    $value = (string)$value;
+                if (is_array($value = $attribute->getFrontend()->getValue($product))) {
+                    continue;
+                }
+                if (!$product->hasData($attribute->getAttributeCode())) {
+                    $value = __('N/A');
+                } elseif ((string)$value == '') {
+                    $value = __('No');
                 } elseif ($attribute->getFrontendInput() == 'price' && is_string($value)) {
                     $value = $this->priceCurrency->convertAndFormat($value);
                 }
 
-                if (is_string($value) && strlen($value)) {
+                if (($value instanceof Phrase || is_string($value)) && strlen($value)) {
                     $data[$attribute->getAttributeCode()] = [
                         'label' => __($attribute->getStoreLabel()),
                         'value' => $value,
@@ -98,6 +101,7 @@ class Attributes extends \Magento\Framework\View\Element\Template
                 }
             }
         }
+
         return $data;
     }
 }

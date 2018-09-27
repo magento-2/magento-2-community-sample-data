@@ -25,25 +25,11 @@ class ApplicationTest extends TestCase
         $inputMock = $this->getMock('Symfony\Component\Console\Input\InputInterface');
         $outputMock = $this->getMock('Symfony\Component\Console\Output\OutputInterface');
 
-        $index = 0;
-        $inputMock->expects($this->at($index++))
-            ->method('hasParameterOption')
-            ->with($this->equalTo('--no-plugins'))
-            ->will($this->returnValue(true));
-
-        $inputMock->expects($this->at($index++))
-            ->method('getParameterOption')
-            ->with($this->equalTo(array('--working-dir', '-d')))
-            ->will($this->returnValue(false));
-
-        $inputMock->expects($this->at($index++))
+        $inputMock->expects($this->once())
             ->method('getFirstArgument')
             ->will($this->returnValue('list'));
 
         $index = 0;
-        $outputMock->expects($this->at($index++))
-            ->method("writeError");
-
         if (extension_loaded('xdebug')) {
             $outputMock->expects($this->at($index++))
                 ->method("getVerbosity")
@@ -66,6 +52,7 @@ class ApplicationTest extends TestCase
             define('COMPOSER_DEV_WARNING_TIME', time() - 1);
         }
 
+        $this->setExpectedException('RuntimeException');
         $application->doRun($inputMock, $outputMock);
     }
 
@@ -78,20 +65,9 @@ class ApplicationTest extends TestCase
         $inputMock = $this->getMock('Symfony\Component\Console\Input\InputInterface');
         $outputMock = $this->getMock('Symfony\Component\Console\Output\OutputInterface');
 
-        $index = 0;
-        $inputMock->expects($this->at($index++))
-            ->method('hasParameterOption')
-            ->with($this->equalTo('--no-plugins'))
-            ->will($this->returnValue(true));
-
-        $inputMock->expects($this->at($index++))
-            ->method('getParameterOption')
-            ->with($this->equalTo(array('--working-dir', '-d')))
-            ->will($this->returnValue(false));
-
-        $inputMock->expects($this->at($index++))
+        $inputMock->expects($this->once())
             ->method('getFirstArgument')
-            ->will($this->returnValue('list'));
+            ->will($this->returnValue($command));
 
         $outputMock->expects($this->never())
             ->method("writeln");
@@ -100,6 +76,7 @@ class ApplicationTest extends TestCase
             define('COMPOSER_DEV_WARNING_TIME', time() - 1);
         }
 
+        $this->setExpectedException('RuntimeException');
         $application->doRun($inputMock, $outputMock);
     }
 

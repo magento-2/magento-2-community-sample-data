@@ -6,12 +6,13 @@
 
 namespace Magento\Msrp\Setup;
 
-use Magento\Catalog\Setup\CategorySetupFactory;
 use Magento\Framework\Setup\ModuleContextInterface;
 use Magento\Framework\Setup\ModuleDataSetupInterface;
 use Magento\Framework\Setup\UpgradeDataInterface;
+use Magento\Catalog\Setup\CategorySetupFactory;
 
 /**
+ * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  * @codeCoverageIgnore
  */
 class UpgradeData implements UpgradeDataInterface
@@ -19,7 +20,7 @@ class UpgradeData implements UpgradeDataInterface
     /**
      * @var CategorySetupFactory
      */
-    private $categorySetupFactory;
+    protected $categorySetupFactory;
 
     /**
      * @param CategorySetupFactory $categorySetupFactory
@@ -59,5 +60,6 @@ class UpgradeData implements UpgradeDataInterface
             'is_global',
             \Magento\Eav\Model\Entity\Attribute\ScopedAttributeInterface::SCOPE_GLOBAL
         );
+
     }
 }

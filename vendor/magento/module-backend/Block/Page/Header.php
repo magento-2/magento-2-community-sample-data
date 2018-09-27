@@ -4,21 +4,21 @@
  * See COPYING.txt for license details.
  */
 
+// @codingStandardsIgnoreFile
+
 namespace Magento\Backend\Block\Page;
 
 /**
  * Adminhtml header block
  *
- * @api
  * @author      Magento Core Team <core@magentocommerce.com>
- * @since 100.0.2
  */
 class Header extends \Magento\Backend\Block\Template
 {
     /**
      * @var string
      */
-    protected $_template = 'page/header.phtml';
+    protected $_template = 'Magento_Backend::page/header.phtml';
 
     /**
      * Backend data
@@ -80,9 +80,6 @@ class Header extends \Magento\Backend\Block\Template
      */
     public function displayNoscriptNotice()
     {
-        return $this->_scopeConfig->getValue(
-            'web/browser_capabilities/javascript',
-            \Magento\Store\Model\ScopeInterface::SCOPE_STORE
-        );
+        return $this->_scopeConfig->getValue('web/browser_capabilities/javascript', \Magento\Store\Model\ScopeInterface::SCOPE_STORE);
     }
 }

@@ -5,7 +5,7 @@
  */
 namespace Magento\SalesRule\Test\Unit\Model\Converter;
 
-class ToModelTest extends \PHPUnit\Framework\TestCase
+class ToModelTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\SalesRule\Model\RuleFactory|\PHPUnit_Framework_MockObject_MockObject
@@ -24,19 +24,19 @@ class ToModelTest extends \PHPUnit\Framework\TestCase
 
     protected function setUp()
     {
-        $this->ruleFactory = $this->getMockBuilder(\Magento\SalesRule\Model\RuleFactory::class)
+        $this->ruleFactory = $this->getMockBuilder('Magento\SalesRule\Model\RuleFactory')
             ->disableOriginalConstructor()
             ->setMethods(['create'])
             ->getMock();
 
-        $this->dataObjectProcessor = $this->getMockBuilder(\Magento\Framework\Reflection\DataObjectProcessor::class)
+        $this->dataObjectProcessor = $this->getMockBuilder('\Magento\Framework\Reflection\DataObjectProcessor')
             ->disableOriginalConstructor()
             ->setMethods([])
             ->getMock();
 
         $helper = new \Magento\Framework\TestFramework\Unit\Helper\ObjectManager($this);
         $this->model = $helper->getObject(
-            \Magento\SalesRule\Model\Converter\ToModel::class,
+            'Magento\SalesRule\Model\Converter\ToModel',
             [
                 'ruleFactory' =>  $this->ruleFactory,
                 'dataObjectProcessor' => $this->dataObjectProcessor,
@@ -71,7 +71,7 @@ class ToModelTest extends \PHPUnit\Framework\TestCase
         /**
          * @var \Magento\SalesRule\Model\Data\Condition $dataCondition
          */
-        $dataCondition = $this->getMockBuilder(\Magento\SalesRule\Model\Data\Condition::class)
+        $dataCondition = $this->getMockBuilder('\Magento\SalesRule\Model\Data\Condition')
             ->disableOriginalConstructor()
             ->setMethods(['create', 'load', 'getConditionType', 'getValue', 'getAttributeName', 'getOperator',
                 'getAggregatorType', 'getConditions'])
@@ -102,13 +102,13 @@ class ToModelTest extends \PHPUnit\Framework\TestCase
             ->method('getAggregatorType')
             ->willReturn('getAggregatorType');
 
-        $dataCondition1 = $this->getMockBuilder(\Magento\SalesRule\Model\Data\Condition::class)
+        $dataCondition1 = $this->getMockBuilder('\Magento\SalesRule\Model\Data\Condition')
             ->disableOriginalConstructor()
             ->setMethods(['create', 'load', 'getConditionType', 'getValue', 'getAttributeName', 'getOperator',
                 'getAggregatorType', 'getConditions'])
             ->getMock();
 
-        $dataCondition2 = $this->getMockBuilder(\Magento\SalesRule\Model\Data\Condition::class)
+        $dataCondition2 = $this->getMockBuilder('\Magento\SalesRule\Model\Data\Condition')
             ->disableOriginalConstructor()
             ->setMethods(['create', 'load', 'getConditionType', 'getValue', 'getAttributeName', 'getOperator',
                 'getAggregatorType', 'getConditions'])
@@ -129,7 +129,7 @@ class ToModelTest extends \PHPUnit\Framework\TestCase
         /**
          * @var \Magento\SalesRule\Model\Data\Rule $dataModel
          */
-        $dataModel = $this->getMockBuilder(\Magento\SalesRule\Model\Data\Rule::class)
+        $dataModel = $this->getMockBuilder('\Magento\SalesRule\Model\Data\Rule')
             ->disableOriginalConstructor()
             ->setMethods(['create', 'load', 'getData', 'getRuleId', 'getCondition', 'getActionCondition',
                 'getStoreLabels'])
@@ -154,7 +154,7 @@ class ToModelTest extends \PHPUnit\Framework\TestCase
             ->method('getStoreLabels')
             ->willReturn([]);
 
-        $ruleModel = $this->getMockBuilder(\Magento\SalesRule\Model\Rule::class)
+        $ruleModel = $this->getMockBuilder('\Magento\SalesRule\Model\Rule')
             ->disableOriginalConstructor()
             ->setMethods(['create', 'load', 'getId', 'getData'])
             ->getMock();
@@ -231,7 +231,7 @@ class ToModelTest extends \PHPUnit\Framework\TestCase
             ->expects($this->atLeastOnce())
             ->method('getStoreLabels')
             ->willReturn([]);
-        $ruleModel = $this->getMockBuilder(\Magento\SalesRule\Model\Rule::class)
+        $ruleModel = $this->getMockBuilder('\Magento\SalesRule\Model\Rule')
             ->disableOriginalConstructor()
             ->setMethods(['create', 'load', 'getId', 'getData'])
             ->getMock();
@@ -273,6 +273,9 @@ class ToModelTest extends \PHPUnit\Framework\TestCase
         $this->model->toModel($dataModel);
     }
 
+    /**
+     * @return array
+     */
     public function expectedDatesProvider()
     {
         return [

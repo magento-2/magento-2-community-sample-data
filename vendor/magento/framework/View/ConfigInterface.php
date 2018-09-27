@@ -7,7 +7,6 @@ namespace Magento\Framework\View;
 
 /**
  * Config Interface
- *
  * @api
  */
 interface ConfigInterface

@@ -11,7 +11,7 @@ use \Magento\Framework\Webapi\Rest\Response\FieldsFilter;
 /**
  * Unit test for FieldsFilter
  */
-class FieldsFilterTest extends \PHPUnit\Framework\TestCase
+class FieldsFilterTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var FieldsFilter SUT
@@ -31,7 +31,7 @@ class FieldsFilterTest extends \PHPUnit\Framework\TestCase
      */
     protected function setUp()
     {
-        $this->requestMock = $this->createMock(\Magento\Framework\Webapi\Rest\Request::class);
+        $this->requestMock = $this->getMock('Magento\Framework\Webapi\Rest\Request', [], [], '', false);
         $this->processor = new FieldsFilter($this->requestMock);
         $this->sampleResponseValue = [
             'customer' => [

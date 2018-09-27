@@ -9,8 +9,6 @@ use Magento\Catalog\Model\Product;
 
 /**
  * Interface TypeHandlerInterface
- * @api
- * @since 100.0.2
  */
 interface TypeHandlerInterface
 {

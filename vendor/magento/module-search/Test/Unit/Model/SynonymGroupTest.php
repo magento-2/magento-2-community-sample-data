@@ -5,7 +5,7 @@
  */
 namespace Magento\Search\Test\Unit\Model;
 
-class SynonymGroupTest extends \PHPUnit\Framework\TestCase
+class SynonymGroupTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\Search\Model\SynonymGroup
@@ -15,7 +15,7 @@ class SynonymGroupTest extends \PHPUnit\Framework\TestCase
     public function setUp()
     {
         $this->model = (new \Magento\Framework\TestFramework\Unit\Helper\ObjectManager($this))
-            ->getObject(\Magento\Search\Model\SynonymGroup::class);
+            ->getObject('Magento\Search\Model\SynonymGroup');
     }
 
     public function testSetGetStoreId()

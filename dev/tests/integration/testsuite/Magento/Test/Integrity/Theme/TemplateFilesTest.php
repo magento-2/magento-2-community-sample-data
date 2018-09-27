@@ -18,10 +18,10 @@ class TemplateFilesTest extends \Magento\TestFramework\TestCase\AbstractIntegrit
             $params = ['area' => $area, 'themeId' => $themeId, 'module' => $module];
             try {
                 $templateFilename = \Magento\TestFramework\Helper\Bootstrap::getObjectmanager()
-                    ->get(\Magento\Framework\View\FileSystem::class)
+                    ->get('Magento\Framework\View\FileSystem')
                     ->getTemplateFileName($file, $params);
                 $this->assertFileExists($templateFilename);
-            } catch (\PHPUnit\Framework\ExpectationFailedException $e) {
+            } catch (\PHPUnit_Framework_ExpectationFailedException $e) {
                 $invalidTemplates[] = "File \"{$templateFilename}\" does not exist." .
                     PHP_EOL .
                     "Parameters: {$area}/{$themeId} {$module}::{$file}" .
@@ -45,7 +45,7 @@ class TemplateFilesTest extends \Magento\TestFramework\TestCase\AbstractIntegrit
         foreach ($themes as $theme) {
             /** @var \Magento\Framework\View\Layout\ProcessorInterface $layoutUpdate */
             $layoutUpdate = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->create(
-                \Magento\Framework\View\Layout\ProcessorInterface::class,
+                'Magento\Framework\View\Layout\ProcessorInterface',
                 ['theme' => $theme]
             );
             $layoutTemplates = $this->_getLayoutTemplates($layoutUpdate->getFileLayoutUpdatesXml());

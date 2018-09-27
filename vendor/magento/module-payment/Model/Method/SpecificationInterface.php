@@ -7,9 +7,6 @@ namespace Magento\Payment\Model\Method;
 
 /**
  * Interface SpecificationInterface
- *
- * @api
- * @since 100.0.2
  */
 interface SpecificationInterface
 {

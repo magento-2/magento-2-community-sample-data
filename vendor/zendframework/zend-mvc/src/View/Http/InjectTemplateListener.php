@@ -30,7 +30,7 @@ class InjectTemplateListener extends AbstractListenerAggregate
      *
      * @var array
      */
-    protected $controllerMap = [];
+    protected $controllerMap = array();
 
     /**
      * Flag to force the use of the route match controller param
@@ -42,9 +42,9 @@ class InjectTemplateListener extends AbstractListenerAggregate
     /**
      * {@inheritDoc}
      */
-    public function attach(Events $events, $priority = 1)
+    public function attach(Events $events)
     {
-        $this->listeners[] = $events->attach(MvcEvent::EVENT_DISPATCH, [$this, 'injectTemplate'], -90);
+        $this->listeners[] = $events->attach(MvcEvent::EVENT_DISPATCH, array($this, 'injectTemplate'), -90);
     }
 
     /**
@@ -136,7 +136,8 @@ class InjectTemplateListener extends AbstractListenerAggregate
         }
 
         foreach ($this->controllerMap as $namespace => $replacement) {
-            if (// Allow disabling rule by setting value to false since config
+            if (
+                // Allow disabling rule by setting value to false since config
                 // merging have no feature to remove entries
                 false == $replacement
                 // Match full class or full namespace
@@ -155,7 +156,7 @@ class InjectTemplateListener extends AbstractListenerAggregate
             //strip Controller namespace(s) (but not classname)
             $parts = explode('\\', $controller);
             array_pop($parts);
-            $parts = array_diff($parts, ['Controller']);
+            $parts = array_diff($parts, array('Controller'));
             //strip trailing Controller in class name
             $parts[] = $this->deriveControllerClass($controller);
             $controller = implode('/', $parts);

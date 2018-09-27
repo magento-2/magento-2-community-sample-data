@@ -12,7 +12,7 @@ use Magento\Security\Model\SecurityCookie;
 /**
  * Test class for \Magento\Security\Model\Plugin\LoginController testing
  */
-class LoginControllerTest extends \PHPUnit\Framework\TestCase
+class LoginControllerTest extends \PHPUnit_Framework_TestCase
 {
     /** @var  \Magento\Security\Model\Plugin\LoginController */
     protected $controller;
@@ -43,27 +43,48 @@ class LoginControllerTest extends \PHPUnit\Framework\TestCase
     {
         $this->objectManager = new ObjectManager($this);
 
-        $this->messageManagerMock = $this->createMock(\Magento\Framework\Message\ManagerInterface::class);
-
-        $this->adminSessionsManagerMock = $this->createPartialMock(
-            \Magento\Security\Model\AdminSessionsManager::class,
-            ['getLogoutReasonMessageByStatus']
+        $this->messageManagerMock = $this->getMock(
+            '\Magento\Framework\Message\ManagerInterface',
+            [],
+            [],
+            '',
+            false
         );
 
-        $this->securityCookieMock = $this->createPartialMock(
+        $this->adminSessionsManagerMock = $this->getMock(
+            '\Magento\Security\Model\AdminSessionsManager',
+            ['getLogoutReasonMessageByStatus'],
+            [],
+            '',
+            false
+        );
+
+        $this->securityCookieMock = $this->getMock(
             SecurityCookie::class,
-            ['getLogoutReasonCookie', 'deleteLogoutReasonCookie']
+            ['getLogoutReasonCookie', 'deleteLogoutReasonCookie'],
+            [],
+            '',
+            false
         );
 
-        $this->backendControllerAuthLoginMock = $this->createPartialMock(
-            \Magento\Backend\Controller\Adminhtml\Auth\Login::class,
-            ['getRequest', 'getUrl']
+        $this->backendControllerAuthLoginMock = $this->getMock(
+            '\Magento\Backend\Controller\Adminhtml\Auth\Login',
+            ['getRequest', 'getUrl'],
+            [],
+            '',
+            false
         );
 
-        $this->requestMock = $this->createPartialMock(\Magento\Framework\App\Request\Http::class, ['getUri']);
+        $this->requestMock = $this->getMock(
+            '\Magento\Framework\App\Request\Http',
+            ['getUri'],
+            [],
+            '',
+            false
+        );
 
         $this->controller = $this->objectManager->getObject(
-            \Magento\Security\Model\Plugin\LoginController::class,
+            '\Magento\Security\Model\Plugin\LoginController',
             [
                 'messageManager' => $this->messageManagerMock,
                 'sessionsManager' => $this->adminSessionsManagerMock,

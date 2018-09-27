@@ -9,10 +9,8 @@ use Magento\Framework\Pricing\Render\RendererPool;
 
 /**
  * Test class for \Magento\Framework\Pricing\Render\RendererPool
- *
- * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  */
-class RendererPoolTest extends \PHPUnit\Framework\TestCase
+class RendererPoolTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\Framework\Pricing\Render\RendererPool | \PHPUnit_Framework_MockObject_MockObject
@@ -41,19 +39,19 @@ class RendererPoolTest extends \PHPUnit\Framework\TestCase
 
     protected function setUp()
     {
-        $this->layoutMock = $this->getMockBuilder(\Magento\Framework\View\Layout::class)
+        $this->layoutMock = $this->getMockBuilder('Magento\Framework\View\Layout')
             ->disableOriginalConstructor()
             ->getMock();
-        $this->contextMock = $this->getMockBuilder(\Magento\Framework\View\Element\Context::class)
+        $this->contextMock = $this->getMockBuilder('\Magento\Framework\View\Element\Context')
             ->disableOriginalConstructor()
             ->getMock();
         $this->contextMock->expects($this->any())
             ->method('getLayout')
             ->will($this->returnValue($this->layoutMock));
-        $this->productMock = $this->getMockBuilder(\Magento\Catalog\Model\Product::class)
+        $this->productMock = $this->getMockBuilder('Magento\Catalog\Model\Product')
             ->disableOriginalConstructor()
             ->getMock();
-        $this->priceMock = $this->getMockBuilder(\Magento\Catalog\Pricing\Price\BasePrice::class)
+        $this->priceMock = $this->getMockBuilder('Magento\Catalog\Pricing\Price\BasePrice')
             ->disableOriginalConstructor()
             ->getMock();
     }
@@ -102,7 +100,7 @@ class RendererPoolTest extends \PHPUnit\Framework\TestCase
         ];
         $priceModel = null;
 
-        $priceInfoMock = $this->getMockBuilder(\Magento\Framework\Pricing\PriceInfo\Base::class)
+        $priceInfoMock = $this->getMockBuilder('Magento\Framework\Pricing\PriceInfo\Base')
             ->disableOriginalConstructor()
             ->getMock();
         $priceInfoMock->expects($this->once())
@@ -133,7 +131,7 @@ class RendererPoolTest extends \PHPUnit\Framework\TestCase
         $methodData = [];
         $priceCode = 'price_test';
         $type = 'simple';
-        $className = \Magento\Framework\View\Element\Template\Context::class;
+        $className = 'Magento\Framework\View\Element\Template\Context';
         $data = [
             $type => [
                 'prices' => [
@@ -144,7 +142,7 @@ class RendererPoolTest extends \PHPUnit\Framework\TestCase
             ],
         ];
 
-        $priceInfoMock = $this->getMockBuilder(\Magento\Framework\Pricing\PriceInfo\Base::class)
+        $priceInfoMock = $this->getMockBuilder('Magento\Framework\Pricing\PriceInfo\Base')
             ->disableOriginalConstructor()
             ->getMock();
         $priceInfoMock->expects($this->once())
@@ -158,7 +156,7 @@ class RendererPoolTest extends \PHPUnit\Framework\TestCase
             ->method('getPriceInfo')
             ->will($this->returnValue($priceInfoMock));
 
-        $contextMock = $this->getMockBuilder(\Magento\Framework\View\Element\Template\Context::class)
+        $contextMock = $this->getMockBuilder('Magento\Framework\View\Element\Template\Context')
             ->disableOriginalConstructor()
             ->getMock();
         $block = new \Magento\Framework\View\Element\Template($contextMock);
@@ -188,7 +186,7 @@ class RendererPoolTest extends \PHPUnit\Framework\TestCase
         $methodData = [];
         $priceCode = 'price_test';
         $type = 'simple';
-        $className = \Magento\Framework\View\Element\Template\Context::class;
+        $className = 'Magento\Framework\View\Element\Template\Context';
         $template = 'template.phtml';
         $data = [
             $type => [
@@ -201,7 +199,7 @@ class RendererPoolTest extends \PHPUnit\Framework\TestCase
             ],
         ];
 
-        $priceInfoMock = $this->getMockBuilder(\Magento\Framework\Pricing\PriceInfo\Base::class)
+        $priceInfoMock = $this->getMockBuilder('Magento\Framework\Pricing\PriceInfo\Base')
             ->disableOriginalConstructor()
             ->getMock();
         $priceInfoMock->expects($this->once())
@@ -215,7 +213,7 @@ class RendererPoolTest extends \PHPUnit\Framework\TestCase
             ->method('getPriceInfo')
             ->will($this->returnValue($priceInfoMock));
 
-        $renderBlock = $this->getMockBuilder(\Magento\Framework\Pricing\Render\PriceBox::class)
+        $renderBlock = $this->getMockBuilder('Magento\Framework\Pricing\Render\PriceBox')
             ->disableOriginalConstructor()
             ->getMock();
         $renderBlock->expects($this->once())
@@ -236,7 +234,7 @@ class RendererPoolTest extends \PHPUnit\Framework\TestCase
             ->will($this->returnValue($renderBlock));
 
         $result = $testedClass->createPriceRender($priceCode, $this->productMock, $methodData);
-        $this->assertInstanceOf(\Magento\Framework\Pricing\Render\PriceBoxRenderInterface::class, $result);
+        $this->assertInstanceOf('Magento\Framework\Pricing\Render\PriceBoxRenderInterface', $result);
     }
 
     /**
@@ -252,7 +250,7 @@ class RendererPoolTest extends \PHPUnit\Framework\TestCase
         $methodData = [];
         $priceCode = 'base_price_test';
 
-        $amountMock = $this->getMockBuilder(\Magento\Framework\Pricing\Amount\Base::class)
+        $amountMock = $this->getMockBuilder('Magento\Framework\Pricing\Amount\Base')
             ->disableOriginalConstructor()
             ->getMock();
         $this->productMock->expects($this->once())
@@ -279,7 +277,7 @@ class RendererPoolTest extends \PHPUnit\Framework\TestCase
         $type = 'simple';
         $methodData = [];
         $priceCode = 'base_price_test';
-        $amountRenderClass = \Magento\Framework\View\Element\Template\Context::class;
+        $amountRenderClass = 'Magento\Framework\View\Element\Template\Context';
         $data = [
             $type => [
                 'prices' => [
@@ -290,7 +288,7 @@ class RendererPoolTest extends \PHPUnit\Framework\TestCase
             ],
         ];
 
-        $amountMock = $this->getMockBuilder(\Magento\Framework\Pricing\Amount\Base::class)
+        $amountMock = $this->getMockBuilder('Magento\Framework\Pricing\Amount\Base')
             ->disableOriginalConstructor()
             ->getMock();
         $this->productMock->expects($this->once())
@@ -300,7 +298,7 @@ class RendererPoolTest extends \PHPUnit\Framework\TestCase
             ->method('getPriceCode')
             ->will($this->returnValue($priceCode));
 
-        $contextMock = $this->getMockBuilder(\Magento\Framework\View\Element\Template\Context::class)
+        $contextMock = $this->getMockBuilder('Magento\Framework\View\Element\Template\Context')
             ->disableOriginalConstructor()
             ->getMock();
         $block = new \Magento\Framework\View\Element\Template($contextMock);
@@ -333,7 +331,7 @@ class RendererPoolTest extends \PHPUnit\Framework\TestCase
         $methodData = [];
         $priceCode = 'base_price_test';
         $template = 'template.phtml';
-        $amountRenderClass = \Magento\Framework\Pricing\Render\Amount::class;
+        $amountRenderClass = 'Magento\Framework\Pricing\Render\Amount';
         $data = [
             $type => [
                 'prices' => [
@@ -345,7 +343,7 @@ class RendererPoolTest extends \PHPUnit\Framework\TestCase
             ],
         ];
 
-        $amountMock = $this->getMockBuilder(\Magento\Framework\Pricing\Amount\Base::class)
+        $amountMock = $this->getMockBuilder('Magento\Framework\Pricing\Amount\Base')
             ->disableOriginalConstructor()
             ->getMock();
         $this->productMock->expects($this->once())
@@ -355,7 +353,7 @@ class RendererPoolTest extends \PHPUnit\Framework\TestCase
             ->method('getPriceCode')
             ->will($this->returnValue($priceCode));
 
-        $blockMock = $this->getMockBuilder(\Magento\Framework\Pricing\Render\Amount::class)
+        $blockMock = $this->getMockBuilder('Magento\Framework\Pricing\Render\Amount')
             ->disableOriginalConstructor()
             ->getMock();
 
@@ -379,7 +377,7 @@ class RendererPoolTest extends \PHPUnit\Framework\TestCase
             ->with($this->equalTo($template));
 
         $result = $testedClass->createAmountRender($amountMock, $this->productMock, $this->priceMock, $methodData);
-        $this->assertInstanceOf(\Magento\Framework\Pricing\Render\AmountRenderInterface::class, $result);
+        $this->assertInstanceOf('Magento\Framework\Pricing\Render\AmountRenderInterface', $result);
     }
 
     /**
@@ -446,7 +444,7 @@ class RendererPoolTest extends \PHPUnit\Framework\TestCase
     {
         $typeId = 'simple';
         $priceCode = 'base_price_test';
-        $class = \Magento\Framework\View\Element\Template::class;
+        $class = 'Magento\Framework\View\Element\Template';
         $template = 'template.phtml';
 
         $code = 'tax';
@@ -471,7 +469,7 @@ class RendererPoolTest extends \PHPUnit\Framework\TestCase
             ->method('getPriceCode')
             ->will($this->returnValue($priceCode));
 
-        $blockMock = $this->getMockBuilder(\Magento\Framework\View\Element\Template::class)
+        $blockMock = $this->getMockBuilder('Magento\Framework\View\Element\Template')
             ->disableOriginalConstructor()
             ->getMock();
         $blockMock->expects($this->once())
@@ -486,7 +484,7 @@ class RendererPoolTest extends \PHPUnit\Framework\TestCase
         $testedClass = $this->createTestedEntity($data);
         $result = $testedClass->getAdjustmentRenders($this->productMock, $this->priceMock);
         $this->assertArrayHasKey($code, $result);
-        $this->assertInstanceOf(\Magento\Framework\View\Element\Template::class, $result[$code]);
+        $this->assertInstanceOf('Magento\Framework\View\Element\Template', $result[$code]);
     }
 
     /**
@@ -501,7 +499,7 @@ class RendererPoolTest extends \PHPUnit\Framework\TestCase
         $methodData = [];
         $priceCode = 'base_price_test';
         $template = false;
-        $amountRenderClass = \Magento\Framework\Pricing\Render\Amount::class;
+        $amountRenderClass = 'Magento\Framework\Pricing\Render\Amount';
         $data = [
             $type => [
                 'prices' => [
@@ -513,7 +511,7 @@ class RendererPoolTest extends \PHPUnit\Framework\TestCase
             ],
         ];
 
-        $amountMock = $this->getMockBuilder(\Magento\Framework\Pricing\Amount\Base::class)
+        $amountMock = $this->getMockBuilder('Magento\Framework\Pricing\Amount\Base')
             ->disableOriginalConstructor()
             ->getMock();
 
@@ -524,7 +522,7 @@ class RendererPoolTest extends \PHPUnit\Framework\TestCase
             ->method('getPriceCode')
             ->will($this->returnValue($priceCode));
 
-        $blockMock = $this->getMockBuilder(\Magento\Framework\Pricing\Render\Amount::class)
+        $blockMock = $this->getMockBuilder('Magento\Framework\Pricing\Render\Amount')
             ->disableOriginalConstructor()
             ->getMock();
 
@@ -558,7 +556,7 @@ class RendererPoolTest extends \PHPUnit\Framework\TestCase
         $methodData = [];
         $priceCode = 'price_test';
         $type = 'simple';
-        $className = \Magento\Framework\View\Element\Template\Context::class;
+        $className = 'Magento\Framework\View\Element\Template\Context';
         $template = false;
         $data = [
             $type => [
@@ -571,7 +569,7 @@ class RendererPoolTest extends \PHPUnit\Framework\TestCase
             ],
         ];
 
-        $priceInfoMock = $this->getMockBuilder(\Magento\Framework\Pricing\PriceInfo\Base::class)
+        $priceInfoMock = $this->getMockBuilder('Magento\Framework\Pricing\PriceInfo\Base')
             ->disableOriginalConstructor()
             ->getMock();
         $priceInfoMock->expects($this->once())
@@ -585,7 +583,7 @@ class RendererPoolTest extends \PHPUnit\Framework\TestCase
             ->method('getPriceInfo')
             ->will($this->returnValue($priceInfoMock));
 
-        $renderBlock = $this->getMockBuilder(\Magento\Framework\Pricing\Render\PriceBox::class)
+        $renderBlock = $this->getMockBuilder('Magento\Framework\Pricing\Render\PriceBox')
             ->disableOriginalConstructor()
             ->getMock();
 
@@ -603,7 +601,7 @@ class RendererPoolTest extends \PHPUnit\Framework\TestCase
             ->will($this->returnValue($renderBlock));
 
         $result = $testedClass->createPriceRender($priceCode, $this->productMock, $methodData);
-        $this->assertInstanceOf(\Magento\Framework\Pricing\Render\PriceBoxRenderInterface::class, $result);
+        $this->assertInstanceOf('Magento\Framework\Pricing\Render\PriceBoxRenderInterface', $result);
     }
 
     /**

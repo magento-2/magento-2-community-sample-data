@@ -96,7 +96,7 @@ class Ini implements ReaderInterface
     public function fromString($string)
     {
         if (empty($string)) {
-            return [];
+            return array();
         }
         $this->directory = null;
 
@@ -123,7 +123,7 @@ class Ini implements ReaderInterface
      */
     protected function process(array $data)
     {
-        $config = [];
+        $config = array();
 
         foreach ($data as $section => $value) {
             if (is_array($value)) {
@@ -154,7 +154,7 @@ class Ini implements ReaderInterface
             return $this->processSection($value);
         }
 
-        $nestedSection = [];
+        $nestedSection = array();
 
         $first = array_shift($sections);
         $nestedSection[$first] = $this->buildNestedSection($sections, $value);
@@ -170,7 +170,7 @@ class Ini implements ReaderInterface
      */
     protected function processSection(array $section)
     {
-        $config = [];
+        $config = array();
 
         foreach ($section as $key => $value) {
             $this->processKey($key, $value, $config);
@@ -197,9 +197,9 @@ class Ini implements ReaderInterface
                 throw new Exception\RuntimeException(sprintf('Invalid key "%s"', $key));
             } elseif (!isset($config[$pieces[0]])) {
                 if ($pieces[0] === '0' && !empty($config)) {
-                    $config = [$pieces[0] => $config];
+                    $config = array($pieces[0] => $config);
                 } else {
-                    $config[$pieces[0]] = [];
+                    $config[$pieces[0]] = array();
                 }
             } elseif (!is_array($config[$pieces[0]])) {
                 throw new Exception\RuntimeException(

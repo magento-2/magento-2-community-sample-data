@@ -29,10 +29,10 @@ class JsonStrategy extends AbstractListenerAggregate
      *
      * @var array
      */
-    protected $multibyteCharsets = [
+    protected $multibyteCharsets = array(
         'UTF-16',
         'UTF-32',
-    ];
+    );
 
     /**
      * @var JsonRenderer
@@ -54,8 +54,8 @@ class JsonStrategy extends AbstractListenerAggregate
      */
     public function attach(EventManagerInterface $events, $priority = 1)
     {
-        $this->listeners[] = $events->attach(ViewEvent::EVENT_RENDERER, [$this, 'selectRenderer'], $priority);
-        $this->listeners[] = $events->attach(ViewEvent::EVENT_RESPONSE, [$this, 'injectResponse'], $priority);
+        $this->listeners[] = $events->attach(ViewEvent::EVENT_RENDERER, array($this, 'selectRenderer'), $priority);
+        $this->listeners[] = $events->attach(ViewEvent::EVENT_RESPONSE, array($this, 'injectResponse'), $priority);
     }
 
     /**
@@ -81,7 +81,8 @@ class JsonStrategy extends AbstractListenerAggregate
     }
 
     /**
-     * Detect if we should use the JsonRenderer based on model type
+     * Detect if we should use the JsonRenderer based on model type and/or
+     * Accept header
      *
      * @param  ViewEvent $e
      * @return null|JsonRenderer
@@ -90,7 +91,7 @@ class JsonStrategy extends AbstractListenerAggregate
     {
         $model = $e->getModel();
 
-        if (! $model instanceof Model\JsonModel) {
+        if (!$model instanceof Model\JsonModel) {
             // no JsonModel; do nothing
             return;
         }
@@ -114,7 +115,7 @@ class JsonStrategy extends AbstractListenerAggregate
         }
 
         $result   = $e->getResult();
-        if (! is_string($result)) {
+        if (!is_string($result)) {
             // We don't have a string, and thus, no JSON
             return;
         }

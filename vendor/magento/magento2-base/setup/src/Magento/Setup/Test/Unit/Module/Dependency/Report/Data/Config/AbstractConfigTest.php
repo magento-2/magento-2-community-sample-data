@@ -5,7 +5,7 @@
  */
 namespace Magento\Setup\Test\Unit\Module\Dependency\Report\Data\Config;
 
-class AbstractConfigTest extends \PHPUnit\Framework\TestCase
+class AbstractConfigTest extends \PHPUnit_Framework_TestCase
 {
     public function testGetModules()
     {
@@ -13,7 +13,7 @@ class AbstractConfigTest extends \PHPUnit\Framework\TestCase
 
         /** @var \Magento\Setup\Module\Dependency\Report\Data\Config\AbstractConfig $config */
         $config = $this->getMockForAbstractClass(
-            \Magento\Setup\Module\Dependency\Report\Data\Config\AbstractConfig::class,
+            'Magento\Setup\Module\Dependency\Report\Data\Config\AbstractConfig',
             ['modules' => $modules]
         );
 

@@ -7,7 +7,7 @@ namespace Magento\Framework\Api\Test\Unit\Data;
 
 use Magento\Framework\Api\AttributeValue;
 
-class AttributeValueTest extends \PHPUnit\Framework\TestCase
+class AttributeValueTest extends \PHPUnit_Framework_TestCase
 {
     const ATTRIBUTE_CODE = 'ATTRIBUTE_CODE';
 

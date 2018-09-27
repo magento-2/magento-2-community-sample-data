@@ -7,7 +7,7 @@ namespace Magento\Framework\HTTP;
 
 use Zend\Stdlib\Parameters;
 
-class HeaderTest extends \PHPUnit\Framework\TestCase
+class HeaderTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\Framework\HTTP\Header
@@ -17,10 +17,10 @@ class HeaderTest extends \PHPUnit\Framework\TestCase
     protected function setUp()
     {
         $objectManager = \Magento\TestFramework\Helper\Bootstrap::getObjectManager();
-        $this->_header = $objectManager->get(\Magento\Framework\HTTP\Header::class);
+        $this->_header = $objectManager->get('Magento\Framework\HTTP\Header');
 
         /** @var \Magento\TestFramework\Request $request */
-        $request = $objectManager->get(\Magento\TestFramework\Request::class);
+        $request = $objectManager->get('Magento\TestFramework\Request');
         $request->setServer(new Parameters(['HTTP_HOST' => 'localhost']));
     }
 

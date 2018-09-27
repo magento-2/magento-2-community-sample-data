@@ -12,7 +12,7 @@ use Magento\Store\Model\StoreManagerInterface;
 use Magento\Customer\Block\CustomerScopeData;
 use Magento\Framework\Json\EncoderInterface;
 
-class CustomerScopeDataTest extends \PHPUnit\Framework\TestCase
+class CustomerScopeDataTest extends \PHPUnit_Framework_TestCase
 {
     /** @var \Magento\Customer\Block\CustomerScopeData */
     private $model;

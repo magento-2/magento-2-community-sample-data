@@ -58,14 +58,4 @@ class ScopeCodeResolver
         $this->resolvedScopeCodes[$scopeType][$scopeCode] = $resolverScopeCode;
         return $resolverScopeCode;
     }
-
-    /**
-     * Clean resolvedScopeCodes, store codes may have been renamed
-     *
-     * @return void
-     */
-    public function clean()
-    {
-        $this->resolvedScopeCodes = [];
-    }
 }

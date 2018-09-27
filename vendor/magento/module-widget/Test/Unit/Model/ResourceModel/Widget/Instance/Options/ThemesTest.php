@@ -12,7 +12,7 @@ use Magento\Theme\Model\ResourceModel\Theme\CollectionFactory as ThemeCollection
 /**
  * Test class for \Magento\Widget\Model\ResourceModel\Widget\Instance\Options\Themes
  */
-class ThemesTest extends \PHPUnit\Framework\TestCase
+class ThemesTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var Themes
@@ -31,8 +31,8 @@ class ThemesTest extends \PHPUnit\Framework\TestCase
 
     protected function setUp()
     {
-        $this->themeCollectionMock = $this->createMock(ThemeCollection::class);
-        $this->themeCollectionFactoryMock = $this->createPartialMock(ThemeCollectionFactory::class, ['create']);
+        $this->themeCollectionMock = $this->getMock(ThemeCollection::class, [], [], '', false);
+        $this->themeCollectionFactoryMock = $this->getMock(ThemeCollectionFactory::class, ['create'], [], '', false);
         $this->model = new Themes(
             $this->themeCollectionFactoryMock
         );

@@ -8,10 +8,9 @@ namespace Magento\Reports\Test\TestCase;
 
 use Magento\Customer\Test\Page\CustomerAccountIndex;
 use Magento\Downloadable\Test\Page\DownloadableCustomerProducts;
-use Magento\Mtf\Client\BrowserInterface;
-use Magento\Mtf\Fixture\FixtureFactory;
-use Magento\Mtf\TestCase\Injectable;
 use Magento\Sales\Test\Fixture\OrderInjectable;
+use Magento\Mtf\Client\BrowserInterface;
+use Magento\Mtf\TestCase\Injectable;
 
 /**
  * Preconditions:
@@ -26,13 +25,14 @@ use Magento\Sales\Test\Fixture\OrderInjectable;
  * 2. Go to Reports > Products > Downloads.
  * 3. Perform all assertions.
  *
- * @group Reports
+ * @group Reports_(MX)
  * @ZephyrId MAGETWO-28823
  */
 class DownloadProductsReportEntityTest extends Injectable
 {
     /* tags */
     const MVP = 'no';
+    const DOMAIN = 'MX';
     /* end tags */
 
     /**
@@ -57,28 +57,18 @@ class DownloadProductsReportEntityTest extends Injectable
     protected $customerProducts;
 
     /**
-     * Fixture factory.
-     *
-     * @var FixtureFactory
-     */
-    private $fixtureFactory;
-
-    /**
      * Inject pages.
      *
-     * @param FixtureFactory $fixtureFactory
      * @param CustomerAccountIndex $customerAccount
      * @param DownloadableCustomerProducts $customerProducts
      * @param BrowserInterface $browser
      * @return void
      */
     public function __inject(
-        FixtureFactory $fixtureFactory,
         CustomerAccountIndex $customerAccount,
         DownloadableCustomerProducts $customerProducts,
         BrowserInterface $browser
     ) {
-        $this->fixtureFactory = $fixtureFactory;
         $this->customerAccount = $customerAccount;
         $this->customerProducts = $customerProducts;
         $this->browser = $browser;
@@ -95,13 +85,7 @@ class DownloadProductsReportEntityTest extends Injectable
     {
         // Preconditions
         $order->persist();
-        $products = $order->getEntityId()['products'];
-        $cart['data']['items'] = ['products' => $products];
-        $cart = $this->fixtureFactory->createByCode('cart', $cart);
-        $invoice = $this->objectManager->create(
-            \Magento\Sales\Test\TestStep\CreateInvoiceStep::class,
-            ['order' => $order, 'cart' => $cart]
-        );
+        $invoice = $this->objectManager->create('Magento\Sales\Test\TestStep\CreateInvoiceStep', ['order' => $order]);
         $invoice->run();
         $this->openDownloadableLink($order, (int)$downloads);
     }
@@ -116,7 +100,7 @@ class DownloadProductsReportEntityTest extends Injectable
     protected function openDownloadableLink(OrderInjectable $order, $downloads)
     {
         $customerLogin = $this->objectManager->create(
-            \Magento\Customer\Test\TestStep\LoginCustomerOnFrontendStep::class,
+            'Magento\Customer\Test\TestStep\LoginCustomerOnFrontendStep',
             ['customer' => $order->getDataFieldConfig('customer_id')['source']->getCustomer()]
         );
         $customerLogin->run();

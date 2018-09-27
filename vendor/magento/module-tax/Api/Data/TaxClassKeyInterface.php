@@ -11,7 +11,6 @@ use Magento\Framework\Api\ExtensibleDataInterface;
 /**
  * Tax class key interface.
  * @api
- * @since 100.0.2
  */
 interface TaxClassKeyInterface extends ExtensibleDataInterface
 {

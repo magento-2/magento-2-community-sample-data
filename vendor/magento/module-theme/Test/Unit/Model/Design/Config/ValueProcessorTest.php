@@ -7,7 +7,7 @@ namespace Magento\Theme\Test\Unit\Model\Design\Config;
 
 use Magento\Theme\Model\Design\Config\ValueProcessor;
 
-class ValueProcessorTest extends \PHPUnit\Framework\TestCase
+class ValueProcessorTest extends \PHPUnit_Framework_TestCase
 {
     /** @var \Magento\Theme\Model\Design\BackendModelFactory|\PHPUnit_Framework_MockObject_MockObject */
     protected $backendModelFactory;
@@ -20,10 +20,10 @@ class ValueProcessorTest extends \PHPUnit\Framework\TestCase
 
     public function setUp()
     {
-        $this->backendModelFactory = $this->getMockBuilder(\Magento\Theme\Model\Design\BackendModelFactory::class)
+        $this->backendModelFactory = $this->getMockBuilder('Magento\Theme\Model\Design\BackendModelFactory')
             ->disableOriginalConstructor()
             ->getMock();
-        $this->backendModel = $this->getMockBuilder(\Magento\Framework\App\Config\Value::class)
+        $this->backendModel = $this->getMockBuilder('Magento\Framework\App\Config\Value')
             ->disableOriginalConstructor()
             ->setMethods(['getValue', 'afterLoad'])
             ->getMock();

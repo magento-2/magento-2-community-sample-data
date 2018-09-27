@@ -13,8 +13,7 @@ define([
     'Magento_Checkout/js/model/full-screen-loader',
     'Magento_Checkout/js/model/payment/additional-validators',
     'Magento_Vault/js/view/payment/vault-enabler',
-    'Magento_Checkout/js/action/create-billing-address',
-    'mage/translate'
+    'Magento_Checkout/js/action/create-billing-address'
 ], function (
     $,
     _,
@@ -24,8 +23,7 @@ define([
     fullScreenLoader,
     additionalValidators,
     VaultEnabler,
-    createBillingAddress,
-    $t
+    createBillingAddress
 ) {
     'use strict';
 
@@ -405,13 +403,7 @@ define([
          */
         payWithPayPal: function () {
             if (additionalValidators.validate()) {
-                try {
-                    Braintree.checkout.paypal.initAuthFlow();
-                } catch (e) {
-                    this.messageContainer.addErrorMessage({
-                        message: $t('Payment ' + this.getTitle() + ' can\'t be initialized.')
-                    });
-                }
+                Braintree.checkout.paypal.initAuthFlow();
             }
         },
 

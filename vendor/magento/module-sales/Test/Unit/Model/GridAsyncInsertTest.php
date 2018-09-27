@@ -9,7 +9,7 @@ namespace Magento\Sales\Test\Unit\Model;
 /**
  * Class GridAsyncInsertTest
  */
-class GridAsyncInsertTest extends \PHPUnit\Framework\TestCase
+class GridAsyncInsertTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\Sales\Model\GridAsyncInsert
@@ -33,9 +33,9 @@ class GridAsyncInsertTest extends \PHPUnit\Framework\TestCase
 
     protected function setUp()
     {
-        $this->gridAggregatorMock = $this->getMockBuilder(\Magento\Sales\Model\ResourceModel\GridInterface::class)
+        $this->gridAggregatorMock = $this->getMockBuilder('Magento\Sales\Model\ResourceModel\GridInterface')
             ->getMockForAbstractClass();
-        $this->salesModelMock = $this->getMockBuilder(\Magento\Sales\Model\AbstractModel::class)
+        $this->salesModelMock = $this->getMockBuilder('Magento\Sales\Model\AbstractModel')
             ->disableOriginalConstructor()
             ->setMethods(
                 [
@@ -43,7 +43,7 @@ class GridAsyncInsertTest extends \PHPUnit\Framework\TestCase
                 ]
             )
             ->getMockForAbstractClass();
-        $this->scopeConfigurationMock = $this->getMockBuilder(\Magento\Framework\App\Config\ScopeConfigInterface::class)
+        $this->scopeConfigurationMock = $this->getMockBuilder('Magento\Framework\App\Config\ScopeConfigInterface')
             ->getMockForAbstractClass();
 
         $this->unit = new \Magento\Sales\Model\GridAsyncInsert(

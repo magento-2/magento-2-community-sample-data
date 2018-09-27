@@ -8,7 +8,7 @@ use Magento\TestFramework\Helper\Bootstrap;
 use Magento\Eav\Api\AttributeRepositoryInterface;
 
 $eavConfig = Bootstrap::getObjectManager()->get(\Magento\Eav\Model\Config::class);
-$attribute = $eavConfig->getAttribute('catalog_product', 'test_configurable');
+$attribute = $eavConfig->getAttribute('catalog_product', 'test_configurable_searchable');
 
 $eavConfig->clear();
 
@@ -27,7 +27,7 @@ if (!$attribute->getId()) {
 
     $attribute->setData(
         [
-            'attribute_code' => 'test_configurable',
+            'attribute_code' => 'test_configurable_searchable',
             'entity_type_id' => $installer->getEntityTypeId('catalog_product'),
             'is_global' => 1,
             'is_user_defined' => 1,

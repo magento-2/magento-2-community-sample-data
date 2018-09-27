@@ -2,7 +2,8 @@
  * Copyright © Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
-
+/*browser:true*/
+/*global define*/
 define([
     'jquery',
     'uiComponent',
@@ -43,6 +44,19 @@ define([
         emailCheckTimeout: 0,
 
         /**
+         * Initializes regular properties of instance.
+         *
+         * @returns {Object} Chainable.
+         */
+        initConfig: function () {
+            this._super();
+
+            this.isPasswordVisible = this.resolveInitialPasswordVisibility();
+
+            return this;
+        },
+
+        /**
          * Initializes observable properties of instance
          *
          * @returns {Object} Chainable.
@@ -50,15 +64,6 @@ define([
         initObservable: function () {
             this._super()
                 .observe(['email', 'emailFocused', 'isLoading', 'isPasswordVisible']);
-
-            return this;
-        },
-
-        /** @inheritdoc */
-        initConfig: function () {
-            this._super();
-
-            this.isPasswordVisible = this.resolveInitialPasswordVisibility();
 
             return this;
         },
@@ -97,10 +102,10 @@ define([
 
             $.when(this.isEmailCheckComplete).done(function () {
                 this.isPasswordVisible(false);
-            }.bind(this)).fail(function () {
-                this.isPasswordVisible(true);
-                checkoutData.setCheckedEmailValue(this.email());
-            }.bind(this)).always(function () {
+                }.bind(this)).fail(function () {
+                    this.isPasswordVisible(true);
+                    checkoutData.setCheckedEmailValue(this.email());
+	            }.bind(this)).always(function () {
                 this.isLoading(false);
             }.bind(this));
         },
@@ -168,12 +173,12 @@ define([
          *
          * @returns {Boolean} - initial visibility state.
          */
-        resolveInitialPasswordVisibility: function () {
-            if (checkoutData.getInputFieldEmailValue() !== '') {
-                return checkoutData.getInputFieldEmailValue() === checkoutData.getCheckedEmailValue();
-            }
+         resolveInitialPasswordVisibility: function () {
+                if (checkoutData.getInputFieldEmailValue() !== '') {
+	                return checkoutData.getInputFieldEmailValue() === checkoutData.getCheckedEmailValue();
+                }
 
             return false;
-        }
+        },
     });
 });

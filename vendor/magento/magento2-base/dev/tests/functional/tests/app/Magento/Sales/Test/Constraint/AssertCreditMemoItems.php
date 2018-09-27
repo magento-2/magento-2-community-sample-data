@@ -11,30 +11,31 @@ use Magento\Sales\Test\Page\Adminhtml\CreditMemoIndex;
 use Magento\Sales\Test\Page\Adminhtml\SalesCreditMemoView;
 
 /**
- * Assert credit memo items on credit memo view page.
+ * Class AssertCreditMemoItems
+ * Assert credit memo items on credit memo view page
  */
 class AssertCreditMemoItems extends AbstractAssertItems
 {
     /**
-     * Assert credit memo items on credit memo view page.
+     * Assert credit memo items on credit memo view page
      *
      * @param CreditMemoIndex $creditMemoIndex
      * @param SalesCreditMemoView $salesCreditMemoView
      * @param OrderInjectable $order
      * @param array $ids
+     * @param array|null $data [optional]
      * @return void
      */
     public function processAssert(
         CreditMemoIndex $creditMemoIndex,
         SalesCreditMemoView $salesCreditMemoView,
         OrderInjectable $order,
-        array $ids
+        array $ids,
+        array $data = null
     ) {
         $creditMemoIndex->open();
         $orderId = $order->getId();
-        $refundsData = $order->getRefund();
-        $data = isset($refundsData[0]['items_data']) ? $refundsData[0]['items_data'] : [];
-        $productsData = $this->prepareOrderProducts($order, $data);
+        $productsData = $this->prepareOrderProducts($order, $data['items_data']);
         foreach ($ids['creditMemoIds'] as $creditMemoId) {
             $filter = [
                 'order_id' => $orderId,
@@ -48,7 +49,7 @@ class AssertCreditMemoItems extends AbstractAssertItems
     }
 
     /**
-     * Returns a string representation of the object.
+     * Returns a string representation of the object
      *
      * @return string
      */

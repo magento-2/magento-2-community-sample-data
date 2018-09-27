@@ -5,7 +5,7 @@
  */
 namespace Magento\Sales\Model\ResourceModel;
 
-class OrderTest extends \PHPUnit\Framework\TestCase
+class OrderTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\Sales\Model\ResourceModel\Order
@@ -25,18 +25,18 @@ class OrderTest extends \PHPUnit\Framework\TestCase
     protected function setUp()
     {
         $this->objectManager = \Magento\TestFramework\Helper\Bootstrap::getObjectManager();
-        $this->resourceModel = $this->objectManager->create(\Magento\Sales\Model\ResourceModel\Order::class);
+        $this->resourceModel = $this->objectManager->create('Magento\Sales\Model\ResourceModel\Order');
         $this->orderIncrementId = '100000001';
     }
 
     protected function tearDown()
     {
-        $registry = $this->objectManager->get(\Magento\Framework\Registry::class);
+        $registry = $this->objectManager->get('Magento\Framework\Registry');
         $registry->unregister('isSecureArea');
         $registry->register('isSecureArea', true);
 
         /** @var \Magento\Sales\Model\Order $order */
-        $order = $this->objectManager->create(\Magento\Sales\Model\Order::class);
+        $order = $this->objectManager->create('Magento\Sales\Model\Order');
         $order->loadByIncrementId($this->orderIncrementId);
         $order->delete();
 
@@ -63,20 +63,17 @@ class OrderTest extends \PHPUnit\Framework\TestCase
             'country_id' => 'US'
         ];
 
-        $billingAddress = $this->objectManager->create(
-            \Magento\Sales\Model\Order\Address::class,
-            ['data' => $addressData]
-        );
+        $billingAddress = $this->objectManager->create('Magento\Sales\Model\Order\Address', ['data' => $addressData]);
         $billingAddress->setAddressType('billing');
 
         $shippingAddress = clone $billingAddress;
         $shippingAddress->setId(null)->setAddressType('shipping');
 
-        $payment = $this->objectManager->create(\Magento\Sales\Model\Order\Payment::class);
+        $payment = $this->objectManager->create('Magento\Sales\Model\Order\Payment');
         $payment->setMethod('checkmo');
 
         /** @var \Magento\Sales\Model\Order\Item $orderItem */
-        $orderItem = $this->objectManager->create(\Magento\Sales\Model\Order\Item::class);
+        $orderItem = $this->objectManager->create('Magento\Sales\Model\Order\Item');
         $orderItem->setProductId(1)
             ->setQtyOrdered(2)
             ->setBasePrice(10)
@@ -84,7 +81,7 @@ class OrderTest extends \PHPUnit\Framework\TestCase
             ->setRowTotal(10);
 
         /** @var \Magento\Sales\Model\Order $order */
-        $order = $this->objectManager->create(\Magento\Sales\Model\Order::class);
+        $order = $this->objectManager->create('Magento\Sales\Model\Order');
         $order->setIncrementId($this->orderIncrementId)
             ->setState(\Magento\Sales\Model\Order::STATE_PROCESSING)
             ->setStatus($order->getConfig()->getStateDefaultStatus(\Magento\Sales\Model\Order::STATE_PROCESSING))
@@ -97,7 +94,7 @@ class OrderTest extends \PHPUnit\Framework\TestCase
             ->setShippingAddress($shippingAddress)
             ->setStoreId(
                 $this->objectManager
-                    ->get(\Magento\Store\Model\StoreManagerInterface::class)
+                    ->get('Magento\Store\Model\StoreManagerInterface')
                     ->getStore()
                     ->getId()
             )

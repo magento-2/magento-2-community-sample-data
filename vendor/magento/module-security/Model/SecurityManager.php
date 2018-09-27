@@ -7,15 +7,10 @@ namespace Magento\Security\Model;
 
 use Magento\Framework\Exception\SecurityViolationException;
 use Magento\Framework\HTTP\PhpEnvironment\RemoteAddress;
-use Magento\Security\Model\SecurityChecker\SecurityCheckerInterface;
 
 /**
- * Manager for password reset actions
- *
- * @api
- *
+ * Security Control Manager Model
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
- * @since 100.1.0
  */
 class SecurityManager
 {
@@ -26,25 +21,21 @@ class SecurityManager
 
     /**
      * @var ConfigInterface
-     * @since 100.1.0
      */
     protected $securityConfig;
 
     /**
      * @var \Magento\Security\Model\PasswordResetRequestEventFactory
-     * @since 100.1.0
      */
     protected $passwordResetRequestEventFactory;
 
     /**
      * @var ResourceModel\PasswordResetRequestEvent\CollectionFactory
-     * @since 100.1.0
      */
     protected $passwordResetRequestEventCollectionFactory;
 
     /**
-     * @var SecurityCheckerInterface[]
-     * @since 100.1.0
+     * @var array
      */
     protected $securityCheckers;
 
@@ -93,7 +84,7 @@ class SecurityManager
         $this->remoteAddress = $remoteAddress;
 
         foreach ($this->securityCheckers as $checker) {
-            if (!($checker instanceof SecurityCheckerInterface)) {
+            if (!($checker instanceof \Magento\Security\Model\SecurityChecker\SecurityCheckerInterface)) {
                 throw new \Magento\Framework\Exception\LocalizedException(
                     __('Incorrect Security Checker class. It has to implement SecurityCheckerInterface')
                 );
@@ -109,7 +100,6 @@ class SecurityManager
      * @param int|null $longIp
      * @return $this
      * @throws SecurityViolationException
-     * @since 100.1.0
      */
     public function performSecurityCheck($requestType, $accountReference = null, $longIp = null)
     {
@@ -129,7 +119,6 @@ class SecurityManager
      * Clean expired Admin Sessions
      *
      * @return $this
-     * @since 100.1.0
      */
     public function cleanExpiredRecords()
     {
@@ -147,7 +136,6 @@ class SecurityManager
      * @param string|null $accountReference
      * @param int $longIp
      * @return PasswordResetRequestEvent
-     * @since 100.1.0
      */
     protected function createNewPasswordResetRequestEventRecord($requestType, $accountReference, $longIp)
     {

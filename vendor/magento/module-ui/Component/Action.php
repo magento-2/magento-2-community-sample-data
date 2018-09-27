@@ -48,6 +48,7 @@ class Action extends AbstractComponent
         parent::prepare();
     }
 
+
     /**
      * Get component name
      *

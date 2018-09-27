@@ -7,10 +7,8 @@ namespace Magento\Swatches\Test\Unit\Helper;
 
 /**
  * Helper to move images from tmp to catalog directory
- *
- * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  */
-class MediaTest extends \PHPUnit\Framework\TestCase
+class MediaTest extends \PHPUnit_Framework_TestCase
 {
     /** @var \PHPUnit_Framework_MockObject_MockObject|\Magento\Catalog\Model\Product\Media\Config */
     protected $mediaConfigMock;
@@ -49,34 +47,58 @@ class MediaTest extends \PHPUnit\Framework\TestCase
     {
         $objectManager = new \Magento\Framework\TestFramework\Unit\Helper\ObjectManager($this);
 
-        $this->mediaConfigMock = $this->createMock(\Magento\Catalog\Model\Product\Media\Config::class);
-        $this->writeInstanceMock = $this->createMock(\Magento\Framework\Filesystem\Directory\WriteInterface::class);
-        $this->fileStorageDbMock = $this->createPartialMock(
-            \Magento\MediaStorage\Helper\File\Storage\Database::class,
-            ['checkDbUsage', 'getUniqueFilename', 'renameFile']
+        $this->mediaConfigMock = $this->getMock('\Magento\Catalog\Model\Product\Media\Config', [], [], '', false);
+        $this->writeInstanceMock = $this->getMock(
+            '\Magento\Framework\Filesystem\Directory\WriteInterface',
+            [],
+            [],
+            '',
+            false
+        );
+        $this->fileStorageDbMock = $this->getMock(
+            '\Magento\MediaStorage\Helper\File\Storage\Database',
+            ['checkDbUsage', 'getUniqueFilename', 'renameFile'],
+            [],
+            '',
+            false
         );
 
-        $this->storeManagerMock = $this->createPartialMock(\Magento\Store\Model\StoreManager::class, ['getStore']);
-
-        $this->imageFactoryMock = $this->createMock(\Magento\Framework\Image\Factory::class);
-        $this->themeCollectionMock = $this->createPartialMock(
-            \Magento\Theme\Model\ResourceModel\Theme\Collection::class,
-            ['loadRegisteredThemes']
+        $this->storeManagerMock = $this->getMock(
+            '\Magento\Store\Model\StoreManager',
+            ['getStore'],
+            [],
+            '',
+            false
         );
 
-        $this->viewConfigMock = $this->createMock(\Magento\Framework\View\Config::class);
+        $this->imageFactoryMock = $this->getMock('\Magento\Framework\Image\Factory', [], [], '', false);
+        $this->themeCollectionMock = $this->getMock(
+            '\Magento\Theme\Model\ResourceModel\Theme\Collection',
+            ['loadRegisteredThemes'],
+            [],
+            '',
+            false
+        );
 
-        $this->storeMock = $this->createPartialMock(\Magento\Store\Model\Store::class, ['getBaseUrl']);
+        $this->viewConfigMock = $this->getMock(
+            '\Magento\Framework\View\Config',
+            [],
+            [],
+            '',
+            false
+        );
 
-        $this->mediaDirectoryMock = $this->createMock(\Magento\Framework\Filesystem\Directory\Write::class);
-        $this->fileSystemMock = $this->createPartialMock(\Magento\Framework\Filesystem::class, ['getDirectoryWrite']);
+        $this->storeMock = $this->getMock('\Magento\Store\Model\Store', ['getBaseUrl'], [], '', false);
+
+        $this->mediaDirectoryMock = $this->getMock('\Magento\Framework\Filesystem\Directory\Write', [], [], '', false);
+        $this->fileSystemMock = $this->getMock('\Magento\Framework\Filesystem', ['getDirectoryWrite'], [], '', false);
         $this->fileSystemMock
             ->expects($this->any())
             ->method('getDirectoryWrite')
             ->will($this->returnValue($this->mediaDirectoryMock));
 
         $this->mediaHelperObject = $objectManager->getObject(
-            \Magento\Swatches\Helper\Media::class,
+            '\Magento\Swatches\Helper\Media',
             [
                 'mediaConfig' => $this->mediaConfigMock,
                 'filesystem' => $this->fileSystemMock,
@@ -114,6 +136,9 @@ class MediaTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals($result, $expectedResult);
     }
 
+    /**
+     * @return array
+     */
     public function dataForFullPath()
     {
         return [
@@ -141,8 +166,7 @@ class MediaTest extends \PHPUnit\Framework\TestCase
     {
         $this->fileStorageDbMock->method('checkDbUsage')->willReturn(false);
         $this->fileStorageDbMock->method('renameFile')->will($this->returnSelf());
-        $result = $this->mediaHelperObject->moveImageFromTmp('file.tmp');
-        $this->assertNotNull($result);
+        $this->mediaHelperObject->moveImageFromTmp('file.tmp');
     }
 
     public function testGenerateSwatchVariations()
@@ -152,7 +176,9 @@ class MediaTest extends \PHPUnit\Framework\TestCase
             ->method('getAbsolutePath')
             ->willReturn('attribute/swatch/e/a/earth.png');
 
-        $image = $this->createPartialMock(\Magento\Framework\Image::class, [
+        $image = $this->getMock(
+            '\Magento\Framework\Image',
+            [
                 'resize',
                 'save',
                 'keepTransparency',
@@ -161,7 +187,11 @@ class MediaTest extends \PHPUnit\Framework\TestCase
                 'keepAspectRatio',
                 'backgroundColor',
                 'quality'
-            ]);
+            ],
+            [],
+            '',
+            false
+        );
 
         $this->imageFactoryMock->expects($this->any())->method('create')->willReturn($image);
         $this->generateImageConfig();
@@ -172,7 +202,7 @@ class MediaTest extends \PHPUnit\Framework\TestCase
 
     public function testGetSwatchMediaUrl()
     {
-        $storeMock = $this->createPartialMock(\Magento\Store\Model\Store::class, ['getBaseUrl']);
+        $storeMock = $this->getMock('\Magento\Store\Model\Store', ['getBaseUrl'], [], '', false);
 
         $this->storeManagerMock
             ->expects($this->once())
@@ -202,6 +232,9 @@ class MediaTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals($expectedResult, $result);
     }
 
+    /**
+     * @return array
+     */
     public function dataForFolderName()
     {
         return [
@@ -249,11 +282,11 @@ class MediaTest extends \PHPUnit\Framework\TestCase
 
     protected function generateImageConfig()
     {
-        $themeMock = $this->createMock(\Magento\Theme\Model\Theme::class);
+        $themeMock = $this->getMock('\Magento\Theme\Model\Theme', [], [], '', false);
         $themesArrayMock = [$themeMock];
         $this->themeCollectionMock->expects($this->any())->method('loadRegisteredThemes')->willReturn($themesArrayMock);
 
-        $configMock = $this->createMock(\Magento\Framework\Config\View::class);
+        $configMock = $this->getMock('\Magento\Framework\Config\View', [], [], '', false);
 
         $this->viewConfigMock
             ->expects($this->atLeastOnce())
@@ -293,6 +326,9 @@ class MediaTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals($expectedResult, $this->mediaHelperObject->getSwatchCachePath($swatchType));
     }
 
+    /**
+     * @return array
+     */
     public function getSwatchTypes()
     {
         return [

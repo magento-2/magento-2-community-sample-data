@@ -11,7 +11,10 @@ use Magento\Framework\DB\Select;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
 use Magento\Framework\Math\Random;
 
-class TemporaryTableServiceTest extends \PHPUnit\Framework\TestCase
+/**
+ * Tests TemporaryTableService class.
+ */
+class TemporaryTableServiceTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var TemporaryTableService|\PHPUnit_Framework_MockObject_MockObject
@@ -33,39 +36,34 @@ class TemporaryTableServiceTest extends \PHPUnit\Framework\TestCase
      */
     private $selectMock;
 
-    /**
-     * Set up
-     *
-     * @return void
-     */
     protected function setUp()
     {
-        $this->adapterMock = $this->createMock(AdapterInterface::class);
-        $this->selectMock = $this->createMock(Select::class);
-        $this->randomMock = $this->createMock(Random::class);
+        $this->adapterMock = $this->getMock(AdapterInterface::class);
+        $this->selectMock = $this->getMock(Select::class, [], [], '', false);
+        $this->randomMock = $this->getMock(Random::class, [], [], '', false);
         $this->temporaryTableService = (new ObjectManager($this))->getObject(
             TemporaryTableService::class,
             [
                 'random' => $this->randomMock,
                 'allowedIndexMethods' => ['HASH'],
-                'allowedEngines' => ['INNODB']
+                'allowedEngines' => ['INNODB'],
             ]
         );
     }
 
     /**
-     * Run test createFromSelect method
+     * Covers createFromSelect() method.
      *
      * @return void
      */
     public function testCreateFromSelectWithException()
     {
-        $this->expectException(\InvalidArgumentException::class);
+        $this->setExpectedException(\InvalidArgumentException::class);
         $random = 'random_table';
         $indexes = [
             ['PRIMARY' => ['primary_column_name']],
             'CREATE TEMPORARY TABLE random_table (PRIMARY KEY(primary_column_name)) ENGINE=INNODB IGNORE '
-            . '(select * from sometable)'
+            . '(select * from sometable)',
         ];
 
         $this->assertEquals(
@@ -81,7 +79,7 @@ class TemporaryTableServiceTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * Run test createFromSelect method
+     * Covers createFromSelect() method.
      *
      * @param array $indexes
      * @param string $expectedSelect
@@ -129,7 +127,7 @@ class TemporaryTableServiceTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * Run test dropTable method when createdTables array of TemporaryTableService is empty
+     * Covers dropTable() method when createdTables array of TemporaryTableService is empty.
      *
      * @return void
      */
@@ -139,7 +137,7 @@ class TemporaryTableServiceTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * Run test dropTable method when data exists in createdTables array of TemporaryTableService
+     * Covers dropTable() method when data exists in createdTables array of TemporaryTableService.
      *
      * @param string $tableName
      * @param bool $assertion
@@ -162,6 +160,8 @@ class TemporaryTableServiceTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
+     * Data provider for testCreateFromSelect().
+     *
      * @return array
      */
     public function createFromSelectDataProvider()
@@ -170,33 +170,35 @@ class TemporaryTableServiceTest extends \PHPUnit\Framework\TestCase
             [
                 ['PRIMARY' => ['primary_column_name']],
                 'CREATE TEMPORARY TABLE random_table (PRIMARY KEY(primary_column_name)) ENGINE=INNODB IGNORE '
-                . '(select * from sometable)'
+                . '(select * from sometable)',
             ],
             [
                 ['UNQ_INDX' => ['column1', 'column2']],
                 'CREATE TEMPORARY TABLE random_table (UNIQUE UNQ_INDX(column1,column2)) ENGINE=INNODB IGNORE '
-                . '(select * from sometable)'
+                . '(select * from sometable)',
             ],
             [
                 ['OTH_INDX' => ['column3', 'column4']],
                 'CREATE TEMPORARY TABLE random_table (INDEX OTH_INDX USING HASH(column3,column4)) ENGINE=INNODB IGNORE '
-                . '(select * from sometable)'
+                . '(select * from sometable)',
             ],
             [
                 [
                     'PRIMARY' => ['primary_column_name'],
                     'OTH_INDX' => ['column3', 'column4'],
-                    'UNQ_INDX' => ['column1', 'column2']
+                    'UNQ_INDX' => ['column1', 'column2'],
                 ],
                 'CREATE TEMPORARY TABLE random_table '
                 . '(PRIMARY KEY(primary_column_name),'
                 . 'INDEX OTH_INDX USING HASH(column3,column4),UNIQUE UNQ_INDX(column1,column2)) ENGINE=INNODB IGNORE '
-                . '(select * from sometable)'
+                . '(select * from sometable)',
             ],
         ];
     }
 
     /**
+     * Data provider for testDropTableWhenCreatedTablesArrayNotEmpty().
+     *
      * @return array
      */
     public function dropTableWhenCreatedTablesArrayNotEmptyDataProvider()

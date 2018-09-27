@@ -5,7 +5,7 @@
  */
 namespace Magento\Setup\Test\Unit\Model\Description\Mixin\Helper;
 
-class RandomWordSelectorTest extends \PHPUnit\Framework\TestCase
+class RandomWordSelectorTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\Setup\Model\Description\Mixin\Helper\RandomWordSelector
@@ -34,6 +34,9 @@ class RandomWordSelectorTest extends \PHPUnit\Framework\TestCase
         }
     }
 
+    /**
+     * @return array
+     */
     public function getTestData()
     {
         return [

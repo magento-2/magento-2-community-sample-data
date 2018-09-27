@@ -8,7 +8,7 @@
 
 namespace Magento\Quote\Test\Unit\Observer\Backend;
 
-class CustomerQuoteObserverTest extends \PHPUnit\Framework\TestCase
+class CustomerQuoteObserverTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\Quote\Observer\Backend\CustomerQuoteObserver
@@ -42,24 +42,24 @@ class CustomerQuoteObserverTest extends \PHPUnit\Framework\TestCase
 
     protected function setUp()
     {
-        $this->storeManagerMock = $this->getMockBuilder(\Magento\Store\Model\StoreManagerInterface::class)
+        $this->storeManagerMock = $this->getMockBuilder('Magento\Store\Model\StoreManagerInterface')
             ->disableOriginalConstructor()
             ->getMock();
-        $this->configMock = $this->getMockBuilder(\Magento\Customer\Model\Config\Share::class)
+        $this->configMock = $this->getMockBuilder('Magento\Customer\Model\Config\Share')
             ->disableOriginalConstructor()
             ->getMock();
-        $this->quoteRepositoryMock = $this->createMock(\Magento\Quote\Api\CartRepositoryInterface::class);
-        $this->observerMock = $this->getMockBuilder(\Magento\Framework\Event\Observer::class)
+        $this->quoteRepositoryMock = $this->getMock('\Magento\Quote\Api\CartRepositoryInterface');
+        $this->observerMock = $this->getMockBuilder('Magento\Framework\Event\Observer')
             ->disableOriginalConstructor()
             ->getMock();
-        $this->eventMock = $this->getMockBuilder(\Magento\Framework\Event::class)
+        $this->eventMock = $this->getMockBuilder('Magento\Framework\Event')
             ->disableOriginalConstructor()
-            ->setMethods(['getCustomerDataObject', 'getOrigCustomerDataObject'])
+            ->setMethods(['getCustomerDataObject'])
             ->getMock();
         $this->observerMock->expects($this->any())->method('getEvent')->will($this->returnValue($this->eventMock));
         $objectManager = new \Magento\Framework\TestFramework\Unit\Helper\ObjectManager($this);
         $this->customerQuote = $objectManager->getObject(
-            \Magento\Quote\Observer\Backend\CustomerQuoteObserver::class,
+            'Magento\Quote\Observer\Backend\CustomerQuoteObserver',
             [
                 'storeManager' => $this->storeManagerMock,
                 'config' => $this->configMock,
@@ -70,13 +70,13 @@ class CustomerQuoteObserverTest extends \PHPUnit\Framework\TestCase
 
     public function testDispatchNoCustomerGroupChange()
     {
-        $customerDataObjectMock = $this->getMockBuilder(\Magento\Customer\Api\Data\CustomerInterface::class)
+        $customerDataObjectMock = $this->getMockBuilder('Magento\Customer\Api\Data\CustomerInterface')
             ->disableOriginalConstructor()
             ->getMock();
         $customerDataObjectMock->expects($this->any())
             ->method('getGroupId')
             ->will($this->returnValue(1));
-        $origCustomerDataObjectMock = $this->getMockBuilder(\Magento\Customer\Api\Data\CustomerInterface::class)
+        $origCustomerDataObjectMock = $this->getMockBuilder('Magento\Customer\Api\Data\CustomerInterface')
             ->disableOriginalConstructor()
             ->getMock();
         $origCustomerDataObjectMock->expects($this->any())
@@ -105,7 +105,7 @@ class CustomerQuoteObserverTest extends \PHPUnit\Framework\TestCase
         $this->configMock->expects($this->once())
             ->method('isWebsiteScope')
             ->will($this->returnValue($isWebsiteScope));
-        $customerDataObjectMock = $this->getMockBuilder(\Magento\Customer\Api\Data\CustomerInterface::class)
+        $customerDataObjectMock = $this->getMockBuilder('Magento\Customer\Api\Data\CustomerInterface')
             ->disableOriginalConstructor()
             ->getMock();
         $customerDataObjectMock->expects($this->any())
@@ -130,7 +130,7 @@ class CustomerQuoteObserverTest extends \PHPUnit\Framework\TestCase
             ->will($this->returnValue($customerDataObjectMock));
         /** @var \PHPUnit_Framework_MockObject_MockObject|\Magento\Quote\Model\Quote $quoteMock */
         $quoteMock = $this->getMockBuilder(
-            \Magento\Quote\Model\Quote::class
+            'Magento\Quote\Model\Quote'
         )->setMethods(
                 [
                     'setWebsite',
@@ -160,6 +160,9 @@ class CustomerQuoteObserverTest extends \PHPUnit\Framework\TestCase
         $this->customerQuote->execute($this->observerMock);
     }
 
+    /**
+     * @return array
+     */
     public function dispatchDataProvider()
     {
         return [

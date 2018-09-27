@@ -11,7 +11,6 @@ use Magento\Framework\Exception\NoSuchEntityException;
  * Website repository interface
  *
  * @api
- * @since 100.0.2
  */
 interface WebsiteRepositoryInterface
 {

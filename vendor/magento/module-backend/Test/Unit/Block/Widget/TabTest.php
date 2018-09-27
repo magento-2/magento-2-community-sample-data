@@ -5,7 +5,7 @@
  */
 namespace Magento\Backend\Test\Unit\Block\Widget;
 
-class TabTest extends \PHPUnit\Framework\TestCase
+class TabTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\Framework\TestFramework\Unit\Helper\ObjectManager
@@ -28,12 +28,15 @@ class TabTest extends \PHPUnit\Framework\TestCase
     {
         /** @var \Magento\Backend\Block\Widget\Tab $object */
         $object = $this->helper->getObject(
-            \Magento\Backend\Block\Widget\Tab::class,
+            '\Magento\Backend\Block\Widget\Tab',
             ['data' => [$field => $value]]
         );
         $this->assertEquals($expected, $object->{$method}());
     }
 
+    /**
+     * @return array
+     */
     public function dataProvider()
     {
         return [

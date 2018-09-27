@@ -8,7 +8,7 @@ namespace Magento\CatalogInventory\Model\Indexer\Stock\Action;
 /**
  * Class RowTest
  */
-class RowTest extends \PHPUnit\Framework\TestCase
+class RowTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\CatalogInventory\Model\Indexer\Stock\Processor
@@ -18,7 +18,7 @@ class RowTest extends \PHPUnit\Framework\TestCase
     protected function setUp()
     {
         $this->_processor = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->create(
-            \Magento\CatalogInventory\Model\Indexer\Stock\Processor::class
+            'Magento\CatalogInventory\Model\Indexer\Stock\Processor'
         );
     }
 
@@ -29,32 +29,31 @@ class RowTest extends \PHPUnit\Framework\TestCase
     public function testProductUpdate()
     {
         $categoryFactory = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->create(
-            \Magento\Catalog\Model\CategoryFactory::class
+            'Magento\Catalog\Model\CategoryFactory'
         );
         /** @var \Magento\Catalog\Block\Product\ListProduct $listProduct */
         $listProduct = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->create(
-            \Magento\Catalog\Block\Product\ListProduct::class
+            'Magento\Catalog\Block\Product\ListProduct'
         );
 
         /** @var \Magento\Framework\Api\DataObjectHelper $dataObjectHelper */
         $dataObjectHelper = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->get(
-            \Magento\Framework\Api\DataObjectHelper::class
+            '\Magento\Framework\Api\DataObjectHelper'
         );
 
         /** @var \Magento\CatalogInventory\Api\StockRegistryInterface $stockRegistry */
         $stockRegistry = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->create(
-            \Magento\CatalogInventory\Api\StockRegistryInterface::class
+            'Magento\CatalogInventory\Api\StockRegistryInterface'
         );
         /** @var \Magento\CatalogInventory\Api\StockItemRepositoryInterface $stockItemRepository */
         $stockItemRepository = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->create(
-            \Magento\CatalogInventory\Api\StockItemRepositoryInterface::class
+            'Magento\CatalogInventory\Api\StockItemRepositoryInterface'
         );
 
         /** @var \Magento\Catalog\Model\ProductRepository $productRepository */
         $productRepository = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->create(
-            \Magento\Catalog\Model\ProductRepository::class
+            'Magento\Catalog\Model\ProductRepository'
         );
-
         $product = $productRepository->get('simple');
 
         $this->_processor->getIndexer()->setScheduled(false);
@@ -71,7 +70,7 @@ class RowTest extends \PHPUnit\Framework\TestCase
         $dataObjectHelper->populateWithArray(
             $stockItem,
             $stockItemData,
-            \Magento\CatalogInventory\Api\Data\StockItemInterface::class
+            '\Magento\CatalogInventory\Api\Data\StockItemInterface'
         );
         $stockItemRepository->save($stockItem);
 

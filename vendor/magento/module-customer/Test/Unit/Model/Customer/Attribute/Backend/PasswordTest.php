@@ -10,7 +10,7 @@ use Magento\Framework\DataObject;
 use Magento\Framework\Stdlib\StringUtils;
 use Magento\Customer\Model\Customer\Attribute\Backend\Password;
 
-class PasswordTest extends \PHPUnit\Framework\TestCase
+class PasswordTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var Password
@@ -39,6 +39,9 @@ class PasswordTest extends \PHPUnit\Framework\TestCase
         $this->assertTrue($this->testable->validate($object));
     }
 
+    /**
+     * @return array
+     */
     public function passwordNegativeDataProvider()
     {
         return [

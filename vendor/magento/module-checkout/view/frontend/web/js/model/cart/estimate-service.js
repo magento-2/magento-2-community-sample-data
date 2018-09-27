@@ -18,11 +18,8 @@ define([
 
     quote.shippingAddress.subscribe(function () {
         var type = quote.shippingAddress().getType();
-
-        if (
-            quote.isVirtual() ||
-            window.checkoutConfig.activeCarriers && window.checkoutConfig.activeCarriers.length === 0
-        ) {
+        
+        if (quote.isVirtual()) {
             // update totals block when estimated address was set
             totalsProcessors['default'] = totalsDefaultProvider;
             totalsProcessors[type] ?

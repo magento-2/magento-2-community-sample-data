@@ -21,19 +21,19 @@ class ObjectManagerFactory extends \Magento\Framework\App\ObjectManagerFactory
      *
      * @var string
      */
-    protected $_locatorClassName = \Magento\TestFramework\ObjectManager::class;
+    protected $_locatorClassName = 'Magento\TestFramework\ObjectManager';
 
     /**
      * Config class name
      *
      * @var string
      */
-    protected $_configClassName = \Magento\TestFramework\ObjectManager\Config::class;
+    protected $_configClassName = 'Magento\TestFramework\ObjectManager\Config';
 
     /**
      * @var string
      */
-    protected $envFactoryClassName = \Magento\TestFramework\App\EnvironmentFactory::class;
+    protected $envFactoryClassName = 'Magento\TestFramework\App\EnvironmentFactory';
 
     /**
      * @var array
@@ -53,18 +53,20 @@ class ObjectManagerFactory extends \Magento\Framework\App\ObjectManagerFactory
         \Magento\TestFramework\ObjectManager::setInstance($objectManager);
         $this->directoryList = $directoryList;
         $objectManager->configure($this->_primaryConfigData);
-        $objectManager->addSharedInstance($this->directoryList, \Magento\Framework\App\Filesystem\DirectoryList::class);
-        $objectManager->addSharedInstance($this->directoryList, \Magento\Framework\Filesystem\DirectoryList::class);
+        $objectManager->addSharedInstance($this->directoryList, 'Magento\Framework\App\Filesystem\DirectoryList');
+        $objectManager->addSharedInstance($this->directoryList, 'Magento\Framework\Filesystem\DirectoryList');
         $deploymentConfig = $this->createDeploymentConfig($directoryList, $this->configFilePool, $arguments);
         $this->factory->setArguments($arguments);
-        $objectManager->addSharedInstance($deploymentConfig, \Magento\Framework\App\DeploymentConfig::class);
+        $objectManager->addSharedInstance($deploymentConfig, 'Magento\Framework\App\DeploymentConfig');
         $objectManager->addSharedInstance(
-            $objectManager->get(\Magento\Framework\App\ObjectManager\ConfigLoader::class),
-            \Magento\Framework\ObjectManager\ConfigLoaderInterface::class
+            $objectManager->get(
+                'Magento\Framework\App\ObjectManager\ConfigLoader'
+            ),
+            'Magento\Framework\ObjectManager\ConfigLoaderInterface'
         );
-        $objectManager->get(\Magento\Framework\Interception\PluginListInterface::class)->reset();
+        $objectManager->get('Magento\Framework\Interception\PluginListInterface')->reset();
         $objectManager->configure(
-            $objectManager->get(\Magento\Framework\App\ObjectManager\ConfigLoader::class)->load('global')
+            $objectManager->get('Magento\Framework\App\ObjectManager\ConfigLoader')->load('global')
         );
 
         return $objectManager;
@@ -85,7 +87,7 @@ class ObjectManagerFactory extends \Magento\Framework\App\ObjectManagerFactory
             $this->_primaryConfigData = array_replace(
                 parent::_loadPrimaryConfig($directoryList, $driverPool, $argumentMapper, $appMode),
                 [
-                    'default_setup' => ['type' => \Magento\TestFramework\Db\ConnectionAdapter::class]
+                    'default_setup' => ['type' => 'Magento\TestFramework\Db\ConnectionAdapter']
                 ]
             );
             $diPreferences = [];

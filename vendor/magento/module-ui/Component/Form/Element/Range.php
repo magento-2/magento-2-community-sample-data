@@ -6,8 +6,7 @@
 namespace Magento\Ui\Component\Form\Element;
 
 /**
- * @api
- * @since 100.0.2
+ * Class Range
  */
 class Range extends AbstractElement
 {

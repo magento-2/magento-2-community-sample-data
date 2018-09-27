@@ -44,7 +44,7 @@ class RelativeFallbackResolver implements ResolverInterface
      */
     public function resolve($name, RendererInterface $renderer = null)
     {
-        $plugin = [$renderer, 'plugin'];
+        $plugin = array($renderer, 'plugin');
 
         if (! is_callable($plugin)) {
             return false;

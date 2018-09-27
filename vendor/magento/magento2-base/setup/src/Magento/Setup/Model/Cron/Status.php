@@ -6,9 +6,9 @@
 
 namespace Magento\Setup\Model\Cron;
 
-use Magento\Framework\App\Filesystem\DirectoryList;
 use Magento\Framework\Exception\FileSystemException;
 use Magento\Framework\Filesystem;
+use Magento\Framework\App\Filesystem\DirectoryList;
 
 /**
  * Class which provides access to the current status of the Magento setup application.

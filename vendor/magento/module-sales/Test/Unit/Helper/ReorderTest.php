@@ -8,7 +8,7 @@ namespace Magento\Sales\Test\Unit\Helper;
 
 use \Magento\Sales\Helper\Reorder;
 
-class ReorderTest extends \PHPUnit\Framework\TestCase
+class ReorderTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\Sales\Helper\Reorder
@@ -45,22 +45,22 @@ class ReorderTest extends \PHPUnit\Framework\TestCase
      */
     protected function setUp()
     {
-        $this->scopeConfigMock = $this->getMockBuilder(\Magento\Framework\App\Config::class)
+        $this->scopeConfigMock = $this->getMockBuilder('Magento\Framework\App\Config')
             ->setMethods(['getValue'])
             ->disableOriginalConstructor()
             ->getMock();
-        $contextMock = $this->getMockBuilder(\Magento\Framework\App\Helper\Context::class)
+        $contextMock = $this->getMockBuilder('Magento\Framework\App\Helper\Context')
             ->disableOriginalConstructor()
             ->getMock();
         $contextMock->expects($this->any())
             ->method('getScopeConfig')
             ->willReturn($this->scopeConfigMock);
 
-        $this->customerSessionMock = $this->getMockBuilder(\Magento\Customer\Model\Session::class)
+        $this->customerSessionMock = $this->getMockBuilder('Magento\Customer\Model\Session')
             ->disableOriginalConstructor()
             ->getMock();
 
-        $this->repositoryMock = $this->getMockBuilder(\Magento\Sales\Api\OrderRepositoryInterface::class)
+        $this->repositoryMock = $this->getMockBuilder('Magento\Sales\Api\OrderRepositoryInterface')
             ->getMockForAbstractClass();
         $this->helper = new \Magento\Sales\Helper\Reorder(
             $contextMock,
@@ -68,11 +68,11 @@ class ReorderTest extends \PHPUnit\Framework\TestCase
             $this->repositoryMock
         );
 
-        $this->storeParam = $this->getMockBuilder(\Magento\Sales\Model\Store::class)
+        $this->storeParam = $this->getMockBuilder('Magento\Sales\Model\Store')
             ->disableOriginalConstructor()
             ->getMock();
 
-        $this->orderMock = $this->getMockBuilder(\Magento\Sales\Model\Order::class)
+        $this->orderMock = $this->getMockBuilder('Magento\Sales\Model\Order')
             ->disableOriginalConstructor()
             ->getMock();
     }

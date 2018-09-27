@@ -15,7 +15,7 @@ use Magento\Quote\Api\Data\PaymentInterface;
 /**
  * Class DataAssignObserverTest
  */
-class DataAssignObserverTest extends \PHPUnit\Framework\TestCase
+class DataAssignObserverTest extends \PHPUnit_Framework_TestCase
 {
     const PAYMENT_METHOD_NONCE = 'nonce';
     const DEVICE_DATA = '{"test": "test"}';
@@ -28,7 +28,7 @@ class DataAssignObserverTest extends \PHPUnit\Framework\TestCase
         $event = $this->getMockBuilder(Event::class)
             ->disableOriginalConstructor()
             ->getMock();
-        $paymentInfoModel = $this->createMock(InfoInterface::class);
+        $paymentInfoModel = $this->getMock(InfoInterface::class);
         $dataObject = new DataObject(
             [
                 PaymentInterface::KEY_ADDITIONAL_DATA => [

@@ -8,10 +8,7 @@ namespace Magento\Downloadable\Test\Unit\Helper\Catalog\Product;
 
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager as ObjectManagerHelper;
 
-/**
- * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
- */
-class ConfigurationTest extends \PHPUnit\Framework\TestCase
+class ConfigurationTest extends \PHPUnit_Framework_TestCase
 {
     /** @var ObjectManagerHelper */
     protected $objectManagerHelper;
@@ -38,16 +35,16 @@ class ConfigurationTest extends \PHPUnit\Framework\TestCase
     {
         $this->objectManagerHelper = new ObjectManagerHelper($this);
 
-        $this->context = $this->getMockBuilder(\Magento\Framework\App\Helper\Context::class)
+        $this->context = $this->getMockBuilder('\Magento\Framework\App\Helper\Context')
             ->disableOriginalConstructor()
             ->getMock();
-        $this->scopeConfig = $this->createMock(\Magento\Framework\App\Config\ScopeConfigInterface::class);
-        $this->productConfig = $this->getMockBuilder(\Magento\Catalog\Helper\Product\Configuration::class)
+        $this->scopeConfig = $this->getMock('\Magento\Framework\App\Config\ScopeConfigInterface');
+        $this->productConfig = $this->getMockBuilder('\Magento\Catalog\Helper\Product\Configuration')
             ->disableOriginalConstructor()
             ->getMock();
         $this->context->expects($this->once())->method('getScopeConfig')->willReturn($this->scopeConfig);
         $this->helper = $this->objectManagerHelper->getObject(
-            \Magento\Downloadable\Helper\Catalog\Product\Configuration::class,
+            'Magento\Downloadable\Helper\Catalog\Product\Configuration',
             [
                 'context' => $this->context,
                 'productConfig' => $this->productConfig
@@ -57,7 +54,7 @@ class ConfigurationTest extends \PHPUnit\Framework\TestCase
 
     public function testGetLinksTitle()
     {
-        $product = $this->getMockBuilder(\Magento\Catalog\Model\Product::class)
+        $product = $this->getMockBuilder('\Magento\Catalog\Model\Product')
             ->disableOriginalConstructor()
             ->setMethods(['_wakeup', 'getLinksTitle'])
             ->getMock();
@@ -69,7 +66,7 @@ class ConfigurationTest extends \PHPUnit\Framework\TestCase
 
     public function testGetLinksTitleWithoutTitle()
     {
-        $product = $this->getMockBuilder(\Magento\Catalog\Model\Product::class)
+        $product = $this->getMockBuilder('\Magento\Catalog\Model\Product')
             ->disableOriginalConstructor()
             ->setMethods(['_wakeup', 'getLinksTitle'])
             ->getMock();
@@ -85,17 +82,17 @@ class ConfigurationTest extends \PHPUnit\Framework\TestCase
 
     public function testGetOptions()
     {
-        $item = $this->createMock(\Magento\Catalog\Model\Product\Configuration\Item\ItemInterface::class);
-        $product = $this->getMockBuilder(\Magento\Catalog\Model\Product::class)
+        $item = $this->getMock('\Magento\Catalog\Model\Product\Configuration\Item\ItemInterface');
+        $product = $this->getMockBuilder('\Magento\Catalog\Model\Product')
             ->disableOriginalConstructor()
             ->setMethods(['_wakeup', 'getLinksTitle', 'getTypeInstance'])
             ->getMock();
-        $option = $this->createMock(\Magento\Catalog\Model\Product\Configuration\Item\Option\OptionInterface::class);
-        $productType = $this->getMockBuilder(\Magento\Downloadable\Model\Product\Type::class)
+        $option = $this->getMock('\Magento\Catalog\Model\Product\Configuration\Item\Option\OptionInterface');
+        $productType = $this->getMockBuilder('\Magento\Downloadable\Model\Product\Type')
             ->disableOriginalConstructor()
             ->setMethods(['getLinks'])
             ->getMock();
-        $productLink = $this->getMockBuilder(\Magento\Downloadable\Model\Link::class)
+        $productLink = $this->getMockBuilder('\Magento\Downloadable\Model\Link')
             ->disableOriginalConstructor()
             ->setMethods(['getTitle'])
             ->getMock();

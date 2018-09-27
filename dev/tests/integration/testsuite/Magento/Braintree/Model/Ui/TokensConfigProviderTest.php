@@ -14,12 +14,12 @@ use Magento\TestFramework\Helper\Bootstrap;
 use Magento\Vault\Model\PaymentTokenManagement;
 use Magento\Vault\Model\Ui\TokensConfigProvider;
 use Magento\Vault\Model\Ui\TokenUiComponentProviderInterface;
-use PHPUnit\Framework\MockObject_MockObject as MockObject;
+use PHPUnit_Framework_MockObject_MockObject as MockObject;
 
 /**
  * Class TokensConfigProviderTest
  */
-class TokensConfigProviderTest extends \PHPUnit\Framework\TestCase
+class TokensConfigProviderTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var ObjectManagerInterface

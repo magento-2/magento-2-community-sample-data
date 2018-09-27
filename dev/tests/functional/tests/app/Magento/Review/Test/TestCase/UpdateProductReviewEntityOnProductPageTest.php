@@ -28,14 +28,14 @@ use Magento\Mtf\TestCase\Injectable;
  * 6. Save changes.
  * 7. Perform all assertions.
  *
- * @group Reviews_and_Ratings
+ * @group Reviews_and_Ratings_(MX)
  * @ZephyrId MAGETWO-27743
- * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  */
 class UpdateProductReviewEntityOnProductPageTest extends Injectable
 {
     /* tags */
     const MVP = 'no';
+    const DOMAIN = 'MX';
     /* end tags */
 
     /**
@@ -130,7 +130,7 @@ class UpdateProductReviewEntityOnProductPageTest extends Injectable
         $review = $this->createReview($review, $rating);
         $product = $this->reviewInitial->getDataFieldConfig('entity_id')['source']->getEntity();
         $this->objectManager->create(
-            \Magento\Catalog\Test\TestStep\OpenProductOnBackendStep::class,
+            'Magento\Catalog\Test\TestStep\OpenProductOnBackendStep',
             ['product' => $product]
         )->run();
 

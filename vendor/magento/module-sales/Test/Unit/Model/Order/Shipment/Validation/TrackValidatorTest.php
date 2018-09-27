@@ -13,7 +13,7 @@ use Magento\Sales\Api\Data\ShipmentTrackInterface;
 /**
  * Class TrackValidatorTest
  */
-class TrackValidatorTest extends \PHPUnit\Framework\TestCase
+class TrackValidatorTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var TrackValidator

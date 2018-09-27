@@ -23,9 +23,7 @@ class ComplexTypeStrategy extends AbstractComplexTypeStrategy
      */
     const APP_INF_NS = 'inf';
 
-    /**
-     * @var \Magento\Framework\Reflection\TypeProcessor
-     */
+    /** @var \Magento\Framework\Reflection\TypeProcessor */
     protected $_typeProcessor;
 
     /**
@@ -229,8 +227,7 @@ class ComplexTypeStrategy extends AbstractComplexTypeStrategy
         $this->_processElementType($elementType, $documentation, $appInfoNode);
 
         if (preg_match_all('/{([a-z]+):(.+)}/Ui', $documentation, $matches)) {
-            $count = count($matches[0]);
-            for ($i = 0; $i < $count; $i++) {
+            for ($i = 0; $i < count($matches[0]); $i++) {
                 $appinfoTag = $matches[0][$i];
                 $tagName = $matches[1][$i];
                 $tagValue = $matches[2][$i];

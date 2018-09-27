@@ -11,6 +11,8 @@ use Magento\Framework\App\Config;
 
 /**
  * Information Expert in stores handling
+ *
+ * @package Magento\Store\Model
  */
 class StoreRepository implements \Magento\Store\Api\StoreRepositoryInterface
 {
@@ -150,7 +152,7 @@ class StoreRepository implements \Magento\Store\Api\StoreRepositoryInterface
     /**
      * Retrieve application config.
      *
-     * @deprecated 100.1.3
+     * @deprecated
      * @return Config
      */
     private function getAppConfig()

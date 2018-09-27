@@ -9,7 +9,7 @@ use Magento\Payment\Helper\Data;
 use Magento\Payment\Model\CcConfig;
 use Magento\Payment\Model\CcGenericConfigProvider;
 
-class CcGenericConfigProviderTest extends \PHPUnit\Framework\TestCase
+class CcGenericConfigProviderTest extends \PHPUnit_Framework_TestCase
 {
     /** @var CcGenericConfigProvider */
     protected $model;
@@ -22,8 +22,8 @@ class CcGenericConfigProviderTest extends \PHPUnit\Framework\TestCase
 
     protected function setUp()
     {
-        $this->ccConfigMock = $this->createMock(\Magento\Payment\Model\CcConfig::class);
-        $this->paymentHelperMock = $this->createMock(\Magento\Payment\Helper\Data::class);
+        $this->ccConfigMock = $this->getMock(\Magento\Payment\Model\CcConfig::class, [], [], '', false);
+        $this->paymentHelperMock = $this->getMock(\Magento\Payment\Helper\Data::class, [], [], '', false);
 
         $this->model = new CcGenericConfigProvider(
             $this->ccConfigMock,

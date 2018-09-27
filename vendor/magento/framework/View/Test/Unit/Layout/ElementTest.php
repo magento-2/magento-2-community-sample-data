@@ -9,7 +9,7 @@
  */
 namespace Magento\Framework\View\Test\Unit\Layout;
 
-class ElementTest extends \PHPUnit\Framework\TestCase
+class ElementTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @dataProvider elementNameDataProvider
@@ -20,6 +20,9 @@ class ElementTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals($name, $model->getElementName());
     }
 
+    /**
+     * @return array
+     */
     public function elementNameDataProvider()
     {
         return [
@@ -31,6 +34,9 @@ class ElementTest extends \PHPUnit\Framework\TestCase
         ];
     }
 
+    /**
+     * @return array
+     */
     public function cacheableDataProvider()
     {
         return [

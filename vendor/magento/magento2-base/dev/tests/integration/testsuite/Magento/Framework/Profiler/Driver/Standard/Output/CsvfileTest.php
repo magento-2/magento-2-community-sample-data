@@ -7,7 +7,7 @@
  */
 namespace Magento\Framework\Profiler\Driver\Standard\Output;
 
-class CsvfileTest extends \PHPUnit\Framework\TestCase
+class CsvfileTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\Framework\Profiler\Driver\Standard\Output\Csvfile

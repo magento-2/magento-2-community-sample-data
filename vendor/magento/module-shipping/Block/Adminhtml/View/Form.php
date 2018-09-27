@@ -11,10 +11,6 @@
  */
 namespace Magento\Shipping\Block\Adminhtml\View;
 
-/**
- * @api
- * @since 100.0.2
- */
 class Form extends \Magento\Sales\Block\Adminhtml\Order\AbstractOrder
 {
     /**
@@ -81,7 +77,7 @@ class Form extends \Magento\Sales\Block\Adminhtml\Order\AbstractOrder
         $data['shipment_id'] = $this->getShipment()->getId();
         $url = $this->getUrl('adminhtml/order_shipment/createLabel', $data);
         return $this->getLayout()->createBlock(
-            \Magento\Backend\Block\Widget\Button::class
+            'Magento\Backend\Block\Widget\Button'
         )->setData(
             [
                 'label' => __('Create Shipping Label...'),
@@ -101,7 +97,7 @@ class Form extends \Magento\Sales\Block\Adminhtml\Order\AbstractOrder
         $data['shipment_id'] = $this->getShipment()->getId();
         $url = $this->getUrl('adminhtml/order_shipment/printLabel', $data);
         return $this->getLayout()->createBlock(
-            \Magento\Backend\Block\Widget\Button::class
+            'Magento\Backend\Block\Widget\Button'
         )->setData(
             ['label' => __('Print Shipping Label'), 'onclick' => 'setLocation(\'' . $url . '\')']
         )->toHtml();
@@ -115,7 +111,7 @@ class Form extends \Magento\Sales\Block\Adminhtml\Order\AbstractOrder
     public function getShowPackagesButton()
     {
         return $this->getLayout()->createBlock(
-            \Magento\Backend\Block\Widget\Button::class
+            'Magento\Backend\Block\Widget\Button'
         )->setData(
             ['label' => __('Show Packages'), 'onclick' => 'showPackedWindow();']
         )->toHtml();

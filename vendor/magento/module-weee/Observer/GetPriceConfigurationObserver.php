@@ -23,9 +23,7 @@ class GetPriceConfigurationObserver implements ObserverInterface
      */
     protected $weeeData;
 
-    /**
-     * @var \Magento\Framework\Registry
-     */
+    /** @var \Magento\Framework\Registry */
     protected $registry;
 
     /**

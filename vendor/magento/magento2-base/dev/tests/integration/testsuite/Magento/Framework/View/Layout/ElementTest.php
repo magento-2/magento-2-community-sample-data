@@ -5,7 +5,7 @@
  */
 namespace Magento\Framework\View\Layout;
 
-class ElementTest extends \PHPUnit\Framework\TestCase
+class ElementTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\Framework\View\Layout\Element
@@ -29,7 +29,7 @@ class ElementTest extends \PHPUnit\Framework\TestCase
         $this->model->prepare();
 
         $this->assertEquals('root', (string)$blockNode->attributes()->parent);
-        $this->assertEquals(\Magento\Backend\Block\Page::class, (string)$blockNode->attributes()->class);
+        $this->assertEquals('Magento\Backend\Block\Page', (string)$blockNode->attributes()->class);
         $this->assertEquals('nodeForTesting', (string)$actionNode->attributes()->block);
     }
 }

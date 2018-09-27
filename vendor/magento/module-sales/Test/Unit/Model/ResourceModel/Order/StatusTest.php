@@ -13,7 +13,7 @@ namespace Magento\Sales\Test\Unit\Model\ResourceModel\Order;
  *
  * @package Magento\Sales\Model\ResourceModel
  */
-class StatusTest extends \PHPUnit\Framework\TestCase
+class StatusTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\Sales\Model\ResourceModel\Order\Status
@@ -42,14 +42,26 @@ class StatusTest extends \PHPUnit\Framework\TestCase
 
     protected function setUp()
     {
-        $this->selectMock = $this->createMock(\Magento\Framework\DB\Select::class);
+        $this->selectMock = $this->getMock('\Magento\Framework\DB\Select', [], [], '', false);
         $this->selectMock->expects($this->any())->method('from')->will($this->returnSelf());
         $this->selectMock->expects($this->any())->method('where');
 
-        $this->connectionMock = $this->createPartialMock(\Magento\Framework\DB\Adapter\Pdo\Mysql::class, ['update', 'insertOnDuplicate', 'select']);
+        $this->connectionMock = $this->getMock(
+            '\Magento\Framework\DB\Adapter\Pdo\Mysql',
+            ['update', 'insertOnDuplicate'],
+            [],
+            '',
+            false
+        );
         $this->connectionMock->expects($this->any())->method('select')->will($this->returnValue($this->selectMock));
 
-        $this->resourceMock = $this->createMock(\Magento\Framework\App\ResourceConnection::class);
+        $this->resourceMock = $this->getMock(
+            '\Magento\Framework\App\ResourceConnection',
+            [],
+            [],
+            '',
+            false
+        );
         $tableName = 'sales_order_status_state';
         $this->resourceMock->expects($this->at(1))
             ->method('getTableName')
@@ -61,10 +73,9 @@ class StatusTest extends \PHPUnit\Framework\TestCase
                 $this->returnValue($this->connectionMock)
             );
 
-        $this->configMock = $this->createPartialMock(\Magento\Eav\Model\Config::class, ['getConnectionName']);
+        $this->configMock = $this->getMock('\Magento\Eav\Model\Config', ['getConnectionName'], [], '', false);
         $objectManager = new \Magento\Framework\TestFramework\Unit\Helper\ObjectManager($this);
-        $this->model = $objectManager->getObject(
-            \Magento\Sales\Model\ResourceModel\Order\Status::class,
+        $this->model = $objectManager->getObject('Magento\Sales\Model\ResourceModel\Order\Status',
             ['resource' => $this->resourceMock]
         );
     }

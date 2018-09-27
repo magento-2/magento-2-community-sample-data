@@ -2,10 +2,6 @@
  * Copyright © Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
-
-/**
- * @api
- */
 define([
     'underscore',
     'mageUtils',
@@ -48,9 +44,9 @@ define([
                 if (_.isUndefined(caption)) {
                     caption = node.label;
                 }
-            } else {
-                return node;
             }
+
+            return node;
         });
 
         return {
@@ -178,7 +174,7 @@ define([
         },
 
         /**
-         * Matches specified value with existing options
+         * Matches specfied value with existing options
          * or, if value is not specified, returns value of the first option.
          *
          * @returns {*}
@@ -276,12 +272,6 @@ define([
             return preview;
         },
 
-        /**
-         * Get option from indexedOptions list.
-         *
-         * @param {Number} value
-         * @returns {Object} Chainable
-         */
         getOption: function (value) {
             return this.indexedOptions[value];
         },
@@ -300,7 +290,7 @@ define([
         },
 
         /**
-         * Initializes observable properties of instance
+         * Initializes observable properties of instance.
          *
          * @returns {Object} Chainable.
          */

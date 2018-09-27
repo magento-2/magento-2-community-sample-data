@@ -3,24 +3,24 @@
  * Copyright © Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
-
+// @codingStandardsIgnoreFile
 namespace Magento\Framework\Api\Test\Unit\Code\Generator;
 
 use Magento\Framework\Api\ExtensionAttribute\Config\Converter;
 
-class ExtensionAttributesInterfaceGeneratorTest extends \PHPUnit\Framework\TestCase
+class ExtensionAttributesInterfaceGeneratorTest extends \PHPUnit_Framework_TestCase
 {
     public function testGenerate()
     {
         $objectManager = new \Magento\Framework\TestFramework\Unit\Helper\ObjectManager($this);
-        $configMock = $this->getMockBuilder(\Magento\Framework\Api\ExtensionAttribute\Config::class)
+        $configMock = $this->getMockBuilder('Magento\Framework\Api\ExtensionAttribute\Config')
             ->disableOriginalConstructor()
             ->getMock();
         $configMock->expects($this->any())
             ->method('get')
             ->willReturn(
                 [
-                    \Magento\Catalog\Api\Data\ProductInterface::class => [
+                    'Magento\Catalog\Api\Data\ProductInterface' => [
                         'string_attribute' => [
                             Converter::DATA_TYPE => 'string',
                             Converter::RESOURCE_PERMISSIONS => [],
@@ -31,11 +31,11 @@ class ExtensionAttributesInterfaceGeneratorTest extends \PHPUnit\Framework\TestC
                         ],
                         // Ensure type declaration is added to argument of setter
                         'complex_object_attribute_with_type_declaration' => [
-                            Converter::DATA_TYPE => \Magento\Bundle\Api\Data\BundleOptionInterface::class,
+                            Converter::DATA_TYPE => '\Magento\Bundle\Api\Data\BundleOptionInterface',
                             Converter::RESOURCE_PERMISSIONS => [],
                         ],
                     ],
-                    \Magento\Catalog\Api\Data\Product::class => [
+                    'Magento\Catalog\Api\Data\Product' => [
                         'should_not_include' => [
                             Converter::DATA_TYPE => 'string',
                             Converter::RESOURCE_PERMISSIONS => [],
@@ -43,19 +43,19 @@ class ExtensionAttributesInterfaceGeneratorTest extends \PHPUnit\Framework\TestC
                     ],
                 ]
             );
-        $typeProcessorMock = $this->getMockBuilder(\Magento\Framework\Reflection\TypeProcessor::class)
+        $typeProcessorMock = $this->getMockBuilder('Magento\Framework\Reflection\TypeProcessor')
             ->disableOriginalConstructor()
             ->setMethods(null)
             ->getMock();
 
         /** @var \Magento\Framework\Api\Code\Generator\ExtensionAttributesInterfaceGenerator $model */
         $model = $objectManager->getObject(
-            \Magento\Framework\Api\Code\Generator\ExtensionAttributesInterfaceGenerator::class,
+            'Magento\Framework\Api\Code\Generator\ExtensionAttributesInterfaceGenerator',
             [
                 'config' => $configMock,
                 'typeProcessor' => $typeProcessorMock,
-                'sourceClassName' => \Magento\Catalog\Api\Data\Product::class,
-                'resultClassName' => \Magento\Catalog\Api\Data\ProductExtensionInterface::class,
+                'sourceClassName' => '\Magento\Catalog\Api\Data\Product',
+                'resultClassName' => '\Magento\Catalog\Api\Data\ProductExtensionInterface',
                 'classGenerator' => null
             ]
         );
@@ -72,10 +72,10 @@ class ExtensionAttributesInterfaceGeneratorTest extends \PHPUnit\Framework\TestC
         $objectManager = new \Magento\Framework\TestFramework\Unit\Helper\ObjectManager($this);
         /** @var \Magento\Framework\Api\Code\Generator\ExtensionAttributesInterfaceGenerator $model */
         $model = $objectManager->getObject(
-            \Magento\Framework\Api\Code\Generator\ExtensionAttributesInterfaceGenerator::class,
+            'Magento\Framework\Api\Code\Generator\ExtensionAttributesInterfaceGenerator',
             [
-                'sourceClassName' => \Magento\Catalog\Api\Data\Product::class,
-                'resultClassName' => \Magento\Catalog\Api\Data\ProductInterface::class
+                'sourceClassName' => '\Magento\Catalog\Api\Data\Product',
+                'resultClassName' => '\Magento\Catalog\Api\Data\ProductInterface'
             ]
         );
         $reflectionObject = new \ReflectionObject($model);

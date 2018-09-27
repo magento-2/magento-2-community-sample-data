@@ -282,8 +282,7 @@ class Price
     public function getPriorFilters($filterParams)
     {
         $priorFilters = [];
-        $count = count($filterParams);
-        for ($i = 1; $i < $count; ++$i) {
+        for ($i = 1; $i < count($filterParams); ++$i) {
             $priorFilter = $this->validateFilter($filterParams[$i]);
             if ($priorFilter) {
                 $priorFilters[] = $priorFilter;

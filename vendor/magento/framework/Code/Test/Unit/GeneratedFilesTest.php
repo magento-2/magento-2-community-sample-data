@@ -9,7 +9,7 @@ namespace Magento\Framework\Code\Test\Unit;
 use Magento\Framework\App\Filesystem\DirectoryList;
 use Magento\Framework\Code\GeneratedFiles;
 
-class GeneratedFilesTest extends \PHPUnit\Framework\TestCase
+class GeneratedFilesTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\Framework\App\Filesystem\DirectoryList | \PHPUnit_Framework_MockObject_MockObject
@@ -28,12 +28,15 @@ class GeneratedFilesTest extends \PHPUnit\Framework\TestCase
 
     protected function setUp()
     {
-        $this->directoryList =
-            $this->createPartialMock(\Magento\Framework\App\Filesystem\DirectoryList::class, ['getPath']);
-        $writeFactory = $this->createMock(\Magento\Framework\Filesystem\Directory\WriteFactory::class);
-        $this->writeInterface = $this->getMockBuilder(\Magento\Framework\Filesystem\Directory\WriteInterface::class)
-            ->setMethods(['getPath', 'delete'])
-            ->getMockForAbstractClass();
+        $this->directoryList = $this->getMock('\Magento\Framework\App\Filesystem\DirectoryList', [], [], '', false);
+        $writeFactory = $this->getMock('\Magento\Framework\Filesystem\Directory\WriteFactory', [], [], '', false);
+        $this->writeInterface = $this->getMock(
+            '\Magento\Framework\Filesystem\Directory\WriteInterface',
+            [],
+            [],
+            '',
+            false
+        );
         $writeFactory->expects($this->once())->method('create')->willReturn($this->writeInterface);
         $this->model = new GeneratedFiles($this->directoryList, $writeFactory);
     }
@@ -73,8 +76,8 @@ class GeneratedFilesTest extends \PHPUnit\Framework\TestCase
         $pathToConfig = 'path/to/config';
 
         $getPathMap =     [
-            [DirectoryList::GENERATED_CODE, $pathToGeneration],
-            [DirectoryList::GENERATED_METADATA, $pathToDi],
+            [DirectoryList::GENERATION, $pathToGeneration],
+            [DirectoryList::DI, $pathToDi],
             [DirectoryList::CACHE, $pathToCache],
             [DirectoryList::CONFIG, $pathToConfig],
         ];

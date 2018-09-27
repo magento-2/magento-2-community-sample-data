@@ -5,98 +5,101 @@
  */
 namespace Magento\CatalogInventory\Test\Unit\Model\Stock;
 
+use Magento\Catalog\Model\ResourceModel\Product\Collection;
 use Magento\Catalog\Model\ResourceModel\Product\CollectionFactory;
-use Magento\CatalogInventory\Api\Data as InventoryApiData;
 use Magento\CatalogInventory\Model\Stock\StockItemRepository;
+use Magento\CatalogInventory\Api\Data as InventoryApiData;
 use Magento\CatalogInventory\Model\StockRegistryStorage;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
 
 /**
+ * Class StockItemRepositoryTest
+ *
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  */
-class StockItemRepositoryTest extends \PHPUnit\Framework\TestCase
+class StockItemRepositoryTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var StockItemRepository
      */
-    private $model;
+    protected $model;
 
     /**
      * @var \Magento\CatalogInventory\Model\Stock\Item |\PHPUnit_Framework_MockObject_MockObject
      */
-    private $stockItemMock;
+    protected $stockItemMock;
 
     /**
      * @var \Magento\CatalogInventory\Api\StockConfigurationInterface|\PHPUnit_Framework_MockObject_MockObject
      */
-    private $stockConfigurationMock;
+    protected $stockConfigurationMock;
 
     /**
      * @var \PHPUnit_Framework_MockObject_MockObject
      */
-    private $productMock;
+    protected $productMock;
 
     /**
      * @var \Magento\CatalogInventory\Model\Spi\StockStateProviderInterface|\PHPUnit_Framework_MockObject_MockObject
      */
-    private $stockStateProviderMock;
+    protected $stockStateProviderMock;
 
     /**
      * @var \Magento\CatalogInventory\Model\ResourceModel\Stock\Item|\PHPUnit_Framework_MockObject_MockObject
      */
-    private $stockItemResourceMock;
+    protected $stockItemResourceMock;
 
     /**
      * @var InventoryApiData\StockItemInterfaceFactory|\PHPUnit_Framework_MockObject_MockObject
      */
-    private $stockItemFactoryMock;
+    protected $stockItemFactoryMock;
 
     /**
      * @var InventoryApiData\StockItemCollectionInterfaceFactory|\PHPUnit_Framework_MockObject_MockObject
      */
-    private $stockItemCollectionMock;
+    protected $stockItemCollectionMock;
 
     /**
      * @var \Magento\Catalog\Model\ProductFactory|\PHPUnit_Framework_MockObject_MockObject
      */
-    private $productFactoryMock;
+    protected $productFactoryMock;
 
     /**
      * @var \Magento\Framework\DB\QueryBuilderFactory|\PHPUnit_Framework_MockObject_MockObject
      */
-    private $queryBuilderFactoryMock;
+    protected $queryBuilderFactoryMock;
 
     /**
      * @var \Magento\Framework\DB\MapperFactory|\PHPUnit_Framework_MockObject_MockObject
      */
-    private $mapperMock;
+    protected $mapperMock;
 
     /**
      * @var \Magento\Framework\Stdlib\DateTime\TimezoneInterface|\PHPUnit_Framework_MockObject_MockObject
      */
-    private $localeDateMock;
+    protected $localeDateMock;
 
     /**
      * @var \Magento\CatalogInventory\Model\Indexer\Stock\Processor|\PHPUnit_Framework_MockObject_MockObject
      */
-    private $indexProcessorMock;
+    protected $indexProcessorMock;
 
     /**
      * @var \Magento\Framework\Stdlib\DateTime\DateTime|\PHPUnit_Framework_MockObject_MockObject
      */
-    private $dateTime;
+    protected $dateTime;
 
     /**
      * @var StockRegistryStorage|\PHPUnit_Framework_MockObject_MockObject
      */
-    private $stockRegistryStorage;
+    protected $stockRegistryStorage;
 
     /**
      * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
      */
     protected function setUp()
     {
-        $this->stockItemMock = $this->getMockBuilder(\Magento\CatalogInventory\Model\Stock\Item::class)
+        $this->stockItemMock = $this->getMockBuilder('\Magento\CatalogInventory\Model\Stock\Item')
             ->disableOriginalConstructor()
             ->setMethods(
                 [
@@ -118,58 +121,65 @@ class StockItemRepositoryTest extends \PHPUnit\Framework\TestCase
             )
             ->getMock();
         $this->stockConfigurationMock = $this->getMockBuilder(
-            \Magento\CatalogInventory\Api\StockConfigurationInterface::class
+            'Magento\CatalogInventory\Api\StockConfigurationInterface'
         )
             ->disableOriginalConstructor()
             ->getMock();
         $this->stockStateProviderMock = $this->getMockBuilder(
-            \Magento\CatalogInventory\Model\Spi\StockStateProviderInterface::class
+            'Magento\CatalogInventory\Model\Spi\StockStateProviderInterface'
         )
             ->disableOriginalConstructor()
             ->getMock();
-        $this->stockItemResourceMock = $this->getMockBuilder(
-            \Magento\CatalogInventory\Model\ResourceModel\Stock\Item::class
-        )
+        $this->stockItemResourceMock = $this->getMockBuilder('Magento\CatalogInventory\Model\ResourceModel\Stock\Item')
             ->disableOriginalConstructor()
             ->getMock();
         $this->stockItemFactoryMock = $this->getMockBuilder(
-            \Magento\CatalogInventory\Api\Data\StockItemInterfaceFactory::class
+            'Magento\CatalogInventory\Api\Data\StockItemInterfaceFactory'
         )
             ->setMethods(['create'])
             ->disableOriginalConstructor()
             ->getMock();
         $this->stockItemCollectionMock = $this->getMockBuilder(
-            \Magento\CatalogInventory\Api\Data\StockItemCollectionInterfaceFactory::class
+            'Magento\CatalogInventory\Api\Data\StockItemCollectionInterfaceFactory'
         )
             ->setMethods(['create'])
             ->disableOriginalConstructor()
             ->getMock();
-        $this->productFactoryMock = $this->getMockBuilder(\Magento\Catalog\Model\ProductFactory::class)
+        $this->productFactoryMock = $this->getMockBuilder('Magento\Catalog\Model\ProductFactory')
             ->disableOriginalConstructor()
             ->setMethods(['load', 'create'])
             ->getMock();
-        $this->productMock = $this->getMockBuilder(\Magento\Catalog\Model\Product::class)
+        $this->productMock = $this->getMockBuilder('Magento\Catalog\Model\Product')
             ->disableOriginalConstructor()
             ->setMethods(['load', 'getId', 'getTypeId', '__wakeup'])
             ->getMock();
 
         $this->productFactoryMock->expects($this->any())->method('create')->willReturn($this->productMock);
 
-        $this->queryBuilderFactoryMock = $this->getMockBuilder(\Magento\Framework\DB\QueryBuilderFactory::class)
+        $this->queryBuilderFactoryMock = $this->getMockBuilder('Magento\Framework\DB\QueryBuilderFactory')
             ->setMethods(['create'])
             ->disableOriginalConstructor()
             ->getMock();
-        $this->mapperMock = $this->getMockBuilder(\Magento\Framework\DB\MapperFactory::class)
+        $this->mapperMock = $this->getMockBuilder('Magento\Framework\DB\MapperFactory')
             ->disableOriginalConstructor()
             ->getMock();
-        $this->localeDateMock = $this->getMockBuilder(\Magento\Framework\Stdlib\DateTime\TimezoneInterface::class)
+        $this->localeDateMock = $this->getMockBuilder('Magento\Framework\Stdlib\DateTime\TimezoneInterface')
             ->disableOriginalConstructor()
             ->getMock();
-        $this->indexProcessorMock = $this->createPartialMock(
-            \Magento\CatalogInventory\Model\Indexer\Stock\Processor::class,
-            ['reindexRow']
+        $this->indexProcessorMock = $this->getMock(
+            'Magento\CatalogInventory\Model\Indexer\Stock\Processor',
+            ['reindexRow'],
+            [],
+            '',
+            false
         );
-        $this->dateTime = $this->createPartialMock(\Magento\Framework\Stdlib\DateTime\DateTime::class, ['gmtDate']);
+        $this->dateTime = $this->getMock(
+            'Magento\Framework\Stdlib\DateTime\DateTime',
+            ['gmtDate'],
+            [],
+            '',
+            false
+        );
         $this->stockRegistryStorage = $this->getMockBuilder(StockRegistryStorage::class)
             ->disableOriginalConstructor()
             ->getMock();
@@ -276,7 +286,7 @@ class StockItemRepositoryTest extends \PHPUnit\Framework\TestCase
             ->method('verifyStock')
             ->with($this->stockItemMock)
             ->willReturn(false);
-        $this->stockItemMock->expects($this->exactly(2))->method('getManageStock')->willReturn(true);
+        $this->stockItemMock->expects($this->once())->method('getManageStock')->willReturn(true);
         $this->stockItemMock->expects($this->once())->method('setIsInStock')->with(false)->willReturnSelf();
         $this->stockItemMock->expects($this->once())
             ->method('setStockStatusChangedAutomaticallyFlag')
@@ -304,6 +314,7 @@ class StockItemRepositoryTest extends \PHPUnit\Framework\TestCase
             ->method('save')
             ->with($this->stockItemMock)
             ->willReturnSelf();
+        $this->indexProcessorMock->expects($this->once())->method('reindexRow')->with($productId);
 
         $this->assertEquals($this->stockItemMock, $this->model->save($this->stockItemMock));
     }
@@ -346,17 +357,16 @@ class StockItemRepositoryTest extends \PHPUnit\Framework\TestCase
 
     public function testGetList()
     {
-        $criteriaMock = $this->getMockBuilder(\Magento\CatalogInventory\Api\StockItemCriteriaInterface::class)
+        $criteriaMock = $this->getMockBuilder('Magento\CatalogInventory\Api\StockItemCriteriaInterface')
             ->getMock();
-        $queryBuilderMock = $this->getMockBuilder(\Magento\Framework\DB\QueryBuilder::class)
+        $queryBuilderMock = $this->getMockBuilder('Magento\Framework\DB\QueryBuilder')
             ->disableOriginalConstructor()
             ->setMethods(['setCriteria', 'setResource', 'create'])
             ->getMock();
-        $queryMock = $this->getMockBuilder(\Magento\Framework\DB\QueryInterface::class)
+        $queryMock = $this->getMockBuilder('Magento\Framework\DB\QueryInterface')
             ->getMock();
-        $queryCollectionMock = $this->getMockBuilder(
-            \Magento\CatalogInventory\Api\Data\StockItemCollectionInterface::class
-        )->getMock();
+        $queryCollectionMock = $this->getMockBuilder('Magento\CatalogInventory\Api\Data\StockItemCollectionInterface')
+            ->getMock();
 
         $this->queryBuilderFactoryMock->expects($this->once())->method('create')->willReturn($queryBuilderMock);
         $queryBuilderMock->expects($this->once())->method('setCriteria')->with($criteriaMock)->willReturnSelf();

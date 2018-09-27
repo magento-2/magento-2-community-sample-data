@@ -5,11 +5,6 @@
  */
 namespace Magento\Sales\Model;
 
-/**
- * Interface ConfigInterface
- * @api
- * @since 100.0.2
- */
 interface ConfigInterface
 {
     /**

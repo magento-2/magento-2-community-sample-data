@@ -17,8 +17,8 @@ interface AttributeLoaderInterface
      * Retrieve configuration for all attributes
      *
      * @param AbstractEntity $resource
-     * @param DataObject|null $entity
+     * @param DataObject|null $object
      * @return AbstractEntity
      */
-    public function loadAllAttributes(AbstractEntity $resource, DataObject $entity = null);
+    public function loadAllAttributes(AbstractEntity $resource, DataObject $object = null);
 }

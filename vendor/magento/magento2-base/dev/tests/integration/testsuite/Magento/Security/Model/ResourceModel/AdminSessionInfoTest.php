@@ -5,7 +5,7 @@
  */
 namespace Magento\Security\Model\ResourceModel;
 
-class AdminSessionInfoTest extends \PHPUnit\Framework\TestCase
+class AdminSessionInfoTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\Framework\Model\AbstractModel
@@ -21,7 +21,7 @@ class AdminSessionInfoTest extends \PHPUnit\Framework\TestCase
     {
         parent::setUp();
         $this->objectManager = \Magento\TestFramework\Helper\Bootstrap::getObjectManager();
-        $this->model = $this->objectManager->create(\Magento\Security\Model\AdminSessionInfo::class);
+        $this->model = $this->objectManager->create('Magento\Security\Model\AdminSessionInfo');
     }
 
     protected function tearDown()
@@ -81,7 +81,7 @@ class AdminSessionInfoTest extends \PHPUnit\Framework\TestCase
      */
     public function testDeleteSessionsOlderThen()
     {
-        $session = $this->objectManager->create(\Magento\Security\Model\AdminSessionInfo::class);
+        $session = $this->objectManager->create('Magento\Security\Model\AdminSessionInfo');
         /** @var $session \Magento\Security\Model\AdminSessionInfo */
         $session->getResource()->deleteSessionsOlderThen(strtotime('2016-01-20 12:00:00'));
         $collection = $session->getResourceCollection()
@@ -98,7 +98,7 @@ class AdminSessionInfoTest extends \PHPUnit\Framework\TestCase
      */
     public function testUpdateStatusByUserId()
     {
-        $session = $this->objectManager->create(\Magento\Security\Model\AdminSessionInfo::class);
+        $session = $this->objectManager->create('Magento\Security\Model\AdminSessionInfo');
         /** @var $session \Magento\Security\Model\AdminSessionInfo */
         $session->getResource()->updateStatusByUserId(
             \Magento\Security\Model\AdminSessionInfo::LOGGED_OUT_BY_LOGIN,

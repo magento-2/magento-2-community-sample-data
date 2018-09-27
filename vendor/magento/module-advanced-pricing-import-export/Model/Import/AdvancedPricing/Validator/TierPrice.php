@@ -22,8 +22,7 @@ class TierPrice extends \Magento\CatalogImportExport\Model\Import\Product\Valida
         AdvancedPricing::COL_TIER_PRICE_WEBSITE,
         AdvancedPricing::COL_TIER_PRICE_CUSTOMER_GROUP,
         AdvancedPricing::COL_TIER_PRICE_QTY,
-        AdvancedPricing::COL_TIER_PRICE,
-        AdvancedPricing::COL_TIER_PRICE_TYPE
+        AdvancedPricing::COL_TIER_PRICE
     ];
 
     /**
@@ -102,7 +101,6 @@ class TierPrice extends \Magento\CatalogImportExport\Model\Import\Product\Valida
                 || !isset($value[AdvancedPricing::COL_TIER_PRICE_CUSTOMER_GROUP])
                 || !isset($value[AdvancedPricing::COL_TIER_PRICE_QTY])
                 || !isset($value[AdvancedPricing::COL_TIER_PRICE])
-                || !isset($value[AdvancedPricing::COL_TIER_PRICE_TYPE])
                 || $this->hasEmptyColumns($value)
             ) {
                 $this->_addMessages([self::ERROR_TIER_DATA_INCOMPLETE]);

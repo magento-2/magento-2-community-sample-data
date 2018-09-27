@@ -54,7 +54,7 @@ class SynchronizePersistentInfoObserver implements ObserverInterface
      *
      * @param Observer $observer
      * @return void
-     * @deprecated 100.1.0
+     * @deprecated
      */
     public function execute(Observer $observer)
     {

@@ -40,11 +40,6 @@ class Definition
     protected $componentData;
 
     /**
-     * @var \Magento\Framework\Serialize\SerializerInterface
-     */
-    private $serializer;
-
-    /**
      * Constructor
      *
      * @param UiReaderInterface $uiReader
@@ -61,9 +56,9 @@ class Definition
         $cachedData = $this->cache->load(static::CACHE_ID);
         if ($cachedData === false) {
             $data = $uiReader->read();
-            $this->cache->save($this->getSerializer()->serialize($data), static::CACHE_ID);
+            $this->cache->save(serialize($data), static::CACHE_ID);
         } else {
-            $data = $this->getSerializer()->unserialize($cachedData);
+            $data = unserialize($cachedData);
         }
         $this->prepareComponentData($data);
     }
@@ -78,7 +73,12 @@ class Definition
     public function getComponentData($name)
     {
         if (!$this->componentData->offsetExists($name)) {
-            return [];
+            throw new LocalizedException(
+                new Phrase(
+                    'The requested component ("' . $name . '") is not found. '
+                    . 'Before using, you must add the implementation.'
+                )
+            );
         }
         return (array) $this->componentData->offsetGet($name);
     }
@@ -108,20 +108,5 @@ class Definition
         foreach ($componentsData as $name => $data) {
             $this->setComponentData($name, reset($data));
         }
-    }
-
-    /**
-     * Get serializer
-     *
-     * @return \Magento\Framework\Serialize\SerializerInterface
-     * @deprecated 100.2.0
-     */
-    private function getSerializer()
-    {
-        if ($this->serializer === null) {
-            $this->serializer = \Magento\Framework\App\ObjectManager::getInstance()
-                ->get(\Magento\Framework\Serialize\SerializerInterface::class);
-        }
-        return $this->serializer;
     }
 }

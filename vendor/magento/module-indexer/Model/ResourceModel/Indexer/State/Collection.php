@@ -14,9 +14,6 @@ class Collection extends \Magento\Framework\Model\ResourceModel\Db\Collection\Ab
      */
     protected function _construct()
     {
-        $this->_init(
-            \Magento\Indexer\Model\Indexer\State::class,
-            \Magento\Indexer\Model\ResourceModel\Indexer\State::class
-        );
+        $this->_init('Magento\Indexer\Model\Indexer\State', 'Magento\Indexer\Model\ResourceModel\Indexer\State');
     }
 }

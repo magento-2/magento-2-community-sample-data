@@ -10,7 +10,7 @@ use Magento\Framework\App\Response\Http\FileFactory;
 use Magento\Ui\Controller\Adminhtml\Export\GridToXml;
 use Magento\Ui\Model\Export\ConvertToXml;
 
-class GridToXmlTest extends \PHPUnit\Framework\TestCase
+class GridToXmlTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var GridToXml
@@ -34,15 +34,15 @@ class GridToXmlTest extends \PHPUnit\Framework\TestCase
 
     protected function setUp()
     {
-        $this->context = $this->getMockBuilder(\Magento\Backend\App\Action\Context::class)
+        $this->context = $this->getMockBuilder('Magento\Backend\App\Action\Context')
             ->disableOriginalConstructor()
             ->getMock();
 
-        $this->converter = $this->getMockBuilder(\Magento\Ui\Model\Export\ConvertToXml::class)
+        $this->converter = $this->getMockBuilder('Magento\Ui\Model\Export\ConvertToXml')
             ->disableOriginalConstructor()
             ->getMock();
 
-        $this->fileFactory = $this->getMockBuilder(\Magento\Framework\App\Response\Http\FileFactory::class)
+        $this->fileFactory = $this->getMockBuilder('Magento\Framework\App\Response\Http\FileFactory')
             ->disableOriginalConstructor()
             ->getMock();
 

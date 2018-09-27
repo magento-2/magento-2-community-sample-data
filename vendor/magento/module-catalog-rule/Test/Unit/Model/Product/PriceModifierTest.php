@@ -5,7 +5,7 @@
  */
 namespace Magento\CatalogRule\Test\Unit\Model\Product;
 
-class PriceModifierTest extends \PHPUnit\Framework\TestCase
+class PriceModifierTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\CatalogRule\Model\Product\PriceModifier
@@ -29,9 +29,15 @@ class PriceModifierTest extends \PHPUnit\Framework\TestCase
 
     protected function setUp()
     {
-        $this->ruleFactoryMock = $this->createPartialMock(\Magento\CatalogRule\Model\RuleFactory::class, ['create']);
-        $this->productMock = $this->createMock(\Magento\Catalog\Model\Product::class);
-        $this->ruleMock = $this->createMock(\Magento\CatalogRule\Model\Rule::class);
+        $this->ruleFactoryMock = $this->getMock(
+            'Magento\CatalogRule\Model\RuleFactory',
+            ['create'],
+            [],
+            '',
+            false
+        );
+        $this->productMock = $this->getMock('Magento\Catalog\Model\Product', [], [], '', false);
+        $this->ruleMock = $this->getMock('Magento\CatalogRule\Model\Rule', [], [], '', false);
         $this->priceModifier = new \Magento\CatalogRule\Model\Product\PriceModifier($this->ruleFactoryMock);
     }
 
@@ -56,6 +62,9 @@ class PriceModifierTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals($expectedPrice, $this->priceModifier->modifyPrice(100, $this->productMock));
     }
 
+    /**
+     * @return array
+     */
     public function modifyPriceDataProvider()
     {
         return ['resulted_price_exists' => [150, 150], 'resulted_price_not_exists' => [null, 100]];

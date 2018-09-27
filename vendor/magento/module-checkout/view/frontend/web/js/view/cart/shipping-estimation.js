@@ -50,13 +50,9 @@ define(
                     if (address) {
                         estimatedAddress = address.isEditable() ?
                             addressConverter.quoteAddressToFormAddressData(address) :
-                            {
-                                // only the following fields must be used by estimation form data provider
-                                'country_id': address.countryId,
-                                region: address.region,
-                                'region_id': address.regionId,
-                                postcode: address.postcode
-                            };
+                            addressConverter.quoteAddressToFormAddressData(
+                                addressConverter.addressToEstimationAddress(address)
+                            );
                         checkoutProvider.set(
                             'shippingAddress',
                             $.extend({}, checkoutProvider.get('shippingAddress'), estimatedAddress)

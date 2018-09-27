@@ -4,6 +4,8 @@
  * See COPYING.txt for license details.
  */
 
+// @codingStandardsIgnoreFile
+
 namespace Magento\Framework\Stdlib\DateTime;
 
 /**
@@ -142,7 +144,6 @@ interface TimezoneInterface
      * @param string|\DateTimeInterface $date
      * @param string $format
      * @return string
-     * @since 100.1.0
      */
     public function convertConfigTimeToUtc($date, $format = 'Y-m-d H:i:s');
 }

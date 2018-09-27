@@ -5,13 +5,12 @@
  */
 namespace Magento\Customer\Model\Customer\Source;
 
-use Magento\Customer\Api\Data\GroupSearchResultsInterface;
 use Magento\Framework\Module\Manager as ModuleManager;
 use Magento\Customer\Api\Data\GroupInterface;
 use Magento\Customer\Api\GroupRepositoryInterface;
 use Magento\Framework\Api\SearchCriteriaBuilder;
 
-class Group implements GroupSourceInterface
+class Group implements \Magento\Framework\Option\ArrayInterface
 {
     /**
      * @var ModuleManager
@@ -53,13 +52,14 @@ class Group implements GroupSourceInterface
         if (!$this->moduleManager->isEnabled('Magento_Customer')) {
             return [];
         }
-        $customerGroups = [];
-        $customerGroups[] = [
-            'label' => __('ALL GROUPS'),
-            'value' => (string)GroupInterface::CUST_GROUP_ALL,
+        $customerGroups = [
+            [
+                'label' => __('ALL GROUPS'),
+                'value' => GroupInterface::CUST_GROUP_ALL,
+            ]
         ];
 
-        /** @var GroupSearchResultsInterface $groups */
+        /** @var GroupInterface[] $groups */
         $groups = $this->groupRepository->getList($this->searchCriteriaBuilder->create());
         foreach ($groups->getItems() as $group) {
             $customerGroups[] = [

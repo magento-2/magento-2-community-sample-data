@@ -14,7 +14,7 @@ use Magento\Quote\Api\ShipmentEstimationInterface;
 use Magento\Quote\Api\Data\ShippingMethodInterface;
 use Magento\Quote\Model\GuestCart\GuestShippingMethodManagement;
 
-class GuestShippingMethodManagementTest extends \PHPUnit\Framework\TestCase
+class GuestShippingMethodManagementTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var GuestShippingMethodManagement
@@ -56,7 +56,7 @@ class GuestShippingMethodManagementTest extends \PHPUnit\Framework\TestCase
         $objectManager = new \Magento\Framework\TestFramework\Unit\Helper\ObjectManager($this);
 
         $this->shippingMethodManagementMock =
-            $this->createMock(\Magento\Quote\Model\ShippingMethodManagement::class);
+            $this->getMock('Magento\Quote\Model\ShippingMethodManagement', [], [], '', false);
 
         $guestCartTestHelper = new GuestCartTestHelper($this);
         list($this->quoteIdMaskFactoryMock, $this->quoteIdMask) = $guestCartTestHelper->mockQuoteIdMask(

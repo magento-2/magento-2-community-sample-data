@@ -6,7 +6,7 @@
 
 namespace Magento\Marketplace\Test\Unit\Controller\Index;
 
-class IndexTest extends \PHPUnit\Framework\TestCase
+class IndexTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \PHPUnit_Framework_MockObject_MockObject| \Magento\Marketplace\Controller\Adminhtml\Index\Index
@@ -60,7 +60,7 @@ class IndexTest extends \PHPUnit\Framework\TestCase
      */
     public function getControllerIndexMock($methods = null)
     {
-        return $this->createPartialMock(\Magento\Marketplace\Controller\Adminhtml\Index\Index::class, $methods);
+        return $this->getMock('Magento\Marketplace\Controller\Adminhtml\Index\Index', $methods, [], '', false);
     }
 
     /**
@@ -68,7 +68,7 @@ class IndexTest extends \PHPUnit\Framework\TestCase
      */
     public function getResultPageFactoryMock($methods = null)
     {
-        return $this->createPartialMock(\Magento\Framework\View\Result\PageFactory::class, $methods, []);
+        return $this->getMock('Magento\Framework\View\Result\PageFactory', $methods, [], '', false);
     }
 
     /**
@@ -76,7 +76,7 @@ class IndexTest extends \PHPUnit\Framework\TestCase
      */
     public function getConfigMock($methods = null)
     {
-        return $this->createPartialMock(\Magento\Framework\View\Page\Config::class, $methods, []);
+        return $this->getMock('Magento\Framework\View\Page\Config', $methods, [], '', false);
     }
 
     /**
@@ -84,7 +84,7 @@ class IndexTest extends \PHPUnit\Framework\TestCase
      */
     public function getTitleMock($methods = null)
     {
-        return $this->createPartialMock(\Magento\Framework\View\Page\Title::class, $methods, []);
+        return $this->getMock('Magento\Framework\View\Page\Title', $methods, [], '', false);
     }
 
     /**
@@ -92,6 +92,6 @@ class IndexTest extends \PHPUnit\Framework\TestCase
      */
     public function getPageMock($methods = null)
     {
-        return $this->createPartialMock(\Magento\Framework\View\Result\Page::class, $methods, []);
+        return $this->getMock('Magento\Framework\View\Result\Page', $methods, [], '', false);
     }
 }

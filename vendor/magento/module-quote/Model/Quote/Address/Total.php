@@ -5,45 +5,17 @@
  */
 namespace Magento\Quote\Model\Quote\Address;
 
-/**
- * @method string getCode()
- *
- * @api
- * @since 100.0.2
- */
 class Total extends \Magento\Framework\DataObject
 {
     /**
      * @var array
      */
-    protected $totalAmounts = [];
+    protected $totalAmounts;
 
     /**
      * @var array
      */
-    protected $baseTotalAmounts = [];
-
-    /**
-     * Serializer interface instance.
-     *
-     * @var \Magento\Framework\Serialize\Serializer\Json
-     */
-    private $serializer;
-
-    /**
-     * Constructor
-     *
-     * @param array $data
-     * @param \Magento\Framework\Serialize\Serializer\Json|null $serializer
-     */
-    public function __construct(
-        array $data = [],
-        \Magento\Framework\Serialize\Serializer\Json $serializer = null
-    ) {
-        $this->serializer = $serializer ?: \Magento\Framework\App\ObjectManager::getInstance()
-            ->get(\Magento\Framework\Serialize\Serializer\Json::class);
-        parent::__construct($data);
-    }
+    protected $baseTotalAmounts;
 
     /**
      * Set total amount value
@@ -171,7 +143,6 @@ class Total extends \Magento\Framework\DataObject
      *
      * @param array|string $info
      * @return $this
-     * @since 100.1.0
      */
     public function setFullInfo($info)
     {
@@ -183,13 +154,12 @@ class Total extends \Magento\Framework\DataObject
      * Returns the full info, which is used to capture tax related information.
      *
      * @return array
-     * @since 100.1.0
      */
     public function getFullInfo()
     {
         $fullInfo = $this->getData('full_info');
         if (is_string($fullInfo)) {
-            $fullInfo = $this->serializer->unserialize($fullInfo);
+            $fullInfo = unserialize($fullInfo);
         }
         return $fullInfo;
     }

@@ -86,12 +86,16 @@ class Observer
      */
     public function emulateWelcomeBlock($block)
     {
-        $customerName = $this->_customerViewHelper->getCustomerName(
-            $this->customerRepository->getById($this->_persistentSession->getSession()->getCustomerId())
+        $escapedName = $this->_escaper->escapeHtml(
+            $this->_customerViewHelper->getCustomerName(
+                $this->customerRepository->getById($this->_persistentSession->getSession()->getCustomerId())
+            ),
+            null
         );
 
         $this->_applyAccountLinksPersistentData();
-        $welcomeMessage = __('Welcome, %1!', $customerName);
+        $welcomeMessage = __('Welcome, %1!', $escapedName)
+            . ' ' . $this->_layout->getBlock('header.additional')->toHtml();
         $block->setWelcome($welcomeMessage);
         return $this;
     }
@@ -104,7 +108,7 @@ class Observer
     protected function _applyAccountLinksPersistentData()
     {
         if (!$this->_layout->getBlock('header.additional')) {
-            $this->_layout->addBlock(\Magento\Persistent\Block\Header\Additional::class, 'header.additional');
+            $this->_layout->addBlock('Magento\Persistent\Block\Header\Additional', 'header.additional');
         }
     }
 
@@ -117,13 +121,6 @@ class Observer
     public function emulateTopLinks($block)
     {
         $this->_applyAccountLinksPersistentData();
-        /** @var \Magento\Framework\View\Element\Html\Link[] $links */
-        $links = $block->getLinks();
-        $removeLink = $this->_url->getUrl('customer/account/login');
-        foreach ($links as $link) {
-            if ($link->getHref() == $removeLink) {
-                $this->_layout->unsetChild($block->getNameInLayout(), $link->getNameInLayout());
-            }
-        }
+        $block->removeLinkByUrl($this->_url->getUrl('customer/account/login'));
     }
 }

@@ -5,10 +5,6 @@
  */
 namespace Magento\CatalogRule\Model\Rule\Action;
 
-/**
- * @api
- * @since 100.0.2
- */
 class Collection extends \Magento\Rule\Model\Action\Collection
 {
     /**
@@ -24,7 +20,7 @@ class Collection extends \Magento\Rule\Model\Action\Collection
         array $data = []
     ) {
         parent::__construct($assetRepo, $layout, $actionFactory, $data);
-        $this->setType(\Magento\CatalogRule\Model\Rule\Action\Collection::class);
+        $this->setType('Magento\CatalogRule\Model\Rule\Action\Collection');
     }
 
     /**
@@ -36,7 +32,7 @@ class Collection extends \Magento\Rule\Model\Action\Collection
         $actions = array_merge_recursive(
             $actions,
             [
-                ['value' => \Magento\CatalogRule\Model\Rule\Action\Product::class, 'label' => __('Update the Product')]
+                ['value' => 'Magento\CatalogRule\Model\Rule\Action\Product', 'label' => __('Update the Product')]
             ]
         );
         return $actions;

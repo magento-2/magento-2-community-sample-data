@@ -7,10 +7,6 @@
  */
 namespace Magento\Framework\App\Response;
 
-/**
- * Interface \Magento\Framework\App\Response\RedirectInterface
- *
- */
 interface RedirectInterface
 {
     const PARAM_NAME_REFERER_URL = 'referer_url';

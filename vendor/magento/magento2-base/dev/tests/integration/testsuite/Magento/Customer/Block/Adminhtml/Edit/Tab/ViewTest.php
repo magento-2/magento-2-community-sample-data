@@ -15,7 +15,7 @@ use Magento\Customer\Controller\RegistryConstants;
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  * @magentoAppArea adminhtml
  */
-class ViewTest extends \PHPUnit\Framework\TestCase
+class ViewTest extends \PHPUnit_Framework_TestCase
 {
     /** @var  \Magento\Backend\Block\Template\Context */
     private $_context;
@@ -45,27 +45,23 @@ class ViewTest extends \PHPUnit\Framework\TestCase
     {
         $this->_objectManager = \Magento\TestFramework\Helper\Bootstrap::getObjectManager();
 
-        $this->_storeManager = $this->_objectManager->get(\Magento\Store\Model\StoreManager::class);
+        $this->_storeManager = $this->_objectManager->get('Magento\Store\Model\StoreManager');
         $this->_context = $this->_objectManager->get(
-            \Magento\Backend\Block\Template\Context::class,
+            'Magento\Backend\Block\Template\Context',
             ['storeManager' => $this->_storeManager]
         );
 
-        $this->_customerFactory = $this->_objectManager->get(
-            \Magento\Customer\Api\Data\CustomerInterfaceFactory::class
-        );
-        $this->_coreRegistry = $this->_objectManager->get(\Magento\Framework\Registry::class);
+        $this->_customerFactory = $this->_objectManager->get('Magento\Customer\Api\Data\CustomerInterfaceFactory');
+        $this->_coreRegistry = $this->_objectManager->get('Magento\Framework\Registry');
         $this->_customerRepository = $this->_objectManager->get(
-            \Magento\Customer\Api\CustomerRepositoryInterface::class
+            'Magento\Customer\Api\CustomerRepositoryInterface'
         );
-        $this->_dataObjectProcessor = $this->_objectManager->get(
-            \Magento\Framework\Reflection\DataObjectProcessor::class
-        );
+        $this->_dataObjectProcessor = $this->_objectManager->get('Magento\Framework\Reflection\DataObjectProcessor');
 
         $this->_block = $this->_objectManager->get(
-            \Magento\Framework\View\LayoutInterface::class
+            'Magento\Framework\View\LayoutInterface'
         )->createBlock(
-            \Magento\Customer\Block\Adminhtml\Edit\Tab\View::class,
+            'Magento\Customer\Block\Adminhtml\Edit\Tab\View',
             '',
             [
                 'context' => $this->_context,
@@ -133,7 +129,7 @@ class ViewTest extends \PHPUnit\Framework\TestCase
             'email@email.com'
         );
         $data = ['account' => $this->_dataObjectProcessor
-            ->buildOutputDataArray($customer, \Magento\Customer\Api\Data\CustomerInterface::class), ];
+            ->buildOutputDataArray($customer, 'Magento\Customer\Api\Data\CustomerInterface'), ];
         $this->_context->getBackendSession()->setCustomerData($data);
         return $customer;
     }
@@ -146,7 +142,7 @@ class ViewTest extends \PHPUnit\Framework\TestCase
         /** @var \Magento\Customer\Api\Data\CustomerInterface $customer */
         $customer = $this->_customerRepository->getById(1);
         $data = ['account' => $this->_dataObjectProcessor
-            ->buildOutputDataArray($customer, \Magento\Customer\Api\Data\CustomerInterface::class), ];
+            ->buildOutputDataArray($customer, 'Magento\Customer\Api\Data\CustomerInterface'), ];
         $this->_context->getBackendSession()->setCustomerData($data);
         $this->_coreRegistry->register(RegistryConstants::CURRENT_CUSTOMER_ID, $customer->getId());
         return $customer;

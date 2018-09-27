@@ -5,11 +5,11 @@
  */
 namespace Magento\Ui\Controller\Adminhtml\Export;
 
+use Magento\Framework\App\ObjectManager;
 use Magento\Backend\App\Action;
 use Magento\Backend\App\Action\Context;
 use Magento\Ui\Model\Export\ConvertToXml;
 use Magento\Framework\App\Response\Http\FileFactory;
-use Magento\Framework\App\ObjectManager;
 use Magento\Ui\Component\MassAction\Filter;
 use Psr\Log\LoggerInterface;
 
@@ -69,7 +69,11 @@ class GridToXml extends Action
      */
     public function execute()
     {
-        return $this->fileFactory->create('export.xml', $this->converter->getXmlFile(), 'var');
+        return $this->fileFactory->create(
+            'export.xml',
+            $this->converter->getXmlFile(),
+            'var'
+        );
     }
 
     /**
@@ -82,15 +86,11 @@ class GridToXml extends Action
         if ($this->_request->getParam('namespace')) {
             try {
                 $component = $this->filter->getComponent();
-                $dataProviderConfig = $component->getContext()
-                    ->getDataProvider()
-                    ->getConfigData();
-                if (isset($dataProviderConfig['aclResource'])) {
-                    return $this->_authorization->isAllowed(
-                        $dataProviderConfig['aclResource']
-                    );
+                $aclResource = $component->getData('acl');
+                if ($aclResource) {
+                    return $this->_authorization->isAllowed($aclResource);
                 }
-            } catch (\Throwable $exception) {
+            } catch (\Exception $exception) {
                 $this->logger->critical($exception);
 
                 return false;

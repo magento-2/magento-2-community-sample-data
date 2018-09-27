@@ -5,10 +5,12 @@
  */
 namespace Magento\Braintree\Model\Report;
 
+use Magento\Braintree\Model\Adapter\BraintreeAdapter;
 use Magento\Braintree\Model\Adapter\BraintreeAdapterFactory;
 use Magento\Braintree\Model\Report\Row\TransactionMap;
 use Magento\Framework\Api\Search\SearchResultInterface;
 use Magento\Framework\Api\SearchCriteriaInterface;
+use Magento\Framework\App\ObjectManager;
 use Magento\Framework\Data\Collection;
 use Magento\Framework\Data\Collection\EntityFactoryInterface;
 
@@ -51,17 +53,21 @@ class TransactionsCollection extends Collection implements SearchResultInterface
 
     /**
      * @param EntityFactoryInterface $entityFactory
-     * @param BraintreeAdapterFactory $braintreeAdapterFactory
+     * @param BraintreeAdapter $braintreeAdapter
      * @param FilterMapper $filterMapper
+     * @param BraintreeAdapterFactory|null $braintreeAdapterFactory
+     * @SuppressWarnings("PMD.UnusedFormalParameter")
      */
     public function __construct(
         EntityFactoryInterface $entityFactory,
-        BraintreeAdapterFactory $braintreeAdapterFactory,
-        FilterMapper $filterMapper
+        BraintreeAdapter $braintreeAdapter,
+        FilterMapper $filterMapper,
+        BraintreeAdapterFactory $braintreeAdapterFactory = null
     ) {
         parent::__construct($entityFactory);
         $this->filterMapper = $filterMapper;
-        $this->braintreeAdapterFactory = $braintreeAdapterFactory;
+        $this->braintreeAdapterFactory = $braintreeAdapterFactory ?
+            : ObjectManager::getInstance()->get(BraintreeAdapterFactory::class);
     }
 
     /**

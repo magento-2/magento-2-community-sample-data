@@ -26,13 +26,14 @@ use Magento\Customer\Test\Page\CustomerAccountLogin;
  * 4. Fill form according to data set and save
  * 5. Perform all assertions
  *
- * @group Customer_Account
+ * @group Customer_Account_(CS)
  * @ZephyrId MAGETWO-29411
  */
 class ChangeCustomerPasswordTest extends Injectable
 {
     /* tags */
     const MVP = 'yes';
+    const DOMAIN = 'CS';
     /* end tags */
 
     /**
@@ -98,7 +99,7 @@ class ChangeCustomerPasswordTest extends Injectable
 
         // Steps
         $this->objectManager->create(
-            \Magento\Customer\Test\TestStep\LoginCustomerOnFrontendStep::class,
+            'Magento\Customer\Test\TestStep\LoginCustomerOnFrontendStep',
             ['customer' => $initialCustomer]
         )->run();
 

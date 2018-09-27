@@ -5,6 +5,7 @@
  */
 namespace Magento\Theme\Model\Indexer\Design\Config;
 
+
 use Magento\Framework\Indexer\FieldsetInterface;
 use Magento\Theme\Model\Design\Config\MetadataProviderInterface;
 
@@ -52,7 +53,7 @@ class FieldsProvider implements FieldsetInterface
                 $fields[$itemName] = [
                     'name' => $itemName,
                     'origin' => 'value',
-                    'handler' => \Magento\Framework\Indexer\Handler\DefaultHandler::class,
+                    'handler' => 'Magento\Framework\Indexer\Handler\DefaultHandler',
                     'type' => 'searchable',
                 ];
             }

@@ -19,7 +19,7 @@ use PHPUnit_Framework_MockObject_MockObject as MockObject;
 /**
  * Class FormTest
  */
-class FormTest extends \PHPUnit\Framework\TestCase
+class FormTest extends \PHPUnit_Framework_TestCase
 {
     public static $baseCardTypes = [
         'AE' => 'American Express',

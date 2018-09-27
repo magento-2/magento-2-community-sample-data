@@ -23,6 +23,7 @@ class Start extends GetToken
         try {
             $token = $this->getToken();
             if ($token === null) {
+
                 return;
             }
 

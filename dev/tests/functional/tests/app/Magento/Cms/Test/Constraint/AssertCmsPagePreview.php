@@ -30,7 +30,6 @@ class AssertCmsPagePreview extends AbstractConstraint
      * @param FrontCmsPage $frontCmsPage
      * @param CmsPage $cms
      * @param BrowserInterface $browser
-     * @param string $displayContent
      * @return void
      */
     public function processAssert(
@@ -38,8 +37,7 @@ class AssertCmsPagePreview extends AbstractConstraint
         FrontCmsIndex $frontCmsIndex,
         FrontCmsPage $frontCmsPage,
         CmsPage $cms,
-        BrowserInterface $browser,
-        $displayContent = null
+        BrowserInterface $browser
     ) {
         $cmsIndex->open();
         $filter = ['title' => $cms->getTitle()];
@@ -48,7 +46,7 @@ class AssertCmsPagePreview extends AbstractConstraint
 
         $fixtureContent = $cms->getContent();
         \PHPUnit_Framework_Assert::assertContains(
-            $displayContent != null ? $displayContent : $fixtureContent['content'],
+            $fixtureContent['content'],
             $frontCmsPage->getCmsPageBlock()->getPageContent(),
             'Wrong content is displayed.'
         );

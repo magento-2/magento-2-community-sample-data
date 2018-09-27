@@ -7,7 +7,7 @@
 // @codingStandardsIgnoreFile
 
 $billingAddress = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->create(
-    \Magento\Sales\Model\Order\Address::class,
+    'Magento\Sales\Model\Order\Address',
     [
         'data' => [
             'firstname' => 'guest',
@@ -24,33 +24,21 @@ $billingAddress = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->c
 );
 $billingAddress->setAddressType('billing');
 
-$payment = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->create(
-    \Magento\Sales\Model\Order\Payment::class);
+$payment = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->create('Magento\Sales\Model\Order\Payment');
 $payment->setMethod('checkmo');
 
-/** @var \Magento\Sales\Model\Order\Item $orderItem */
-$orderItem = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->create(
-    \Magento\Sales\Model\Order\Item::class);
-
-/** @var \Magento\Catalog\Api\ProductRepositoryInterface $productRepository */
-$productRepository = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()
-    ->get(\Magento\Catalog\Api\ProductRepositoryInterface::class);
-$product = $productRepository->getById(1);
-$link = $product->getExtensionAttributes()->getDownloadableProductLinks()[0];
-
+$orderItem = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->create('Magento\Sales\Model\Order\Item');
 $orderItem->setProductId(
     1
 )->setProductType(
     \Magento\Downloadable\Model\Product\Type::TYPE_DOWNLOADABLE
-)->setProductOptions(
-    ['links' => [$link->getId()]]
 )->setBasePrice(
     100
 )->setQtyOrdered(
     1
 );
 
-$order = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->create(\Magento\Sales\Model\Order::class);
+$order = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->create('Magento\Sales\Model\Order');
 $order->setCustomerEmail('mail@to.co')
     ->addItem(
     $orderItem

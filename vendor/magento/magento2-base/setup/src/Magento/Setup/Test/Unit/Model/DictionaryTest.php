@@ -5,7 +5,7 @@
  */
 namespace Magento\Setup\Test\Unit\Model;
 
-class DictionaryTest extends \PHPUnit\Framework\TestCase
+class DictionaryTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var array

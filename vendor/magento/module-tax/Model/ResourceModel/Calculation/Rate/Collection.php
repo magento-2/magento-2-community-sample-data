@@ -50,10 +50,7 @@ class Collection extends \Magento\Framework\Model\ResourceModel\Db\Collection\Ab
      */
     protected function _construct()
     {
-        $this->_init(
-            \Magento\Tax\Model\Calculation\Rate::class,
-            \Magento\Tax\Model\ResourceModel\Calculation\Rate::class
-        );
+        $this->_init('Magento\Tax\Model\Calculation\Rate', 'Magento\Tax\Model\ResourceModel\Calculation\Rate');
     }
 
     /**

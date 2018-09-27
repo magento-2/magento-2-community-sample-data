@@ -12,7 +12,7 @@ use Magento\Framework\App\ResourceConnection;
 use Magento\Framework\DB\Adapter\AdapterInterface;
 use Magento\Framework\DB\Select;
 
-class PositionResolverTest extends \PHPUnit\Framework\TestCase
+class PositionResolverTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var Context|\PHPUnit_Framework_MockObject_MockObject
@@ -48,19 +48,11 @@ class PositionResolverTest extends \PHPUnit\Framework\TestCase
         '1' => 102
     ];
 
-    /**
-     * @var array
-     */
     private $flippedPositions = [
         '100' => 3,
         '101' => 2,
         '102' => 1
     ];
-
-    /**
-     * @var int
-     */
-    private $categoryId = 1;
 
     protected function setUp()
     {
@@ -115,6 +107,6 @@ class PositionResolverTest extends \PHPUnit\Framework\TestCase
             ->method('fetchCol')
             ->willReturn($this->positions);
 
-        $this->assertEquals($this->flippedPositions, $this->model->getPositions($this->categoryId));
+        $this->assertEquals($this->flippedPositions, $this->model->getPositions(1));
     }
 }

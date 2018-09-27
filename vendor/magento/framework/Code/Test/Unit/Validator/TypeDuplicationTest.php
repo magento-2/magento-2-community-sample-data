@@ -6,7 +6,7 @@
 namespace Magento\Framework\Code\Test\Unit\Validator;
 
 require_once '_files/ClassesForTypeDuplication.php';
-class TypeDuplicationTest extends \PHPUnit\Framework\TestCase
+class TypeDuplicationTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\Framework\Code\Validator\TypeDuplication
@@ -34,6 +34,9 @@ class TypeDuplicationTest extends \PHPUnit\Framework\TestCase
         $this->assertTrue($this->_validator->validate($className));
     }
 
+    /**
+     * @return array
+     */
     public function validClassesDataProvider()
     {
         return [
@@ -49,8 +52,7 @@ class TypeDuplicationTest extends \PHPUnit\Framework\TestCase
             $this->_fixturePath .
             PHP_EOL .
             'Multiple type injection [\TypeDuplication\ArgumentBaseClass]';
-        $this->expectException(\Magento\Framework\Exception\ValidatorException::class);
-        $this->expectExceptionMessage($message);
+        $this->setExpectedException('Magento\Framework\Exception\ValidatorException', $message);
         $this->_validator->validate('\TypeDuplication\InvalidClassWithDuplicatedTypes');
     }
 }

@@ -257,7 +257,8 @@ class Redirect implements \Magento\Framework\App\Response\RedirectInterface
     {
         $store = $this->_storeManager->getStore();
 
-        if ($store
+        if (
+            $store
             && !empty($refererQuery[StoreResolverInterface::PARAM_NAME])
             && ($refererQuery[StoreResolverInterface::PARAM_NAME] !== $store->getCode())
         ) {

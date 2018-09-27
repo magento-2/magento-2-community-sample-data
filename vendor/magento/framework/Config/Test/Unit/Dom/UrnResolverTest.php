@@ -8,7 +8,7 @@ namespace Magento\Framework\Config\Test\Unit\Dom;
 use Magento\Framework\Config\Dom\UrnResolver;
 use Magento\Framework\Component\ComponentRegistrar;
 
-class UrnResolverTest extends \PHPUnit\Framework\TestCase
+class UrnResolverTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var UrnResolver
@@ -23,7 +23,7 @@ class UrnResolverTest extends \PHPUnit\Framework\TestCase
     protected function setUp()
     {
         $this->objectManagerHelper = new \Magento\Framework\TestFramework\Unit\Helper\ObjectManager($this);
-        $this->urnResolver = $this->objectManagerHelper->getObject(\Magento\Framework\Config\Dom\UrnResolver::class);
+        $this->urnResolver = $this->objectManagerHelper->getObject('Magento\Framework\Config\Dom\UrnResolver');
     }
 
     public function testGetRealPathNoUrn()

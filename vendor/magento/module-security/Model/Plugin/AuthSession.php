@@ -81,7 +81,7 @@ class AuthSession
             $this->securityCookie->setLogoutReasonCookie(
                 $this->sessionsManager->getCurrentSession()->getStatus()
             );
-        } elseif ($message = $this->sessionsManager->getLogoutReasonMessage()) {
+        } else if ($message = $this->sessionsManager->getLogoutReasonMessage()) {
             $this->messageManager->addError($message);
         }
 

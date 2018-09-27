@@ -8,7 +8,7 @@ namespace Magento\Framework\Filter\Test\Unit;
 
 use \Magento\Framework\Filter\ArrayFilter;
 
-class ArrayFilterTest extends \PHPUnit\Framework\TestCase
+class ArrayFilterTest extends \PHPUnit_Framework_TestCase
 {
     public function testFilter()
     {
@@ -16,7 +16,7 @@ class ArrayFilterTest extends \PHPUnit\Framework\TestCase
 
         /** @var \Zend_Filter_Interface $filterMock */
         /** This filter should be applied to all fields values */
-        $filterMock = $this->createMock(\Zend_Filter_Interface::class);
+        $filterMock = $this->getMock('Zend_Filter_Interface', [], [], '', false);
         $filterMock->expects($this->exactly(3))->method('filter')->will(
             $this->returnCallback(
                 function ($input) {
@@ -28,7 +28,7 @@ class ArrayFilterTest extends \PHPUnit\Framework\TestCase
 
         /** @var \Zend_Filter_Interface $fieldFilterMock */
         /** This filter should be applied to 'field2' field value only */
-        $fieldFilterMock = $this->createMock(\Zend_Filter_Interface::class);
+        $fieldFilterMock = $this->getMock('Zend_Filter_Interface', [], [], '', false);
         $fieldFilterMock->expects($this->exactly(1))->method('filter')->will(
             $this->returnCallback(
                 function ($input) {

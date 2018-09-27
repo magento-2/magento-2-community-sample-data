@@ -14,7 +14,7 @@ use \PHPUnit_Framework_MockObject_MockObject as Mock;
 /**
  * Class EnvironmentTest
  */
-class EnvironmentTest extends \PHPUnit\Framework\TestCase
+class EnvironmentTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var Environment
@@ -47,11 +47,14 @@ class EnvironmentTest extends \PHPUnit\Framework\TestCase
     public function testGenerate($path, $scope, $scopeId, $expected)
     {
         $this->assertSame(
-            $expected,
-            $this->model->generate($path, $scope, $scopeId)
+            $this->model->generate($path, $scope, $scopeId),
+            $expected
         );
     }
 
+    /**
+     * @return array
+     */
     public function getGenerateDataProvider()
     {
         return [
@@ -84,8 +87,8 @@ class EnvironmentTest extends \PHPUnit\Framework\TestCase
     public function testIsApplicable($placeholder, $expected)
     {
         $this->assertSame(
-            $expected,
-            $this->model->isApplicable($placeholder)
+            $this->model->isApplicable($placeholder),
+            $expected
         );
     }
 
@@ -98,34 +101,6 @@ class EnvironmentTest extends \PHPUnit\Framework\TestCase
             [Environment::PREFIX . 'TEST', true],
             ['TEST', false],
             [Environment::PREFIX . 'TEST_test', true],
-            [Environment::PREFIX . '-:A', false],
-            [Environment::PREFIX . '_A', false],
-            [Environment::PREFIX . 'A@#$', false]
-        ];
-    }
-
-    /**
-     * @param string $template
-     * @param string $expected
-     * @dataProvider restoreDataProvider
-     */
-    public function testRestore($template, $expected)
-    {
-        $this->assertSame(
-            $expected,
-            $this->model->restore($template)
-        );
-    }
-
-    /**
-     * @return array
-     */
-    public function restoreDataProvider()
-    {
-        return [
-            [Environment::PREFIX . 'TEST__CONFIG', 'test/config'],
-            [Environment::PREFIX . 'TEST__CONFIG__VALUE', 'test/config/value'],
-            [Environment::PREFIX . 'TEST__CONFIG_VALUE', 'test/config_value'],
         ];
     }
 }

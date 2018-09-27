@@ -41,7 +41,7 @@ class AssertMsrpInShoppingCart extends AbstractConstraint
         $cmsIndex->getTopmenu()->selectCategoryByName($product->getCategoryIds()[0]);
         $catalogCategoryView->getListProductBlock()->getProductItem($product)->open();
 
-        if ($product->hasData('checkout_data') || $product->getMsrpDisplayActualPriceType() === 'In Cart') {
+        if ($product->hasData('checkout_data')) {
             $catalogProductView->getViewBlock()->addToCart($product);
         } else {
             $catalogProductView->getMsrpViewBlock()->openMapBlock();

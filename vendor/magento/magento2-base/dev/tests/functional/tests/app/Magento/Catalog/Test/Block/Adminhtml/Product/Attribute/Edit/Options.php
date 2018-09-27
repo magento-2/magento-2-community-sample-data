@@ -68,7 +68,7 @@ class Options extends SimpleElement
     protected function getFormInstance(SimpleElement $element = null)
     {
         return ObjectManager::getInstance()->create(
-            \Magento\Catalog\Test\Block\Adminhtml\Product\Attribute\Edit\Tab\Options\Option::class,
+            'Magento\Catalog\Test\Block\Adminhtml\Product\Attribute\Edit\Tab\Options\Option',
             ['element' => $element === null ? $this->find($this->option . ':last-child') : $element]
         );
     }

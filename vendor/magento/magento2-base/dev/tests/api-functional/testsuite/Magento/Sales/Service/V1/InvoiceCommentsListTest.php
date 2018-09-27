@@ -25,9 +25,9 @@ class InvoiceCommentsListTest extends WebapiAbstract
         $objectManager = \Magento\TestFramework\Helper\Bootstrap::getObjectManager();
 
         /** @var \Magento\Sales\Model\ResourceModel\Order\Invoice\Collection $invoiceCollection */
-        $invoiceCollection = $objectManager->get(\Magento\Sales\Model\ResourceModel\Order\Invoice\Collection::class);
+        $invoiceCollection = $objectManager->get('Magento\Sales\Model\ResourceModel\Order\Invoice\Collection');
         $invoice = $invoiceCollection->getFirstItem();
-        $invoiceComment = $objectManager->get(\Magento\Sales\Model\Order\Invoice\Comment::class);
+        $invoiceComment = $objectManager->get('Magento\Sales\Model\Order\Invoice\Comment');
         $invoiceComment->setComment($comment);
         $invoiceComment->setParentId($invoice->getId());
         $invoiceComment->save();
@@ -48,7 +48,7 @@ class InvoiceCommentsListTest extends WebapiAbstract
         $result = $this->_webApiCall($serviceInfo, $requestData);
         foreach ($result['items'] as $item) {
             /** @var \Magento\Sales\Model\Order\Invoice\Comment $invoiceHistoryStatus */
-            $invoiceHistoryStatus = $objectManager->get(\Magento\Sales\Model\Order\Invoice\Comment::class)
+            $invoiceHistoryStatus = $objectManager->get('Magento\Sales\Model\Order\Invoice\Comment')
                 ->load($item['entity_id']);
             $this->assertEquals($invoiceHistoryStatus->getComment(), $item['comment']);
         }

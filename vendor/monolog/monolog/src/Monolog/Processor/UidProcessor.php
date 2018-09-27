@@ -35,12 +35,4 @@ class UidProcessor
 
         return $record;
     }
-
-    /**
-     * @return string
-     */
-    public function getUid()
-    {
-        return $this->uid;
-    }
 }

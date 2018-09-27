@@ -14,7 +14,7 @@ class Googleoptimizer extends \Magento\Backend\Block\Template
     public function toHtml()
     {
         return $this->getLayout()->createBlock(
-            \Magento\GoogleOptimizer\Block\Adminhtml\Catalog\Category\Edit\GoogleoptimizerForm::class,
+            'Magento\GoogleOptimizer\Block\Adminhtml\Catalog\Category\Edit\GoogleoptimizerForm',
             'google-experiment-form'
         )->toHtml();
     }

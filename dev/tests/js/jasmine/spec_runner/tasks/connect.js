@@ -30,7 +30,7 @@ function init(config) {
 
         middlewares.unshift(function (req, res, next) {
             var url = req.url;
-
+                
             if (serveAsIs(url)) {
                 return server.apply(null, arguments);
             }

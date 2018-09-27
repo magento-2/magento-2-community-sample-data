@@ -82,12 +82,12 @@ class HashTiming implements RandomLib\Source
             $total -= $bytes;
             for ($i=1; $i < 3; $i++) {
                 $t1   = microtime(true);
-                $seed = $initialSeed = uniqid(mt_rand() . lcg_value() . rand() . getmypid(), true);
+                $seed = mt_rand();
                 for ($j=1; $j < 50; $j++) {
-                    $seed = sha1($initialSeed . $i . $seed);
+                    $seed = sha1($seed);
                 }
                 $t2 = microtime(true);
-                $entropy .= $t1 . $t2 . $seed;
+                $entropy .= $t1 . $t2;
             }
             $div = (int) (($t2 - $t1) * 1000000);
             if ($div <= 0) {
@@ -97,12 +97,12 @@ class HashTiming implements RandomLib\Source
             $iter = $bytes * (int) (ceil(8 / $bits_per_round));
             for ($i = 0; $i < $iter; $i ++) {
                 $t1 = microtime();
-                $seed = $initialSeed = sha1(uniqid(mt_rand() . lcg_value() . rand(), true));
+                $seed = sha1(mt_rand());
                 for ($j = 0; $j < $rounds; $j++) {
-                    $seed = sha1($initialSeed . $i . $seed);
+                    $seed = sha1($seed);
                 }
                 $t2 = microtime();
-                $entropy .= $t1 . $t2 . $seed;
+                $entropy .= $t1 . $t2;
             }
             $result .= sha1($entropy, true);
         }

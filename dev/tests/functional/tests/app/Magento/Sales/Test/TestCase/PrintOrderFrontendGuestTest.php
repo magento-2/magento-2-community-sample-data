@@ -25,13 +25,14 @@ use Magento\Mtf\TestCase\Scenario;
  * 5. Click on the "Print Order" button.
  * 6. Perform appropriate assertions.v
  *
- * @group Order_Management
+ * @group Order_Management_(CS)
  * @ZephyrId MAGETWO-30253
  */
 class PrintOrderFrontendGuestTest extends Scenario
 {
     /* tags */
     const MVP = 'yes';
+    const DOMAIN = 'CS';
     /* end tags */
 
     /**

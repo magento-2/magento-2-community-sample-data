@@ -10,43 +10,33 @@ use Magento\Sales\Test\Page\Adminhtml\OrderIndex;
 use Magento\Sales\Test\Page\Adminhtml\SalesOrderView;
 
 /**
- * Assert that deny payment message exists in Comments History section on order page in Admin.
+ * Class AssertDenyPaymentMessageInCommentsHistory
  *
  * Constraint checks deny payment message in order comments history
  */
 class AssertDenyPaymentMessageInCommentsHistory extends AbstractConstraint
 {
     /**
-     * Deny payment message.
-     *
      * @var string
      */
     private static $message = 'Denied the payment online';
 
     /**
-     * Assert that deny payment message exists in Comments History section on order page in Admin.
-     *
-     * @param SalesOrderView $salesOrderView
+     * @param SalesOrderView $orderView
      * @param OrderIndex $orderIndex
      * @param $orderId
-     * @return void
      */
-    public function processAssert(SalesOrderView $salesOrderView, OrderIndex $orderIndex, $orderId)
+    public function processAssert(SalesOrderView $orderView, OrderIndex $orderIndex, $orderId)
     {
         $orderIndex->open();
         $orderIndex->getSalesOrderGrid()->searchAndOpen(['id' => $orderId]);
+        $history = $orderView->getOrderHistoryBlock()->getCommentsHistory();
 
-        /** @var \Magento\Sales\Test\Block\Adminhtml\Order\View\Tab\Info $infoTab */
-        $infoTab = $salesOrderView->getOrderForm()->openTab('info')->getTab('info');
-        $latestComment = $infoTab->getCommentsHistoryBlock()->getLatestComment();
-
-        \PHPUnit_Framework_Assert::assertContains(self::$message, $latestComment['comment']);
+        \PHPUnit_Framework_Assert::assertContains(self::$message, $history);
     }
 
     /**
-     * Returns a string representation of the object.
-     *
-     * @return string
+     * @inheritdoc
      */
     public function toString()
     {

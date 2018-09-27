@@ -7,6 +7,6 @@
 require_once dirname(__FILE__) . DIRECTORY_SEPARATOR . 'bootstrap.php';
 
 $magentoObjectManager->create(
-    \Magento\Mtf\Util\Generate\Fixture\SchemaXml::class,
+    'Magento\Mtf\Util\Generate\Fixture\SchemaXml',
     ['objectManager' => $magentoObjectManager]
 )->launch();

@@ -6,8 +6,6 @@
 
 namespace Magento\Catalog\Test\TestCase\Product;
 
-use Magento\Mtf\Fixture\InjectableFixture;
-
 /**
  * Preconditions:
  * 1. Create products.
@@ -17,13 +15,14 @@ use Magento\Mtf\Fixture\InjectableFixture;
  * 1. Navigate through up-sell products.
  *
  * @ZephyrId MAGETWO-12391
- * @group Up-sells
+ * @group Up-sells_(MX)
  */
 class NavigateUpSellProductsTest extends AbstractProductPromotedProductsTest
 {
     /* tags */
     const TEST_TYPE = 'acceptance_test, extended_acceptance_test';
     const MVP = 'yes';
+    const DOMAIN = 'MX';
     /* end tags */
 
     /**

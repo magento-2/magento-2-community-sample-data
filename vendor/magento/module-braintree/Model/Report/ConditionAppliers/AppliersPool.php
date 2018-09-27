@@ -10,9 +10,7 @@ namespace Magento\Braintree\Model\Report\ConditionAppliers;
  */
 class AppliersPool
 {
-    /**
-     * @var \Magento\Braintree\Model\Report\ConditionAppliers\ApplierInterface[]
-     */
+    /** @var ApplierInterface[] */
     private $appliersPool = [];
 
     /**

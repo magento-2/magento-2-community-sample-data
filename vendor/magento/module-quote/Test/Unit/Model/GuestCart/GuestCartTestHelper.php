@@ -13,16 +13,16 @@ namespace Magento\Quote\Test\Unit\Model\GuestCart;
 class GuestCartTestHelper
 {
     /**
-     * @var \PHPUnit\Framework\TestCase
+     * @var \PHPUnit_Framework_TestCase
      */
     protected $testCase;
 
     /**
      * Initialize helper
      *
-     * @param \PHPUnit\Framework\TestCase $testCase
+     * @param \PHPUnit_Framework_TestCase $testCase
      */
-    public function __construct(\PHPUnit\Framework\TestCase $testCase)
+    public function __construct(\PHPUnit_Framework_TestCase $testCase)
     {
         $this->testCase = $testCase;
     }
@@ -38,11 +38,14 @@ class GuestCartTestHelper
      */
     public function mockQuoteIdMask($maskedCartId, $cartId)
     {
-        $quoteIdMaskMock = $this->testCase->getMockBuilder(\Magento\Quote\Model\QuoteIdMask::class)
-            ->setMethods(['load', 'getQuoteId', 'getMaskedId'])
-            ->disableOriginalConstructor()
-            ->getMock();
-        $quoteIdMaskFactoryMock = $this->testCase->getMockBuilder(\Magento\Quote\Model\QuoteIdMaskFactory::class)
+        $quoteIdMaskMock = $this->testCase->getMock(
+            'Magento\Quote\Model\QuoteIdMask',
+            ['load', 'getQuoteId', 'getMaskedId'],
+            [],
+            '',
+            false
+        );
+        $quoteIdMaskFactoryMock = $this->testCase->getMockBuilder('Magento\Quote\Model\QuoteIdMaskFactory')
             ->setMethods(['create'])
             ->disableOriginalConstructor()
             ->getMock();

@@ -6,7 +6,7 @@
 
 namespace Magento\SalesRule\Test\Unit\Model\Plugin;
 
-class RuleTest extends \PHPUnit\Framework\TestCase
+class RuleTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\SalesRule\Model\Plugin\Rule
@@ -26,14 +26,14 @@ class RuleTest extends \PHPUnit\Framework\TestCase
     protected function setUp()
     {
         $objectManager = new \Magento\Framework\TestFramework\Unit\Helper\ObjectManager($this);
-        $this->subject = $this->getMockBuilder(\Magento\SalesRule\Model\Rule::class)
+        $this->subject = $this->getMockBuilder('Magento\SalesRule\Model\Rule')
             ->disableOriginalConstructor()
             ->getMock();
         $this->genericClosure = function () {
             return;
         };
 
-        $this->plugin = $objectManager->getObject(\Magento\SalesRule\Model\Plugin\Rule::class);
+        $this->plugin = $objectManager->getObject('Magento\SalesRule\Model\Plugin\Rule');
     }
 
     public function testLoadRelations()

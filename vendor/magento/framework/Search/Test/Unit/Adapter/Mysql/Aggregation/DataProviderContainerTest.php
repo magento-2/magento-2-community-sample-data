@@ -7,7 +7,7 @@ namespace Magento\Framework\Search\Test\Unit\Adapter\Mysql\Aggregation;
 
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
 
-class DataProviderContainerTest extends \PHPUnit\Framework\TestCase
+class DataProviderContainerTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\Framework\TestFramework\Unit\Helper\ObjectManager
@@ -25,7 +25,7 @@ class DataProviderContainerTest extends \PHPUnit\Framework\TestCase
         $bucketValue = 'dataProvider';
         /** @var \Magento\Framework\Search\Adapter\Mysql\Aggregation\DataProviderContainer $provider */
         $provider = $this->objectManager->getObject(
-            \Magento\Framework\Search\Adapter\Mysql\Aggregation\DataProviderContainer::class,
+            'Magento\Framework\Search\Adapter\Mysql\Aggregation\DataProviderContainer',
             ['dataProviders' => [$bucketName => $bucketValue]]
         );
         $this->assertEquals($bucketValue, $provider->get($bucketName));

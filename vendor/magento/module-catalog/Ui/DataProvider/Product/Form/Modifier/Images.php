@@ -9,9 +9,6 @@ use Magento\Catalog\Model\Locator\LocatorInterface;
 
 /**
  * Class Images customizes Images panel
- *
- * @api
- * @since 101.0.0
  */
 class Images extends AbstractModifier
 {
@@ -28,7 +25,6 @@ class Images extends AbstractModifier
 
     /**
      * @var LocatorInterface
-     * @since 101.0.0
      */
     protected $locator;
 
@@ -42,7 +38,6 @@ class Images extends AbstractModifier
 
     /**
      * {@inheritdoc}
-     * @since 101.0.0
      */
     public function modifyMeta(array $meta)
     {
@@ -53,20 +48,19 @@ class Images extends AbstractModifier
 
     /**
      * {@inheritdoc}
-     * @since 101.0.0
      */
     public function modifyData(array $data)
     {
         /** @var \Magento\Catalog\Api\Data\ProductInterface $product */
         $product = $this->locator->getProduct();
         $modelId = $product->getId();
-        if (isset($data[$modelId][self::DATA_SOURCE_DEFAULT]['media_gallery'])
-            && !empty($data[$modelId][self::DATA_SOURCE_DEFAULT]['media_gallery'])
-            && !empty($data[$modelId][self::DATA_SOURCE_DEFAULT]['media_gallery']['images'])
+        if (
+            isset($data[$modelId][self::DATA_SOURCE_DEFAULT]['media_gallery']['images'])
+            && is_array($data[$modelId][self::DATA_SOURCE_DEFAULT]['media_gallery']['images'])
         ) {
             foreach ($data[$modelId][self::DATA_SOURCE_DEFAULT]['media_gallery']['images'] as $index => $image) {
                 if (!isset($image['label'])) {
-                    $data[$modelId][self::DATA_SOURCE_DEFAULT]['media_gallery']['images'][$index]['label'] = "";
+                    $data[$modelId][self::DATA_SOURCE_DEFAULT]['media_gallery']['images'][$index]['label'] = '';
                 }
             }
         }

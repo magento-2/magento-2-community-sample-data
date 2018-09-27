@@ -71,12 +71,14 @@ class Unitofmeasure extends Field
             )
         );
 
-        $convertedWeight = $this->carrierHelper->convertMeasureWeight(
-            $kgWeight,
-            \Zend_Measure_Weight::KILOGRAM,
-            \Zend_Measure_Weight::POUND
+        $weight = round(
+            $this->carrierHelper->convertMeasureWeight(
+                $kgWeight,
+                \Zend_Measure_Weight::KILOGRAM,
+                \Zend_Measure_Weight::POUND
+            ),
+            3
         );
-        $weight = sprintf('%.3f', $convertedWeight);
 
         $this->setDivideOrderWeightNoteLbp(
             __(

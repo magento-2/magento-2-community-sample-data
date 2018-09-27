@@ -20,8 +20,5 @@
         <sku>
             <selector>[name$='[sku]']</selector>
         </sku>
-        <add_before>
-            <selector>[class*="admin__addon-prefix"]</selector>
-        </add_before>
     </fields>
 </mapping>

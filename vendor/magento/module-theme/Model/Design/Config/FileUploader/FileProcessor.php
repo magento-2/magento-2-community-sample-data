@@ -135,6 +135,7 @@ class FileProcessor
      */
     protected function save($fileId, $destination)
     {
+        $result = ['file' => '', 'size' => ''];
         /** @var File $backendModel */
         $backendModel = $this->getBackendModel($fileId);
         $uploader = $this->uploaderFactory->create(['fileId' => $fileId]);
@@ -142,11 +143,7 @@ class FileProcessor
         $uploader->setFilesDispersion(false);
         $uploader->setAllowedExtensions($backendModel->getAllowedExtensions());
         $uploader->addValidateCallback('size', $backendModel, 'validateMaxSize');
-
-        $result = $uploader->save($destination);
-        unset($result['path']);
-
-        return $result;
+        return array_intersect_key($uploader->save($destination), $result);
     }
 
     /**

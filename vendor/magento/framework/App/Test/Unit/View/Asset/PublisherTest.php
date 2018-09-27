@@ -12,7 +12,7 @@ use \Magento\Framework\App\View\Asset\MaterializationStrategy;
 use Magento\Framework\App\Filesystem\DirectoryList;
 use Magento\Framework\Filesystem\DriverPool;
 
-class PublisherTest extends \PHPUnit\Framework\TestCase
+class PublisherTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\Framework\Filesystem|\PHPUnit_Framework_MockObject_MockObject
@@ -51,21 +51,20 @@ class PublisherTest extends \PHPUnit\Framework\TestCase
 
     protected function setUp()
     {
-        $this->filesystem = $this->createMock(\Magento\Framework\Filesystem::class);
-        $this->materializationStrategyFactory =
-            $this->createMock(\Magento\Framework\App\View\Asset\MaterializationStrategy\Factory::class);
-        $this->writeFactory = $this->createMock(\Magento\Framework\Filesystem\Directory\WriteFactory::class);
+        $this->filesystem = $this->getMock('Magento\Framework\Filesystem', [], [], '', false);
+        $this->materializationStrategyFactory = $this->getMock(
+            'Magento\Framework\App\View\Asset\MaterializationStrategy\Factory',
+            [],
+            [],
+            '',
+            false
+        );
+        $this->writeFactory = $this->getMock('Magento\Framework\Filesystem\Directory\WriteFactory', [], [], '', false);
         $this->object = new Publisher($this->filesystem, $this->materializationStrategyFactory, $this->writeFactory);
 
-        $this->sourceDirWrite = $this->getMockForAbstractClass(
-            \Magento\Framework\Filesystem\Directory\WriteInterface::class
-        );
-        $this->staticDirRead = $this->getMockForAbstractClass(
-            \Magento\Framework\Filesystem\Directory\ReadInterface::class
-        );
-        $this->staticDirWrite = $this->getMockForAbstractClass(
-            \Magento\Framework\Filesystem\Directory\WriteInterface::class
-        );
+        $this->sourceDirWrite = $this->getMockForAbstractClass('Magento\Framework\Filesystem\Directory\WriteInterface');
+        $this->staticDirRead = $this->getMockForAbstractClass('Magento\Framework\Filesystem\Directory\ReadInterface');
+        $this->staticDirWrite = $this->getMockForAbstractClass('Magento\Framework\Filesystem\Directory\WriteInterface');
         $this->filesystem->expects($this->any())
             ->method('getDirectoryRead')
             ->with(DirectoryList::STATIC_VIEW)
@@ -91,8 +90,13 @@ class PublisherTest extends \PHPUnit\Framework\TestCase
             ->method('isExist')
             ->with('some/file.ext')
             ->will($this->returnValue(false));
-        $materializationStrategy =
-            $this->createMock(\Magento\Framework\App\View\Asset\MaterializationStrategy\StrategyInterface::class);
+        $materializationStrategy = $this->getMock(
+            'Magento\Framework\App\View\Asset\MaterializationStrategy\StrategyInterface',
+            [],
+            [],
+            '',
+            false
+        );
 
         $this->materializationStrategyFactory->expects($this->once())
             ->method('create')
@@ -113,7 +117,7 @@ class PublisherTest extends \PHPUnit\Framework\TestCase
      */
     protected function getAsset()
     {
-        $asset = $this->createMock(\Magento\Framework\View\Asset\File::class);
+        $asset = $this->getMock('Magento\Framework\View\Asset\File', [], [], '', false);
         $asset->expects($this->any())
             ->method('getPath')
             ->will($this->returnValue('some/file.ext'));

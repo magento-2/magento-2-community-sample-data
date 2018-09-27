@@ -6,13 +6,13 @@
 namespace Magento\Framework\View\Test\Unit\Template\Html;
 
 use Magento\Framework\App\Filesystem\DirectoryList;
-use Magento\Framework\Filesystem;
-use Magento\Framework\Filesystem\Directory\ReadInterface;
 use Magento\Framework\Filesystem\DriverPool;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
 use Magento\Framework\View\Template\Html\Minifier;
+use Magento\Framework\Filesystem\Directory\ReadInterface;
+use Magento\Framework\Filesystem;
 
-class MinifierTest extends \PHPUnit\Framework\TestCase
+class MinifierTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var Minifier
@@ -64,7 +64,7 @@ class MinifierTest extends \PHPUnit\Framework\TestCase
 
         $this->filesystemMock->expects($this->once())
             ->method('getDirectoryWrite')
-            ->with(DirectoryList::TMP_MATERIALIZATION_DIR)
+            ->with(DirectoryList::TEMPLATE_MINIFICATION_DIR)
             ->willReturn($this->htmlDirectoryMock);
         $this->filesystemMock->expects($this->any())
             ->method('getDirectoryRead')
@@ -104,7 +104,6 @@ class MinifierTest extends \PHPUnit\Framework\TestCase
     }
 
     // @codingStandardsIgnoreStart
-
     /**
      * Covered method minify and test regular expressions
      * @test
@@ -156,6 +155,11 @@ class MinifierTest extends \PHPUnit\Framework\TestCase
         <?php echo '//some.link.com/' ?>
         <em>inline text</em>
         <a href="http://www.<?php echo 'hi' ?>"></a>
+        <?php// if (\$block->getSomeVariable() > 1):?>
+            <?php echo \$block->getChildHtml('someChildBlock'); ?>
+        <?php //else:?>
+            <?php // echo \$block->getChildHtml('anotherChildBlock'); ?>
+        <?php // endif; ?>
     </body>
 </html>
 TEXT;
@@ -179,7 +183,7 @@ TEXT;
                 }
             });
             //]]>
-</script><?php echo "http://some.link.com/" ?> <?php echo "//some.link.com/" ?> <?php echo '//some.link.com/' ?> <em>inline text</em> <a href="http://www.<?php echo 'hi' ?>"></a></body></html>
+</script><?php echo "http://some.link.com/" ?> <?php echo "//some.link.com/" ?> <?php echo '//some.link.com/' ?> <em>inline text</em> <a href="http://www.<?php echo 'hi' ?>"></a> <?php ?> <?php echo \$block->getChildHtml('someChildBlock'); ?> <?php ?> <?php ?> <?php ?></body></html>
 TEXT;
 
         $this->appDirectoryMock->expects($this->once())
@@ -198,7 +202,6 @@ TEXT;
 
         $this->object->minify($file);
     }
-
     // @codingStandardsIgnoreEnd
 
     /**
@@ -210,7 +213,7 @@ TEXT;
         $file = '/absolute/path/to/phtml/template/file';
         $relativeGeneratedPath = 'absolute/path/to/phtml/template/file';
 
-        $htmlDriver = $this->createMock(\Magento\Framework\Filesystem\DriverInterface::class);
+        $htmlDriver = $this->getMock('Magento\Framework\Filesystem\DriverInterface', [], [], '', false);
         $htmlDriver
             ->expects($this->once())
             ->method('getRealPathSafety')

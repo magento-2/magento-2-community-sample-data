@@ -5,7 +5,11 @@
  */
 namespace Magento\Setup\Controller;
 
-class Session extends \Zend\Mvc\Controller\AbstractActionController
+use Zend\Mvc\Controller\AbstractActionController;
+use Zend\View\Model\JsonModel;
+use Zend\View\Model\ViewModel;
+
+class Session extends AbstractActionController
 {
     /**
      * @var \Zend\ServiceManager\ServiceManager
@@ -31,12 +35,12 @@ class Session extends \Zend\Mvc\Controller\AbstractActionController
 
     /**
      * No index action, return 404 error page
-     *
-     * @return \Zend\View\Model\ViewModel|\Zend\Http\Response
+     * 
+     * @return ViewModel|\Zend\Http\Response
      */
     public function indexAction()
     {
-        $view = new \Zend\View\Model\ViewModel();
+        $view = new ViewModel;
         $view->setTemplate('/error/404.phtml');
         $this->getResponse()->setStatusCode(\Zend\Http\Response::STATUS_CODE_404);
         return $view;
@@ -50,39 +54,39 @@ class Session extends \Zend\Mvc\Controller\AbstractActionController
     public function prolongAction()
     {
         try {
-            if ($this->serviceManager->get(\Magento\Framework\App\DeploymentConfig::class)->isAvailable()) {
+            if ($this->serviceManager->get('Magento\Framework\App\DeploymentConfig')->isAvailable()) {
                 $objectManager = $this->objectManagerProvider->get();
                 /** @var \Magento\Framework\App\State $adminAppState */
-                $adminAppState = $objectManager->get(\Magento\Framework\App\State::class);
-                $adminAppState->setAreaCode(\Magento\Framework\App\Area::AREA_ADMINHTML);
-                $sessionConfig = $objectManager->get(\Magento\Backend\Model\Session\AdminConfig::class);
+                $adminAppState = $objectManager->get('Magento\Framework\App\State');
+                $adminAppState->setAreaCode(\Magento\Framework\App\Area::AREA_ADMIN);
+                $sessionConfig = $objectManager->get('Magento\Backend\Model\Session\AdminConfig');
                 /** @var \Magento\Backend\Model\Url $backendUrl */
-                $backendUrl = $objectManager->get(\Magento\Backend\Model\Url::class);
+                $backendUrl = $objectManager->get('Magento\Backend\Model\Url');
                 $urlPath = parse_url($backendUrl->getBaseUrl(), PHP_URL_PATH);
                 $cookiePath = $urlPath . 'setup';
                 $sessionConfig->setCookiePath($cookiePath);
                 /* @var \Magento\Backend\Model\Auth\Session $session */
                 $session = $objectManager->create(
-                    \Magento\Backend\Model\Auth\Session::class,
+                    'Magento\Backend\Model\Auth\Session',
                     [
                         'sessionConfig' => $sessionConfig,
                         'appState' => $adminAppState
                     ]
                 );
                 $session->prolong();
-                return new \Zend\View\Model\JsonModel(['success' => true]);
+                return new JsonModel(['success' => true]);
             }
         } catch (\Exception $e) {
         }
-        return new \Zend\View\Model\JsonModel(['success' => false]);
+        return new JsonModel(['success' => false]);
     }
 
     /**
-     * @return \Zend\View\Model\ViewModel|\Zend\Http\Response
+     * @return ViewModel|\Zend\Http\Response
      */
     public function unloginAction()
     {
-        $view = new \Zend\View\Model\ViewModel();
+        $view = new ViewModel();
         $view->setTemplate('/error/401.phtml');
         $this->getResponse()->setStatusCode(\Zend\Http\Response::STATUS_CODE_401);
         return $view;

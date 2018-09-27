@@ -6,10 +6,9 @@
 
 namespace Magento\Reports\Test\TestCase;
 
-use Magento\Mtf\Fixture\FixtureFactory;
-use Magento\Mtf\TestCase\Injectable;
 use Magento\Reports\Test\Page\Adminhtml\RefundsReport;
 use Magento\Sales\Test\Fixture\OrderInjectable;
+use Magento\Mtf\TestCase\Injectable;
 
 /**
  * Preconditions:
@@ -30,13 +29,14 @@ use Magento\Sales\Test\Fixture\OrderInjectable;
  * 4. Click button Show Report
  * 5. Perform Asserts
  *
- * @group Reports
+ * @group Reports_(MX)
  * @ZephyrId MAGETWO-29348
  */
 class SalesRefundsReportEntityTest extends Injectable
 {
     /* tags */
     const MVP = 'no';
+    const DOMAIN = 'MX';
     /* end tags */
 
     /**
@@ -47,23 +47,14 @@ class SalesRefundsReportEntityTest extends Injectable
     protected $refundsReport;
 
     /**
-     * Fixture factory.
-     *
-     * @var FixtureFactory
-     */
-    private $fixtureFactory;
-
-    /**
      * Inject pages.
      *
-     * @param FixtureFactory $fixtureFactory
      * @param RefundsReport $refundsReport
      * @return void
      */
-    public function __inject(FixtureFactory $fixtureFactory, RefundsReport $refundsReport)
+    public function __inject(RefundsReport $refundsReport)
     {
         $this->refundsReport = $refundsReport;
-        $this->fixtureFactory = $fixtureFactory;
     }
 
     /**
@@ -83,17 +74,11 @@ class SalesRefundsReportEntityTest extends Injectable
         $initialRefundsResult = $this->refundsReport->getGridBlock()->getLastResult();
 
         $order->persist();
-        $products = $order->getEntityId()['products'];
-        $cart['data']['items'] = ['products' => $products];
-        $cart = $this->fixtureFactory->createByCode('cart', $cart);
-        $invoice = $this->objectManager->create(
-            \Magento\Sales\Test\TestStep\CreateInvoiceStep::class,
-            ['order' => $order, 'cart' => $cart]
-        );
+        $invoice = $this->objectManager->create('Magento\Sales\Test\TestStep\CreateInvoiceStep', ['order' => $order]);
         $invoice->run();
         $creditMemo = $this->objectManager->create(
-            \Magento\Sales\Test\TestStep\CreateCreditMemoStep::class,
-            ['order' => $order, 'cart' => $cart]
+            'Magento\Sales\Test\TestStep\CreateCreditMemoStep',
+            ['order' => $order]
         );
         $creditMemo->run();
 

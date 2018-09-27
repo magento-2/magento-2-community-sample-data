@@ -5,10 +5,6 @@
  */
 namespace Magento\Framework\App;
 
-/**
- * Interface \Magento\Framework\App\ScopeTreeProviderInterface
- *
- */
 interface ScopeTreeProviderInterface
 {
     /**

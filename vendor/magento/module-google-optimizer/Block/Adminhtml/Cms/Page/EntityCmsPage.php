@@ -5,8 +5,10 @@
  */
 namespace Magento\GoogleOptimizer\Block\Adminhtml\Cms\Page;
 
+
 use Magento\Framework\DataObject;
 use Magento\Framework\Exception\NoSuchEntityException;
+use Magento\GoogleOptimizer\Block\Adminhtml\EntityCodeResolverInterface;
 use Magento\GoogleOptimizer\Model\Code as GoogleOptimizerCode;
 
 class EntityCmsPage extends DataObject

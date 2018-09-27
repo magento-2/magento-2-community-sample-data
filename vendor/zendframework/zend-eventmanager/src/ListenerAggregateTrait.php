@@ -18,7 +18,7 @@ trait ListenerAggregateTrait
     /**
      * @var \Zend\Stdlib\CallbackHandler[]
      */
-    protected $listeners = [];
+    protected $listeners = array();
 
     /**
      * {@inheritDoc}

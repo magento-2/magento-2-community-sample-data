@@ -10,10 +10,6 @@
 
 namespace Magento\GoogleOptimizer\Block\Code;
 
-/**
- * @api
- * @since 100.0.2
- */
 class Category extends \Magento\GoogleOptimizer\Block\AbstractCode implements \Magento\Framework\DataObject\IdentityInterface
 {
     /**

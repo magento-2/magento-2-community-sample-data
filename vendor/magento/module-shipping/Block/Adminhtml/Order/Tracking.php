@@ -8,8 +8,6 @@ namespace Magento\Shipping\Block\Adminhtml\Order;
 /**
  * Shipment tracking control form
  *
- * @api
- * @since 100.0.2
  */
 class Tracking extends \Magento\Backend\Block\Template
 {
@@ -51,7 +49,7 @@ class Tracking extends \Magento\Backend\Block\Template
     {
         $this->addChild(
             'add_button',
-            \Magento\Backend\Block\Widget\Button::class,
+            'Magento\Backend\Block\Widget\Button',
             ['label' => __('Add Tracking Number'), 'class' => '', 'onclick' => 'trackingControl.add()']
         );
     }

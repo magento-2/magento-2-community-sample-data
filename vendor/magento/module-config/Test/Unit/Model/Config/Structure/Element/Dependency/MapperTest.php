@@ -5,7 +5,7 @@
  */
 namespace Magento\Config\Test\Unit\Model\Config\Structure\Element\Dependency;
 
-class MapperTest extends \PHPUnit\Framework\TestCase
+class MapperTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * Field prefix
@@ -63,17 +63,17 @@ class MapperTest extends \PHPUnit\Framework\TestCase
         ];
 
         $this->_configStructureMock = $this->getMockBuilder(
-            \Magento\Config\Model\Config\Structure::class
+            'Magento\Config\Model\Config\Structure'
         )->setMethods(
             ['getElement']
         )->disableOriginalConstructor()->getMock();
         $this->_fieldFactoryMock = $this->getMockBuilder(
-            \Magento\Config\Model\Config\Structure\Element\Dependency\FieldFactory::class
+            'Magento\Config\Model\Config\Structure\Element\Dependency\FieldFactory'
         )->setMethods(
             ['create']
         )->disableOriginalConstructor()->getMock();
         $this->_scopeConfigMock = $this->getMockBuilder(
-            \Magento\Framework\App\Config\ScopeConfigInterface::class
+            '\Magento\Framework\App\Config\ScopeConfigInterface'
         )->disableOriginalConstructor()->getMock();
         $this->_model = new \Magento\Config\Model\Config\Structure\Element\Dependency\Mapper(
             $this->_configStructureMock,
@@ -98,8 +98,7 @@ class MapperTest extends \PHPUnit\Framework\TestCase
     {
         $expected = [];
         $rowData = array_values($this->_testData);
-        $count = count($this->_testData);
-        for ($i = 0; $i < $count; ++$i) {
+        for ($i = 0; $i < count($this->_testData); ++$i) {
             $data = $rowData[$i];
             $dependentPath = 'some path ' . $i;
             $field = $this->_getField(
@@ -150,6 +149,9 @@ class MapperTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals($expected, $actual);
     }
 
+    /**
+     * @return array
+     */
     public function getDependenciesDataProvider()
     {
         return [[true], [false]];
@@ -159,8 +161,7 @@ class MapperTest extends \PHPUnit\Framework\TestCase
     {
         $expected = [];
         $rowData = array_values($this->_testData);
-        $count = count($this->_testData);
-        for ($i = 0; $i < $count; ++$i) {
+        for ($i = 0; $i < count($this->_testData); ++$i) {
             $data = $rowData[$i];
             $field = $this->_getField(
                 true,
@@ -209,7 +210,7 @@ class MapperTest extends \PHPUnit\Framework\TestCase
     protected function _getDependencyField($isValueSatisfy, $isFieldVisible, $fieldId, $mockClassName)
     {
         $field = $this->getMockBuilder(
-            \Magento\Config\Model\Config\Structure\Element\Dependency\Field::class
+            'Magento\Config\Model\Config\Structure\Element\Dependency\Field'
         )->setMethods(
             ['isValueSatisfy', 'getId']
         )->setMockClassName(
@@ -249,7 +250,7 @@ class MapperTest extends \PHPUnit\Framework\TestCase
     protected function _getField($isVisible, $path, $mockClassName)
     {
         $field = $this->getMockBuilder(
-            \Magento\Config\Model\Config\Structure\Element\Field::class
+            'Magento\Config\Model\Config\Structure\Element\Field'
         )->setMethods(
             ['isVisible', 'getPath']
         )->setMockClassName(

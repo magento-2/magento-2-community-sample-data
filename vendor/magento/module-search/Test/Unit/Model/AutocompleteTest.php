@@ -9,7 +9,7 @@ use Magento\Search\Model\Autocomplete;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
 use Magento\Search\Model\Autocomplete\DataProviderInterface;
 
-class AutocompleteTest extends \PHPUnit\Framework\TestCase
+class AutocompleteTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var Autocomplete
@@ -30,11 +30,11 @@ class AutocompleteTest extends \PHPUnit\Framework\TestCase
     {
         $helper = new ObjectManager($this);
 
-        $this->firstDataProvider = $this->getMockBuilder(\Magento\Search\Model\DataProviderInterface::class)
+        $this->firstDataProvider = $this->getMockBuilder('Magento\Search\Model\DataProviderInterface')
             ->disableOriginalConstructor()
             ->setMethods(['getItems'])
             ->getMock();
-        $this->secondDataProvider = $this->getMockBuilder(\Magento\Search\Model\DataProviderInterface::class)
+        $this->secondDataProvider = $this->getMockBuilder('Magento\Search\Model\DataProviderInterface')
             ->disableOriginalConstructor()
             ->setMethods(['getItems'])
             ->getMock();
@@ -44,18 +44,18 @@ class AutocompleteTest extends \PHPUnit\Framework\TestCase
         ];
 
         $this->model = $helper->getObject(
-            \Magento\Search\Model\Autocomplete::class,
+            'Magento\Search\Model\Autocomplete',
             ['dataProviders' => $dataProviders]
         );
     }
 
     public function testGetItems()
     {
-        $firstItemMock = $this->getMockBuilder(\Magento\Search\Model\Autocomplete\Item::class)
+        $firstItemMock = $this->getMockBuilder('Magento\Search\Model\Autocomplete\Item')
             ->disableOriginalConstructor()
             ->setMockClassName('FirstItem')
             ->getMock();
-        $secondItemMock = $this->getMockBuilder(\Magento\Search\Model\Autocomplete\Item::class)
+        $secondItemMock = $this->getMockBuilder('Magento\Search\Model\Autocomplete\Item')
             ->disableOriginalConstructor()
             ->setMockClassName('SecondItem')
             ->getMock();

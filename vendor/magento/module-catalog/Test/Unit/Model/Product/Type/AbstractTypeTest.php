@@ -8,7 +8,7 @@ namespace Magento\Catalog\Test\Unit\Model\Product\Type;
 use Magento\Catalog\Model\Product\Attribute\Source\Status;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
 
-class AbstractTypeTest extends \PHPUnit\Framework\TestCase
+class AbstractTypeTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var ObjectManager
@@ -38,20 +38,20 @@ class AbstractTypeTest extends \PHPUnit\Framework\TestCase
     protected function setUp()
     {
         $this->objectManagerHelper = new ObjectManager($this);
-        $this->model = $this->objectManagerHelper->getObject(\Magento\Catalog\Model\Product\Type\Simple::class);
+        $this->model = $this->objectManagerHelper->getObject('Magento\Catalog\Model\Product\Type\Simple');
 
-        $this->product = $this->getMockBuilder(\Magento\Catalog\Model\Product::class)
-            ->setMethods(['getHasOptions', '__wakeup', '__sleep', 'getResource', 'getStatus'])
+        $this->product = $this->getMockBuilder('Magento\Catalog\Model\Product')
+            ->setMethods(['getHasOptions', '__wakeup', '__sleep', 'getResource'])
             ->disableOriginalConstructor()
             ->getMock();
-        $this->productResource = $this->getMockBuilder(\Magento\Catalog\Model\ResourceModel\Product::class)
+        $this->productResource = $this->getMockBuilder('Magento\Catalog\Model\ResourceModel\Product')
             ->setMethods(['getSortedAttributes', 'loadAllAttributes'])
             ->disableOriginalConstructor()
             ->getMockForAbstractClass();
 
         $this->product->expects($this->any())->method('getResource')->will($this->returnValue($this->productResource));
 
-        $this->attribute = $this->getMockBuilder(\Magento\Catalog\Model\Entity\Attribute::class)
+        $this->attribute = $this->getMockBuilder('Magento\Catalog\Model\Entity\Attribute')
             ->setMethods(['getGroupSortPath', 'getSortPath', '__wakeup'])
             ->disableOriginalConstructor()
             ->getMock();
@@ -96,6 +96,9 @@ class AbstractTypeTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals($expectedResult, $this->model->attributesCompare($attribute, $attribute2));
     }
 
+    /**
+     * @return array
+     */
     public function attributeCompareProvider()
     {
         return [

@@ -35,7 +35,7 @@ class Options extends Tab
         foreach ($fields['options']['value'] as $field) {
             $this->_rootElement->find($this->addOption)->click();
             $this->blockFactory->create(
-                \Magento\Catalog\Test\Block\Adminhtml\Product\Attribute\Edit\Tab\Options\Option::class,
+                'Magento\Catalog\Test\Block\Adminhtml\Product\Attribute\Edit\Tab\Options\Option',
                 ['element' => $this->_rootElement->find('.ui-sortable tr:last-child')]
             )->fillOptions($field);
         }

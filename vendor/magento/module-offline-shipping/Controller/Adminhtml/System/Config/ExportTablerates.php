@@ -51,7 +51,7 @@ class ExportTablerates extends \Magento\Config\Controller\Adminhtml\System\Abstr
         $fileName = 'tablerates.csv';
         /** @var $gridBlock \Magento\OfflineShipping\Block\Adminhtml\Carrier\Tablerate\Grid */
         $gridBlock = $this->_view->getLayout()->createBlock(
-            \Magento\OfflineShipping\Block\Adminhtml\Carrier\Tablerate\Grid::class
+            'Magento\OfflineShipping\Block\Adminhtml\Carrier\Tablerate\Grid'
         );
         $website = $this->_storeManager->getWebsite($this->getRequest()->getParam('website'));
         if ($this->getRequest()->getParam('conditionName')) {

@@ -5,7 +5,7 @@
  */
 namespace Magento\GroupedProduct\Test\Unit\Block\Stockqty\Type;
 
-class GroupedTest extends \PHPUnit\Framework\TestCase
+class GroupedTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\GroupedProduct\Block\Stockqty\Type\Grouped
@@ -20,9 +20,9 @@ class GroupedTest extends \PHPUnit\Framework\TestCase
     protected function setUp()
     {
         $objectManager = new \Magento\Framework\TestFramework\Unit\Helper\ObjectManager($this);
-        $this->registry = $this->createMock(\Magento\Framework\Registry::class);
+        $this->registry = $this->getMock('Magento\Framework\Registry', [], [], '', false);
         $this->block = $objectManager->getObject(
-            \Magento\GroupedProduct\Block\Stockqty\Type\Grouped::class,
+            'Magento\GroupedProduct\Block\Stockqty\Type\Grouped',
             ['registry' => $this->registry]
         );
     }
@@ -35,9 +35,15 @@ class GroupedTest extends \PHPUnit\Framework\TestCase
     public function testGetIdentities()
     {
         $productTags = ['catalog_product_1'];
-        $childProduct = $this->createMock(\Magento\Catalog\Model\Product::class);
+        $childProduct = $this->getMock('Magento\Catalog\Model\Product', [], [], '', false);
         $childProduct->expects($this->once())->method('getIdentities')->will($this->returnValue($productTags));
-        $typeInstance = $this->createMock(\Magento\GroupedProduct\Model\Product\Type\Grouped::class);
+        $typeInstance = $this->getMock(
+            'Magento\GroupedProduct\Model\Product\Type\Grouped',
+            [],
+            [],
+            '',
+            false
+        );
         $typeInstance->expects(
             $this->once()
         )->method(
@@ -45,7 +51,7 @@ class GroupedTest extends \PHPUnit\Framework\TestCase
         )->will(
             $this->returnValue([$childProduct])
         );
-        $product = $this->createMock(\Magento\Catalog\Model\Product::class);
+        $product = $this->getMock('Magento\Catalog\Model\Product', [], [], '', false);
         $product->expects($this->once())->method('getTypeInstance')->will($this->returnValue($typeInstance));
         $this->registry->expects(
             $this->any()

@@ -68,18 +68,18 @@ class AccountManagementCustomAttributesTest extends WebapiAbstract
     public function setUp()
     {
         $this->accountManagement = Bootstrap::getObjectManager()->get(
-            \Magento\Customer\Api\AccountManagementInterface::class
+            'Magento\Customer\Api\AccountManagementInterface'
         );
 
         $this->customerHelper = new CustomerHelper();
 
         $this->dataObjectProcessor = Bootstrap::getObjectManager()->create(
-            \Magento\Framework\Reflection\DataObjectProcessor::class
+            'Magento\Framework\Reflection\DataObjectProcessor'
         );
 
-        $this->imageFactory = Bootstrap::getObjectManager()->get(\Magento\Framework\Api\ImageContentFactory::class);
+        $this->imageFactory = Bootstrap::getObjectManager()->get('Magento\Framework\Api\ImageContentFactory');
 
-        $this->fileSystem = Bootstrap::getObjectManager()->get(\Magento\Framework\Filesystem::class);
+        $this->fileSystem = Bootstrap::getObjectManager()->get('Magento\Framework\Filesystem');
     }
 
     public function tearDown()
@@ -122,7 +122,7 @@ class AccountManagementCustomAttributesTest extends WebapiAbstract
 
         $imageData = $this->dataObjectProcessor->buildOutputDataArray(
             $image,
-            \Magento\Framework\Api\Data\ImageContentInterface::class
+            '\Magento\Framework\Api\Data\ImageContentInterface'
         );
         return $this->createCustomerWithImageAttribute($imageData);
     }
@@ -151,7 +151,7 @@ class AccountManagementCustomAttributesTest extends WebapiAbstract
 
         $customerDataArray = $this->dataObjectProcessor->buildOutputDataArray(
             $customerData,
-            \Magento\Customer\Api\Data\CustomerInterface::class
+            '\Magento\Customer\Api\Data\CustomerInterface'
         );
         $customerDataArray['custom_attributes'][] = [
             'attribute_code' => 'customer_image',
@@ -205,7 +205,7 @@ class AccountManagementCustomAttributesTest extends WebapiAbstract
 
         $imageData = $this->dataObjectProcessor->buildOutputDataArray(
             $image,
-            \Magento\Framework\Api\Data\ImageContentInterface::class
+            '\Magento\Framework\Api\Data\ImageContentInterface'
         );
         $expectedMessage = 'The image content must be valid base64 encoded data.';
         try {
@@ -239,7 +239,7 @@ class AccountManagementCustomAttributesTest extends WebapiAbstract
             ->setBase64EncodedData($imageData);
         $imageData = $this->dataObjectProcessor->buildOutputDataArray(
             $image,
-            \Magento\Framework\Api\Data\ImageContentInterface::class
+            '\Magento\Framework\Api\Data\ImageContentInterface'
         );
 
         //Replace image attribute

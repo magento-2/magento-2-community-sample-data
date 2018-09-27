@@ -5,10 +5,6 @@
  */
 namespace Magento\LayeredNavigation\Model\Attribute\Source;
 
-/**
- * @api
- * @since 100.0.2
- */
 class FilterableOptions implements \Magento\Framework\Data\OptionSourceInterface
 {
     /**

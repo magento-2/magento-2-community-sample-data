@@ -14,10 +14,7 @@ define([
             clearing: false,
             parentContainer: '',
             parentSelections: '',
-            changer: '',
-            exports: {
-                value: '${$.parentName}:isDefaultValue'
-            }
+            changer: ''
         },
 
         /**

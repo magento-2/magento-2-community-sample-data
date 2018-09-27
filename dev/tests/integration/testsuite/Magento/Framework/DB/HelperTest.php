@@ -5,7 +5,7 @@
  */
 namespace Magento\Framework\DB;
 
-class HelperTest extends \PHPUnit\Framework\TestCase
+class HelperTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\Framework\DB\Helper
@@ -20,11 +20,11 @@ class HelperTest extends \PHPUnit\Framework\TestCase
     protected function setUp()
     {
         $this->_model = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->create(
-            \Magento\Framework\DB\Helper::class,
+            'Magento\Framework\DB\Helper',
             ['modulePrefix' => 'core']
         );
         $collection = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->create(
-            \Magento\Store\Model\ResourceModel\Store\Collection::class
+            'Magento\Store\Model\ResourceModel\Store\Collection'
         );
         $this->_select = $collection->getSelect();
     }

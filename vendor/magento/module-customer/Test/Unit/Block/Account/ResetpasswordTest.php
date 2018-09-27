@@ -10,7 +10,7 @@ use Magento\Customer\Model\AccountManagement;
 /**
  * Test class for \Magento\Customer\Block\Account\Resetpassword
  */
-class ResetpasswordTest extends \PHPUnit\Framework\TestCase
+class ResetpasswordTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\Framework\App\Config\ScopeConfigInterface | \PHPUnit_Framework_MockObject_MockObject
@@ -28,10 +28,22 @@ class ResetpasswordTest extends \PHPUnit\Framework\TestCase
      */
     public function setUp()
     {
-        $this->scopeConfigMock =  $this->createPartialMock(\Magento\Framework\App\Config::class, ['getValue']);
+        $this->scopeConfigMock =  $this->getMock(
+            \Magento\Framework\App\Config::class,
+            ['getValue'],
+            [],
+            '',
+            false
+        );
 
         /** @var \Magento\Framework\View\Element\Template\Context | \PHPUnit_Framework_MockObject_MockObject $context */
-        $context = $this->createMock(\Magento\Framework\View\Element\Template\Context::class);
+        $context = $this->getMock(
+            'Magento\Framework\View\Element\Template\Context',
+            [],
+            [],
+            '',
+            false
+        );
         $context->expects($this->any())
             ->method('getScopeConfig')
             ->willReturn($this->scopeConfigMock);
@@ -39,7 +51,7 @@ class ResetpasswordTest extends \PHPUnit\Framework\TestCase
         $objectManager = new \Magento\Framework\TestFramework\Unit\Helper\ObjectManager($this);
 
         $this->block = $objectManager->getObject(
-            \Magento\Customer\Block\Account\Resetpassword::class,
+            '\Magento\Customer\Block\Account\Resetpassword',
             ['context' => $context]
         );
     }

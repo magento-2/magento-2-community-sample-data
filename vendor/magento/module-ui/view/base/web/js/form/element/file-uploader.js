@@ -2,10 +2,6 @@
  * Copyright © Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
-
-/**
- * @api
- */
 define([
     'jquery',
     'underscore',
@@ -22,7 +18,6 @@ define([
             value: [],
             maxFileSize: false,
             isMultipleFiles: false,
-            placeholderType: 'document', // 'image', 'video'
             allowedExtensions: false,
             previewTmpl: 'ui/form/element/uploader/preview',
             dropZone: '[data-role=drop-zone]',
@@ -77,7 +72,6 @@ define([
 
             this.value(value);
             this.on('value', this.onUpdate.bind(this));
-            this.isUseDefault(this.disabled());
 
             return this;
         },
@@ -133,7 +127,7 @@ define([
 
         /**
          * Retrieves from the list file which matches
-         * search criteria implemented in itertor function.
+         * search criteria implemented in iterator function.
          *
          * @param {Function} fn - Function that will be invoked
          *      for each file in the list.
@@ -163,8 +157,6 @@ define([
          * @returns {Object} Modified file object.
          */
         processFile: function (file) {
-            file.previewType = this.getFilePreviewType(file);
-
             this.observe.call(file, true, [
                 'previewWidth',
                 'previewHeight'
@@ -193,7 +185,7 @@ define([
         },
 
         /**
-         * Returns path to the files' preview image.
+         * Returns path to the file's preview image.
          *
          * @param {Object} file
          * @returns {String}
@@ -240,24 +232,6 @@ define([
          */
         isExtensionAllowed: function (file) {
             return validator('validate-file-type', file.name, this.allowedExtensions);
-        },
-
-        /**
-         * Get simplified file type.
-         *
-         * @param {Object} file - File to be checked.
-         * @returns {String}
-         */
-        getFilePreviewType: function (file) {
-            var type;
-
-            if (!file.type) {
-                return 'document';
-            }
-
-            type = file.type.split('/')[0];
-
-            return type !== 'image' && type !== 'video' ? 'document' : type;
         },
 
         /**
@@ -310,7 +284,7 @@ define([
 
         /**
          * Abstract handler which is invoked when files are choosed for upload.
-         * May be used for implementation of aditional validation rules,
+         * May be used for implementation of additional validation rules,
          * e.g. total files and a total size rules.
          *
          * @abstract
@@ -320,7 +294,7 @@ define([
         /**
          * Handler which is invoked prior to the start of a file upload.
          *
-         * @param {Event} e - Event object.
+         * @param {Event} e - Event obejct.
          * @param {Object} data - File data that will be uploaded.
          */
         onBeforeFileUpload: function (e, data) {
@@ -331,6 +305,7 @@ define([
             if (allowed.passed) {
                 target.on('fileuploadsend', function (event, postData) {
                     postData.data.append('param_name', this.paramName);
+                    $(event.currentTarget).off('fileuploadsend');
                 }.bind(data));
 
                 target.fileupload('process', data).done(function () {
@@ -389,8 +364,8 @@ define([
         onPreviewLoad: function (file, e) {
             var img = e.currentTarget;
 
-            file.previewWidth = img.naturalWidth;
-            file.previewHeight = img.naturalHeight;
+            file.previewWidth = img.naturalHeight;
+            file.previewHeight = img.naturalWidth;
         },
 
         /**

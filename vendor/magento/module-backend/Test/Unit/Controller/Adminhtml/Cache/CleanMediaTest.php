@@ -4,64 +4,52 @@
  * See COPYING.txt for license details.
  */
 
+// @codingStandardsIgnoreFile
+
 namespace Magento\Backend\Test\Unit\Controller\Adminhtml\Cache;
 
-/**
- * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
- */
-class CleanMediaTest extends \PHPUnit\Framework\TestCase
+class CleanMediaTest extends \PHPUnit_Framework_TestCase
 {
     public function testExecute()
     {
         // Wire object with mocks
-        $response = $this->createMock(\Magento\Framework\App\Response\Http::class);
-        $request = $this->createMock(\Magento\Framework\App\Request\Http::class);
+        $response = $this->getMock('Magento\Framework\App\Response\Http', [], [], '', false);
+        $request = $this->getMock('Magento\Framework\App\Request\Http', [], [], '', false);
 
-        $objectManager = $this->createMock(\Magento\Framework\ObjectManagerInterface::class);
-        $backendHelper = $this->createMock(\Magento\Backend\Helper\Data::class);
+        $objectManager = $this->getMock('Magento\Framework\ObjectManagerInterface');
+        $backendHelper = $this->getMock('Magento\Backend\Helper\Data', [], [], '', false);
         $helper = new \Magento\Framework\TestFramework\Unit\Helper\ObjectManager($this);
 
-        $session = $this->getMockBuilder(\Magento\Backend\Model\Session::class)
-            ->setMethods(['setIsUrlNotice'])
-            ->setConstructorArgs($helper->getConstructArguments(\Magento\Backend\Model\Session::class))
-            ->getMock();
-
-        $exceptionMessageFactory = $this->getMockBuilder(
-            \Magento\Framework\Message\ExceptionMessageLookupFactory::class
-        )
-            ->disableOriginalConstructor()
-            ->setMethods(
-                ['getMessageGenerator']
-            )
-            ->getMock();
-
-        $messageManagerParams = $helper->getConstructArguments(\Magento\Framework\Message\Manager::class);
-        $messageManagerParams['exceptionMessageFactory'] = $exceptionMessageFactory;
-        $messageManager = $this->getMockBuilder(\Magento\Framework\Message\Manager::class)
-            ->setMethods(['addSuccess'])
-            ->setConstructorArgs($messageManagerParams)
-            ->getMock();
-
-        $args = $helper->getConstructArguments(
-            \Magento\Backend\App\Action\Context::class,
-            [
-                'session' => $session,
-                'response' => $response,
-                'objectManager' => $objectManager,
-                'helper' => $backendHelper,
-                'request' => $request,
-                'messageManager' => $messageManager
-            ]
+        $session = $this->getMock(
+            'Magento\Backend\Model\Session',
+            ['setIsUrlNotice'],
+            $helper->getConstructArguments('Magento\Backend\Model\Session')
         );
-        $context = $this->getMockBuilder(\Magento\Backend\App\Action\Context::class)
-            ->setMethods(['getRequest', 'getResponse', 'getMessageManager', 'getSession', 'getResultFactory'])
-            ->setConstructorArgs($args)
-            ->getMock();
-        $resultFactory = $this->getMockBuilder(\Magento\Framework\Controller\ResultFactory::class)
+        $messageManager = $this->getMock(
+            'Magento\Framework\Message\Manager',
+            ['addSuccess'],
+            $helper->getConstructArguments('Magento\Framework\Message\Manager')
+        );
+        $context = $this->getMock(
+            'Magento\Backend\App\Action\Context',
+            ['getRequest', 'getResponse', 'getMessageManager', 'getSession', 'getResultFactory'],
+            $helper->getConstructArguments(
+                'Magento\Backend\App\Action\Context',
+                [
+                    'session' => $session,
+                    'response' => $response,
+                    'objectManager' => $objectManager,
+                    'helper' => $backendHelper,
+                    'request' => $request,
+                    'messageManager' => $messageManager
+                ]
+            )
+        );
+        $resultFactory = $this->getMockBuilder('Magento\Framework\Controller\ResultFactory')
             ->disableOriginalConstructor()
             ->setMethods(['create'])
             ->getMock();
-        $resultRedirect = $this->getMockBuilder(\Magento\Backend\Model\View\Result\Redirect::class)
+        $resultRedirect = $this->getMockBuilder('Magento\Backend\Model\View\Result\Redirect')
             ->disableOriginalConstructor()
             ->getMock();
         $resultFactory->expects($this->atLeastOnce())
@@ -75,23 +63,24 @@ class CleanMediaTest extends \PHPUnit\Framework\TestCase
         $context->expects($this->once())->method('getResultFactory')->willReturn($resultFactory);
 
         $controller = $helper->getObject(
-            \Magento\Backend\Controller\Adminhtml\Cache\CleanMedia::class,
+            'Magento\Backend\Controller\Adminhtml\Cache\CleanMedia',
             [
                 'context' => $context
             ]
         );
 
         // Setup expectations
-        $mergeService = $this->createMock(\Magento\Framework\View\Asset\MergeService::class);
+        $mergeService = $this->getMock('Magento\Framework\View\Asset\MergeService', [], [], '', false);
         $mergeService->expects($this->once())->method('cleanMergedJsCss');
 
         $messageManager->expects($this->once())
             ->method('addSuccess')
-            ->with('The JavaScript/CSS cache has been cleaned.');
+            ->with('The JavaScript/CSS cache has been cleaned.'
+        );
 
         $valueMap = [
-            [\Magento\Framework\View\Asset\MergeService::class, $mergeService],
-            [\Magento\Framework\Session\SessionManager::class, $session],
+            ['Magento\Framework\View\Asset\MergeService', $mergeService],
+            ['Magento\Framework\Session\SessionManager', $session],
         ];
         $objectManager->expects($this->any())->method('get')->will($this->returnValueMap($valueMap));
 

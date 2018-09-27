@@ -3,12 +3,14 @@
  * Copyright © Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
-namespace Magento\Directory\Model;
 
 /**
- * @api
- * @since 100.0.2
+ * Region factory
+ *
+ * @author     Magento Core Team <core@magentocommerce.com>
  */
+namespace Magento\Directory\Model;
+
 class RegionFactory
 {
     /**
@@ -32,6 +34,6 @@ class RegionFactory
      */
     public function create(array $arguments = [])
     {
-        return $this->_objectManager->create(\Magento\Directory\Model\Region::class, $arguments);
+        return $this->_objectManager->create('Magento\Directory\Model\Region', $arguments);
     }
 }

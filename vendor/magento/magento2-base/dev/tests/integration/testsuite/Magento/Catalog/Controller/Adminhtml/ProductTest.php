@@ -5,10 +5,7 @@
  */
 namespace Magento\Catalog\Controller\Adminhtml;
 
-use Magento\Framework\App\Request\DataPersistorInterface;
-use Magento\Framework\Data\Form\FormKey;
-use Magento\Framework\Message\Manager;
-use Magento\TestFramework\Helper\Bootstrap;
+use Magento\Catalog\Model\ProductRepository;
 
 /**
  * @magentoAppArea adminhtml
@@ -32,7 +29,7 @@ class ProductTest extends \Magento\TestFramework\TestCase\AbstractBackendControl
     public function testSaveActionAndNew()
     {
         $this->getRequest()->setPostValue(['back' => 'new']);
-        $repository = $this->_objectManager->create(\Magento\Catalog\Model\ProductRepository::class);
+        $repository = $this->_objectManager->create(ProductRepository::class);
         $product = $repository->get('simple');
         $this->dispatch('backend/catalog/product/save/id/' . $product->getEntityId());
         $this->assertRedirect($this->stringStartsWith('http://localhost/index.php/backend/catalog/product/new/'));
@@ -48,7 +45,7 @@ class ProductTest extends \Magento\TestFramework\TestCase\AbstractBackendControl
     public function testSaveActionAndDuplicate()
     {
         $this->getRequest()->setPostValue(['back' => 'duplicate']);
-        $repository = $this->_objectManager->create(\Magento\Catalog\Model\ProductRepository::class);
+        $repository = $this->_objectManager->create(ProductRepository::class);
         $product = $repository->get('simple');
         $this->dispatch('backend/catalog/product/save/id/' . $product->getEntityId());
         $this->assertRedirect($this->stringStartsWith('http://localhost/index.php/backend/catalog/product/edit/'));
@@ -74,36 +71,28 @@ class ProductTest extends \Magento\TestFramework\TestCase\AbstractBackendControl
         $this->dispatch('backend/catalog/product');
         $body = $this->getResponse()->getBody();
 
-        $this->assertEquals(
+        $this->assertSelectCount(
+            '#add_new_product',
             1,
-            \Magento\TestFramework\Helper\Xpath::getElementsCountForXpath(
-                '//*[@id="add_new_product"]',
-                $body
-            ),
+            $body,
             '"Add Product" button container should be present on Manage Products page, if the limit is not  reached'
         );
-        $this->assertEquals(
+        $this->assertSelectCount(
+            '#add_new_product-button',
             1,
-            \Magento\TestFramework\Helper\Xpath::getElementsCountForXpath(
-                '//*[@id="add_new_product-button"]',
-                $body
-            ),
+            $body,
             '"Add Product" button should be present on Manage Products page, if the limit is not reached'
         );
-        $this->assertEquals(
+        $this->assertSelectCount(
+            '#add_new_product-button.disabled',
             0,
-            \Magento\TestFramework\Helper\Xpath::getElementsCountForXpath(
-                '//*[@id="add_new_product-button" and contains(@class,"disabled")]',
-                $body
-            ),
+            $body,
             '"Add Product" button should be enabled on Manage Products page, if the limit is not reached'
         );
-        $this->assertEquals(
+        $this->assertSelectCount(
+            '#add_new_product .action-toggle',
             1,
-            \Magento\TestFramework\Helper\Xpath::getElementsCountForXpath(
-                '//*[@id="add_new_product"]/*[contains(@class,"action-toggle")]',
-                $body
-            ),
+            $body,
             '"Add Product" button split should be present on Manage Products page, if the limit is not reached'
         );
     }
@@ -113,127 +102,50 @@ class ProductTest extends \Magento\TestFramework\TestCase\AbstractBackendControl
      */
     public function testEditAction()
     {
-        $repository = $this->_objectManager->create(\Magento\Catalog\Model\ProductRepository::class);
+        $repository = $this->_objectManager->create(ProductRepository::class);
         $product = $repository->get('simple');
         $this->dispatch('backend/catalog/product/edit/id/' . $product->getEntityId());
         $body = $this->getResponse()->getBody();
 
-        $this->assertEquals(
+        $this->assertSelectCount('#save-button', 1, $body, '"Save" button isn\'t present on Edit Product page');
+        $this->assertSelectCount(
+            '#save_and_new',
             1,
-            \Magento\TestFramework\Helper\Xpath::getElementsCountForXpath(
-                '//*[@id="save-button"]',
-                $body
-            ),
-            '"Save" button isn\'t present on Edit Product page'
-        );
-
-        $this->assertEquals(
-            1,
-            \Magento\TestFramework\Helper\Xpath::getElementsCountForXpath(
-                '//*[@id="save_and_new"]',
-                $body
-            ),
+            $body,
             '"Save & New" button isn\'t present on Edit Product page'
         );
-
-        $this->assertEquals(
+        $this->assertSelectCount(
+            '#save_and_duplicate',
             1,
-            \Magento\TestFramework\Helper\Xpath::getElementsCountForXpath(
-                '//*[@id="save_and_duplicate"]',
-                $body
-            ),
+            $body,
             '"Save & Duplicate" button isn\'t present on Edit Product page'
         );
     }
 
     /**
-     * Test create product with already existing url key.
+     * Tests Validate product action.
      *
-     * @dataProvider saveActionWithAlreadyExistingUrlKeyDataProvider
-     * @magentoDataFixture Magento/Catalog/_files/product_image.php
-     * @magentoDataFixture Magento/Catalog/_files/product_simple.php
-     * @magentoDbIsolation disabled
-     * @param array $postData
+     * @magentoDataFixture Magento/Catalog/_files/products_with_multiselect_attribute.php
+     *
      * @return void
      */
-    public function testSaveActionWithAlreadyExistingUrlKey(array $postData)
+    public function testValidateAction()
     {
-        $this->getRequest()->setPostValue($postData);
-        $this->dispatch('backend/catalog/product/save');
-        /** @var Manager $messageManager */
-        $messageManager = $this->_objectManager->get(Manager::class);
-        $messages = $messageManager->getMessages();
-        $errors = $messages->getItemsByType('error');
-        $message = array_shift($errors);
-        $this->assertSame('URL key for specified store already exists.', $message->getText());
-        $this->assertRedirect($this->stringContains('/backend/catalog/product/new'));
-        /** @var DataPersistorInterface $dataPersistor */
-        $dataPersistor = $this->_objectManager->get(DataPersistorInterface::class);
-        $productData = $dataPersistor->get('catalog_product')['product'];
-        $image = array_shift($productData['media_gallery']['images']);
-        $this->assertStringEndsNotWith('.tmp', $image['file']);
-        $this->assertStringEndsNotWith('.tmp', $productData['image']);
-        $this->assertStringEndsNotWith('.tmp', $productData['small_image']);
-        $this->assertStringEndsNotWith('.tmp', $productData['thumbnail']);
-        $this->assertStringEndsNotWith('.tmp', $productData['swatch_image']);
-    }
+        $expectedResult = json_encode(['error' => false]);
 
-    /**
-     * Provide test data for testSaveActionWithAlreadyExistingUrlKey().
-     *
-     * @return array
-     */
-    public function saveActionWithAlreadyExistingUrlKeyDataProvider()
-    {
-        return [
-            [
-                'post_data' => [
-                    'product' =>
-                        [
-                            'attribute_set_id' => '4',
-                            'status' => '1',
-                            'name' => 's2',
-                            'url_key' => 'simple-product',
-                            'quantity_and_stock_status' =>
-                                [
-                                    'qty' => '10',
-                                    'is_in_stock' => '1',
-                                ],
-                            'website_ids' =>
-                                [
-                                    1 => '1',
-                                ],
-                            'sku' => 's2',
-                            'price' => '3',
-                            'tax_class_id' => '2',
-                            'product_has_weight' => '0',
-                            'visibility' => '4',
-                            'media_gallery' =>
-                                [
-                                    'images' =>
-                                        [
-                                            'h17hftqohrd' =>
-                                                [
-                                                    'position' => '1',
-                                                    'media_type' => 'image',
-                                                    'video_provider' => '',
-                                                    'file' => '/m/a//magento_image.jpg.tmp',
-                                                    'value_id' => '',
-                                                    'label' => '',
-                                                    'disabled' => '0',
-                                                    'removed' => '',
-                                                    'role' => '',
-                                                ],
-                                        ],
-                                ],
-                            'image' => '/m/a//magento_image.jpg.tmp',
-                            'small_image' => '/m/a//magento_image.jpg.tmp',
-                            'thumbnail' => '/m/a//magento_image.jpg.tmp',
-                            'swatch_image' => '/m/a//magento_image.jpg.tmp',
-                        ],
-                    'form_key' => Bootstrap::getObjectManager()->get(FormKey::class)->getFormKey(),
-                ]
-            ]
-        ];
+        $repository = $this->_objectManager->create(ProductRepository::class);
+        $product = $repository->get('simple_ms_2');
+        $data = $product->getData();
+        unset($data['multiselect_attribute']);
+
+        $this->getRequest()->setPostValue(['product' => $data]);
+        $this->dispatch('backend/catalog/product/validate');
+        $response = $this->getResponse()->getBody();
+
+        $this->assertJsonStringEqualsJsonString(
+            $expectedResult,
+            $response,
+            'Validate action returned incorrect result.'
+        );
     }
 }

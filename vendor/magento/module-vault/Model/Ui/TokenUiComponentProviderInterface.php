@@ -11,7 +11,6 @@ use Magento\Vault\Api\Data\PaymentTokenInterface;
  * Interface TokenUiComponentProviderInterface
  * @package Magento\Vault\Model\Ui
  * @api
- * @since 100.1.0
  */
 interface TokenUiComponentProviderInterface
 {
@@ -21,7 +20,6 @@ interface TokenUiComponentProviderInterface
     /**
      * @param PaymentTokenInterface $paymentToken
      * @return TokenUiComponentInterface
-     * @since 100.1.0
      */
     public function getComponentForToken(PaymentTokenInterface $paymentToken);
 }

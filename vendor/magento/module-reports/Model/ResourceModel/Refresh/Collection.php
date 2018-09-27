@@ -11,10 +11,6 @@
  */
 namespace Magento\Reports\Model\ResourceModel\Refresh;
 
-/**
- * @api
- * @since 100.0.2
- */
 class Collection extends \Magento\Framework\Data\Collection
 {
     /**

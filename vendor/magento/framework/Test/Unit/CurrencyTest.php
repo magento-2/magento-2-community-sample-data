@@ -10,14 +10,14 @@ use Magento\Framework\Currency;
 /**
  * Test for Magento\Framework\Currency
  */
-class CurrencyTest extends \PHPUnit\Framework\TestCase
+class CurrencyTest extends \PHPUnit_Framework_TestCase
 {
     public function testConstruct()
     {
-        $frontendCache = $this->createMock(\Magento\Framework\Cache\FrontendInterface::class);
-        $lowLevelFrontend = $this->createMock(\Zend_Cache_Core::class);
+        $frontendCache = $this->getMock('Magento\Framework\Cache\FrontendInterface', [], [], '', false, false);
+        $lowLevelFrontend = $this->getMock('Zend_Cache_Core', [], [], '', false, false);
         /** @var \Magento\Framework\App\CacheInterface|\PHPUnit_Framework_MockObject_MockObject $appCache */
-        $appCache = $this->createMock(\Magento\Framework\App\CacheInterface::class);
+        $appCache = $this->getMock('Magento\Framework\App\CacheInterface', [], [], '', false, false);
         $frontendCache->expects($this->once())->method('getLowLevelFrontend')->willReturn($lowLevelFrontend);
         $appCache->expects($this->once())
             ->method('getFrontend')

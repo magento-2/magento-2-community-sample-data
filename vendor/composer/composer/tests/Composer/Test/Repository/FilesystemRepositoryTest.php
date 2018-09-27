@@ -10,9 +10,8 @@
  * file that was distributed with this source code.
  */
 
-namespace Composer\Test\Repository;
+namespace Composer\Repository;
 
-use Composer\Repository\FilesystemRepository;
 use Composer\TestCase;
 
 class FilesystemRepositoryTest extends TestCase

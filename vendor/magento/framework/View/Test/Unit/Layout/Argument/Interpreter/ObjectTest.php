@@ -7,9 +7,9 @@ namespace Magento\Framework\View\Test\Unit\Layout\Argument\Interpreter;
 
 use \Magento\Framework\View\Layout\Argument\Interpreter\DataObject;
 
-class ObjectTest extends \PHPUnit\Framework\TestCase
+class ObjectTest extends \PHPUnit_Framework_TestCase
 {
-    const EXPECTED_CLASS = \Magento\Framework\View\Test\Unit\Layout\Argument\Interpreter\ObjectTest::class;
+    const EXPECTED_CLASS = 'Magento\Framework\View\Test\Unit\Layout\Argument\Interpreter\ObjectTest';
 
     /**
      * @var \Magento\Framework\ObjectManagerInterface|\PHPUnit_Framework_MockObject_MockObject
@@ -28,17 +28,22 @@ class ObjectTest extends \PHPUnit\Framework\TestCase
 
     protected function setUp()
     {
-        $this->_objectManager = $this->createMock(\Magento\Framework\ObjectManagerInterface::class);
+        $this->_objectManager = $this->getMock('Magento\Framework\ObjectManagerInterface');
         $this->_model = new DataObject($this->_objectManager, self::EXPECTED_CLASS);
     }
 
     public function testEvaluate()
     {
-        $input = ['name' => 'dataSource', 'value' => self::EXPECTED_CLASS];
-        $this->_objectManager->expects($this->once())
-            ->method('create')
-            ->with(self::EXPECTED_CLASS)
-            ->willReturn($this);
+        $input = ['value' => self::EXPECTED_CLASS];
+        $this->_objectManager->expects(
+            $this->once()
+        )->method(
+            'create'
+        )->with(
+            self::EXPECTED_CLASS
+        )->will(
+            $this->returnValue($this)
+        );
 
         $actual = $this->_model->evaluate($input);
         $this->assertSame($this, $actual);
@@ -49,13 +54,14 @@ class ObjectTest extends \PHPUnit\Framework\TestCase
      */
     public function testEvaluateWrongClass($input, $expectedException, $expectedExceptionMessage)
     {
-        $this->expectException($expectedException);
-        $this->expectExceptionMessage($expectedExceptionMessage);
+        $this->setExpectedException($expectedException, $expectedExceptionMessage);
         $self = $this;
-        $this->_objectManager->expects($this->any())->method('create')->willReturnCallback(
-            function ($className) use ($self) {
-                return $self->createMock($className);
-            }
+        $this->_objectManager->expects($this->any())->method('create')->will(
+            $this->returnCallback(
+                function ($className) use ($self) {
+                    return $self->getMock($className);
+                }
+            )
         );
 
         $this->_model->evaluate($input);
@@ -69,7 +75,7 @@ class ObjectTest extends \PHPUnit\Framework\TestCase
         return [
             'no class' => [[], '\InvalidArgumentException', 'Object class name is missing'],
             'unexpected class' => [
-                ['value' => \Magento\Framework\ObjectManagerInterface::class],
+                ['value' => 'Magento\Framework\ObjectManagerInterface'],
                 '\UnexpectedValueException',
                 'Instance of ' . self::EXPECTED_CLASS . ' is expected',
             ]

@@ -1,7 +1,7 @@
 <?php
 namespace Braintree;
 
-class MerchantGateway
+final class MerchantGateway
 {
     private $_gateway;
     private $_config;

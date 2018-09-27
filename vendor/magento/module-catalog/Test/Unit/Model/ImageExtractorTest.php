@@ -7,7 +7,7 @@ namespace Magento\Catalog\Test\Unit\Model;
 
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
 
-class ImageExtractorTest extends \PHPUnit\Framework\TestCase
+class ImageExtractorTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\Catalog\Model\ImageExtractor

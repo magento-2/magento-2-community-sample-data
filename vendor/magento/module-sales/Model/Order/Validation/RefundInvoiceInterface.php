@@ -12,9 +12,6 @@ use Magento\Sales\Model\ValidatorResultInterface;
 
 /**
  * Interface RefundInvoiceInterface
- *
- * @api
- * @since 100.1.3
  */
 interface RefundInvoiceInterface
 {
@@ -29,7 +26,6 @@ interface RefundInvoiceInterface
      * @param \Magento\Sales\Api\Data\CreditmemoCommentCreationInterface|null $comment
      * @param \Magento\Sales\Api\Data\CreditmemoCreationArgumentsInterface|null $arguments
      * @return ValidatorResultInterface
-     * @since 100.1.3
      */
     public function validate(
         InvoiceInterface $invoice,

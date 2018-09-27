@@ -6,10 +6,6 @@
 namespace Magento\Cms\Api;
 
 use Magento\Cms\Api\Data\BlockInterface;
-use Magento\Framework\Api\FilterBuilder;
-use Magento\Framework\Api\SearchCriteriaBuilder;
-use Magento\Framework\Api\SortOrder;
-use Magento\Framework\Api\SortOrderBuilder;
 use Magento\TestFramework\Helper\Bootstrap;
 use Magento\TestFramework\TestCase\WebapiAbstract;
 
@@ -52,12 +48,11 @@ class BlockRepositoryTest extends WebapiAbstract
      */
     public function setUp()
     {
-        $this->blockFactory = Bootstrap::getObjectManager()->create(\Magento\Cms\Api\Data\BlockInterfaceFactory::class);
-        $this->blockRepository = Bootstrap::getObjectManager()
-            ->create(\Magento\Cms\Api\BlockRepositoryInterface::class);
-        $this->dataObjectHelper = Bootstrap::getObjectManager()->create(\Magento\Framework\Api\DataObjectHelper::class);
+        $this->blockFactory = Bootstrap::getObjectManager()->create('Magento\Cms\Api\Data\BlockInterfaceFactory');
+        $this->blockRepository = Bootstrap::getObjectManager()->create('Magento\Cms\Api\BlockRepositoryInterface');
+        $this->dataObjectHelper = Bootstrap::getObjectManager()->create('Magento\Framework\Api\DataObjectHelper');
         $this->dataObjectProcessor = Bootstrap::getObjectManager()
-            ->create(\Magento\Framework\Reflection\DataObjectProcessor::class);
+            ->create('Magento\Framework\Reflection\DataObjectProcessor');
     }
 
     /**
@@ -157,11 +152,11 @@ class BlockRepositoryTest extends WebapiAbstract
         $this->dataObjectHelper->populateWithArray(
             $this->currentBlock,
             [BlockInterface::TITLE => $newBlockTitle],
-            \Magento\Cms\Api\Data\BlockInterface::class
+            'Magento\Cms\Api\Data\BlockInterface'
         );
         $blockData = $this->dataObjectProcessor->buildOutputDataArray(
             $this->currentBlock,
-            \Magento\Cms\Api\Data\BlockInterface::class
+            'Magento\Cms\Api\Data\BlockInterface'
         );
 
         $serviceInfo = [
@@ -218,47 +213,23 @@ class BlockRepositoryTest extends WebapiAbstract
      */
     public function testSearch()
     {
-        $cmsBlocks = $this->prepareCmsBlocks();
+        $blockTitle = 'Block title';
+        $blockIdentifier = 'block-title';
+        /** @var  \Magento\Cms\Api\Data\BlockInterface $blockDataObject */
+        $blockDataObject = $this->blockFactory->create();
+        $blockDataObject->setTitle($blockTitle)
+            ->setIdentifier($blockIdentifier);
+        $this->currentBlock = $this->blockRepository->save($blockDataObject);
 
-        /** @var FilterBuilder $filterBuilder */
-        $filterBuilder = Bootstrap::getObjectManager()->create(FilterBuilder::class);
-
-        /** @var SearchCriteriaBuilder $searchCriteriaBuilder */
+        $filterBuilder = Bootstrap::getObjectManager()->create('Magento\Framework\Api\FilterBuilder');
+        /** @var \Magento\Framework\Api\SearchCriteriaBuilder $searchCriteriaBuilder */
         $searchCriteriaBuilder = Bootstrap::getObjectManager()
-            ->create(SearchCriteriaBuilder::class);
-
-        $filter1 = $filterBuilder
+            ->create('Magento\Framework\Api\SearchCriteriaBuilder');
+        $filter = $filterBuilder
             ->setField(BlockInterface::IDENTIFIER)
-            ->setValue($cmsBlocks['first']->getIdentifier())
+            ->setValue($blockIdentifier)
             ->create();
-        $filter2 = $filterBuilder
-            ->setField(BlockInterface::IDENTIFIER)
-            ->setValue($cmsBlocks['third']->getIdentifier())
-            ->create();
-        $filter3 = $filterBuilder
-            ->setField(BlockInterface::TITLE)
-            ->setValue($cmsBlocks['second']->getTitle())
-            ->create();
-        $filter4 = $filterBuilder
-            ->setField(BlockInterface::IS_ACTIVE)
-            ->setValue(true)
-            ->create();
-
-        $searchCriteriaBuilder->addFilters([$filter1, $filter2]);
-        $searchCriteriaBuilder->addFilters([$filter3, $filter4]);
-
-        /** @var SortOrderBuilder $sortOrderBuilder */
-        $sortOrderBuilder = Bootstrap::getObjectManager()->create(SortOrderBuilder::class);
-
-        /** @var SortOrder $sortOrder */
-        $sortOrder = $sortOrderBuilder->setField(BlockInterface::IDENTIFIER)
-            ->setDirection(SortOrder::SORT_ASC)
-            ->create();
-
-        $searchCriteriaBuilder->setSortOrders([$sortOrder]);
-
-        $searchCriteriaBuilder->setPageSize(1);
-        $searchCriteriaBuilder->setCurrentPage(2);
+        $searchCriteriaBuilder->addFilters([$filter]);
 
         $searchData = $searchCriteriaBuilder->create()->__toArray();
         $requestData = ['searchCriteria' => $searchData];
@@ -275,44 +246,7 @@ class BlockRepositoryTest extends WebapiAbstract
         ];
 
         $searchResult = $this->_webApiCall($serviceInfo, $requestData);
-        $this->assertEquals(2, $searchResult['total_count']);
-        $this->assertEquals(1, count($searchResult['items']));
-        $this->assertEquals(
-            $searchResult['items'][0][BlockInterface::IDENTIFIER],
-            $cmsBlocks['third']->getIdentifier()
-        );
-    }
-
-    /**
-     * @return BlockInterface[]
-     */
-    private function prepareCmsBlocks()
-    {
-        $result = [];
-
-        $blocksData['first'][BlockInterface::TITLE] = 'Block title 1';
-        $blocksData['first'][BlockInterface::IDENTIFIER] = 'block-title-1' . uniqid();
-        $blocksData['first'][BlockInterface::IS_ACTIVE] = true;
-
-        $blocksData['second'][BlockInterface::TITLE] = 'Block title 2';
-        $blocksData['second'][BlockInterface::IDENTIFIER] = 'block-title-2' . uniqid();
-        $blocksData['second'][BlockInterface::IS_ACTIVE] = false;
-
-        $blocksData['third'][BlockInterface::TITLE] = 'Block title 3';
-        $blocksData['third'][BlockInterface::IDENTIFIER] = 'block-title-3' . uniqid();
-        $blocksData['third'][BlockInterface::IS_ACTIVE] = true;
-
-        foreach ($blocksData as $key => $blockData) {
-            /** @var  \Magento\Cms\Api\Data\BlockInterface $blockDataObject */
-            $blockDataObject = $this->blockFactory->create();
-            $this->dataObjectHelper->populateWithArray(
-                $blockDataObject,
-                $blockData,
-                \Magento\Cms\Api\Data\BlockInterface::class
-            );
-            $result[$key] = $this->blockRepository->save($blockDataObject);
-        }
-
-        return $result;
+        $this->assertEquals(1, $searchResult['total_count']);
+        $this->assertEquals($searchResult['items'][0][BlockInterface::IDENTIFIER], $blockIdentifier);
     }
 }

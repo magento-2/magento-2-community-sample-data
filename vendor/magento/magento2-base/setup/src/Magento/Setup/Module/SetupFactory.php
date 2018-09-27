@@ -10,8 +10,6 @@ use Magento\Setup\Model\ObjectManagerProvider;
 
 /**
  * Factory class to create Setup
- *
- * @api
  */
 class SetupFactory
 {
@@ -40,7 +38,7 @@ class SetupFactory
     {
         $objectManager = $this->objectManagerProvider->get();
         if ($appResource === null) {
-            $appResource = $objectManager->get(\Magento\Framework\App\ResourceConnection::class);
+            $appResource = $objectManager->get('Magento\Framework\App\ResourceConnection');
         }
         return new Setup($appResource);
     }

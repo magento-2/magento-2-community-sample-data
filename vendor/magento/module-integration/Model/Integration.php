@@ -25,8 +25,7 @@ namespace Magento\Integration\Model;
  * @method Integration setCreatedAt(\string $createdAt)
  * @method \string getUpdatedAt()
  * @method Integration setUpdatedAt(\string $createdAt)
- * @api
- * @since 100.0.2
+ * @method \Magento\Integration\Model\ResourceModel\Integration getResource()
  */
 class Integration extends \Magento\Framework\Model\AbstractModel
 {
@@ -96,7 +95,7 @@ class Integration extends \Magento\Framework\Model\AbstractModel
     protected function _construct()
     {
         parent::_construct();
-        $this->_init(\Magento\Integration\Model\ResourceModel\Integration::class);
+        $this->_init('Magento\Integration\Model\ResourceModel\Integration');
     }
 
     /**

@@ -68,10 +68,10 @@ class Cm_Cache_Backend_Redis extends Zend_Cache_Backend implements Zend_Cache_Ba
     /** @var int */
     protected $_lifetimelimit = self::MAX_LIFETIME; /* Redis backend limit */
 
-    /** @var int|bool */
+    /** @var int */
     protected $_compressTags = 1;
 
-    /** @var int|bool */
+    /** @var int */
     protected $_compressData = 1;
 
     /** @var int */
@@ -112,31 +112,6 @@ class Cm_Cache_Backend_Redis extends Zend_Cache_Backend implements Zend_Cache_Ba
     protected $_luaMaxCStack = 5000;
 
     /**
-     * @var stdClass
-     */
-    protected $_clientOptions;
-
-    /**
-     * If 'load_from_slaves' is truthy then reads are performed on a randomly selected slave server
-     *
-     * @var Credis_Client
-     */
-    protected $_slave;
-
-    protected function getClientOptions($options = array())
-    {
-        $clientOptions = new stdClass();
-        $clientOptions->forceStandalone = isset($options['force_standalone']) && $options['force_standalone'];
-        $clientOptions->connectRetries = isset($options['connect_retries']) ? (int) $options['connect_retries'] : self::DEFAULT_CONNECT_RETRIES;
-        $clientOptions->readTimeout = isset($options['read_timeout']) ? (float) $options['read_timeout'] : NULL;
-        $clientOptions->password = isset($options['password']) ? $options['password'] : NULL;
-        $clientOptions->database = isset($options['database']) ? (int) $options['database'] : 0;
-        $clientOptions->persistent = isset($options['persistent']) ? $options['persistent'] : '';
-        $clientOptions->timeout = isset($options['timeout']) ? $options['timeout'] : self::DEFAULT_CONNECT_TIMEOUT;
-        return $clientOptions;
-    }
-
-    /**
      * Construct Zend_Cache Redis backend
      * @param array $options
      * @return \Cm_Cache_Backend_Redis
@@ -147,123 +122,35 @@ class Cm_Cache_Backend_Redis extends Zend_Cache_Backend implements Zend_Cache_Ba
             Zend_Cache::throwException('Redis \'server\' not specified.');
         }
 
-        $port = isset($options['port']) ? $options['port'] : 6379;
-        $slaveSelect = isset($options['slave_select_callable']) && is_callable($options['slave_select_callable']) ? $options['slave_select_callable'] : null;
-        $sentinelMaster =  empty($options['sentinel_master']) ? NULL : $options['sentinel_master'];
-
-        $this->_clientOptions = $this->getClientOptions($options);
-
-        // If 'sentinel_master' is specified then server is actually sentinel and master address should be fetched from server.
-        if ($sentinelMaster) {
-            $sentinelClientOptions = isset($options['sentinel']) && is_array($options['sentinel']) 
-                                     ? $this->getClientOptions($options['sentinel'] + $options)
-                                     : $this->_clientOptions;
-            $servers = preg_split('/\s*,\s*/', trim($options['server']), NULL, PREG_SPLIT_NO_EMPTY);
-            $sentinel = NULL;
-            $exception = NULL;
-            for ($i = 0; $i <= $sentinelClientOptions->connectRetries; $i++) // Try each sentinel in round-robin fashion
-            foreach ($servers as $server) {
-                try {
-                    $sentinelClient = new Credis_Client($server, NULL, $sentinelClientOptions->timeout, $sentinelClientOptions->persistent);
-                    $sentinelClient->forceStandalone();
-                    $sentinelClient->setMaxConnectRetries(0);
-                    if ($sentinelClientOptions->readTimeout) {
-                        $sentinelClient->setReadTimeout($sentinelClientOptions->readTimeout);
-                    }
-                    // Sentinel currently doesn't support AUTH
-                    //if ($password) {
-                    //    $sentinelClient->auth($password) or Zend_Cache::throwException('Unable to authenticate with the redis sentinel.');
-                    //}
-                    $sentinel = new Credis_Sentinel($sentinelClient);
-                    $sentinel
-                        ->setClientTimeout($this->_clientOptions->timeout)
-                        ->setClientPersistent($this->_clientOptions->persistent);
-                    $redisMaster = $sentinel->getMasterClient($sentinelMaster);
-                    $this->_applyClientOptions($redisMaster);
-
-                    // Verify connected server is actually master as per Sentinel client spec
-                    if ( ! empty($options['sentinel_master_verify'])) {
-                        $roleData = $redisMaster->role();
-                        if ( ! $roleData || $roleData[0] != 'master') {
-                            usleep(100000); // Sleep 100ms and try again
-                            $redisMaster = $sentinel->getMasterClient($sentinelMaster);
-                            $this->_applyClientOptions($redisMaster);
-                            $roleData = $redisMaster->role();
-                            if ( ! $roleData || $roleData[0] != 'master') {
-                                Zend_Cache::throwException('Unable to determine master redis server.');
-                            }
-                        }
-                    }
-
-                    $this->_redis = $redisMaster;
-                    break 2;
-                } catch (Exception $e) {
-                    unset($sentinelClient);
-                    $exception = $e;
-                }
-            }
-            if ( ! $this->_redis) {
-                Zend_Cache::throwException('Unable to connect to a redis sentinel: '.$exception->getMessage(), $exception);
-            }
-
-            // Optionally use read slaves - will only be used for 'load' operation
-            if ( ! empty($options['load_from_slaves'])) {
-                $slaves = $sentinel->getSlaveClients($sentinelMaster);
-                if ($slaves) {
-                    if ($options['load_from_slaves'] == 2) {
-                        array_push($slaves, $this->_redis); // Also send reads to the master
-                    }
-                    if ($slaveSelect) {
-                        $slave = $slaveSelect($slaves, $this->_redis);
-                    } else {
-                        $slaveKey = array_rand($slaves, 1);
-                        $slave = $slaves[$slaveKey]; /* @var $slave Credis_Client */
-                    }
-                    if ($slave instanceof Credis_Client && $slave != $this->_redis) {
-                        try {
-                            $this->_applyClientOptions($slave, TRUE);
-                            $this->_slave = $slave;
-                        } catch (Exception $e) {
-                            // If there is a problem with first slave then skip 'load_from_slaves' option
-                        }
-                    }
-                }
-            }
-            unset($sentinel);
+        if ( empty($options['port']) && substr($options['server'],0,1) != '/' ) {
+            Zend_Cache::throwException('Redis \'port\' not specified.');
         }
 
-        elseif (class_exists('Credis_Cluster') && array_key_exists('cluster', $options) && !empty($options['cluster'])) {
-            $this->_setupReadWriteCluster($options);
+        $port = isset($options['port']) ? $options['port'] : NULL;
+        $timeout = isset($options['timeout']) ? $options['timeout'] : self::DEFAULT_CONNECT_TIMEOUT;
+        $persistent = isset($options['persistent']) ? $options['persistent'] : '';
+        $this->_redis = new Credis_Client($options['server'], $port, $timeout, $persistent);
+
+        if ( isset($options['force_standalone']) && $options['force_standalone']) {
+            $this->_redis->forceStandalone();
         }
 
-        // Direct connection to single Redis server
-        else {
-            $this->_redis = new Credis_Client($options['server'], $port, $this->_clientOptions->timeout, $this->_clientOptions->persistent);
-            $this->_applyClientOptions($this->_redis);
+        $connectRetries = isset($options['connect_retries']) ? (int)$options['connect_retries'] : self::DEFAULT_CONNECT_RETRIES;
+        $this->_redis->setMaxConnectRetries($connectRetries);
 
-            // Support loading from a replication slave
-            if (isset($options['load_from_slave'])) {
-                if (is_array($options['load_from_slave'])) {
-                    $server = $options['load_from_slave']['server'];
-                    $port = $options['load_from_slave']['port'];
-
-                    $clientOptions = $this->getClientOptions($options['load_from_slave'] + $options);
-                } else {
-                    $server = $options['load_from_slave'];
-                    $port = 6379;
-                    $clientOptions = $this->_clientOptions;
-                }
-                if (is_string($server)) {
-                    try {
-                        $slave = new Credis_Client($server, $port, $clientOptions->timeout, $clientOptions->persistent);
-                        $this->_applyClientOptions($slave, TRUE, $clientOptions);
-                        $this->_slave = $slave;
-                    } catch (Exception $e) {
-                        // Slave will not be used
-                    }
-                }
-            }
+        if ( ! empty($options['read_timeout']) && $options['read_timeout'] > 0) {
+            $this->_redis->setReadTimeout((float) $options['read_timeout']);
         }
+
+        if ( ! empty($options['password'])) {
+            $this->_redis->auth($options['password']) or Zend_Cache::throwException('Unable to authenticate with the redis server.');
+        }
+
+        // Always select database on startup in case persistent connection is re-used by other code
+        if (empty($options['database'])) {
+            $options['database'] = 0;
+        }
+        $this->_redis->select( (int) $options['database']) or Zend_Cache::throwException('The redis database could not be selected.');
 
         if ( isset($options['notMatchingTags']) ) {
             $this->_notMatchingTags = (bool) $options['notMatchingTags'];
@@ -298,12 +185,6 @@ class Cm_Cache_Backend_Redis extends Zend_Cache_Backend implements Zend_Cache_Ba
             $this->_compressionLib = 'snappy';
         }
         else if ( function_exists('lz4_compress')) {
-            $version = phpversion("lz4");
-            if (version_compare($version, "0.3.0") < 0)
-            {
-                $this->_compressTags = $this->_compressTags > 1 ? true : false;
-                $this->_compressData = $this->_compressData > 1 ? true : false;
-            }
             $this->_compressionLib = 'l4z';
         }
         else if ( function_exists('lzf_compress') ) {
@@ -340,84 +221,6 @@ class Cm_Cache_Backend_Redis extends Zend_Cache_Backend implements Zend_Cache_Ba
     }
 
     /**
-     * Apply common configuration to client instances.
-     *
-     * @param Credis_Client $client
-     */
-    protected function _applyClientOptions(Credis_Client $client, $forceSelect = FALSE, $clientOptions = null)
-    {
-        if ($clientOptions === null) {
-            $clientOptions = $this->_clientOptions;
-        }
-
-        if ($clientOptions->forceStandalone) {
-            $client->forceStandalone();
-        }
-
-        $client->setMaxConnectRetries($clientOptions->connectRetries);
-
-        if ($clientOptions->readTimeout) {
-            $client->setReadTimeout($clientOptions->readTimeout);
-        }
-
-        if ($clientOptions->password) {
-            $client->auth($clientOptions->password) or Zend_Cache::throwException('Unable to authenticate with the redis server.');
-        }
-
-        // Always select database when persistent is used in case connection is re-used by other clients
-        if ($forceSelect || $clientOptions->database || $client->getPersistence()) {
-            $client->select($clientOptions->database) or Zend_Cache::throwException('The redis database could not be selected.');
-        }
-    }
-
-    protected function _setupReadWriteCluster($options) {
-        $clusterNodes = array();
-
-        if (array_key_exists('master', $options['cluster']) && !empty($options['cluster']['master'])) {
-            foreach ($options['cluster']['master'] as $masterNode) {
-                if (empty($masterNode['server']) || empty($masterNode['port'])) {
-                    continue;
-                }
-
-                $clusterNodes[] = array(
-                    'host'       => $masterNode['server'],
-                    'port'       => $masterNode['port'],
-                    'alias'      => 'master',
-                    'master'     => true,
-                    'write_only' => true,
-                    'timeout'    => $this->_clientOptions->timeout,
-                    'persistent' => $this->_clientOptions->persistent,
-                    'db'         => (int) $options['database'],
-                );
-
-                break; // limit to 1
-            }
-        }
-
-        if (!empty($clusterNodes) && array_key_exists('slave', $options['cluster']) && !empty($options['cluster']['slave'])) {
-            foreach ($options['cluster']['slave'] as $slaveNodes) {
-                if (empty($masterNode['server']) || empty($masterNode['port'])) {
-                    continue;
-                }
-
-                $clusterNodes[] = array(
-                    'host'       => $slaveNodes['server'],
-                    'port'       => $slaveNodes['port'],
-                    'alias'      => 'slave' . count($clusterNodes),
-                    'timeout'    => $this->_clientOptions->timeout,
-                    'persistent' => $this->_clientOptions->persistent,
-                    'db'         => (int) $options['database'],
-                    'password'   => $options['password'],
-                );
-            }
-        }
-
-        if (!empty($clusterNodes)) {
-            $this->_redis = new Credis_Cluster($clusterNodes);
-        }
-    }
-
-    /**
      * Load value with given id from cache
      *
      * @param  string  $id                     Cache id
@@ -426,11 +229,7 @@ class Cm_Cache_Backend_Redis extends Zend_Cache_Backend implements Zend_Cache_Ba
      */
     public function load($id, $doNotTestCacheValidity = false)
     {
-        if ($this->_slave) {
-            $data = $this->_slave->hGet(self::PREFIX_KEY.$id, self::FIELD_DATA);
-        } else {
-            $data = $this->_redis->hGet(self::PREFIX_KEY.$id, self::FIELD_DATA);
-        }
+        $data = $this->_redis->hGet(self::PREFIX_KEY.$id, self::FIELD_DATA);
         if ($data === NULL) {
             return FALSE;
         }
@@ -459,7 +258,6 @@ class Cm_Cache_Backend_Redis extends Zend_Cache_Backend implements Zend_Cache_Ba
      */
     public function test($id)
     {
-        // Don't use slave for this since `test` is usually used for locking
         $mtime = $this->_redis->hGet(self::PREFIX_KEY.$id, self::FIELD_MTIME);
         return ($mtime ? $mtime : FALSE);
     }
@@ -1096,9 +894,7 @@ class Cm_Cache_Backend_Redis extends Zend_Cache_Backend implements Zend_Cache_Ba
      */
     public function getMetadatas($id)
     {
-        list($tags, $mtime, $inf) = array_values(
-            $this->_redis->hMGet(self::PREFIX_KEY.$id, array(self::FIELD_TAGS, self::FIELD_MTIME, self::FIELD_INF))
-        );
+        list($tags, $mtime, $inf) = $this->_redis->hMGet(self::PREFIX_KEY.$id, array(self::FIELD_TAGS, self::FIELD_MTIME, self::FIELD_INF));
         if( ! $mtime) {
           return FALSE;
         }
@@ -1163,11 +959,11 @@ class Cm_Cache_Backend_Redis extends Zend_Cache_Backend implements Zend_Cache_Ba
      */
     protected function _encodeData($data, $level)
     {
-        if ($this->_compressionLib && $level !== 0 && strlen($data) >= $this->_compressThreshold) {
+        if ($this->_compressionLib && $level && strlen($data) >= $this->_compressThreshold) {
             switch($this->_compressionLib) {
                 case 'snappy': $data = snappy_compress($data); break;
                 case 'lzf':    $data = lzf_compress($data); break;
-                case 'l4z':    $data = lz4_compress($data, $level); break;
+                case 'l4z':    $data = lz4_compress($data,($level > 1 ? true : false)); break;
                 case 'gzip':   $data = gzcompress($data, $level); break;
                 default:       throw new CredisException("Unrecognized 'compression_lib'.");
             }

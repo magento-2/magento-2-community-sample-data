@@ -13,7 +13,6 @@ use Magento\Framework\Api\ExtensibleDataInterface;
  * An invoice is a record of the receipt of payment for an order. An invoice can include comments that detail the
  * invoice history.
  * @api
- * @since 100.0.2
  */
 interface InvoiceCommentInterface extends ExtensibleDataInterface, CommentInterface, EntityInterface
 {

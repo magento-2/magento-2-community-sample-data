@@ -9,9 +9,9 @@ namespace Magento\Cms\Controller\Adminhtml\Wysiwyg\Images;
 use Magento\Framework\App\Filesystem\DirectoryList;
 
 /**
- * Test for \Magento\Cms\Controller\Adminhtml\Wysiwyg\Images\DeleteFiles class.
+ * Tests Magento\Cms\Controller\Adminhtml\Wysiwyg\Images\DeleteFiles.
  */
-class DeleteFilesTest extends \PHPUnit\Framework\TestCase
+class DeleteFilesTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\Cms\Controller\Adminhtml\Wysiwyg\Images\DeleteFiles
@@ -31,29 +31,30 @@ class DeleteFilesTest extends \PHPUnit\Framework\TestCase
     /**
      * @var string
      */
+    private $fullDirectoryPath;
+
+    /**
+     * @var string
+     */
     private $fileName = 'magento_small_image.jpg';
-
-    /**
-     * @var \Magento\Framework\Filesystem
-     */
-    private $filesystem;
-
-    /**
-     * @var \Magento\Framework\ObjectManagerInterface
-     */
-    private $objectManager;
 
     /**
      * @inheritdoc
      */
     protected function setUp()
     {
-        $this->objectManager = \Magento\TestFramework\Helper\Bootstrap::getObjectManager();
-        $this->filesystem = $this->objectManager->get(\Magento\Framework\Filesystem::class);
+        $objectManager = \Magento\TestFramework\Helper\Bootstrap::getObjectManager();
+        $directoryName = 'directory1';
+        $filesystem = $objectManager->get(\Magento\Framework\Filesystem::class);
         /** @var \Magento\Cms\Helper\Wysiwyg\Images $imagesHelper */
-        $this->imagesHelper = $this->objectManager->get(\Magento\Cms\Helper\Wysiwyg\Images::class);
-        $this->mediaDirectory = $this->filesystem->getDirectoryWrite(DirectoryList::MEDIA);
-        $this->model = $this->objectManager->get(\Magento\Cms\Controller\Adminhtml\Wysiwyg\Images\DeleteFiles::class);
+        $this->imagesHelper = $objectManager->get(\Magento\Cms\Helper\Wysiwyg\Images::class);
+        $this->mediaDirectory = $filesystem->getDirectoryWrite(DirectoryList::MEDIA);
+        $this->fullDirectoryPath = $this->imagesHelper->getStorageRoot() . '/' . $directoryName;
+        $this->mediaDirectory->create($this->mediaDirectory->getRelativePath($this->fullDirectoryPath));
+        $filePath =  $this->fullDirectoryPath . DIRECTORY_SEPARATOR . $this->fileName;
+        $fixtureDir = realpath(__DIR__ . '/../../../../../Catalog/_files');
+        copy($fixtureDir . '/' . $this->fileName, $filePath);
+        $this->model = $objectManager->get(\Magento\Cms\Controller\Adminhtml\Wysiwyg\Images\DeleteFiles::class);
     }
 
     /**
@@ -64,46 +65,15 @@ class DeleteFilesTest extends \PHPUnit\Framework\TestCase
      */
     public function testExecute()
     {
-        $directoryName = 'directory1';
-        $fullDirectoryPath = $this->imagesHelper->getStorageRoot() . '/' . $directoryName;
-        $this->mediaDirectory->create($this->mediaDirectory->getRelativePath($fullDirectoryPath));
-        $filePath =  $fullDirectoryPath . DIRECTORY_SEPARATOR . $this->fileName;
-        $fixtureDir = realpath(__DIR__ . '/../../../../../Catalog/_files');
-        copy($fixtureDir . '/' . $this->fileName, $filePath);
-
         $this->model->getRequest()->setMethod('POST')
             ->setPostValue('files', [$this->imagesHelper->idEncode($this->fileName)]);
-        $this->model->getStorage()->getSession()->setCurrentPath($fullDirectoryPath);
+        $this->model->getStorage()->getSession()->setCurrentPath($this->fullDirectoryPath);
         $this->model->execute();
         $this->assertFalse(
             $this->mediaDirectory->isExist(
-                $this->mediaDirectory->getRelativePath($fullDirectoryPath . '/' . $this->fileName)
+                $this->mediaDirectory->getRelativePath($this->fullDirectoryPath . '/' . $this->fileName)
             )
         );
-    }
-
-    /**
-     * Execute method with correct directory path and file name to check that files under linked media directory
-     * can be removed.
-     *
-     * @return void
-     * @magentoDataFixture Magento/Cms/_files/linked_media.php
-     */
-    public function testExecuteWithLinkedMedia()
-    {
-        $directoryName = 'linked_media';
-        $fullDirectoryPath = $this->filesystem->getDirectoryRead(DirectoryList::PUB)
-                ->getAbsolutePath() . DIRECTORY_SEPARATOR . $directoryName;
-        $filePath =  $fullDirectoryPath . DIRECTORY_SEPARATOR . $this->fileName;
-        $fixtureDir = realpath(__DIR__ . '/../../../../../Catalog/_files');
-        copy($fixtureDir . '/' . $this->fileName, $filePath);
-
-        $wysiwygDir = $this->mediaDirectory->getAbsolutePath() . '/wysiwyg';
-        $this->model->getRequest()->setMethod('POST')
-            ->setPostValue('files', [$this->imagesHelper->idEncode($this->fileName)]);
-        $this->model->getStorage()->getSession()->setCurrentPath($wysiwygDir);
-        $this->model->execute();
-        $this->assertFalse(is_file($fullDirectoryPath . DIRECTORY_SEPARATOR . $this->fileName));
     }
 
     /**

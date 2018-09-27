@@ -9,7 +9,6 @@ namespace Magento\ConfigurableProduct\Api;
 /**
  * Interface ConfigurableProductManagementInterface
  * @api
- * @since 100.0.2
  */
 interface ConfigurableProductManagementInterface
 {
@@ -25,7 +24,7 @@ interface ConfigurableProductManagementInterface
     /**
      * Provide the number of product count
      *
-     * @param int|null $status
+     * @param null|int $status
      * @return int
      */
     public function getCount($status = null);

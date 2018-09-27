@@ -19,7 +19,11 @@ class Dependency
 
     /**#@-*/
 
-    /**#@-*/
+    /**
+     * Module we depend on
+     *
+     * @var string
+     */
     protected $module;
 
     /**

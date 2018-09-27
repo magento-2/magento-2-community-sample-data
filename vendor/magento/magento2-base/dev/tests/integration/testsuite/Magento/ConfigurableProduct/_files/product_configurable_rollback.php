@@ -7,26 +7,24 @@
 $objectManager = \Magento\TestFramework\Helper\Bootstrap::getObjectManager();
 
 /** @var \Magento\Framework\Registry $registry */
-$registry = $objectManager->get(\Magento\Framework\Registry::class);
+$registry = $objectManager->get('Magento\Framework\Registry');
 
 $registry->unregister('isSecureArea');
 $registry->register('isSecureArea', true);
 
 /** @var \Magento\Catalog\Api\ProductRepositoryInterface $productRepository */
 $productRepository = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()
-    ->get(\Magento\Catalog\Api\ProductRepositoryInterface::class);
+    ->get('Magento\Catalog\Api\ProductRepositoryInterface');
 
 foreach (['simple_10', 'simple_20', 'configurable'] as $sku) {
     try {
-        $product = $productRepository->get($sku, true);
+        $product = $productRepository->get($sku, false, null, true);
 
-        $stockStatus = $objectManager->create(\Magento\CatalogInventory\Model\Stock\Status::class);
+        $stockStatus = $objectManager->create('Magento\CatalogInventory\Model\Stock\Status');
         $stockStatus->load($product->getEntityId(), 'product_id');
         $stockStatus->delete();
 
-        if ($product->getId()) {
-            $productRepository->delete($product);
-        }
+        $productRepository->delete($product);
     } catch (\Magento\Framework\Exception\NoSuchEntityException $e) {
         //Product already removed
     }

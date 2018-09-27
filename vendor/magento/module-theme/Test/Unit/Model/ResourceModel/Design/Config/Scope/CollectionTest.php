@@ -5,14 +5,14 @@
  */
 namespace Magento\Theme\Test\Unit\Model\ResourceModel\Design\Config\Scope;
 
+use Magento\Store\Model\ScopeInterface;
+use Magento\Theme\Model\ResourceModel\Design\Config\Scope\Collection;
 use Magento\Framework\App\Config\ScopeConfigInterface;
 use Magento\Framework\App\ScopeTreeProviderInterface;
 use Magento\Framework\Data\Collection\EntityFactoryInterface;
-use Magento\Store\Model\ScopeInterface;
 use Magento\Theme\Model\Design\Config\MetadataProviderInterface;
-use Magento\Theme\Model\ResourceModel\Design\Config\Scope\Collection;
 
-class CollectionTest extends \PHPUnit\Framework\TestCase
+class CollectionTest extends \PHPUnit_Framework_TestCase
 {
     /** @var Collection */
     protected $collection;
@@ -34,17 +34,16 @@ class CollectionTest extends \PHPUnit\Framework\TestCase
 
     protected function setUp()
     {
-        $this->entityFactoryMock = $this->getMockBuilder(
-            \Magento\Framework\Data\Collection\EntityFactoryInterface::class
-        )->getMockForAbstractClass();
-        $this->scopeTreeMock = $this->getMockBuilder(\Magento\Framework\App\ScopeTreeProviderInterface::class)
+        $this->entityFactoryMock = $this->getMockBuilder('Magento\Framework\Data\Collection\EntityFactoryInterface')
+            ->getMockForAbstractClass();
+        $this->scopeTreeMock = $this->getMockBuilder('Magento\Framework\App\ScopeTreeProviderInterface')
             ->getMockForAbstractClass();
         $this->metadataProviderMock =
-            $this->getMockBuilder(\Magento\Theme\Model\Design\Config\MetadataProviderInterface::class)
+            $this->getMockBuilder('Magento\Theme\Model\Design\Config\MetadataProviderInterface')
                 ->getMockForAbstractClass();
-        $this->appConfigMock = $this->getMockBuilder(\Magento\Framework\App\Config\ScopeConfigInterface::class)
+        $this->appConfigMock = $this->getMockBuilder('Magento\Framework\App\Config\ScopeConfigInterface')
             ->getMockForAbstractClass();
-        $this->valueProcessor = $this->getMockBuilder(\Magento\Theme\Model\Design\Config\ValueProcessor::class)
+        $this->valueProcessor = $this->getMockBuilder('Magento\Theme\Model\Design\Config\ValueProcessor')
             ->disableOriginalConstructor()
             ->getMock();
 
@@ -88,7 +87,7 @@ class CollectionTest extends \PHPUnit\Framework\TestCase
                                ],
                            ],
                        ],
-                    ],
+                   ],
                 ]
             );
 

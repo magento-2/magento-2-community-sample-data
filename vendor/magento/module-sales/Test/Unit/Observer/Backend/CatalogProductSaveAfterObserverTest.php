@@ -3,12 +3,11 @@
  * Copyright © Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
-
 namespace Magento\Sales\Test\Unit\Observer\Backend;
 
 use Magento\Sales\Observer\Backend\CatalogProductSaveAfterObserver;
 
-class CatalogProductSaveAfterObserverTest extends \PHPUnit\Framework\TestCase
+class CatalogProductSaveAfterObserverTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var CatalogProductSaveAfterObserver
@@ -32,11 +31,14 @@ class CatalogProductSaveAfterObserverTest extends \PHPUnit\Framework\TestCase
 
     protected function setUp()
     {
-        $this->_quoteMock = $this->createMock(\Magento\Quote\Model\ResourceModel\Quote::class);
-        $this->_observerMock = $this->createMock(\Magento\Framework\Event\Observer::class);
-        $this->_eventMock = $this->createPartialMock(
-            \Magento\Framework\Event::class,
-            ['getProduct', 'getStatus', 'getProductId']
+        $this->_quoteMock = $this->getMock('Magento\Quote\Model\ResourceModel\Quote', [], [], '', false);
+        $this->_observerMock = $this->getMock('Magento\Framework\Event\Observer', [], [], '', false);
+        $this->_eventMock = $this->getMock(
+            'Magento\Framework\Event',
+            ['getProduct', 'getStatus', 'getProductId'],
+            [],
+            '',
+            false
         );
         $this->_observerMock->expects($this->any())->method('getEvent')->will($this->returnValue($this->_eventMock));
         $this->_model = new CatalogProductSaveAfterObserver($this->_quoteMock);
@@ -49,9 +51,12 @@ class CatalogProductSaveAfterObserverTest extends \PHPUnit\Framework\TestCase
      */
     public function testSaveProduct($productId, $productStatus)
     {
-        $productMock = $this->createPartialMock(
-            \Magento\Catalog\Model\Product::class,
-            ['getId', 'getStatus', '__wakeup']
+        $productMock = $this->getMock(
+            'Magento\Catalog\Model\Product',
+            ['getId', 'getStatus', '__wakeup'],
+            [],
+            '',
+            false
         );
         $this->_eventMock->expects($this->once())->method('getProduct')->will($this->returnValue($productMock));
         $productMock->expects($this->once())->method('getId')->will($this->returnValue($productId));

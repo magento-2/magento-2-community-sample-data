@@ -12,19 +12,17 @@ namespace Magento\Wishlist\Block\Rss;
 /**
  * Class EmailLink
  *
- * @api
  * @SuppressWarnings(PHPMD.DepthOfInheritance)
- * @since 100.0.2
  */
 class EmailLink extends Link
 {
     /**
      * @var string
      */
-    protected $_template = 'rss/email.phtml';
+    protected $_template = 'Magento_Wishlist::rss/email.phtml';
 
     /**
-     * @return string
+     * @return array
      */
     protected function getLinkParams()
     {

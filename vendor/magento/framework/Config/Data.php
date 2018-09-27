@@ -1,30 +1,26 @@
 <?php
 /**
+ * Config data. Represents loaded and cached configuration data. Should be used to gain access to different types
+ *
  * Copyright © Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Framework\Config;
 
-use Magento\Framework\Serialize\SerializerInterface;
-use Magento\Framework\App\ObjectManager;
-
 /**
- * Represents loaded and cached configuration data, should be used to gain access to different types
- *
  * @SuppressWarnings(PHPMD.NumberOfChildren)
- * @api
  */
 class Data implements \Magento\Framework\Config\DataInterface
 {
     /**
-     * Configuration reader
+     * Configuration reader model
      *
      * @var ReaderInterface
      */
     protected $_reader;
 
     /**
-     * Configuration cache
+     * Configuration cache model
      *
      * @var CacheInterface
      */
@@ -67,34 +63,25 @@ class Data implements \Magento\Framework\Config\DataInterface
     private $cacheId;
 
     /**
-     * @var SerializerInterface
-     */
-    private $serializer;
-
-    /**
      * Constructor
      *
      * @param ReaderInterface $reader
      * @param CacheInterface $cache
      * @param string $cacheId
-     * @param SerializerInterface|null $serializer
      */
     public function __construct(
         ReaderInterface $reader,
         CacheInterface $cache,
-        $cacheId,
-        SerializerInterface $serializer = null
+        $cacheId
     ) {
         $this->reader = $reader;
         $this->cache = $cache;
         $this->cacheId = $cacheId;
-        $this->serializer = $serializer ?: ObjectManager::getInstance()->get(SerializerInterface::class);
         $this->initData();
     }
 
     /**
      * Initialise data for configuration
-     *
      * @return void
      */
     protected function initData()
@@ -102,11 +89,10 @@ class Data implements \Magento\Framework\Config\DataInterface
         $data = $this->cache->load($this->cacheId);
         if (false === $data) {
             $data = $this->reader->read();
-            $this->cache->save($this->serializer->serialize($data), $this->cacheId, $this->cacheTags);
+            $this->cache->save(serialize($data), $this->cacheId, $this->cacheTags);
         } else {
-            $data = $this->serializer->unserialize($data);
+            $data = unserialize($data);
         }
-
         $this->merge($data);
     }
 
@@ -147,7 +133,6 @@ class Data implements \Magento\Framework\Config\DataInterface
 
     /**
      * Clear cache data
-     *
      * @return void
      */
     public function reset()

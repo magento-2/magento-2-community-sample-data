@@ -9,7 +9,6 @@
 
 namespace Zend\Validator\File;
 
-use Countable;
 use Zend\Validator\AbstractValidator;
 use Zend\Validator\Exception;
 
@@ -36,7 +35,7 @@ class Upload extends AbstractValidator
     /**
      * @var array Error message templates
      */
-    protected $messageTemplates = [
+    protected $messageTemplates = array(
         self::INI_SIZE       => "File '%value%' exceeds the defined ini size",
         self::FORM_SIZE      => "File '%value%' exceeds the defined form size",
         self::PARTIAL        => "File '%value%' was only partially uploaded",
@@ -47,11 +46,11 @@ class Upload extends AbstractValidator
         self::ATTACK         => "File '%value%' was illegally uploaded. This could be a possible attack",
         self::FILE_NOT_FOUND => "File '%value%' was not found",
         self::UNKNOWN        => "Unknown error while uploading file '%value%'"
-    ];
+    );
 
-    protected $options = [
-        'files' => [],
-    ];
+    protected $options = array(
+        'files' => array(),
+    );
 
     /**
      * Sets validator options
@@ -62,10 +61,10 @@ class Upload extends AbstractValidator
      *
      * @param  array|\Traversable $options Array of files in syntax of \Zend\File\Transfer\Transfer
      */
-    public function __construct($options = [])
+    public function __construct($options = array())
     {
-        if (is_array($options) && ! array_key_exists('files', $options)) {
-            $options = ['files' => $options];
+        if (is_array($options) && !array_key_exists('files', $options)) {
+            $options = array('files' => $options);
         }
 
         parent::__construct($options);
@@ -81,7 +80,7 @@ class Upload extends AbstractValidator
     public function getFiles($file = null)
     {
         if ($file !== null) {
-            $return = [];
+            $return = array();
             foreach ($this->options['files'] as $name => $content) {
                 if ($name === $file) {
                     $return[$file] = $this->options['files'][$name];
@@ -108,23 +107,20 @@ class Upload extends AbstractValidator
      * @param  array $files The files to check in syntax of \Zend\File\Transfer\Transfer
      * @return Upload Provides a fluent interface
      */
-    public function setFiles($files = [])
+    public function setFiles($files = array())
     {
-        if (null === $files
-            || ((is_array($files) || $files instanceof Countable)
-                && count($files) === 0)
-        ) {
+        if (count($files) === 0) {
             $this->options['files'] = $_FILES;
         } else {
             $this->options['files'] = $files;
         }
 
         if ($this->options['files'] === null) {
-            $this->options['files'] = [];
+            $this->options['files'] = array();
         }
 
         foreach ($this->options['files'] as $file => $content) {
-            if (! isset($content['error'])) {
+            if (!isset($content['error'])) {
                 unset($this->options['files'][$file]);
             }
         }
@@ -142,7 +138,7 @@ class Upload extends AbstractValidator
      */
     public function isValid($value, $file = null)
     {
-        $files = [];
+        $files = array();
         $this->setValue($value);
         if (array_key_exists($value, $this->getFiles())) {
             $files = array_merge($files, $this->getFiles($value));
@@ -166,7 +162,7 @@ class Upload extends AbstractValidator
             $this->value = $file;
             switch ($content['error']) {
                 case 0:
-                    if (! is_uploaded_file($content['tmp_name'])) {
+                    if (!is_uploaded_file($content['tmp_name'])) {
                         $this->throwError($content, self::ATTACK);
                     }
                     break;

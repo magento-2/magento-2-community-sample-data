@@ -10,8 +10,6 @@ use Magento\Framework\App;
 
 /**
  * Cache status manager
- *
- * @api
  */
 class Manager
 {

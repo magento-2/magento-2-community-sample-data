@@ -35,6 +35,6 @@ class ThemeDependencyCheckerFactory
      */
     public function create()
     {
-        return $this->objectManagerProvider->get()->get(\Magento\Theme\Model\Theme\ThemeDependencyChecker::class);
+        return $this->objectManagerProvider->get()->get('Magento\Theme\Model\Theme\ThemeDependencyChecker');
     }
 }

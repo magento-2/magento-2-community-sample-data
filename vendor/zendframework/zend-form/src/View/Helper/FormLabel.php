@@ -23,10 +23,10 @@ class FormLabel extends AbstractHelper
      *
      * @var array
      */
-    protected $validTagAttributes = [
+    protected $validTagAttributes = array(
         'for'  => true,
         'form' => true,
-    ];
+    );
 
     /**
      * Generate a form label, optionally with content
@@ -42,7 +42,7 @@ class FormLabel extends AbstractHelper
      */
     public function __invoke(ElementInterface $element = null, $labelContent = null, $position = null)
     {
-        if (! $element) {
+        if (!$element) {
             return $this;
         }
 
@@ -108,7 +108,7 @@ class FormLabel extends AbstractHelper
             return sprintf('<label %s>', $attributes);
         }
 
-        if (! $attributesOrElement instanceof ElementInterface) {
+        if (!$attributesOrElement instanceof ElementInterface) {
             throw new Exception\InvalidArgumentException(sprintf(
                 '%s expects an array or Zend\Form\ElementInterface instance; received "%s"',
                 __METHOD__,
@@ -124,14 +124,14 @@ class FormLabel extends AbstractHelper
             ));
         }
 
-        $labelAttributes = [];
+        $labelAttributes = array();
         if ($attributesOrElement instanceof LabelAwareInterface) {
             $labelAttributes = $attributesOrElement->getLabelAttributes();
         }
 
-        $attributes = ['for' => $id];
+        $attributes = array('for' => $id);
 
-        if (! empty($labelAttributes)) {
+        if (!empty($labelAttributes)) {
             $attributes = array_merge($labelAttributes, $attributes);
         }
 

@@ -13,7 +13,7 @@ use Magento\Checkout\Model\Session;
 use Magento\Paypal\Helper\Checkout;
 use Magento\Sales\Model\Order;
 
-class CheckoutTest extends \PHPUnit\Framework\TestCase
+class CheckoutTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var Session|\PHPUnit_Framework_MockObject_MockObject

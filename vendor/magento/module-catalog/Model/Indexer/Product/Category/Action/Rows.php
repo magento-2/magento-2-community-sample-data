@@ -127,7 +127,7 @@ class Rows extends \Magento\Catalog\Model\Indexer\Category\Product\AbstractActio
 
     /**
      * Register affected products
-     *
+     * 
      * @param array $entityIds
      * @return void
      */
@@ -156,12 +156,10 @@ class Rows extends \Magento\Catalog\Model\Indexer\Category\Product\AbstractActio
      */
     protected function removeEntries()
     {
-        foreach ($this->storeManager->getStores() as $store) {
-            $this->connection->delete(
-                $this->getIndexTable($store->getId()),
-                ['product_id IN (?)' => $this->limitationByProducts]
-            );
-        };
+        $this->connection->delete(
+            $this->getMainTable(),
+            ['product_id IN (?)' => $this->limitationByProducts]
+        );
     }
 
     /**
@@ -213,22 +211,20 @@ class Rows extends \Magento\Catalog\Model\Indexer\Category\Product\AbstractActio
     /**
      * Returns a list of category ids which are assigned to product ids in the index
      *
-     * @return \Magento\Framework\Indexer\CacheContext
+     * This may be required to get list of categories that are affected by the indexation process.
+     * Also, returns all parents of assigned categories as they're may be affected as well.
+     *
+     * @param array $productIds
+     * @return array
      */
     private function getCategoryIdsFromIndex(array $productIds)
     {
-        $categoryIds = [];
-        foreach ($this->storeManager->getStores() as $store) {
-            $categoryIds = array_merge(
-                $categoryIds,
-                $this->connection->fetchCol(
-                    $this->connection->select()
-                        ->from($this->getIndexTable($store->getId()), ['category_id'])
-                        ->where('product_id IN (?)', $productIds)
-                        ->distinct()
-                )
-            );
-        };
+        $categoryIds = $this->connection->fetchCol(
+            $this->connection->select()
+                ->from($this->getMainTable(), ['category_id'])
+                ->where('product_id IN (?)', $productIds)
+                ->distinct()
+        );
         $parentCategories = $categoryIds;
         foreach ($categoryIds as $categoryId) {
             $parentIds = explode('/', $this->getPathFromCategoryId($categoryId));

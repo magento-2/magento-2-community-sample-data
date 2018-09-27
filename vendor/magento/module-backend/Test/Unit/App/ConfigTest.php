@@ -13,7 +13,7 @@ use Magento\Backend\App\Config;
  * @see \Magento\Backend\App\Config
  * @package Magento\Backend\Test\Unit\App
  */
-class ConfigTest extends \PHPUnit\Framework\TestCase
+class ConfigTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\Framework\App\Config|\PHPUnit_Framework_MockObject_MockObject
@@ -27,8 +27,17 @@ class ConfigTest extends \PHPUnit\Framework\TestCase
 
     protected function setUp()
     {
-        $this->appConfig = $this->createPartialMock(\Magento\Framework\App\Config::class, ['get']);
-        $this->model = new \Magento\Backend\App\Config($this->appConfig);
+        $this->appConfig = $this->getMock(
+            'Magento\Framework\App\Config',
+            ['get'],
+            [],
+            '',
+            false
+        );
+        $this->model = new \Magento\Backend\App\Config(
+            $this->getMock(\Magento\Framework\App\Config\ScopePool::class, [], [], '', false, false),
+            $this->appConfig
+        );
     }
 
     public function testGetValue()
@@ -70,6 +79,9 @@ class ConfigTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals($expectedResult, $this->model->isSetFlag($configPath));
     }
 
+    /**
+     * @return array
+     */
     public function isSetFlagDataProvider()
     {
         return [
@@ -90,6 +102,6 @@ class ConfigTest extends \PHPUnit\Framework\TestCase
      */
     protected function getConfigDataMock($mockedMethod)
     {
-        return $this->createPartialMock(\Magento\Framework\App\Config\Data::class, [$mockedMethod]);
+        return $this->getMock('Magento\Framework\App\Config\Data', [$mockedMethod], [], '', false);
     }
 }

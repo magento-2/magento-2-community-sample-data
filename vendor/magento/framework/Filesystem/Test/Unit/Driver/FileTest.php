@@ -8,7 +8,7 @@ namespace Magento\Framework\Filesystem\Test\Unit\Driver;
 
 use Magento\Framework\Filesystem\Driver\File;
 
-class FileTest extends \PHPUnit\Framework\TestCase
+class FileTest extends \PHPUnit_Framework_TestCase
 {
     /** @var string Result of file_get_contents() function */
     public static $fileGetContents;
@@ -31,13 +31,16 @@ class FileTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals($expected, $file->getAbsolutePath($basePath, $path));
     }
 
+    /**
+     * @return array
+     */
     public function dataProviderForTestGetAbsolutePath()
     {
         return [
             ['/root/path/', 'sub', '/root/path/sub'],
             ['/root/path/', '/sub', '/root/path/sub'],
             ['/root/path/', '../sub', '/root/path/../sub'],
-            ['/root/path/', '/root/path/sub', '/root/path/sub'],
+            ['/root/path/', '/root/path/sub', '/root/path/root/path/sub'],
         ];
     }
 
@@ -50,6 +53,9 @@ class FileTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals($expected, $file->getRelativePath($basePath, $path));
     }
 
+    /**
+     * @return array
+     */
     public function dataProviderForTestGetRelativePath()
     {
         return [

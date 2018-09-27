@@ -5,13 +5,19 @@
  */
 namespace Magento\Catalog\Test\Unit\Block\Product;
 
-class ListTest extends \PHPUnit\Framework\TestCase
+class ListTest extends \PHPUnit_Framework_TestCase
 {
     public function testGetMode()
     {
         $childBlock = new \Magento\Framework\DataObject();
 
-        $block = $this->createPartialMock(\Magento\Catalog\Block\Product\ListProduct::class, ['getChildBlock']);
+        $block = $this->getMock(
+            'Magento\Catalog\Block\Product\ListProduct',
+            ['getChildBlock'],
+            [],
+            '',
+            false
+        );
         $block->expects(
             $this->atLeastOnce()
         )->method(

@@ -28,7 +28,7 @@ class AssertCatalogPriceRuleNotAppliedShoppingCart extends AbstractConstraint
         array $productPrice
     ) {
         $this->objectManager->create(
-            \Magento\Checkout\Test\TestStep\AddProductsToTheCartStep::class,
+            '\Magento\Checkout\Test\TestStep\AddProductsToTheCartStep',
             ['products' => $products]
         )->run();
         $checkoutCartPage->open();

@@ -13,12 +13,7 @@ use Magento\ConfigurableProduct\Model\Product\VariationHandler;
 use Magento\Catalog\Controller\Adminhtml\Product\Initialization\Helper as ProductInitializationHelper;
 use Magento\Catalog\Model\Product;
 
-/**
- * Class UpdateConfigurationsTest
- * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
- * @package Magento\ConfigurableProduct\Test\Unit\Controller\Adminhtml\Product\Initialization\Helper\Plugin
- */
-class UpdateConfigurationsTest extends \PHPUnit\Framework\TestCase
+class UpdateConfigurationsTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var UpdateConfigurations
@@ -148,12 +143,18 @@ class UpdateConfigurationsTest extends \PHPUnit\Framework\TestCase
             'product3' => $this->getProductMock($configurations['product3'], false, true),
         ];
 
+        $productMock->expects(static::any())
+            ->method('hasData')
+            ->willReturn(true);
+        $productMock->expects(static::any())
+            ->method('getData')
+            ->with('configurable-matrix')
+            ->willReturn($configurableMatrix);
         $this->requestMock->expects(static::any())
             ->method('getParam')
             ->willReturnMap(
                 [
-                    ['store', 0, 0],
-                    ['configurable-matrix-serialized', "[]", json_encode($configurableMatrix)]
+                    ['store', 0, 0]
                 ]
             );
         $this->variationHandlerMock->expects(static::once())
@@ -209,31 +210,5 @@ class UpdateConfigurationsTest extends \PHPUnit\Framework\TestCase
                 ->willReturnSelf();
         }
         return $productMock;
-    }
-
-    /**
-     * Test for no exceptions if configurable matrix is empty string.
-     */
-    public function testAfterInitializeEmptyMatrix()
-    {
-        $productMock = $this->getProductMock();
-
-        $this->requestMock->expects(static::any())
-            ->method('getParam')
-            ->willReturnMap(
-                [
-                    ['store', 0, 0],
-                    ['configurable-matrix-serialized', null, ''],
-                ]
-            );
-
-        $this->variationHandlerMock->expects(static::once())
-            ->method('duplicateImagesForVariations')
-            ->with([])
-            ->willReturn([]);
-
-        $this->updateConfigurations->afterInitialize($this->subjectMock, $productMock);
-
-        $this->assertEmpty($productMock->getData());
     }
 }

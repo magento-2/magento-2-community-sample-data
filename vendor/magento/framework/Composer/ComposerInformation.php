@@ -47,7 +47,7 @@ class ComposerInformation
     /**
      * Default composer repository key
      */
-    const COMPOSER_DEFAULT_REPO_KEY = 'packagist.org';
+    const COMPOSER_DEFAULT_REPO_KEY = 'packagist';
 
     /**#@+
      * Composer command
@@ -63,7 +63,9 @@ class ComposerInformation
     const PARAM_AVAILABLE = '--available';
     /**#@-*/
 
-    /**#@-*/
+    /**
+     * @var \Composer\Composer
+     */
     private $composer;
 
     /**
@@ -71,9 +73,7 @@ class ComposerInformation
      */
     private $locker;
 
-    /**
-     * @var array
-     */
+    /** @var array */
     private static $packageTypes = [
         self::THEME_PACKAGE_TYPE,
         self::LANGUAGE_PACKAGE_TYPE,
@@ -341,7 +341,7 @@ class ComposerInformation
      * Load composerFactory
      *
      * @return ComposerFactory
-     * @deprecated 100.1.0
+     * @deprecated
      */
     private function getComposerFactory()
     {

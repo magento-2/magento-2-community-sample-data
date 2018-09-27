@@ -14,24 +14,18 @@ use Magento\Framework\Api\DataObjectHelper;
  */
 abstract class AbstractStorage implements StorageInterface
 {
-    /**
-     * @var \Magento\UrlRewrite\Service\V1\Data\UrlRewriteFactory
-     */
+    /** @var UrlRewriteFactory */
     protected $urlRewriteFactory;
 
-    /**
-     * @var \Magento\Framework\Api\DataObjectHelper
-     */
+    /** @var  DataObjectHelper */
     protected $dataObjectHelper;
 
     /**
      * @param UrlRewriteFactory $urlRewriteFactory
      * @param DataObjectHelper $dataObjectHelper
      */
-    public function __construct(
-        UrlRewriteFactory $urlRewriteFactory,
-        DataObjectHelper $dataObjectHelper
-    ) {
+    public function __construct(UrlRewriteFactory $urlRewriteFactory, DataObjectHelper $dataObjectHelper)
+    {
         $this->urlRewriteFactory = $urlRewriteFactory;
         $this->dataObjectHelper = $dataObjectHelper;
     }
@@ -56,7 +50,7 @@ abstract class AbstractStorage implements StorageInterface
      * @param array $data
      * @return array
      */
-    abstract protected function doFindAllByData(array $data);
+    abstract protected function doFindAllByData($data);
 
     /**
      * {@inheritdoc}
@@ -74,7 +68,7 @@ abstract class AbstractStorage implements StorageInterface
      * @param array $data
      * @return array
      */
-    abstract protected function doFindOneByData(array $data);
+    abstract protected function doFindOneByData($data);
 
     /**
      * {@inheritdoc}
@@ -82,19 +76,26 @@ abstract class AbstractStorage implements StorageInterface
     public function replace(array $urls)
     {
         if (!$urls) {
-            return [];
+            return;
         }
-        return $this->doReplace($urls);
+
+        try {
+            $this->doReplace($urls);
+        } catch (\Magento\Framework\Exception\AlreadyExistsException $e) {
+            throw new \Magento\Framework\Exception\AlreadyExistsException(
+                __('URL key for specified store already exists.')
+            );
+        }
     }
 
     /**
      * Save new url rewrites and remove old if exist. Template method
      *
      * @param \Magento\UrlRewrite\Service\V1\Data\UrlRewrite[] $urls
-     * @return \Magento\UrlRewrite\Service\V1\Data\UrlRewrite[]
-     * @throws \Magento\UrlRewrite\Model\Exception\UrlAlreadyExistsException|\Exception
+     * @return int
+     * @throws \Magento\Framework\Exception\AlreadyExistsException
      */
-    abstract protected function doReplace(array $urls);
+    abstract protected function doReplace($urls);
 
     /**
      * Create url rewrite object

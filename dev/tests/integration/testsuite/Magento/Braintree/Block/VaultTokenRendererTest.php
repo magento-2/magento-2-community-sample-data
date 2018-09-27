@@ -17,7 +17,7 @@ use Magento\Vault\Model\AccountPaymentTokenFactory;
 /**
  * Class VaultTokenRendererTest
  */
-class VaultTokenRendererTest extends \PHPUnit\Framework\TestCase
+class VaultTokenRendererTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var AccountTokens

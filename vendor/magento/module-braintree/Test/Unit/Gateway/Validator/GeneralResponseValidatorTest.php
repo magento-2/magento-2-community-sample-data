@@ -5,16 +5,14 @@
  */
 namespace Magento\Braintree\Test\Unit\Gateway\Validator;
 
-use Braintree\Result\Error;
-use Magento\Braintree\Gateway\SubjectReader;
-use Magento\Braintree\Gateway\Validator\ErrorCodeValidator;
-use Magento\Braintree\Gateway\Validator\GeneralResponseValidator;
+use Braintree\Transaction;
 use Magento\Framework\Phrase;
-use Magento\Payment\Gateway\Validator\Result;
+use Magento\Payment\Gateway\Validator\ResultInterface;
 use Magento\Payment\Gateway\Validator\ResultInterfaceFactory;
-use PHPUnit_Framework_MockObject_MockObject as MockObject;
+use Magento\Braintree\Gateway\Validator\GeneralResponseValidator;
+use Magento\Braintree\Gateway\Helper\SubjectReader;
 
-class GeneralResponseValidatorTest extends \PHPUnit\Framework\TestCase
+class GeneralResponseValidatorTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var GeneralResponseValidator
@@ -22,9 +20,14 @@ class GeneralResponseValidatorTest extends \PHPUnit\Framework\TestCase
     private $responseValidator;
 
     /**
-     * @var ResultInterfaceFactory|MockObject
+     * @var ResultInterfaceFactory|\PHPUnit_Framework_MockObject_MockObject
      */
-    private $resultInterfaceFactory;
+    private $resultInterfaceFactoryMock;
+
+    /**
+     * @var SubjectReader|\PHPUnit_Framework_MockObject_MockObject
+     */
+    private $subjectReaderMock;
 
     /**
      * Set up
@@ -33,20 +36,23 @@ class GeneralResponseValidatorTest extends \PHPUnit\Framework\TestCase
      */
     protected function setUp()
     {
-        $this->resultInterfaceFactory = $this->getMockBuilder(ResultInterfaceFactory::class)
-            ->disableOriginalConstructor()
+        $this->resultInterfaceFactoryMock = $this->getMockBuilder(
+            \Magento\Payment\Gateway\Validator\ResultInterfaceFactory::class
+        )->disableOriginalConstructor()
             ->setMethods(['create'])
+            ->getMock();
+        $this->subjectReaderMock = $this->getMockBuilder(SubjectReader::class)
+            ->disableOriginalConstructor()
             ->getMock();
 
         $this->responseValidator = new GeneralResponseValidator(
-            $this->resultInterfaceFactory,
-            new SubjectReader(),
-            new ErrorCodeValidator()
+            $this->resultInterfaceFactoryMock,
+            $this->subjectReaderMock
         );
     }
 
     /**
-     * Checks a case when the validator processes successful and failed transactions.
+     * Run test for validate method
      *
      * @param array $validationSubject
      * @param bool $isValid
@@ -55,52 +61,45 @@ class GeneralResponseValidatorTest extends \PHPUnit\Framework\TestCase
      *
      * @dataProvider dataProviderTestValidate
      */
-    public function testValidate(array $validationSubject, bool $isValid, $messages)
+    public function testValidate(array $validationSubject, $isValid, $messages)
     {
-        $result = new Result($isValid, $messages);
+        /** @var ResultInterface|\PHPUnit_Framework_MockObject_MockObject $resultMock */
+        $resultMock = $this->getMock(ResultInterface::class);
 
-        $this->resultInterfaceFactory->method('create')
+        $this->subjectReaderMock->expects(self::once())
+            ->method('readResponseObject')
+            ->with($validationSubject)
+            ->willReturn($validationSubject['response']['object']);
+
+        $this->resultInterfaceFactoryMock->expects(self::once())
+            ->method('create')
             ->with([
                 'isValid' => $isValid,
                 'failsDescription' => $messages
             ])
-            ->willReturn($result);
+            ->willReturn($resultMock);
 
-        $actual = $this->responseValidator->validate($validationSubject);
+        $actualMock = $this->responseValidator->validate($validationSubject);
 
-        self::assertEquals($result, $actual);
+        self::assertEquals($resultMock, $actualMock);
     }
 
     /**
-     * Gets variations for different type of response.
-     *
      * @return array
      */
     public function dataProviderTestValidate()
     {
-        $successTransaction = new \stdClass();
-        $successTransaction->success = true;
+        $successTrue = new \stdClass();
+        $successTrue->success = true;
 
-        $failureTransaction = new \stdClass();
-        $failureTransaction->success = false;
-        $failureTransaction->message = 'Transaction was failed.';
-
-        $errors = [
-            'errors' => [
-                [
-                    'code' => 81804,
-                    'attribute' => 'base',
-                    'message' => 'Cannot process transaction.'
-                ]
-            ]
-        ];
-        $errorTransaction = new Error(['errors' => $errors]);
+        $successFalse = new \stdClass();
+        $successFalse->success = false;
 
         return [
             [
                 'validationSubject' => [
                     'response' => [
-                        'object' => $successTransaction
+                        'object' => $successTrue
                     ],
                 ],
                 'isValid' => true,
@@ -109,24 +108,12 @@ class GeneralResponseValidatorTest extends \PHPUnit\Framework\TestCase
             [
                 'validationSubject' => [
                     'response' => [
-                        'object' => $failureTransaction
+                        'object' => $successFalse
                     ]
                 ],
                 'isValid' => false,
                 [
-                    __('Transaction was failed.')
-                ]
-            ],
-            [
-                'validationSubject' => [
-                    'response' => [
-                        'object' => $errorTransaction
-                    ]
-                ],
-                'isValid' => false,
-                [
-                    __('Braintree error response.'),
-                    81804
+                    __('Braintree error response.')
                 ]
             ]
         ];

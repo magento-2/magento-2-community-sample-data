@@ -6,9 +6,6 @@
 
 namespace Magento\Framework\Exception;
 
-/**
- * @api
- */
 class CouldNotSaveException extends AbstractAggregateException
 {
 }

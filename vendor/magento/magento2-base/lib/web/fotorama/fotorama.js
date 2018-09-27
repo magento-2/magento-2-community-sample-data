@@ -831,7 +831,7 @@ fotoramaVersion = '4.6.4';
                 }
                 type = 'youtube';
             }
-        } else if (href.host.match(/youtube\.com|youtu\.be/)) {
+        } else if (href.host.match(/youtube\.com|youtu\.be|youtube-nocookie.com/)) {
             id = href.pathname.replace(/^\/(embed\/|v\/)?/, '').replace(/\/.*/, '');
             type = 'youtube';
         } else if (href.host.match(/vimeo\.com/)) {
@@ -1215,22 +1215,6 @@ fotoramaVersion = '4.6.4';
     function stopEvent(e, stopPropagation) {
         e.preventDefault ? e.preventDefault() : (e.returnValue = false);
         stopPropagation && e.stopPropagation && e.stopPropagation();
-    }
-
-    function stubEvent($el, eventType) {
-        var isIOS = /ip(ad|hone|od)/i.test(window.navigator.userAgent);
-
-        if (isIOS && eventType === 'touchend') {
-            $el.on('touchend', function(e){
-                $DOCUMENT.trigger('mouseup', e);
-            })
-        }
-
-        $el.on(eventType, function (e) {
-            stopEvent(e, true);
-
-            return false;
-        });
     }
 
     function getDirectionSign(forward) {
@@ -2166,11 +2150,6 @@ fotoramaVersion = '4.6.4';
             if (o_allowFullScreen) {
                 $fullscreenIcon.prependTo($stage);
                 o_nativeFullScreen = FULLSCREEN && o_allowFullScreen === 'native';
-
-                // Due 300ms click delay on mobile devices
-                // we stub touchend and fallback to click.
-                // MAGETWO-69567
-                stubEvent($fullscreenIcon, 'touchend');
             } else {
                 $fullscreenIcon.detach();
                 o_nativeFullScreen = false;

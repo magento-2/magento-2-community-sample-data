@@ -18,7 +18,7 @@ class ReturnWizard extends \Magento\Paypal\Controller\Billing\Agreement
     public function execute()
     {
         /** @var \Magento\Paypal\Model\Billing\Agreement $agreement */
-        $agreement = $this->_objectManager->create(\Magento\Paypal\Model\Billing\Agreement::class);
+        $agreement = $this->_objectManager->create('Magento\Paypal\Model\Billing\Agreement');
         $paymentCode = $this->getRequest()->getParam('payment_method');
         $token = $this->getRequest()->getParam('token');
 
@@ -28,7 +28,7 @@ class ReturnWizard extends \Magento\Paypal\Controller\Billing\Agreement
         if ($token && $paymentCode) {
             try {
                 $agreement->setStoreId(
-                    $this->_objectManager->get(\Magento\Store\Model\StoreManager::class)->getStore()->getId()
+                    $this->_objectManager->get('Magento\Store\Model\StoreManager')->getStore()->getId()
                 )->setToken(
                     $token
                 )->setMethodCode(

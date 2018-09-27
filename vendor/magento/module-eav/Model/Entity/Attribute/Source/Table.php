@@ -6,13 +6,9 @@
 namespace Magento\Eav\Model\Entity\Attribute\Source;
 
 use Magento\Framework\App\ObjectManager;
-use Magento\Store\Model\StoreManagerInterface;
 use Magento\Framework\Escaper;
+use Magento\Store\Model\StoreManagerInterface;
 
-/**
- * @api
- * @since 100.0.2
- */
 class Table extends \Magento\Eav\Model\Entity\Attribute\Source\AbstractSource
 {
     /**
@@ -33,6 +29,8 @@ class Table extends \Magento\Eav\Model\Entity\Attribute\Source\AbstractSource
     protected $_attrOptionFactory;
 
     /**
+     * Store manager interface.
+     *
      * @var StoreManagerInterface
      */
     private $storeManager;
@@ -77,6 +75,7 @@ class Table extends \Magento\Eav\Model\Entity\Attribute\Source\AbstractSource
         if (!is_array($this->_optionsDefault)) {
             $this->_optionsDefault = [];
         }
+
         $attributeId = $this->getAttribute()->getId();
         if (!isset($this->_options[$storeId][$attributeId])) {
             $collection = $this->_attrOptionCollectionFactory->create()->setPositionOrder(
@@ -100,16 +99,17 @@ class Table extends \Magento\Eav\Model\Entity\Attribute\Source\AbstractSource
     }
 
     /**
-     * Get StoreManager dependency
+     * Get StoreManager dependency.
      *
      * @return StoreManagerInterface
-     * @deprecated 100.1.6
+     * @deprecated
      */
     private function getStoreManager()
     {
         if ($this->storeManager === null) {
             $this->storeManager = ObjectManager::getInstance()->get(StoreManagerInterface::class);
         }
+
         return $this->storeManager;
     }
 

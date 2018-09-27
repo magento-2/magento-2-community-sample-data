@@ -24,14 +24,4 @@ class Link extends Block
     {
         $this->_rootElement->click();
     }
-
-    /**
-     * Get title of Proceed to Checkout link
-     *
-     * @return string
-     */
-    public function getTitle()
-    {
-        return $this->_rootElement->getText();
-    }
 }

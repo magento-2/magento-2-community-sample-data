@@ -7,10 +7,6 @@
  */
 namespace Magento\ConfigurableProduct\Block\Product\Configurable\AssociatedSelector\Renderer;
 
-/**
- * @api
- * @since 100.0.2
- */
 class Id extends \Magento\Backend\Block\Widget\Grid\Column\Renderer\AbstractRenderer
 {
     /**

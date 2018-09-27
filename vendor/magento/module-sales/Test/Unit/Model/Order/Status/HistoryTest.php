@@ -11,7 +11,7 @@ use Magento\Sales\Model\Order\Status\History;
 /**
  * Class HistoryTest
  */
-class HistoryTest extends \PHPUnit\Framework\TestCase
+class HistoryTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\Framework\TestFramework\Unit\Helper\ObjectManager
@@ -37,16 +37,18 @@ class HistoryTest extends \PHPUnit\Framework\TestCase
     {
         $this->objectManager = new \Magento\Framework\TestFramework\Unit\Helper\ObjectManager($this);
 
-        $this->order = $this->createMock(\Magento\Sales\Model\Order::class);
+        $this->order = $this->getMock('Magento\Sales\Model\Order', [], [], '', false);
         $this->storeManager = $this->getMockForAbstractClass(
-            \Magento\Store\Model\StoreManagerInterface::class,
+            'Magento\Store\Model\StoreManagerInterface',
             [],
             '',
             false
         );
 
+
+
         $this->model = $this->objectManager->getObject(
-            \Magento\Sales\Model\Order\Status\History::class,
+            'Magento\Sales\Model\Order\Status\History',
             ['storeManager' => $this->storeManager]
         );
     }
@@ -76,7 +78,7 @@ class HistoryTest extends \PHPUnit\Framework\TestCase
         $status = 'pending';
         $this->assertNull($this->model->getStatusLabel());
         $this->model->setStatus($status);
-        $config = $this->createMock(\Magento\Sales\Model\Order\Config::class);
+        $config = $this->getMock('Magento\Sales\Model\Order\Config', [], [], '', false);
         $config->expects($this->once())->method('getStatusLabel')->with($status)->willReturn($status);
         $this->order->expects($this->once())->method('getConfig')->willReturn($config);
         $this->model->setOrder($this->order);

@@ -7,7 +7,7 @@ namespace Magento\Setup\Test\Unit\Module\Dependency\Parser\Composer;
 
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
 
-class JsonTest extends \PHPUnit\Framework\TestCase
+class JsonTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\Setup\Module\Dependency\Parser\Config\Xml
@@ -17,7 +17,7 @@ class JsonTest extends \PHPUnit\Framework\TestCase
     protected function setUp()
     {
         $objectManagerHelper = new ObjectManager($this);
-        $this->parser = $objectManagerHelper->getObject(\Magento\Setup\Module\Dependency\Parser\Composer\Json::class);
+        $this->parser = $objectManagerHelper->getObject('Magento\Setup\Module\Dependency\Parser\Composer\Json');
     }
 
     /**

@@ -13,7 +13,7 @@ use \Magento\Framework\Event\ObserverFactory;
  *
  * @package Magento\Framework\Event
  */
-class ObserverFactoryTest extends \PHPUnit\Framework\TestCase
+class ObserverFactoryTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\Framework\ObjectManagerInterface|\PHPUnit_Framework_MockObject_MockObject
@@ -27,9 +27,13 @@ class ObserverFactoryTest extends \PHPUnit\Framework\TestCase
 
     protected function setUp()
     {
-        $this->objectManagerMock = $this->createPartialMock(
-            \Magento\Framework\ObjectManager\ObjectManager::class,
-            ['get', 'create']
+        $this->objectManagerMock = $this->getMock(
+            'Magento\Framework\ObjectManager\ObjectManager',
+            ['get', 'create'],
+            [],
+            '',
+            false,
+            false
         );
         $this->observerFactory = new ObserverFactory($this->objectManagerMock);
     }
@@ -37,7 +41,7 @@ class ObserverFactoryTest extends \PHPUnit\Framework\TestCase
     public function testGet()
     {
         $className = 'Magento\Class';
-        $observerMock = $this->getMockBuilder('Observer')->getMock();
+        $observerMock = $this->getMock('Magento\Observer', [], [], '', false, false);
         $this->objectManagerMock->expects($this->once())
             ->method('get')
             ->with($className)
@@ -50,7 +54,7 @@ class ObserverFactoryTest extends \PHPUnit\Framework\TestCase
     public function testCreate()
     {
         $className = 'Magento\Class';
-        $observerMock =  $this->getMockBuilder('Observer')->getMock();
+        $observerMock = $this->getMock('Magento\Observer', [], [], '', false, false);
         $arguments = ['arg1', 'arg2'];
 
         $this->objectManagerMock->expects($this->once())

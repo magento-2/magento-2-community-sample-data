@@ -11,7 +11,7 @@ use Magento\Customer\Model\Context;
 /**
  * Class ContextPluginTest
  */
-class ContextPluginTest extends \PHPUnit\Framework\TestCase
+class ContextPluginTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\Customer\Model\App\Action\ContextPlugin
@@ -29,6 +29,11 @@ class ContextPluginTest extends \PHPUnit\Framework\TestCase
     protected $httpContextMock;
 
     /**
+     * @var \Closure
+     */
+    protected $closureMock;
+
+    /**
      * @var \PHPUnit_Framework_MockObject_MockObject
      */
     protected $subjectMock;
@@ -43,10 +48,25 @@ class ContextPluginTest extends \PHPUnit\Framework\TestCase
      */
     protected function setUp()
     {
-        $this->customerSessionMock = $this->createMock(\Magento\Customer\Model\Session::class);
-        $this->httpContextMock = $this->createMock(\Magento\Framework\App\Http\Context::class);
-        $this->subjectMock = $this->createMock(\Magento\Framework\App\Action\Action::class);
-        $this->requestMock = $this->createMock(\Magento\Framework\App\RequestInterface::class);
+        $this->customerSessionMock = $this->getMock(
+            'Magento\Customer\Model\Session',
+            [],
+            [],
+            '',
+            false
+        );
+        $this->httpContextMock = $this->getMock(
+            'Magento\Framework\App\Http\Context',
+            [],
+            [],
+            '',
+            false
+        );
+        $this->closureMock = function () {
+            return 'ExpectedValue';
+        };
+        $this->subjectMock = $this->getMock('Magento\Framework\App\Action\Action', [], [], '', false);
+        $this->requestMock = $this->getMock('Magento\Framework\App\RequestInterface');
         $this->plugin = new \Magento\Customer\Model\App\Action\ContextPlugin(
             $this->customerSessionMock,
             $this->httpContextMock
@@ -56,7 +76,7 @@ class ContextPluginTest extends \PHPUnit\Framework\TestCase
     /**
      * Test aroundDispatch
      */
-    public function testBeforeDispatch()
+    public function testAroundDispatch()
     {
         $this->customerSessionMock->expects($this->once())
             ->method('getCustomerGroupId')
@@ -74,6 +94,9 @@ class ContextPluginTest extends \PHPUnit\Framework\TestCase
                     ]
                 )
             );
-        $this->plugin->beforeDispatch($this->subjectMock, $this->requestMock);
+        $this->assertEquals(
+            'ExpectedValue',
+            $this->plugin->aroundDispatch($this->subjectMock, $this->closureMock, $this->requestMock)
+        );
     }
 }

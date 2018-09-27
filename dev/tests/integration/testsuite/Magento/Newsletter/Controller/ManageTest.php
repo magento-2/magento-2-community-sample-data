@@ -15,7 +15,6 @@ class ManageTest extends \Magento\TestFramework\TestCase\AbstractController
      * @var \Magento\Customer\Model\Session
      */
     protected $customerSession;
-
     /**
      * @var \Magento\Framework\Session\Generic
      */
@@ -25,9 +24,9 @@ class ManageTest extends \Magento\TestFramework\TestCase\AbstractController
     {
         parent::setUp();
         $objectManager = \Magento\TestFramework\Helper\Bootstrap::getObjectManager();
-        $this->customerSession = $objectManager->get(\Magento\Customer\Model\Session::class);
+        $this->customerSession = $objectManager->get('Magento\Customer\Model\Session');
         $this->customerSession->setCustomerId(1);
-        $this->coreSession = $objectManager->get(\Magento\Framework\Session\Generic::class);
+        $this->coreSession = $objectManager->get('Magento\Framework\Session\Generic');
         $this->coreSession->setData('_form_key', 'formKey');
     }
 

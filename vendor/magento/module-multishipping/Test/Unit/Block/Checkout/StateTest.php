@@ -11,7 +11,7 @@ namespace Magento\Multishipping\Test\Unit\Block\Checkout;
 
 use Magento\Multishipping\Block\Checkout\State;
 
-class StateTest extends \PHPUnit\Framework\TestCase
+class StateTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var State
@@ -27,9 +27,8 @@ class StateTest extends \PHPUnit\Framework\TestCase
     {
         $objectManager = new \Magento\Framework\TestFramework\Unit\Helper\ObjectManager($this);
         $this->mShippingStateMock =
-            $this->createMock(\Magento\Multishipping\Model\Checkout\Type\Multishipping\State::class);
-        $this->model = $objectManager->getObject(
-            \Magento\Multishipping\Block\Checkout\State::class,
+            $this->getMock('Magento\Multishipping\Model\Checkout\Type\Multishipping\State', [], [], '', false);
+        $this->model = $objectManager->getObject('Magento\Multishipping\Block\Checkout\State',
             [
                 'multishippingState' => $this->mShippingStateMock,
             ]

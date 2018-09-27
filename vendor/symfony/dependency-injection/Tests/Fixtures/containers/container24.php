@@ -7,7 +7,8 @@ $container = new ContainerBuilder();
 $container
     ->register('foo', 'Foo')
     ->setAutowired(true)
-    ->setPublic(true)
+    ->addAutowiringType('A')
+    ->addAutowiringType('B')
 ;
 
 return $container;

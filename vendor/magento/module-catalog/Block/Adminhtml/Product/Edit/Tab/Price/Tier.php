@@ -13,7 +13,7 @@ class Tier extends Group\AbstractGroup
     /**
      * @var string
      */
-    protected $_template = 'catalog/product/edit/price/tier.phtml';
+    protected $_template = 'Magento_Catalog::catalog/product/edit/price/tier.phtml';
 
     /**
      * Retrieve list of initial customer groups
@@ -69,7 +69,7 @@ class Tier extends Group\AbstractGroup
     protected function _prepareLayout()
     {
         $button = $this->getLayout()->createBlock(
-            \Magento\Backend\Block\Widget\Button::class
+            'Magento\Backend\Block\Widget\Button'
         )->setData(
             ['label' => __('Add Price'), 'onclick' => 'return tierPriceControl.addItem()', 'class' => 'add']
         );

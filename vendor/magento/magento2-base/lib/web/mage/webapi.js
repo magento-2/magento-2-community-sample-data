@@ -2,40 +2,33 @@
  * Copyright © Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
-
-/**
- * @deprecated since version 2.2.0
- */
+/* jshint define: true */
 (function (factory) {
-    'use strict';
-
     if (typeof define === 'function' && define.amd) {
         define([
-            'jquery',
-            'mage/mage'
+            "jquery",
+            "mage/mage"
         ], factory);
     } else {
         factory(jQuery);
     }
 }(function ($) {
-    'use strict';
+    "use strict";
 
     /**
      * Webapi object constructor
      *
-     * @param {String} baseUrl - Base URL
-     * @param {Object|undefined} ajaxArgs - Arguments for AJAX API call
+     * @param {string}           baseUrl  Base URL
+     * @param {Object|undefined} ajaxArgs Arguments for AJAX API call
      * @see http://api.jquery.com/jQuery.ajax/
      * @returns {{method: Object, call: Function}}
      */
-    $.mage.Webapi = function (baseUrl, ajaxArgs) {
-        var validMethods;
-
+    $.mage.Webapi = function(baseUrl, ajaxArgs) {
         /**
          * Resource-related parameters. Further extended by other domain objects like Product, etc.
          *
          * @const
-         * @type {Object}
+         * @type {{uri: {base: string}}}
          */
         this.resource = {
             uri: {
@@ -45,8 +38,10 @@
         };
 
         /**
+         *
+         *
          * @const
-         * @type {Object}
+         * @type {{create: string, update: string, get: string, delete: string}}
          */
         this.method = {
             'create': 'POST',
@@ -55,7 +50,7 @@
             'delete': 'DELETE'
         };
 
-        validMethods = [this.method.create, this.method.update, this.method.get, this.method['delete']];
+        var validMethods = [this.method.create, this.method.update, this.method.get, this.method['delete']];
 
         // Check whether passed options comply with what we allow
         if (ajaxArgs && typeof ajaxArgs !== 'object') {
@@ -72,61 +67,58 @@
         /**
          * Makes an API request
          *
-         * @param {String} resourceUri - Resource URI request to be sent to, e.g. '/v1/products/'
-         * @param {String} method - Request method, e.g. GET, POST, etc.
-         * @param {*} data - Payload to be sent to the server
-         * @param {String|undefined} version - Optional: API version, e.g. 'v1' (if not specifieds using URI)
+         * @param {string}           resourceUri Resource URI request to be sent to, e.g. '/v1/products/'
+         * @param {string}           method      Request method, e.g. GET, POST, etc.
+         * @param {*}                data        Payload to be sent to the server
+         * @param {string|undefined} version     Optional: API version, e.g. 'v1' (if not specified
+         *                                       using URI)
          * @returns {jqXHR}
          */
-        this.call = function (resourceUri, method, data, version) {
-            var that = this,
-                ajaxOptions;
-
+        this.call = function(resourceUri, method, data, version) {
             /**
              * Helper function to validate request method
              *
-             * @param {String} methodName
-             * @returns {String}
+             * @param {string} method
+             * @returns {string}
              */
-            function validateMethod(methodName) {
-                if (validMethods.indexOf(methodName) === -1) {
-                    throw 'Method name is not valid: ' + methodName;
+            function validateMethod(method) {
+                if (validMethods.indexOf(method) === -1) {
+                    throw 'Method name is not valid: ' + method;
                 }
 
-                return methodName;
+                return method;
             }
+
+            var that = this;
 
             /**
              * Helper function to construct URIs
              *
-             * @param {String} resUri - Resource URI request to be sent to, e.g. '/v1/products/'
-             * @param {String} m - Request method, e.g. GET, POST, etc.
-             * @param {*} payload - Payload to be sent to the server
-             * @param {String|undefined} v - Optional: API version, e.g. 'v1'
-             * @returns {String}
+             * @param {string}           resourceUri Resource URI request to be sent to, e.g. '/v1/products/'
+             * @param {string}           method      Request method, e.g. GET, POST, etc.
+             * @param {*}                data        Payload to be sent to the server
+             * @param {string|undefined} version     Optional: API version, e.g. 'v1'
+             *
+             * @returns {string}
              */
-            function getUrl(resUri, m, payload, v) {
-                /**
-                 * @param {String} str
-                 * @return {String}
-                 */
+            function getUrl(resourceUri, method, data, version) {
                 function ensureForwardSlash(str) {
                     return str[0] === '/' ? str : '/' + str;
                 }
 
-                if (v) {
-                    resUri = v + ensureForwardSlash(resUri);
+                if (version) {
+                    resourceUri = version + ensureForwardSlash(resourceUri);
                 }
 
-                if (payload && [that.method.get, that.method['delete']].indexOf(m) !== -1) {
+                if (data && [that.method.get, that.method['delete']].indexOf(method) !== -1) {
                     // Append data for GET and DELETE request methods as it's simple ID (usually int)
-                    resUri += payload;
+                    resourceUri += data;
                 }
 
-                return that.resource.uri.base + that.resource.uri.api + ensureForwardSlash(resUri);
+                return that.resource.uri.base + that.resource.uri.api + ensureForwardSlash(resourceUri);
             }
 
-            ajaxOptions = {
+            var ajaxOptions = {
                 url: getUrl(resourceUri, method, data, version),
                 type: validateMethod(method),
                 data: data,
@@ -135,9 +127,6 @@
                 processData: false, // Otherwise jQuery will try to append 'data' to query URL
                 cache: false, // Disable browser cache for GET requests
 
-                /**
-                 * @param {Object} request
-                 */
                 beforeSend: function (request) {
                     request.setRequestHeader('Accept', 'application/json');
                 }
@@ -156,27 +145,26 @@
     /**
      * Syntax sugar over call(). Example usage: $.mage.webapi.Product('v1').get({...})
      *
-     * @param {String} version - API version (e.g. 'v1')
+     * @param {string} version API version (e.g. 'v1')
      * @returns {{get: Function, create: Function}}
      */
-    $.mage.Webapi.prototype.Product = function (version) {
-        var that = this; // Points to $.mage.webapi
-
+    $.mage.Webapi.prototype.Product = function(version) {
         if (!(typeof version === 'string' && /v\d+/i.test(version))) {
             throw 'Incorrect version format: ' + version;
         }
 
         version = version.toLowerCase();
+        var that = this; // Points to $.mage.webapi
         that.resource.uri.products = '/products/';
 
         return {
             /**
              * Retrieves information about specific product
              *
-             * @param {Object} idObj - Object which helps to identify the product, e.g. {id: 1}
+             * @param idObj Object which helps to identify the product, e.g. {id: 1}
              * @returns {jqXHR}
              */
-            get: function (idObj) {
+            get: function(idObj) {
                 if (!idObj.hasOwnProperty('id')) {
                     throw '"id" property expected in the object';
                 }
@@ -187,23 +175,23 @@
             /**
              * Create a new product
              *
-             * @param {Object} productData - Example product data:
-             *  productData = {
-             *      "type_id": "simple",
-             *      "attribute_set_id": 4,
-             *      "sku": "1234567890",
-             *      "weight": 1,
-             *      "status": 1,
-             *      "visibility": 4,
-             *      "name": "Simple Product",
-             *      "description": "Simple Description",
-             *      "short_description": "Simple Short Description",
-             *      "price": 99.95,
-             *      "tax_class_id": 0
-             *  };
+             * @param productData Example product data:
+             *                    productData = {
+             *                        "type_id": "simple",
+             *                        "attribute_set_id": 4,
+             *                        "sku": "1234567890",
+             *                        "weight": 1,
+             *                        "status": 1,
+             *                        "visibility": 4,
+             *                        "name": "Simple Product",
+             *                        "description": "Simple Description",
+             *                        "short_description": "Simple Short Description",
+             *                        "price": 99.95,
+             *                        "tax_class_id": 0
+             *                    };
              * @returns {jqXHR}
              */
-            create: function (productData) {
+            create: function(productData) {
                 return that.call(that.resource.uri.products, that.method.create, productData, version);
             }
         };

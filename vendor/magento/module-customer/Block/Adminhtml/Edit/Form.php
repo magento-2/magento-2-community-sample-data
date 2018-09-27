@@ -75,7 +75,7 @@ class Form extends \Magento\Backend\Block\Widget\Form\Generic
                 $this->_extensibleDataObjectConverter->toFlatArray(
                     $customer,
                     [],
-                    \Magento\Customer\Api\Data\CustomerInterface::class
+                    '\Magento\Customer\Api\Data\CustomerInterface'
                 )
             )->addValues(
                 ['customer_id' => $customerId]

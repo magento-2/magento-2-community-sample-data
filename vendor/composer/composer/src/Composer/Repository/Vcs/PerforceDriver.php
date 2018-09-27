@@ -24,8 +24,9 @@ class PerforceDriver extends VcsDriver
 {
     protected $depot;
     protected $branch;
-    /** @var Perforce */
     protected $perforce;
+    protected $composerInfo;
+    protected $composerInfoIdentifier;
 
     /**
      * {@inheritDoc}
@@ -39,8 +40,8 @@ class PerforceDriver extends VcsDriver
         }
 
         $this->initPerforce($this->repoConfig);
-        $this->perforce->p4Login();
-        $this->perforce->checkStream();
+        $this->perforce->p4Login($this->io);
+        $this->perforce->checkStream($this->depot);
 
         $this->perforce->writeP4ClientSpec();
         $this->perforce->connectClient();
@@ -59,19 +60,18 @@ class PerforceDriver extends VcsDriver
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
-    public function getFileContent($file, $identifier)
+    public function getComposerInformation($identifier)
     {
-        return $this->perforce->getFileContent($file, $identifier);
-    }
+        if (!empty($this->composerInfoIdentifier)) {
+            if (strcmp($identifier, $this->composerInfoIdentifier) === 0) {
+                return $this->composerInfo;
+            }
+        }
+        $composer_info = $this->perforce->getComposerInformation($identifier);
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getChangeDate($identifier)
-    {
-        return null;
+        return $composer_info;
     }
 
     /**
@@ -116,10 +116,10 @@ class PerforceDriver extends VcsDriver
     public function getSource($identifier)
     {
         $source = array(
-            'type' => 'perforce',
-            'url' => $this->repoConfig['url'],
+            'type'      => 'perforce',
+            'url'       => $this->repoConfig['url'],
             'reference' => $identifier,
-            'p4user' => $this->perforce->getUser(),
+            'p4user'    => $this->perforce->getUser(),
         );
 
         return $source;
@@ -138,10 +138,10 @@ class PerforceDriver extends VcsDriver
      */
     public function hasComposerFile($identifier)
     {
-        $composerInfo = $this->perforce->getComposerInformation('//' . $this->depot . '/' . $identifier);
-        $composerInfoIdentifier = $identifier;
+        $this->composerInfo = $this->perforce->getComposerInformation('//' . $this->depot . '/' . $identifier);
+        $this->composerInfoIdentifier = $identifier;
 
-        return !empty($composerInfo);
+        return !empty($this->composerInfo);
     }
 
     /**

@@ -38,36 +38,38 @@ class ShippingInformationManagement implements \Magento\Checkout\Api\ShippingInf
     protected $cartTotalsRepository;
 
     /**
+     * Quote repository.
+     *
      * @var \Magento\Quote\Api\CartRepositoryInterface
      */
     protected $quoteRepository;
 
     /**
+     * Logger.
+     *
      * @var Logger
      */
     protected $logger;
 
     /**
+     * Validator.
+     *
      * @var QuoteAddressValidator
-     * @deprecated 100.2.0
      */
     protected $addressValidator;
 
     /**
      * @var \Magento\Customer\Api\AddressRepositoryInterface
-     * @deprecated 100.2.0
      */
     protected $addressRepository;
 
     /**
      * @var \Magento\Framework\App\Config\ScopeConfigInterface
-     * @deprecated 100.2.0
      */
     protected $scopeConfig;
 
     /**
      * @var \Magento\Quote\Model\Quote\TotalsCollector
-     * @deprecated 100.2.0
      */
     protected $totalsCollector;
 
@@ -87,8 +89,6 @@ class ShippingInformationManagement implements \Magento\Checkout\Api\ShippingInf
     private $shippingFactory;
 
     /**
-     * Constructor
-     *
      * @param \Magento\Quote\Api\PaymentMethodManagementInterface $paymentMethodManagement
      * @param \Magento\Checkout\Model\PaymentDetailsFactory $paymentDetailsFactory
      * @param \Magento\Quote\Api\CartTotalRepositoryInterface $cartTotalsRepository
@@ -98,9 +98,11 @@ class ShippingInformationManagement implements \Magento\Checkout\Api\ShippingInf
      * @param \Magento\Customer\Api\AddressRepositoryInterface $addressRepository
      * @param \Magento\Framework\App\Config\ScopeConfigInterface $scopeConfig
      * @param \Magento\Quote\Model\Quote\TotalsCollector $totalsCollector
-     * @param CartExtensionFactory|null $cartExtensionFactory,
-     * @param ShippingAssignmentFactory|null $shippingAssignmentFactory,
+     * @param CartExtensionFactory|null $cartExtensionFactory
+     * @param ShippingAssignmentFactory|null $shippingAssignmentFactory
      * @param ShippingFactory|null $shippingFactory
+     * @codeCoverageIgnore
+     * @throws \RuntimeException
      * @SuppressWarnings(PHPMD.ExcessiveParameterList)
      */
     public function __construct(
@@ -126,12 +128,18 @@ class ShippingInformationManagement implements \Magento\Checkout\Api\ShippingInf
         $this->addressRepository = $addressRepository;
         $this->scopeConfig = $scopeConfig;
         $this->totalsCollector = $totalsCollector;
-        $this->cartExtensionFactory = $cartExtensionFactory ?: ObjectManager::getInstance()
-            ->get(CartExtensionFactory::class);
-        $this->shippingAssignmentFactory = $shippingAssignmentFactory ?: ObjectManager::getInstance()
-            ->get(ShippingAssignmentFactory::class);
-        $this->shippingFactory = $shippingFactory ?: ObjectManager::getInstance()
-            ->get(ShippingFactory::class);
+        if (!$cartExtensionFactory) {
+            $cartExtensionFactory = ObjectManager::getInstance()->get(CartExtensionFactory::class);
+        }
+        $this->cartExtensionFactory = $cartExtensionFactory;
+        if (!$shippingAssignmentFactory) {
+            $shippingAssignmentFactory = ObjectManager::getInstance()->get(ShippingAssignmentFactory::class);
+        }
+        $this->shippingAssignmentFactory = $shippingAssignmentFactory;
+        if (!$shippingFactory) {
+            $shippingFactory = ObjectManager::getInstance()->get(ShippingFactory::class);
+        }
+        $this->shippingFactory = $shippingFactory;
     }
 
     /**

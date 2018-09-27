@@ -8,7 +8,7 @@ namespace Magento\Setup\Test\Unit\Fixtures;
 
 use \Magento\Setup\Fixtures\TaxRatesFixture;
 
-class TaxRatesFixtureTest extends \PHPUnit\Framework\TestCase
+class TaxRatesFixtureTest extends \PHPUnit_Framework_TestCase
 {
 
     /**
@@ -23,29 +23,35 @@ class TaxRatesFixtureTest extends \PHPUnit\Framework\TestCase
 
     public function setUp()
     {
-        $this->fixtureModelMock = $this->createMock(\Magento\Setup\Fixtures\FixtureModel::class);
+        $this->fixtureModelMock = $this->getMock(\Magento\Setup\Fixtures\FixtureModel::class, [], [], '', false);
 
         $this->model = new TaxRatesFixture($this->fixtureModelMock);
     }
 
     public function testExecute()
     {
-        $rateMock = $this->createPartialMock(\Magento\Tax\Model\Calculation\Rate::class, ['setId', 'delete']);
+        $rateMock = $this->getMock(\Magento\Tax\Model\Calculation\Rate::class, ['setId', 'delete'], [], '', false);
 
         $collectionMock =
-            $this->createMock(\Magento\Tax\Model\ResourceModel\Calculation\Rate\Collection::class);
+            $this->getMock(\Magento\Tax\Model\ResourceModel\Calculation\Rate\Collection::class, [], [], '', false);
         $collectionMock->expects($this->once())
             ->method('getAllIds')
             ->willReturn([1]);
 
-        $csvImportHandlerMock = $this->createMock(\Magento\TaxImportExport\Model\Rate\CsvImportHandler::class);
+        $csvImportHandlerMock = $this->getMock(
+            \Magento\TaxImportExport\Model\Rate\CsvImportHandler::class,
+            [],
+            [],
+            '',
+            false
+        );
 
         $valueMap = [
             [\Magento\Tax\Model\Calculation\Rate::class, $rateMock],
             [\Magento\Tax\Model\ResourceModel\Calculation\Rate\Collection::class, $collectionMock]
         ];
 
-        $objectManagerMock = $this->createMock(\Magento\Framework\ObjectManager\ObjectManager::class);
+        $objectManagerMock = $this->getMock(\Magento\Framework\ObjectManager\ObjectManager::class, [], [], '', false);
         $objectManagerMock->expects($this->exactly(2))
             ->method('get')
             ->will($this->returnValueMap($valueMap));
@@ -67,10 +73,16 @@ class TaxRatesFixtureTest extends \PHPUnit\Framework\TestCase
 
     public function testNoFixtureConfigValue()
     {
-        $csvImportHandlerMock = $this->createMock(\Magento\TaxImportExport\Model\Rate\CsvImportHandler::class);
+        $csvImportHandlerMock = $this->getMock(
+            \Magento\TaxImportExport\Model\Rate\CsvImportHandler::class,
+            [],
+            [],
+            '',
+            false
+        );
         $csvImportHandlerMock->expects($this->never())->method('importFromCsvFile');
 
-        $objectManagerMock = $this->createMock(\Magento\Framework\ObjectManager\ObjectManager::class);
+        $objectManagerMock = $this->getMock(\Magento\Framework\ObjectManager\ObjectManager::class, [], [], '', false);
         $objectManagerMock->expects($this->never())
             ->method('create')
             ->willReturn($csvImportHandlerMock);

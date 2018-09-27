@@ -12,10 +12,13 @@ use Magento\Mtf\Constraint\AbstractConstraint;
 use Magento\Checkout\Test\Fixture\Cart;
 use Magento\Catalog\Test\Fixture\CatalogProductSimple;
 
+/**
+ * Assert that quantity of visible Cart items is the same as minicart configuration value.
+ */
 class AssertVisibleItemsQtyInMiniShoppingCart extends AbstractConstraint
 {
     /**
-     * Assert that quantity of visible Cart items are the same as minicart configuration value.
+     * Assert that quantity of visible Cart items is the same as minicart configuration value.
      *
      * @param CmsIndex $cmsIndex
      * @param Cart $cart
@@ -31,7 +34,7 @@ class AssertVisibleItemsQtyInMiniShoppingCart extends AbstractConstraint
         $products = $sourceProducts->getProducts();
 
         $presentItems = 0;
-        /** @var Item $item */
+        
         foreach (array_keys($cart->getItems()) as $key) {
             /** @var CatalogProductSimple $product */
             $product = $products[$key];
@@ -48,12 +51,10 @@ class AssertVisibleItemsQtyInMiniShoppingCart extends AbstractConstraint
     }
 
     /**
-     * Returns a string representation of the object.
-     *
-     * @return string
+     * {@inheritdoc}
      */
     public function toString()
     {
-        return 'Quantity of visible Cart items the same as minicart configuration value.';
+        return 'Quantity of visible Cart items is the same as minicart configuration value.';
     }
 }

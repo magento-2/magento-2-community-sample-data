@@ -14,6 +14,7 @@ namespace Symfony\Component\DependencyInjection\Extension;
 use Symfony\Component\DependencyInjection\Container;
 use Symfony\Component\DependencyInjection\Exception\BadMethodCallException;
 use Symfony\Component\DependencyInjection\Exception\InvalidArgumentException;
+use Symfony\Component\Config\Resource\FileResource;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\Config\Definition\Processor;
 use Symfony\Component\Config\Definition\ConfigurationInterface;
@@ -25,8 +26,6 @@ use Symfony\Component\Config\Definition\ConfigurationInterface;
  */
 abstract class Extension implements ExtensionInterface, ConfigurationExtensionInterface
 {
-    private $processedConfigs = array();
-
     /**
      * {@inheritdoc}
      */
@@ -66,7 +65,7 @@ abstract class Extension implements ExtensionInterface, ConfigurationExtensionIn
     public function getAlias()
     {
         $className = get_class($this);
-        if ('Extension' != substr($className, -9)) {
+        if (substr($className, -9) != 'Extension') {
             throw new BadMethodCallException('This extension does not follow the naming convention; you must overwrite the getAlias() method.');
         }
         $classBaseName = substr(strrchr($className, '\\'), 1, -9);
@@ -79,13 +78,17 @@ abstract class Extension implements ExtensionInterface, ConfigurationExtensionIn
      */
     public function getConfiguration(array $config, ContainerBuilder $container)
     {
-        $class = get_class($this);
-        $class = substr_replace($class, '\Configuration', strrpos($class, '\\'));
-        $class = $container->getReflectionClass($class);
-        $constructor = $class ? $class->getConstructor() : null;
+        $reflected = new \ReflectionClass($this);
+        $namespace = $reflected->getNamespaceName();
 
-        if ($class && (!$constructor || !$constructor->getNumberOfRequiredParameters())) {
-            return $class->newInstance();
+        $class = $namespace.'\\Configuration';
+        if (class_exists($class)) {
+            $r = new \ReflectionClass($class);
+            $container->addResource(new FileResource($r->getFileName()));
+
+            if (!method_exists($class, '__construct')) {
+                return new $class();
+            }
         }
     }
 
@@ -93,22 +96,13 @@ abstract class Extension implements ExtensionInterface, ConfigurationExtensionIn
     {
         $processor = new Processor();
 
-        return $this->processedConfigs[] = $processor->processConfiguration($configuration, $configs);
+        return $processor->processConfiguration($configuration, $configs);
     }
 
     /**
-     * @internal
-     */
-    final public function getProcessedConfigs()
-    {
-        try {
-            return $this->processedConfigs;
-        } finally {
-            $this->processedConfigs = array();
-        }
-    }
-
-    /**
+     * @param ContainerBuilder $container
+     * @param array            $config
+     *
      * @return bool Whether the configuration is enabled
      *
      * @throws InvalidArgumentException When the config is not enableable

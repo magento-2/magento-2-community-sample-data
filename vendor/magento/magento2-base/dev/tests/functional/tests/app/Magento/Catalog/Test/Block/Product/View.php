@@ -8,9 +8,9 @@ namespace Magento\Catalog\Test\Block\Product;
 
 use Magento\Catalog\Test\Block\AbstractConfigureBlock;
 use Magento\Catalog\Test\Fixture\CatalogProductSimple;
-use Magento\Checkout\Test\Block\Cart\Sidebar;
 use Magento\Mtf\Client\Locator;
 use Magento\Mtf\Fixture\FixtureInterface;
+use Magento\Mtf\Fixture\InjectableFixture;
 
 /**
  * Product view block on the product page.
@@ -43,13 +43,6 @@ class View extends AbstractConfigureBlock
     protected $addToCart = '.tocart';
 
     /**
-     * Locator for "Update Cart" button.
-     *
-     * @var string
-     */
-    protected $updateCart = '#product-updatecart-button';
-
-    /**
      * Quantity input id.
      *
      * @var string
@@ -75,7 +68,7 @@ class View extends AbstractConfigureBlock
      *
      * @var string
      */
-    protected $inContextPaypalCheckout = 'ul.checkout-methods-items a[data-action="paypal-in-context-checkout"]';
+    protected $inContextPaypalCheckout = '#paypal-express-in-context-mini-cart';
 
     /**
      * Product name element.
@@ -152,14 +145,7 @@ class View extends AbstractConfigureBlock
      *
      * @var string
      */
-    protected $miniCartBlockSelector = '[data-block="minicart"]';
-
-    /**
-     * Minicart block element.
-     *
-     * @var Sidebar
-     */
-    private $miniCartBlock;
+    protected $miniCartBlock = '[data-block="minicart"]';
 
     /**
      * Success message selector.
@@ -216,36 +202,11 @@ class View extends AbstractConfigureBlock
     private $videoContainer = 'div.fotorama-video-container';
 
     /**
-     * @var string
-     */
-    private $productVideo = '.product-video';
-
-    /**
-     * Threshold message selector.
+     * Success message block after add to cart click.
      *
      * @var string
      */
-    private $thresholdMessage = '.availability.only';
-
-    /**
-     * Checks if threshold message is displayed.
-     *
-     * @return bool
-     */
-    public function isThresholdMessageDisplayed()
-    {
-        return $this->_rootElement->find($this->thresholdMessage)->isVisible();
-    }
-
-    /**
-     * Gets threshold message.
-     *
-     * @return string
-     */
-    public function getThresholdMessage()
-    {
-        return $this->_rootElement->find($this->thresholdMessage)->getText();
-    }
+    private $addToCartSuccess = '.message-success';
 
     /**
      * Get block price.
@@ -268,7 +229,7 @@ class View extends AbstractConfigureBlock
         }
 
         return $this->blockFactory->create(
-            \Magento\Catalog\Test\Block\Product\Price::class,
+            'Magento\Catalog\Test\Block\Product\Price',
             ['element' => $this->_rootElement->find($this->priceBlock, Locator::SELECTOR_XPATH)]
         );
     }
@@ -281,64 +242,32 @@ class View extends AbstractConfigureBlock
      */
     public function addToCart(FixtureInterface $product)
     {
-        $this->configure($product);
-        $this->clickAddToCart();
-        $this->getMiniCartBlock()->waitLoader();
-    }
-
-    /**
-     * Configure Product.
-     *
-     * @param FixtureInterface $product
-     * @return void
-     */
-    public function configure(FixtureInterface $product)
-    {
+        /** @var \Magento\Checkout\Test\Block\Cart\Sidebar $miniCart */
+        $miniCart = $this->blockFactory->create(
+            '\Magento\Checkout\Test\Block\Cart\Sidebar',
+            ['element' => $this->browser->find($this->miniCartBlock)]
+        );
         /** @var CatalogProductSimple $product */
         $checkoutData = $product->getCheckoutData();
 
-        $this->getMiniCartBlock()->waitInit();
+        $miniCart->waitInit();
         $this->fillOptions($product);
         if (isset($checkoutData['qty'])) {
             $this->setQty($checkoutData['qty']);
         }
+        $this->clickAddToCart();
+        $miniCart->waitLoader();
     }
 
     /**
-     * Get MiniCart block.
-     *
-     * @return Sidebar
-     */
-    private function getMiniCartBlock()
-    {
-        if ($this->miniCartBlock === null) {
-            $this->miniCartBlock = $this->blockFactory->create(
-                Sidebar::class,
-                ['element' => $this->browser->find($this->miniCartBlockSelector)]
-            );
-        }
-
-        return $this->miniCartBlock;
-    }
-
-    /**
-     * Click "Add to Cart" button.
+     * Click link.
      *
      * @return void
      */
     public function clickAddToCart()
     {
-        $this->_rootElement->find($this->addToCart)->click();
-    }
-
-    /**
-     * Click "Update Cart" button.
-     *
-     * @return void
-     */
-    public function clickUpdateCart()
-    {
-        $this->_rootElement->find($this->updateCart)->click();
+        $this->_rootElement->find($this->addToCart, Locator::SELECTOR_CSS)->click();
+        $this->waitForElementVisible($this->addToCartSuccess);
     }
 
     /**
@@ -399,16 +328,20 @@ class View extends AbstractConfigureBlock
 
     /**
      * Press 'Check out with Braintree PayPal' button.
-     *
+     * 
      * @return string
      */
     public function braintreePaypalCheckout()
     {
         $currentWindow = $this->browser->getCurrentWindow();
-        $this->getMiniCartBlock()->waitInit();
-        $this->getMiniCartBlock()->openMiniCart();
-        $this->getMiniCartBlock()->clickBraintreePaypalButton();
+        /** @var \Magento\Checkout\Test\Block\Cart\Sidebar $miniCart */
+        $miniCart = $this->blockFactory->create(
+            '\Magento\Checkout\Test\Block\Cart\Sidebar',
+            ['element' => $this->browser->find($this->miniCartBlock)]
+        );
 
+        $miniCart->openMiniCart();
+        $miniCart->clickBraintreePaypalButton();
         return $currentWindow;
     }
 
@@ -530,7 +463,7 @@ class View extends AbstractConfigureBlock
     {
         /** @var \Magento\Backend\Test\Block\Messages $messageBlock */
         $messageBlock = $this->blockFactory->create(
-            \Magento\Backend\Test\Block\Messages::class,
+            'Magento\Backend\Test\Block\Messages',
             ['element' => $this->browser->find($this->messageBlock)]
         );
         $this->_rootElement->find($this->clickAddToCompare, Locator::SELECTOR_CSS)->click();
@@ -582,23 +515,18 @@ class View extends AbstractConfigureBlock
      */
     public function waitLoader()
     {
-        try {
-            $this->waitForElementNotVisible($this->ajaxLoading);
-        } catch (\Exception $e) {
-        }
+        $this->waitForElementNotVisible($this->ajaxLoading);
     }
 
     /**
-     * Check if media gallery is visible for the product.
+     * Check id media gallery is visible for the product.
      *
      * @return bool
      */
     public function isGalleryVisible()
     {
         $this->waitForElementNotVisible($this->galleryLoader);
-        $this->waitForElementVisible($this->mediaGallery);
-
-        return true;
+        return $this->_rootElement->find($this->mediaGallery)->isVisible();
     }
 
     /**
@@ -682,19 +610,6 @@ class View extends AbstractConfigureBlock
      */
     public function isVideoVisible()
     {
-        $this->waitForElementNotVisible($this->galleryLoader);
         return $this->_rootElement->find($this->videoContainer)->isVisible();
-    }
-
-    /**
-     * Check definite video data is presented on product page
-     *
-     * @param string $videoData
-     * @return bool
-     */
-    public function checkVideoDataPresence($videoData)
-    {
-        $dataVideoSelector = $this->productVideo . '[data-code="' . $videoData. '"]';
-        return $this->_rootElement->find($dataVideoSelector)->isPresent();
     }
 }

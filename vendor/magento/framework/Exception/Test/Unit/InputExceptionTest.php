@@ -8,7 +8,7 @@ namespace Magento\Framework\Exception\Test\Unit;
 use \Magento\Framework\Exception\InputException;
 use Magento\Framework\Phrase;
 
-class InputExceptionTest extends \PHPUnit\Framework\TestCase
+class InputExceptionTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * Verify that the constructor creates a single instance of InputException with the proper

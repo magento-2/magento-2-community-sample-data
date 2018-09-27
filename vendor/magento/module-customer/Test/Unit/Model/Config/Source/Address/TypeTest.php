@@ -6,7 +6,7 @@
  */
 namespace Magento\Customer\Test\Unit\Model\Config\Source\Address;
 
-class TypeTest extends \PHPUnit\Framework\TestCase
+class TypeTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\Customer\Model\Config\Source\Address\Type

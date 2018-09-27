@@ -11,7 +11,7 @@ use Magento\Sales\Model\Order\Invoice\Total\Shipping;
 /**
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  */
-class ShippingTest extends \PHPUnit\Framework\TestCase
+class ShippingTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var Shipping
@@ -80,9 +80,8 @@ class ShippingTest extends \PHPUnit\Framework\TestCase
     private function createInvoiceStub(array $prevInvoicesData, $orderShipping)
     {
         $order = $this->getMockBuilder(\Magento\Sales\Model\Order::class)
-            ->setMethods(['getInvoiceCollection', 'getShippingAmount'])
             ->disableOriginalConstructor()
-            ->getMockForAbstractClass();
+            ->getMock();
         $order->expects($this->any())
             ->method('getInvoiceCollection')
             ->will($this->returnValue($this->getInvoiceCollection($prevInvoicesData)));
@@ -107,37 +106,54 @@ class ShippingTest extends \PHPUnit\Framework\TestCase
      */
     private function getInvoiceCollection(array $invoicesData)
     {
-        $className = \Magento\Sales\Model\Order\Invoice::class;
+        $className = 'Magento\Sales\Model\Order\Invoice';
         $result = new \Magento\Framework\Data\Collection(
-            $this->createMock(\Magento\Framework\Data\Collection\EntityFactory::class)
+            $this->getMock('Magento\Framework\Data\Collection\EntityFactory', [], [], '', false)
         );
         $objectManagerHelper = new \Magento\Framework\TestFramework\Unit\Helper\ObjectManager($this);
         $arguments = [
-            'orderFactory' => $this->createMock(\Magento\Sales\Model\OrderFactory::class),
-            'orderResourceFactory' => $this->createMock(
-                \Magento\Sales\Model\ResourceModel\OrderFactory::class
+            'orderFactory' => $this->getMock('Magento\Sales\Model\OrderFactory', [], [], '', false),
+            'orderResourceFactory' => $this->getMock(
+                'Magento\Sales\Model\ResourceModel\OrderFactory',
+                [],
+                [],
+                '',
+                false
             ),
-            'calculatorFactory' => $this->createMock(
-                \Magento\Framework\Math\CalculatorFactory::class
+            'calculatorFactory' => $this->getMock(
+                \Magento\Framework\Math\CalculatorFactory::class,
+                [],
+                [],
+                '',
+                false
             ),
-            'invoiceItemCollectionFactory' => $this->createMock(
-                \Magento\Sales\Model\ResourceModel\Order\Invoice\Item\CollectionFactory::class
+            'invoiceItemCollectionFactory' => $this->getMock(
+                'Magento\Sales\Model\ResourceModel\Order\Invoice\Item\CollectionFactory',
+                [],
+                [],
+                '',
+                false
             ),
-            'invoiceCommentFactory' => $this->createMock(
-                \Magento\Sales\Model\Order\Invoice\CommentFactory::class
+            'invoiceCommentFactory' => $this->getMock(
+                'Magento\Sales\Model\Order\Invoice\CommentFactory',
+                [],
+                [],
+                '',
+                false
             ),
-            'commentCollectionFactory' => $this->createMock(
-                \Magento\Sales\Model\ResourceModel\Order\Invoice\Comment\CollectionFactory::class
+            'commentCollectionFactory' => $this->getMock(
+                'Magento\Sales\Model\ResourceModel\Order\Invoice\Comment\CollectionFactory',
+                [],
+                [],
+                '',
+                false
             ),
         ];
         foreach ($invoicesData as $oneInvoiceData) {
             $arguments['data'] = $oneInvoiceData;
             $arguments = $objectManagerHelper->getConstructArguments($className, $arguments);
             /** @var $prevInvoice \Magento\Sales\Model\Order\Invoice */
-            $prevInvoice = $this->getMockBuilder($className)
-                ->setMethods(['_init'])
-                ->setConstructorArgs($arguments)
-                ->getMock();
+            $prevInvoice = $this->getMock($className, ['_init'], $arguments);
             $result->addItem($prevInvoice);
         }
         return $result;

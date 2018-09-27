@@ -9,7 +9,7 @@ namespace Magento\Framework\App\Utility;
 use Magento\Framework\App\Utility\Files;
 use Magento\Framework\Component\ComponentRegistrar;
 
-class FilesTest extends \PHPUnit\Framework\TestCase
+class FilesTest extends \PHPUnit_Framework_TestCase
 {
     /** @var  \Magento\Framework\App\Utility\Files */
     protected $model;
@@ -33,9 +33,9 @@ class FilesTest extends \PHPUnit\Framework\TestCase
     {
         $componentRegistrar = new ComponentRegistrar();
         $dirSearch = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()
-            ->create(\Magento\Framework\Component\DirSearch::class);
+            ->create('Magento\Framework\Component\DirSearch');
         $themePackageList = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()
-            ->create(\Magento\Framework\View\Design\Theme\ThemePackageList::class);
+            ->create('Magento\Framework\View\Design\Theme\ThemePackageList');
         $this->model = new Files($componentRegistrar, $dirSearch, $themePackageList);
         foreach ($componentRegistrar->getPaths(ComponentRegistrar::MODULE) as $moduleDir) {
             $this->moduleTests[] = '#' . $moduleDir . '/Test#';

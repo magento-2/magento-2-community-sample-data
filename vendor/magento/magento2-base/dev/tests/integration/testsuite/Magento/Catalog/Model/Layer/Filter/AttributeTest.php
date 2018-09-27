@@ -8,11 +8,9 @@ namespace Magento\Catalog\Model\Layer\Filter;
 /**
  * Test class for \Magento\Catalog\Model\Layer\Filter\Attribute.
  *
- * @magentoDbIsolation disabled
- *
  * @magentoDataFixture Magento/Catalog/Model/Layer/Filter/_files/attribute_with_option.php
  */
-class AttributeTest extends \PHPUnit\Framework\TestCase
+class AttributeTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\Catalog\Model\Layer\Filter\Attribute
@@ -33,7 +31,7 @@ class AttributeTest extends \PHPUnit\Framework\TestCase
     {
         /** @var $attribute \Magento\Catalog\Model\Entity\Attribute */
         $attribute = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->create(
-            \Magento\Catalog\Model\Entity\Attribute::class
+            'Magento\Catalog\Model\Entity\Attribute'
         );
         $attribute->loadByCode('catalog_product', 'attribute_with_option');
         foreach ($attribute->getSource()->getAllOptions() as $optionInfo) {
@@ -44,9 +42,9 @@ class AttributeTest extends \PHPUnit\Framework\TestCase
         }
 
         $this->_layer = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()
-            ->create(\Magento\Catalog\Model\Layer\Category::class);
+            ->create('Magento\Catalog\Model\Layer\Category');
         $this->_model = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()
-            ->create(\Magento\Catalog\Model\Layer\Filter\Attribute::class, ['layer' => $this->_layer]);
+            ->create('Magento\Catalog\Model\Layer\Filter\Attribute', ['layer' => $this->_layer]);
         $this->_model->setData([
             'attribute_model' => $attribute,
         ]);
@@ -61,14 +59,14 @@ class AttributeTest extends \PHPUnit\Framework\TestCase
     {
         $this->assertEmpty($this->_model->getLayer()->getState()->getFilters());
         $objectManager = \Magento\TestFramework\Helper\Bootstrap::getObjectManager();
-        $request = $objectManager->get(\Magento\TestFramework\Request::class);
+        $request = $objectManager->get('Magento\TestFramework\Request');
         $request->setParam('attribute', []);
         $this->_model->apply(
             $request,
             \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->get(
-                \Magento\Framework\View\LayoutInterface::class
+                'Magento\Framework\View\LayoutInterface'
             )->createBlock(
-                \Magento\Framework\View\Element\Text::class
+                'Magento\Framework\View\Element\Text'
             )
         );
 
@@ -80,7 +78,7 @@ class AttributeTest extends \PHPUnit\Framework\TestCase
         $this->assertEmpty($this->_model->getLayer()->getState()->getFilters());
 
         $objectManager = \Magento\TestFramework\Helper\Bootstrap::getObjectManager();
-        $request = $objectManager->get(\Magento\TestFramework\Request::class);
+        $request = $objectManager->get('Magento\TestFramework\Request');
         $request->setParam('attribute', $this->_attributeOptionId);
         $this->_model->apply($request);
 
@@ -97,7 +95,7 @@ class AttributeTest extends \PHPUnit\Framework\TestCase
         /** @var $item \Magento\Catalog\Model\Layer\Filter\Item */
         $item = $items[0];
 
-        $this->assertInstanceOf(\Magento\Catalog\Model\Layer\Filter\Item::class, $item);
+        $this->assertInstanceOf('Magento\Catalog\Model\Layer\Filter\Item', $item);
         $this->assertSame($this->_model, $item->getFilter());
         $this->assertEquals('Option Label', $item->getLabel());
         $this->assertEquals($this->_attributeOptionId, $item->getValue());

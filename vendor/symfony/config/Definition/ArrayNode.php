@@ -82,7 +82,7 @@ class ArrayNode extends BaseNode implements PrototypeNodeInterface
     /**
      * Sets the xml remappings that should be performed.
      *
-     * @param array $remappings An array of the form array(array(string, string))
+     * @param array $remappings an array of the form array(array(string, string))
      */
     public function setXmlRemappings(array $remappings)
     {
@@ -153,7 +153,9 @@ class ArrayNode extends BaseNode implements PrototypeNodeInterface
     }
 
     /**
-     * {@inheritdoc}
+     * Sets the node Name.
+     *
+     * @param string $name The node's name
      */
     public function setName($name)
     {
@@ -161,7 +163,9 @@ class ArrayNode extends BaseNode implements PrototypeNodeInterface
     }
 
     /**
-     * {@inheritdoc}
+     * Checks if the node has a default value.
+     *
+     * @return bool
      */
     public function hasDefaultValue()
     {
@@ -169,7 +173,11 @@ class ArrayNode extends BaseNode implements PrototypeNodeInterface
     }
 
     /**
-     * {@inheritdoc}
+     * Retrieves the default value.
+     *
+     * @return array The default value
+     *
+     * @throws \RuntimeException if the node has no default value
      */
     public function getDefaultValue()
     {
@@ -189,6 +197,8 @@ class ArrayNode extends BaseNode implements PrototypeNodeInterface
 
     /**
      * Adds a child node.
+     *
+     * @param NodeInterface $node The child node to add
      *
      * @throws \InvalidArgumentException when the child node has no name
      * @throws \InvalidArgumentException when the child node's name is not unique
@@ -238,10 +248,6 @@ class ArrayNode extends BaseNode implements PrototypeNodeInterface
                 }
 
                 continue;
-            }
-
-            if ($child->isDeprecated()) {
-                @trigger_error($child->getDeprecationMessage($name, $this->getPath()), E_USER_DEPRECATED);
             }
 
             try {

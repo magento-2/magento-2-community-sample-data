@@ -5,11 +5,6 @@
  */
 namespace Magento\Framework\Mview\Config;
 
-use Magento\Framework\Serialize\SerializerInterface;
-
-/**
- * Provides materialized view configuration
- */
 class Data extends \Magento\Framework\Config\Data
 {
     /**
@@ -18,26 +13,22 @@ class Data extends \Magento\Framework\Config\Data
     protected $stateCollection;
 
     /**
-     * Constructor
-     *
-     * @param Reader $reader
+     * @param \Magento\Framework\Mview\Config\Reader $reader
      * @param \Magento\Framework\Config\CacheInterface $cache
      * @param \Magento\Framework\Mview\View\State\CollectionInterface $stateCollection
-     * @param string|null $cacheId
-     * @param SerializerInterface|null $serializer
+     * @param string $cacheId
      */
     public function __construct(
         \Magento\Framework\Mview\Config\Reader $reader,
         \Magento\Framework\Config\CacheInterface $cache,
         \Magento\Framework\Mview\View\State\CollectionInterface $stateCollection,
-        $cacheId = 'mview_config',
-        SerializerInterface $serializer = null
+        $cacheId = 'mview_config'
     ) {
         $this->stateCollection = $stateCollection;
 
         $isCacheExists = $cache->test($cacheId);
 
-        parent::__construct($reader, $cache, $cacheId, $serializer);
+        parent::__construct($reader, $cache, $cacheId);
 
         if (!$isCacheExists) {
             $this->deleteNonexistentStates();

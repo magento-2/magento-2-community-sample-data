@@ -5,7 +5,7 @@
  */
 namespace Magento\Braintree\Test\Unit\Gateway\Request;
 
-use Magento\Braintree\Gateway\SubjectReader;
+use Magento\Braintree\Gateway\Helper\SubjectReader;
 use Magento\Braintree\Gateway\Request\VaultCaptureDataBuilder;
 use Magento\Payment\Gateway\Data\PaymentDataObjectInterface;
 use Magento\Sales\Api\Data\OrderPaymentExtension;
@@ -13,7 +13,7 @@ use Magento\Sales\Model\Order\Payment;
 use Magento\Vault\Model\PaymentToken;
 use PHPUnit_Framework_MockObject_MockObject as MockObject;
 
-class VaultCaptureDataBuilderTest extends \PHPUnit\Framework\TestCase
+class VaultCaptureDataBuilderTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var VaultCaptureDataBuilder
@@ -32,7 +32,7 @@ class VaultCaptureDataBuilderTest extends \PHPUnit\Framework\TestCase
 
     public function setUp()
     {
-        $this->paymentDO = $this->createMock(PaymentDataObjectInterface::class);
+        $this->paymentDO = $this->getMock(PaymentDataObjectInterface::class);
         $this->payment = $this->getMockBuilder(Payment::class)
             ->disableOriginalConstructor()
             ->getMock();

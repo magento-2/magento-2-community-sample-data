@@ -35,7 +35,6 @@ class Improved implements AlgorithmInterface
      * @var Render
      */
     private $render;
-
     /**
      * @var IntervalFactory
      */

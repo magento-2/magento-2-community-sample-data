@@ -18,7 +18,7 @@ class SharedTest extends \Magento\TestFramework\TestCase\AbstractController
         $this->dispatch('wishlist/shared/allcart');
 
         /** @var \Magento\Checkout\Model\Cart $cart */
-        $cart = $this->_objectManager->get(\Magento\Checkout\Model\Cart::class);
+        $cart = $this->_objectManager->get('Magento\Checkout\Model\Cart');
         $quoteCount = $cart->getQuote()->getItemsCollection()->count();
 
         $this->assertEquals(1, $quoteCount);

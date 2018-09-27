@@ -13,7 +13,7 @@ use Magento\TestFramework\Helper\Bootstrap;
  * Class ReadTest
  * Test for Magento\Framework\Filesystem\Directory\Read class
  */
-class ReadTest extends \PHPUnit\Framework\TestCase
+class ReadTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * Test instance of Read
@@ -284,7 +284,7 @@ class ReadTest extends \PHPUnit\Framework\TestCase
         $fullPath = __DIR__ . '/../_files/' . $path;
         $objectManager = Bootstrap::getObjectManager();
         /** @var \Magento\Framework\Filesystem\Directory\ReadFactory $directoryFactory */
-        $directoryFactory = $objectManager->create(\Magento\Framework\Filesystem\Directory\ReadFactory::class);
+        $directoryFactory = $objectManager->create('Magento\Framework\Filesystem\Directory\ReadFactory');
         return $directoryFactory->create($fullPath);
     }
 

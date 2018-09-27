@@ -7,10 +7,7 @@ namespace Magento\Framework\DB\Sql;
 
 use Magento\Framework\DB\Select;
 
-/**
- * Class UnionExpression
- */
-class UnionExpression extends Expression
+class UnionExpression extends \Zend_Db_Expr
 {
     /**
      * @var Select[]

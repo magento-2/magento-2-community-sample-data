@@ -6,10 +6,6 @@
  */
 namespace Magento\Sales\Controller\AbstractController;
 
-/**
- * Interface \Magento\Sales\Controller\AbstractController\OrderViewAuthorizationInterface
- *
- */
 interface OrderViewAuthorizationInterface
 {
     /**

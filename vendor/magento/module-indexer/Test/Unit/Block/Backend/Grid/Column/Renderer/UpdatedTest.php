@@ -5,7 +5,7 @@
  */
 namespace Magento\Indexer\Test\Unit\Block\Backend\Grid\Column\Renderer;
 
-class UpdatedTest extends \PHPUnit\Framework\TestCase
+class UpdatedTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @param string $defaultValue
@@ -14,7 +14,7 @@ class UpdatedTest extends \PHPUnit\Framework\TestCase
      */
     public function testRender($defaultValue, $assert)
     {
-        $context = $this->getMockBuilder(\Magento\Backend\Block\Context::class)
+        $context = $this->getMockBuilder('\Magento\Backend\Block\Context')
             ->disableOriginalConstructor()
             ->getMock();
         $model = new \Magento\Indexer\Block\Backend\Grid\Column\Renderer\Updated($context);
@@ -27,6 +27,9 @@ class UpdatedTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals($result, $assert);
     }
 
+    /**
+     * @return array
+     */
     public function renderProvider()
     {
         return [

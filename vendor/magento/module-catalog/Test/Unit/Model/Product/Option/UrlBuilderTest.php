@@ -7,7 +7,7 @@ namespace Magento\Catalog\Test\Unit\Model\Product\Option;
 
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
 
-class UrlBuilderTest extends \PHPUnit\Framework\TestCase
+class UrlBuilderTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\Catalog\Model\Product\Option\UrlBuilder
@@ -24,7 +24,7 @@ class UrlBuilderTest extends \PHPUnit\Framework\TestCase
         $mockedFrontendUrlBuilder = $this->getMockedFrontendUrlBuilder();
         $helper = new ObjectManager($this);
         $this->model = $helper->getObject(
-            \Magento\Catalog\Model\Product\Option\UrlBuilder::class,
+            '\Magento\Catalog\Model\Product\Option\UrlBuilder',
             ['frontendUrlBuilder' => $mockedFrontendUrlBuilder]
         );
     }
@@ -34,7 +34,7 @@ class UrlBuilderTest extends \PHPUnit\Framework\TestCase
      */
     private function getMockedFrontendUrlBuilder()
     {
-        $mockBuilder = $this->getMockBuilder(\Magento\Framework\UrlInterface::class)
+        $mockBuilder = $this->getMockBuilder('\Magento\Framework\UrlInterface')
             ->disableOriginalConstructor();
         $mock = $mockBuilder->getMockForAbstractClass();
 

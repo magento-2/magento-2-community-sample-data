@@ -7,7 +7,7 @@ namespace Magento\Setup\Module;
 
 use Magento\Framework\Setup\ModuleDataSetupInterface;
 
-class DataSetupTest extends \PHPUnit\Framework\TestCase
+class DataSetupTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var ModuleDataSetupInterface
@@ -17,7 +17,7 @@ class DataSetupTest extends \PHPUnit\Framework\TestCase
     protected function setUp()
     {
         $this->_model = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->create(
-            \Magento\Setup\Module\DataSetup::class
+            'Magento\Setup\Module\DataSetup'
         );
     }
 
@@ -73,6 +73,6 @@ class DataSetupTest extends \PHPUnit\Framework\TestCase
 
     public function testGetSetupCache()
     {
-        $this->assertInstanceOf(\Magento\Framework\Setup\DataCacheInterface::class, $this->_model->getSetupCache());
+        $this->assertInstanceOf('Magento\Framework\Setup\DataCacheInterface', $this->_model->getSetupCache());
     }
 }
