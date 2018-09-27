@@ -6,24 +6,23 @@
 namespace Magento\Authorizenet\Controller\Directpost\Payment;
 
 /**
- * Contains tests for Authorize.net Direct Post response handler.
+ * Class ResponseTest
  *
  * @magentoAppArea frontend
  */
 class ResponseTest extends \Magento\TestFramework\TestCase\AbstractController
 {
     /**
-     * Tests the controller for declines.
+     * Tests the controller for declines
      *
      * @param int $invoiceNum
      * @param string $hash
      * @param string $errorMsg
-     * @param array $params
-     * @return void
+     * @param string[] $params
      *
      * @dataProvider responseActionAuthorizeCaptureDeclineDataProvider
      */
-    public function testResponseActionAuthorizeCaptureDecline($invoiceNum, $hash, $errorMsg, array $params)
+    public function testResponseActionAuthorizeCaptureDecline($invoiceNum, $hash, $errorMsg, $params)
     {
         $controllerName = 'directpost_payment';
         $controllerModule = 'authorizenet';
@@ -57,15 +56,14 @@ class ResponseTest extends \Magento\TestFramework\TestCase\AbstractController
     }
 
     /**
-     * Tests the controller for created blocks used for sending emails that should not affect layout response.
+     * Tests the controller for created blocks used for sending emails that should not affect layout response
      *
      * @param string $hash
-     * @param array $params
-     * @return void
+     * @param string[] $params
      *
      * @dataProvider responseActionAuthorizeCaptureSuccessDataProvider
      */
-    public function testBlockCreationAffectingResult($hash, array $params)
+    public function testBlockCreationAffectingResult($hash, $params)
     {
         $controllerName = 'directpost_payment';
         $controllerModule = 'authorizenet';
@@ -98,7 +96,7 @@ class ResponseTest extends \Magento\TestFramework\TestCase\AbstractController
         $context = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->create(
             \Magento\Backend\App\Action\Context::class,
             [
-                'objectManager' => $objectManagerMock,
+                'objectManager' => $objectManagerMock
             ]
         );
 
@@ -106,7 +104,7 @@ class ResponseTest extends \Magento\TestFramework\TestCase\AbstractController
         $controller = $objectManager->create(
             \Magento\Authorizenet\Controller\Directpost\Payment\Response::class,
             [
-                'context' => $context,
+                'context' => $context
             ]
         );
 
@@ -174,17 +172,16 @@ class ResponseTest extends \Magento\TestFramework\TestCase\AbstractController
             'x_cavv_response' => 2,
             'x_test_request' => false,
             'controller_action_name' => 'directpost_payment',
-            'is_secure' => null,
+            'is_secure' => null
         ];
-
         return [
             'error_hash' => [
                 'invoice_num' => '1231231',
                 'x_MD5_Hash' => 'F9AE81A5DA36057D1312D71C904FCCF2',
                 'error_msg' => 'The%20transaction%20was%20declined%20because%20the%20'
                     . 'response%20hash%20validation%20failed.',
-                'post' => $postArray,
-            ],
+                'post' => $postArray
+            ]
         ];
     }
 
@@ -236,13 +233,12 @@ class ResponseTest extends \Magento\TestFramework\TestCase\AbstractController
             'x_cavv_response' => 2,
             'x_test_request' => false,
             'controller_action_name' => 'directpost_payment',
-            'is_secure' => null,
+            'is_secure' => null
         ];
-
         return [
             'success' => [
                 'x_MD5_Hash' => '35DCF749F7760193FB8254886E1D1522',
-                'post' => $postArray,
+                'post' => $postArray
             ],
         ];
     }

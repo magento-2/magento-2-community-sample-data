@@ -16,6 +16,7 @@ class Resolver implements ResolverInterface
      * @var AttributeCollection
      */
     private $attributeCollection;
+
     /**
      * @var FieldFactory
      */
@@ -39,6 +40,7 @@ class Resolver implements ResolverInterface
     public function resolve(array $fields)
     {
         $resolvedFields = [];
+        $this->attributeCollection->addFieldToFilter('attribute_code', ['in' => $fields]);
         foreach ($fields as $field) {
             if ('*' === $field) {
                 $resolvedFields = [

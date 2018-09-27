@@ -91,7 +91,7 @@ class ValidatorFile extends Validator
         $this->httpFactory = $httpFactory;
         $this->isImageValidator = $isImageValidator;
         $this->random = $random
-            ? $random : ObjectManager::getInstance()->get(Random::class);
+            ?? ObjectManager::getInstance()->get(Random::class);
         parent::__construct($scopeConfig, $filesystem, $fileSize);
     }
 
@@ -159,19 +159,14 @@ class ValidatorFile extends Validator
 
         if ($upload->isUploaded($file) && $upload->isValid($file)) {
             $fileName = \Magento\MediaStorage\Model\File\Uploader::getCorrectFileName($fileInfo['name']);
-            $dispersion = \Magento\MediaStorage\Model\File\Uploader::getDispretionPath($fileName);
+            $dispersion = \Magento\MediaStorage\Model\File\Uploader::getDispersionPath($fileName);
 
             $filePath = $dispersion;
 
             $tmpDirectory = $this->filesystem->getDirectoryRead(DirectoryList::SYS_TMP);
-            $fileHash = hash(
-                'md5',
-                $tmpDirectory->readFile(
-                    $tmpDirectory->getRelativePath($fileInfo['tmp_name'])
-                )
-            );
+            $fileHash = md5($tmpDirectory->readFile($tmpDirectory->getRelativePath($fileInfo['tmp_name'])));
             $fileRandomName = $this->random->getRandomString(32);
-            $filePath .= '/' . $fileRandomName;
+            $filePath .= '/' .$fileRandomName;
             $fileFullPath = $this->mediaDirectory->getAbsolutePath($this->quotePath . $filePath);
 
             $upload->addFilter(new \Zend_Filter_File_Rename(['target' => $fileFullPath, 'overwrite' => true]));

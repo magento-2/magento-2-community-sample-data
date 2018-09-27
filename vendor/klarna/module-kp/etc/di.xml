@@ -1,0 +1,207 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * This file is part of the Klarna KP module
+ *
+ * (c) Klarna Bank AB (publ)
+ *
+ * For the full copyright and license information, please view the NOTICE
+ * and LICENSE files that were distributed with this source code.
+ */
+-->
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="urn:magento:framework:ObjectManager/etc/config.xsd">
+    <virtualType name="KpConfigHelper" type="Klarna\Core\Helper\ConfigHelper">
+        <arguments>
+            <argument name="code" xsi:type="const">Klarna\Kp\Model\Payment\Kp::METHOD_CODE</argument>
+            <argument name="eventPrefix" xsi:type="string">kp</argument>
+        </arguments>
+    </virtualType>
+    <virtualType name="KpKlarnaConfig" type="Klarna\Core\Helper\KlarnaConfig">
+        <arguments>
+            <argument name="eventPrefix" xsi:type="string">kp</argument>
+        </arguments>
+    </virtualType>
+    <type name="Klarna\Kp\Model\KpConfigProvider">
+        <arguments>
+            <argument name="config" xsi:type="object">KpConfigHelper</argument>
+        </arguments>
+    </type>
+
+    <virtualType name="KpCollector" type="Klarna\Core\Model\Checkout\Orderline\Collector">
+        <arguments>
+            <argument name="klarnaConfig" xsi:type="object">KpKlarnaConfig</argument>
+        </arguments>
+    </virtualType>
+
+    <virtualType name="KpItemsOrderline" type="Klarna\Core\Model\Checkout\Orderline\Items">
+        <arguments>
+            <argument name="klarnaConfig" xsi:type="object">KpKlarnaConfig</argument>
+        </arguments>
+    </virtualType>
+
+    <virtualType name="KpDiscountOrderLine" type="Klarna\Core\Model\Checkout\Orderline\Discount">
+        <arguments>
+            <argument name="klarnaConfig" xsi:type="object">KpKlarnaConfig</argument>
+        </arguments>
+    </virtualType>
+
+    <virtualType name="KpTaxOrderLine" type="Klarna\Core\Model\Checkout\Orderline\Tax">
+        <arguments>
+            <argument name="klarnaConfig" xsi:type="object">KpKlarnaConfig</argument>
+        </arguments>
+    </virtualType>
+
+    <virtualType name="KpShippingOrderLine" type="Klarna\Core\Model\Checkout\Orderline\Shipping">
+        <arguments>
+            <argument name="klarnaConfig" xsi:type="object">KpKlarnaConfig</argument>
+        </arguments>
+    </virtualType>
+
+    <virtualType name="KpGiftWrapLine" type="Klarna\Core\Model\Checkout\Orderline\GiftWrap">
+        <arguments>
+            <argument name="klarnaConfig" xsi:type="object">KpKlarnaConfig</argument>
+        </arguments>
+    </virtualType>
+
+    <virtualType name="KpSurchargeLine" type="Klarna\Core\Model\Checkout\Orderline\Surcharge">
+        <arguments>
+            <argument name="klarnaConfig" xsi:type="object">KpKlarnaConfig</argument>
+        </arguments>
+    </virtualType>
+
+    <virtualType name="KpGiftCardOrderLine" type="Klarna\Core\Model\Checkout\Orderline\Giftcard"/>
+    <virtualType name="KpRewardOrderLine" type="Klarna\Core\Model\Checkout\Orderline\Reward"/>
+    <virtualType name="KpCustomerBalanceOrderLine" type="Klarna\Core\Model\Checkout\Orderline\Customerbalance"/>
+
+    <type name="Klarna\Kp\Model\Api\Builder\Kasper">
+        <arguments>
+            <argument name="collector" xsi:type="object">KpCollector</argument>
+            <argument name="configHelper" xsi:type="object">KpConfigHelper</argument>
+        </arguments>
+    </type>
+
+    <type name="Klarna\Kp\Model\System\Config\Source\Version">
+        <arguments>
+            <argument name="config" xsi:type="object">Klarna\Core\Config\Virtual</argument>
+        </arguments>
+    </type>
+
+    <type name="Klarna\Kp\Model\Api\Rest\Service\Payments">
+        <arguments>
+            <argument name="log" xsi:type="object">Klarna\Core\Logger\Logger</argument>
+            <argument name="configHelper" xsi:type="object">KpConfigHelper</argument>
+            <argument name="klarnaConfig" xsi:type="object">Klarna\Core\Helper\KlarnaConfig\Proxy</argument>
+        </arguments>
+    </type>
+
+    <!-- Payment Method configuration -->
+    <type name="Klarna\Kp\Model\Payment\Kp">
+        <arguments>
+            <argument name="adapter" xsi:type="object">KPVirtual</argument>
+        </arguments>
+    </type>
+
+    <type name="Klarna\Kp\Gateway\Validator\SessionValidator">
+        <arguments>
+            <argument name="log" xsi:type="object">Klarna\Core\Logger\Logger</argument>
+            <argument name="helper" xsi:type="object">KpConfigHelper</argument>
+        </arguments>
+    </type>
+
+    <type name="Klarna\Kp\Model\Session">
+        <arguments>
+            <argument name="builder" xsi:type="object">Klarna\Kp\Model\Api\Builder\Kasper</argument>
+        </arguments>
+    </type>
+
+    <type name="Klarna\Kp\Gateway\Command\Authorize">
+        <arguments>
+            <argument name="builder" xsi:type="object">Klarna\Kp\Model\Api\Builder\Kasper</argument>
+        </arguments>
+    </type>
+
+    <type name="Klarna\Kp\Observer\AssignData">
+        <arguments>
+            <argument name="log" xsi:type="object">Klarna\Core\Logger\Logger</argument>
+        </arguments>
+    </type>
+
+    <virtualType name="KPVirtual" type="Magento\Payment\Model\Method\Adapter">
+        <arguments>
+            <argument name="code" xsi:type="const">Klarna\Kp\Model\Payment\Kp::METHOD_CODE</argument>
+            <argument name="valueHandlerPool" xsi:type="object">KPValueHandlerPool</argument>
+            <argument name="commandPool" xsi:type="object">KPCommandPool</argument>
+            <argument name="validatorPool" xsi:type="object">KPValidatorPool</argument>
+            <argument name="formBlockType" xsi:type="string">Magento\Payment\Block\Form</argument>
+            <argument name="infoBlockType" xsi:type="string">Klarna\Core\Block\Info\Klarna</argument>
+        </arguments>
+    </virtualType>
+
+    <virtualType name="KPCountryValidator" type="Magento\Payment\Gateway\Validator\CountryValidator">
+        <arguments>
+            <argument name="config" xsi:type="object">KPConfig</argument>
+        </arguments>
+    </virtualType>
+
+    <virtualType name="KPValidatorPool" type="Magento\Payment\Gateway\Validator\ValidatorPool">
+        <arguments>
+            <argument name="validators" xsi:type="array">
+                <item name="country" xsi:type="string">KPCountryValidator</item>
+                <item name="availability" xsi:type="string">Klarna\Kp\Gateway\Validator\SessionValidator</item>
+            </argument>
+        </arguments>
+    </virtualType>
+
+    <virtualType name="KPCommandPool" type="Magento\Payment\Gateway\Command\CommandPool">
+        <arguments>
+            <argument name="commands" xsi:type="array">
+                <item name="authorize" xsi:type="string">Klarna\Kp\Gateway\Command\Authorize</item>
+            </argument>
+        </arguments>
+    </virtualType>
+    <virtualType name="KPConfig" type="Magento\Payment\Gateway\Config\Config">
+        <arguments>
+            <argument name="methodCode" xsi:type="const">Klarna\Kp\Model\Payment\Kp::METHOD_CODE</argument>
+        </arguments>
+    </virtualType>
+    <virtualType name="KPConfigValueHandler" type="Magento\Payment\Gateway\Config\ConfigValueHandler">
+        <arguments>
+            <argument name="configInterface" xsi:type="object">KPConfig</argument>
+        </arguments>
+    </virtualType>
+    <virtualType name="KPValueHandlerPool" type="Magento\Payment\Gateway\Config\ValueHandlerPool">
+        <arguments>
+            <argument name="handlers" xsi:type="array">
+                <item name="title" xsi:type="string">Klarna\Kp\Gateway\Handler\TitleHandler</item>
+                <item name="default" xsi:type="string">KPConfigValueHandler</item>
+            </argument>
+        </arguments>
+    </virtualType>
+
+    <type name="Magento\Payment\Helper\Data">
+        <plugin sortOrder="10" name="klarnaKpPaymentData" type="Klarna\Kp\Plugin\Payment\Helper\DataPlugin"/>
+    </type>
+
+    <type name="Klarna\Kp\Model\PaymentMethodList">
+        <arguments>
+            <argument name="log" xsi:type="object">Klarna\Core\Logger\Logger</argument>
+        </arguments>
+    </type>
+    <type name="Klarna\Core\Model\Checkout\Orderline\Collector">
+        <plugin sortOrder="100" name="klarnaKpCollector"
+                type="Klarna\Kp\Plugin\Model\Checkout\Orderline\CollectorPlugin"/>
+    </type>
+    <type name="Klarna\Core\Model\Config">
+        <plugin sortOrder="100" name="klarnaKpConfig"
+                type="Klarna\Kp\Plugin\Model\ConfigPlugin"/>
+    </type>
+    <type name="Klarna\Core\Helper\KlarnaConfig">
+        <plugin sortOrder="100" name="klarnaKpKlarnaConfig" type="Klarna\Kp\Plugin\Helper\KlarnaConfigPlugin"/>
+    </type>
+    <preference for="Klarna\Kp\Api\SessionInitiatorInterface" type="Klarna\Kp\Model\SessionInitiator"/>
+    <preference for="Klarna\Kp\Api\PaymentMethodListInterface" type="Klarna\Kp\Model\PaymentMethodList"/>
+    <preference for="Klarna\Kp\Api\QuoteInterface" type="Klarna\Kp\Model\Quote"/>
+    <preference for="Klarna\Kp\Api\QuoteRepositoryInterface" type="Klarna\Kp\Model\QuoteRepository"/>
+    <preference for="Klarna\Kp\Api\CreditApiInterface" type="Klarna\Kp\Model\Api\Rest\Service\Payments"/>
+</config>

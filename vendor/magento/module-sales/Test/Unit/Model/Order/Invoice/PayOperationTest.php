@@ -8,7 +8,7 @@ namespace Magento\Sales\Test\Unit\Model\Order\Invoice;
 /**
  * Unit test for Invoice pay operation.
  */
-class PayOperationTest extends \PHPUnit_Framework_TestCase
+class PayOperationTest extends \PHPUnit\Framework\TestCase
 {
     /**
      * @var \Magento\Sales\Model\Order\Invoice\PayOperation
@@ -93,7 +93,7 @@ class PayOperationTest extends \PHPUnit_Framework_TestCase
                 'setBaseDiscountInvoiced',
                 'getBaseDiscountInvoiced',
                 'setBaseTotalInvoicedCost',
-                'getBaseTotalInvoicedCost'
+                'getBaseTotalInvoicedCost',
             ]
         );
         $this->orderMock->expects($this->any())
@@ -169,7 +169,7 @@ class PayOperationTest extends \PHPUnit_Framework_TestCase
                 'getBaseShippingAmount',
                 'getDiscountAmount',
                 'getBaseDiscountAmount',
-                'getBaseCost'
+                'getBaseCost',
             ]
         );
         $this->invoiceMock->expects($this->any())
@@ -218,13 +218,7 @@ class PayOperationTest extends \PHPUnit_Framework_TestCase
             ->method('getBaseCost')
             ->willReturn(31);
 
-        $this->contextMock = $this->getMock(
-            \Magento\Framework\Model\Context::class,
-            [],
-            [],
-            '',
-            false
-        );
+        $this->contextMock = $this->createMock(\Magento\Framework\Model\Context::class);
 
         $this->invoiceItemMock = $this->getMockForAbstractClass(
             \Magento\Sales\Api\Data\InvoiceItemInterface::class,
@@ -235,7 +229,7 @@ class PayOperationTest extends \PHPUnit_Framework_TestCase
             true,
             [
                 'isDeleted',
-                'register'
+                'register',
             ]
         );
         $this->invoiceItemMock->expects($this->any())
@@ -255,7 +249,7 @@ class PayOperationTest extends \PHPUnit_Framework_TestCase
             [
                 'canCapture',
                 'getMethodInstance',
-                'getIsTransactionPending'
+                'getIsTransactionPending',
             ]
         );
         $this->orderMock->expects($this->any())
@@ -407,7 +401,7 @@ class PayOperationTest extends \PHPUnit_Framework_TestCase
                 'sales_order_invoice_register',
                 [
                     'invoice' => $this->invoiceMock,
-                    'order' => $this->orderMock
+                    'order' => $this->orderMock,
                 ]
             );
 
@@ -428,17 +422,17 @@ class PayOperationTest extends \PHPUnit_Framework_TestCase
     {
         return [
             'Invoice can capture, online' => [
-                true, true, null, null
+                true, true, null, null,
             ],
             'Invoice can capture, offline' => [
-                true, false, null, null
+                true, false, null, null,
             ],
             'Invoice can not capture, online, is not gateway, transaction is not pending' => [
-                false, true, false, false
+                false, true, false, false,
             ],
             'Invoice can not capture, offline, gateway, transaction is not pending' => [
-                false, false, true, false
-            ]
+                false, false, true, false,
+            ],
         ];
     }
 }

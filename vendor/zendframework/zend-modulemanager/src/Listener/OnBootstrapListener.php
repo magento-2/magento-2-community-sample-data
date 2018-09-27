@@ -25,8 +25,8 @@ class OnBootstrapListener extends AbstractListener
     public function __invoke(ModuleEvent $e)
     {
         $module = $e->getModule();
-        if (!$module instanceof BootstrapListenerInterface
-            && !method_exists($module, 'onBootstrap')
+        if (! $module instanceof BootstrapListenerInterface
+            && ! method_exists($module, 'onBootstrap')
         ) {
             return;
         }
@@ -34,6 +34,6 @@ class OnBootstrapListener extends AbstractListener
         $moduleManager = $e->getTarget();
         $events        = $moduleManager->getEventManager();
         $sharedEvents  = $events->getSharedManager();
-        $sharedEvents->attach('Zend\Mvc\Application', ModuleManager::EVENT_BOOTSTRAP, array($module, 'onBootstrap'));
+        $sharedEvents->attach('Zend\Mvc\Application', ModuleManager::EVENT_BOOTSTRAP, [$module, 'onBootstrap']);
     }
 }

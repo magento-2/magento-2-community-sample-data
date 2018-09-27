@@ -7,6 +7,8 @@ namespace Magento\Backend\Block\Store\Switcher\Form\Renderer\Fieldset;
 
 /**
  * Form fieldset renderer
+ * @api
+ * @since 100.0.2
  */
 class Element extends \Magento\Backend\Block\Widget\Form\Renderer\Fieldset\Element implements
     \Magento\Framework\Data\Form\Element\Renderer\RendererInterface
@@ -53,7 +55,7 @@ class Element extends \Magento\Backend\Block\Widget\Form\Renderer\Fieldset\Eleme
     public function getHintHtml()
     {
         /** @var $storeSwitcher \Magento\Backend\Block\Store\Switcher */
-        $storeSwitcher = $this->_layout->getBlockSingleton('Magento\Backend\Block\Store\Switcher');
+        $storeSwitcher = $this->_layout->getBlockSingleton(\Magento\Backend\Block\Store\Switcher::class);
         return $storeSwitcher->getHintHtml();
     }
 }

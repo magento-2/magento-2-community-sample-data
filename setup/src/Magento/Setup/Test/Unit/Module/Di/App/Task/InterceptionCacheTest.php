@@ -7,7 +7,7 @@ namespace Magento\Setup\Test\Unit\Module\Di\App\Task;
 
 use Magento\Setup\Module\Di\App\Task\Operation\InterceptionCache;
 
-class InterceptionCacheTest extends \PHPUnit_Framework_TestCase
+class InterceptionCacheTest extends \PHPUnit\Framework\TestCase
 {
     /**
      * @var \PHPUnit_Framework_MockObject_MockObject | \Magento\Framework\Interception\Config\Config
@@ -21,12 +21,12 @@ class InterceptionCacheTest extends \PHPUnit_Framework_TestCase
 
     public function setUp()
     {
-        $this->configMock = $this->getMockBuilder('Magento\Framework\Interception\Config\Config')
+        $this->configMock = $this->getMockBuilder(\Magento\Framework\Interception\Config\Config::class)
             ->setMethods([])
             ->disableOriginalConstructor()
             ->getMock();
         $this->interceptionsListMock = $this->getMockBuilder(
-            'Magento\Setup\Module\Di\Code\Reader\Decorator\Interceptions'
+            \Magento\Setup\Module\Di\Code\Reader\Decorator\Interceptions::class
         )
             ->setMethods([])
             ->disableOriginalConstructor()

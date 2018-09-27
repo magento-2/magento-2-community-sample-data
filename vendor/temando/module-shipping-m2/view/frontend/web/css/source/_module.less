@@ -1,0 +1,60 @@
+// checkout fields in multi-checkout
+.multi-checkout-fields {
+  // style for more spacing
+  label {
+    display: block;
+    margin-bottom: 7px;
+  }
+  .field {
+    margin: 1.5em 0;
+  }
+  // special case for checkbox fields
+  .field.checkbox {
+    label {
+      display: inline-block;
+      margin: 0 0 0 12px;
+    }
+  }
+}
+
+.collection-point-country,
+.collection-point-postalcode,
+.collection-point-button {
+  display: inline-block;
+  padding: 20px 10px 0 0;
+}
+
+.collection-point-list {
+  border: 1px solid #c2c2c2;
+  max-height: 200px;
+  overflow: auto;
+}
+
+.collection-point-postalcode {
+  max-width: 9em;
+  vertical-align: top;
+}
+
+.field-error {
+  color: #e02b27;
+  font-size: 1.2rem;
+  margin-top: 7px;
+}
+
+table.collection-point-opening-hours > tbody > tr > td {
+  padding-bottom: 2px;
+}
+
+.collection-point-message {
+  padding-top: 10px;
+}
+
+.box-order-shipping-address {
+  .box-subtitle {
+    font-weight: @font-weight__semibold;
+  }
+
+  .order-shipping-secondary-address {
+    margin-top: 1rem;
+  }
+}

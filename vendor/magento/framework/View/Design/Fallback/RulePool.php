@@ -27,11 +27,7 @@ class RulePool
     const TYPE_EMAIL_TEMPLATE = 'email';
     /**#@-*/
 
-    /**
-     * File system
-     *
-     * @var \Magento\Framework\Filesystem
-     */
+    /**#@-*/
     protected $filesystem;
 
     /**
@@ -180,7 +176,12 @@ class RulePool
                                         'optionalParams' => ['locale']
                                     ]),
                                 $this->simpleFactory
-                                    ->create(['pattern' => "<theme_dir>/web"])
+                                    ->create(['pattern' => "<theme_dir>/web"]),
+                                $this->simpleFactory
+                                    ->create([
+                                        'pattern' => "<theme_pubstatic_dir>",
+                                        'optionalParams' => ['theme_pubstatic_dir']
+                                    ]),
                             ]
                         )]
                     ),

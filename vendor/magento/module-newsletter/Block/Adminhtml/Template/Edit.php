@@ -16,6 +16,10 @@ namespace Magento\Newsletter\Block\Adminhtml\Template;
 use Magento\Backend\Block\Widget;
 use Magento\Framework\App\TemplateTypesInterface;
 
+/**
+ * @api
+ * @since 100.0.2
+ */
 class Edit extends Widget
 {
     /**
@@ -67,7 +71,7 @@ class Edit extends Widget
     {
         $this->getToolbar()->addChild(
             'back_button',
-            'Magento\Backend\Block\Widget\Button',
+            \Magento\Backend\Block\Widget\Button::class,
             [
                 'label' => __('Back'),
                 'onclick' => "window.location.href = '" . $this->getUrl('*/*') . "'",
@@ -77,7 +81,7 @@ class Edit extends Widget
 
         $this->getToolbar()->addChild(
             'reset_button',
-            'Magento\Backend\Block\Widget\Button',
+            \Magento\Backend\Block\Widget\Button::class,
             [
                 'label' => __('Reset'),
                 'onclick' => 'window.location.href = window.location.href',
@@ -88,7 +92,7 @@ class Edit extends Widget
         if (!$this->isTextType()) {
             $this->getToolbar()->addChild(
                 'to_plain_button',
-                'Magento\Backend\Block\Widget\Button',
+                \Magento\Backend\Block\Widget\Button::class,
                 [
                     'label' => __('Convert to Plain Text'),
                     'data_attribute' => [
@@ -101,7 +105,7 @@ class Edit extends Widget
 
             $this->getToolbar()->addChild(
                 'to_html_button',
-                'Magento\Backend\Block\Widget\Button',
+                \Magento\Backend\Block\Widget\Button::class,
                 [
                     'label' => __('Return HTML Version'),
                     'data_attribute' => [
@@ -116,7 +120,7 @@ class Edit extends Widget
 
         $this->getToolbar()->addChild(
             'preview_button',
-            'Magento\Backend\Block\Widget\Button',
+            \Magento\Backend\Block\Widget\Button::class,
             [
                 'label' => __('Preview Template'),
                 'data_attribute' => [
@@ -129,7 +133,7 @@ class Edit extends Widget
         if ($this->getEditMode()) {
             $this->getToolbar()->addChild(
                 'delete_button',
-                'Magento\Backend\Block\Widget\Button',
+                \Magento\Backend\Block\Widget\Button::class,
                 [
                     'label' => __('Delete Template'),
                     'data_attribute' => [
@@ -141,7 +145,7 @@ class Edit extends Widget
 
             $this->getToolbar()->addChild(
                 'save_as_button',
-                'Magento\Backend\Block\Widget\Button',
+                \Magento\Backend\Block\Widget\Button::class,
                 [
                     'label' => __('Save As'),
                     'data_attribute' => [
@@ -154,7 +158,7 @@ class Edit extends Widget
 
         $this->getToolbar()->addChild(
             'save_button',
-            'Magento\Backend\Block\Widget\Button',
+            \Magento\Backend\Block\Widget\Button::class,
             [
                 'label' => __('Save Template'),
                 'data_attribute' => [
@@ -202,7 +206,9 @@ class Edit extends Widget
      */
     public function getForm()
     {
-        return $this->getLayout()->createBlock('Magento\Newsletter\Block\Adminhtml\Template\Edit\Form')->toHtml();
+        return $this->getLayout()->createBlock(
+             \Magento\Newsletter\Block\Adminhtml\Template\Edit\Form::class
+        )->toHtml();
     }
 
     /**

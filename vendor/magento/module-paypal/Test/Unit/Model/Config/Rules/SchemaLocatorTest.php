@@ -10,7 +10,7 @@ namespace Magento\Paypal\Test\Unit\Model\Config\Rules;
  *
  * Test for class \Magento\Paypal\Model\Config\Rules\SchemaLocator
  */
-class SchemaLocatorTest extends \PHPUnit_Framework_TestCase
+class SchemaLocatorTest extends \PHPUnit\Framework\TestCase
 {
     /**
      * @var \Magento\Paypal\Model\Config\Rules\SchemaLocator
@@ -29,7 +29,7 @@ class SchemaLocatorTest extends \PHPUnit_Framework_TestCase
      */
     protected function setUp()
     {
-        $this->readerMock = $this->getMockBuilder('Magento\Framework\Module\Dir\Reader')
+        $this->readerMock = $this->getMockBuilder(\Magento\Framework\Module\Dir\Reader::class)
             ->disableOriginalConstructor()
             ->getMock();
 

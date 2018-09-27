@@ -3,17 +3,16 @@
  * Copyright © Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
-
 namespace Magento\Catalog\Model\Product\Option;
 
 use Magento\Catalog\Api\Data\ProductInterface;
-use Magento\Framework\EntityManager\HydratorPool;
-use Magento\Framework\EntityManager\MetadataPool;
 use Magento\Framework\Exception\CouldNotSaveException;
 use Magento\Framework\Exception\NoSuchEntityException;
+use Magento\Framework\EntityManager\MetadataPool;
+use Magento\Framework\EntityManager\HydratorPool;
+use Magento\Framework\App\ObjectManager;
 
 /**
- * Class Repository
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  */
 class Repository implements \Magento\Catalog\Api\ProductCustomOptionRepositoryInterface
@@ -54,34 +53,32 @@ class Repository implements \Magento\Catalog\Api\ProductCustomOptionRepositoryIn
     protected $converter;
 
     /**
-     * Repository constructor.
+     * Constructor
+     *
      * @param \Magento\Catalog\Api\ProductRepositoryInterface $productRepository
      * @param \Magento\Catalog\Model\ResourceModel\Product\Option $optionResource
      * @param Converter $converter
-     * @param \Magento\Catalog\Model\Product\OptionFactory|null $optionFactory
      * @param \Magento\Catalog\Model\ResourceModel\Product\Option\CollectionFactory|null $collectionFactory
-     * @throws \RuntimeException
+     * @param \Magento\Catalog\Model\Product\OptionFactory|null $optionFactory
+     * @param \Magento\Framework\EntityManager\MetadataPool|null $metadataPool
      */
     public function __construct(
         \Magento\Catalog\Api\ProductRepositoryInterface $productRepository,
         \Magento\Catalog\Model\ResourceModel\Product\Option $optionResource,
         \Magento\Catalog\Model\Product\Option\Converter $converter,
+        \Magento\Catalog\Model\ResourceModel\Product\Option\CollectionFactory $collectionFactory = null,
         \Magento\Catalog\Model\Product\OptionFactory $optionFactory = null,
-        \Magento\Catalog\Model\ResourceModel\Product\Option\CollectionFactory $collectionFactory = null
+        \Magento\Framework\EntityManager\MetadataPool $metadataPool = null
     ) {
         $this->productRepository = $productRepository;
         $this->optionResource = $optionResource;
         $this->converter = $converter;
-        if (null === $optionFactory) {
-            $optionFactory = \Magento\Framework\App\ObjectManager::getInstance()
-                ->get(\Magento\Catalog\Model\Product\OptionFactory::class);
-        }
-        $this->optionFactory = $optionFactory;
-        if (null === $collectionFactory) {
-            $collectionFactory = \Magento\Framework\App\ObjectManager::getInstance()
-                ->get(\Magento\Catalog\Model\ResourceModel\Product\Option\CollectionFactory::class);
-        }
-        $this->collectionFactory = $collectionFactory;
+        $this->collectionFactory = $collectionFactory ?: ObjectManager::getInstance()
+            ->get(\Magento\Catalog\Model\ResourceModel\Product\Option\CollectionFactory::class);
+        $this->optionFactory = $optionFactory ?: ObjectManager::getInstance()
+            ->get(\Magento\Catalog\Model\Product\OptionFactory::class);
+        $this->metadataPool = $metadataPool ?: ObjectManager::getInstance()
+            ->get(\Magento\Framework\EntityManager\MetadataPool::class);
     }
 
     /**
@@ -135,7 +132,7 @@ class Repository implements \Magento\Catalog\Api\ProductCustomOptionRepositoryIn
         \Magento\Catalog\Api\Data\ProductInterface $duplicate
     ) {
         $hydrator = $this->getHydratorPool()->getHydrator(ProductInterface::class);
-        $metadata = $this->getMetadataPool()->getMetadata(ProductInterface::class);
+        $metadata = $this->metadataPool->getMetadata(ProductInterface::class);
         return $this->optionResource->duplicate(
             $this->optionFactory->create([]),
             $hydrator->extract($product)[$metadata->getLinkField()],
@@ -154,8 +151,7 @@ class Repository implements \Magento\Catalog\Api\ProductCustomOptionRepositoryIn
         }
         /** @var \Magento\Catalog\Model\Product $product */
         $product = $this->productRepository->get($productSku);
-        /** @var \Magento\Framework\EntityManager\EntityMetadataInterface $metadata */
-        $metadata = $this->getMetadataPool()->getMetadata(ProductInterface::class);
+        $metadata = $this->metadataPool->getMetadata(ProductInterface::class);
         $option->setData('product_id', $product->getData($metadata->getLinkField()));
         $option->setData('store_id', $product->getStoreId());
 
@@ -164,21 +160,16 @@ class Repository implements \Magento\Catalog\Api\ProductCustomOptionRepositoryIn
             if (!$options) {
                 $options = $this->getProductOptions($product);
             }
-            $persistedOption = array_filter(
-                $options,
-                function ($iOption) use ($option) {
-                    return $option->getOptionId() == $iOption->getOptionId();
-                }
-            );
+
+            $persistedOption = array_filter($options, function ($iOption) use ($option) {
+                return $option->getOptionId() == $iOption->getOptionId();
+            });
             $persistedOption = reset($persistedOption);
 
             if (!$persistedOption) {
                 throw new NoSuchEntityException();
             }
-
-            /** @var array $originalValues */
             $originalValues = $persistedOption->getValues();
-            /** @var array $newValues */
             $newValues = $option->getData('values');
             if ($newValues) {
                 if (isset($originalValues)) {
@@ -187,9 +178,7 @@ class Repository implements \Magento\Catalog\Api\ProductCustomOptionRepositoryIn
                 $option->setData('values', $newValues);
             }
         }
-
         $option->save();
-
         return $option;
     }
 
@@ -244,22 +233,8 @@ class Repository implements \Magento\Catalog\Api\ProductCustomOptionRepositoryIn
     }
 
     /**
-     * @return \Magento\Framework\EntityManager\MetadataPool
-     * @deprecated
-     */
-    private function getMetadataPool()
-    {
-        if (null === $this->metadataPool) {
-            $this->metadataPool = \Magento\Framework\App\ObjectManager::getInstance()
-                ->get(\Magento\Framework\EntityManager\MetadataPool::class);
-        }
-        return $this->metadataPool;
-    }
-
-    /**
      * @return \Magento\Framework\EntityManager\HydratorPool
-     * @throws \RuntimeException
-     * @deprecated
+     * @deprecated 101.0.0
      */
     private function getHydratorPool()
     {

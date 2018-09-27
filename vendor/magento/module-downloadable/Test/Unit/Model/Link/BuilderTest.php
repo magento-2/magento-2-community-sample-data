@@ -13,7 +13,7 @@ use Magento\Downloadable\Helper\Download;
 /**
  * Class BuilderTest
  */
-class BuilderTest extends \PHPUnit_Framework_TestCase
+class BuilderTest extends \PHPUnit\Framework\TestCase
 {
     /**
      * @var \PHPUnit_Framework_MockObject_MockObject
@@ -60,7 +60,7 @@ class BuilderTest extends \PHPUnit_Framework_TestCase
             \Magento\Framework\Api\DataObjectHelper::class
         )->disableOriginalConstructor()->getMock();
 
-        $this->mockComponentFactory = $this->getMockBuilder('\Magento\Downloadable\Model\LinkFactory')
+        $this->mockComponentFactory = $this->getMockBuilder(\Magento\Downloadable\Model\LinkFactory::class)
             ->disableOriginalConstructor()
             ->setMethods(['create'])
             ->getMock();

@@ -3,6 +3,7 @@
  * Copyright © Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
+// @codingStandardsIgnoreFile
 namespace Magento\CatalogUrlRewrite\Test\Unit\Model\Category;
 
 use Magento\CatalogUrlRewrite\Model\CategoryUrlRewriteGenerator;
@@ -10,7 +11,7 @@ use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
 use Magento\UrlRewrite\Model\OptionProvider;
 use Magento\UrlRewrite\Service\V1\Data\UrlRewrite;
 
-class CurrentUrlRewritesRegeneratorTest extends \PHPUnit_Framework_TestCase
+class CurrentUrlRewritesRegeneratorTest extends \PHPUnit\Framework\TestCase
 {
     /** @var \Magento\CatalogUrlRewrite\Model\Category\CurrentUrlRewritesRegenerator */
     private $currentUrlRewritesRegenerator;
@@ -49,17 +50,11 @@ class CurrentUrlRewritesRegeneratorTest extends \PHPUnit_Framework_TestCase
             ->disableOriginalConstructor()->getMock();
         $this->urlRewriteFactory->expects($this->once())->method('create')
             ->willReturn($this->urlRewrite);
-        $mergeDataProviderFactory = $this->getMock(
-            \Magento\UrlRewrite\Model\MergeDataProviderFactory::class,
-            ['create'],
-            [],
-            '',
-            false
-        );
+        $mergeDataProviderFactory = $this->createPartialMock(\Magento\UrlRewrite\Model\MergeDataProviderFactory::class, ['create']);
         $this->mergeDataProvider = new \Magento\UrlRewrite\Model\MergeDataProvider;
         $mergeDataProviderFactory->expects($this->once())->method('create')->willReturn($this->mergeDataProvider);
 
-        $this->currentUrlRewritesRegenerator = (new ObjectManager($this))->getObject(
+        $this->currentUrlRewritesRegenerator = (new ObjectManager($this))->getObject(   
             \Magento\CatalogUrlRewrite\Model\Category\CurrentUrlRewritesRegenerator::class,
             [
                 'categoryUrlPathGenerator' => $this->categoryUrlPathGenerator,
@@ -128,6 +123,7 @@ class CurrentUrlRewritesRegeneratorTest extends \PHPUnit_Framework_TestCase
                     )
                 )
             );
+
         $this->category->expects($this->any())->method('getEntityId')->will($this->returnValue($categoryId));
         $this->category->expects($this->once())->method('getData')->with('save_rewrites_history')
             ->will($this->returnValue(true));

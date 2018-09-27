@@ -1,3 +1,143 @@
+## 3.28.0
+* Add support for Level 3 summary parameters: `shippingAmount`, `discountAmount`, and `shipsFromPostalCode`
+* Add support for `tax_amount` field on transaction `line_items`
+* Add `sourceMerchantId` property to `WebhookNotification`s if present
+* Deprecate `TRANSACTION_LINE_ITEM_DISCOUNT_AMOUNT_MUST_BE_GREATER_THAN_ZERO` error in favor of `TRANSACTION_LINE_ITEM_DISCOUNT_AMOUNT_CANNOT_BE_NEGATIVE`.
+* Deprecate `TRANSACTION_LINE_ITEM_UNIT_TAX_AMOUNT_MUST_BE_GREATER_THAN_ZERO` error in favor of `TRANSACTION_LINE_ITEM_UNIT_TAX_AMOUNT_CANNOT_BE_NEGATIVE`.
+* Deprecate `Braintree\Transaction\LineItem` in favor of `Braintree\TransactionLineItem`.
+* Add `findAll` static method to `TransactionLineItem` class
+
+## 3.27.0
+* Add support for Level 3 summary parameters: `shippingAmount`, `discountAmount`, and `shipsFromPostalCode`
+* Add support for transaction line items
+* Add support for tagged evidence in `DisputeGateway::addTextEvidence` (Beta release)
+* Update https certificate bundle
+
+## 3.26.1
+* Deprecate `OAuthGateway::computeSignature`
+* Fix spec to expect PayPal transactions to move to settling rather than settled
+* Fix AchMandate acceptedAt attribute parsing
+
+## 3.26.0
+* Add support for upgrading a PayPal future payment refresh token to a billing agreement
+* Address deprecation warnings for create_function with PHP 7 (#193, thanks @chrisdeeming)
+* Add `cardHolderName` to `CreditCardDetails` (#201, thanks @Samistine)
+* Add GrantedPaymentInstrumentUpdate webhook support
+* Allow paypal => options params to be passed in camel case
+* Add ability to create a transaction from a shared nonce
+* Implement JsonSerializable on Braintree Objects for easier logging (#200, thanks @hfmikep)
+* Fix spec to expect PayPal transaction to settle immediately after successful capture
+* Add `options` -> `paypal` -> `shipping` for creating & updating customers as well as creating payment methods
+* Add `options` -> `paypal` -> `description` for creating and updating subscriptions
+* Add `binData` to `PaymentMethodNonce`
+* Add `bin` to `ApplePayCard`
+* Add `deviceDataCaptured` field in `riskData`
+
+## 3.25.0
+* Add `submitForSettlement` option to `Subscription::retryCharge`
+* Support `eci_indicator` for Transaction sale with raw Apple Pay parameters
+* Add `accept` method for the Dispute API
+* Add `addTextEvidence` method for the Dispute API
+* Add `addFileEvidence` method for the Dispute API
+* Add `finalize` method for the Dispute API
+* Add `find` method for the Dispute API
+* Add `removeEvidence` method for the Dispute API
+* Add `search` method for the Dispute API
+* Add DocumentUpload
+
+## 3.24.0
+* Add AuthorizationAdjustment class and `authorizationAdjustments` to Transaction
+* Add iDEAL webhook support
+* Add `IDEAL_PAYMENT` to `PaymentInstrumentType`
+* Create Braintree class to be PSR compliant
+* Coinbase is no longer a supported payment method. `PAYMENT_METHOD_NO_LONGER_SUPPORTED` will be returned for Coinbase operations.
+* Add `ApplePay` for web domain registration.
+* Add facilitated details to Transaction if present
+* Update link to transaction api documentation (thanks @qoheleth-tech!).
+* Fix TransactionGateway return types (thanks @jjok!).
+* Update return type for client token (thanks @jlaswell!).
+
+## 3.23.1
+* Fix token generator return type - thanks @jjok!
+* Improve error reporting for connection issues - thanks @montymxb!
+* Add support for additional PayPal options when vaulting a PayPal Order
+
+## 3.23.0
+* Add Visa Checkout support
+* Add ConnectedMerchantStatusTransitioned and ConnectedMerchantPayPalStatusChanged Auth webhooks
+* Add new properties to `CreditCardVerification` and `Customer`
+* Add SDK support for skip AVS and skip CVV
+
+## 3.22.0
+* Add option to disable Accept-Encoding: gzip header for Google App Engine
+* Fix a bug where `merchantAccount->all` would attempt to fetch too many pages of merchant accounts
+
+## 3.21.1
+* Add back in `options->three_d_secure` to transaction params that was accidentally removed in v3.14.0
+
+## 3.21.0
+* Allow optional configuration of SSL version
+* Replace `var_dump` with `print_r`. Thanks, @mnlg
+* Add functionality to list all merchant accounts for a merchant with `merchantAccount->all`
+* Stop sending account_description field from us bank accounts
+
+## 3.20.0
+* Add option `skip_advanced_fraud_check` for transaction flows
+
+## 3.19.0
+* Add multi-currency updates to merchants onboarded through Braintree Auth
+* Raise an exception if fetching pages of results times out during a transaction search
+
+## 3.18.0
+* Fix `UsBankAccount` support for `Customer`s
+* Update `Grant` api to support options hash
+
+## 3.17.0
+* Add 'UsBankAccount' payment method
+
+## 3.16.0
+* Add authenticated proxy functionality
+* Add constant for Venmo Account payment instrument type
+* Add validation error for verifications with submerchants
+
+## 3.15.0
+* Add 'default_payment_method' option for Customer
+
+## 3.14.0
+**Note: This version introduced an unintentional breaking change where the `options->three_d_secure` transaction parameter was changed to `options->threeDSecure`. Starting in v3.21.1, both case conventions are supported for backwards compatibility.**
+
+* Add OrderId to refund
+* Add 3DS Pass thru support
+* Expose IDs in resource collections
+* Add leading slash to the namespace. Thanks, @bocharsky-bw
+* Stop modifying DateTime parameters during XML generation. Thanks, @jodarove
+
+## 3.13.0
+* Add method of revoking OAuth access tokens.
+
+## 3.12.0
+* Add Transaction `update_details`
+* Support for Too Many Requests response codes
+* Add ability to count errors in ErrorCollection object. Thanks, @bocharsky-bw
+* Improve Type Hinting
+
+## 3.11.0
+* Remove final from classes. Thanks, @ibrahimlawal!
+* Add currency to Transaction search
+
+## 3.10.0
+* Add timeout attribute
+* Add start-date and end-date to SUBSCRIPTION_CHARGED_SUCCESSFULLY test webhook response
+
+## 3.9.0
+* Add AccountUpdaterDailyReport webhook parsing
+
+## 3.8.0
+* Add payment method revoke
+* Add support for options in `submit_for_settlement` transaction flows
+* Add verification create API
+* Update https certificate bundle
+
 ## 3.7.0
 * Add VenmoAccount
 * Allow order_id and descriptor to be passed in for Transaction submit_for_settlement
@@ -317,7 +457,7 @@
 
 ## 2.4.0
 
-* Added ability to specify country using countryName, countryCodeAlpha2, countryCodeAlpha3, or countryCodeNumeric (see [ISO_3166-1](http://en.wikipedia.org/wiki/ISO_3166-1))
+* Added ability to specify country using countryName, countryCodeAlpha2, countryCodeAlpha3, or countryCodeNumeric (see [ISO_3166-1](https://en.wikipedia.org/wiki/ISO_3166-1))
 * Added gatewayRejectionReason to Braintree_Transaction and Braintree_Verification
 * Added unified message to result objects
 
@@ -352,7 +492,7 @@
 
 * Updated success? on transaction responses to return false on declined transactions
 * Search results now include Enumerable and will automatically paginate data
-* Added credit_card[cardholder_name] to allowed transaction params and CreditCardDetails (thanks [chrismcc](http://github.com/chrismcc))
+* Added credit_card[cardholder_name] to allowed transaction params and CreditCardDetails (thanks [chrismcc](https://github.com/chrismcc))
 * Fixed a bug with Customer::all
 * Added constants for error codes
 

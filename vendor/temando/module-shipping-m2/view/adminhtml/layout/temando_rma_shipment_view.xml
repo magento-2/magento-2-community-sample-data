@@ -1,0 +1,92 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * Refer to LICENSE.txt distributed with the Temando Shipping module for notice of license
+ */
+-->
+<page xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:View/Layout/etc/page_configuration.xsd">
+    <body>
+        <referenceContainer name="content">
+            <!-- container block, renders all children, adds toolbar button -->
+            <block class="Temando\Shipping\Block\Adminhtml\Rma\RmaShipment\View" name="rma_shipment_view">
+
+                <!-- RMA/Order/Account Information -->
+                <block class="Magento\Backend\Block\Template" name="rma_shipment_info"
+                       template="Temando_Shipping::rma/view/info.phtml">
+                    <!-- RMA/Order Information: placeholder, see appropriate handles for template -->
+                    <block class="Magento\Backend\Block\Template" name="rma_shipment_parent_info">
+                        <arguments>
+                            <argument name="orderViewModel" xsi:type="object">Temando\Shipping\ViewModel\Order\OrderDetails</argument>
+                            <argument name="rmaViewModel" xsi:type="object">Temando\Shipping\ViewModel\Rma\RmaView</argument>
+                        </arguments>
+                    </block>
+
+                    <!-- Account Information -->
+                    <block class="Magento\Backend\Block\Template" name="rma_shipment_customer_info"
+                           template="Temando_Shipping::rma/view/info/customer.phtml">
+                        <arguments>
+                            <argument name="rmaViewModel" xsi:type="object">Temando\Shipping\ViewModel\Rma\RmaView</argument>
+                            <argument name="customerViewModel" xsi:type="object">Temando\Shipping\ViewModel\Order\CustomerDetails</argument>
+                        </arguments>
+                    </block>
+
+                    <container name="extra_customer_info"/>
+                </block>
+
+                <!-- Address Information -->
+                <block class="Magento\Backend\Block\Template" name="rma_shipment_address_info"
+                       template="Temando_Shipping::rma/view/address.phtml">
+                    <arguments>
+                        <argument name="viewModel" xsi:type="object">Temando\Shipping\ViewModel\Shipment\Location</argument>
+                    </arguments>
+                </block>
+
+                <!-- Payment & Shipping Method -->
+                <block class="Magento\Backend\Block\Template" name="rma_shipment_payment_shipping"
+                       template="Temando_Shipping::rma/view/payment_shipping.phtml">
+
+                    <block class="Magento\Backend\Block\Template" name="rma_shipment_payment"
+                           template="Temando_Shipping::rma/view/payment_shipping/payment.phtml" />
+
+                    <block class="Magento\Backend\Block\Template" name="rma_shipment_shipping"
+                           template="Temando_Shipping::rma/view/payment_shipping/shipping.phtml">
+                        <arguments>
+                            <argument name="viewModel" xsi:type="object">Temando\Shipping\ViewModel\Rma\RmaView</argument>
+                        </arguments>
+
+                        <block class="Magento\Backend\Block\Template" name="rma_shipment_tracking" template="Temando_Shipping::rma/view/payment_shipping/tracking.phtml">
+                            <arguments>
+                                <argument name="viewModel" xsi:type="object">Temando\Shipping\ViewModel\Rma\RmaShipment\Tracking</argument>
+                            </arguments>
+                        </block>
+                    </block>
+
+                </block>
+
+                <!-- Documentation -->
+                <block class="Magento\Backend\Block\Template" name="rma_shipment_documentation"
+                       template="Temando_Shipping::shipment/documentation.phtml">
+                    <arguments>
+                        <argument name="viewModel" xsi:type="object">Temando\Shipping\ViewModel\Shipment\ShipmentDetails</argument>
+                    </arguments>
+                </block>
+
+                <!-- Packages -->
+                <block class="Magento\Backend\Block\Template" name="rma_shipment_packages"
+                       template="Temando_Shipping::shipment/packages.phtml">
+                    <arguments>
+                        <argument name="viewModel" xsi:type="object">Temando\Shipping\ViewModel\Shipment\ShipmentDetails</argument>
+                    </arguments>
+                </block>
+
+                <!-- Items Shipped -->
+                <block class="Magento\Backend\Block\Template" name="rma_shipment_items"
+                       template="Temando_Shipping::rma/view/items.phtml">
+                    <arguments>
+                        <argument name="viewModel" xsi:type="object">Temando\Shipping\ViewModel\Rma\RmaShipment\Items</argument>
+                    </arguments>
+                </block>
+            </block>
+        </referenceContainer>
+    </body>
+</page>

@@ -6,13 +6,14 @@
 
 namespace Magento\Sales\Model\Order;
 
-use Magento\Sales\Model\ResourceModel\Order\Creditmemo as Resource;
-use Magento\Sales\Model\ResourceModel\Metadata;
-use Magento\Sales\Api\Data\CreditmemoSearchResultInterfaceFactory as SearchResultFactory;
-use Magento\Framework\Exception\NoSuchEntityException;
-use Magento\Framework\Exception\InputException;
+use Magento\Framework\Api\SearchCriteria\CollectionProcessorInterface;
 use Magento\Framework\Exception\CouldNotDeleteException;
 use Magento\Framework\Exception\CouldNotSaveException;
+use Magento\Framework\Exception\InputException;
+use Magento\Framework\Exception\LocalizedException;
+use Magento\Framework\Exception\NoSuchEntityException;
+use Magento\Sales\Api\Data\CreditmemoSearchResultInterfaceFactory as SearchResultFactory;
+use Magento\Sales\Model\ResourceModel\Metadata;
 
 /**
  * Repository class for @see \Magento\Sales\Api\Data\CreditmemoInterface
@@ -38,15 +39,24 @@ class CreditmemoRepository implements \Magento\Sales\Api\CreditmemoRepositoryInt
     protected $registry = [];
 
     /**
+     * @var \Magento\Framework\Api\SearchCriteria\CollectionProcessorInterface
+     */
+    private $collectionProcessor;
+
+    /**
+     * CreditmemoRepository constructor.
      * @param Metadata $metadata
      * @param SearchResultFactory $searchResultFactory
+     * @param CollectionProcessorInterface|null $collectionProcessor
      */
     public function __construct(
         Metadata $metadata,
-        SearchResultFactory $searchResultFactory
+        SearchResultFactory $searchResultFactory,
+        CollectionProcessorInterface $collectionProcessor = null
     ) {
         $this->metadata = $metadata;
         $this->searchResultFactory = $searchResultFactory;
+        $this->collectionProcessor = $collectionProcessor ?: $this->getCollectionProcessor();
     }
 
     /**
@@ -86,22 +96,15 @@ class CreditmemoRepository implements \Magento\Sales\Api\CreditmemoRepositoryInt
     /**
      * Lists credit memos that match specified search criteria.
      *
-     * @param \Magento\Framework\Api\SearchCriteria $searchCriteria The search criteria.
+     * @param \Magento\Framework\Api\SearchCriteriaInterface $searchCriteria The search criteria.
      * @return \Magento\Sales\Api\Data\CreditmemoSearchResultInterface Credit memo search result interface.
      */
-    public function getList(\Magento\Framework\Api\SearchCriteria $searchCriteria)
+    public function getList(\Magento\Framework\Api\SearchCriteriaInterface $searchCriteria)
     {
-        /** @var \Magento\Sales\Api\Data\CreditmemoSearchResultInterface $searchResult */
+        /** @var \Magento\Sales\Model\ResourceModel\Order\Creditmemo\Collection $searchResult */
         $searchResult = $this->searchResultFactory->create();
-        foreach ($searchCriteria->getFilterGroups() as $filterGroup) {
-            foreach ($filterGroup->getFilters() as $filter) {
-                $condition = $filter->getConditionType() ? $filter->getConditionType() : 'eq';
-                $searchResult->addFieldToFilter($filter->getField(), [$condition => $filter->getValue()]);
-            }
-        }
+        $this->collectionProcessor->process($searchCriteria, $searchResult);
         $searchResult->setSearchCriteria($searchCriteria);
-        $searchResult->setCurPage($searchCriteria->getCurrentPage());
-        $searchResult->setPageSize($searchCriteria->getPageSize());
         return $searchResult;
     }
 
@@ -135,9 +138,27 @@ class CreditmemoRepository implements \Magento\Sales\Api\CreditmemoRepositoryInt
         try {
             $this->metadata->getMapper()->save($entity);
             $this->registry[$entity->getEntityId()] = $entity;
+        } catch (LocalizedException $e) {
+            throw new CouldNotSaveException(__($e->getMessage()), $e);
         } catch (\Exception $e) {
             throw new CouldNotSaveException(__('Could not save credit memo'), $e);
         }
         return $this->registry[$entity->getEntityId()];
+    }
+
+    /**
+     * Retrieve collection processor
+     *
+     * @deprecated 100.2.0
+     * @return CollectionProcessorInterface
+     */
+    private function getCollectionProcessor()
+    {
+        if (!$this->collectionProcessor) {
+            $this->collectionProcessor = \Magento\Framework\App\ObjectManager::getInstance()->get(
+                \Magento\Framework\Api\SearchCriteria\CollectionProcessorInterface::class
+            );
+        }
+        return $this->collectionProcessor;
     }
 }

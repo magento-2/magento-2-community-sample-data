@@ -38,7 +38,7 @@ class Generator
     }
 
     /**
-     * Generate select query list with predefined items count in each select item.
+     * Generate select query list with predefined items count in each select item
      *
      * Generates select parameters - batchSize, correlationName, rangeField, rangeFieldAlias
      * to obtain instance of iterator. The behavior of the iterator will depend on the parameters passed to it.
@@ -125,13 +125,13 @@ class Generator
      * rangeFieldAlias - alias of range field.
      *
      * @see BatchRangeIterator
-     * @param string $rangeField -  Field which is used for the range mechanism in select.
+     * @param string $rangeField -  Field which is used for the range mechanism in select
      * @param \Magento\Framework\DB\Select $select
      * @param int $batchSize
      * @return BatchIteratorInterface
      * @throws LocalizedException Throws if incorrect "FROM" part in \Select exists
      * @see \Magento\Framework\DB\Query\Generator
-     * @deprecated This is a temporary solution which is made due to the fact that we
+     * @deprecated 100.2.0 This is a temporary solution which is made due to the fact that we
      *             can't change method generate() in version 2.1 due to a backwards incompatibility.
      *             In 2.2 version need to use original method generate() with additional parameter.
      */

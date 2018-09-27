@@ -9,7 +9,7 @@
  */
 namespace Magento\Framework\Encryption\Test\Unit;
 
-class CryptTest extends \PHPUnit_Framework_TestCase
+class CryptTest extends \PHPUnit\Framework\TestCase
 {
     private $_key;
 
@@ -32,6 +32,7 @@ class CryptTest extends \PHPUnit_Framework_TestCase
 
     /**
      * @param $length
+     *
      * @return bool|string
      */
     protected function _getRandomString($length)
@@ -71,6 +72,7 @@ class CryptTest extends \PHPUnit_Framework_TestCase
     /**
      * @param $cipherName
      * @param $modeName
+     *
      * @return mixed
      */
     protected function _getKeySize($cipherName, $modeName)
@@ -82,6 +84,7 @@ class CryptTest extends \PHPUnit_Framework_TestCase
     /**
      * @param $cipherName
      * @param $modeName
+     *
      * @return mixed
      */
     protected function _getInitVectorSize($cipherName, $modeName)

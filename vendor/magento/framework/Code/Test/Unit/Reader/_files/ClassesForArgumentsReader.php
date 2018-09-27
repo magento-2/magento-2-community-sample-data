@@ -1,11 +1,13 @@
 <?php
 /**
- *
  * Copyright © Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 
-// @codingStandardsIgnoreFile
+/**
+ * @codingStandardsIgnoreFile
+ * Coding Standards have to be ignored in this file, as it is just a data source for tests.
+ */
 
 class ClassWithAllArgumentTypes
 {
@@ -49,7 +51,7 @@ class ClassWithAllArgumentTypes
     /**
      * @param stdClass $stdClassObject
      * @param ClassWithoutConstruct $withoutConstructorClassObject
-     * @param $someVariable
+     * @param mixed $someVariable
      * @param string $const
      * @param int $optionalNumValue
      * @param string $optionalStringValue
@@ -130,7 +132,7 @@ class FirstClassForParentCall
         $this->_arrayVariable = $arrayVariable;
     }
 }
-class ThirdClassForParentCall extends firstClassForParentCall
+class ThirdClassForParentCall extends FirstClassForParentCall
 {
     /**
      * @var stdClass
@@ -153,7 +155,7 @@ class ThirdClassForParentCall extends firstClassForParentCall
         $this->_secondClass = $secondClass;
     }
 }
-class WrongArgumentsOrder extends firstClassForParentCall
+class WrongArgumentsOrder extends FirstClassForParentCall
 {
     /**
      * @var stdClass
@@ -176,7 +178,7 @@ class WrongArgumentsOrder extends firstClassForParentCall
         $this->_secondClass = $secondClass;
     }
 }
-class ArgumentsOnSeparateLines extends firstClassForParentCall
+class ArgumentsOnSeparateLines extends FirstClassForParentCall
 {
     /**
      * @var stdClass
@@ -222,22 +224,4 @@ class ClassWithSuppressWarnings
         $this->argumentOne = $stdClassObject;
         $this->argumentTwo = $secondClass;
     }
-}
-
-interface InterfaceTypeWithConstructorMethodAndParams
-{
-    /**
-     * We do not expect that this is valid case. There is no need to declare interface with method __construct
-     *
-     * @param $paramOne
-     * @param $paramTwo
-     */
-    public function __construct($paramOne, $paramTwo);
-}
-interface InterfaceTypeWithConstructorMethodWithoutParams
-{
-    /**
-     * We do not expect that this is valid case. There is no need to declare interface with method __construct
-     */
-    public function __construct();
 }

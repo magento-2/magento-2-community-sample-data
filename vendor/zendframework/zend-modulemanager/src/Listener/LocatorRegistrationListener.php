@@ -9,12 +9,14 @@
 
 namespace Zend\ModuleManager\Listener;
 
-use Zend\EventManager\Event;
 use Zend\EventManager\EventManagerInterface;
 use Zend\EventManager\ListenerAggregateInterface;
+use Zend\EventManager\ListenerAggregateTrait;
 use Zend\ModuleManager\Feature\LocatorRegisteredInterface;
 use Zend\ModuleManager\ModuleEvent;
 use Zend\ModuleManager\ModuleManager;
+use Zend\Mvc\MvcEvent;
+use Zend\ServiceManager\ServiceManager;
 
 /**
  * Locator registration listener
@@ -22,15 +24,12 @@ use Zend\ModuleManager\ModuleManager;
 class LocatorRegistrationListener extends AbstractListener implements
     ListenerAggregateInterface
 {
-    /**
-     * @var array
-     */
-    protected $modules = array();
+    use ListenerAggregateTrait;
 
     /**
      * @var array
      */
-    protected $callbacks = array();
+    protected $modules = [];
 
     /**
      * loadModule
@@ -43,7 +42,7 @@ class LocatorRegistrationListener extends AbstractListener implements
      */
     public function onLoadModule(ModuleEvent $e)
     {
-        if (!$e->getModule() instanceof LocatorRegisteredInterface) {
+        if (! $e->getModule() instanceof LocatorRegisteredInterface) {
             return;
         }
         $this->modules[] = $e->getModule();
@@ -54,36 +53,42 @@ class LocatorRegistrationListener extends AbstractListener implements
      *
      * Once all the modules are loaded, loop
      *
-     * @param  Event $e
+     * @param  ModuleEvent $e
      * @return void
      */
-    public function onLoadModules(Event $e)
+    public function onLoadModules(ModuleEvent $e)
     {
         $moduleManager = $e->getTarget();
         $events        = $moduleManager->getEventManager()->getSharedManager();
 
-        if (!$events) {
+        if (! $events) {
             return;
         }
 
         // Shared instance for module manager
-        $events->attach('Zend\Mvc\Application', ModuleManager::EVENT_BOOTSTRAP, function ($e) use ($moduleManager) {
-            $moduleClassName = get_class($moduleManager);
-            $moduleClassNameArray = explode('\\', $moduleClassName);
-            $moduleClassNameAlias = end($moduleClassNameArray);
-            $application     = $e->getApplication();
-            $services        = $application->getServiceManager();
-            if (!$services->has($moduleClassName)) {
-                $services->setAlias($moduleClassName, $moduleClassNameAlias);
-            }
-        }, 1000);
+        $events->attach(
+            'Zend\Mvc\Application',
+            ModuleManager::EVENT_BOOTSTRAP,
+            function (MvcEvent $e) use ($moduleManager) {
+                $moduleClassName      = get_class($moduleManager);
+                $moduleClassNameArray = explode('\\', $moduleClassName);
+                $moduleClassNameAlias = end($moduleClassNameArray);
+                $application          = $e->getApplication();
+                /* @var $services ServiceManager */
+                $services             = $application->getServiceManager();
+                if (! $services->has($moduleClassName)) {
+                        $services->setAlias($moduleClassName, $moduleClassNameAlias);
+                }
+            },
+            1000
+        );
 
         if (0 === count($this->modules)) {
             return;
         }
 
         // Attach to the bootstrap event if there are modules we need to process
-        $events->attach('Zend\Mvc\Application', ModuleManager::EVENT_BOOTSTRAP, array($this, 'onBootstrap'), 1000);
+        $events->attach('Zend\Mvc\Application', ModuleManager::EVENT_BOOTSTRAP, [$this, 'onBootstrap'], 1000);
     }
 
     /**
@@ -94,17 +99,18 @@ class LocatorRegistrationListener extends AbstractListener implements
      *
      * @TODO: Check the application / locator / etc a bit better to make sure
      * the env looks how we're expecting it to?
-     * @param Event $e
+     * @param MvcEvent $e
      * @return void
      */
-    public function onBootstrap(Event $e)
+    public function onBootstrap(MvcEvent $e)
     {
         $application = $e->getApplication();
+        /* @var $services ServiceManager */
         $services    = $application->getServiceManager();
 
         foreach ($this->modules as $module) {
             $moduleClassName = get_class($module);
-            if (!$services->has($moduleClassName)) {
+            if (! $services->has($moduleClassName)) {
                 $services->setService($moduleClassName, $module);
             }
         }
@@ -113,22 +119,9 @@ class LocatorRegistrationListener extends AbstractListener implements
     /**
      * {@inheritDoc}
      */
-    public function attach(EventManagerInterface $events)
+    public function attach(EventManagerInterface $events, $priority = 1)
     {
-        $this->callbacks[] = $events->attach(ModuleEvent::EVENT_LOAD_MODULE, array($this, 'onLoadModule'));
-        $this->callbacks[] = $events->attach(ModuleEvent::EVENT_LOAD_MODULES, array($this, 'onLoadModules'), -1000);
-        return $this;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public function detach(EventManagerInterface $events)
-    {
-        foreach ($this->callbacks as $index => $callback) {
-            if ($events->detach($callback)) {
-                unset($this->callbacks[$index]);
-            }
-        }
+        $this->listeners[] = $events->attach(ModuleEvent::EVENT_LOAD_MODULE, [$this, 'onLoadModule']);
+        $this->listeners[] = $events->attach(ModuleEvent::EVENT_LOAD_MODULES, [$this, 'onLoadModules'], -1000);
     }
 }

@@ -7,18 +7,15 @@
 namespace Magento\Sales\Model;
 
 /**
- * Class OrderIncrementIdCheckerTest to verify isIncrementIdUsed method behaviour.
+ * Class QuoteTest to verify isOrderIncrementIdUsed method behaviour
  */
-class OrderIncrementIdCheckerTest extends \PHPUnit_Framework_TestCase
+class OrderIncrementIdCheckerTest extends \PHPUnit\Framework\TestCase
 {
     /**
      * @var \Magento\Sales\Model\OrderIncrementIdChecker
      */
     private $checker;
 
-    /**
-     * @inheritdoc
-     */
     protected function setUp()
     {
         $this->checker = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->create(
@@ -27,23 +24,21 @@ class OrderIncrementIdCheckerTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * Test to verify if isIncrementIdUsed method works with numeric increment ids.
+     * Test to verify if isOrderIncrementIdUsed method works with numeric increment ids
      *
      * @magentoDataFixture Magento/Sales/_files/order.php
-     * @return void
      */
-    public function testIsIncrementIdUsedNumericIncrementId()
+    public function testIsOrderIncrementIdUsedNumericIncrementId()
     {
         $this->assertTrue($this->checker->isIncrementIdUsed('100000001'));
     }
 
     /**
-     * Test to verify if IsIncrementIdUsed method works with alphanumeric increment ids.
+     * Test to verify if isOrderIncrementIdUsed method works with alphanumeric increment ids
      *
      * @magentoDataFixture Magento/Sales/_files/order_alphanumeric_id.php
-     * @return void
      */
-    public function testIsIncrementIdUsedAlphanumericIncrementId()
+    public function testIsOrderIncrementIdUsedAlphanumericIncrementId()
     {
         $this->assertTrue($this->checker->isIncrementIdUsed('M00000001'));
     }

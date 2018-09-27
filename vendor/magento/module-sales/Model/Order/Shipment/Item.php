@@ -13,9 +13,9 @@ use Magento\Sales\Api\Data\ShipmentItemInterface;
 use Magento\Sales\Model\AbstractModel;
 
 /**
- * @method \Magento\Sales\Model\ResourceModel\Order\Shipment\Item _getResource()
- * @method \Magento\Sales\Model\ResourceModel\Order\Shipment\Item getResource()
+ * @api
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
+ * @since 100.0.2
  */
 class Item extends AbstractModel implements ShipmentItemInterface
 {
@@ -83,7 +83,7 @@ class Item extends AbstractModel implements ShipmentItemInterface
      */
     protected function _construct()
     {
-        $this->_init('Magento\Sales\Model\ResourceModel\Order\Shipment\Item');
+        $this->_init(\Magento\Sales\Model\ResourceModel\Order\Shipment\Item::class);
     }
 
     /**
@@ -146,7 +146,8 @@ class Item extends AbstractModel implements ShipmentItemInterface
      * Declare qty
      *
      * @param float $qty
-     * @return $this
+     * @return \Magento\Sales\Model\Order\Shipment\Item
+     * @throws \Magento\Framework\Exception\LocalizedException
      */
     public function setQty($qty)
     {
@@ -158,6 +159,7 @@ class Item extends AbstractModel implements ShipmentItemInterface
      * Applying qty to order item
      *
      * @return $this
+     * @throws \Magento\Framework\Exception\LocalizedException
      */
     public function register()
     {
@@ -166,6 +168,7 @@ class Item extends AbstractModel implements ShipmentItemInterface
     }
 
     //@codeCoverageIgnoreStart
+
     /**
      * Returns additional_data
      *
@@ -376,5 +379,6 @@ class Item extends AbstractModel implements ShipmentItemInterface
     {
         return $this->_setExtensionAttributes($extensionAttributes);
     }
+
     //@codeCoverageIgnoreEnd
 }

@@ -5,8 +5,8 @@
  */
 namespace Magento\Payment\Gateway\Http\Client;
 
-use Magento\Framework\HTTP\ZendClientFactory;
 use Magento\Framework\HTTP\ZendClient;
+use Magento\Framework\HTTP\ZendClientFactory;
 use Magento\Payment\Gateway\Http\ClientInterface;
 use Magento\Payment\Gateway\Http\ConverterInterface;
 use Magento\Payment\Gateway\Http\TransferInterface;
@@ -16,6 +16,7 @@ use Magento\Payment\Model\Method\Logger;
  * Class Zend
  * @package Magento\Payment\Gateway\Http\Client
  * @api
+ * @since 100.0.2
  */
 class Zend implements ClientInterface
 {
@@ -65,7 +66,7 @@ class Zend implements ClientInterface
         $client->setConfig($transferObject->getClientConfig());
         $client->setMethod($transferObject->getMethod());
 
-        switch($transferObject->getMethod()) {
+        switch ($transferObject->getMethod()) {
             case \Zend_Http_Client::GET:
                 $client->setParameterGet($transferObject->getBody());
                 break;

@@ -8,7 +8,7 @@ namespace Magento\Backend\Test\Unit\Model\Config\SessionLifetime;
 use Magento\Backend\Model\Config\SessionLifetime\BackendModel;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
 
-class BackendModelTest extends \PHPUnit_Framework_TestCase
+class BackendModelTest extends \PHPUnit\Framework\TestCase
 {
     /**
      * @dataProvider adminSessionLifetimeDataProvider
@@ -16,12 +16,16 @@ class BackendModelTest extends \PHPUnit_Framework_TestCase
     public function testBeforeSave($value, $errorMessage = null)
     {
         /** @var BackendModel $model */
-        $model = (new ObjectManager($this))->getObject('Magento\Backend\Model\Config\SessionLifetime\BackendModel');
+        $model = (new ObjectManager($this))->getObject(
+            \Magento\Backend\Model\Config\SessionLifetime\BackendModel::class
+        );
         if ($errorMessage !== null) {
-            $this->setExpectedException('\Magento\Framework\Exception\LocalizedException', $errorMessage);
+            $this->expectException(\Magento\Framework\Exception\LocalizedException::class);
+            $this->expectExceptionMessage($errorMessage);
         }
         $model->setValue($value);
-        $model->beforeSave();
+        $object = $model->beforeSave();
+        $this->assertEquals($model, $object);
     }
 
     /**

@@ -30,6 +30,8 @@ class SwatchAttributeCodes
     private $resourceConnection;
 
     /**
+     * Key is attribute_id, value is attribute_code
+     *
      * @var array
      */
     private $swatchAttributeCodes;
@@ -61,6 +63,7 @@ class SwatchAttributeCodes
 
     /**
      * Returns list of known swatch attribute codes. Check cache and database.
+     * Key is attribute_id, value is attribute_code
      *
      * @return array
      */
@@ -69,7 +72,7 @@ class SwatchAttributeCodes
         if ($this->swatchAttributeCodes === null) {
             $swatchAttributeCodesCache = $this->cache->load($this->cacheKey);
             if (false === $swatchAttributeCodesCache) {
-                $swatchAttributeCodes = $this->loadSwatchAttributeCodes();
+                $swatchAttributeCodes = $this->getSwatchAttributeCodes();
                 $this->cache->save(json_encode($swatchAttributeCodes), $this->cacheKey, $this->cacheTags);
             } else {
                 $swatchAttributeCodes = json_decode($swatchAttributeCodesCache, true);
@@ -83,9 +86,11 @@ class SwatchAttributeCodes
     /**
      * Returns list of known swatch attributes.
      *
+     * Returns a map of id and code for all EAV attributes with swatches
+     *
      * @return array
      */
-    private function loadSwatchAttributeCodes()
+    private function getSwatchAttributeCodes()
     {
         $select = $this->resourceConnection->getConnection()->select()
             ->from(
@@ -96,7 +101,7 @@ class SwatchAttributeCodes
                 ]
             )->where(
                 'a.attribute_id IN (?)',
-                new \Zend_Db_Expr(sprintf('(%s)', $this->getAttributeIdsSelect()))
+                new \Zend_Db_Expr($this->getAttributeIdsSelect())
             );
         $result = $this->resourceConnection->getConnection()->fetchPairs($select);
         return $result;
@@ -104,6 +109,8 @@ class SwatchAttributeCodes
 
     /**
      * Returns Select for attributes Ids.
+     *
+     * Builds a "Select" object which loads all EAV attributes that has "swatch" options
      *
      * @return Select
      */

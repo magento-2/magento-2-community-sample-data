@@ -45,7 +45,7 @@ class Gettext extends AbstractFileLoader
     public function load($locale, $filename)
     {
         $resolvedFile = $this->resolveFile($filename);
-        if (!$resolvedFile) {
+        if (! $resolvedFile) {
             throw new Exception\InvalidArgumentException(sprintf(
                 'Could not find or open file %s for reading',
                 $filename
@@ -112,7 +112,7 @@ class Gettext extends AbstractFileLoader
             $translationStringSize   = $translationStringTable[$sizeKey];
             $translationStringOffset = $translationStringTable[$offsetKey];
 
-            $originalString = array('');
+            $originalString = [''];
             if ($originalStringSize > 0) {
                 fseek($this->file, $originalStringOffset);
                 $originalString = explode("\0", fread($this->file, $originalStringSize));

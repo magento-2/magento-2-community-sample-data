@@ -13,7 +13,7 @@ use Magento\Framework\Model\ResourceModel\Db\VersionControl\Snapshot;
 use Magento\Quote\Model\Quote;
 use Magento\SalesSequence\Model\Manager;
 
-class QuoteTest extends \PHPUnit_Framework_TestCase
+class QuoteTest extends \PHPUnit\Framework\TestCase
 {
     /**
      * @var Quote|\PHPUnit_Framework_MockObject_MockObject
@@ -85,13 +85,14 @@ class QuoteTest extends \PHPUnit_Framework_TestCase
         $this->sequenceMock->expects($this->once())
             ->method('getNextValue')
             ->willReturn($reservedOrderId);
+
         $this->assertEquals($reservedOrderId, $this->quote->getReservedOrderId($this->quoteMock));
     }
 
     /**
      * @return array
      */
-    public function getReservedOrderIdDataProvider()
+    public function getReservedOrderIdDataProvider(): array
     {
         return [
             [\Magento\Sales\Model\Order::ENTITY, 1, '1000000001'],

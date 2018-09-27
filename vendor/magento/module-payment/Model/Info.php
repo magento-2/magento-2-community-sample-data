@@ -9,6 +9,9 @@ use Magento\Framework\Model\AbstractExtensibleModel;
 
 /**
  * Payment information model
+ *
+ * @api
+ * @since 100.0.2
  */
 class Info extends AbstractExtensibleModel implements InfoInterface
 {

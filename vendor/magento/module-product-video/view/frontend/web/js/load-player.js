@@ -340,6 +340,7 @@ define(['jquery', 'jquery/ui'], function ($) {
                     .attr('webkitallowfullscreen', '')
                     .attr('mozallowfullscreen', '')
                     .attr('allowfullscreen', '')
+                    .attr('referrerPolicy', 'origin')
             );
             this._player = window.$f(this.element.children(':first')[0]);
 

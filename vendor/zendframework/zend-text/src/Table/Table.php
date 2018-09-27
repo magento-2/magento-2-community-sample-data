@@ -1,15 +1,14 @@
 <?php
 /**
- * Zend Framework (http://framework.zend.com/)
- *
- * @link      http://github.com/zendframework/zf2 for the canonical source repository
- * @copyright Copyright (c) 2005-2015 Zend Technologies USA Inc. (http://www.zend.com)
- * @license   http://framework.zend.com/license/new-bsd New BSD License
+ * @see       https://github.com/zendframework/zend-text for the canonical source repository
+ * @copyright Copyright (c) 2005-2018 Zend Technologies USA Inc. (https://www.zend.com)
+ * @license   https://github.com/zendframework/zend-text/blob/master/LICENSE.md New BSD License
  */
 
 namespace Zend\Text\Table;
 
 use Traversable;
+use Zend\ServiceManager\ServiceManager;
 use Zend\Stdlib\ArrayUtils;
 use Zend\Text\Table\Decorator\DecoratorInterface as Decorator;
 
@@ -45,7 +44,7 @@ class Table
      *
      * @var array
      */
-    protected $rows = array();
+    protected $rows = [];
 
     /**
      * Auto separation mode
@@ -66,7 +65,7 @@ class Table
      *
      * @var array
      */
-    protected $defaultColumnAligns = array();
+    protected $defaultColumnAligns = [];
 
     /**
      * Plugin loader for decorators
@@ -94,11 +93,11 @@ class Table
      *
      * @var array
      */
-    protected $skipOptions = array(
+    protected $skipOptions = [
         'options',
         'config',
         'defaultColumnAlign',
-    );
+    ];
 
     /**
      * Create a basic table object
@@ -193,7 +192,7 @@ class Table
      */
     public function setDecorator($decorator)
     {
-        if (!$decorator instanceof Decorator) {
+        if (! $decorator instanceof Decorator) {
             $decorator = $this->getDecoratorManager()->get($decorator);
         }
 
@@ -225,7 +224,7 @@ class Table
             return $this->decoratorManager;
         }
 
-        $this->setDecoratorManager(new DecoratorManager());
+        $this->setDecoratorManager(new DecoratorManager(new ServiceManager()));
         return $this->decoratorManager;
     }
 
@@ -305,7 +304,7 @@ class Table
      */
     public function appendRow($row)
     {
-        if (!is_array($row) && !($row instanceof Row)) {
+        if (! is_array($row) && ! ($row instanceof Row)) {
             throw new Exception\InvalidArgumentException('$row must be an array or instance of Zend\Text\Table\Row');
         }
 
@@ -386,7 +385,7 @@ class Table
                 $result .= "\n";
             } else {
                 // Else check if we have to draw the row separator
-                if (!$hasHorizontal) {
+                if (! $hasHorizontal) {
                     $drawSeparator = false; // there is no horizontal character;
                 } elseif ($this->autoSeparate & self::AUTO_SEPARATE_ALL) {
                     $drawSeparator = true;

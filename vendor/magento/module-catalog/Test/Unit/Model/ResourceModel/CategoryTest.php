@@ -7,6 +7,7 @@
 namespace Magento\Catalog\Test\Unit\Model\ResourceModel;
 
 use Magento\Catalog\Model\Factory;
+use Magento\Catalog\Model\Indexer\Category\Product\Processor;
 use Magento\Catalog\Model\ResourceModel\Category;
 use Magento\Catalog\Model\ResourceModel\Category\CollectionFactory;
 use Magento\Eav\Model\Config;
@@ -18,12 +19,13 @@ use Magento\Framework\App\ResourceConnection;
 use Magento\Framework\DB\Adapter\AdapterInterface as Adapter;
 use Magento\Framework\DB\Select;
 use Magento\Framework\Event\ManagerInterface;
+use Magento\Framework\Serialize\Serializer\Json;
 use Magento\Store\Model\StoreManagerInterface;
 
 /**
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  */
-class CategoryTest extends \PHPUnit_Framework_TestCase
+class CategoryTest extends \PHPUnit\Framework\TestCase
 {
     /**
      * @var Category
@@ -86,6 +88,16 @@ class CategoryTest extends \PHPUnit_Framework_TestCase
     protected $collectionFactoryMock;
 
     /**
+     * @var Json|\PHPUnit_Framework_MockObject_MockObject
+     */
+    private $serializerMock;
+
+    /**
+     * @var Processor|\PHPUnit_Framework_MockObject_MockObject
+     */
+    private $indexerProcessorMock;
+
+    /**
      * {@inheritDoc}
      */
     protected function setUp()
@@ -115,6 +127,11 @@ class CategoryTest extends \PHPUnit_Framework_TestCase
         $this->collectionFactoryMock = $this->getMockBuilder(CollectionFactory::class)
             ->disableOriginalConstructor()
             ->getMock();
+        $this->indexerProcessorMock = $this->getMockBuilder(Processor::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+
+        $this->serializerMock = $this->getMockBuilder(Json::class)->getMock();
 
         $this->category = new Category(
             $this->contextMock,
@@ -123,7 +140,9 @@ class CategoryTest extends \PHPUnit_Framework_TestCase
             $this->managerMock,
             $this->treeFactoryMock,
             $this->collectionFactoryMock,
-            []
+            [],
+            $this->serializerMock,
+            $this->indexerProcessorMock
         );
     }
 
@@ -139,6 +158,15 @@ class CategoryTest extends \PHPUnit_Framework_TestCase
 
         $attribute->expects($this->any())->method('getBackend')->willReturn($backendModel);
         $this->connectionMock->expects($this->once())->method('fetchCol')->willReturn(['result']);
+        $this->serializerMock->expects($this->once())
+            ->method('serialize')
+            ->will(
+                $this->returnCallback(
+                    function ($value) {
+                        return json_encode($value);
+                    }
+                )
+            );
 
         $result = $this->category->findWhereAttributeIs($entityIdsFilter, $attribute, $expectedValue);
         $this->assertEquals(['result'], $result);

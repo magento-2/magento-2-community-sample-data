@@ -9,7 +9,7 @@ namespace Magento\Framework\Filesystem\File;
 
 use Magento\TestFramework\Helper\Bootstrap;
 
-class WriteTest extends \PHPUnit_Framework_TestCase
+class WriteTest extends \PHPUnit\Framework\TestCase
 {
     /**
      * Current file path
@@ -199,7 +199,7 @@ class WriteTest extends \PHPUnit_Framework_TestCase
     {
         $this->currentFilePath = __DIR__ . '/../_files/' . $path;
         return Bootstrap::getObjectManager()->create(
-            'Magento\Framework\Filesystem\File\Write',
+            \Magento\Framework\Filesystem\File\Write::class,
             [
                 'path' => $this->currentFilePath,
                 'driver' => new \Magento\Framework\Filesystem\Driver\File(),

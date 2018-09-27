@@ -10,14 +10,13 @@ use InvalidArgumentException;
  *
  * <b>== More information ==</b>
  *
- * For more detailed information on Transactions, see {@link http://www.braintreepayments.com/gateway/transaction-api http://www.braintreepaymentsolutions.com/gateway/transaction-api}
+ * For more detailed information on Transactions, see {@link https://developers.braintreepayments.com/reference/response/transaction/php https://developers.braintreepayments.com/reference/response/transaction/php}
  *
  * @package    Braintree
  * @category   Resources
- * @copyright  2015 Braintree, a division of PayPal, Inc.
  */
 
-final class TransactionGateway
+class TransactionGateway
 {
     private $_gateway;
     private $_config;
@@ -41,7 +40,7 @@ final class TransactionGateway
      * @ignore
      * @access private
      * @param array $attribs
-     * @return object
+     * @return Result\Successful|Result\Error
      */
     private function create($attribs)
     {
@@ -120,6 +119,7 @@ final class TransactionGateway
             'recurring',
             'serviceFeeAmount',
             'sharedPaymentMethodToken',
+            'sharedPaymentMethodNonce',
             'sharedCustomerId',
             'sharedShippingAddressId',
             'sharedBillingAddressId',
@@ -127,8 +127,15 @@ final class TransactionGateway
             'taxAmount',
             'taxExempt',
             'threeDSecureToken',
+            'transactionSource',
             'type',
             'venmoSdkPaymentMethodCode',
+            'shippingAmount',
+            'discountAmount',
+            'shipsFromPostalCode',
+            ['riskData' =>
+                ['customerBrowser', 'customerIp', 'customer_browser', 'customer_ip']
+            ],
             ['creditCard' =>
                 ['token', 'cardholderName', 'cvv', 'expirationDate', 'expirationMonth', 'expirationYear', 'number'],
             ],
@@ -151,6 +158,12 @@ final class TransactionGateway
                     'extendedAddress', 'locality', 'postalCode', 'region',
                     'streetAddress'],
             ],
+            ['threeDSecurePassThru' =>
+                [
+                    'eciFlag',
+                    'cavv',
+                    'xid'],
+            ],
             ['options' =>
                 [
                     'holdInEscrow',
@@ -161,6 +174,13 @@ final class TransactionGateway
                     'venmoSdkSession',
                     'storeShippingAddressInVault',
                     'payeeEmail',
+                    'skipAdvancedFraudChecking',
+                    'skipAvs',
+                    'skipCvv',
+                    ['threeDSecure' =>
+                        ['required']
+                    ],
+                    # Included for backwards compatiblity. Remove in the next major version
                     ['three_d_secure' =>
                         ['required']
                     ],
@@ -185,7 +205,8 @@ final class TransactionGateway
             ['customFields' => ['_anyKey_']],
             ['descriptor' => ['name', 'phone', 'url']],
             ['paypalAccount' => ['payeeEmail']],
-            ['apple_pay_card' => ['number', 'cardholder_name', 'cryptogram', 'expiration_month', 'expiration_year']],
+            ['apple_pay_card' => ['number', 'cardholder_name', 'cryptogram', 'expiration_month', 'expiration_year', 'eci_indicator']], #backwards compatibility
+            ['applePayCard' => ['number', 'cardholderName', 'cryptogram', 'expirationMonth', 'expirationYear', 'eciIndicator']],
             ['industry' =>
                 ['industryType',
                     ['data' =>
@@ -202,13 +223,24 @@ final class TransactionGateway
                         ]
                     ]
                 ]
-            ]
+            ],
+            ['lineItems' => ['quantity', 'name', 'description', 'kind', 'unitAmount', 'unitTaxAmount', 'totalAmount', 'discountAmount', 'taxAmount', 'unitOfMeasure', 'productCode', 'commodityCode', 'url']],
         ];
     }
 
     public static function submitForSettlementSignature()
     {
         return ['orderId', ['descriptor' => ['name', 'phone', 'url']]];
+    }
+
+    public static function updateDetailsSignature()
+    {
+        return ['amount', 'orderId', ['descriptor' => ['name', 'phone', 'url']]];
+    }
+
+    public static function refundSignature()
+    {
+        return ['amount', 'orderId'];
     }
 
     /**
@@ -256,7 +288,7 @@ final class TransactionGateway
     /**
      * new sale
      * @param array $attribs
-     * @return array
+     * @return Result\Successful|Result\Error
      */
     public function sale($attribs)
     {
@@ -281,7 +313,7 @@ final class TransactionGateway
      *
      * If <b>query</b> is a string, the search will be a basic search.
      * If <b>query</b> is a hash, the search will be an advanced search.
-     * For more detailed information and examples, see {@link http://www.braintreepayments.com/gateway/transaction-api#searching http://www.braintreepaymentsolutions.com/gateway/transaction-api}
+     * For more detailed information and examples, see {@link https://developers.braintreepayments.com/reference/request/transaction/search/php https://developers.braintreepayments.com/reference/request/transaction/search/php}
      *
      * @param mixed $query search query
      * @param array $options options such as page number
@@ -320,10 +352,14 @@ final class TransactionGateway
         $path = $this->_config->merchantPath() . '/transactions/advanced_search';
         $response = $this->_http->post($path, ['search' => $criteria]);
 
-        return Util::extractattributeasarray(
-            $response['creditCardTransactions'],
-            'transaction'
-        );
+        if (array_key_exists('creditCardTransactions', $response)) {
+            return Util::extractattributeasarray(
+                $response['creditCardTransactions'],
+                'transaction'
+            );
+        } else {
+            throw new Exception\DownForMaintenance();
+        }
     }
 
     /**
@@ -366,6 +402,27 @@ final class TransactionGateway
         return Util::returnObjectOrThrowException(__CLASS__, $result);
     }
 
+    public function updateDetails($transactionId, $attribs = [])
+    {
+        $this->_validateId($transactionId);
+        Util::verifyKeys(self::updateDetailsSignature(), $attribs);
+
+        $path = $this->_config->merchantPath() . '/transactions/'. $transactionId . '/update_details';
+        $response = $this->_http->put($path, ['transaction' => $attribs]);
+        return $this->_verifyGatewayResponse($response);
+    }
+
+    public function submitForPartialSettlement($transactionId, $amount, $attribs = [])
+    {
+        $this->_validateId($transactionId);
+        Util::verifyKeys(self::submitForSettlementSignature(), $attribs);
+        $attribs['amount'] = $amount;
+
+        $path = $this->_config->merchantPath() . '/transactions/'. $transactionId . '/submit_for_partial_settlement';
+        $response = $this->_http->post($path, ['transaction' => $attribs]);
+        return $this->_verifyGatewayResponse($response);
+    }
+
     public function holdInEscrow($transactionId)
     {
         $this->_validateId($transactionId);
@@ -393,22 +450,22 @@ final class TransactionGateway
         return $this->_verifyGatewayResponse($response);
     }
 
-    public function refund($transactionId, $amount = null)
+    public function refund($transactionId, $amount_or_options = null)
     {
         self::_validateId($transactionId);
 
-        $params = ['transaction' => ['amount' => $amount]];
+        if(gettype($amount_or_options) == "array") {
+            $options = $amount_or_options;
+        } else {
+            $options = [
+                "amount" => $amount_or_options
+            ];
+        }
+        Util::verifyKeys(self::refundSignature(), $options);
+
+        $params = ['transaction' => $options];
         $path = $this->_config->merchantPath() . '/transactions/' . $transactionId . '/refund';
         $response = $this->_http->post($path, $params);
-        return $this->_verifyGatewayResponse($response);
-    }
-
-    public function submitForPartialSettlement($transactionId, $amount)
-    {
-        $this->_validateId($transactionId);
-
-        $path = $this->_config->merchantPath() . '/transactions/'. $transactionId . '/submit_for_partial_settlement';
-        $response = $this->_http->post($path, ['transaction' => ['amount' => $amount]]);
         return $this->_verifyGatewayResponse($response);
     }
 
@@ -418,7 +475,7 @@ final class TransactionGateway
      * @ignore
      * @param var $subPath
      * @param array $params
-     * @return mixed
+     * @return Result\Successful|Result\Error
      */
     public function _doCreate($subPath, $params)
     {

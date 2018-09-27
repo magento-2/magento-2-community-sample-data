@@ -11,6 +11,10 @@
  */
 namespace Magento\Reports\Model\ResourceModel\Wishlist;
 
+/**
+ * @api
+ * @since 100.0.2
+ */
 class Collection extends \Magento\Framework\Model\ResourceModel\Db\Collection\AbstractCollection
 {
     /**
@@ -54,7 +58,7 @@ class Collection extends \Magento\Framework\Model\ResourceModel\Db\Collection\Ab
      */
     protected function _construct()
     {
-        $this->_init('Magento\Wishlist\Model\Wishlist', 'Magento\Wishlist\Model\ResourceModel\Wishlist');
+        $this->_init(\Magento\Wishlist\Model\Wishlist::class, \Magento\Wishlist\Model\ResourceModel\Wishlist::class);
         $this->setWishlistTable($this->getTable('wishlist'));
     }
 

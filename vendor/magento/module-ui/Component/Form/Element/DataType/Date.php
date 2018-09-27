@@ -32,6 +32,11 @@ class Date extends AbstractDataType
     protected $wrappedComponent;
 
     /**
+     * @var TimezoneInterface
+     */
+    private $localeDate;
+
+    /**
      * Constructor
      *
      * @param ContextInterface $context
@@ -65,6 +70,11 @@ class Date extends AbstractDataType
             $storeTimeZone = $this->localeDate->getConfigTimezone();
             $config['storeTimeZone'] = $storeTimeZone;
         }
+
+        if (!empty($config['options']['showsTime'])) {
+            $config['options']['timeFormat'] = $this->localeDate->getTimeFormat();
+        }
+
         // Set date format pattern by current locale
         $localeDateFormat = $this->localeDate->getDateFormat();
         $config['options']['dateFormat'] = $localeDateFormat;
@@ -100,9 +110,10 @@ class Date extends AbstractDataType
      * @param int $hour
      * @param int $minute
      * @param int $second
+     * @param bool $setUtcTimeZone
      * @return \DateTime|null
      */
-    public function convertDate($date, $hour = 0, $minute = 0, $second = 0)
+    public function convertDate($date, $hour = 0, $minute = 0, $second = 0, $setUtcTimeZone = true)
     {
         try {
             $dateObj = $this->localeDate->date(
@@ -115,7 +126,9 @@ class Date extends AbstractDataType
             );
             $dateObj->setTime($hour, $minute, $second);
             //convert store date to default date in UTC timezone without DST
-            $dateObj->setTimezone(new \DateTimeZone('UTC'));
+            if ($setUtcTimeZone) {
+                $dateObj->setTimezone(new \DateTimeZone('UTC'));
+            }
             return $dateObj;
         } catch (\Exception $e) {
             return null;

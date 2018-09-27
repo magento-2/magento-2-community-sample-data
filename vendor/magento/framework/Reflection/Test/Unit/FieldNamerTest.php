@@ -10,7 +10,7 @@ use Magento\Framework\Reflection\FieldNamer;
 /**
  * Field namer Test
  */
-class FieldNamerTest extends \PHPUnit_Framework_TestCase
+class FieldNamerTest extends \PHPUnit\Framework\TestCase
 {
     /**
      * @var FieldNamer
@@ -23,7 +23,7 @@ class FieldNamerTest extends \PHPUnit_Framework_TestCase
     protected function setUp()
     {
         $objectManager = new \Magento\Framework\TestFramework\Unit\Helper\ObjectManager($this);
-        $this->model = $objectManager->getObject('Magento\Framework\Reflection\FieldNamer');
+        $this->model = $objectManager->getObject(\Magento\Framework\Reflection\FieldNamer::class);
     }
 
     /**

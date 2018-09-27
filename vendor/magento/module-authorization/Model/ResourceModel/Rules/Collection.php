@@ -8,7 +8,8 @@ namespace Magento\Authorization\Model\ResourceModel\Rules;
 /**
  * Rules collection
  *
- * @author      Magento Core Team <core@magentocommerce.com>
+ * @api
+ * @since 100.0.2
  */
 class Collection extends \Magento\Framework\Model\ResourceModel\Db\Collection\AbstractCollection
 {
@@ -19,7 +20,10 @@ class Collection extends \Magento\Framework\Model\ResourceModel\Db\Collection\Ab
      */
     protected function _construct()
     {
-        $this->_init('Magento\Authorization\Model\Rules', 'Magento\Authorization\Model\ResourceModel\Rules');
+        $this->_init(
+            \Magento\Authorization\Model\Rules::class,
+            \Magento\Authorization\Model\ResourceModel\Rules::class
+        );
     }
 
     /**

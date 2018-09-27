@@ -14,7 +14,8 @@ use Magento\Downloadable\Api\Data\SampleInterface;
 /**
  * Downloadable Product Samples part block
  *
- * @author      Magento Core Team <core@magentocommerce.com>
+ * @api
+ * @since 100.0.2
  */
 class Samples extends \Magento\Catalog\Block\Product\AbstractProduct
 {

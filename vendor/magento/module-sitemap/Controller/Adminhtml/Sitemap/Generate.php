@@ -6,9 +6,29 @@
  */
 namespace Magento\Sitemap\Controller\Adminhtml\Sitemap;
 
+use Magento\Backend\App\Action;
+use Magento\Store\Model\App\Emulation;
+use Magento\Framework\App\ObjectManager;
 
 class Generate extends \Magento\Sitemap\Controller\Adminhtml\Sitemap
 {
+    /** @var \Magento\Store\Model\App\Emulation $appEmulation */
+    private $appEmulation;
+
+    /**
+     * Generate constructor.
+     * @param Action\Context $context
+     * @param \Magento\Store\Model\App\Emulation|null $appEmulation
+     */
+    public function __construct(
+        Action\Context $context,
+        Emulation $appEmulation = null
+    ) {
+        parent::__construct($context);
+        $this->appEmulation = $appEmulation ?: ObjectManager::getInstance()
+            ->get(\Magento\Store\Model\App\Emulation::class);
+    }
+
     /**
      * Generate sitemap
      *
@@ -18,12 +38,18 @@ class Generate extends \Magento\Sitemap\Controller\Adminhtml\Sitemap
     {
         // init and load sitemap model
         $id = $this->getRequest()->getParam('sitemap_id');
-        $sitemap = $this->_objectManager->create('Magento\Sitemap\Model\Sitemap');
+        $sitemap = $this->_objectManager->create(\Magento\Sitemap\Model\Sitemap::class);
         /* @var $sitemap \Magento\Sitemap\Model\Sitemap */
         $sitemap->load($id);
         // if sitemap record exists
         if ($sitemap->getId()) {
             try {
+                //We need to emulate to get the correct frontend URL for the product images
+                $this->appEmulation->startEnvironmentEmulation(
+                    $sitemap->getStoreId(),
+                    \Magento\Framework\App\Area::AREA_FRONTEND,
+                    true
+                );
                 $sitemap->generateXml();
 
                 $this->messageManager->addSuccess(
@@ -33,6 +59,8 @@ class Generate extends \Magento\Sitemap\Controller\Adminhtml\Sitemap
                 $this->messageManager->addError($e->getMessage());
             } catch (\Exception $e) {
                 $this->messageManager->addException($e, __('We can\'t generate the sitemap right now.'));
+            } finally {
+                $this->appEmulation->stopEnvironmentEmulation();
             }
         } else {
             $this->messageManager->addError(__('We can\'t find a sitemap to generate.'));

@@ -3,8 +3,11 @@
  * Copyright © Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
+declare(strict_types=1);
+
 namespace Magento\Customer\Controller\Adminhtml\Index;
 
+use Magento\Backend\Model\Session;
 use Magento\Framework\Message\MessageInterface;
 use Magento\Newsletter\Model\Subscriber;
 use Magento\Newsletter\Model\SubscriberFactory;
@@ -29,12 +32,12 @@ class MassSubscribeTest extends \Magento\TestFramework\TestCase\AbstractBackendC
         /**
          * Unset customer data
          */
-        Bootstrap::getObjectManager()->get(\Magento\Backend\Model\Session::class)->setCustomerData(null);
+        Bootstrap::getObjectManager()->get(Session::class)->setCustomerData(null);
 
         /**
          * Unset messages
          */
-        Bootstrap::getObjectManager()->get(\Magento\Backend\Model\Session::class)->getMessages(true);
+        Bootstrap::getObjectManager()->get(Session::class)->getMessages(true);
     }
 
     /**
@@ -60,19 +63,13 @@ class MassSubscribeTest extends \Magento\TestFramework\TestCase\AbstractBackendC
                 ->getSubscriberStatus()
         );
 
-        try {
-            /** @var CustomerInterface $customer1 */
-            $customer1 = $customerRepository->get('customer1@example.com');
-            /** @var CustomerInterface $customer2 */
-            $customer2 = $customerRepository->get('customer2@example.com');
-        } catch (\Exception $e) {
-            self::fail($e->getMessage());
-        }
+        /** @var CustomerInterface $customer1 */
+        $customer1 = $customerRepository->get('customer1@example.com');
+        /** @var CustomerInterface $customer2 */
+        $customer2 = $customerRepository->get('customer2@example.com');
 
         /** @var \Magento\Framework\Data\Form\FormKey $formKey */
-        $formKey = $this->_objectManager->get(
-            \Magento\Framework\Data\Form\FormKey::class
-        );
+        $formKey = $this->_objectManager->get(\Magento\Framework\Data\Form\FormKey::class);
 
         $params = [
             'selected' => [
@@ -82,9 +79,9 @@ class MassSubscribeTest extends \Magento\TestFramework\TestCase\AbstractBackendC
             'namespace' => 'customer_listing',
             'form_key' => $formKey->getFormKey()
         ];
-        $this->getRequest()
-            ->setParams($params)
-            ->setMethod('POST');
+
+        $this->getRequest()->setParams($params);
+        $this->getRequest()->setMethod('POST');
 
         $this->dispatch('backend/customer/index/massSubscribe');
 
@@ -115,18 +112,15 @@ class MassSubscribeTest extends \Magento\TestFramework\TestCase\AbstractBackendC
     public function testMassSubscriberActionNoSelection()
     {
         /** @var \Magento\Framework\Data\Form\FormKey $formKey */
-        $formKey = $this->_objectManager->get(
-            \Magento\Framework\Data\Form\FormKey::class
-        );
+        $formKey = $this->_objectManager->get(\Magento\Framework\Data\Form\FormKey::class);
 
         $params = [
             'namespace' => 'customer_listing',
             'form_key' => $formKey->getFormKey()
         ];
 
-        $this->getRequest()
-            ->setParams($params)
-            ->setMethod('POST');
+        $this->getRequest()->setParams($params);
+        $this->getRequest()->setMethod('POST');
         $this->dispatch('backend/customer/index/massSubscribe');
 
         $this->assertRedirect($this->stringStartsWith($this->baseControllerUrl));

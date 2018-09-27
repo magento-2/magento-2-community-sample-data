@@ -10,6 +10,10 @@ namespace Magento\Integration\Block\Adminhtml\Integration;
 use Magento\Integration\Block\Adminhtml\Integration\Edit\Tab\Info;
 use Magento\Integration\Controller\Adminhtml\Integration;
 
+/**
+ * @api
+ * @since 100.0.2
+ */
 class Edit extends \Magento\Backend\Block\Widget\Form\Container
 {
     /**
@@ -19,7 +23,9 @@ class Edit extends \Magento\Backend\Block\Widget\Form\Container
      */
     protected $_registry = null;
 
-    /** @var \Magento\Integration\Helper\Data */
+    /**
+     * @var \Magento\Integration\Helper\Data
+     */
     protected $_integrationHelper;
 
     /**
@@ -69,7 +75,7 @@ class Edit extends \Magento\Backend\Block\Widget\Form\Container
                 [
                     'id' => 'save-split-button',
                     'label' => __('Save'),
-                    'class_name' => 'Magento\Backend\Block\Widget\Button\SplitButton',
+                    'class_name' => \Magento\Backend\Block\Widget\Button\SplitButton::class,
                     'button_class' => '',
                     'data_attribute' => [
                         'mage-init' => ['button' => ['event' => 'save', 'target' => '#edit_form']],

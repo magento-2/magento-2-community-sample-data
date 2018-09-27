@@ -5,14 +5,17 @@
  */
 namespace Magento\CurrencySymbol\Model\System;
 
-use Magento\Framework\Locale\Bundle\CurrencyBundle;
-use Magento\Framework\Unserialize\SecureUnserializer;
 use Magento\Framework\App\ObjectManager;
-use Psr\Log\LoggerInterface;
+use Magento\Framework\Locale\Bundle\CurrencyBundle;
+use Magento\Framework\Serialize\Serializer\Json;
 
 /**
  * Custom currency symbol model
+ *
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
+ *
+ * @api
+ * @since 100.0.2
  */
 class Currencysymbol
 {
@@ -111,14 +114,9 @@ class Currencysymbol
     protected $_scopeConfig;
 
     /**
-     * @var SecureUnserializer
+     * @var Json
      */
-    private $unserializer;
-
-    /**
-     * @var LoggerInterface
-     */
-    private $logger;
+    private $serializer;
 
     /**
      * @param \Magento\Framework\App\Config\ScopeConfigInterface $scopeConfig
@@ -129,10 +127,7 @@ class Currencysymbol
      * @param \Magento\Framework\Locale\ResolverInterface $localeResolver
      * @param \Magento\Store\Model\System\Store $systemStore
      * @param \Magento\Framework\Event\ManagerInterface $eventManager
-     * @param SecureUnserializer|null $unserializer
-     * @param LoggerInterface|null $logger
-     *
-     * @SuppressWarnings(PHPMD.ExcessiveParameterList)
+     * @param Json|null $serializer
      */
     public function __construct(
         \Magento\Framework\App\Config\ScopeConfigInterface $scopeConfig,
@@ -143,8 +138,7 @@ class Currencysymbol
         \Magento\Framework\Locale\ResolverInterface $localeResolver,
         \Magento\Store\Model\System\Store $systemStore,
         \Magento\Framework\Event\ManagerInterface $eventManager,
-        SecureUnserializer $unserializer = null,
-        LoggerInterface $logger = null
+        Json $serializer = null
     ) {
         $this->_coreConfig = $coreConfig;
         $this->_configFactory = $configFactory;
@@ -154,8 +148,7 @@ class Currencysymbol
         $this->_systemStore = $systemStore;
         $this->_eventManager = $eventManager;
         $this->_scopeConfig = $scopeConfig;
-        $this->unserializer = $unserializer ?: ObjectManager::getInstance()->get(SecureUnserializer::class);
-        $this->logger = $logger ?: ObjectManager::getInstance()->get(LoggerInterface::class);
+        $this->serializer = $serializer ?: ObjectManager::getInstance()->get(Json::class);
     }
 
     /**
@@ -206,7 +199,7 @@ class Currencysymbol
         }
         $value = [];
         if ($symbols) {
-            $value['options']['fields']['customsymbol']['value'] = serialize($symbols);
+            $value['options']['fields']['customsymbol']['value'] = $this->serializer->serialize($symbols);
         } else {
             $value['options']['fields']['customsymbol']['inherit'] = 1;
         }
@@ -284,11 +277,7 @@ class Currencysymbol
             $storeId
         );
         if ($configData) {
-            try {
-                $result = $this->unserializer->unserialize($configData);
-            } catch (\InvalidArgumentException $e) {
-                $this->logger->critical($e);
-            }
+            $result = $this->serializer->unserialize($configData);
         }
 
         return is_array($result) ? $result : [];

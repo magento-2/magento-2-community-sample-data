@@ -5,7 +5,7 @@
  */
 namespace Magento\Framework\Indexer\Test\Unit;
 
-class BatchTest extends \PHPUnit_Framework_TestCase
+class BatchTest extends \PHPUnit\Framework\TestCase
 {
     /**
      * @var \Magento\Framework\Indexer\SaveHandler\Batch
@@ -27,7 +27,8 @@ class BatchTest extends \PHPUnit_Framework_TestCase
     public function testGetItems(array $itemsData, $size, array $expected)
     {
         $items = new \ArrayObject($itemsData);
-        $this->assertSame($expected, $this->object->getItems($items, $size));
+        $data = $this->object->getItems($items, $size);
+        $this->assertSame($expected, iterator_to_array($data));
     }
 
     /**

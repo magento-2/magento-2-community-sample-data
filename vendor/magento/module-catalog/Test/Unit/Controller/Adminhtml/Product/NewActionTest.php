@@ -34,12 +34,9 @@ class NewActionTest extends \Magento\Catalog\Test\Unit\Controller\Adminhtml\Prod
 
     protected function setUp()
     {
-        $this->productBuilder = $this->getMock(
+        $this->productBuilder = $this->createPartialMock(
             \Magento\Catalog\Controller\Adminhtml\Product\Builder::class,
-            ['build'],
-            [],
-            '',
-            false
+            ['build']
         );
         $this->product = $this->getMockBuilder(\Magento\Catalog\Model\Product::class)->disableOriginalConstructor()
             ->setMethods(['addData', 'getTypeId', 'getStoreId', '__sleep', '__wakeup'])->getMock();
@@ -70,17 +67,6 @@ class NewActionTest extends \Magento\Catalog\Test\Unit\Controller\Adminhtml\Prod
             ->method('create')
             ->willReturn($this->resultForward);
 
-        $store = $this->getMockBuilder(\Magento\Store\Model\Store::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-
-        $storeManager = $this->getMockBuilder(\Magento\Store\Model\StoreManager::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $storeManager->expects($this->once())
-            ->method('getStore')
-            ->willReturn($store);
-
         $this->action = (new ObjectManager($this))->getObject(
             NewAction::class,
             [
@@ -88,7 +74,6 @@ class NewActionTest extends \Magento\Catalog\Test\Unit\Controller\Adminhtml\Prod
                 'productBuilder' => $this->productBuilder,
                 'resultPageFactory' => $resultPageFactory,
                 'resultForwardFactory' => $resultForwardFactory,
-                'storeManager' => $storeManager,
             ]
         );
 

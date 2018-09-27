@@ -10,11 +10,11 @@ use Magento\Framework\DB\Adapter\AdapterInterface;
 use Magento\Framework\DB\Select;
 
 /**
- * Query batch range iterator.
+ * Query batch range iterator
  *
- * It is used for processing selects which will obtain values from  $rangeField with relation one-to-many.
- * This iterator makes chunks with operator LIMIT...OFFSET,
- * starting with zero offset and finishing on OFFSET + LIMIT = TOTAL_COUNT.
+ * It is uses to processing selects which will obtain values from  $rangeField with relation one-to-many
+ * This iterator make chunks with operator LIMIT...OFFSET,
+ * starting with zero offset and finishing on OFFSET + LIMIT = TOTAL_COUNT
  *
  * @see \Magento\Framework\DB\Query\Generator
  * @see \Magento\Framework\DB\Query\BatchIteratorFactory
@@ -29,7 +29,7 @@ class BatchRangeIterator implements BatchIteratorInterface
     private $currentSelect;
 
     /**
-     * @var string
+     * @var string|array
      */
     private $rangeField;
 
@@ -46,7 +46,7 @@ class BatchRangeIterator implements BatchIteratorInterface
     /**
      * @var int
      */
-    private $currentBatch = 0;
+    private $currentOffset = 0;
 
     /**
      * @var int
@@ -79,7 +79,7 @@ class BatchRangeIterator implements BatchIteratorInterface
      * @param Select $select
      * @param int $batchSize
      * @param string $correlationName
-     * @param string $rangeField
+     * @param string|array $rangeField
      * @param string $rangeFieldAlias
      */
     public function __construct(
@@ -98,19 +98,27 @@ class BatchRangeIterator implements BatchIteratorInterface
     }
 
     /**
-     * {@inheritdoc}
+     * Return the current element
+     *
+     * If we don't have sub-select we should create and remember it.
+     *
+     * @return Select
      */
     public function current()
     {
         if (null === $this->currentSelect) {
-            $this->isValid = ($this->currentBatch + $this->batchSize) < $this->totalItemCount;
+            $this->isValid = ($this->currentOffset + $this->batchSize) <= $this->totalItemCount;
             $this->currentSelect = $this->initSelectObject();
         }
         return $this->currentSelect;
     }
 
     /**
-     * {@inheritdoc}
+     * Return the key of the current element
+     *
+     * Сan return the number of the current sub-select in the iteration.
+     *
+     * @return int
      */
     public function key()
     {
@@ -118,14 +126,19 @@ class BatchRangeIterator implements BatchIteratorInterface
     }
 
     /**
-     * {@inheritdoc}
+     * Move forward to next sub-select
+     *
+     * Retrieve the next sub-select and move cursor to the next element.
+     * Checks that the count of elements more than the sum of limit and offset.
+     *
+     * @return Select
      */
     public function next()
     {
         if (null === $this->currentSelect) {
             $this->current();
         }
-        $this->isValid = ($this->batchSize + $this->currentBatch) < $this->totalItemCount;
+        $this->isValid = ($this->batchSize + $this->currentOffset) <= $this->totalItemCount;
         $select = $this->initSelectObject();
         if ($this->isValid) {
             $this->iteration++;
@@ -137,7 +150,11 @@ class BatchRangeIterator implements BatchIteratorInterface
     }
 
     /**
-     * {@inheritdoc}
+     * Rewind the BatchRangeIterator to the first element.
+     *
+     * Allows to start iteration from the beginning.
+     *
+     * @return void
      */
     public function rewind()
     {
@@ -148,7 +165,9 @@ class BatchRangeIterator implements BatchIteratorInterface
     }
 
     /**
-     * {@inheritdoc}
+     * Checks if current position is valid
+     *
+     * @return bool
      */
     public function valid()
     {
@@ -156,7 +175,7 @@ class BatchRangeIterator implements BatchIteratorInterface
     }
 
     /**
-     * Initialize select object.
+     * Initialize select object
      *
      * Return sub-select which is limited by current batch value and return items from n page of SQL request.
      *
@@ -179,10 +198,16 @@ class BatchRangeIterator implements BatchIteratorInterface
             $this->totalItemCount = intval($row['cnt']);
         }
 
-        //Reset sort order section from origin select object.
-        $object->order($this->correlationName . '.' . $this->rangeField . ' ' . \Magento\Framework\DB\Select::SQL_ASC);
-        $object->limit($this->currentBatch, $this->batchSize);
-        $this->currentBatch += $this->batchSize;
+        $rangeField = is_array($this->rangeField) ? $this->rangeField : [$this->rangeField];
+
+        /**
+         * Reset sort order section from origin select object
+         */
+        foreach ($rangeField as $field) {
+            $object->order($this->correlationName . '.' . $field . ' ' . \Magento\Framework\DB\Select::SQL_ASC);
+        }
+        $object->limit($this->batchSize, $this->currentOffset);
+        $this->currentOffset += $this->batchSize;
 
         return $object;
     }

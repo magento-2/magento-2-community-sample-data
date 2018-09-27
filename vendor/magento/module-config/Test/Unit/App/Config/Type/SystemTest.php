@@ -11,7 +11,9 @@ use Magento\Framework\App\Config\ConfigSourceInterface;
 use Magento\Framework\App\Config\Spi\PostProcessorInterface;
 use Magento\Framework\App\Config\Spi\PreProcessorInterface;
 use Magento\Framework\Cache\FrontendInterface;
-use Magento\Framework\Encryption\EncryptorInterface;
+use Magento\Framework\Serialize\Serializer\Sensitive;
+use Magento\Framework\Serialize\Serializer\SensitiveFactory;
+use Magento\Framework\Serialize\SerializerInterface;
 use Magento\Store\Model\Config\Processor\Fallback;
 use Magento\Config\App\Config\Type\System\Reader;
 
@@ -19,7 +21,7 @@ use Magento\Config\App\Config\Type\System\Reader;
  * Test how Class process source, cache them and retrieve value by path
  * @package Magento\Config\Test\Unit\App\Config\Type
  */
-class SystemTest extends \PHPUnit_Framework_TestCase
+class SystemTest extends \PHPUnit\Framework\TestCase
 {
     /**
      * @var ConfigSourceInterface|\PHPUnit_Framework_MockObject_MockObject
@@ -52,14 +54,14 @@ class SystemTest extends \PHPUnit_Framework_TestCase
     private $configType;
 
     /**
+     * @var SerializerInterface|\PHPUnit_Framework_MockObject_MockObject
+     */
+    private $serializer;
+
+    /**
      * @var Reader|\PHPUnit_Framework_MockObject_MockObject
      */
     private $reader;
-
-    /**
-     * @var EncryptorInterface|\PHPUnit_Framework_MockObject_MockObject
-     */
-    private $encryptorMock;
 
     public function setUp()
     {
@@ -74,10 +76,20 @@ class SystemTest extends \PHPUnit_Framework_TestCase
             ->getMockForAbstractClass();
         $this->preProcessor = $this->getMockBuilder(PreProcessorInterface::class)
             ->getMockForAbstractClass();
+        $this->serializer = $this->getMockBuilder(Sensitive::class)
+            ->disableOriginalConstructor()
+            ->getMock();
         $this->reader = $this->getMockBuilder(Reader::class)
             ->disableOriginalConstructor()
             ->getMock();
-        $this->encryptorMock = $this->getMockBuilder(EncryptorInterface::class)
+        $sensitiveFactory = $this->getMockBuilder(SensitiveFactory::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+        $sensitiveFactory->expects($this->any())
+            ->method('create')
+            ->willReturn($this->serializer);
+        /** @var SerializerInterface|\PHPUnit_Framework_MockObject_MockObject $serializerMock */
+        $serializerMock = $this->getMockBuilder(SerializerInterface::class)
             ->disableOriginalConstructor()
             ->getMock();
 
@@ -86,11 +98,12 @@ class SystemTest extends \PHPUnit_Framework_TestCase
             $this->postProcessor,
             $this->fallback,
             $this->cache,
+            $serializerMock,
             $this->preProcessor,
             1,
             'system',
             $this->reader,
-            $this->encryptorMock
+            $sensitiveFactory
         );
     }
 
@@ -101,17 +114,17 @@ class SystemTest extends \PHPUnit_Framework_TestCase
         $data = [
             'dev' => [
                 'unsecure' => [
-                    'url' => $url,
-                ],
-            ],
+                    'url' => $url
+                ]
+            ]
         ];
 
-        $this->cache->expects($this->once())
+        $this->cache->expects($this->any())
             ->method('load')
-            ->willReturn(serialize($data));
-        $this->encryptorMock->expects($this->once())
-            ->method('decrypt')
-            ->willReturnArgument(0);
+            ->willReturnOnConsecutiveCalls('1', serialize($data));
+        $this->serializer->expects($this->once())
+            ->method('unserialize')
+            ->willReturn($data);
         $this->assertEquals($url, $this->configType->get($path));
     }
 
@@ -121,52 +134,17 @@ class SystemTest extends \PHPUnit_Framework_TestCase
         $data = [
             'dev' => [
                 'unsecure' => [
-                    'url' => $url,
-                ],
+                    'url' => $url
+                ]
             ]
         ];
 
-        $this->cache->expects($this->once())
-            ->method('load')
-            ->willReturn(serialize($data));
-        $this->encryptorMock->expects($this->once())
-            ->method('decrypt')
-            ->willReturnArgument(0);
-        $this->assertEquals($data, $this->configType->get(''));
-    }
-
-    public function testGetNotCached()
-    {
-        $path = 'stores/default/dev/unsecure/url';
-        $url = 'http://magento.test/';
-
-        $data = [
-            'default' => [],
-            'websites' => [],
-            'stores' => [
-                'default' => [
-                    'dev' => [
-                        'unsecure' => [
-                            'url' => $url,
-                        ],
-                    ],
-                ],
-            ],
-        ];
         $this->cache->expects($this->any())
             ->method('load')
-            ->willReturnOnConsecutiveCalls(false, false);
-
-        $this->cache->expects($this->atLeastOnce())
-            ->method('save')
-            ->willReturnSelf();
-        $this->reader->expects($this->once())
-            ->method('read')
+            ->willReturnOnConsecutiveCalls('1', serialize($data));
+        $this->serializer->expects($this->once())
+            ->method('unserialize')
             ->willReturn($data);
-        $this->encryptorMock->expects($this->atLeastOnce())
-            ->method('encrypt')
-            ->willReturnArgument(0);
-
-        $this->assertEquals($url, $this->configType->get($path));
+        $this->assertEquals($data, $this->configType->get(''));
     }
 }

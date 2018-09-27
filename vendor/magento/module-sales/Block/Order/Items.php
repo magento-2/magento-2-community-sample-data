@@ -11,10 +11,14 @@
  */
 namespace Magento\Sales\Block\Order;
 
+/**
+ * @api
+ * @since 100.0.2
+ */
 class Items extends \Magento\Sales\Block\Items\AbstractItems
 {
     /**
-     * Core registry.
+     * Core registry
      *
      * @var \Magento\Framework\Registry
      */
@@ -28,15 +32,11 @@ class Items extends \Magento\Sales\Block\Items\AbstractItems
     private $itemsPerPage;
 
     /**
-     * Sales order item collection factory.
-     *
      * @var \Magento\Sales\Model\ResourceModel\Order\Item\CollectionFactory
      */
     private $itemCollectionFactory;
 
     /**
-     * Sales order item collection.
-     *
      * @var \Magento\Sales\Model\ResourceModel\Order\Item\Collection|null
      */
     private $itemCollection;
@@ -60,9 +60,10 @@ class Items extends \Magento\Sales\Block\Items\AbstractItems
     }
 
     /**
-     * Init pager block and item collection with page size and current page number.
+     * Init pager block and item collection with page size and current page number
      *
      * @return $this
+     * @since 100.1.7
      */
     protected function _prepareLayout()
     {
@@ -86,23 +87,24 @@ class Items extends \Magento\Sales\Block\Items\AbstractItems
     }
 
     /**
-     * Determine if the pager should be displayed for order items list.
-     * To be called from templates(after _prepareLayout()).
+     * Determine if the pager should be displayed for order items list
+     * To be called from templates(after _prepareLayout())
      *
      * @return bool
+     * @since 100.1.7
      */
     public function isPagerDisplayed()
     {
         $pagerBlock = $this->getChildBlock('sales_order_item_pager');
-
         return $pagerBlock && ($this->itemCollection->getSize() > $this->itemsPerPage);
     }
 
     /**
      * Get visible items for current page.
-     * To be called from templates(after _prepareLayout()).
+     * To be called from templates(after _prepareLayout())
      *
      * @return \Magento\Framework\DataObject[]
+     * @since 100.1.7
      */
     public function getItems()
     {
@@ -110,10 +112,11 @@ class Items extends \Magento\Sales\Block\Items\AbstractItems
     }
 
     /**
-     * Get pager HTML according to our requirements.
-     * To be called from templates(after _prepareLayout()).
+     * Get pager HTML according to our requirements
+     * To be called from templates(after _prepareLayout())
      *
      * @return string HTML output
+     * @since 100.1.7
      */
     public function getPagerHtml()
     {
@@ -123,7 +126,7 @@ class Items extends \Magento\Sales\Block\Items\AbstractItems
     }
 
     /**
-     * Retrieve current order model instance.
+     * Retrieve current order model instance
      *
      * @return \Magento\Sales\Model\Order
      */

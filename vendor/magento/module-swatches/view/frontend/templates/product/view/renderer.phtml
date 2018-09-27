@@ -3,6 +3,7 @@
  * Copyright © Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
+// @codingStandardsIgnoreFile
 //"swatchRenderer": {
 ?>
 <?php /** @var $block \Magento\Swatches\Block\Product\Renderer\Configurable */ ?>
@@ -12,43 +13,15 @@
     {
         "[data-role=swatch-options]": {
             "Magento_Swatches/js/swatch-renderer": {
-                "jsonConfig": <?php /* @escapeNotVerified */ echo $swatchOptions = $block->getJsonConfig(); ?>,
-                "jsonSwatchConfig": <?php /* @escapeNotVerified */ echo $block->getJsonSwatchConfig(); ?>,
-                "mediaCallback": "<?php /* @escapeNotVerified */ echo $block->getMediaCallback() ?>",
+                "jsonConfig": <?= /* @escapeNotVerified */ $swatchOptions = $block->getJsonConfig() ?>,
+                "jsonSwatchConfig": <?php /* @noEscape */ echo $block->getJsonSwatchConfig(); ?>,
+                "mediaCallback": "<?= /* @escapeNotVerified */ $block->getMediaCallback() ?>",
                 "gallerySwitchStrategy": "<?php /* @escapeNotVerified */ echo $block->getVar('gallery_switch_strategy',
                     'Magento_ConfigurableProduct') ?: 'replace'; ?>"
+            },
+            "Magento_Swatches/js/configurable-customer-data": {
+                    "swatchOptions": <?php /* @noEscape */ echo $swatchOptions ?>
             }
         }
     }
-</script>
-
-<script>
-    require([
-        'jquery',
-        'Magento_ConfigurableProduct/js/options-updater'
-    ], function($, Updater) {
-        var selectors = {
-                formSelector: '#product_addtocart_form',
-                swatchSelector: '.swatch-opt'
-            },
-            swatchWidgetName = 'mageSwatchRenderer',
-            widgetInitEvent = 'swatch.initialized',
-            clickEventName = 'emulateClick',
-            swatchOptions = <?php /* @escapeNotVerified */ echo $swatchOptions ?>
-
-        /**
-         * Sets default configurable swatch attribute's selected
-         */
-        selectDefaultSwatchOptions = function () {
-            var swatchWidget = $(selectors.swatchSelector).data(swatchWidgetName);
-
-            if (!swatchWidget || !swatchWidget._EmulateSelectedByAttributeId) {
-                return;
-            }
-            swatchWidget._EmulateSelectedByAttributeId(swatchOptions.defaultValues, clickEventName);
-        },
-
-        updater = new Updater(widgetInitEvent, selectDefaultSwatchOptions);
-        updater.listen();
-    });
 </script>

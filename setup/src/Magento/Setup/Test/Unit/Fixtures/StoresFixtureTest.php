@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © 2013-2018 Magento, Inc. All rights reserved.
+ * Copyright © Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 
@@ -18,7 +18,7 @@ use Magento\Store\Api\Data\StoreInterface;
 use Magento\Store\Api\Data\WebsiteInterface;
 use Magento\Store\Model\StoreManager;
 
-class StoresFixtureTest extends \PHPUnit_Framework_TestCase
+class StoresFixtureTest extends \PHPUnit\Framework\TestCase
 {
 
     /**
@@ -75,7 +75,6 @@ class StoresFixtureTest extends \PHPUnit_Framework_TestCase
                     'getDefaultStoreView',
                     'getStore',
                     'getStores',
-                    'reinitStores'
                 ]
             )->getMock();
 
@@ -249,10 +248,6 @@ class StoresFixtureTest extends \PHPUnit_Framework_TestCase
                 ]
             )
             ->willReturn($storeGroupMock);
-
-        $this->storeManagerMock->expects($this->once())
-            ->method('reinitStores')
-            ->willReturn('void');
 
         $this->storeManagerMock->expects($this->once())
             ->method('getGroups')

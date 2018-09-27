@@ -3,6 +3,9 @@
  * See COPYING.txt for license details.
  */
 
+/**
+ * @api
+ */
 define([
     'underscore',
     './dynamic-rows'
@@ -52,13 +55,15 @@ define([
                 obj;
 
             if (this.recordData().length && !this.update) {
-                this.recordData.each(function (recordData) {
+                _.each(this.recordData(), function (recordData) {
                     obj = {};
                     obj[this.map[this.identificationProperty]] = recordData[this.identificationProperty];
                     insertData.push(obj);
                 }, this);
 
-                this.source.set(this.dataProvider, insertData);
+                if (insertData.length) {
+                    this.source.set(this.dataProvider, insertData);
+                }
             }
         },
 
@@ -115,7 +120,7 @@ define([
          */
         updateInsertData: function (recordId) {
             var data = this.getElementData(this.insertData(), recordId),
-                prop = this.map[this.identificationDRProperty];
+            prop = this.map[this.identificationDRProperty];
 
             this.insertData(_.reject(this.source.get(this.dataProvider), function (recordData) {
                 return ~~recordData[prop] === ~~data[prop];
@@ -177,7 +182,7 @@ define([
                 tmpObj = {};
 
             if (data.length !== this.relatedData.length) {
-                data.forEach(function (obj) {
+                _.each(data, function (obj) {
                     tmpObj[this.identificationDRProperty] = obj[this.identificationDRProperty];
 
                     if (!_.findWhere(this.relatedData, tmpObj)) {
@@ -192,7 +197,7 @@ define([
         /**
          * Processing insert data
          *
-         * @param {Array} data
+         * @param {Object} data
          */
         processingInsertData: function (data) {
             var changes,

@@ -60,6 +60,16 @@ class Links extends Block
     }
 
     /**
+     * Open customer registration
+     *
+     * @return void
+     */
+    public function openCustomerCreateLink()
+    {
+        $this->openLink('Create an Account');
+    }
+
+    /**
      * Open link by its title.
      *
      * @param string $linkTitle
@@ -129,6 +139,17 @@ class Links extends Block
     public function waitWelcomeMessage()
     {
         $this->waitForElementVisible($this->welcomeMessage);
+    }
+
+    /**
+     * Get text of the welcome message.
+     *
+     * @return string
+     */
+    public function getWelcomeText()
+    {
+        $this->waitForElementVisible($this->welcomeMessage);
+        return $this->_rootElement->find($this->welcomeMessage)->getText();
     }
 
     /**

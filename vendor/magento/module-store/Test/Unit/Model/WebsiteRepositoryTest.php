@@ -8,7 +8,7 @@ namespace Magento\Store\Test\Unit\Model;
 
 use Magento\Framework\App\Config;
 
-class WebsiteRepositoryTest extends \PHPUnit_Framework_TestCase
+class WebsiteRepositoryTest extends \PHPUnit\Framework\TestCase
 {
     /**
      * @var \Magento\Store\Model\WebsiteRepository
@@ -39,12 +39,12 @@ class WebsiteRepositoryTest extends \PHPUnit_Framework_TestCase
                 ->setMethods(['create'])
                 ->getMock();
         $this->websiteCollectionFactoryMock =
-            $this->getMockBuilder('Magento\Store\Model\ResourceModel\Website\CollectionFactory')
+            $this->getMockBuilder(\Magento\Store\Model\ResourceModel\Website\CollectionFactory::class)
                 ->disableOriginalConstructor()
                 ->setMethods(['create'])
                 ->getMock();
         $this->model = $objectManager->getObject(
-            'Magento\Store\Model\WebsiteRepository',
+            \Magento\Store\Model\WebsiteRepository::class,
             [
                 'factory' => $this->websiteFactoryMock,
                 'websiteCollectionFactory' => $this->websiteCollectionFactoryMock
@@ -66,7 +66,7 @@ class WebsiteRepositoryTest extends \PHPUnit_Framework_TestCase
 
     public function testGetDefault()
     {
-        $websiteMock = $this->getMockBuilder('Magento\Store\Api\Data\WebsiteInterface')
+        $websiteMock = $this->getMockBuilder(\Magento\Store\Api\Data\WebsiteInterface::class)
             ->disableOriginalConstructor()
             ->setMethods([])
             ->getMock();
@@ -88,7 +88,7 @@ class WebsiteRepositoryTest extends \PHPUnit_Framework_TestCase
             ->willReturn($websiteMock);
 
         $website = $this->model->getDefault();
-        $this->assertInstanceOf('Magento\Store\Api\Data\WebsiteInterface', $website);
+        $this->assertInstanceOf(\Magento\Store\Api\Data\WebsiteInterface::class, $website);
         $this->assertEquals($websiteMock, $website);
     }
 
@@ -98,7 +98,7 @@ class WebsiteRepositoryTest extends \PHPUnit_Framework_TestCase
      */
     public function testGetDefaultIsSeveral()
     {
-        $websiteMock = $this->getMockBuilder('Magento\Store\Api\Data\WebsiteInterface')
+        $websiteMock = $this->getMockBuilder(\Magento\Store\Api\Data\WebsiteInterface::class)
             ->disableOriginalConstructor()
             ->setMethods([])
             ->getMock();
@@ -126,7 +126,7 @@ class WebsiteRepositoryTest extends \PHPUnit_Framework_TestCase
      */
     public function testGetDefaultIsZero()
     {
-        $websiteMock = $this->getMockBuilder('Magento\Store\Api\Data\WebsiteInterface')
+        $websiteMock = $this->getMockBuilder(\Magento\Store\Api\Data\WebsiteInterface::class)
             ->disableOriginalConstructor()
             ->setMethods([])
             ->getMock();

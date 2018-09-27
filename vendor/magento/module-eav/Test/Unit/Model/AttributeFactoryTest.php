@@ -5,7 +5,7 @@
  */
 namespace Magento\Eav\Test\Unit\Model;
 
-class AttributeFactoryTest extends \PHPUnit_Framework_TestCase
+class AttributeFactoryTest extends \PHPUnit\Framework\TestCase
 {
     /**
      * @var \Magento\Eav\Model\AttributeFactory
@@ -25,7 +25,7 @@ class AttributeFactoryTest extends \PHPUnit_Framework_TestCase
     protected function setUp()
     {
         /** @var $objectManagerMock \Magento\Framework\ObjectManagerInterface */
-        $objectManagerMock = $this->getMock('Magento\Framework\ObjectManagerInterface');
+        $objectManagerMock = $this->createMock(\Magento\Framework\ObjectManagerInterface::class);
         $objectManagerMock->expects(
             $this->any()
         )->method(
@@ -53,6 +53,7 @@ class AttributeFactoryTest extends \PHPUnit_Framework_TestCase
     /**
      * @param $className
      * @param $arguments
+     *
      * @return mixed
      */
     public function getModelInstance($className, $arguments)

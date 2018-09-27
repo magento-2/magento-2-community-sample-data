@@ -6,13 +6,10 @@
 
 namespace Magento\CatalogSearch\Test\Unit\Model\Search\RequestGenerator;
 
-use Magento\CatalogSearch\Model\Search\RequestGenerator\GeneratorResolver;
 use Magento\CatalogSearch\Model\Search\RequestGenerator\GeneratorInterface;
+use Magento\CatalogSearch\Model\Search\RequestGenerator\GeneratorResolver;
 
-/**
- * Test for Magento\CatalogSearch\Model\Search\RequestGenerator\GeneratorResolver.
- */
-class GeneratorResolverTest extends \PHPUnit_Framework_TestCase
+class GeneratorResolverTest extends \PHPUnit\Framework\TestCase
 {
     /** @var  GeneratorResolver */
     private $resolver;
@@ -26,9 +23,6 @@ class GeneratorResolverTest extends \PHPUnit_Framework_TestCase
     /** @var  GeneratorInterface|\PHPUnit_Framework_MockObject_MockObject */
     private $rangeGenerator;
 
-    /**
-     * {@inheritdoc}
-     */
     protected function setUp()
     {
         $this->defaultGenerator = $this->getMockBuilder(GeneratorInterface::class)
@@ -60,32 +54,19 @@ class GeneratorResolverTest extends \PHPUnit_Framework_TestCase
         );
     }
 
-    /**
-     * Tests resolving type specific search generator.
-     *
-     * @return void
-     */
     public function testGetSpecificGenerator()
     {
         $this->assertEquals($this->rangeGenerator, $this->resolver->getGeneratorForType('range'));
         $this->assertEquals($this->datetimeGenerator, $this->resolver->getGeneratorForType('datetime'));
     }
 
-    /**
-     * Tests resolving fallback search generator.
-     *
-     * @return void
-     */
     public function testGetFallbackGenerator()
     {
         $this->assertEquals($this->defaultGenerator, $this->resolver->getGeneratorForType('unknown_type'));
     }
 
     /**
-     * Tests resolving search generator with invalid type.
-     *
      * @expectedException InvalidArgumentException
-     * @return void
      */
     public function testGetInvalidGeneratorType()
     {

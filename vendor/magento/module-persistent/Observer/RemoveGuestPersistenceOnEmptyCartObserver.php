@@ -14,41 +14,43 @@ use Magento\Framework\Exception\NoSuchEntityException;
 class RemoveGuestPersistenceOnEmptyCartObserver implements ObserverInterface
 {
     /**
-     * Customer session.
+     * Customer session
      *
      * @var \Magento\Customer\Model\Session
      */
     private $customerSession;
 
     /**
-     * Persistent session.
+     * Persistent session
      *
      * @var \Magento\Persistent\Helper\Session
      */
     private $persistenceSessionHelper;
 
     /**
-     * Quote manager.
+     * Quote manager
      *
      * @var \Magento\Persistent\Model\QuoteManager
      */
     private $quoteManager;
 
     /**
-     * Persistent Data.
+     * Persistent Data
      *
      * @var \Magento\Persistent\Helper\Data
      */
     private $persistenceDataHelper;
 
     /**
-     * Cart Repository.
+     * Cart Repository
      *
      * @var \Magento\Quote\Api\CartRepositoryInterface $cartRepository
      */
     private $cartRepository;
 
     /**
+     * Initialize dependencies
+     *
      * @param \Magento\Persistent\Helper\Session $persistenceSessionHelper
      * @param \Magento\Persistent\Helper\Data $persistenceDataHelper
      * @param \Magento\Persistent\Model\QuoteManager $quoteManager
@@ -70,7 +72,7 @@ class RemoveGuestPersistenceOnEmptyCartObserver implements ObserverInterface
     }
 
     /**
-     * Set persistent session to guest if cart has been emptied and customer not logged in.
+     * Set persistent session to guest if cart has been emptied and customer not logged in
      *
      * @param \Magento\Framework\Event\Observer $observer
      * @return void

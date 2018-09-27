@@ -11,6 +11,7 @@ use Magento\Braintree\Gateway\Config\Config;
 use Magento\Braintree\Model\Adapter\BraintreeAdapter;
 use Magento\Braintree\Model\Adapter\BraintreeAdapterFactory;
 use Magento\Framework\App\ObjectManager;
+use Magento\Framework\Serialize\SerializerInterface;
 use Magento\Store\Api\StoreRepositoryInterface;
 use Magento\TestFramework\TestCase\AbstractBackendController;
 use PHPUnit_Framework_MockObject_MockObject as MockObject;
@@ -122,7 +123,7 @@ class GetClientTokenTest extends AbstractBackendController
         ];
 
         $adapter = $this->getMockBuilder(BraintreeAdapter::class)
-            ->setConstructorArgs(array_merge(['config' => null], $args))
+            ->setConstructorArgs($args)
             ->setMethods(['generate'])
             ->getMock();
         $adapter->method('generate')
@@ -134,7 +135,9 @@ class GetClientTokenTest extends AbstractBackendController
 
         $this->dispatch('backend/braintree/payment/getClientToken');
 
-        $decoded = json_decode($this->getResponse()->getBody(), true);
+        /** @var SerializerInterface $serializer */
+        $serializer = $this->_objectManager->get(SerializerInterface::class);
+        $decoded = $serializer->unserialize($this->getResponse()->getBody());
         $this->performAsserts($decoded['clientToken'], $merchantId, $publicKey, $privateKey);
     }
 

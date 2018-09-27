@@ -1,0 +1,75 @@
+<form id="collection-points-form" class="form fieldset" data-bind="submit: submitForm.bind($data)">
+        <div class="step-title"
+             translate="'Collection Point Selection'"
+             data-role="title"
+        />
+
+    <div class="field _required collection-point-country">
+        <label class="label" for="collection-point-countries">
+            <span data-bind="i18n:'Country'"/>
+        </label>
+        <div class="control">
+            <select class="input-select" id="collection-point-countries"
+                    data-bind="  options: getCountryData(),
+                                 optionsText: 'countryName',
+                                 optionsValue: 'countryCode',
+                                 value: countryValue
+                                ">
+
+            </select>
+        </div>
+    </div>
+
+    <div class="field _required collection-point-postalcode" data-bind="css:{_error: zipCodeError}">
+        <label class="label" for="collection-points-postal-code">
+            <span data-bind="i18n:'Postal Code'"/>
+        </label>
+        <div class="control">
+            <input class="input-text required-entry"
+                   type="text"
+                   id="collection-points-postal-code"
+                   data-bind="value: zipValue"
+            />
+            <label class="admin__ field-error" if="zipCodeError" data-bind="i18n:zipCodeError"/>
+        </div>
+    </div>
+
+    <div class="field collection-point-button">
+        <div class="control">
+            <button class="action primary" type="submit" title="search">
+                <span data-bind="i18n:'Search'"></span>
+            </button>
+        </div>
+    </div>
+
+    <div class="collection-point-list" if="getCollectionPoints().length > 0">
+        <table>
+            <tbody data-bind="foreach: getCollectionPoints()">
+                <tr>
+                    <td><input type="radio"
+                               name="collection-points"
+                               data-bind="checked: $parent.selected, value: entity_id"
+                        />
+                    </td>
+                    <td><span data-bind="text: collection_point_id"></span></td>
+                    <td>
+                        <div>
+                            <span data-bind="text: street"></span>, <span data-bind="text: city"></span>
+                        </div>
+                        <table class="collection-point-opening-hours">
+                            <tbody data-bind="foreach: opening_hours">
+                                <tr>
+                                    <td data-bind="text: days"></td>
+                                    <td data-bind="text: times"></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+    <div class="collection-point-message">
+        <label if="getMessage()" data-bind="text:getMessage(), css:{'field-error':hasNoResult()}" />
+    </div>
+</form>

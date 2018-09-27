@@ -1,14 +1,14 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
- * See COPYING.txt for license details.
+ *  Copyright © Magento, Inc. All rights reserved.
+ *  See COPYING.txt for license details.
  */
 
 namespace Magento\Framework\TestFramework\Test\Unit\Autoloader;
 
 use Magento\Framework\TestFramework\Unit\Autoloader\ExtensionAttributesGenerator;
 
-class ExtensionAttributesGeneratorTest extends \PHPUnit_Framework_TestCase
+class ExtensionAttributesGeneratorTest extends \PHPUnit\Framework\TestCase
 {
     /**
      * @var ExtensionAttributesGenerator
@@ -23,7 +23,7 @@ class ExtensionAttributesGeneratorTest extends \PHPUnit_Framework_TestCase
     public function testGenerateExtensionAttributes()
     {
         $this->assertStringMatchesFormat(
-            "%Anamespace My;%Aclass SimpleExtension implements \My\SimpleExtensionInterface%A",
+            "%Anamespace My;%Aclass SimpleExtension implements SimpleExtensionInterface%A",
             $this->subject->generate('\My\SimpleExtension')
         );
     }

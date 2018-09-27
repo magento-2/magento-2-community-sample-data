@@ -17,6 +17,7 @@ use Magento\UrlRewrite\Service\V1\Data\UrlRewrite;
 /**
  * Catalog category
  *
+ * @api
  * @method Category setAffectedProductIds(array $productIds)
  * @method array getAffectedProductIds()
  * @method Category setMovedCategoryId(array $productIds)
@@ -35,6 +36,7 @@ use Magento\UrlRewrite\Service\V1\Data\UrlRewrite;
  * @SuppressWarnings(PHPMD.TooManyFields)
  * @SuppressWarnings(PHPMD.ExcessiveClassComplexity)
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
+ * @since 100.0.2
  */
 class Category extends \Magento\Catalog\Model\AbstractModel implements
     \Magento\Framework\DataObject\IdentityInterface,
@@ -67,7 +69,7 @@ class Category extends \Magento\Catalog\Model\AbstractModel implements
      */
     const TREE_ROOT_ID = 1;
 
-    const CACHE_TAG = 'catalog_category';
+    const CACHE_TAG = 'cat_c';
 
     /**#@+
      * Constants
@@ -86,11 +88,7 @@ class Category extends \Magento\Catalog\Model\AbstractModel implements
     const KEY_CHILDREN_DATA = 'children_data';
     /**#@-*/
 
-    /**
-     * Prefix of model events names
-     *
-     * @var string
-     */
+    /**#@-*/
     protected $_eventPrefix = 'catalog_category';
 
     /**
@@ -123,6 +121,7 @@ class Category extends \Magento\Catalog\Model\AbstractModel implements
      * URL rewrite model
      *
      * @var \Magento\UrlRewrite\Model\UrlRewrite
+     * @deprecated 101.1.0
      */
     protected $_urlRewrite;
 
@@ -213,13 +212,19 @@ class Category extends \Magento\Catalog\Model\AbstractModel implements
      */
     protected $flatState;
 
-    /** @var \Magento\CatalogUrlRewrite\Model\CategoryUrlPathGenerator */
+    /**
+     * @var \Magento\CatalogUrlRewrite\Model\CategoryUrlPathGenerator
+     */
     protected $categoryUrlPathGenerator;
 
-    /** @var UrlFinderInterface */
+    /**
+     * @var \Magento\UrlRewrite\Model\UrlFinderInterface
+     */
     protected $urlFinder;
 
-    /** @var \Magento\Framework\Indexer\IndexerRegistry */
+    /**
+     * @var \Magento\Framework\Indexer\IndexerRegistry
+     */
     protected $indexerRegistry;
 
     /**
@@ -313,10 +318,10 @@ class Category extends \Magento\Catalog\Model\AbstractModel implements
     {
         // If Flat Index enabled then use it but only on frontend
         if ($this->flatState->isAvailable()) {
-            $this->_init('Magento\Catalog\Model\ResourceModel\Category\Flat');
+            $this->_init(\Magento\Catalog\Model\ResourceModel\Category\Flat::class);
             $this->_useFlatResource = true;
         } else {
-            $this->_init('Magento\Catalog\Model\ResourceModel\Category');
+            $this->_init(\Magento\Catalog\Model\ResourceModel\Category::class);
         }
     }
 
@@ -669,10 +674,8 @@ class Category extends \Magento\Catalog\Model\AbstractModel implements
     }
 
     /**
-     * Get image url by attribute code.
-     *
      * @param string $attributeCode
-     * @return string
+     * @return bool|string
      * @throws \Magento\Framework\Exception\LocalizedException
      */
     public function getImageUrl($attributeCode = 'image')
@@ -690,7 +693,6 @@ class Category extends \Magento\Catalog\Model\AbstractModel implements
                 );
             }
         }
-
         return $url;
     }
 
@@ -719,7 +721,7 @@ class Category extends \Magento\Catalog\Model\AbstractModel implements
             return $parentId;
         }
         $parentIds = $this->getParentIds();
-        return (int)array_pop($parentIds);
+        return intval(array_pop($parentIds));
     }
 
     /**
@@ -795,11 +797,14 @@ class Category extends \Magento\Catalog\Model\AbstractModel implements
     /**
      * Retrieve children ids comma separated
      *
+     * @param boolean $recursive
+     * @param boolean $isActive
+     * @param boolean $sortByPosition
      * @return string
      */
-    public function getChildren()
+    public function getChildren($recursive = false, $isActive = true, $sortByPosition = false)
     {
-        return implode(',', $this->getResource()->getChildren($this, false));
+        return implode(',', $this->getResource()->getChildren($this, $recursive, $isActive, $sortByPosition));
     }
 
     /**
@@ -1158,7 +1163,7 @@ class Category extends \Magento\Catalog\Model\AbstractModel implements
             if ($this->hasDataChanges() || $this->isDeleted() || $this->dataHasChangedFor(self::KEY_INCLUDE_IN_MENU)) {
                 $identities[] = Product::CACHE_PRODUCT_CATEGORY_TAG . '_' . $this->getId();
             }
-
+            
             if ($this->isObjectNew()) {
                 $identities[] = self::CACHE_TAG;
             }
@@ -1256,6 +1261,7 @@ class Category extends \Magento\Catalog\Model\AbstractModel implements
     {
         return $this->getData(self::KEY_CHILDREN_DATA);
     }
+
     //@codeCoverageIgnoreEnd
 
     /**
@@ -1448,5 +1454,6 @@ class Category extends \Magento\Catalog\Model\AbstractModel implements
     {
         return $this->_setExtensionAttributes($extensionAttributes);
     }
+
     //@codeCoverageIgnoreEnd
 }

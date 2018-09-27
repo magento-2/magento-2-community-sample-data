@@ -132,12 +132,14 @@ class Shipping extends AbstractTotal
      *
      * @return \Magento\Tax\Model\Config
      *
-     * @deprecated
+     * @deprecated 100.1.0
      */
     private function getTaxConfig()
     {
         if ($this->taxConfig === null) {
-            $this->taxConfig = \Magento\Framework\App\ObjectManager::getInstance()->get('Magento\Tax\Model\Config');
+            $this->taxConfig = \Magento\Framework\App\ObjectManager::getInstance()->get(
+                \Magento\Tax\Model\Config::class
+            );
         }
         return $this->taxConfig;
     }

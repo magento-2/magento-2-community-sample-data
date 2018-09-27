@@ -6,20 +6,22 @@
 namespace Magento\Sales\Model\Service;
 
 use Magento\Backend\App\Area\FrontNameResolver;
-use Magento\Sales\Api\PaymentFailuresInterface;
 use Magento\Framework\App\Config\ScopeConfigInterface;
-use Magento\Framework\Stdlib\DateTime\TimezoneInterface;
+use Magento\Framework\App\ObjectManager;
 use Magento\Framework\Mail\Template\TransportBuilder;
+use Magento\Framework\Stdlib\DateTime\TimezoneInterface;
 use Magento\Framework\Translate\Inline\StateInterface;
+use Magento\Quote\Api\CartRepositoryInterface;
+use Magento\Quote\Api\Data\CartInterface as Quote;
+use Magento\Sales\Api\PaymentFailuresInterface;
 use Magento\Store\Model\ScopeInterface;
 use Magento\Store\Model\Store;
-use Magento\Quote\Api\Data\CartInterface as Quote;
-use Magento\Quote\Api\CartRepositoryInterface;
+use Psr\Log\LoggerInterface;
 
 /**
  * Service is responsible for handling failed payment transactions.
- * It depends on Stores > Configuration > Sales > Checkout > Payment Failed Emails
- * configuration.
+ *
+ * It depends on Stores > Configuration > Sales > Checkout > Payment Failed Emails configuration.
  *
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  */
@@ -53,26 +55,32 @@ class PaymentFailuresService implements PaymentFailuresInterface
     private $cartRepository;
 
     /**
-     * PaymentFailures constructor.
-     *
+     * @var LoggerInterface
+     */
+    private $logger;
+
+    /**
      * @param ScopeConfigInterface $scopeConfig
      * @param StateInterface $inlineTranslation
      * @param TransportBuilder $transportBuilder
      * @param TimezoneInterface $localeDate
      * @param CartRepositoryInterface $cartRepository
+     * @param LoggerInterface|null $logger
      */
     public function __construct(
         ScopeConfigInterface $scopeConfig,
         StateInterface $inlineTranslation,
         TransportBuilder $transportBuilder,
         TimezoneInterface $localeDate,
-        CartRepositoryInterface $cartRepository
+        CartRepositoryInterface $cartRepository,
+        LoggerInterface $logger = null
     ) {
         $this->scopeConfig = $scopeConfig;
         $this->inlineTranslation = $inlineTranslation;
         $this->transportBuilder = $transportBuilder;
         $this->localeDate = $localeDate;
         $this->cartRepository = $cartRepository;
+        $this->logger = $logger ?: ObjectManager::getInstance()->get(LoggerInterface::class);
     }
 
     /**
@@ -82,14 +90,12 @@ class PaymentFailuresService implements PaymentFailuresInterface
      * @param string $message
      * @param string $checkoutType
      * @return PaymentFailuresInterface
-     * @throws \Magento\Framework\Exception\NoSuchEntityException
-     * @throws \Magento\Framework\Exception\MailException
      */
     public function handle(
-        $cartId,
-        $message,
-        $checkoutType = 'onepage'
-    ) {
+        int $cartId,
+        string $message,
+        string $checkoutType = 'onepage'
+    ): PaymentFailuresInterface {
         $this->inlineTranslation->suspend();
         $quote = $this->cartRepository->get($cartId);
 
@@ -124,7 +130,7 @@ class PaymentFailuresService implements PaymentFailuresInterface
                 ->setTemplateIdentifier($template)
                 ->setTemplateOptions([
                     'area' => FrontNameResolver::AREA_CODE,
-                    'store' => Store::DEFAULT_STORE_ID
+                    'store' => Store::DEFAULT_STORE_ID,
                 ])
                 ->setTemplateVars($this->getTemplateVars($quote, $message, $checkoutType))
                 ->setFrom($this->getSendFrom($quote))
@@ -132,7 +138,11 @@ class PaymentFailuresService implements PaymentFailuresInterface
                 ->addBcc($bcc)
                 ->getTransport();
 
-            $transport->sendMessage();
+            try {
+                $transport->sendMessage();
+            } catch (\Exception $e) {
+                $this->logger->critical($e->getMessage());
+            }
         }
 
         $this->inlineTranslation->resume();
@@ -148,7 +158,7 @@ class PaymentFailuresService implements PaymentFailuresInterface
      * @param string $checkoutType
      * @return array
      */
-    private function getTemplateVars($quote, $message, $checkoutType)
+    private function getTemplateVars(Quote $quote, string $message, string $checkoutType): array
     {
         return [
             'reason' => $message,
@@ -178,7 +188,7 @@ class PaymentFailuresService implements PaymentFailuresInterface
      * @param Quote $quote
      * @return mixed
      */
-    private function getConfigValue($configPath, Quote $quote)
+    private function getConfigValue(string $configPath, Quote $quote)
     {
         return $this->scopeConfig->getValue(
             $configPath,
@@ -226,14 +236,13 @@ class PaymentFailuresService implements PaymentFailuresInterface
      * @param Quote $quote
      * @return array
      */
-    private function getQuoteItems(Quote $quote)
+    private function getQuoteItems(Quote $quote): array
     {
         $items = [];
         foreach ($quote->getAllVisibleItems() as $item) {
-            /* @var $item \Magento\Quote\Model\Quote\Item */
-            $itemData = $item->getProduct()->getName() . '  x ' . $item->getQty() . '  ';
-            $itemData .= $quote->getCurrency()->getStoreCurrencyCode() . ' ' .
-                $item->getProduct()->getFinalPrice($item->getQty());
+            $itemData = $item->getProduct()->getName() . '  x ' . $item->getQty() . '  ' .
+                        $quote->getCurrency()->getStoreCurrencyCode() . ' ' .
+                        $item->getProduct()->getFinalPrice($item->getQty());
             $items[] = $itemData;
         }
 
@@ -262,7 +271,7 @@ class PaymentFailuresService implements PaymentFailuresInterface
      * @param Quote $quote
      * @return string
      */
-    private function getSendFrom(Quote $quote)
+    private function getSendFrom(Quote $quote): string
     {
         return $this->getConfigValue('checkout/payment_failed/identity', $quote);
     }
@@ -272,7 +281,7 @@ class PaymentFailuresService implements PaymentFailuresInterface
      *
      * @return string
      */
-    private function getLocaleDate()
+    private function getLocaleDate(): string
     {
         return $this->localeDate->formatDateTime(
             new \DateTime(),
@@ -287,7 +296,7 @@ class PaymentFailuresService implements PaymentFailuresInterface
      * @param Quote $quote
      * @return string
      */
-    private function getCustomerName(Quote $quote)
+    private function getCustomerName(Quote $quote): string
     {
         $customer = __('Guest');
         if (!$quote->getCustomerIsGuest()) {

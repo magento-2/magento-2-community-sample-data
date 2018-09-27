@@ -200,12 +200,14 @@ class Viewfile extends \Magento\Customer\Controller\Adminhtml\Index
             $file = $this->urlDecoder->decode(
                 $this->getRequest()->getParam('file')
             );
+
             return [$file, false];
         } elseif ($this->getRequest()->getParam('image')) {
             // show plain image
             $file = $this->urlDecoder->decode(
                 $this->getRequest()->getParam('image')
             );
+
             return [$file, true];
         } else {
             throw new NotFoundException(__('Page not found.'));

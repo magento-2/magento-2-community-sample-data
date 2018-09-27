@@ -5,12 +5,16 @@
  */
 namespace Magento\Customer\Block\Account;
 
+use Magento\Customer\Block\Account\SortLinkInterface;
+
 /**
  * Class Link
  *
+ * @api
  * @SuppressWarnings(PHPMD.DepthOfInheritance)
+ * @since 100.0.2
  */
-class Link extends \Magento\Framework\View\Element\Html\Link
+class Link extends \Magento\Framework\View\Element\Html\Link implements SortLinkInterface
 {
     /**
      * @var \Magento\Customer\Model\Url
@@ -37,5 +41,14 @@ class Link extends \Magento\Framework\View\Element\Html\Link
     public function getHref()
     {
         return $this->_customerUrl->getAccountUrl();
+    }
+
+    /**
+     * {@inheritdoc}
+     * @since 100.2.0
+     */
+    public function getSortOrder()
+    {
+        return $this->getData(self::SORT_ORDER);
     }
 }

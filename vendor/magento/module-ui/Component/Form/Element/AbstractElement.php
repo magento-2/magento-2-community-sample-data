@@ -9,6 +9,9 @@ use Magento\Ui\Component\AbstractComponent;
 
 /**
  * Class AbstractElement
+ *
+ * @api
+ * @since 100.0.2
  */
 abstract class AbstractElement extends AbstractComponent implements ElementInterface
 {
@@ -41,7 +44,7 @@ abstract class AbstractElement extends AbstractComponent implements ElementInter
      */
     public function isReadonly()
     {
-        return (bool) $this->getData('readonly');
+        return (bool)$this->getData('readonly');
     }
 
     /**

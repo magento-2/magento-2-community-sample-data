@@ -7,10 +7,10 @@
 namespace Magento\Quote\Model\Quote\Address;
 
 use Magento\Framework\DataObject\Copy;
-use Magento\Quote\Model\Quote\Address;
-use Magento\Sales\Api\Data\OrderInterfaceFactory as OrderFactory;
-use Magento\Sales\Api\Data\OrderInterface;
 use Magento\Framework\Event\ManagerInterface;
+use Magento\Quote\Model\Quote\Address;
+use Magento\Sales\Api\Data\OrderInterface;
+use Magento\Sales\Api\Data\OrderInterfaceFactory as OrderFactory;
 
 /**
  * Class ToOrder converter
@@ -74,7 +74,7 @@ class ToOrder
         $this->dataObjectHelper->populateWithArray(
             $order,
             array_merge($orderData, $data),
-            '\Magento\Sales\Api\Data\OrderInterface'
+            \Magento\Sales\Api\Data\OrderInterface::class
         );
         $order->setStoreId($object->getQuote()->getStoreId())
             ->setQuoteId($object->getQuote()->getId())
@@ -90,6 +90,5 @@ class ToOrder
             ['order' => $order, 'quote' => $object->getQuote()]
         );
         return $order;
-
     }
 }

@@ -8,7 +8,7 @@ namespace Magento\Authorizenet\Test\Unit\Model\Directpost;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
 use Magento\Authorizenet\Model\Directpost;
 
-class ResponseTest extends \PHPUnit_Framework_TestCase
+class ResponseTest extends \PHPUnit\Framework\TestCase
 {
     /**
      * @var \Magento\Authorizenet\Model\Directpost\Response
@@ -18,7 +18,7 @@ class ResponseTest extends \PHPUnit_Framework_TestCase
     protected function setUp()
     {
         $objectManager = new ObjectManager($this);
-        $this->responseModel = $objectManager->getObject('Magento\Authorizenet\Model\Directpost\Response');
+        $this->responseModel = $objectManager->getObject(\Magento\Authorizenet\Model\Directpost\Response::class);
     }
 
     /**
@@ -65,6 +65,7 @@ class ResponseTest extends \PHPUnit_Framework_TestCase
      * @param $merchantApiLogin
      * @param $amount
      * @param $transactionId
+     *
      * @return string
      */
     protected function generateHash($merchantMd5, $merchantApiLogin, $amount, $transactionId)

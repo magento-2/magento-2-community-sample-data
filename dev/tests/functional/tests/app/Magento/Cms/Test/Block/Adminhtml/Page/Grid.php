@@ -16,6 +16,13 @@ use Magento\Mtf\Client\Element\SimpleElement;
 class Grid extends DataGrid
 {
     /**
+     * Action button (located above the Grid).
+     *
+     * @var string
+     */
+    protected $actionButton = 'button.action-select';
+
+    /**
      * Select action toggle.
      *
      * @var string
@@ -102,7 +109,7 @@ class Grid extends DataGrid
             $rowItem->find($this->selectAction)->click();
             $rowItem->find($this->previewCmsPage)->click();
         } else {
-            throw new \Exception('Searched item was not found.');
+            throw new \Exception("Searched item was not found by filter\n" . print_r($filter, true));
         }
     }
 }

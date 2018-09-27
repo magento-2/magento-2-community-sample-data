@@ -9,6 +9,9 @@ use Magento\Framework\Data\OptionSourceInterface;
 
 /**
  * Core System Store Model
+ *
+ * @api
+ * @since 100.0.2
  */
 class Store extends \Magento\Framework\DataObject implements OptionSourceInterface
 {

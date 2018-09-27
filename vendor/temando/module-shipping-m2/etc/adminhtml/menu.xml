@@ -1,0 +1,59 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * Refer to LICENSE.txt distributed with the Temando Shipping module for notice of license
+ */
+-->
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Backend:etc/menu.xsd">
+    <menu>
+        <add id="Temando_Shipping::shipping"
+             title="Shipping"
+             translate="title"
+             module="Temando_Shipping"
+             sortOrder="45"
+             dependsOnModule="Temando_Shipping"
+             resource="Temando_Shipping::shipping"
+             parent="Magento_Backend::stores"
+        />
+        <add id="Temando_Shipping::carriers"
+             title="Carriers"
+             module="Temando_Shipping"
+             sortOrder="20"
+             resource="Temando_Shipping::carriers"
+             parent="Temando_Shipping::shipping"
+             action="temando/configuration_carrier/index"
+        />
+        <add id="Temando_Shipping::locations"
+             title="Locations"
+             module="Temando_Shipping"
+             sortOrder="22"
+             resource="Temando_Shipping::locations"
+             parent="Temando_Shipping::shipping"
+             action="temando/configuration_location/index"
+        />
+        <add id="Temando_Shipping::packaging"
+             title="Packaging"
+             module="Temando_Shipping"
+             sortOrder="23"
+             resource="Temando_Shipping::packaging"
+             parent="Temando_Shipping::shipping"
+             action="temando/configuration_packaging/index"
+        />
+        <add id="Temando_Shipping::dispatches"
+             title="Dispatches"
+             module="Temando_Shipping"
+             sortOrder="35"
+             resource="Temando_Shipping::dispatches"
+             parent="Magento_Sales::sales_operation"
+             action="temando/dispatch/index"
+        />
+        <add id="Temando_Shipping::batches"
+             title="Batches"
+             module="Temando_Shipping"
+             sortOrder="37"
+             resource="Temando_Shipping::batches"
+             parent="Magento_Sales::sales_operation"
+             action="temando/batch/index"
+        />
+    </menu>
+</config>

@@ -22,6 +22,7 @@ use Magento\Store\Api\Data\StoreInterface;
 /**
  * Store model
  *
+ * @api
  * @method Store setGroupId($value)
  * @method int getSortOrder()
  * @method int getStoreId()
@@ -32,6 +33,7 @@ use Magento\Store\Api\Data\StoreInterface;
  * @SuppressWarnings(PHPMD.ExcessiveClassComplexity)
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  * @SuppressWarnings(PHPMD.ExcessivePublicCount)
+ * @since 100.0.2
  */
 class Store extends AbstractExtensibleModel implements
     AppScopeInterface,
@@ -318,6 +320,11 @@ class Store extends AbstractExtensibleModel implements
     private $urlModifier;
 
     /**
+     * @var \Magento\Framework\Event\ManagerInterface
+     */
+    private $eventManager;
+
+    /**
      * @param \Magento\Framework\Model\Context $context
      * @param \Magento\Framework\Registry $registry
      * @param \Magento\Framework\Api\ExtensionAttributesFactory $extensionFactory
@@ -342,6 +349,7 @@ class Store extends AbstractExtensibleModel implements
      * @param \Magento\Framework\Data\Collection\AbstractDb $resourceCollection
      * @param bool $isCustomEntryPoint
      * @param array $data optional generic object data
+     * @param \Magento\Framework\Event\ManagerInterface|null $eventManager
      *
      * @SuppressWarnings(PHPMD.ExcessiveParameterList)
      */
@@ -369,7 +377,8 @@ class Store extends AbstractExtensibleModel implements
         \Magento\Store\Api\WebsiteRepositoryInterface $websiteRepository,
         \Magento\Framework\Data\Collection\AbstractDb $resourceCollection = null,
         $isCustomEntryPoint = false,
-        array $data = []
+        array $data = [],
+        \Magento\Framework\Event\ManagerInterface $eventManager = null
     ) {
         $this->_coreFileStorageDatabase = $coreFileStorageDatabase;
         $this->_config = $config;
@@ -388,6 +397,8 @@ class Store extends AbstractExtensibleModel implements
         $this->_currencyInstalled = $currencyInstalled;
         $this->groupRepository = $groupRepository;
         $this->websiteRepository = $websiteRepository;
+        $this->eventManager = $eventManager ?: \Magento\Framework\App\ObjectManager::getInstance()
+            ->get(\Magento\Framework\Event\ManagerInterface::class);
         parent::__construct(
             $context,
             $registry,
@@ -418,8 +429,10 @@ class Store extends AbstractExtensibleModel implements
     {
         parent::__wakeup();
         $this->_coreFileStorageDatabase = ObjectManager::getInstance()
-            ->get('Magento\MediaStorage\Helper\File\Storage\Database');
-        $this->_config = ObjectManager::getInstance()->get('Magento\Framework\App\Config\ReinitableConfigInterface');
+            ->get(\Magento\MediaStorage\Helper\File\Storage\Database::class);
+        $this->_config = ObjectManager::getInstance()->get(
+            \Magento\Framework\App\Config\ReinitableConfigInterface::class
+        );
     }
 
     /**
@@ -429,7 +442,7 @@ class Store extends AbstractExtensibleModel implements
      */
     protected function _construct()
     {
-        $this->_init('Magento\Store\Model\ResourceModel\Store');
+        $this->_init(\Magento\Store\Model\ResourceModel\Store::class);
     }
 
     /**
@@ -1037,12 +1050,22 @@ class Store extends AbstractExtensibleModel implements
     /**
      * Reinit Stores on after save
      *
-     * @deprecated
+     * @deprecated 100.1.3
      * @return $this
+     * @since 100.1.3
      */
     public function afterSave()
     {
         $this->_storeManager->reinitStores();
+        if ($this->isObjectNew()) {
+            $event = $this->_eventPrefix . '_add';
+        } else {
+            $event = $this->_eventPrefix . '_edit';
+        }
+        $store  = $this;
+        $this->getResource()->addCommitCallback(function () use ($event, $store) {
+            $this->eventManager->dispatch($event, ['store' => $store]);
+        });
         return parent::afterSave();
     }
 
@@ -1110,6 +1133,7 @@ class Store extends AbstractExtensibleModel implements
      * Check if store is default
      *
      * @return boolean
+     * @since 100.1.0
      */
     public function isDefault()
     {
@@ -1122,7 +1146,7 @@ class Store extends AbstractExtensibleModel implements
     /**
      * Retrieve current url for store
      *
-     * @param bool|string $fromStore
+     * @param bool $fromStore
      * @return string
      * @SuppressWarnings(PHPMD.CyclomaticComplexity)
      * @SuppressWarnings(PHPMD.NPathComplexity)
@@ -1130,7 +1154,14 @@ class Store extends AbstractExtensibleModel implements
     public function getCurrentUrl($fromStore = true)
     {
         $sidQueryParam = $this->_sidResolver->getSessionIdQueryParam($this->_getSession());
-        $requestString = $this->_url->escape(ltrim($this->_request->getRequestString(), '/'));
+        /** @var string $requestString Request path without query parameters */
+        $requestString = $this->_url->escape(
+            preg_replace(
+                '/\?.*?$/',
+                '',
+                ltrim($this->_request->getRequestString(), '/')
+            )
+        );
 
         $storeUrl = $this->getUrl('', ['_secure' => $this->_storeManager->getStore()->isCurrentlySecure()]);
 
@@ -1182,7 +1213,7 @@ class Store extends AbstractExtensibleModel implements
             . (isset($storeParsedUrl['port']) ? ':' . $storeParsedUrl['port'] : '')
             . $storeParsedUrl['path']
             . $requestStringPath
-            . ($currentUrlQueryParams ? '?' . http_build_query($currentUrlQueryParams, '', '&amp;') : '');
+            . ($currentUrlQueryParams ? '?' . http_build_query($currentUrlQueryParams) : '');
 
         return $currentUrl;
     }
@@ -1215,6 +1246,11 @@ class Store extends AbstractExtensibleModel implements
      */
     public function afterDelete()
     {
+        $store = $this;
+        $this->getResource()->addCommitCallback(function () use ($store) {
+            $this->_storeManager->reinitStores();
+            $this->eventManager->dispatch($this->_eventPrefix . '_delete', ['store' => $store]);
+        });
         parent::afterDelete();
         $this->_configCacheType->clean();
 
@@ -1229,6 +1265,7 @@ class Store extends AbstractExtensibleModel implements
             $this->getGroup()->setDefaultStoreId($defaultId);
             $this->getGroup()->save();
         }
+
         return $this;
     }
 
@@ -1307,6 +1344,7 @@ class Store extends AbstractExtensibleModel implements
 
     /**
      * {@inheritdoc}
+     * @since 100.1.0
      */
     public function getScopeType()
     {
@@ -1315,6 +1353,7 @@ class Store extends AbstractExtensibleModel implements
 
     /**
      * {@inheritdoc}
+     * @since 100.1.0
      */
     public function getScopeTypeName()
     {
@@ -1342,13 +1381,13 @@ class Store extends AbstractExtensibleModel implements
      * Gets URL modifier.
      *
      * @return \Magento\Framework\Url\ModifierInterface
-     * @deprecated
+     * @deprecated 100.1.0
      */
     private function getUrlModifier()
     {
         if ($this->urlModifier === null) {
             $this->urlModifier = \Magento\Framework\App\ObjectManager::getInstance()->get(
-                'Magento\Framework\Url\ModifierInterface'
+                \Magento\Framework\Url\ModifierInterface::class
             );
         }
 

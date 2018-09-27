@@ -1,0 +1,111 @@
+{
+  "data": {
+    "type": "shipment",
+    "id": "00000000-5000-0005-0000-000000000000",
+    "attributes": {
+      "pickupAt": "2017-06-01T11:11:11+02:00",
+      "fulfill": {
+        "carrierBooking": {
+          "shippingTaxInclusiveCharge": {
+            "amount": 2.75,
+            "currency": "GBP"
+          },
+          "trackingReference": "6666666666666666",
+          "bookingReference": "6666666666666666",
+          "carrierName": "carrier-integration-huxloe-hermes",
+          "integrationId": "carrier-integration-huxloe-hermes",
+          "configurationId": "00000000-5005-5005-0000-000000000000",
+          "integrationServiceId": "H24",
+          "serviceName": "H24"
+        }
+      },
+      "selectedService": {
+        "service": "H24",
+        "configurationId": "00000000-5005-5005-0000-000000000000"
+      },
+      "orderId": "00000000-3000-0003-0000-000000000000",
+      "origin": {
+        "address": {
+          "countryCode": "GB",
+          "postalCode": "XY1Z 2AB",
+          "locality": "London",
+          "dependentLocality": "Holborn",
+          "administrativeArea": "Greater London",
+          "lines": [
+            "1 Foo Square"
+          ],
+          "type": "business"
+        },
+        "contact": {
+          "organisationName": "Temando UK",
+          "phoneNumber": "0800",
+          "personLastName": "Aßmann",
+          "personFirstName": "Christoph",
+          "email": "christoph.assmann@netresearch.de"
+        },
+        "name": "Temando UK",
+        "type": "Store"
+      },
+      "destination": {
+        "address": {
+          "countryCode": "GB",
+          "postalCode": "AB99 1CD",
+          "locality": "London",
+          "administrativeArea": "London",
+          "lines": [
+            "4/5 Foo Road"
+          ],
+          "type": "business"
+        },
+        "contact": {
+          "organisationName": "Foo Studios",
+          "phoneNumber": "0800",
+          "personLastName": "Ertner",
+          "personFirstName": "Sebastian",
+          "email": "sebastian.ertner@netresearch.de"
+        }
+      },
+      "documentation": [
+        {
+          "size": "A4",
+          "mimeType": "application/pdf",
+          "type": "packageLabel",
+          "url": "https://example.com/documents/packageLabels-1234"
+        }
+      ],
+      "packages": [
+        {
+          "trackingReference": "6666666666666666",
+          "grossWeight": {
+            "unit": "kg",
+            "value": 0.8
+          },
+          "documentation": [
+            {
+              "description": "Package Label",
+              "size": "A6",
+              "id": "shipments/00000000-5000-0005-0000-000000000000/documents/packageLabels-4321",
+              "mimeType": "application/pdf",
+              "encoding": "base64",
+              "type": "packageLabels",
+              "url": "https://example.com/documents/packageLabels-4321"
+            }
+          ],
+          "id": "1",
+          "dimensions": {
+            "unit": "cm",
+            "length": 20,
+            "width": 15,
+            "height": 10
+          }
+        }
+      ],
+      "capabilities": {
+        "authorityToLeave": false,
+        "signature": {
+          "required": true
+        }
+      }
+    }
+  }
+}

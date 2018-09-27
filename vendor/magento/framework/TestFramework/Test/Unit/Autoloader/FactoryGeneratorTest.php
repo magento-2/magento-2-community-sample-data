@@ -1,14 +1,14 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
- * See COPYING.txt for license details.
+ *  Copyright © Magento, Inc. All rights reserved.
+ *  See COPYING.txt for license details.
  */
 
 namespace Magento\Framework\TestFramework\Test\Unit\Autoloader;
 
 use Magento\Framework\TestFramework\Unit\Autoloader\FactoryGenerator;
 
-class FactoryGeneratorTest extends \PHPUnit_Framework_TestCase
+class FactoryGeneratorTest extends \PHPUnit\Framework\TestCase
 {
     /**
      * @var FactoryGenerator

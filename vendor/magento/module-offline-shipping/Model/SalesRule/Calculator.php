@@ -13,6 +13,10 @@ namespace Magento\OfflineShipping\Model\SalesRule;
 
 use Magento\SalesRule\Model\Validator;
 
+/**
+ * @api
+ * @since 100.0.2
+ */
 class Calculator extends Validator
 {
     /**
@@ -45,7 +49,6 @@ class Calculator extends Validator
 
                 case Rule::FREE_SHIPPING_ADDRESS:
                     $address->setFreeShipping(true);
-                    $item->setFreeShipping(true);
                     break;
             }
             if ($rule->getStopRulesProcessing()) {

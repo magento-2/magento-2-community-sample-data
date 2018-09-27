@@ -6,6 +6,10 @@
  */
 namespace Magento\Theme\Controller\Adminhtml\System\Design\Theme;
 
+/**
+ * Class Grid
+ * @deprecated 100.2.0
+ */
 class Grid extends \Magento\Theme\Controller\Adminhtml\System\Design\Theme
 {
     /**

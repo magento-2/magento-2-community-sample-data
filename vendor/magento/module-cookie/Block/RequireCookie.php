@@ -9,6 +9,10 @@
  */
 namespace Magento\Cookie\Block;
 
+/**
+ * @api
+ * @since 100.0.2
+ */
 class RequireCookie extends \Magento\Framework\View\Element\Template
 {
     /**
@@ -18,7 +22,10 @@ class RequireCookie extends \Magento\Framework\View\Element\Template
      */
     public function getScriptOptions()
     {
-        $params = ['noCookieUrl' => $this->getUrl('cookie/index/noCookies/'), 'triggers' => $this->getTriggers()];
+        $params = [
+            'noCookieUrl' => $this->escapeUrl($this->getUrl('cookie/index/noCookies/')),
+            'triggers' => $this->escapeHtml($this->getTriggers())
+        ];
         return json_encode($params);
     }
 }

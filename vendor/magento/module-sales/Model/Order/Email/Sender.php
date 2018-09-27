@@ -10,6 +10,12 @@ use Magento\Sales\Model\Order\Email\Container\IdentityInterface;
 use Magento\Sales\Model\Order\Email\Container\Template;
 use Magento\Sales\Model\Order\Address\Renderer;
 
+/**
+ * Class Sender
+ * @api
+ *
+ * @since 100.0.2
+ */
 abstract class Sender
 {
     /**

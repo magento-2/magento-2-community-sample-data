@@ -27,16 +27,6 @@ class Utils
     }
 
     /**
-     * Escapes backreferences such as \1 and $1 in a regular expression replacement string
-     * @param $string
-     * @return string
-     */
-    public static function escapeReplacementString($string)
-    {
-        return addcslashes($string, '\\$');
-    }
-
-    /**
      * Converts a HSL color into a RGB color
      * @param array $hslValues
      * @return array
@@ -89,22 +79,6 @@ class Utils
         }
 
         return $v1;
-    }
-
-    /**
-     * PHP port of Javascript's "indexOf" function for strings only
-     * Author: Tubal Martin
-     *
-     * @param string $haystack
-     * @param string $needle
-     * @param int    $offset index (optional)
-     * @return int
-     */
-    public static function indexOf($haystack, $needle, $offset = 0)
-    {
-        $index = strpos($haystack, $needle, $offset);
-
-        return ($index !== false) ? $index : -1;
     }
 
     /**
@@ -171,40 +145,5 @@ class Utils
     public static function roundNumber($n)
     {
         return intval(round(floatval($n)), 10);
-    }
-
-    /**
-     * PHP port of Javascript's "slice" function for strings only
-     * Author: Tubal Martin
-     *
-     * @param string   $str
-     * @param int      $start index
-     * @param int|bool $end index (optional)
-     * @return string
-     */
-    public static function strSlice($str, $start = 0, $end = false)
-    {
-        if ($end !== false && ($start < 0 || $end <= 0)) {
-            $max = strlen($str);
-
-            if ($start < 0) {
-                if (($start = $max + $start) < 0) {
-                    return '';
-                }
-            }
-
-            if ($end < 0) {
-                if (($end = $max + $end) < 0) {
-                    return '';
-                }
-            }
-
-            if ($end <= $start) {
-                return '';
-            }
-        }
-
-        $slice = ($end === false) ? substr($str, $start) : substr($str, $start, $end - $start);
-        return ($slice === false) ? '' : $slice;
     }
 }

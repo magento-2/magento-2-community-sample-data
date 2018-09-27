@@ -3,13 +3,10 @@
  * Copyright © Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
-
-// @codingStandardsIgnoreFile
-
 namespace Magento\Integration\Test\Unit\Controller\Adminhtml\Integration;
 
 /**
- * Class TokensDialogTest.
+ * @codingStandardsIgnoreFile
  */
 class TokensDialogTest extends \Magento\Integration\Test\Unit\Controller\Adminhtml\IntegrationTest
 {
@@ -28,7 +25,8 @@ class TokensDialogTest extends \Magento\Integration\Test\Unit\Controller\Adminht
                         [
                             \Magento\Integration\Controller\Adminhtml\Integration::PARAM_INTEGRATION_ID,
                             null,
-                            self::INTEGRATION_ID, ],
+                            self::INTEGRATION_ID
+                        ],
                         [\Magento\Integration\Controller\Adminhtml\Integration::PARAM_REAUTHORIZE, 0, 0],
                     ]
                 )

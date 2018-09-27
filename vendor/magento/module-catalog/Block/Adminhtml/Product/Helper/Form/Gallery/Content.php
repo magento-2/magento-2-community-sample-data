@@ -62,7 +62,7 @@ class Content extends \Magento\Backend\Block\Widget
      */
     protected function _prepareLayout()
     {
-        $this->addChild('uploader', 'Magento\Backend\Block\Media\Uploader');
+        $this->addChild('uploader', \Magento\Backend\Block\Media\Uploader::class);
 
         $this->getUploader()->getConfig()->setUrl(
             $this->_urlBuilder->addSessionParam()->getUrl('catalog/product_gallery/upload')
@@ -193,9 +193,11 @@ class Content extends \Magento\Backend\Block\Widget
         $imageTypes = [];
         foreach ($this->getMediaAttributes() as $attribute) {
             /* @var $attribute \Magento\Eav\Model\Entity\Attribute */
+            $value = $this->getElement()->getDataObject()->getData($attribute->getAttributeCode())
+                ?: $this->getElement()->getImageValue($attribute->getAttributeCode());
             $imageTypes[$attribute->getAttributeCode()] = [
                 'code' => $attribute->getAttributeCode(),
-                'value' => $this->getElement()->getDataObject()->getData($attribute->getAttributeCode()),
+                'value' => $value,
                 'label' => $attribute->getFrontend()->getLabel(),
                 'scope' => __($this->getElement()->getScopeLabel($attribute)),
                 'name' => $this->getElement()->getAttributeFieldName($attribute),
@@ -242,13 +244,13 @@ class Content extends \Magento\Backend\Block\Widget
 
     /**
      * @return \Magento\Catalog\Helper\Image
-     * @deprecated
+     * @deprecated 101.0.3
      */
     private function getImageHelper()
     {
         if ($this->imageHelper === null) {
             $this->imageHelper = \Magento\Framework\App\ObjectManager::getInstance()
-                ->get('Magento\Catalog\Helper\Image');
+                ->get(\Magento\Catalog\Helper\Image::class);
         }
         return $this->imageHelper;
     }

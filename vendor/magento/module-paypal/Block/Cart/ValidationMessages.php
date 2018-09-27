@@ -10,6 +10,9 @@ use Magento\Framework\View\Element\Message\InterpretationStrategyInterface;
 
 /**
  * PayPal order review page validation messages block
+ *
+ * @api
+ * @since 100.0.2
  */
 class ValidationMessages extends \Magento\Framework\View\Element\Messages
 {
@@ -58,7 +61,7 @@ class ValidationMessages extends \Magento\Framework\View\Element\Messages
         }
         return parent::_prepareLayout();
     }
-    
+
     /**
      * Add quote messages
      *
@@ -81,7 +84,6 @@ class ValidationMessages extends \Magento\Framework\View\Element\Messages
             } else {
                 $messages[] = $message;
             }
-
         }
         $this->messageManager->addUniqueMessages(
             $messages

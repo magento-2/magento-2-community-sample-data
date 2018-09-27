@@ -7,6 +7,9 @@ namespace Magento\Sales\Api\Data;
 
 /**
  * Interface CreditmemoCreationArgumentsInterface
+ *
+ * @api
+ * @since 100.1.3
  */
 interface CreditmemoCreationArgumentsInterface
 {
@@ -14,6 +17,7 @@ interface CreditmemoCreationArgumentsInterface
      * Gets the credit memo shipping amount.
      *
      * @return float|null Credit memo shipping amount.
+     * @since 100.1.3
      */
     public function getShippingAmount();
 
@@ -21,6 +25,7 @@ interface CreditmemoCreationArgumentsInterface
      * Gets the credit memo positive adjustment.
      *
      * @return float|null Credit memo positive adjustment.
+     * @since 100.1.3
      */
     public function getAdjustmentPositive();
 
@@ -28,6 +33,7 @@ interface CreditmemoCreationArgumentsInterface
      * Gets the credit memo negative adjustment.
      *
      * @return float|null Credit memo negative adjustment.
+     * @since 100.1.3
      */
     public function getAdjustmentNegative();
 
@@ -36,6 +42,7 @@ interface CreditmemoCreationArgumentsInterface
      *
      * @param float $amount
      * @return $this
+     * @since 100.1.3
      */
     public function setShippingAmount($amount);
 
@@ -44,6 +51,7 @@ interface CreditmemoCreationArgumentsInterface
      *
      * @param float $amount
      * @return $this
+     * @since 100.1.3
      */
     public function setAdjustmentPositive($amount);
 
@@ -52,6 +60,7 @@ interface CreditmemoCreationArgumentsInterface
      *
      * @param float $amount
      * @return $this
+     * @since 100.1.3
      */
     public function setAdjustmentNegative($amount);
 
@@ -59,6 +68,7 @@ interface CreditmemoCreationArgumentsInterface
      * Gets existing extension attributes.
      *
      * @return \Magento\Sales\Api\Data\CreditmemoCreationArgumentsExtensionInterface|null
+     * @since 100.1.3
      */
     public function getExtensionAttributes();
 
@@ -68,6 +78,7 @@ interface CreditmemoCreationArgumentsInterface
      * @param \Magento\Sales\Api\Data\CreditmemoCreationArgumentsExtensionInterface $extensionAttributes
      *
      * @return $this
+     * @since 100.1.3
      */
     public function setExtensionAttributes(
         \Magento\Sales\Api\Data\CreditmemoCreationArgumentsExtensionInterface $extensionAttributes

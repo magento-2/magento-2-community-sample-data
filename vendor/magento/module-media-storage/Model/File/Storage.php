@@ -14,7 +14,10 @@ use Magento\Framework\Model\AbstractModel;
 
 /**
  * Class Storage
+ *
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
+ * @api
+ * @since 100.0.2
  */
 class Storage extends AbstractModel
 {

@@ -6,17 +6,15 @@
  */
 namespace Magento\SalesRule\Controller\Adminhtml\Promo\Quote;
 
+use Magento\Framework\App\ObjectManager;
+use Magento\SalesRule\Model\CouponGenerator;
+
 class Generate extends \Magento\SalesRule\Controller\Adminhtml\Promo\Quote
 {
     /**
-     * @var \Magento\SalesRule\Api\Data\CouponGenerationSpecInterfaceFactory
+     * @var CouponGenerator
      */
-    private $generationSpecFactory;
-
-    /**
-     * @var \Magento\SalesRule\Model\Service\CouponManagementService
-     */
-    private $couponManagementService;
+    private $couponGenerator;
 
     /**
      * Generate constructor.
@@ -24,22 +22,18 @@ class Generate extends \Magento\SalesRule\Controller\Adminhtml\Promo\Quote
      * @param \Magento\Framework\Registry $coreRegistry
      * @param \Magento\Framework\App\Response\Http\FileFactory $fileFactory
      * @param \Magento\Framework\Stdlib\DateTime\Filter\Date $dateFilter
-     * @param \Magento\SalesRule\Model\Service\CouponManagementService|null $couponManagementService
-     * @param \Magento\SalesRule\Api\Data\CouponGenerationSpecInterfaceFactory|null $generationSpecFactory
+     * @param CouponGenerator|null $couponGenerator
      */
     public function __construct(
         \Magento\Backend\App\Action\Context $context,
         \Magento\Framework\Registry $coreRegistry,
         \Magento\Framework\App\Response\Http\FileFactory $fileFactory,
         \Magento\Framework\Stdlib\DateTime\Filter\Date $dateFilter,
-        \Magento\SalesRule\Model\Service\CouponManagementService $couponManagementService = null,
-        \Magento\SalesRule\Api\Data\CouponGenerationSpecInterfaceFactory $generationSpecFactory = null
+        CouponGenerator $couponGenerator = null
     ) {
         parent::__construct($context, $coreRegistry, $fileFactory, $dateFilter);
-        $this->generationSpecFactory = $generationSpecFactory ?:
-            $this->_objectManager->get(\Magento\SalesRule\Api\Data\CouponGenerationSpecInterfaceFactory::class);
-        $this->couponManagementService = $couponManagementService ?:
-            $this->_objectManager->get(\Magento\SalesRule\Model\Service\CouponManagementService::class);
+        $this->couponGenerator = $couponGenerator ?:
+            $this->_objectManager->get(CouponGenerator::class);
     }
 
     /**
@@ -51,13 +45,11 @@ class Generate extends \Magento\SalesRule\Controller\Adminhtml\Promo\Quote
     {
         if (!$this->getRequest()->isAjax()) {
             $this->_forward('noroute');
-
             return;
         }
         $result = [];
         $this->_initRule();
 
-        /** @var $rule \Magento\SalesRule\Model\Rule */
         $rule = $this->_coreRegistry->registry(\Magento\SalesRule\Model\RegistryConstants::CURRENT_SALES_RULE);
 
         if (!$rule->getId()) {
@@ -70,9 +62,7 @@ class Generate extends \Magento\SalesRule\Controller\Adminhtml\Promo\Quote
                     $data = $inputFilter->getUnescaped();
                 }
 
-                $data = $this->convertCouponSpecData($data);
-                $couponSpec = $this->generationSpecFactory->create(['data' => $data]);
-                $couponCodes = $this->couponManagementService->generate($couponSpec);
+                $couponCodes = $this->couponGenerator->generateCodes($data);
                 $generated = count($couponCodes);
                 $this->messageManager->addSuccess(__('%1 coupon(s) have been generated.', $generated));
                 $this->_view->getLayout()->initMessages();
@@ -85,25 +75,11 @@ class Generate extends \Magento\SalesRule\Controller\Adminhtml\Promo\Quote
                 $result['error'] = __(
                     'Something went wrong while generating coupons. Please review the log and try again.'
                 );
-                $this->_objectManager->get('Psr\Log\LoggerInterface')->critical($e);
+                $this->_objectManager->get(\Psr\Log\LoggerInterface::class)->critical($e);
             }
         }
         $this->getResponse()->representJson(
-            $this->_objectManager->get('Magento\Framework\Json\Helper\Data')->jsonEncode($result)
+            $this->_objectManager->get(\Magento\Framework\Json\Helper\Data::class)->jsonEncode($result)
         );
-    }
-
-    /**
-     * We should map old values to new one
-     * We need to do this, as new service with another key names was added
-     *
-     * @param array $data
-     * @return array
-     */
-    private function convertCouponSpecData(array $data)
-    {
-        $data['quantity'] = $data['qty'];
-
-        return $data;
     }
 }

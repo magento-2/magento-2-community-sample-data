@@ -5,17 +5,14 @@
  */
 namespace Magento\Braintree\Test\Unit\Gateway\Request;
 
-use Magento\Braintree\Gateway\Helper\SubjectReader;
+use Magento\Braintree\Gateway\SubjectReader;
 use Magento\Braintree\Gateway\Request\CustomerDataBuilder;
 use Magento\Payment\Gateway\Data\AddressAdapterInterface;
 use Magento\Payment\Gateway\Data\OrderAdapterInterface;
 use Magento\Payment\Gateway\Data\PaymentDataObjectInterface;
 use PHPUnit_Framework_MockObject_MockObject as MockObject;
 
-/**
- * Class CustomerDataBuilderTest
- */
-class CustomerDataBuilderTest extends \PHPUnit_Framework_TestCase
+class CustomerDataBuilderTest extends \PHPUnit\Framework\TestCase
 {
     /**
      * @var PaymentDataObjectInterface|MockObject
@@ -34,8 +31,8 @@ class CustomerDataBuilderTest extends \PHPUnit_Framework_TestCase
 
     protected function setUp()
     {
-        $this->paymentDO = $this->getMock(PaymentDataObjectInterface::class);
-        $this->order = $this->getMock(OrderAdapterInterface::class);
+        $this->paymentDO = $this->createMock(PaymentDataObjectInterface::class);
+        $this->order = $this->createMock(OrderAdapterInterface::class);
 
         $this->builder = new CustomerDataBuilder(new SubjectReader());
     }
@@ -107,7 +104,7 @@ class CustomerDataBuilderTest extends \PHPUnit_Framework_TestCase
      */
     private function getBillingMock($billingData)
     {
-        $address = $this->getMockForAbstractClass(AddressAdapterInterface::class);
+        $address = $this->createMock(AddressAdapterInterface::class);
 
         $address->method('getFirstname')
             ->willReturn($billingData['first_name']);

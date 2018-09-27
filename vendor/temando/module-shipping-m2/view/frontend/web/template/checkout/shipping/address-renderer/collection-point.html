@@ -1,0 +1,7 @@
+<div data-bind="foreach: collectionPoints.getSelectedCollectionPoint()">
+    <!-- ko text: collection_point_id --><!-- /ko --><br/>
+    <!-- ko text: name --><!-- /ko --><br/>
+    <!-- ko text: street --><!-- /ko --><br/>
+    <!-- ko text: city --><!-- /ko -->, <!-- ko text: $parent.getRegionNameByCode(country,region) --><!-- /ko -->, <!-- ko text: postcode --><!-- /ko --><br/>
+    <!-- ko text: $parent.getCountryName(country) --><!-- /ko -->
+</div>

@@ -10,6 +10,7 @@ use Magento\Store\Model\ResourceModel\Store\CollectionFactory;
 
 /**
  * @api
+ * @since 100.0.2
  */
 class StoreManagement implements StoreManagementInterface
 {
@@ -25,6 +26,7 @@ class StoreManagement implements StoreManagementInterface
     {
         $this->storesFactory = $storesFactory;
     }
+
     /**
      * {@inheritdoc}
      */

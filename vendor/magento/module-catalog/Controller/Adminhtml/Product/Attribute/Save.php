@@ -115,6 +115,7 @@ class Save extends Attribute
     {
         $data = $this->getRequest()->getPostValue();
         if ($data) {
+            $this->preprocessOptionsData($data);
             $setId = $this->getRequest()->getParam('set');
 
             $attributeSet = null;
@@ -132,6 +133,7 @@ class Save extends Attribute
                 } catch (AlreadyExistsException $alreadyExists) {
                     $this->messageManager->addErrorMessage(__('An attribute set named \'%1\' already exists.', $name));
                     $this->_session->setAttributeData($data);
+
                     return $this->returnResult('catalog/*/edit', ['_current' => true], ['error' => true]);
                 } catch (LocalizedException $e) {
                     $this->messageManager->addErrorMessage($e->getMessage());
@@ -156,7 +158,7 @@ class Save extends Attribute
             $attributeCode = $attributeCode ?: $this->generateCode($this->getRequest()->getParam('frontend_label')[0]);
             if (strlen($attributeCode) > 0) {
                 $validatorAttrCode = new \Zend_Validate_Regex(
-                    ['pattern' => '/^[a-z][a-z_0-9]{0,30}$/']
+                    ['pattern' => '/^[a-z\x{600}-\x{6FF}][a-z\x{600}-\x{6FF}_0-9]{0,30}$/u']
                 );
                 if (!$validatorAttrCode->isValid($attributeCode)) {
                     $this->messageManager->addErrorMessage(
@@ -166,6 +168,7 @@ class Save extends Attribute
                             $attributeCode
                         )
                     );
+
                     return $this->returnResult(
                         'catalog/*/edit',
                         ['attribute_id' => $attributeId, '_current' => true],
@@ -183,6 +186,7 @@ class Save extends Attribute
                     foreach ($inputType->getMessages() as $message) {
                         $this->messageManager->addErrorMessage($message);
                     }
+
                     return $this->returnResult(
                         'catalog/*/edit',
                         ['attribute_id' => $attributeId, '_current' => true],
@@ -194,18 +198,20 @@ class Save extends Attribute
             if ($attributeId) {
                 if (!$model->getId()) {
                     $this->messageManager->addErrorMessage(__('This attribute no longer exists.'));
+
                     return $this->returnResult('catalog/*/', [], ['error' => true]);
                 }
                 // entity type check
                 if ($model->getEntityTypeId() != $this->_entityTypeId) {
                     $this->messageManager->addErrorMessage(__('We can\'t update the attribute.'));
                     $this->_session->setAttributeData($data);
+
                     return $this->returnResult('catalog/*/', [], ['error' => true]);
                 }
 
                 $data['attribute_code'] = $model->getAttributeCode();
                 $data['is_user_defined'] = $model->getIsUserDefined();
-                $data['frontend_input'] = $model->getFrontendInput();
+                $data['frontend_input'] = $data['frontend_input'] ?? $model->getFrontendInput();
             } else {
                 /**
                  * @todo add to helper and specify all relations for properties
@@ -218,7 +224,7 @@ class Save extends Attribute
                 );
             }
 
-            $data += ['is_filterable' => 0, 'is_filterable_in_search' => 0, 'apply_to' => []];
+            $data += ['is_filterable' => 0, 'is_filterable_in_search' => 0];
 
             if ($model->getIsUserDefined() === null || $model->getIsUserDefined() != 0) {
                 $data['backend_type'] = $model->getBackendTypeByInput($data['frontend_input']);
@@ -280,6 +286,7 @@ class Save extends Attribute
                     if ($attributeSet !== null) {
                         $requestParams['new_attribute_set_id'] = $attributeSet->getId();
                     }
+
                     return $this->returnResult('catalog/product/addAttribute', $requestParams, ['error' => false]);
                 } elseif ($this->getRequest()->getParam('back', false)) {
                     return $this->returnResult(
@@ -288,10 +295,12 @@ class Save extends Attribute
                         ['error' => false]
                     );
                 }
+
                 return $this->returnResult('catalog/*/', [], ['error' => false]);
             } catch (\Exception $e) {
                 $this->messageManager->addErrorMessage($e->getMessage());
                 $this->_session->setAttributeData($data);
+
                 return $this->returnResult(
                     'catalog/*/edit',
                     ['attribute_id' => $attributeId, '_current' => true],
@@ -299,7 +308,30 @@ class Save extends Attribute
                 );
             }
         }
+
         return $this->returnResult('catalog/*/', [], ['error' => true]);
+    }
+
+    /**
+     * Extract options data from serialized options field and append to data array.
+     *
+     * This logic is required to overcome max_input_vars php limit
+     * that may vary and/or be inaccessible to change on different instances.
+     *
+     * @param array $data
+     * @return void
+     */
+    private function preprocessOptionsData(&$data)
+    {
+        if (isset($data['serialized_options'])) {
+            $serializedOptions = json_decode($data['serialized_options'], JSON_OBJECT_AS_ARRAY);
+            foreach ($serializedOptions as $serializedOption) {
+                $option = [];
+                parse_str($serializedOption, $option);
+                $data = array_replace_recursive($data, $option);
+            }
+        }
+        unset($data['serialized_options']);
     }
 
     /**
@@ -316,8 +348,10 @@ class Save extends Attribute
 
             $response['messages'] = [$layout->getMessagesBlock()->getGroupedHtml()];
             $response['params'] = $params;
+
             return $this->resultFactory->create(ResultFactory::TYPE_JSON)->setData($response);
         }
+
         return $this->resultFactory->create(ResultFactory::TYPE_REDIRECT)->setPath($path, $params);
     }
 

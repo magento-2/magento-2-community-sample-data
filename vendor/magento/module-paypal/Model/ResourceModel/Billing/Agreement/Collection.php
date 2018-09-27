@@ -7,6 +7,9 @@ namespace Magento\Paypal\Model\ResourceModel\Billing\Agreement;
 
 /**
  * Billing agreements resource collection
+ *
+ * @api
+ * @since 100.0.2
  */
 class Collection extends \Magento\Framework\Model\ResourceModel\Db\Collection\AbstractCollection
 {
@@ -67,7 +70,10 @@ class Collection extends \Magento\Framework\Model\ResourceModel\Db\Collection\Ab
      */
     protected function _construct()
     {
-        $this->_init('Magento\Paypal\Model\Billing\Agreement', 'Magento\Paypal\Model\ResourceModel\Billing\Agreement');
+        $this->_init(
+            \Magento\Paypal\Model\Billing\Agreement::class,
+            \Magento\Paypal\Model\ResourceModel\Billing\Agreement::class
+        );
     }
 
     /**

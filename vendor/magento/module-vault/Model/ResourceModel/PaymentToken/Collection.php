@@ -5,14 +5,10 @@
  */
 namespace Magento\Vault\Model\ResourceModel\PaymentToken;
 
-use Magento\Framework\Model\ResourceModel\Db\Collection\AbstractCollection;
-use Magento\Vault\Model\PaymentToken;
-use Magento\Vault\Model\ResourceModel\PaymentToken as ResourcePaymentToken;
-
 /**
  * Vault Payment Tokens collection
  */
-class Collection extends AbstractCollection
+class Collection extends \Magento\Framework\Model\ResourceModel\Db\Collection\AbstractCollection
 {
     /**
      * Resource initialization
@@ -21,6 +17,6 @@ class Collection extends AbstractCollection
      */
     public function _construct()
     {
-        $this->_init(PaymentToken::class, ResourcePaymentToken::class);
+        $this->_init(\Magento\Vault\Model\PaymentToken::class, \Magento\Vault\Model\ResourceModel\PaymentToken::class);
     }
 }

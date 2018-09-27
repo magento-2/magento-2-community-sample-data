@@ -14,6 +14,8 @@ use Magento\Framework\Pricing\PriceInfoInterface;
 /**
  * Class AbstractPrice
  * Should be the base for creating any Price type class
+ *
+ * @api
  */
 abstract class AbstractPrice implements PriceInterface
 {
@@ -23,12 +25,12 @@ abstract class AbstractPrice implements PriceInterface
     const PRICE_CODE = 'abstract_price';
 
     /**
-     * @var AmountInterface
+     * @var AmountInterface[]
      */
     protected $amount;
 
     /**
-     * @var \Magento\Framework\Pricing\Adjustment\Calculator
+     * @var \Magento\Framework\Pricing\Adjustment\CalculatorInterface
      */
     protected $calculator;
 

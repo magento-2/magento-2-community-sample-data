@@ -1,0 +1,75 @@
+<?php
+/**
+ * Refer to LICENSE.txt distributed with the Temando Shipping module for notice of license
+ */
+?>
+<?php // @codingStandardsIgnoreFile ?>
+<?php
+/** @var \Magento\Backend\Block\Template $block */
+/** @var \Temando\Shipping\ViewModel\Batch\BatchDetails $viewModel */
+/** @var \Temando\Shipping\ViewModel\Order\OrderDetails $orderViewModel */
+/** @var \Temando\Shipping\ViewModel\Account\Support $supportViewModel */
+$viewModel = $block->getData('viewModel');
+$orderViewModel = $block->getData('orderViewModel');
+$supportViewModel = $block->getData('supportViewModel');
+
+/** @var \Temando\Shipping\Model\Batch $batch */
+$batch = $viewModel->getBatch();
+?>
+
+<?php $failedShipments = $batch->getFailedShipments() ?>
+
+<section class="admin__page-section batch-solve">
+    <h2><?= $block->escapeHtml(__('%1 Shipments(s) failed to book in this Batch', count($failedShipments))) ?></h2>
+    <h3><?= $block->escapeHtml(__('Steps to find a solution')) ?></h3>
+
+    <ol class="list-items">
+        <li>
+            <?= $block->escapeHtml(__('Review the errors, address them where possible and attempt to re-process the Order/s.')) ?>
+            <ol class="sub-list" type="a">
+                <li>
+                    <?= $block->escapeHtml(__('If the error is related to the carrier in question, please contact the carrier directly.')) ?>
+                </li>
+            </ol>
+        </li>
+        <li><a href="<?= $block->escapeUrl($supportViewModel->getShippingPortalUrl()) ?>"
+               target="_blank" rel="noopener noreferrer"><?= $block->escapeHtml(__('Contact Magento Shipping Support')) ?></a>
+        </li>
+    </ol>
+
+    <div class="admin__data-grid-wrap">
+        <table class="data-grid">
+            <thead>
+            <tr>
+                <th class="data-grid-th"><?= $block->escapeHtml(__('Magento Order ID')) ?></th>
+                <th class="data-grid-th"><?= $block->escapeHtml(__('Ship-to Name')) ?></th>
+                <th class="data-grid-th"><?= $block->escapeHtml(__('Destination Address')) ?></th>
+                <th class="data-grid-th"><?= $block->escapeHtml(__('Reason')) ?></th>
+                <th class="data-grid-th"><?= $block->escapeHtml(__('Action')) ?></th>
+            </tr>
+            </thead>
+            <tbody>
+            <?php foreach ($failedShipments as $failedShipment) : ?>
+                <tr class="data-row">
+                    <td><?= $block->escapeHtml($failedShipment->getData('order_id')) ?></td>
+                    <td><?= $block->escapeHtml($failedShipment->getData('recipient_name')) ?></td>
+                    <td><?= /* @noEscape */ $failedShipment->getData('recipient_address') ?></td>
+                    <td>
+                        <?php $errors = $failedShipment->hasData('errors') ? $failedShipment->getData('errors') : []; ?>
+                        <?php foreach ($errors as $error) : ?>
+                            <p>
+                                <strong><?= $block->escapeHtml($error->getData('title')) ?></strong><br>
+                                <?= $block->escapeHtml($error->getData('detail')) ?>
+                            </p>
+                        <?php endforeach; ?>
+                    </td>
+                    <td>
+                        <?php $orderUrl = $orderViewModel->getViewActionUrl($failedShipment->getOrderId()) ?>
+                        <a href="<?= $block->escapeUrl($orderUrl) ?>"><?= $block->escapeHtml(__('View Order')) ?></a>
+                    </td>
+                </tr>
+            <?php endforeach; ?>
+            </tbody>
+        </table>
+    </div>
+</section>

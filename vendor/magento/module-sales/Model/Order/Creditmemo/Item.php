@@ -10,10 +10,10 @@ use Magento\Sales\Api\Data\CreditmemoItemInterface;
 use Magento\Sales\Model\AbstractModel;
 
 /**
- * @method \Magento\Sales\Model\ResourceModel\Order\Creditmemo\Item _getResource()
- * @method \Magento\Sales\Model\ResourceModel\Order\Creditmemo\Item getResource()
+ * @api
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  * @SuppressWarnings(PHPMD.ExcessivePublicCount)
+ * @since 100.0.2
  */
 class Item extends AbstractModel implements CreditmemoItemInterface
 {
@@ -81,7 +81,7 @@ class Item extends AbstractModel implements CreditmemoItemInterface
      */
     protected function _construct()
     {
-        $this->_init('Magento\Sales\Model\ResourceModel\Order\Creditmemo\Item');
+        $this->_init(\Magento\Sales\Model\ResourceModel\Order\Creditmemo\Item::class);
     }
 
     /**
@@ -876,5 +876,6 @@ class Item extends AbstractModel implements CreditmemoItemInterface
     ) {
         return $this->_setExtensionAttributes($extensionAttributes);
     }
+
     //@codeCoverageIgnoreEnd
 }

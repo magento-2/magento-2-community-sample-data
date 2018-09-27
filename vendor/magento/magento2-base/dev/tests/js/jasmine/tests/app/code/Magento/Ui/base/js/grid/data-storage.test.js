@@ -5,7 +5,6 @@
 
 /*eslint max-nested-callbacks: 0*/
 /*jscs:disable requireCamelCaseOrUpperCaseIdentifiers*/
-
 define([
     'mageUtils',
     'Magento_Ui/js/grid/data-storage'

@@ -5,7 +5,7 @@
  */
 namespace Magento\Framework\Data\Test\Unit\Form\Element;
 
-class MultilineTest extends \PHPUnit_Framework_TestCase
+class MultilineTest extends \PHPUnit\Framework\TestCase
 {
     /**
      * @var \Magento\Framework\Data\Form\Element\Multiline
@@ -29,15 +29,15 @@ class MultilineTest extends \PHPUnit_Framework_TestCase
 
     protected function setUp()
     {
-        $this->elementFactory = $this->getMockBuilder('Magento\Framework\Data\Form\Element\Factory')
+        $this->elementFactory = $this->getMockBuilder(\Magento\Framework\Data\Form\Element\Factory::class)
             ->disableOriginalConstructor()
             ->getMock();
 
-        $this->collectionFactory = $this->getMockBuilder('Magento\Framework\Data\Form\Element\CollectionFactory')
+        $this->collectionFactory = $this->getMockBuilder(\Magento\Framework\Data\Form\Element\CollectionFactory::class)
             ->disableOriginalConstructor()
             ->getMock();
 
-        $this->escaper = $this->getMockBuilder('Magento\Framework\Escaper')
+        $this->escaper = $this->getMockBuilder(\Magento\Framework\Escaper::class)
             ->disableOriginalConstructor()
             ->getMock();
 

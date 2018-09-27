@@ -7,7 +7,7 @@ namespace Magento\Paypal\Model\ResourceModel\Billing\Agreement;
 
 use Magento\TestFramework\Helper\Bootstrap;
 
-class CollectionTest extends \PHPUnit_Framework_TestCase
+class CollectionTest extends \PHPUnit\Framework\TestCase
 {
     /**
      * @magentoDataFixture Magento/Customer/_files/customer.php
@@ -17,7 +17,7 @@ class CollectionTest extends \PHPUnit_Framework_TestCase
     {
         /** @var \Magento\Paypal\Model\ResourceModel\Billing\Agreement\Collection $billingAgreementCollection */
         $billingAgreementCollection = Bootstrap::getObjectManager()->create(
-            'Magento\Paypal\Model\ResourceModel\Billing\Agreement\Collection'
+            \Magento\Paypal\Model\ResourceModel\Billing\Agreement\Collection::class
         );
 
         $billingAgreementCollection->addCustomerDetails();

@@ -7,7 +7,7 @@ namespace Magento\Paypal\Test\Unit\Model;
 
 use Magento\Paypal\Model\Cart;
 
-class CartTest extends \PHPUnit_Framework_TestCase
+class CartTest extends \PHPUnit\Framework\TestCase
 {
     /**
      * @var Cart
@@ -46,9 +46,9 @@ class CartTest extends \PHPUnit_Framework_TestCase
     protected function setUp()
     {
         $this->_salesModel = $this->getMockForAbstractClass(
-            'Magento\Payment\Model\Cart\SalesModel\SalesModelInterface'
+            \Magento\Payment\Model\Cart\SalesModel\SalesModelInterface::class
         );
-        $factoryMock = $this->getMock('Magento\Payment\Model\Cart\SalesModel\Factory', ['create'], [], '', false);
+        $factoryMock = $this->createPartialMock(\Magento\Payment\Model\Cart\SalesModel\Factory::class, ['create']);
         $factoryMock->expects(
             $this->once()
         )->method(
@@ -58,7 +58,7 @@ class CartTest extends \PHPUnit_Framework_TestCase
         )->will(
             $this->returnValue($this->_salesModel)
         );
-        $eventManagerMock = $this->getMockForAbstractClass('Magento\Framework\Event\ManagerInterface');
+        $eventManagerMock = $this->getMockForAbstractClass(\Magento\Framework\Event\ManagerInterface::class);
 
         $this->_model = new \Magento\Paypal\Model\Cart($factoryMock, $eventManagerMock, 'sales model');
     }
@@ -70,7 +70,7 @@ class CartTest extends \PHPUnit_Framework_TestCase
     public function testInvalidGetAllItems($items)
     {
         $taxContainer = new \Magento\Framework\DataObject(
-            ['base_discount_tax_compensation_amount' => 0.2, 'base_shipping_discount_tax_compensation_amnt' => 0.1]
+            ['base_discount_tax_compensation_amount' => 0.2, 'base_shipping_discount_tax_compensation_amount' => 0.1]
         );
         $this->_salesModel->expects($this->once())->method('getTaxContainer')->will($this->returnValue($taxContainer));
         $this->_salesModel->expects($this->once())->method('getAllItems')->will($this->returnValue($items));
@@ -146,7 +146,7 @@ class CartTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals(
             $values['base_tax_amount'] +
             $values['base_discount_tax_compensation_amount'] +
-            $values['base_shipping_discount_tax_compensation_amnt'],
+            $values['base_shipping_discount_tax_compensation_amount'],
             $this->_model->getTax()
         );
         $this->assertEquals($values['base_shipping_amount'], $this->_model->getShipping());
@@ -162,7 +162,7 @@ class CartTest extends \PHPUnit_Framework_TestCase
             [
                 [
                     'base_discount_tax_compensation_amount' => 0,
-                    'base_shipping_discount_tax_compensation_amnt' => 0,
+                    'base_shipping_discount_tax_compensation_amount' => 0,
                     'base_subtotal' => 0,
                     'base_tax_amount' => 0,
                     'base_shipping_amount' => 0,
@@ -174,7 +174,7 @@ class CartTest extends \PHPUnit_Framework_TestCase
             [
                 [
                     'base_discount_tax_compensation_amount' => 1,
-                    'base_shipping_discount_tax_compensation_amnt' => 2,
+                    'base_shipping_discount_tax_compensation_amount' => 2,
                     'base_subtotal' => 3,
                     'base_tax_amount' => 4,
                     'base_shipping_amount' => 5,
@@ -255,8 +255,8 @@ class CartTest extends \PHPUnit_Framework_TestCase
             [
                 'base_discount_tax_compensation_amount' =>
                     $values['base_discount_tax_compensation_amount'],
-                'base_shipping_discount_tax_compensation_amnt' =>
-                    $values['base_shipping_discount_tax_compensation_amnt'],
+                'base_shipping_discount_tax_compensation_amount' =>
+                    $values['base_shipping_discount_tax_compensation_amount'],
             ]
         );
         $expectedSubtotal = $values['base_subtotal'];

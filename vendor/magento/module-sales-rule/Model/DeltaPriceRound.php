@@ -25,9 +25,8 @@ class DeltaPriceRound
     /**
      * @param PriceCurrencyInterface $priceCurrency
      */
-    public function __construct(
-        PriceCurrencyInterface $priceCurrency
-    ) {
+    public function __construct(PriceCurrencyInterface $priceCurrency)
+    {
         $this->priceCurrency = $priceCurrency;
     }
 

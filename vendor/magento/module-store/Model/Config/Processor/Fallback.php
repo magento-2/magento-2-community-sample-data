@@ -18,9 +18,7 @@ use Magento\Store\Model\ResourceModel\Website\AllWebsitesCollection;
 use Magento\Store\Model\ResourceModel\Website\AllWebsitesCollectionFactory;
 
 /**
- * Fallback throguh different scopes and merge them
- *
- * @package Magento\Store\Model\Config\Processor
+ * Fallback through different scopes and merge them
  */
 class Fallback implements PostProcessorInterface
 {
@@ -60,6 +58,8 @@ class Fallback implements PostProcessorInterface
     private $deploymentConfig;
 
     /**
+     * Fallback constructor.
+     *
      * @param Scopes $scopes
      * @param ResourceConnection $resourceConnection
      * @param Store $storeResource
@@ -82,7 +82,6 @@ class Fallback implements PostProcessorInterface
 
     /**
      * @inheritdoc
-     * @SuppressWarnings(PHPMD.NPathComplexity)
      */
     public function process(array $data)
     {
@@ -122,7 +121,7 @@ class Fallback implements PostProcessorInterface
         array $websitesConfig
     ) {
         $result = [];
-        foreach ($this->websiteData as $website) {
+        foreach ((array)$this->websiteData as $website) {
             $code = $website['code'];
             $id = $website['website_id'];
             $websiteConfig = isset($websitesConfig[$code]) ? $websitesConfig[$code] : [];
@@ -147,7 +146,7 @@ class Fallback implements PostProcessorInterface
     ) {
         $result = [];
 
-        foreach ($this->storeData as $store) {
+        foreach ((array)$this->storeData as $store) {
             $code = $store['code'];
             $id = $store['store_id'];
             $websiteConfig = [];
@@ -162,7 +161,7 @@ class Fallback implements PostProcessorInterface
     }
 
     /**
-     * Find by id specific information about website.
+     * Find information about website by its ID.
      *
      * @param array $websites Has next format: (website_code => [website_data])
      * @param int $id
@@ -170,13 +169,12 @@ class Fallback implements PostProcessorInterface
      */
     private function getWebsiteConfig(array $websites, $id)
     {
-        foreach ($this->websiteData as $website) {
+        foreach ((array)$this->websiteData as $website) {
             if ($website['website_id'] == $id) {
                 $code = $website['code'];
                 return isset($websites[$code]) ? $websites[$code] : [];
             }
         }
-
         return [];
     }
 }

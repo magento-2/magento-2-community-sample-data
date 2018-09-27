@@ -4,16 +4,12 @@
  * Copyright © Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
-
 namespace Magento\Customer\Controller\Account;
 
-use Magento\Framework\Stdlib\Cookie\CookieMetadataFactory;
-use Magento\Framework\Stdlib\Cookie\PhpCookieManager;
 use Magento\Customer\Model\Url;
 use Magento\Framework\App\Action\Context;
 use Magento\Customer\Model\Session;
 use Magento\Framework\App\Config\ScopeConfigInterface;
-use Magento\Framework\App\ObjectManager;
 use Magento\Store\Model\StoreManagerInterface;
 use Magento\Customer\Api\AccountManagementInterface;
 use Magento\Customer\Api\CustomerRepositoryInterface;
@@ -30,22 +26,34 @@ use Magento\Framework\Controller\ResultFactory;
  */
 class Confirm extends \Magento\Customer\Controller\AbstractAccount
 {
-    /** @var ScopeConfigInterface */
+    /**
+     * @var \Magento\Framework\App\Config\ScopeConfigInterface
+     */
     protected $scopeConfig;
 
-    /** @var StoreManagerInterface */
+    /**
+     * @var \Magento\Store\Model\StoreManagerInterface
+     */
     protected $storeManager;
 
-    /** @var AccountManagementInterface */
+    /**
+     * @var \Magento\Customer\Api\AccountManagementInterface
+     */
     protected $customerAccountManagement;
 
-    /** @var CustomerRepositoryInterface */
+    /**
+     * @var \Magento\Customer\Api\CustomerRepositoryInterface
+     */
     protected $customerRepository;
 
-    /** @var Address */
+    /**
+     * @var \Magento\Customer\Helper\Address
+     */
     protected $addressHelper;
 
-    /** @var \Magento\Framework\UrlInterface */
+    /**
+     * @var \Magento\Framework\UrlInterface
+     */
     protected $urlModel;
 
     /**
@@ -54,12 +62,12 @@ class Confirm extends \Magento\Customer\Controller\AbstractAccount
     protected $session;
 
     /**
-     * @var CookieMetadataFactory
+     * @var \Magento\Framework\Stdlib\Cookie\CookieMetadataFactory
      */
     private $cookieMetadataFactory;
 
     /**
-     * @var PhpCookieManager
+     * @var \Magento\Framework\Stdlib\Cookie\PhpCookieManager
      */
     private $cookieMetadataManager;
 
@@ -72,9 +80,6 @@ class Confirm extends \Magento\Customer\Controller\AbstractAccount
      * @param CustomerRepositoryInterface $customerRepository
      * @param Address $addressHelper
      * @param UrlFactory $urlFactory
-     * @param CookieMetadataFactory $cookieMetadataFactory
-     * @param PhpCookieManager $cookieMetadataManager
-     * @SuppressWarnings(PHPMD.ExcessiveParameterList)
      */
     public function __construct(
         Context $context,
@@ -84,9 +89,7 @@ class Confirm extends \Magento\Customer\Controller\AbstractAccount
         AccountManagementInterface $customerAccountManagement,
         CustomerRepositoryInterface $customerRepository,
         Address $addressHelper,
-        UrlFactory $urlFactory,
-        CookieMetadataFactory $cookieMetadataFactory = null,
-        PhpCookieManager $cookieMetadataManager = null
+        UrlFactory $urlFactory
     ) {
         $this->session = $customerSession;
         $this->scopeConfig = $scopeConfig;
@@ -95,12 +98,39 @@ class Confirm extends \Magento\Customer\Controller\AbstractAccount
         $this->customerRepository = $customerRepository;
         $this->addressHelper = $addressHelper;
         $this->urlModel = $urlFactory->create();
-        $this->cookieMetadataFactory = $cookieMetadataFactory ?: ObjectManager::getInstance()
-            ->get(CookieMetadataFactory::class);
-        $this->cookieMetadataManager = $cookieMetadataManager ?: ObjectManager::getInstance()
-            ->get(PhpCookieManager::class);
-
         parent::__construct($context);
+    }
+
+    /**
+     * Retrieve cookie manager
+     *
+     * @deprecated 100.2.0
+     * @return \Magento\Framework\Stdlib\Cookie\PhpCookieManager
+     */
+    private function getCookieManager()
+    {
+        if (!$this->cookieMetadataManager) {
+            $this->cookieMetadataManager = \Magento\Framework\App\ObjectManager::getInstance()->get(
+                \Magento\Framework\Stdlib\Cookie\PhpCookieManager::class
+            );
+        }
+        return $this->cookieMetadataManager;
+    }
+
+    /**
+     * Retrieve cookie metadata factory
+     *
+     * @deprecated 100.2.0
+     * @return \Magento\Framework\Stdlib\Cookie\CookieMetadataFactory
+     */
+    private function getCookieMetadataFactory()
+    {
+        if (!$this->cookieMetadataFactory) {
+            $this->cookieMetadataFactory = \Magento\Framework\App\ObjectManager::getInstance()->get(
+                \Magento\Framework\Stdlib\Cookie\CookieMetadataFactory::class
+            );
+        }
+        return $this->cookieMetadataFactory;
     }
 
     /**
@@ -124,13 +154,15 @@ class Confirm extends \Magento\Customer\Controller\AbstractAccount
                 throw new \Exception(__('Bad request.'));
             }
 
-            //clean customer cookies
-            $this->cleanCookie('mage-cache-sessid');
             // log in and send greeting email
             $customerEmail = $this->customerRepository->getById($customerId)->getEmail();
             $customer = $this->customerAccountManagement->activate($customerEmail, $key);
             $this->session->setCustomerDataAsLoggedIn($customer);
-
+            if ($this->getCookieManager()->getCookie('mage-cache-sessid')) {
+                $metadata = $this->getCookieMetadataFactory()->createCookieMetadata();
+                $metadata->setPath('/');
+                $this->getCookieManager()->deleteCookie('mage-cache-sessid', $metadata);
+            }
             $this->messageManager->addSuccess($this->getSuccessMessage());
             $resultRedirect->setUrl($this->getSuccessRedirect());
             return $resultRedirect;
@@ -147,7 +179,7 @@ class Confirm extends \Magento\Customer\Controller\AbstractAccount
     /**
      * Retrieve success message
      *
-     * @return \Magento\Framework\Phrase
+     * @return string
      */
     protected function getSuccessMessage()
     {
@@ -191,22 +223,5 @@ class Confirm extends \Magento\Customer\Controller\AbstractAccount
             $successUrl = $this->urlModel->getUrl('*/*/index', ['_secure' => true]);
         }
         return $this->_redirect->success($backUrl ? $backUrl : $successUrl);
-    }
-
-    /**
-     * Clean cookie by name.
-     *
-     * @param String $cookieName
-     * @return void
-     */
-    private function cleanCookie($cookieName)
-    {
-        if ($this->cookieMetadataManager->getCookie($cookieName)) {
-            $this->cookieMetadataManager->deleteCookie(
-                $cookieName,
-                $this->cookieMetadataFactory->createCookieMetadata()
-                    ->setPath('/')
-            );
-        }
     }
 }

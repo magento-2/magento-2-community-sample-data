@@ -3,6 +3,8 @@
  * Copyright © Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
+declare(strict_types=1);
+
 namespace Magento\Captcha\Observer;
 
 use Magento\Captcha\Model\ResourceModel\Log as CaptchaLog;
@@ -17,7 +19,7 @@ use Magento\User\Model\UserFactory;
  *
  * Test for checking that the admin login attempts are removed after a successful login
  */
-class ResetAttemptForBackendObserverTest extends \PHPUnit_Framework_TestCase
+class ResetAttemptForBackendObserverTest extends \PHPUnit\Framework\TestCase
 {
     /**
      * @var ObjectManagerInterface

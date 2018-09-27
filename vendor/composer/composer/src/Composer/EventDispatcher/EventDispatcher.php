@@ -21,9 +21,11 @@ use Composer\Composer;
 use Composer\DependencyResolver\Operation\OperationInterface;
 use Composer\Repository\CompositeRepository;
 use Composer\Script;
-use Composer\Script\CommandEvent;
-use Composer\Script\PackageEvent;
+use Composer\Installer\PackageEvent;
+use Composer\Installer\BinaryInstaller;
 use Composer\Util\ProcessExecutor;
+use Composer\Script\Event as ScriptEvent;
+use Symfony\Component\Process\PhpExecutableFinder;
 
 /**
  * The Event Dispatcher.
@@ -72,7 +74,7 @@ class EventDispatcher
      */
     public function dispatch($eventName, Event $event = null)
     {
-        if (null == $event) {
+        if (null === $event) {
             $event = new Event($eventName);
         }
 
@@ -136,22 +138,25 @@ class EventDispatcher
     /**
      * Triggers the listeners of an event.
      *
-     * @param  Event             $event          The event object to pass to the event handlers/listeners.
-     * @param  string            $additionalArgs
-     * @throws \RuntimeException
-     * @throws \Exception
-     * @return int               return code of the executed script if any, for php scripts a false return
-     *                                          value is changed to 1, anything else to 0
+     * @param  Event                        $event The event object to pass to the event handlers/listeners.
+     * @throws \RuntimeException|\Exception
+     * @return int                          return code of the executed script if any, for php scripts a false return
+     *                                            value is changed to 1, anything else to 0
      */
     protected function doDispatch(Event $event)
     {
+        $pathStr = 'PATH';
+        if (!isset($_SERVER[$pathStr]) && isset($_SERVER['Path'])) {
+            $pathStr = 'Path';
+        }
+
         // add the bin dir to the PATH to make local binaries of deps usable in scripts
         $binDir = $this->composer->getConfig()->get('bin-dir');
         if (is_dir($binDir)) {
             $binDir = realpath($binDir);
-            if (isset($_SERVER['PATH']) && !preg_match('{(^|'.PATH_SEPARATOR.')'.preg_quote($binDir).'($|'.PATH_SEPARATOR.')}', $_SERVER['PATH'])) {
-                $_SERVER['PATH'] = $binDir.PATH_SEPARATOR.getenv('PATH');
-                putenv('PATH='.$_SERVER['PATH']);
+            if (isset($_SERVER[$pathStr]) && !preg_match('{(^|'.PATH_SEPARATOR.')'.preg_quote($binDir).'($|'.PATH_SEPARATOR.')}', $_SERVER[$pathStr])) {
+                $_SERVER[$pathStr] = $binDir.PATH_SEPARATOR.getenv($pathStr);
+                putenv($pathStr.'='.$_SERVER[$pathStr]);
             }
         }
 
@@ -169,17 +174,30 @@ class EventDispatcher
                 $scriptName = substr($callable, 1);
                 $args = $event->getArguments();
                 $flags = $event->getFlags();
-                $return = $this->dispatch($scriptName, new Script\Event($scriptName, $event->getComposer(), $event->getIO(), $event->isDevMode(), $args, $flags));
+                if (substr($callable, 0, 10) === '@composer ') {
+                    $exec = $this->getPhpExecCommand() . ' ' . ProcessExecutor::escape(getenv('COMPOSER_BINARY')) . substr($callable, 9);
+                    if (0 !== ($exitCode = $this->process->execute($exec))) {
+                        $this->io->writeError(sprintf('<error>Script %s handling the %s event returned with error code '.$exitCode.'</error>', $callable, $event->getName()), true, IOInterface::QUIET);
+
+                        throw new ScriptExecutionException('Error Output: '.$this->process->getErrorOutput(), $exitCode);
+                    }
+                } else {
+                    if (!$this->getListeners(new Event($scriptName))) {
+                        $this->io->writeError(sprintf('<warning>You made a reference to a non-existent script %s</warning>', $callable), true, IOInterface::QUIET);
+                    }
+
+                    $return = $this->dispatch($scriptName, new Script\Event($scriptName, $event->getComposer(), $event->getIO(), $event->isDevMode(), $args, $flags));
+                }
             } elseif ($this->isPhpScript($callable)) {
                 $className = substr($callable, 0, strpos($callable, '::'));
                 $methodName = substr($callable, strpos($callable, '::') + 2);
 
                 if (!class_exists($className)) {
-                    $this->io->writeError('<warning>Class '.$className.' is not autoloadable, can not call '.$event->getName().' script</warning>');
+                    $this->io->writeError('<warning>Class '.$className.' is not autoloadable, can not call '.$event->getName().' script</warning>', true, IOInterface::QUIET);
                     continue;
                 }
                 if (!is_callable($callable)) {
-                    $this->io->writeError('<warning>Method '.$callable.' is not callable, can not call '.$event->getName().' script</warning>');
+                    $this->io->writeError('<warning>Method '.$callable.' is not callable, can not call '.$event->getName().' script</warning>', true, IOInterface::QUIET);
                     continue;
                 }
 
@@ -187,7 +205,7 @@ class EventDispatcher
                     $return = false === $this->executeEventPhpScript($className, $methodName, $event) ? 1 : 0;
                 } catch (\Exception $e) {
                     $message = "Script %s handling the %s event terminated with an exception";
-                    $this->io->writeError('<error>'.sprintf($message, $callable, $event->getName()).'</error>');
+                    $this->io->writeError('<error>'.sprintf($message, $callable, $event->getName()).'</error>', true, IOInterface::QUIET);
                     throw $e;
                 }
             } else {
@@ -198,10 +216,26 @@ class EventDispatcher
                 } else {
                     $this->io->writeError(sprintf('> %s', $exec));
                 }
-                if (0 !== ($exitCode = $this->process->execute($exec))) {
-                    $this->io->writeError(sprintf('<error>Script %s handling the %s event returned with an error</error>', $callable, $event->getName()));
 
-                    throw new \RuntimeException('Error Output: '.$this->process->getErrorOutput(), $exitCode);
+                $possibleLocalBinaries = $this->composer->getPackage()->getBinaries();
+                if ($possibleLocalBinaries) {
+                    foreach ($possibleLocalBinaries as $localExec) {
+                        if (preg_match('{\b'.preg_quote($callable).'$}', $localExec)) {
+                            $caller = BinaryInstaller::determineBinaryCaller($localExec);
+                            $exec = preg_replace('{^'.preg_quote($callable).'}', $caller . ' ' . $localExec, $exec);
+                            break;
+                        }
+                    }
+                }
+
+                if (substr($exec, 0, 5) === '@php ') {
+                    $exec = $this->getPhpExecCommand() . ' ' . substr($exec, 5);
+                }
+
+                if (0 !== ($exitCode = $this->process->execute($exec))) {
+                    $this->io->writeError(sprintf('<error>Script %s handling the %s event returned with error code '.$exitCode.'</error>', $callable, $event->getName()), true, IOInterface::QUIET);
+
+                    throw new ScriptExecutionException('Error Output: '.$this->process->getErrorOutput(), $exitCode);
                 }
             }
 
@@ -213,6 +247,19 @@ class EventDispatcher
         $this->popEvent();
 
         return $return;
+    }
+
+    protected function getPhpExecCommand()
+    {
+        $finder = new PhpExecutableFinder();
+        $phpPath = $finder->find();
+        if (!$phpPath) {
+            throw new \RuntimeException('Failed to locate PHP binary to execute '.$scriptName);
+        }
+
+        $memoryFlag = ' -d memory_limit='.ini_get('memory_limit');
+
+        return ProcessExecutor::escape($phpPath) . $memoryFlag;
     }
 
     /**
@@ -234,12 +281,20 @@ class EventDispatcher
     }
 
     /**
-     * @param  mixed              $target
-     * @param  Event              $event
-     * @return Event|CommandEvent
+     * @param  mixed $target
+     * @param  Event $event
+     * @return Event
      */
     protected function checkListenerExpectedEvent($target, Event $event)
     {
+        if (in_array($event->getName(), array(
+            'init',
+            'command',
+            'pre-file-download',
+        ), true)) {
+            return $event;
+        }
+
         try {
             $reflected = new \ReflectionParameter($target, 0);
         } catch (\Exception $e) {
@@ -256,11 +311,13 @@ class EventDispatcher
 
         // BC support
         if (!$event instanceof $expected && $expected === 'Composer\Script\CommandEvent') {
+            trigger_error('The callback '.$this->serializeCallback($target).' declared at '.$reflected->getDeclaringFunction()->getFileName().' accepts a '.$expected.' but '.$event->getName().' events use a '.get_class($event).' instance. Please adjust your type hint accordingly, see https://getcomposer.org/doc/articles/scripts.md#event-classes', E_USER_DEPRECATED);
             $event = new \Composer\Script\CommandEvent(
                 $event->getName(), $event->getComposer(), $event->getIO(), $event->isDevMode(), $event->getArguments()
             );
         }
         if (!$event instanceof $expected && $expected === 'Composer\Script\PackageEvent') {
+            trigger_error('The callback '.$this->serializeCallback($target).' declared at '.$reflected->getDeclaringFunction()->getFileName().' accepts a '.$expected.' but '.$event->getName().' events use a '.get_class($event).' instance. Please adjust your type hint accordingly, see https://getcomposer.org/doc/articles/scripts.md#event-classes', E_USER_DEPRECATED);
             $event = new \Composer\Script\PackageEvent(
                 $event->getName(), $event->getComposer(), $event->getIO(), $event->isDevMode(),
                 $event->getPolicy(), $event->getPool(), $event->getInstalledRepo(), $event->getRequest(),
@@ -268,6 +325,7 @@ class EventDispatcher
             );
         }
         if (!$event instanceof $expected && $expected === 'Composer\Script\Event') {
+            trigger_error('The callback '.$this->serializeCallback($target).' declared at '.$reflected->getDeclaringFunction()->getFileName().' accepts a '.$expected.' but '.$event->getName().' events use a '.get_class($event).' instance. Please adjust your type hint accordingly, see https://getcomposer.org/doc/articles/scripts.md#event-classes', E_USER_DEPRECATED);
             $event = new \Composer\Script\Event(
                 $event->getName(), $event->getComposer(), $event->getIO(), $event->isDevMode(),
                 $event->getArguments(), $event->getFlags()
@@ -277,11 +335,28 @@ class EventDispatcher
         return $event;
     }
 
+    private function serializeCallback($cb)
+    {
+        if (is_array($cb) && count($cb) === 2) {
+            if (is_object($cb[0])) {
+                $cb[0] = get_class($cb[0]);
+            }
+            if (is_string($cb[0]) && is_string($cb[1])) {
+                $cb = implode('::', $cb);
+            }
+        }
+        if (is_string($cb)) {
+            return $cb;
+        }
+
+        return var_export($cb, true);
+    }
+
     /**
      * Add a listener for a particular event
      *
      * @param string   $eventName The event name - typically a constant
-     * @param Callable $listener  A callable expecting an event argument
+     * @param callable $listener  A callable expecting an event argument
      * @param int      $priority  A higher value represents a higher priority
      */
     public function addListener($eventName, $listener, $priority = 0)
@@ -365,6 +440,10 @@ class EventDispatcher
         }
 
         $generator = $this->composer->getAutoloadGenerator();
+        if ($event instanceof ScriptEvent) {
+            $generator->setDevMode($event->isDevMode());
+        }
+
         $packages = $this->composer->getRepositoryManager()->getLocalRepository()->getCanonicalPackages();
         $packageMap = $generator->buildPackageMap($this->composer->getInstallationManager(), $package, $packages);
         $map = $generator->parseAutoloads($packageMap, $package);
@@ -393,7 +472,7 @@ class EventDispatcher
      */
     protected function isComposerScript($callable)
     {
-        return '@' === substr($callable, 0, 1);
+        return '@' === substr($callable, 0, 1) && '@php ' !== substr($callable, 0, 5);
     }
 
     /**

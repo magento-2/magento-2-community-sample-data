@@ -10,14 +10,14 @@ use Magento\Framework\Search\Request\BucketInterface as RequestBucketInterface;
 class Metrics
 {
     /**
-     * Available metrics.
+     * Available metrics
      *
      * @var string[]
      */
     private $allowedMetrics = ['count', 'sum', 'min', 'max', 'avg'];
 
     /**
-     * Build metrics for Select->columns.
+     * Build metrics for Select->columns
      *
      * @param RequestBucketInterface $bucket
      * @return string[]

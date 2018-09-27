@@ -16,7 +16,7 @@ use Magento\Paypal\Model\Payflow\Service\Response\Validator\ResponseValidator;
  *
  * Test for class \Magento\Paypal\Model\Payflow\Service\Response\Validator\ResponseValidator
  */
-class ResponseValidatorTest extends \PHPUnit_Framework_TestCase
+class ResponseValidatorTest extends \PHPUnit\Framework\TestCase
 {
     /**
      * @var ResponseValidator
@@ -36,7 +36,7 @@ class ResponseValidatorTest extends \PHPUnit_Framework_TestCase
     protected function setUp()
     {
         $this->validatorMock = $this->getMockBuilder(
-            'Magento\Paypal\Model\Payflow\Service\Response\ValidatorInterface'
+            \Magento\Paypal\Model\Payflow\Service\Response\ValidatorInterface::class
         )
             ->setMethods(['validate'])
             ->getMockForAbstractClass();

@@ -14,8 +14,9 @@ use Magento\Framework\Exception\NoSuchEntityException;
 /**
  * Customer address helper
  *
- * @author      Magento Core Team <core@magentocommerce.com>
+ * @api
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
+ * @since 100.0.2
  */
 class Address extends \Magento\Framework\App\Helper\AbstractHelper
 {
@@ -65,19 +66,31 @@ class Address extends \Magento\Framework\App\Helper\AbstractHelper
      */
     protected $_formatTemplate = [];
 
-    /** @var \Magento\Framework\View\Element\BlockFactory */
+    /**
+     * @var \Magento\Framework\View\Element\BlockFactory
+     */
     protected $_blockFactory;
 
-    /** @var \Magento\Store\Model\StoreManagerInterface */
+    /**
+     * @var \Magento\Store\Model\StoreManagerInterface
+     */
     protected $_storeManager;
 
-    /** @var CustomerMetadataInterface */
+    /**
+     * @var CustomerMetadataInterface
+     *
+     * @deprecated 100.2.0
+     */
     protected $_customerMetadataService;
 
-    /** @var AddressMetadataInterface */
+    /**
+     * @var \Magento\Customer\Api\AddressMetadataInterface
+     */
     protected $_addressMetadataService;
 
-    /** @var \Magento\Customer\Model\Address\Config*/
+    /**
+     * @var \Magento\Customer\Model\Address\Config
+     */
     protected $_addressConfig;
 
     /**
@@ -243,19 +256,8 @@ class Address extends \Magento\Framework\App\Helper\AbstractHelper
             $attribute = isset($this->_attributes[$attributeCode])
                 ? $this->_attributes[$attributeCode]
                 : $this->_addressMetadataService->getAttributeMetadata($attributeCode);
-            $class = $attribute ? $attribute->getFrontendClass() : '';
-            if (in_array($attributeCode, ['firstname', 'middlename', 'lastname', 'prefix', 'suffix', 'taxvat'])) {
-                if ($class && !$attribute->isVisible()) {
-                    // address attribute is not visible thus its validation rules are not applied
-                    $class = '';
-                }
 
-                /** @var $customerAttribute AttributeMetadataInterface */
-                $customerAttribute = $this->_customerMetadataService->getAttributeMetadata($attributeCode);
-                $class .= $customerAttribute &&
-                    $customerAttribute->isVisible() ? $customerAttribute->getFrontendClass() : '';
-                $class = implode(' ', array_unique(array_filter(explode(' ', $class))));
-            }
+            $class = $attribute ? $attribute->getFrontendClass() : '';
         } catch (NoSuchEntityException $e) {
             // the attribute does not exist so just return an empty string
         }
@@ -372,5 +374,21 @@ class Address extends \Magento\Framework\App\Helper\AbstractHelper
             self::XML_PATH_VAT_FRONTEND_VISIBILITY,
             \Magento\Store\Model\ScopeInterface::SCOPE_STORE
         );
+    }
+
+    /**
+     * Retrieve attribute visibility
+     *
+     * @param string $code
+     * @return bool
+     * @since 100.2.0
+     */
+    public function isAttributeVisible($code)
+    {
+        $attributeMetadata = $this->_addressMetadataService->getAttributeMetadata($code);
+        if ($attributeMetadata) {
+            return $attributeMetadata->isVisible();
+        }
+        return false;
     }
 }

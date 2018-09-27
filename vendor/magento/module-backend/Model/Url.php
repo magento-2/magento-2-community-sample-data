@@ -5,11 +5,16 @@
  */
 namespace Magento\Backend\Model;
 
+use Magento\Framework\Serialize\Serializer\Json;
+use Magento\Framework\Url\HostChecker;
+use Magento\Framework\App\ObjectManager;
 
 /**
  * Class \Magento\Backend\Model\UrlInterface
  *
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
+ * @api
+ * @since 100.0.2
  */
 class Url extends \Magento\Framework\Url implements \Magento\Backend\Model\UrlInterface
 {
@@ -77,6 +82,8 @@ class Url extends \Magento\Framework\Url implements \Magento\Backend\Model\UrlIn
     protected $_scope;
 
     /**
+     * Constructor
+     *
      * @param \Magento\Framework\App\Route\ConfigInterface $routeConfig
      * @param \Magento\Framework\App\RequestInterface $request
      * @param \Magento\Framework\Url\SecurityInfoInterface $urlSecurityInfo
@@ -96,7 +103,8 @@ class Url extends \Magento\Framework\Url implements \Magento\Backend\Model\UrlIn
      * @param \Magento\Store\Model\StoreFactory $storeFactory
      * @param \Magento\Framework\Data\Form\FormKey $formKey
      * @param array $data
-     *
+     * @param HostChecker|null $hostChecker
+     * @param Json $serializer
      * @SuppressWarnings(PHPMD.ExcessiveParameterList)
      */
     public function __construct(
@@ -118,9 +126,12 @@ class Url extends \Magento\Framework\Url implements \Magento\Backend\Model\UrlIn
         \Magento\Framework\Encryption\EncryptorInterface $encryptor,
         \Magento\Store\Model\StoreFactory $storeFactory,
         \Magento\Framework\Data\Form\FormKey $formKey,
-        array $data = []
+        array $data = [],
+        HostChecker $hostChecker = null,
+        Json $serializer = null
     ) {
         $this->_encryptor = $encryptor;
+        $hostChecker = $hostChecker ?: ObjectManager::getInstance()->get(HostChecker::class);
         parent::__construct(
             $routeConfig,
             $request,
@@ -133,7 +144,9 @@ class Url extends \Magento\Framework\Url implements \Magento\Backend\Model\UrlIn
             $scopeConfig,
             $routeParamsPreprocessor,
             $scopeType,
-            $data
+            $data,
+            $hostChecker,
+            $serializer
         );
         $this->_backendHelper = $backendHelper;
         $this->_menuConfig = $menuConfig;
@@ -204,11 +217,11 @@ class Url extends \Magento\Framework\Url implements \Magento\Backend\Model\UrlIn
         $routeName = $this->_getRouteName('*');
         $controllerName = $this->_getControllerName(self::DEFAULT_CONTROLLER_NAME);
         $actionName = $this->_getActionName(self::DEFAULT_ACTION_NAME);
+
         if (!isset($routeParams[self::SECRET_KEY_PARAM_NAME])) {
             if (!is_array($routeParams)) {
                 $routeParams = [];
             }
-
             $secretKey = $cacheSecretKey
                 ? "\${$routeName}/{$controllerName}/{$actionName}\$"
                 : $this->getSecretKey($routeName, $controllerName, $actionName);

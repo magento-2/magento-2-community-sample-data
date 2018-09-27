@@ -18,12 +18,7 @@ use Magento\Quote\Api\Data\CartExtensionInterface;
 use Magento\Quote\Model\Quote\Item as QuoteItem;
 use Magento\Framework\Exception\NoSuchEntityException;
 
-/**
- * SaveHandler test.
- *
- * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
- */
-class SaveHandlerTest extends \PHPUnit_Framework_TestCase
+class SaveHandlerTest extends \PHPUnit\Framework\TestCase
 {
     /**
      * @var SaveHandler
@@ -101,9 +96,11 @@ class SaveHandlerTest extends \PHPUnit_Framework_TestCase
             )
             ->getMock();
         $this->billingAddressMock = $this->getMockBuilder(QuoteAddress::class)
+            ->setMethods(['getCustomerAddress', 'getCustomerAddressId', 'setCustomerAddressId'])
             ->disableOriginalConstructor()
             ->getMock();
         $this->extensionAttributesMock = $this->getMockBuilder(CartExtensionInterface::class)
+            ->setMethods(['getShippingAssignments'])
             ->getMockForAbstractClass();
 
         $this->quoteMock->expects(static::any())
@@ -126,13 +123,10 @@ class SaveHandlerTest extends \PHPUnit_Framework_TestCase
         );
     }
 
-    /**
-     * Tests save() method for virtual quote.
-     */
     public function testSaveForVirtualQuote()
     {
         $quoteItemMock = $this->createQuoteItemMock(false);
-
+        
         $this->quoteMock->expects(static::atLeastOnce())
             ->method('getItems')
             ->willReturn([$quoteItemMock]);
@@ -164,13 +158,10 @@ class SaveHandlerTest extends \PHPUnit_Framework_TestCase
             ->method('save')
             ->with($this->quoteMock)
             ->willReturnSelf();
-
+        
         $this->assertSame($this->quoteMock, $this->saveHandler->save($this->quoteMock));
     }
 
-    /**
-     * Tests save() method with not existing customer address.
-     */
     public function testSaveWithNotExistingCustomerAddress()
     {
         $customerAddressId = 5;
@@ -210,10 +201,9 @@ class SaveHandlerTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * Create quote item mock.
+     * Create quote item mock
      *
      * @param bool $isDeleted
-     *
      * @return QuoteItem|\PHPUnit_Framework_MockObject_MockObject
      */
     private function createQuoteItemMock($isDeleted)

@@ -137,7 +137,7 @@ class CheckPayflowProConfigStep implements TestStepInterface
             [$enablers['Enable this Solution'], $enablers['Enable PayPal Credit']]
         );
         $this->systemConfigEditSectionPayment->getPageActions()->save();
-        $this->systemConfigEditSectionPayment->getMessagesBlock()->waitSuccessMessageAndRefreshPage();
+        $this->systemConfigEditSectionPayment->getMessagesBlock()->waitSuccessMessage();
     }
 
     /**
@@ -160,6 +160,6 @@ class CheckPayflowProConfigStep implements TestStepInterface
             [$enablers['Enable PayPal Credit']]
         );
         $this->systemConfigEditSectionPayment->getPageActions()->save();
-        $this->systemConfigEditSectionPayment->getMessagesBlock()->waitSuccessMessageAndRefreshPage();
+        $this->systemConfigEditSectionPayment->getMessagesBlock()->waitSuccessMessage();
     }
 }

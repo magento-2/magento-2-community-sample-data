@@ -11,8 +11,9 @@ use Magento\Framework\App\Filesystem\DirectoryList;
 /**
  *
  * @SuppressWarnings(PHPMD.LongVariable)
+ * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  */
-class StorageTest extends \PHPUnit_Framework_TestCase
+class StorageTest extends \PHPUnit\Framework\TestCase
 {
     /**
      * @var string
@@ -63,7 +64,7 @@ class StorageTest extends \PHPUnit_Framework_TestCase
     /**
      * @inheritdoc
      */
-    protected function setUp()
+    public function setUp()
     {
         $this->objectManager = \Magento\TestFramework\Helper\Bootstrap::getObjectManager();
         $this->filesystem = $this->objectManager->get(\Magento\Framework\Filesystem::class);
@@ -71,7 +72,6 @@ class StorageTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @return void
      * @magentoAppIsolation enabled
      */
     public function testGetFilesCollection()
@@ -87,13 +87,11 @@ class StorageTest extends \PHPUnit_Framework_TestCase
                 'http://%s/static/%s/adminhtml/%s/%s/Magento_Cms/images/placeholder_thumbnail.jpg',
                 $item->getThumbUrl()
             );
-
             return;
         }
     }
 
     /**
-     * @return void
      * @magentoAppArea adminhtml
      */
     public function testGetThumbsPath()
@@ -125,7 +123,6 @@ class StorageTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @return void
      * @expectedException \Magento\Framework\Exception\LocalizedException
      * @expectedExceptionMessage File validation failed.
      */
@@ -150,7 +147,6 @@ class StorageTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @return void
      * @expectedException \Magento\Framework\Exception\LocalizedException
      * @expectedExceptionMessage File validation failed.
      */

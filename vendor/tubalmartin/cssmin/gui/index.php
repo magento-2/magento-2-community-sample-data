@@ -48,14 +48,21 @@ if (!empty($_POST)) :
     parse_str($_POST['options']);
 
     $linebreak_pos = trim($linebreak_pos) !== '' ? $linebreak_pos : false;
-    $chunk_length = trim($chunk_length) !== '' ? $chunk_length : false;
     $raise_php = isset($raise_php) ? true : false;
 
     // Create a new CSSmin object and try to raise PHP settings
     $compressor = new CSSmin($raise_php);
 
-    if ($chunk_length !== false) {
-        $compressor->setChunkLength($chunk_length);
+    if ($linebreak_pos !== false) {
+        $compressor->setLineBreakPosition($linebreak_pos);
+    }
+
+    if (isset($keep_sourcemap)) {
+        $compressor->keepSourceMapComment();
+    }
+
+    if (isset($remove_important_comments)) {
+        $compressor->removeImportantComments();
     }
 
     if ($raise_php) {
@@ -67,7 +74,7 @@ if (!empty($_POST)) :
 
     // Compress the CSS code and store data
     $output = array();
-    $output['css'] = $compressor->run($_POST['css'], $linebreak_pos);
+    $output['css'] = $compressor->run($_POST['css']);
     $output['originalSize'] = mb_strlen($_POST['css'], '8bit');
     $output['compressedSize'] = mb_strlen($output['css'], '8bit');
     $output['bytesSaved'] = $output['originalSize'] - $output['compressedSize'];
@@ -133,8 +140,14 @@ else :
                             <input type="text" name="linebreak_pos" class="span1">
                         </div>
                         <div class="control-group">
-                            <label>Chunk length</label>
-                            <input type="text" name="chunk_length" class="span1">
+                            <label class="checkbox">
+                                <input type="checkbox" name="keep_sourcemap" value="1"> Keep CSS Sourcemap comment
+                            </label>
+                        </div>
+                        <div class="control-group">
+                            <label class="checkbox">
+                                <input type="checkbox" name="remove_important_comments" value="1"> Remove important comments
+                            </label>
                         </div>
                     </fieldset>
                     <fieldset>

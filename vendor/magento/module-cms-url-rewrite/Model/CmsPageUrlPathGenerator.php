@@ -7,14 +7,18 @@ namespace Magento\CmsUrlRewrite\Model;
 
 use Magento\Cms\Api\Data\PageInterface;
 
+/**
+ * @api
+ * @since 100.0.2
+ */
 class CmsPageUrlPathGenerator
 {
-    /** @var \Magento\Framework\Filter\FilterManager */
+    /**
+     * @var \Magento\Framework\Filter\FilterManager
+     */
     protected $filterManager;
 
     /**
-     * CmsPageUrlPathGenerator constructor.
-     * @param \Magento\Framework\Filter\FilterManager $filterManager
      */
     public function __construct(
         \Magento\Framework\Filter\FilterManager $filterManager
@@ -26,7 +30,6 @@ class CmsPageUrlPathGenerator
      * @param PageInterface $cmsPage
      *
      * @return string
-     * @api
      */
     public function getUrlPath(PageInterface $cmsPage)
     {
@@ -38,7 +41,6 @@ class CmsPageUrlPathGenerator
      *
      * @param PageInterface $cmsPage
      * @return string
-     * @api
      */
     public function getCanonicalUrlPath(PageInterface $cmsPage)
     {
@@ -50,7 +52,6 @@ class CmsPageUrlPathGenerator
      *
      * @param PageInterface $cmsPage
      * @return string
-     * @api
      */
     public function generateUrlKey(PageInterface $cmsPage)
     {

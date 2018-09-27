@@ -3,15 +3,12 @@
  * Copyright © Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
-
 namespace Magento\Cms\Test\Unit\Controller;
 
 /**
- * Tests Magento\Cms\Controller\Router Class
- *
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  */
-class RouterTest extends \PHPUnit_Framework_TestCase
+class RouterTest extends \PHPUnit\Framework\TestCase
 {
     /**
      * @var \Magento\Cms\Controller\Router
@@ -67,7 +64,6 @@ class RouterTest extends \PHPUnit_Framework_TestCase
             ->getMock();
 
         $objectManagerHelper = new \Magento\Framework\TestFramework\Unit\Helper\ObjectManager($this);
-
         $this->router = $objectManagerHelper->getObject(
             \Magento\Cms\Controller\Router::class,
             [
@@ -79,11 +75,6 @@ class RouterTest extends \PHPUnit_Framework_TestCase
         );
     }
 
-    /**
-     * This test ensures that cms controller router match cms page before event params.
-     *
-     * @return void
-     */
     public function testMatchCmsControllerRouterMatchBeforeEventParams()
     {
         $identifier = '/test';

@@ -12,6 +12,9 @@ use Magento\Catalog\Api\ProductRepositoryInterface;
 /**
  * Item option model
  * @method int getProductId()
+ *
+ * @api
+ * @since 100.0.2
  */
 class Option extends \Magento\Framework\Model\AbstractModel implements
     \Magento\Catalog\Model\Product\Configuration\Item\Option\OptionInterface
@@ -58,7 +61,7 @@ class Option extends \Magento\Framework\Model\AbstractModel implements
      */
     protected function _construct()
     {
-        $this->_init('Magento\Wishlist\Model\ResourceModel\Item\Option');
+        $this->_init(\Magento\Wishlist\Model\ResourceModel\Item\Option::class);
     }
 
     /**

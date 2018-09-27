@@ -7,6 +7,9 @@ namespace Magento\Shipping\Block\Adminhtml\Create;
 
 /**
  * Adminhtml shipment create form
+ *
+ * @api
+ * @since 100.0.2
  */
 class Form extends \Magento\Sales\Block\Adminhtml\Order\AbstractOrder
 {
@@ -45,7 +48,7 @@ class Form extends \Magento\Sales\Block\Adminhtml\Order\AbstractOrder
      */
     protected function _prepareLayout()
     {
-        $this->addChild('items', 'Magento\Shipping\Block\Adminhtml\Create\Items');
+        $this->addChild('items', \Magento\Shipping\Block\Adminhtml\Create\Items::class);
         return parent::_prepareLayout();
     }
 

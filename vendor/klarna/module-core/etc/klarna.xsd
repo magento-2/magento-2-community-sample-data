@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+/**
+ * This file is part of the Klarna Core module
+ *
+ * (c) Klarna Bank AB (publ)
+ *
+ * For the full copyright and license information, please view the NOTICE
+ * and LICENSE files that were distributed with this source code.
+ */
+-->
+<xs:schema attributeFormDefault="unqualified" elementFormDefault="qualified"
+           xmlns:xs="http://www.w3.org/2001/XMLSchema">
+    <xs:element name="klarna">
+        <xs:complexType>
+            <xs:choice maxOccurs="unbounded">
+                <xs:element name="external_payment_method" minOccurs="0">
+                    <xs:complexType>
+                        <xs:all>
+                            <xs:element type="xs:string" name="label"/>
+                            <xs:element type="xs:string" name="name"/>
+                            <xs:element type="xs:string" name="redirect_url" minOccurs="0"/>
+                            <xs:element type="xs:string" name="image_url" minOccurs="0"/>
+                            <xs:element type="xs:string" name="description"/>
+                            <xs:element type="xs:string" name="fee"/>
+                        </xs:all>
+                        <xs:attribute type="xs:string" name="id"/>
+                        <xs:attribute type="xs:string" name="translate"/>
+                        <xs:attribute type="xs:string" name="ifconfig"/>
+                    </xs:complexType>
+                </xs:element>
+                <xs:element name="api_type" minOccurs="0">
+                    <xs:complexType>
+                        <xs:sequence>
+                            <xs:element type="xs:string" name="class"/>
+                            <xs:element type="xs:string" name="ordermanagement"/>
+                            <xs:element name="options" maxOccurs="1" minOccurs="0">
+                                <xs:complexType>
+                                    <xs:sequence>
+                                        <xs:element name="option" maxOccurs="unbounded" minOccurs="0">
+                                            <xs:complexType>
+                                                <xs:simpleContent>
+                                                    <xs:extension base="xs:string">
+                                                        <xs:attribute name="id" type="xs:string"/>
+                                                    </xs:extension>
+                                                </xs:simpleContent>
+                                            </xs:complexType>
+                                        </xs:element>
+                                    </xs:sequence>
+                                </xs:complexType>
+                            </xs:element>
+                        </xs:sequence>
+                        <xs:attribute type="xs:string" name="id"/>
+                    </xs:complexType>
+                </xs:element>
+                <xs:element name="api_version" minOccurs="0">
+                    <xs:complexType>
+                        <xs:all>
+                            <xs:element type="xs:string" name="label"/>
+                            <xs:element type="xs:string" name="type"/>
+                            <xs:element type="xs:string" name="production_url"/>
+                            <xs:element type="xs:string" name="testdrive_url"/>
+                            <xs:element name="options" maxOccurs="1" minOccurs="0">
+                                <xs:complexType>
+                                    <xs:sequence>
+                                        <xs:element name="option" maxOccurs="unbounded" minOccurs="0">
+                                            <xs:complexType>
+                                                <xs:simpleContent>
+                                                    <xs:extension base="xs:string">
+                                                        <xs:attribute name="id" type="xs:string"/>
+                                                    </xs:extension>
+                                                </xs:simpleContent>
+                                            </xs:complexType>
+                                        </xs:element>
+                                    </xs:sequence>
+                                </xs:complexType>
+                            </xs:element>
+                        </xs:all>
+                        <xs:attribute type="xs:string" name="id" use="required"/>
+                        <xs:attribute type="xs:string" name="translate" use="optional"/>
+                    </xs:complexType>
+                </xs:element>
+                <xs:element name="merchant_checkbox" minOccurs="0">
+                    <xs:complexType>
+                        <xs:all>
+                            <xs:element type="xs:string" name="label"/>
+                            <xs:element type="xs:string" name="text"/>
+                            <xs:element type="xs:string" name="validation_event"/>
+                            <xs:element type="xs:string" name="save_event"/>
+                        </xs:all>
+                        <xs:attribute type="xs:string" name="id" use="required"/>
+                        <xs:attribute type="xs:string" name="translate" use="optional"/>
+                    </xs:complexType>
+                </xs:element>
+                <xs:element name="order_lines" minOccurs="0">
+                    <xs:complexType>
+                        <xs:sequence>
+                            <xs:element name="line" maxOccurs="unbounded" minOccurs="0">
+                                <xs:complexType>
+                                    <xs:attribute type="xs:string" name="id" use="required"/>
+                                    <xs:attribute type="xs:string" name="class" use="required"/>
+                                </xs:complexType>
+                            </xs:element>
+                        </xs:sequence>
+                        <xs:attribute type="xs:string" name="id"/>
+                    </xs:complexType>
+                </xs:element>
+            </xs:choice>
+        </xs:complexType>
+    </xs:element>
+</xs:schema>

@@ -3,14 +3,9 @@
  * Copyright © Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
-
-/**
- * Copyright © Magento, Inc. All rights reserved.
- * See COPYING.txt for license details.
- */
 namespace Magento\TestFramework\Utility;
 
-class ClassNameExtractorTest extends \PHPUnit_Framework_TestCase
+class ClassNameExtractorTest extends \PHPUnit\Framework\TestCase
 {
     /**
      * @param string $file
@@ -24,7 +19,6 @@ class ClassNameExtractorTest extends \PHPUnit_Framework_TestCase
             $classNameExtractor->getNameWithNamespace($this->getFileContent($file)),
             $className
         );
-
     }
 
     /**
@@ -76,7 +70,6 @@ class ClassNameExtractorTest extends \PHPUnit_Framework_TestCase
             $classNameExtractor->getName($this->getFileContent($file)),
             $className
         );
-
     }
 
     /**
@@ -116,7 +109,6 @@ class ClassNameExtractorTest extends \PHPUnit_Framework_TestCase
             $classNameExtractor->getNamespace($this->getFileContent($file)),
             $className
         );
-
     }
 
     /**

@@ -1,0 +1,22 @@
+<?xml version="1.0"?>
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:Acl/etc/acl.xsd">
+    <acl>
+        <resources>
+            <resource id="Magento_Backend::admin">
+                <resource id="Magento_Sales::sales">
+                    <resource id="Magento_Sales::sales_operation">
+                        <resource id="Temando_Shipping::dispatches" sortOrder="35" title="Dispatches"/>
+                        <resource id="Temando_Shipping::batches" sortOrder="37" title="Batches"/>
+                    </resource>
+                </resource>
+                <resource id="Magento_Backend::stores">
+                    <resource id="Temando_Shipping::shipping" sortOrder="10" title="Shipping">
+                        <resource id="Temando_Shipping::carriers" sortOrder="30" title="Carriers"/>
+                        <resource id="Temando_Shipping::locations" sortOrder="30" title="Locations"/>
+                        <resource id="Temando_Shipping::packaging" sortOrder="30" title="Packaging"/>
+                    </resource>
+                </resource>
+            </resource>
+        </resources>
+    </acl>
+</config>

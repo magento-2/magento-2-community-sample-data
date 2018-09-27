@@ -13,7 +13,7 @@ namespace Magento\Sales\Controller\Adminhtml\Order\View;
 abstract class Giftmessage extends \Magento\Backend\App\Action
 {
     /**
-     * Authorization level of a basic admin session.
+     * Authorization level of a basic admin session
      *
      * @see _isAllowed()
      */
@@ -26,6 +26,6 @@ abstract class Giftmessage extends \Magento\Backend\App\Action
      */
     protected function _getGiftmessageSaveModel()
     {
-        return $this->_objectManager->get('Magento\GiftMessage\Model\Save');
+        return $this->_objectManager->get(\Magento\GiftMessage\Model\Save::class);
     }
 }

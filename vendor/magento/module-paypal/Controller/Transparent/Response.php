@@ -68,7 +68,7 @@ class Response extends \Magento\Framework\App\Action\Action
      * @param ResponseValidator $responseValidator
      * @param LayoutFactory $resultLayoutFactory
      * @param Transparent $transparent
-     * @param Session $sessionTransparent
+     * @param Session|null $sessionTransparent
      * @param PaymentFailuresInterface|null $paymentFailures
      */
     public function __construct(
@@ -104,7 +104,7 @@ class Response extends \Magento\Framework\App\Action\Action
         } catch (LocalizedException $exception) {
             $parameters['error'] = true;
             $parameters['error_msg'] = $exception->getMessage();
-            $this->paymentFailures->handle($this->sessionTransparent->getQuoteId(), $parameters['error_msg']);
+            $this->paymentFailures->handle((int)$this->sessionTransparent->getQuoteId(), $parameters['error_msg']);
         }
 
         $this->coreRegistry->register(Iframe::REGISTRY_KEY, $parameters);

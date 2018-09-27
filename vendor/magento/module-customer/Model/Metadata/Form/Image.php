@@ -1,7 +1,5 @@
 <?php
 /**
- * Form Element Image Data Model
- *
  * Copyright © Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
@@ -10,10 +8,9 @@ namespace Magento\Customer\Model\Metadata\Form;
 use Magento\Customer\Api\AddressMetadataInterface;
 use Magento\Customer\Api\CustomerMetadataInterface;
 use Magento\Customer\Model\FileProcessor;
-use Magento\Customer\Model\FileProcessorFactory;
 use Magento\Framework\Api\ArrayObjectSearch;
 use Magento\Framework\Api\Data\ImageContentInterface;
-use Magento\Framework\Api\Data\ImageContentInterfaceFactory as ImageContentFactory;
+use Magento\Framework\Api\Data\ImageContentInterfaceFactory;
 use Magento\Framework\App\ObjectManager;
 use Magento\Framework\File\UploaderFactory;
 use Magento\Framework\Filesystem;
@@ -24,12 +21,13 @@ use Magento\Framework\Filesystem;
 class Image extends File
 {
     /**
-     * @var ImageContentFactory
+     * @var ImageContentInterfaceFactory
      */
     private $imageContentFactory;
 
     /**
-     * Image constructor.
+     * Constructor
+     *
      * @param \Magento\Framework\Stdlib\DateTime\TimezoneInterface $localeDate
      * @param \Psr\Log\LoggerInterface $logger
      * @param \Magento\Customer\Api\Data\AttributeMetadataInterface $attribute
@@ -41,9 +39,8 @@ class Image extends File
      * @param \Magento\MediaStorage\Model\File\Validator\NotProtectedExtension $fileValidator
      * @param Filesystem $fileSystem
      * @param UploaderFactory $uploaderFactory
-     * @param FileProcessorFactory|null $fileProcessorFactory
-     * @param ImageContentFactory|null $imageContentFactory
-     * @throws \RuntimeException
+     * @param \Magento\Customer\Model\FileProcessorFactory|null $fileProcessorFactory
+     * @param \Magento\Framework\Api\Data\ImageContentInterfaceFactory|null $imageContentInterfaceFactory
      * @SuppressWarnings(PHPMD.ExcessiveParameterList)
      */
     public function __construct(
@@ -58,8 +55,8 @@ class Image extends File
         \Magento\MediaStorage\Model\File\Validator\NotProtectedExtension $fileValidator,
         Filesystem $fileSystem,
         UploaderFactory $uploaderFactory,
-        FileProcessorFactory $fileProcessorFactory = null,
-        ImageContentFactory $imageContentFactory = null
+        \Magento\Customer\Model\FileProcessorFactory $fileProcessorFactory = null,
+        \Magento\Framework\Api\Data\ImageContentInterfaceFactory $imageContentInterfaceFactory = null
     ) {
         parent::__construct(
             $localeDate,
@@ -75,10 +72,8 @@ class Image extends File
             $uploaderFactory,
             $fileProcessorFactory
         );
-        if (null === $imageContentFactory) {
-            $imageContentFactory = ObjectManager::getInstance()->get(ImageContentFactory::class);
-        }
-        $this->imageContentFactory = $imageContentFactory;
+        $this->imageContentFactory = $imageContentInterfaceFactory ?: ObjectManager::getInstance()
+            ->get(\Magento\Framework\Api\Data\ImageContentInterfaceFactory::class);
     }
 
     /**
@@ -193,9 +188,8 @@ class Image extends File
     {
         $temporaryFile = FileProcessor::TMP_DIR . '/' . ltrim($value['file'], '/');
 
-        $fileProcessor = $this->fileProcessorFactory->create();
-        if ($fileProcessor->isExist($temporaryFile)) {
-            $base64EncodedData = $fileProcessor->getBase64EncodedData($temporaryFile);
+        if ($this->getFileProcessor()->isExist($temporaryFile)) {
+            $base64EncodedData = $this->getFileProcessor()->getBase64EncodedData($temporaryFile);
 
             /** @var ImageContentInterface $imageContentDataObject */
             $imageContentDataObject = $this->imageContentFactory->create()
@@ -204,7 +198,7 @@ class Image extends File
                 ->setType($value['type']);
 
             // Remove temporary file
-            $fileProcessor->removeUploadedFile($temporaryFile);
+            $this->getFileProcessor()->removeUploadedFile($temporaryFile);
 
             return $imageContentDataObject;
         }

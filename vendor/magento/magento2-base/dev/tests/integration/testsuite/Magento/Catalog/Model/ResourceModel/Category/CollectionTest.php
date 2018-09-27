@@ -3,10 +3,9 @@
  * Copyright © Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
-
 namespace Magento\Catalog\Model\ResourceModel\Category;
 
-class CollectionTest extends \PHPUnit_Framework_TestCase
+class CollectionTest extends \PHPUnit\Framework\TestCase
 {
     /**
      * @var \Magento\Catalog\Model\ResourceModel\Category\Collection
@@ -60,6 +59,6 @@ class CollectionTest extends \PHPUnit_Framework_TestCase
         $this->assertCount(1, $categories);
         /** @var $category \Magento\Catalog\Model\Category */
         $category = $categories->getFirstItem();
-        $this->assertContains('category-3-on-2', $category->getUrl());
+        $this->assertStringEndsWith('category-3-on-2.html', $category->getUrl());
     }
 }

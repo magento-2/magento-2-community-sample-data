@@ -17,7 +17,6 @@ class Response extends \Magento\Authorizenet\Controller\Directpost\Payment
     public function execute()
     {
         $this->_responseAction('frontend');
-
         return $this->resultFactory->create(\Magento\Framework\Controller\ResultFactory::TYPE_PAGE);
     }
 }

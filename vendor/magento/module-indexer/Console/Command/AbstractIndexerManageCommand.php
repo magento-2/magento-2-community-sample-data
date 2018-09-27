@@ -5,12 +5,9 @@
  */
 namespace Magento\Indexer\Console\Command;
 
-use Magento\Framework\App\ObjectManager;
-use Magento\Framework\App\ObjectManagerFactory;
 use Magento\Framework\Indexer\IndexerInterface;
-use Magento\Indexer\Model\IndexerFactory;
-use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
+use Symfony\Component\Console\Input\InputArgument;
 
 /**
  * An Abstract class for all Indexer related commands.
@@ -23,33 +20,11 @@ abstract class AbstractIndexerManageCommand extends AbstractIndexerCommand
     const INPUT_KEY_INDEXERS = 'index';
 
     /**
-     * @var IndexerFactory|null
-     */
-    private $indexerFactory;
-
-    /**
-     * AbstractIndexerManageCommand constructor.
-     * @param ObjectManagerFactory $objectManagerFactory
-     * @param null $collectionFactory
-     * @param IndexerFactory|null $indexerFactory
-     * @throws \LogicException
-     */
-    public function __construct(
-        ObjectManagerFactory $objectManagerFactory,
-        $collectionFactory = null,
-        IndexerFactory $indexerFactory = null
-    ) {
-        parent::__construct($objectManagerFactory, $collectionFactory);
-        $this->indexerFactory = $indexerFactory;
-    }
-
-    /**
-     * Gets list of indexers
+     * Returns the ordered list of indexers.
      *
      * @param InputInterface $input
      * @return IndexerInterface[]
      * @throws \InvalidArgumentException
-     * @throws \Magento\Framework\Exception\LocalizedException
      */
     protected function getIndexers(InputInterface $input)
     {
@@ -58,33 +33,21 @@ abstract class AbstractIndexerManageCommand extends AbstractIndexerCommand
             $requestedTypes = $input->getArgument(self::INPUT_KEY_INDEXERS);
             $requestedTypes = array_filter(array_map('trim', $requestedTypes), 'strlen');
         }
+
         if (empty($requestedTypes)) {
-            return $this->getAllIndexers();
+            $indexers = $this->getAllIndexers();
         } else {
-            $indexerFactory = $this->getIndexerFactory();
-            $indexers = [];
-            $unsupportedTypes = [];
-            foreach ($requestedTypes as $code) {
-                $indexer = $indexerFactory->create();
-                try {
-                    $indexer->load($code);
-                    $indexers[] = $indexer;
-                } catch (\Exception $e) {
-                    $unsupportedTypes[] = $code;
-                }
-            }
+            $availableIndexers = $this->getAllIndexers();
+            $unsupportedTypes = array_diff($requestedTypes, array_keys($availableIndexers));
             if ($unsupportedTypes) {
-                $availableTypes = [];
-                $indexers = $this->getAllIndexers();
-                foreach ($indexers as $indexer) {
-                    $availableTypes[] = $indexer->getId();
-                }
                 throw new \InvalidArgumentException(
-                    "The following requested index types are not supported: '" . implode("', '", $unsupportedTypes)
-                    . "'." . PHP_EOL . 'Supported types: ' . implode(', ', $availableTypes)
+                    "The following requested index types are not supported: '" . join("', '", $unsupportedTypes)
+                    . "'." . PHP_EOL . 'Supported types: ' . join(", ", array_keys($availableIndexers))
                 );
             }
+            $indexers = array_intersect_key($availableIndexers, array_flip($requestedTypes));
         }
+
         return $indexers;
     }
 
@@ -92,7 +55,6 @@ abstract class AbstractIndexerManageCommand extends AbstractIndexerCommand
      * Get list of options and arguments for the command
      *
      * @return mixed
-     * @throws \InvalidArgumentException
      */
     public function getInputList()
     {
@@ -103,19 +65,5 @@ abstract class AbstractIndexerManageCommand extends AbstractIndexerCommand
                 'Space-separated list of index types or omit to apply to all indexes.'
             ),
         ];
-    }
-
-    /**
-     * @deprecated
-     * @return mixed
-     * @throws \Magento\Framework\Exception\LocalizedException
-     */
-    private function getIndexerFactory()
-    {
-        if (null === $this->indexerFactory) {
-            $this->indexerFactory = $this->getObjectManager()->create(IndexerFactory::class);
-        }
-
-        return $this->indexerFactory;
     }
 }

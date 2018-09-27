@@ -54,7 +54,6 @@ class Breadcrumbs extends \Magento\Framework\View\Element\Template
      */
     protected function _prepareLayout()
     {
-        $title = [];
         if ($breadcrumbsBlock = $this->getLayout()->getBlock('breadcrumbs')) {
             $breadcrumbsBlock->addCrumb(
                 'home',
@@ -65,6 +64,7 @@ class Breadcrumbs extends \Magento\Framework\View\Element\Template
                 ]
             );
 
+            $title = [];
             $path = $this->_catalogData->getBreadcrumbPath();
 
             foreach ($path as $name => $breadcrumb) {
@@ -73,18 +73,7 @@ class Breadcrumbs extends \Magento\Framework\View\Element\Template
             }
 
             $this->pageConfig->getTitle()->set(join($this->getTitleSeparator(), array_reverse($title)));
-
-            return parent::_prepareLayout();
         }
-
-        $path = $this->_catalogData->getBreadcrumbPath();
-
-        foreach ($path as $name => $breadcrumb) {
-            $title[] = $breadcrumb['label'];
-        }
-
-        $this->pageConfig->getTitle()->set(join($this->getTitleSeparator(), array_reverse($title)));
-
         return parent::_prepareLayout();
     }
 }

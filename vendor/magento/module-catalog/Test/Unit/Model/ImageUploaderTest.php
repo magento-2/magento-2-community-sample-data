@@ -5,10 +5,7 @@
  */
 namespace Magento\Catalog\Test\Unit\Model;
 
-/**
- * Magento\Catalog\Model\ImageUploader unit tests.
- */
-class ImageUploaderTest extends \PHPUnit_Framework_TestCase
+class ImageUploaderTest extends \PHPUnit\Framework\TestCase
 {
     /**
      * @var \Magento\Catalog\Model\ImageUploader
@@ -16,7 +13,7 @@ class ImageUploaderTest extends \PHPUnit_Framework_TestCase
     private $imageUploader;
 
     /**
-     * Core file storage database.
+     * Core file storage database
      *
      * @var \Magento\MediaStorage\Helper\File\Storage\Database|\PHPUnit_Framework_MockObject_MockObject
      */
@@ -37,14 +34,14 @@ class ImageUploaderTest extends \PHPUnit_Framework_TestCase
     private $mediaWriteDirectoryMock;
 
     /**
-     * Uploader factory.
+     * Uploader factory
      *
      * @var \Magento\MediaStorage\Model\File\UploaderFactory|\PHPUnit_Framework_MockObject_MockObject
      */
     private $uploaderFactoryMock;
 
     /**
-     * Store manager.
+     * Store manager
      *
      * @var \Magento\Store\Model\StoreManagerInterface|\PHPUnit_Framework_MockObject_MockObject
      */
@@ -56,62 +53,47 @@ class ImageUploaderTest extends \PHPUnit_Framework_TestCase
     private $loggerMock;
 
     /**
-     * Base tmp path.
+     * Base tmp path
      *
      * @var string
      */
     private $baseTmpPath;
 
     /**
-     * Base path.
+     * Base path
      *
      * @var string
      */
     private $basePath;
 
     /**
-     * Allowed extensions.
+     * Allowed extensions
      *
      * @var string
      */
     private $allowedExtensions;
 
-    /**
-     * @inheritdoc
-     */
     protected function setUp()
     {
-        $this->coreFileStorageDatabaseMock = $this->getMockBuilder(
+        $this->coreFileStorageDatabaseMock = $this->createMock(
             \Magento\MediaStorage\Helper\File\Storage\Database::class
-        )
-            ->disableOriginalConstructor()
-            ->getMock();
-        $this->mediaDirectoryMock = $this->getMockBuilder(
+        );
+        $this->mediaDirectoryMock = $this->createMock(
             \Magento\Framework\Filesystem::class
-        )
-            ->disableOriginalConstructor()
-            ->getMock();
-        $this->mediaWriteDirectoryMock = $this->getMockBuilder(
+        );
+        $this->mediaWriteDirectoryMock = $this->createMock(
             \Magento\Framework\Filesystem\Directory\WriteInterface::class
-        )
-            ->disableOriginalConstructor()
-            ->getMock();
+        );
         $this->mediaDirectoryMock->expects($this->any())->method('getDirectoryWrite')->willReturn(
             $this->mediaWriteDirectoryMock
         );
-        $this->uploaderFactoryMock = $this->getMockBuilder(
+        $this->uploaderFactoryMock = $this->createMock(
             \Magento\MediaStorage\Model\File\UploaderFactory::class
-        )
-            ->disableOriginalConstructor()
-            ->getMock();
-        $this->storeManagerMock = $this->getMockBuilder(
+        );
+        $this->storeManagerMock = $this->createMock(
             \Magento\Store\Model\StoreManagerInterface::class
-        )
-            ->disableOriginalConstructor()
-            ->getMock();
-        $this->loggerMock = $this->getMockBuilder(\Psr\Log\LoggerInterface::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        );
+        $this->loggerMock = $this->createMock(\Psr\Log\LoggerInterface::class);
         $this->baseTmpPath = 'base/tmp/';
         $this->basePath =  'base/real/';
         $this->allowedExtensions = ['.jpg'];
@@ -136,12 +118,10 @@ class ImageUploaderTest extends \PHPUnit_Framework_TestCase
             'image/jpg',
             'image/jpeg',
             'image/gif',
-            'image/png',
+            'image/png'
         ];
         /** @var \Magento\MediaStorage\Model\File\Uploader|\PHPUnit_Framework_MockObject_MockObject $uploader */
-        $uploader = $this->getMockBuilder(\Magento\MediaStorage\Model\File\Uploader::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $uploader = $this->createMock(\Magento\MediaStorage\Model\File\Uploader::class);
         $this->uploaderFactoryMock->expects($this->once())->method('create')->willReturn($uploader);
         $uploader->expects($this->once())->method('setAllowedExtensions')->with($this->allowedExtensions);
         $uploader->expects($this->once())->method('setAllowRenameFiles')->with(true);
@@ -150,11 +130,10 @@ class ImageUploaderTest extends \PHPUnit_Framework_TestCase
         $uploader->expects($this->once())->method('save')->with($this->basePath)
             ->willReturn(['tmp_name' => $this->baseTmpPath, 'file' => $fileId, 'path' => $this->basePath]);
         $uploader->expects($this->atLeastOnce())->method('checkMimeType')->with($allowedMimeTypes)->willReturn(true);
-        $storeMock = $this->getMockBuilder(\Magento\Store\Model\Store::class)
-            ->disableOriginalConstructor()
-            ->setMethods(['getBaseUrl'])
-            ->getMock();
-
+        $storeMock = $this->createPartialMock(
+            \Magento\Store\Model\Store::class,
+            ['getBaseUrl']
+        );
         $this->storeManagerMock->expects($this->once())->method('getStore')->willReturn($storeMock);
         $storeMock->expects($this->once())->method('getBaseUrl');
         $this->coreFileStorageDatabaseMock->expects($this->once())->method('saveFile');

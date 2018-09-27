@@ -25,13 +25,13 @@
 @message-global-caution__border-color: none;
 
 @header__background-color: false;
-@header-panel__background-color: @color-gray-middle3;
+@header-panel__background-color: @color-gray-middle4;
 @header-panel__text-color: @color-white;
-@header-icons-color: @color-gray56;
+@header-icons-color: @color-gray46;
 @header-icons-color-hover: @color-gray20;
 @customer-welcome__z-index: @dropdown-list__z-index + 1;
 
-@addto-color: @color-gray60;
+@addto-color: @color-gray40;
 @addto-hover-color: @primary__color;
 @minicart-icons-color: @header-icons-color;
 @minicart-icons-color-hover: @header-icons-color-hover;
@@ -56,7 +56,7 @@
 @filter-title-background-color: @color-gray94;
 @filter-link: @color-gray-darken4;
 @filter-link-hover: darken(@filter-link, 30%);
-@filter-quantity: @color-gray52;
+@filter-quantity: @color-gray46;
 
 //
 //  Common
@@ -72,6 +72,16 @@
 & when (@media-common = true) {
     body {
         .lib-css(background-color, @page__background-color);
+    }
+
+    .page-wrapper {
+        .lib-vendor-prefix-display(flex);
+        .lib-vendor-prefix-flex-direction(column);
+        min-height: 100vh; // Stretch content area for sticky footer
+    }
+
+    .page-main {
+        .lib-vendor-prefix-flex-grow(1);
     }
 
     //
@@ -167,6 +177,11 @@
         }
     }
 
+    .action-skip-wrapper {
+        height: 0;
+        position: relative;
+    }
+
     //
     //  Global notice
     //  ---------------------------------------------
@@ -256,6 +271,7 @@
     .copyright {
         .lib-css(background-color, @copyright__background-color);
         .lib-css(color, @color-white);
+        box-sizing: border-box;
         display: block;
         padding: @indent__s;
         text-align: center;
@@ -307,7 +323,6 @@
     //
     //  Widgets
     //  ---------------------------------------------
-
     .sidebar {
         .widget.block:not(:last-child),
         .widget:not(:last-child) {
@@ -421,17 +436,6 @@
 }
 
 //
-//  Mobile
-//  _____________________________________________
-
-.media-width(@extremum, @break) when (@extremum = 'max') and (@break = @screen__m) {
-    .cms-page-view .page-main {
-        padding-top: 41px;
-        position: relative;
-    }
-}
-
-//
 //  Desktop
 //  _____________________________________________
 
@@ -535,6 +539,7 @@
 
         .header.links {
             min-width: 175px;
+            z-index: 1000;
         }
 
         &.active {
@@ -585,6 +590,12 @@
                         display: inline-block;
                         margin: 0 -@indent__xs 0 @indent__xs;
                     }
+
+                    &:last-child {
+                        &:after {
+                            display: none;
+                        }
+                    }
                 }
 
                 > .customer-welcome + .authorization-link {
@@ -607,10 +618,7 @@
     }
 
     .page-wrapper {
-        .lib-vendor-prefix-display(flex);
-        .lib-vendor-prefix-flex-direction(column);
         margin: 0;
-        min-height: 100%; // Stretch content area for sticky footer
         position: relative;
         transition: margin .3s ease-out 0s;
 

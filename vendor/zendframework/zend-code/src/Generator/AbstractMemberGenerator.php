@@ -3,7 +3,7 @@
  * Zend Framework (http://framework.zend.com/)
  *
  * @link      http://github.com/zendframework/zf2 for the canonical source repository
- * @copyright Copyright (c) 2005-2015 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright Copyright (c) 2005-2016 Zend Technologies USA Inc. (http://www.zend.com)
  * @license   http://framework.zend.com/license/new-bsd New BSD License
  */
 
@@ -17,6 +17,7 @@ abstract class AbstractMemberGenerator extends AbstractGenerator
     const FLAG_ABSTRACT  = 0x01;
     const FLAG_FINAL     = 0x02;
     const FLAG_STATIC    = 0x04;
+    const FLAG_INTERFACE = 0x08;
     const FLAG_PUBLIC    = 0x10;
     const FLAG_PROTECTED = 0x20;
     const FLAG_PRIVATE   = 0x40;
@@ -99,6 +100,23 @@ abstract class AbstractMemberGenerator extends AbstractGenerator
     public function isAbstract()
     {
         return (bool) ($this->flags & self::FLAG_ABSTRACT);
+    }
+
+    /**
+     * @param  bool $isInterface
+     * @return AbstractMemberGenerator
+     */
+    public function setInterface($isInterface)
+    {
+        return (($isInterface) ? $this->addFlag(self::FLAG_INTERFACE) : $this->removeFlag(self::FLAG_INTERFACE));
+    }
+
+    /**
+     * @return bool
+     */
+    public function isInterface()
+    {
+        return (bool) ($this->flags & self::FLAG_INTERFACE);
     }
 
     /**

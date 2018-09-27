@@ -4,6 +4,7 @@
  * See COPYING.txt for license details.
  */
 
+declare(strict_types=1);
 namespace Magento\Search\Model;
 
 use Magento\Search\Api\SynonymAnalyzerInterface;
@@ -81,13 +82,13 @@ class SynonymAnalyzer implements SynonymAnalyzerInterface
     /**
      * Helper method to find the matching of $pattern to $synonymGroupsToExamine.
      * If matches, the particular array index is returned.
-     * Otherwise false will be returned.
+     * Otherwise null will be returned.
      *
      * @param string $pattern
      * @param array $synonymGroupsToExamine
      * @return int|null
      */
-    private function findInArray($pattern, array $synonymGroupsToExamine)
+    private function findInArray(string $pattern, array $synonymGroupsToExamine)
     {
         $position = 0;
         foreach ($synonymGroupsToExamine as $synonymGroup) {
@@ -129,7 +130,7 @@ class SynonymAnalyzer implements SynonymAnalyzerInterface
      * @param array $words
      * @return string
      */
-    private function getSearchPattern(array $words)
+    private function getSearchPattern(array $words): string
     {
         $patterns = [];
         for ($lastItem = count($words); $lastItem > 0; $lastItem--) {
@@ -151,7 +152,7 @@ class SynonymAnalyzer implements SynonymAnalyzerInterface
      * @param string $phrase
      * @return string[]
      */
-    private function getSynonymGroupsByPhrase($phrase)
+    private function getSynonymGroupsByPhrase(string $phrase): array
     {
         $result = [];
 

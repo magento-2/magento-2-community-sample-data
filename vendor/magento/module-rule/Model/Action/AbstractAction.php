@@ -9,7 +9,10 @@ use Magento\Framework\Data\Form;
 use Magento\Framework\Data\Form\Element\AbstractElement;
 
 /**
- * Quote rule action abstract
+ * Abstract rule action
+ *
+ * @api
+ * @since 100.0.2
  */
 abstract class AbstractAction extends \Magento\Framework\DataObject implements ActionInterface
 {
@@ -275,7 +278,7 @@ abstract class AbstractAction extends \Magento\Framework\DataObject implements A
                 'value_name' => $this->getAttributeName()
             ]
         )->setRenderer(
-            $this->_layout->getBlockSingleton('Magento\Rule\Block\Editable')
+            $this->_layout->getBlockSingleton(\Magento\Rule\Block\Editable::class)
         );
     }
 
@@ -294,7 +297,7 @@ abstract class AbstractAction extends \Magento\Framework\DataObject implements A
                 'value_name' => $this->getOperatorName()
             ]
         )->setRenderer(
-            $this->_layout->getBlockSingleton('Magento\Rule\Block\Editable')
+            $this->_layout->getBlockSingleton(\Magento\Rule\Block\Editable::class)
         );
     }
 
@@ -312,7 +315,7 @@ abstract class AbstractAction extends \Magento\Framework\DataObject implements A
                 'value_name' => $this->getValueName()
             ]
         )->setRenderer(
-            $this->_layout->getBlockSingleton('Magento\Rule\Block\Editable')
+            $this->_layout->getBlockSingleton(\Magento\Rule\Block\Editable::class)
         );
     }
 

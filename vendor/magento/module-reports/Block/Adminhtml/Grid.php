@@ -9,7 +9,9 @@ namespace Magento\Reports\Block\Adminhtml;
 /**
  * Backend report grid block
  *
+ * @api
  * @author     Magento Core Team <core@magentocommerce.com>
+ * @since 100.0.2
  */
 class Grid extends \Magento\Backend\Block\Widget\Grid
 {
@@ -373,7 +375,7 @@ class Grid extends \Magento\Backend\Block\Widget\Grid
     {
         $this->addChild(
             'refresh_button',
-            'Magento\Backend\Block\Widget\Button',
+            \Magento\Backend\Block\Widget\Button::class,
             ['label' => __('Refresh'), 'onclick' => "{$this->getJsObjectName()}.doFilter();", 'class' => 'task']
         );
     }

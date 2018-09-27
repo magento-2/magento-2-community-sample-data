@@ -8,12 +8,14 @@ namespace Magento\Catalog\Controller\Adminhtml\Category;
 use Magento\Framework\View\Element\BlockInterface;
 
 /**
- * Catalog category widgets controller for CMS WYSIWYG.
+ * Catalog category widgets controller for CMS WYSIWYG
+ *
+ * @author     Magento Core Team <core@magentocommerce.com>
  */
 abstract class Widget extends \Magento\Backend\App\Action
 {
     /**
-     * Authorization level of a basic admin session.
+     * Authorization level of a basic admin session
      *
      * @see _isAllowed()
      */
@@ -41,15 +43,16 @@ abstract class Widget extends \Magento\Backend\App\Action
      */
     protected function _getCategoryTreeBlock()
     {
-        return $this->layoutFactory->create()->createBlock(
-            'Magento\Catalog\Block\Adminhtml\Category\Widget\Chooser',
-            '',
-            [
-                'data' => [
-                    'id' => $this->getRequest()->getParam('uniq_id'),
-                    'use_massaction' => $this->getRequest()->getParam('use_massaction', false),
+        return $this->layoutFactory->create()
+            ->createBlock(
+                \Magento\Catalog\Block\Adminhtml\Category\Widget\Chooser::class,
+                '',
+                [
+                    'data' => [
+                        'id' => $this->getRequest()->getParam('uniq_id'),
+                        'use_massaction' => $this->getRequest()->getParam('use_massaction', false),
+                    ]
                 ]
-            ]
-        );
+            );
     }
 }

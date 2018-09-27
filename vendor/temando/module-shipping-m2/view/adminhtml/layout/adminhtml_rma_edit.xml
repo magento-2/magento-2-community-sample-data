@@ -1,0 +1,34 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * Refer to LICENSE.txt distributed with the Temando Shipping module for notice of license
+ */
+-->
+<page xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:View/Layout/etc/page_configuration.xsd">
+    <body>
+        <referenceBlock name="magento_rma_edit_tabs">
+            <block class="Temando\Shipping\Block\Adminhtml\Rma\Edit\Tab\Shipments" template="Magento_Rma::edit/items.phtml" name="magento_rma_edit_tab_shipments">
+                <block class="Magento\Framework\View\Element\Text" name="temando_rma_added_shipment_listing_container">
+                    <arguments>
+                        <argument name="text" xsi:type="string">Added Shipments</argument>
+                    </arguments>
+                </block>
+                <uiComponent name="temando_rma_added_shipment_listing"/>
+
+                <block class="Magento\Framework\View\Element\Text" name="temando_rma_available_shipment_listing_container">
+                    <arguments>
+                        <argument name="text" xsi:type="string">Available Shipments</argument>
+                    </arguments>
+                </block>
+                <uiComponent name="temando_rma_available_shipment_listing"/>
+            </block>
+            <action method="addTab">
+                <argument name="name" xsi:type="string">rma_shipments</argument>
+                <argument name="block" xsi:type="string">magento_rma_edit_tab_shipments</argument>
+            </action>
+        </referenceBlock>
+        <referenceContainer name="before.body.end">
+            <block class="Magento\Backend\Block\Template" name="magento_rma_create_label_notice" template="Temando_Shipping::rma/edit/create_label_notice.phtml"/>
+        </referenceContainer>
+    </body>
+</page>

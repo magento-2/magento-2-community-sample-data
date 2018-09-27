@@ -17,28 +17,22 @@ use Magento\Tax\Model\Config;
 class ApplyDiscountOnPrices implements \Magento\Tax\Model\System\Message\NotificationInterface
 {
     /**
-     * Store manager object.
-     *
      * @var \Magento\Store\Model\StoreManagerInterface
      */
     private $storeManager;
 
     /**
-     * Store url interface object.
-     *
      * @var \Magento\Framework\UrlInterface
      */
     private $urlBuilder;
 
     /**
-     * Store tax configuration.
-     *
      * @var Config
      */
     private $taxConfig;
 
     /**
-     * Stores with invalid display settings.
+     * Stores with invalid display settings
      *
      * @var array
      */
@@ -76,7 +70,6 @@ class ApplyDiscountOnPrices implements \Magento\Tax\Model\System\Message\Notific
         if (!$this->taxConfig->isWrongApplyDiscountSettingIgnored() && $this->getStoresWithWrongSettings()) {
             return true;
         }
-
         return false;
     }
 
@@ -89,10 +82,8 @@ class ApplyDiscountOnPrices implements \Magento\Tax\Model\System\Message\Notific
 
         if ($this->isDisplayed()) {
             $messageDetails .= '<strong>';
-            $messageDetails .= __(
-                'To apply the discount on prices including tax and apply the tax after discount,'.
-                ' set Catalog Prices to “Including Tax”. '
-            );
+            $messageDetails .= __('To apply the discount on prices including tax and apply the tax after discount,'
+                . ' set Catalog Prices to “Including Tax”. ');
             $messageDetails .= '</strong><p>';
             $messageDetails .= __('Store(s) affected: ');
             $messageDetails .= implode(', ', $this->getStoresWithWrongSettings());
@@ -134,14 +125,13 @@ class ApplyDiscountOnPrices implements \Magento\Tax\Model\System\Message\Notific
                 $this->storesWithInvalidSettings[] = $website->getName() . ' (' . $store->getName() . ')';
             }
         }
-
         return $this->storesWithInvalidSettings;
     }
 
     /**
      * Check if settings are valid.
      *
-     * @param null|int|bool|string|\Magento\Store\Model\Store $store
+     * @param null|int|bool|string|\Magento\Store\Model\Store $store $store
      * @return bool false if settings are incorrect
      */
     private function checkSettings($store = null)

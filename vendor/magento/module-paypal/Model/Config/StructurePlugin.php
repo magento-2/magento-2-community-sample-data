@@ -9,10 +9,13 @@ use Magento\Config\Model\Config\ScopeDefiner;
 use Magento\Config\Model\Config\Structure;
 use Magento\Config\Model\Config\Structure\Element\Section;
 use Magento\Config\Model\Config\Structure\ElementInterface;
-use Magento\Framework\App\ObjectManager;
 use Magento\Paypal\Helper\Backend as BackendHelper;
+use Magento\Framework\App\ObjectManager;
 use Magento\Paypal\Model\Config\Structure\PaymentSectionModifier;
 
+/**
+ * Plugin for \Magento\Config\Model\Config\Structure
+ */
 class StructurePlugin
 {
     /**
@@ -23,12 +26,12 @@ class StructurePlugin
     /**
      * @var BackendHelper
      */
-    protected $_helper;
+    private $backendHelper;
 
     /**
      * @var ScopeDefiner
      */
-    protected $_scopeDefiner;
+    private $scopeDefiner;
 
     /**
      * @var PaymentSectionModifier
@@ -38,7 +41,7 @@ class StructurePlugin
     /**
      * @var string[]
      */
-    private static $_paypalConfigCountries = [
+    private static $paypalConfigCountries = [
         'payment_us',
         'payment_ca',
         'payment_au',
@@ -54,16 +57,16 @@ class StructurePlugin
 
     /**
      * @param ScopeDefiner $scopeDefiner
-     * @param BackendHelper $helper
+     * @param BackendHelper $backendHelper
      * @param PaymentSectionModifier|null $paymentSectionModifier
      */
     public function __construct(
         ScopeDefiner $scopeDefiner,
-        BackendHelper $helper,
+        BackendHelper $backendHelper,
         PaymentSectionModifier $paymentSectionModifier = null
     ) {
-        $this->_scopeDefiner = $scopeDefiner;
-        $this->_helper = $helper;
+        $this->scopeDefiner = $scopeDefiner;
+        $this->backendHelper = $backendHelper;
         $this->paymentSectionModifier = $paymentSectionModifier
                                       ?: ObjectManager::getInstance()->get(PaymentSectionModifier::class);
     }
@@ -76,10 +79,12 @@ class StructurePlugin
      */
     public static function getPaypalConfigCountries($addOther = false)
     {
-        $countries = self::$_paypalConfigCountries;
+        $countries = self::$paypalConfigCountries;
+
         if ($addOther) {
             $countries[] = 'payment_other';
         }
+
         return $countries;
     }
 
@@ -89,34 +94,39 @@ class StructurePlugin
      * @param Structure $subject
      * @param \Closure $proceed
      * @param array $pathParts
-     * @return ElementInterface
+     * @return ElementInterface|null
+     *
      * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      */
-    public function aroundGetElementByPathParts(
-        Structure $subject,
-        \Closure $proceed,
-        array $pathParts
-    ) {
+    public function aroundGetElementByPathParts(Structure $subject, \Closure $proceed, array $pathParts)
+    {
         $isSectionChanged = $pathParts[0] == 'payment';
+
         if ($isSectionChanged) {
-            $requestedCountrySection = 'payment_' . strtolower($this->_helper->getConfigurationCountryCode());
+            $requestedCountrySection = 'payment_' . strtolower($this->backendHelper->getConfigurationCountryCode());
+
             if (in_array($requestedCountrySection, self::getPaypalConfigCountries())) {
                 $pathParts[0] = $requestedCountrySection;
             } else {
                 $pathParts[0] = 'payment_other';
             }
         }
-        /** @var ElementInterface $result */
+
         $result = $proceed($pathParts);
-        if ($isSectionChanged && isset($result)) {
+
+        if ($isSectionChanged && $result) {
             if ($result instanceof Section) {
                 $this->restructurePayments($result);
-                $result->setData(array_merge(
-                    $result->getData(),
-                    ['showInDefault' => true, 'showInWebsite' => true, 'showInStore' => true]
-                ), $this->_scopeDefiner->getScope());
+                $result->setData(
+                    array_merge(
+                        $result->getData(),
+                        ['showInDefault' => true, 'showInWebsite' => true, 'showInStore' => true]
+                    ),
+                    $this->scopeDefiner->getScope()
+                );
             }
         }
+
         return $result;
     }
 
@@ -132,6 +142,6 @@ class StructurePlugin
         $sectionInitialStructure = isset($sectionData['children']) ? $sectionData['children'] : [];
         $sectionChangedStructure = $this->paymentSectionModifier->modify($sectionInitialStructure);
         $sectionData['children'] = $sectionChangedStructure;
-        $result->setData($sectionData, $this->_scopeDefiner->getScope());
+        $result->setData($sectionData, $this->scopeDefiner->getScope());
     }
 }

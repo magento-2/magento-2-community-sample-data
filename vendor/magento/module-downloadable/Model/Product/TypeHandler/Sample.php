@@ -11,6 +11,8 @@ use Magento\Downloadable\Model\ComponentInterface;
 
 /**
  * Class Sample
+ * @api
+ * @since 100.0.2
  */
 class Sample extends AbstractTypeHandler
 {

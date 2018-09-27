@@ -7,6 +7,11 @@ namespace Magento\Framework\Api\Search;
 
 use Magento\Framework\Api\SearchResultsInterface;
 
+/**
+ * Interface SearchResultInterface
+ *
+ * @api
+ */
 interface SearchResultInterface extends SearchResultsInterface
 {
     /**#@+

@@ -9,17 +9,16 @@ namespace Magento\CatalogSearch\Test\Unit\Model\Adapter\Mysql\Filter;
 use Magento\CatalogSearch\Model\Search\RequestGenerator;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager as ObjectManagerHelper;
 
-/**
- * Tests \Magento\CatalogSearch\Model\Adapter\Mysql\Filter\AliasResolver class.
- *
- */
-class AliasResolverTest extends \PHPUnit_Framework_TestCase
+class AliasResolverTest extends \PHPUnit\Framework\TestCase
 {
     /**
      * @var \Magento\CatalogSearch\Model\Adapter\Mysql\Filter\AliasResolver
      */
     private $aliasResolver;
 
+    /**
+     * @inheritDoc
+     */
     protected function setUp()
     {
         $objectManagerHelper = new ObjectManagerHelper($this);
@@ -43,7 +42,6 @@ class AliasResolverTest extends \PHPUnit_Framework_TestCase
         $filter->expects($this->once())
             ->method('getField')
             ->willReturn($field);
-
         $this->assertSame($expectedAlias, $this->aliasResolver->getAlias($filter));
     }
 
@@ -63,11 +61,7 @@ class AliasResolverTest extends \PHPUnit_Framework_TestCase
             ],
             'category_ids' => [
                 'field' => 'category_ids',
-                'alias' => 'category_products_index',
-            ],
-            'visibility' => [
-                'field' => 'visibility',
-                'alias' => 'category_products_index',
+                'alias' => 'category_ids_index',
             ],
         ];
     }

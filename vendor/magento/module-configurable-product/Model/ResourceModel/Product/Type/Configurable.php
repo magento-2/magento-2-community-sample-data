@@ -9,16 +9,22 @@ namespace Magento\ConfigurableProduct\Model\ResourceModel\Product\Type;
 
 use Magento\Catalog\Api\Data\ProductInterface;
 use Magento\ConfigurableProduct\Api\Data\OptionInterface;
-use Magento\Framework\App\ObjectManager;
+use Magento\Eav\Model\Entity\Attribute\AbstractAttribute;
+use Magento\Catalog\Model\ResourceModel\Product\Relation as ProductRelation;
+use Magento\Framework\Model\ResourceModel\Db\Context as DbContext;
+use Magento\Catalog\Model\Product as ProductModel;
 use Magento\ConfigurableProduct\Model\AttributeOptionProviderInterface;
 use Magento\ConfigurableProduct\Model\ResourceModel\Attribute\OptionProvider;
+use Magento\Framework\App\ScopeResolverInterface;
+use Magento\Framework\App\ObjectManager;
+use Magento\Framework\DB\Adapter\AdapterInterface;
 
 class Configurable extends \Magento\Framework\Model\ResourceModel\Db\AbstractDb
 {
     /**
      * Catalog product relation
      *
-     * @var \Magento\Catalog\Model\ResourceModel\Product\Relation
+     * @var ProductRelation
      */
     protected $catalogProductRelation;
 
@@ -28,29 +34,36 @@ class Configurable extends \Magento\Framework\Model\ResourceModel\Db\AbstractDb
     private $attributeOptionProvider;
 
     /**
+     * @var ScopeResolverInterface
+     */
+    private $scopeResolver;
+
+    /**
      * @var OptionProvider
      */
     private $optionProvider;
 
     /**
-     * @param \Magento\Framework\Model\ResourceModel\Db\Context $context
-     * @param \Magento\Catalog\Model\ResourceModel\Product\Relation $catalogProductRelation
+     * @param DbContext $context
+     * @param ProductRelation $catalogProductRelation
      * @param string $connectionName
-     * @param OptionProvider $optionProvider
+     * @param ScopeResolverInterface $scopeResolver
      * @param AttributeOptionProviderInterface $attributeOptionProvider
+     * @param OptionProvider $optionProvider
      */
     public function __construct(
-        \Magento\Framework\Model\ResourceModel\Db\Context $context,
-        \Magento\Catalog\Model\ResourceModel\Product\Relation $catalogProductRelation,
+        DbContext $context,
+        ProductRelation $catalogProductRelation,
         $connectionName = null,
-        OptionProvider $optionProvider = null,
-        AttributeOptionProviderInterface $attributeOptionProvider = null
+        ScopeResolverInterface $scopeResolver = null,
+        AttributeOptionProviderInterface $attributeOptionProvider = null,
+        OptionProvider $optionProvider = null
     ) {
         $this->catalogProductRelation = $catalogProductRelation;
+        $this->scopeResolver = $scopeResolver;
         $this->attributeOptionProvider = $attributeOptionProvider
             ?: ObjectManager::getInstance()->get(AttributeOptionProviderInterface::class);
         $this->optionProvider = $optionProvider ?: ObjectManager::getInstance()->get(OptionProvider::class);
-
         parent::__construct($context, $connectionName);
     }
 
@@ -86,7 +99,7 @@ class Configurable extends \Magento\Framework\Model\ResourceModel\Db\AbstractDb
     /**
      * Save configurable product relations
      *
-     * @param \Magento\Catalog\Model\Product $mainProduct the parent id
+     * @param ProductModel $mainProduct the parent id
      * @param array $productIds the children id array
      * @return $this
      */
@@ -97,26 +110,33 @@ class Configurable extends \Magento\Framework\Model\ResourceModel\Db\AbstractDb
         }
 
         $productId = $mainProduct->getData($this->optionProvider->getProductEntityLinkField());
+        $select = $this->getConnection()->select()->from(
+            ['t' => $this->getMainTable()],
+            ['product_id']
+        )->where(
+            't.parent_id = ?',
+            $productId
+        );
 
-        $data = [];
-        foreach ($productIds as $id) {
-            $data[] = ['product_id' => (int) $id, 'parent_id' => (int) $productId];
-        }
+        $existingProductIds = $this->getConnection()->fetchCol($select);
+        $insertProductIds = array_diff($productIds, $existingProductIds);
+        $deleteProductIds = array_diff($existingProductIds, $productIds);
 
-        if (!empty($data)) {
-            $this->getConnection()->insertOnDuplicate(
+        if (!empty($insertProductIds)) {
+            $insertData = [];
+            foreach ($insertProductIds as $id) {
+                $insertData[] = ['product_id' => (int) $id, 'parent_id' => (int) $productId];
+            }
+            $this->getConnection()->insertMultiple(
                 $this->getMainTable(),
-                $data,
-                ['product_id', 'parent_id']
+                $insertData
             );
         }
 
-        $where = ['parent_id = ?' => $productId];
-        if (!empty($productIds)) {
-            $where['product_id NOT IN(?)'] = $productIds;
+        if (!empty($deleteProductIds)) {
+            $where = ['parent_id = ?' => $productId, 'product_id IN (?)' => $deleteProductIds];
+            $this->getConnection()->delete($this->getMainTable(), $where);
         }
-
-        $this->getConnection()->delete($this->getMainTable(), $where);
 
         // configurable product relations should be added to relation table
         $this->catalogProductRelation->processRelations($productId, $productIds);
@@ -153,10 +173,13 @@ class Configurable extends \Magento\Framework\Model\ResourceModel\Db\AbstractDb
             $parentId
         );
 
-        $childrenIds = [0 => []];
-        foreach ($this->getConnection()->fetchAll($select) as $row) {
-            $childrenIds[0][$row['product_id']] = $row['product_id'];
-        }
+        $childrenIds = [
+            0 => array_column(
+                $this->getConnection()->fetchAll($select),
+                'product_id',
+                'product_id'
+            )
+        ];
 
         return $childrenIds;
     }
@@ -185,7 +208,7 @@ class Configurable extends \Magento\Framework\Model\ResourceModel\Db\AbstractDb
     /**
      * Collect product options with values according to the product instance and attributes, that were received
      *
-     * @param \Magento\Catalog\Model\Product $product
+     * @param ProductModel $product
      * @param array $attributes
      * @return array
      */
@@ -203,11 +226,11 @@ class Configurable extends \Magento\Framework\Model\ResourceModel\Db\AbstractDb
     /**
      * Load options for attribute
      *
-     * @param \Magento\Eav\Model\Entity\Attribute\AbstractAttribute $superAttribute
+     * @param AbstractAttribute $superAttribute
      * @param int $productId
      * @return array
      */
-    public function getAttributeOptions($superAttribute, $productId)
+    public function getAttributeOptions(AbstractAttribute $superAttribute, $productId)
     {
         return $this->attributeOptionProvider->getAttributeOptions($superAttribute, $productId);
     }

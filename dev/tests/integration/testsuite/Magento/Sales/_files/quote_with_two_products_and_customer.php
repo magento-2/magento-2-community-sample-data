@@ -23,7 +23,7 @@ $quote->collectTotals()
 
 /** @var \Magento\Quote\Model\QuoteIdMask $quoteIdMask */
 $quoteIdMask = Bootstrap::getObjectManager()
-    ->create('Magento\Quote\Model\QuoteIdMaskFactory')
+    ->create(\Magento\Quote\Model\QuoteIdMaskFactory::class)
     ->create();
 $quoteIdMask->setQuoteId($quote->getId());
 $quoteIdMask->setDataChanges(true);

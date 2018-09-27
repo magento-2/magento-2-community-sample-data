@@ -5,23 +5,16 @@
  */
 namespace Magento\CatalogSearch\Model\Indexer\Fulltext\Action;
 
-/**
- * @magentoDbIsolation disabled
- */
-class DataProviderTest extends \PHPUnit_Framework_TestCase
+class DataProviderTest extends \PHPUnit\Framework\TestCase
 {
     /**
      * @magentoDataFixture Magento/CatalogSearch/_files/product_for_search.php
+     * @magentoDbIsolation disabled
      */
     public function testSearchProductByAttribute()
     {
         /** @var $objectManager \Magento\TestFramework\ObjectManager */
         $objectManager = \Magento\TestFramework\Helper\Bootstrap::getObjectManager();
-
-        /** @var \Magento\Framework\Indexer\IndexerInterface $indexer */
-        $indexer = $objectManager->create(\Magento\Indexer\Model\Indexer::class);
-        $indexer->load('catalogsearch_fulltext');
-        $indexer->reindexAll();
 
         $config = $objectManager->create(\Magento\Framework\Search\Request\Config::class);
         /** @var \Magento\Framework\Search\Request\Builder $requestBuilder */

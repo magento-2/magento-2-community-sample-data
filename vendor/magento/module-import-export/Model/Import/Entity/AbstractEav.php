@@ -9,7 +9,11 @@ use Magento\ImportExport\Model\Import\ErrorProcessing\ProcessingErrorAggregatorI
 
 /**
  * Import EAV entity abstract model
+ *
+ * @api
+ *
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
+ * @since 100.0.2
  */
 abstract class AbstractEav extends \Magento\ImportExport\Model\Import\AbstractEntity
 {
@@ -176,7 +180,7 @@ abstract class AbstractEav extends \Magento\ImportExport\Model\Import\AbstractEn
                 'table' => $attribute->getBackend()->getTable(),
                 'is_required' => $attribute->getIsRequired(),
                 'is_static' => $attribute->isStatic(),
-                'rules' => $attribute->getValidateRules() ? unserialize($attribute->getValidateRules()) : null,
+                'rules' => $attribute->getValidateRules() ? $attribute->getValidateRules() : null,
                 'type' => \Magento\ImportExport\Model\Import::getAttributeType($attribute),
                 'options' => $this->getAttributeOptions($attribute),
             ];
@@ -224,12 +228,7 @@ abstract class AbstractEav extends \Magento\ImportExport\Model\Import\AbstractEn
                     foreach ($value as $innerOption) {
                         // skip ' -- Please Select -- ' option
                         if (strlen($innerOption['value'])) {
-                            if ($attribute->isStatic()) {
-                                $options[strtolower($innerOption[$index])] = $innerOption['value'];
-                            } else {
-                                // Non-static attributes flip keys an values
-                                $options[$innerOption['value']] = $innerOption[$index];
-                            }
+                            $options[mb_strtolower($innerOption[$index])] = $innerOption['value'];
                         }
                     }
                 }

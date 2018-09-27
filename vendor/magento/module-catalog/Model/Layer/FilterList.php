@@ -6,7 +6,6 @@
 
 namespace Magento\Catalog\Model\Layer;
 
-
 class FilterList
 {
     const CATEGORY_FILTER   = 'category';
@@ -30,10 +29,10 @@ class FilterList
      * @var string[]
      */
     protected $filterTypes = [
-        self::CATEGORY_FILTER  => 'Magento\Catalog\Model\Layer\Filter\Category',
-        self::ATTRIBUTE_FILTER => 'Magento\Catalog\Model\Layer\Filter\Attribute',
-        self::PRICE_FILTER     => 'Magento\Catalog\Model\Layer\Filter\Price',
-        self::DECIMAL_FILTER   => 'Magento\Catalog\Model\Layer\Filter\Decimal',
+        self::CATEGORY_FILTER  => \Magento\Catalog\Model\Layer\Filter\Category::class,
+        self::ATTRIBUTE_FILTER => \Magento\Catalog\Model\Layer\Filter\Attribute::class,
+        self::PRICE_FILTER     => \Magento\Catalog\Model\Layer\Filter\Price::class,
+        self::DECIMAL_FILTER   => \Magento\Catalog\Model\Layer\Filter\Decimal::class,
     ];
 
     /**

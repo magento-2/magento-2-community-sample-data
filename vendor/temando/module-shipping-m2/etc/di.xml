@@ -1,0 +1,477 @@
+<?xml version="1.0"?>
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:ObjectManager/etc/config.xsd">
+    <!-- # public interface preferences -->
+    <preference for="Temando\Shipping\Api\Data\Checkout\AddressInterface"
+                type="Temando\Shipping\Model\Checkout\Address" />
+    <preference for="Temando\Shipping\Api\Data\CollectionPoint\OrderCollectionPointInterface"
+                type="Temando\Shipping\Model\CollectionPoint\OrderCollectionPoint" />
+    <preference for="Temando\Shipping\Api\Data\CollectionPoint\QuoteCollectionPointInterface"
+                type="Temando\Shipping\Model\CollectionPoint\QuoteCollectionPoint" />
+    <preference for="Temando\Shipping\Api\Data\CollectionPoint\SearchRequestInterface"
+                type="Temando\Shipping\Model\CollectionPoint\SearchRequest" />
+    <preference for="Temando\Shipping\Api\Data\Order\OrderReferenceInterface"
+                type="Temando\Shipping\Model\Order\OrderReference" />
+    <preference for="Temando\Shipping\Api\Data\Order\ShippingExperienceInterface"
+                type="Temando\Shipping\Model\Order\ShippingExperience" />
+    <preference for="Temando\Shipping\Api\Data\Shipment\ShipmentReferenceInterface"
+                type="Temando\Shipping\Model\Shipment\ShipmentReference" />
+
+    <preference for="Temando\Shipping\Api\CollectionPoint\CartCollectionPointManagementInterface"
+                type="Temando\Shipping\Model\CollectionPoint\CartCollectionPointManagement" />
+    <preference for="Temando\Shipping\Api\CollectionPoint\GuestCartCollectionPointManagementInterface"
+                type="Temando\Shipping\Model\CollectionPoint\GuestCartCollectionPointManagement" />
+    <preference for="Temando\Shipping\Api\Quote\ShippingMethodManagementInterface"
+                type="Temando\Shipping\Model\Quote\ShippingMethodManagement" />
+    <preference for="Temando\Shipping\Api\Rma\RmaShipmentManagementInterface"
+                type="Temando\Shipping\Model\Rma\RmaShipmentManagement" />
+    <preference for="Temando\Shipping\Api\Data\CollectionPoint\CollectionPointSearchResultInterface"
+                type="Temando\Shipping\Model\ResourceModel\CollectionPoint\CollectionPointSearchResult" />
+    <preference for="Temando\Shipping\Api\Quote\CartCheckoutFieldManagementInterface"
+                type="Temando\Shipping\Model\Quote\CartCheckoutFieldManagement" />
+    <preference for="Temando\Shipping\Api\Quote\GuestCartCheckoutFieldManagementInterface"
+                type="Temando\Shipping\Model\Quote\GuestCartCheckoutFieldManagement" />
+    <preference for="Temando\Shipping\Api\Quote\CartDeliveryOptionManagementInterface"
+                type="Temando\Shipping\Model\Quote\CartDeliveryOptionManagement" />
+    <preference for="Temando\Shipping\Api\Quote\GuestCartDeliveryOptionManagementInterface"
+                type="Temando\Shipping\Model\Quote\GuestCartDeliveryOptionManagement" />
+
+    <!-- # internal data interface preferences -->
+    <!-- ## webservice request types -->
+    <preference for="Temando\Shipping\Rest\Request\AuthRequestInterface"
+                type="Temando\Shipping\Rest\Request\AuthRequest"/>
+    <preference for="Temando\Shipping\Rest\Request\ItemRequestInterface"
+                type="Temando\Shipping\Rest\Request\ItemRequest"/>
+    <preference for="Temando\Shipping\Rest\Request\ListRequestInterface"
+                type="Temando\Shipping\Rest\Request\ListRequest"/>
+    <preference for="Temando\Shipping\Rest\Request\OrderRequestInterface"
+                type="Temando\Shipping\Rest\Request\OrderRequest"/>
+    <preference for="Temando\Shipping\Rest\Request\RequestHeadersInterface"
+                type="\Temando\Shipping\Rest\Request\RequestHeaders"/>
+    <preference for="Temando\Shipping\Rest\Request\StreamCreateRequestInterface"
+                type="Temando\Shipping\Rest\Request\StreamCreateRequest"/>
+    <preference for="Temando\Shipping\Rest\Request\StreamEventItemRequestInterface"
+                type="Temando\Shipping\Rest\Request\StreamEventItemRequest"/>
+    <preference for="Temando\Shipping\Rest\Request\StreamEventListRequestInterface"
+                type="Temando\Shipping\Rest\Request\StreamEventListRequest"/>
+    <preference for="Temando\Shipping\Rest\Request\Type\OrderRequestTypeInterface"
+                type="Temando\Shipping\Rest\Request\Type\OrderRequestType"/>
+
+    <!-- ## account data return types -->
+    <preference for="Temando\Shipping\Model\CarrierInterface"
+                type="Temando\Shipping\Model\Carrier" />
+    <preference for="Temando\Shipping\Model\LocationInterface"
+                type="Temando\Shipping\Model\Location" />
+    <preference for="Temando\Shipping\Model\PackagingInterface"
+                type="Temando\Shipping\Model\Packaging" />
+
+    <!-- ## shipment/dispatch/return shipment documentation -->
+    <preference for="Temando\Shipping\Model\DocumentationInterface"
+                type="Temando\Shipping\Model\Documentation" />
+
+    <!-- ## shipment entity and related (sub-)types -->
+    <preference for="Temando\Shipping\Model\ShipmentInterface"
+                type="Temando\Shipping\Model\Shipment" />
+    <preference for="Temando\Shipping\Model\Shipment\AllocationErrorInterface"
+                type="Temando\Shipping\Model\Shipment\AllocationError" />
+    <preference for="Temando\Shipping\Model\Shipment\CapabilityInterface"
+                type="Temando\Shipping\Model\Shipment\Capability" />
+    <preference for="Temando\Shipping\Model\Shipment\ExportDeclarationInterface"
+                type="Temando\Shipping\Model\Shipment\ExportDeclaration" />
+    <preference for="Temando\Shipping\Model\Shipment\FulfillmentInterface"
+                type="Temando\Shipping\Model\Shipment\Fulfillment" />
+    <preference for="Temando\Shipping\Model\Shipment\LocationInterface"
+                type="Temando\Shipping\Model\Shipment\Location" />
+    <preference for="Temando\Shipping\Model\Shipment\PackageInterface"
+                type="Temando\Shipping\Model\Shipment\Package" />
+    <preference for="Temando\Shipping\Model\Shipment\PackageItemInterface"
+                type="Temando\Shipping\Model\Shipment\PackageItem" />
+    <preference for="Temando\Shipping\Model\Shipment\ShipmentErrorInterface"
+                type="Temando\Shipping\Model\Shipment\ShipmentError" />
+    <preference for="Temando\Shipping\Model\Shipment\ShipmentItemInterface"
+                type="Temando\Shipping\Model\Shipment\ShipmentItem" />
+    <preference for="Temando\Shipping\Model\Shipment\ShipmentSummaryInterface"
+                type="Temando\Shipping\Model\Shipment\ShipmentSummary" />
+    <preference for="Temando\Shipping\Model\Shipment\TrackEventInterface"
+                type="Temando\Shipping\Model\Shipment\TrackEvent" />
+
+    <!-- ## dispatch entity and related (sub-)types -->
+    <preference for="Temando\Shipping\Model\DispatchInterface"
+                type="Temando\Shipping\Model\Dispatch" />
+    <preference for="Temando\Shipping\Model\Dispatch\ErrorInterface"
+                type="Temando\Shipping\Model\Dispatch\Error" />
+    <preference for="Temando\Shipping\Model\Dispatch\ShipmentInterface"
+                type="Temando\Shipping\Model\Dispatch\Shipment" />
+
+    <!-- ## batch entity and related (sub-)types -->
+    <preference for="Temando\Shipping\Model\BatchInterface"
+                type="Temando\Shipping\Model\Batch" />
+
+    <!-- ## order entity and related (sub-)types -->
+    <preference for="Temando\Shipping\Model\OrderInterface"
+                type="Temando\Shipping\Model\Order" />
+    <preference for="Temando\Shipping\Model\Order\OrderBillingInterface"
+                type="Temando\Shipping\Model\Order\OrderBilling" />
+    <preference for="Temando\Shipping\Model\Order\OrderItemInterface"
+                type="Temando\Shipping\Model\Order\OrderItem" />
+    <preference for="Temando\Shipping\Model\Order\OrderRecipientInterface"
+                type="Temando\Shipping\Model\Order\OrderRecipient" />
+    <preference for="Temando\Shipping\Webservice\Response\Type\OrderResponseTypeInterface"
+                type="Temando\Shipping\Webservice\Response\Type\OrderResponseType" />
+
+    <!-- ## dynamic checkout fields -->
+    <preference for="Temando\Shipping\Model\Order\CheckoutFieldContainerInterface"
+                type="Temando\Shipping\Model\Order\CheckoutFieldContainer" />
+    <preference for="Temando\Shipping\Model\Checkout\Attribute\CheckoutFieldInterface"
+                type="Temando\Shipping\Model\Checkout\Attribute\CheckoutField" />
+
+    <!-- ## stream synchronization -->
+    <preference for="Temando\Shipping\Model\StreamEventInterface"
+                type="Temando\Shipping\Model\StreamEvent" />
+
+    <!-- # internal service interface preferences -->
+    <!-- ## repositories -->
+    <preference for="Temando\Shipping\Model\ResourceModel\EventStream\EventRepositoryInterface"
+                type="Temando\Shipping\Model\ResourceModel\EventStream\EventRepository" />
+    <preference for="Temando\Shipping\Model\ResourceModel\EventStream\StreamRepositoryInterface"
+                type="Temando\Shipping\Model\ResourceModel\EventStream\StreamRepository"/>
+    <preference for="Temando\Shipping\Model\ResourceModel\Repository\AddressRepositoryInterface"
+                type="Temando\Shipping\Model\ResourceModel\Checkout\AddressRepository" />
+    <preference for="Temando\Shipping\Model\ResourceModel\Repository\CarrierRepositoryInterface"
+                type="Temando\Shipping\Model\ResourceModel\Carrier\CarrierRepository" />
+    <preference for="Temando\Shipping\Model\ResourceModel\Repository\CollectionPointSearchRepositoryInterface"
+                type="Temando\Shipping\Model\ResourceModel\CollectionPoint\SearchRequestRepository" />
+    <preference for="Temando\Shipping\Model\ResourceModel\Repository\BatchRepositoryInterface"
+                type="Temando\Shipping\Model\ResourceModel\Batch\BatchRepository" />
+    <preference for="Temando\Shipping\Model\ResourceModel\Repository\DispatchRepositoryInterface"
+                type="Temando\Shipping\Model\ResourceModel\Dispatch\DispatchRepository" />
+    <preference for="Temando\Shipping\Model\ResourceModel\Repository\LocationRepositoryInterface"
+                type="Temando\Shipping\Model\ResourceModel\Location\LocationRepository" />
+    <preference for="Temando\Shipping\Model\ResourceModel\Repository\OrderCollectionPointRepositoryInterface"
+                type="Temando\Shipping\Model\ResourceModel\CollectionPoint\OrderCollectionPointRepository" />
+    <preference for="Temando\Shipping\Model\ResourceModel\Repository\OrderRepositoryInterface"
+                type="Temando\Shipping\Model\ResourceModel\Order\OrderRepository" />
+    <preference for="Temando\Shipping\Model\ResourceModel\Repository\PackagingRepositoryInterface"
+                type="Temando\Shipping\Model\ResourceModel\Packaging\PackagingRepository" />
+    <preference for="Temando\Shipping\Model\ResourceModel\Repository\QuoteCollectionPointRepositoryInterface"
+                type="Temando\Shipping\Model\ResourceModel\CollectionPoint\QuoteCollectionPointRepository" />
+    <preference for="Temando\Shipping\Model\ResourceModel\Repository\RmaShipmentRepositoryInterface"
+                type="Temando\Shipping\Model\ResourceModel\Rma\RmaShipmentRepository" />
+    <preference for="Temando\Shipping\Model\ResourceModel\Repository\ShipmentRepositoryInterface"
+                type="Temando\Shipping\Model\ResourceModel\Shipment\ShipmentRepository" />
+
+    <!-- ## webservice authentication -->
+    <preference for="Temando\Shipping\Rest\AuthenticationInterface"
+                type="Temando\Shipping\Rest\Authentication"/>
+
+    <!-- ## webservice adapters / clients -->
+    <preference for="Temando\Shipping\Rest\Adapter\AuthenticationApiInterface"
+                type="Temando\Shipping\Rest\AuthAdapter"/>
+    <preference for="Temando\Shipping\Rest\Adapter\CarrierApiInterface"
+                type="Temando\Shipping\Rest\Adapter"/>
+    <preference for="Temando\Shipping\Rest\Adapter\CompletionApiInterface"
+                type="Temando\Shipping\Rest\Adapter"/>
+    <preference for="Temando\Shipping\Rest\Adapter\BatchApiInterface"
+                type="Temando\Shipping\Rest\Adapter"/>
+    <preference for="Temando\Shipping\Rest\Adapter\ContainerApiInterface"
+                type="Temando\Shipping\Rest\Adapter"/>
+    <preference for="Temando\Shipping\Rest\Adapter\EventStreamApiInterface"
+                type="Temando\Shipping\Rest\Adapter"/>
+    <preference for="Temando\Shipping\Rest\Adapter\LocationApiInterface"
+                type="Temando\Shipping\Rest\Adapter"/>
+    <preference for="Temando\Shipping\Rest\Adapter\OrderApiInterface"
+                type="Temando\Shipping\Rest\OrderAdapter"/>
+    <preference for="Temando\Shipping\Rest\Adapter\ShipmentApiInterface"
+                type="Temando\Shipping\Rest\Adapter"/>
+    <preference for="Temando\Shipping\Rest\RestClientInterface"
+                type="Temando\Shipping\Rest\RestClient"/>
+    <preference for="Temando\Shipping\Webservice\HttpClientInterface"
+                type="Temando\Shipping\Webservice\HttpClient" />
+
+    <!-- ## webservice response deserialization -->
+    <preference for="Temando\Shipping\Rest\SchemaMapper\Reflection\ReflectionInterface"
+                type="Temando\Shipping\Rest\SchemaMapper\Reflection"/>
+    <preference for="Temando\Shipping\Rest\SchemaMapper\Reflection\PropertyHandlerInterface"
+                type="Temando\Shipping\Rest\SchemaMapper\Reflection\PropertyHandler"/>
+    <preference for="Temando\Shipping\Rest\SchemaMapper\Reflection\TypeHandlerInterface"
+                type="Temando\Shipping\Rest\SchemaMapper\TypeHandler"/>
+    <preference for="Temando\Shipping\Rest\SchemaMapper\ParserInterface"
+                type="Temando\Shipping\Rest\SchemaMapper\Json"/>
+
+    <!-- ## others -->
+    <preference for="Temando\Shipping\Model\BatchProviderInterface"
+                type="Temando\Shipping\Model\BatchProvider" />
+    <preference for="Temando\Shipping\Model\Config\ModuleConfigInterface"
+                type="Temando\Shipping\Model\Config\ModuleConfig"/>
+    <preference for="Temando\Shipping\Model\DispatchProviderInterface"
+                type="Temando\Shipping\Model\DispatchProvider" />
+    <preference for="Temando\Shipping\Model\Order\AutoProcessing\AutoFulfillInterface"
+                type="Temando\Shipping\Model\Order\AutoProcessing\AutoFulfill" />
+    <preference for="Temando\Shipping\Model\Shipment\ShipmentProviderInterface"
+                type="Temando\Shipping\Model\Shipment\ShipmentProvider" />
+    <preference for="Temando\Shipping\Webservice\Config\WsConfigInterface"
+                type="Temando\Shipping\Model\Config\ModuleConfig"/>
+    <preference for="Temando\Shipping\Webservice\Logger\LogAnonymizerInterface"
+                type="Temando\Shipping\Rest\Logger\Anonymizer"/>
+
+    <!-- # virtual types -->
+    <!-- ## third party library adapters -->
+    <virtualType name="Temando\Shipping\Http\VirtualClient" type="Zend\Http\Client" shared="false" />
+
+    <!-- ## other virtual types -->
+    <virtualType name="Temando\Shipping\Api\SearchCriteria\CollectionProcessor\ShipmentReferenceFilterProcessor" type="Magento\Framework\Api\SearchCriteria\CollectionProcessor\FilterProcessor">
+        <arguments>
+            <argument name="fieldMapping" xsi:type="array">
+                <item name="id" xsi:type="string">r.entity_id</item>
+            </argument>
+        </arguments>
+    </virtualType>
+    <virtualType name="Temando\Shipping\Api\SearchCriteria\ShipmentReferenceCollectionProcessor" type="Magento\Framework\Api\SearchCriteria\CollectionProcessor">
+        <arguments>
+            <argument name="processors" xsi:type="array">
+                <item name="filters" xsi:type="object">Temando\Shipping\Api\SearchCriteria\CollectionProcessor\ShipmentReferenceFilterProcessor</item>
+            </argument>
+        </arguments>
+    </virtualType>
+    <virtualType name="Temando\Shipping\Webservice\Processor\CollectRatesProcessorPool" type="Temando\Shipping\Webservice\Processor\OrderOperationProcessorPool">
+        <arguments>
+            <argument name="ratesProcessors" xsi:type="array">
+                <item name="tsDefaultRatesProcessor" xsi:type="object">Temando\Shipping\Webservice\Processor\OrderOperation\RatesProcessor</item>
+                <item name="tsCollectionPointRatesProcessor" xsi:type="object">Temando\Shipping\Webservice\Processor\OrderOperation\CollectionPointRatesProcessor</item>
+                <item name="tsCollectionPointSearchProcessor" xsi:type="object">Temando\Shipping\Webservice\Processor\OrderOperation\CollectionPointSearchProcessor</item>
+            </argument>
+        </arguments>
+    </virtualType>
+    <virtualType name="Temando\Shipping\Webservice\Processor\ManifestOrderProcessorPool" type="Temando\Shipping\Webservice\Processor\OrderOperationProcessorPool">
+        <arguments>
+            <argument name="saveProcessors" xsi:type="array">
+                <item name="tsAutoFulfillProcessor" xsi:type="object">Temando\Shipping\Webservice\Processor\OrderOperation\AutoFulfillProcessor</item>
+                <item name="tsCollectionPointProcessor" xsi:type="object">Temando\Shipping\Webservice\Processor\OrderOperation\CollectionPointManifestProcessor</item>
+            </argument>
+        </arguments>
+    </virtualType>
+    <virtualType name="Temando\Shipping\Virtual\CheckoutTableNameIterator" type="Magento\Framework\ForeignKey\Migration\TableNameArrayIterator">
+        <arguments>
+            <argument name="tableNames" xsi:type="array">
+                <item name="temando_checkout_address" xsi:type="const">Temando\Shipping\Setup\SetupSchema::TABLE_CHECKOUT_ADDRESS</item>
+                <item name="temando_collection_point_search" xsi:type="const">Temando\Shipping\Setup\SetupSchema::TABLE_COLLECTION_POINT_SEARCH</item>
+                <item name="temando_quote_collection_point" xsi:type="const">Temando\Shipping\Setup\SetupSchema::TABLE_QUOTE_COLLECTION_POINT</item>
+            </argument>
+        </arguments>
+    </virtualType>
+    <virtualType name="Temando\Shipping\Virtual\SalesTableNameIterator" type="Magento\Framework\ForeignKey\Migration\TableNameArrayIterator">
+        <arguments>
+            <argument name="tableNames" xsi:type="array">
+                <item name="temando_shipment" xsi:type="const">Temando\Shipping\Setup\SetupSchema::TABLE_SHIPMENT</item>
+                <item name="temando_order" xsi:type="const">Temando\Shipping\Setup\SetupSchema::TABLE_ORDER</item>
+                <item name="temando_order_collection_point" xsi:type="const">Temando\Shipping\Setup\SetupSchema::TABLE_ORDER_COLLECTION_POINT</item>
+            </argument>
+        </arguments>
+    </virtualType>
+
+    <!-- # argument di overrides -->
+    <type name="Magento\ScalableCheckout\Console\Command\SplitQuote">
+        <arguments>
+            <argument name="tableIterators" xsi:type="array">
+                <item name="temandoCheckoutTableNameIterator" xsi:type="object">Temando\Shipping\Virtual\CheckoutTableNameIterator</item>
+            </argument>
+        </arguments>
+    </type>
+    <type name="Magento\ScalableOms\Console\Command\SplitSales">
+        <arguments>
+            <argument name="tableIterators" xsi:type="array">
+                <item name="temandoSalesTableNameIterator" xsi:type="object">Temando\Shipping\Virtual\SalesTableNameIterator</item>
+            </argument>
+        </arguments>
+    </type>
+    <type name="Temando\Shipping\CustomerData\CollectionPoints">
+        <arguments>
+            <argument name="checkoutSession" xsi:type="object">Magento\Checkout\Model\Session\Proxy</argument>
+        </arguments>
+    </type>
+    <type name="Temando\Shipping\Model\Config\ConfigAccessor">
+        <arguments>
+            <argument name="systemConfigType" xsi:type="object">Magento\Config\App\Config\Type\System</argument>
+        </arguments>
+    </type>
+    <type name="Temando\Shipping\Model\ResourceModel\Checkout\Address">
+        <arguments>
+            <argument name="serializer" xsi:type="object">Temando\Shipping\Model\Checkout\Address\ServiceSerializer</argument>
+            <argument name="connectionName" xsi:type="const">Temando\Shipping\Setup\SetupSchema::CHECKOUT_CONNECTION_NAME</argument>
+        </arguments>
+    </type>
+    <type name="Temando\Shipping\Model\ResourceModel\CollectionPoint\OrderCollectionPoint">
+        <arguments>
+            <argument name="connectionName" xsi:type="const">Temando\Shipping\Setup\SetupSchema::SALES_CONNECTION_NAME</argument>
+        </arguments>
+    </type>
+    <type name="Temando\Shipping\Model\ResourceModel\CollectionPoint\QuoteCollectionPoint">
+        <arguments>
+            <argument name="connectionName" xsi:type="const">Temando\Shipping\Setup\SetupSchema::CHECKOUT_CONNECTION_NAME</argument>
+        </arguments>
+    </type>
+    <type name="Temando\Shipping\Model\ResourceModel\CollectionPoint\SearchRequest">
+        <arguments>
+            <argument name="connectionName" xsi:type="const">Temando\Shipping\Setup\SetupSchema::CHECKOUT_CONNECTION_NAME</argument>
+        </arguments>
+    </type>
+    <type name="Temando\Shipping\Model\ResourceModel\Order\OrderReference">
+        <arguments>
+            <argument name="connectionName" xsi:type="const">Temando\Shipping\Setup\SetupSchema::SALES_CONNECTION_NAME</argument>
+        </arguments>
+    </type>
+    <type name="Temando\Shipping\Model\ResourceModel\Shipment\ShipmentReference">
+        <arguments>
+            <argument name="connectionName" xsi:type="const">Temando\Shipping\Setup\SetupSchema::SALES_CONNECTION_NAME</argument>
+        </arguments>
+    </type>
+    <type name="Temando\Shipping\Model\ResourceModel\Rma\RmaShipmentRepository">
+        <arguments>
+            <argument name="collectionProcessor" xsi:type="object">Temando\Shipping\Api\SearchCriteria\ShipmentReferenceCollectionProcessor</argument>
+        </arguments>
+    </type>
+    <type name="Temando\Shipping\Model\Shipping\Carrier">
+        <arguments>
+            <argument name="logger" xsi:type="object">Temando\Shipping\Webservice\Logger</argument>
+            <argument name="shipmentRepository" xsi:type="object">Temando\Shipping\Model\ResourceModel\Repository\ShipmentRepositoryInterface\Proxy</argument>
+            <argument name="orderRepository" xsi:type="object">Temando\Shipping\Model\ResourceModel\Repository\OrderRepositoryInterface\Proxy</argument>
+            <argument name="processorPool" xsi:type="object">Temando\Shipping\Webservice\Processor\CollectRatesProcessorPool</argument>
+        </arguments>
+    </type>
+    <type name="Temando\Shipping\Observer\PrepareMyOrderInfoObserver">
+        <arguments>
+            <argument name="viewModel" xsi:type="object">Temando\Shipping\ViewModel\Order\Location\Proxy</argument>
+        </arguments>
+    </type>
+    <type name="Temando\Shipping\Observer\PrepareMyShipmentInfoObserver">
+        <arguments>
+            <argument name="shipmentProvider" xsi:type="object">Temando\Shipping\Model\Shipment\ShipmentProviderInterface\Proxy</argument>
+            <argument name="shipmentRepository" xsi:type="object">Temando\Shipping\Model\ResourceModel\Repository\ShipmentRepositoryInterface\Proxy</argument>
+            <argument name="viewModel" xsi:type="object">Temando\Shipping\ViewModel\Shipment\Location\Proxy</argument>
+        </arguments>
+    </type>
+    <type name="Temando\Shipping\Observer\PrepareOrderViewObserver">
+        <arguments>
+            <argument name="locationViewModel" xsi:type="object">Temando\Shipping\ViewModel\Order\Location\Proxy</argument>
+            <argument name="orderDetailsViewModel" xsi:type="object">Temando\Shipping\ViewModel\Order\OrderDetails\Proxy</argument>
+        </arguments>
+    </type>
+    <type name="Temando\Shipping\Observer\PrepareShipmentViewObserver">
+        <arguments>
+            <argument name="shipmentProvider" xsi:type="object">Temando\Shipping\Model\Shipment\ShipmentProviderInterface\Proxy</argument>
+            <argument name="locationViewModel" xsi:type="object">Temando\Shipping\ViewModel\Shipment\Location\Proxy</argument>
+            <argument name="orderDetailsViewModel" xsi:type="object">Temando\Shipping\ViewModel\Order\OrderDetails\Proxy</argument>
+            <argument name="shipmentDetailsViewModel" xsi:type="object">Temando\Shipping\ViewModel\Shipment\ShipmentDetails\Proxy</argument>
+        </arguments>
+    </type>
+    <type name="Temando\Shipping\Plugin\Sales\OrderRepositoryPlugin">
+        <arguments>
+            <argument name="processorPool" xsi:type="object">Temando\Shipping\Webservice\Processor\ManifestOrderProcessorPool</argument>
+        </arguments>
+    </type>
+    <type name="Temando\Shipping\Plugin\Shipping\CollectRatesPlugin">
+        <arguments>
+            <argument name="searchRequestRepository" xsi:type="object">Temando\Shipping\Model\ResourceModel\Repository\CollectionPointSearchRepositoryInterface\Proxy</argument>
+            <argument name="collectionPointRepository" xsi:type="object">Temando\Shipping\Model\ResourceModel\Repository\QuoteCollectionPointRepositoryInterface\Proxy</argument>
+        </arguments>
+    </type>
+    <type name="Temando\Shipping\Rest\Adapter">
+        <arguments>
+            <argument name="logger" xsi:type="object">Temando\Shipping\Webservice\Logger</argument>
+        </arguments>
+    </type>
+    <type name="Temando\Shipping\Rest\AuthAdapter">
+        <arguments>
+            <argument name="logger" xsi:type="object">Temando\Shipping\Webservice\Logger</argument>
+        </arguments>
+    </type>
+    <type name="Temando\Shipping\Rest\OrderAdapter">
+        <arguments>
+            <argument name="logger" xsi:type="object">Temando\Shipping\Webservice\Logger</argument>
+        </arguments>
+    </type>
+    <type name="Temando\Shipping\Rest\Logger\Anonymizer">
+        <arguments>
+            <argument name="secrets" xsi:type="array">
+                <item name="accountId" xsi:type="string">[hidden]</item>
+                <item name="bearerToken" xsi:type="string">[hidden]</item>
+                <item name="sessionToken" xsi:type="string">[hidden]</item>
+                <item name="organisationName" xsi:type="string">[hidden]</item>
+                <item name="personFirstName" xsi:type="string">[hidden]</item>
+                <item name="personLastName" xsi:type="string">[hidden]</item>
+                <item name="phoneNumber" xsi:type="string">[hidden]</item>
+                <item name="email" xsi:type="string">[hidden]</item>
+                <item name="lines" xsi:type="string">[hidden]</item>
+            </argument>
+        </arguments>
+    </type>
+    <type name="Temando\Shipping\Webservice\HttpClient">
+        <arguments>
+            <argument name="client" xsi:type="object">Temando\Shipping\Http\VirtualClient</argument>
+        </arguments>
+    </type>
+    <type name="Temando\Shipping\Webservice\Logger">
+        <arguments>
+            <argument name="name" xsi:type="string">temando</argument>
+            <argument name="handlers" xsi:type="array">
+                <item name="debug" xsi:type="object">Temando\Shipping\Webservice\Logger\Handler\FileSystemHandler</item>
+                <item name="error" xsi:type="object">Temando\Shipping\Webservice\Logger\Handler\FileSystemHandler</item>
+                <item name="critical" xsi:type="object">Temando\Shipping\Webservice\Logger\Handler\FileSystemHandler</item>
+            </argument>
+        </arguments>
+    </type>
+
+    <!-- # interceptor plugins -->
+    <type name="Magento\Framework\View\Asset\Minification">
+        <plugin name="preventComponentryMinification" type="Temando\Shipping\Plugin\View\MinificationPlugin" />
+    </type>
+    <type name="Magento\Quote\Model\Quote\Address\RateCollectorInterface">
+        <plugin name="temando-shipping-limitCarrier" type="Temando\Shipping\Plugin\Shipping\CollectRatesPlugin" />
+    </type>
+    <type name="Magento\Quote\Model\Quote\Address\ToOrderAddress">
+        <plugin name="temando-shipping-convertQuoteAddress" type="Temando\Shipping\Plugin\Quote\Address\ToOrderAddressPlugin" />
+    </type>
+    <type name="Magento\Sales\Api\OrderRepositoryInterface">
+        <plugin name="temando-shipping-manifestOrder" type="Temando\Shipping\Plugin\Sales\OrderRepositoryPlugin" />
+    </type>
+    <type name="Magento\Sales\Api\ShipmentRepositoryInterface">
+        <plugin name="temando-shipping-loadAndSaveExtensionAttributes" type="Temando\Shipping\Plugin\Sales\Order\ShipmentRepositoryPlugin" />
+    </type>
+    <type name="Magento\Sales\Model\Order\ShipmentDocumentFactory">
+        <plugin name="temando-shipping-shiftShipmentCreationArguments" type="Temando\Shipping\Plugin\Sales\Order\ShipmentDocumentFactoryPlugin" />
+    </type>
+    <type name="Magento\Sales\Model\Order\ShippingBuilder">
+        <plugin name="temando-shipping-extendShippingAssignments" type="Temando\Shipping\Plugin\Sales\Order\ShippingBuilderPlugin" />
+    </type>
+
+    <type name="Magento\Multishipping\Block\Checkout\Addresses">
+        <plugin name="temando-shipping-appendCheckoutFields" type="Temando\Shipping\Plugin\Multishipping\Checkout\GetAddressesHtmlSelectPlugin" />
+    </type>
+    <type name="Magento\Multishipping\Model\Checkout\Type\Multishipping">
+        <plugin name="temando-shipping-shiftCheckoutFieldSelection" type="Temando\Shipping\Plugin\Multishipping\Checkout\MultishippingSavePlugin" />
+    </type>
+
+    <!-- # data provider & entity manager configuration -->
+    <type name="Magento\Framework\View\Element\UiComponent\DataProvider\CollectionFactory">
+        <arguments>
+            <argument name="collections" xsi:type="array">
+                <item name="temando_carrier_listing_data_source" xsi:type="string">Temando\Shipping\Model\ResourceModel\Carrier\Grid\Collection</item>
+                <item name="temando_location_listing_data_source" xsi:type="string">Temando\Shipping\Model\ResourceModel\Location\Grid\Collection</item>
+                <item name="temando_packaging_listing_data_source" xsi:type="string">Temando\Shipping\Model\ResourceModel\Packaging\Grid\Collection</item>
+                <item name="temando_rma_added_shipment_listing_data_source" xsi:type="string">Temando\Shipping\Model\ResourceModel\Rma\AddedShipment\Grid\Collection</item>
+                <item name="temando_rma_available_shipment_listing_data_source" xsi:type="string">Temando\Shipping\Model\ResourceModel\Rma\AvailableShipment\Grid\Collection</item>
+            </argument>
+        </arguments>
+    </type>
+    <type name="Magento\Framework\EntityManager\HydratorPool">
+        <arguments>
+            <argument name="hydrators" xsi:type="array">
+                <item name="Temando\Shipping\Api\Data\Checkout\AddressInterface" xsi:type="string">Magento\Framework\EntityManager\AbstractModelHydrator</item>
+                <item name="Temando\Shipping\Api\Data\CollectionPoint\OrderCollectionPointInterface" xsi:type="string">Magento\Framework\EntityManager\AbstractModelHydrator</item>
+                <item name="Temando\Shipping\Api\Data\CollectionPoint\QuoteCollectionPointInterface" xsi:type="string">Magento\Framework\EntityManager\AbstractModelHydrator</item>
+                <item name="Temando\Shipping\Api\Data\CollectionPoint\SearchRequestInterface" xsi:type="string">Magento\Framework\EntityManager\AbstractModelHydrator</item>
+                <item name="Temando\Shipping\Api\Data\Order\OrderReferenceInterface" xsi:type="string">Magento\Framework\EntityManager\AbstractModelHydrator</item>
+                <item name="Temando\Shipping\Api\Data\Shipment\ShipmentReferenceInterface" xsi:type="string">Magento\Framework\EntityManager\AbstractModelHydrator</item>
+            </argument>
+        </arguments>
+    </type>
+</config>

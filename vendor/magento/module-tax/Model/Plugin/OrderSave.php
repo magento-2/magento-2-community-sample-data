@@ -160,7 +160,7 @@ class OrderSave
 
                         if (isset($ratesIdQuoteItemId[$id])) {
                             foreach ($ratesIdQuoteItemId[$id] as $quoteItemId) {
-                                if ($quoteItemId['code'] == $tax['code']) {
+                                if ($quoteItemId['code'] === $tax['code']) {
                                     $itemId = null;
                                     $associatedItemId = null;
                                     if (isset($quoteItemId['id'])) {

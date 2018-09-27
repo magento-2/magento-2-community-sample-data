@@ -1,0 +1,21 @@
+<?xml version="1.0"?>
+<!--
+  @copyright  Vertex. All rights reserved.  https://www.vertexinc.com/
+  @author     Mediotype                     https://www.mediotype.com/
+  -->
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="urn:magento:framework:ObjectManager/etc/config.xsd">
+    <!-- Turn on error messages during Multishipping checkout -->
+    <type name="Magento\Multishipping\Controller\Checkout\AddressesPost">
+        <plugin name="vertex_multishipping_errors_on" type="Vertex\Tax\Model\Plugin\MultishippingErrorMessageSupport" />
+    </type>
+    <type name="Magento\Multishipping\Controller\Checkout\ShippingPost">
+        <plugin name="vertex_multishipping_errors_on" type="Vertex\Tax\Model\Plugin\MultishippingErrorMessageSupport" />
+    </type>
+    <type name="Magento\Multishipping\Controller\Checkout\Overview">
+        <plugin name="vertex_multishipping_errors_on" type="Vertex\Tax\Model\Plugin\MultishippingErrorMessageSupport" />
+    </type>
+    <type name="Magento\Multishipping\Controller\Checkout\OverviewPost">
+        <plugin name="vertex_multishipping_errors_on" type="Vertex\Tax\Model\Plugin\MultishippingErrorMessageSupport" />
+    </type>
+</config>

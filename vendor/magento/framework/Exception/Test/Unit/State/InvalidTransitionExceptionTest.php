@@ -10,14 +10,14 @@ namespace Magento\Framework\Exception\Test\Unit\State;
 use \Magento\Framework\Exception\State\InvalidTransitionException;
 use Magento\Framework\Phrase;
 
-class InvalidTransitionExceptionTest extends \PHPUnit_Framework_TestCase
+class InvalidTransitionExceptionTest extends \PHPUnit\Framework\TestCase
 {
     /**
      * @return void
      */
     public function testConstructor()
     {
-        $instanceClass = 'Magento\Framework\Exception\State\InvalidTransitionException';
+        $instanceClass = \Magento\Framework\Exception\State\InvalidTransitionException::class;
         $message =  'message %1 %2';
         $params = [
             'parameter1',

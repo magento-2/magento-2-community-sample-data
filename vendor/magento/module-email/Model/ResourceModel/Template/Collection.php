@@ -8,7 +8,8 @@ namespace Magento\Email\Model\ResourceModel\Template;
 /**
  * Templates collection
  *
- * @author      Magento Core Team <core@magentocommerce.com>
+ * @api
+ * @since 100.0.2
  */
 class Collection extends \Magento\Framework\Model\ResourceModel\Db\Collection\AbstractCollection
 {
@@ -26,7 +27,7 @@ class Collection extends \Magento\Framework\Model\ResourceModel\Db\Collection\Ab
      */
     public function _construct()
     {
-        $this->_init('Magento\Email\Model\Template', 'Magento\Email\Model\ResourceModel\Template');
+        $this->_init(\Magento\Email\Model\Template::class, \Magento\Email\Model\ResourceModel\Template::class);
         $this->_templateTable = $this->getMainTable();
     }
 

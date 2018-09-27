@@ -13,7 +13,7 @@ use Magento\Framework\View\Result\LayoutFactory;
 class Grid extends Action
 {
     /**
-     * Authorization level of a basic admin session.
+     * Authorization level of a basic admin session
      *
      * @see _isAllowed()
      */

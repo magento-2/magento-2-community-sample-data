@@ -45,6 +45,7 @@ class MergePreconditionProductsStep implements TestStepInterface
     public function run()
     {
         $products = array_merge($this->preconditionProducts, $this->products);
+
         return ['products' => $products];
     }
 }

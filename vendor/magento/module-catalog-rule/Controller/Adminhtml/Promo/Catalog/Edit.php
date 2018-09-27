@@ -17,24 +17,24 @@ class Edit extends \Magento\CatalogRule\Controller\Adminhtml\Promo\Catalog
 
         /** @var \Magento\CatalogRule\Api\CatalogRuleRepositoryInterface $ruleRepository */
         $ruleRepository = $this->_objectManager->get(
-            'Magento\CatalogRule\Api\CatalogRuleRepositoryInterface'
+            \Magento\CatalogRule\Api\CatalogRuleRepositoryInterface::class
         );
 
         if ($id) {
             try {
                 $model = $ruleRepository->get($id);
             } catch (\Magento\Framework\Exception\NoSuchEntityException $exception) {
-                $this->messageManager->addError(__('This rule no longer exists.'));
+                $this->messageManager->addErrorMessage(__('This rule no longer exists.'));
                 $this->_redirect('catalog_rule/*');
                 return;
             }
         } else {
             /** @var \Magento\CatalogRule\Model\Rule $model */
-            $model = $this->_objectManager->create('Magento\CatalogRule\Model\Rule');
+            $model = $this->_objectManager->create(\Magento\CatalogRule\Model\Rule::class);
         }
 
         // set entered data if was error when we do save
-        $data = $this->_objectManager->get('Magento\Backend\Model\Session')->getPageData(true);
+        $data = $this->_objectManager->get(\Magento\Backend\Model\Session::class)->getPageData(true);
         if (!empty($data)) {
             $model->addData($data);
         }

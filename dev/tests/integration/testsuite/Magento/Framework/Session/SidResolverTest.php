@@ -8,7 +8,7 @@ namespace Magento\Framework\Session;
 use Magento\Framework\App\State;
 use Zend\Stdlib\Parameters;
 
-class SidResolverTest extends \PHPUnit_Framework_TestCase
+class SidResolverTest extends \PHPUnit\Framework\TestCase
 {
     /**
      * @var \Magento\Framework\Session\SidResolver

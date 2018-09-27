@@ -43,6 +43,7 @@ class JsonFile
      *
      * @param  string                    $path path to a lockfile
      * @param  RemoteFilesystem          $rfs  required for loading http/https json files
+     * @param  IOInterface               $io
      * @throws \InvalidArgumentException
      */
     public function __construct($path, RemoteFilesystem $rfs = null, IOInterface $io = null)
@@ -103,9 +104,9 @@ class JsonFile
     /**
      * Writes json file.
      *
-     * @param  array                     $hash    writes hash into json file
-     * @param  int                       $options json_encode options (defaults to JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE)
-     * @throws \UnexpectedValueException
+     * @param  array                                $hash    writes hash into json file
+     * @param  int                                  $options json_encode options (defaults to JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE)
+     * @throws \UnexpectedValueException|\Exception
      */
     public function write(array $hash, $options = 448)
     {
@@ -156,7 +157,13 @@ class JsonFile
         }
 
         $schemaFile = __DIR__ . '/../../../res/composer-schema.json';
-        $schemaData = json_decode(file_get_contents($schemaFile));
+
+        // Prepend with file:// only when not using a special schema already (e.g. in the phar)
+        if (false === strpos($schemaFile, '://')) {
+            $schemaFile = 'file://' . $schemaFile;
+        }
+
+        $schemaData = (object) array('$ref' => $schemaFile);
 
         if ($schema === self::LAX_SCHEMA) {
             $schemaData->additionalProperties = true;

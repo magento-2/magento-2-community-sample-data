@@ -7,6 +7,9 @@ namespace Magento\Framework\Filesystem\Directory;
 
 use Magento\Framework\Exception\FileSystemException;
 
+/**
+ * @api
+ */
 class Read implements ReadInterface
 {
     /**
@@ -205,7 +208,6 @@ class Read implements ReadInterface
     {
         $absolutePath = $this->driver->getAbsolutePath($this->path, $path);
         return $this->driver->fileGetContents($absolutePath, $flag, $context);
-
     }
 
     /**

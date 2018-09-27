@@ -8,7 +8,7 @@ namespace Magento\Search\Test\Unit\Model;
 
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
 
-class QueryResultTest extends \PHPUnit_Framework_TestCase
+class QueryResultTest extends \PHPUnit\Framework\TestCase
 {
     /**
      * @var ObjectManager
@@ -27,7 +27,7 @@ class QueryResultTest extends \PHPUnit_Framework_TestCase
     {
         /** @var \Magento\Search\Model\QueryResult $queryResult */
         $queryResult = $this->objectManager->getObject(
-            'Magento\Search\Model\QueryResult',
+            \Magento\Search\Model\QueryResult::class,
             [
                 'queryText' => $queryText,
                 'resultsCount' => $resultsCount,

@@ -3,7 +3,7 @@
  * Zend Framework (http://framework.zend.com/)
  *
  * @link      http://github.com/zendframework/zf2 for the canonical source repository
- * @copyright Copyright (c) 2005-2015 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright Copyright (c) 2005-2016 Zend Technologies USA Inc. (http://www.zend.com)
  * @license   http://framework.zend.com/license/new-bsd New BSD License
  */
 
@@ -32,7 +32,7 @@ class CompilerDefinition implements DefinitionInterface
      */
     protected $directoryScanner = null;
 
-    protected $classes = array();
+    protected $classes = [];
 
     /**
      * Constructor
@@ -151,12 +151,12 @@ class CompilerDefinition implements DefinitionInterface
         $matches = null; // used for regex below
 
         // setup the key in classes
-        $this->classes[$className] = array(
-            'supertypes'   => array(),
+        $this->classes[$className] = [
+            'supertypes'   => [],
             'instantiator' => null,
-            'methods'      => array(),
-            'parameters'   => array()
-        );
+            'methods'      => [],
+            'parameters'   => []
+        ];
 
         $def = &$this->classes[$className]; // localize for brevity
 
@@ -173,7 +173,7 @@ class CompilerDefinition implements DefinitionInterface
 
         /* @var $rTarget \Zend\Code\Reflection\ClassReflection */
         $rTarget = $rClass;
-        $supertypes = array();
+        $supertypes = [];
         do {
             $supertypes = array_merge($supertypes, $rTarget->getInterfaceNames());
             if (!($rTargetParent = $rTarget->getParentClass())) {
@@ -279,13 +279,13 @@ class CompilerDefinition implements DefinitionInterface
 
         // @todo annotations here for alternate names?
 
-        $def['parameters'][$methodName] = array();
+        $def['parameters'][$methodName] = [];
 
         foreach ($rMethod->getParameters() as $p) {
             /** @var $p \ReflectionParameter  */
             $actualParamName = $p->getName();
             $fqName = $rClass->getName() . '::' . $rMethod->getName() . ':' . $p->getPosition();
-            $def['parameters'][$methodName][$fqName] = array();
+            $def['parameters'][$methodName][$fqName] = [];
 
             // set the class name, if it exists
             $def['parameters'][$methodName][$fqName][] = $actualParamName;

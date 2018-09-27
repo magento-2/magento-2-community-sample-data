@@ -36,10 +36,8 @@ class Converter implements \Magento\Framework\Config\ConverterInterface
     protected function _setArrayValue(array $container, $path, $value)
     {
         $parts = explode('/', $path);
-
         if (count($parts) > 0) {
             $parts = array_reverse($parts);
-
             $result = $value;
             foreach ($parts as $part) {
                 $part = trim($part);
@@ -47,7 +45,6 @@ class Converter implements \Magento\Framework\Config\ConverterInterface
                     $result = [$part => $result];
                 }
             }
-
             $container = array_merge_recursive($container, $result);
         }
         return $container;

@@ -16,7 +16,7 @@ use Magento\Framework\Exception\NoSuchEntityException;
  * @SuppressWarnings(PHPMD.ExcessivePublicCount)
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  */
-class AddressRepositoryTest extends \PHPUnit_Framework_TestCase
+class AddressRepositoryTest extends \PHPUnit\Framework\TestCase
 {
     /** @var AddressRepositoryInterface */
     private $repository;
@@ -205,24 +205,15 @@ class AddressRepositoryTest extends \PHPUnit_Framework_TestCase
         try {
             $this->repository->save($address);
         } catch (InputException $exception) {
-            $this->assertEquals(
-                InputException::DEFAULT_MESSAGE,
-                $exception->getMessage()
-            );
+            $this->assertEquals('One or more input exceptions have occurred.', $exception->getMessage());
             $errors = $exception->getErrors();
             $this->assertCount(3, $errors);
-            $this->assertEquals(
-                'firstname is a required field.',
-                $errors[0]->getLogMessage()
-            );
-            $this->assertEquals(
-                'lastname is a required field.',
-                $errors[1]->getLogMessage()
-            );
+            $this->assertEquals('firstname is a required field.', $errors[0]->getLogMessage());
+            $this->assertEquals('lastname is a required field.', $errors[1]->getLogMessage());
             $this->assertEquals(
                 __(
                     'Invalid value of "%value" provided for the %fieldName field.',
-                    ['fieldName'=>'regionId', 'value' => $invalidRegion]
+                    ['fieldName' => 'regionId', 'value' => $invalidRegion]
                 ),
                 $errors[2]->getLogMessage()
             );
@@ -233,7 +224,7 @@ class AddressRepositoryTest extends \PHPUnit_Framework_TestCase
             $this->repository->save($address);
         } catch (InputException $exception) {
             $this->assertEquals(
-                InputException::DEFAULT_MESSAGE,
+                'One or more input exceptions have occurred.',
                 $exception->getMessage()
             );
             $errors = $exception->getErrors();
@@ -249,7 +240,7 @@ class AddressRepositoryTest extends \PHPUnit_Framework_TestCase
             $this->assertEquals(
                 __(
                     'Invalid value of "%value" provided for the %fieldName field.',
-                    ['fieldName'=>'countryId', 'value' => $invalidCountry]
+                    ['fieldName' => 'countryId', 'value' => $invalidCountry]
                 ),
                 $errors[2]->getLogMessage()
             );

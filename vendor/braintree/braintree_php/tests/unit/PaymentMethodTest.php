@@ -31,10 +31,30 @@ class PaymentMethodTest extends Setup
                 'failOnDuplicatePaymentMethod',
                 'makeDefault',
                 'verificationMerchantAccountId',
-                'verifyCard'
+                'verifyCard',
+                'verificationAmount',
+                ['paypal' => [
+                    'payee_email',
+                    'payeeEmail',
+                    'order_id',
+                    'orderId',
+                    'custom_field',
+                    'customField',
+                    'description',
+                    'amount',
+                    ['shipping' =>
+                        [
+                            'firstName', 'lastName', 'company', 'countryName',
+                            'countryCodeAlpha2', 'countryCodeAlpha3', 'countryCodeNumeric',
+                            'extendedAddress', 'locality', 'postalCode', 'region',
+                            'streetAddress'],
+                    ],
+                ]],
             ]],
             ['billingAddress' => Braintree\AddressGateway::createSignature()],
-            'customerId'
+            'customerId',
+            'paypalRefreshToken',
+            'paypalVaultWithoutUpgrade'
         ];
         $this->assertEquals($expected, Braintree\PaymentMethodGateway::createSignature());
     }
@@ -55,5 +75,45 @@ class PaymentMethodTest extends Setup
     {
         $this->setExpectedException('InvalidArgumentException');
         Braintree\PaymentMethod::find('\t');
+    }
+
+    public function testDeleteWithRevokeAllGrantsAsTrue()
+    {
+        $paymentMethodGateway = $this->mockPaymentMethodGatewayDoDelete();
+        $expectedURL = "/payment_methods/any/some_token?revoke_all_grants=1";
+        $paymentMethodGateway->expects($this->once())->method('_doDelete')->with($this->equalTo($expectedURL));
+        $paymentMethodGateway->delete("some_token", ['revokeAllGrants' => true]);
+    }
+
+    public function testDeleteWithRevokeAllGrantsAsFalse()
+    {
+        $paymentMethodGateway = $this->mockPaymentMethodGatewayDoDelete();
+        $expectedURL = "/payment_methods/any/some_token?revoke_all_grants=0";
+        $paymentMethodGateway->expects($this->once())->method('_doDelete')->with($this->equalTo($expectedURL));
+        $paymentMethodGateway->delete("some_token", ['revokeAllGrants' => false]);
+    }
+
+    public function testDeleteWithoutRevokeAllGrantsOption()
+    {
+        $paymentMethodGateway = $this->mockPaymentMethodGatewayDoDelete();
+        $expectedURL = "/payment_methods/any/some_token";
+        $paymentMethodGateway->expects($this->once())->method('_doDelete')->with($this->equalTo($expectedURL));
+        $paymentMethodGateway->delete("some_token");
+    }
+
+    public function testDeleteWithInvalidOption()
+    {
+        $paymentMethodGateway = $this->mockPaymentMethodGatewayDoDelete();
+        $this->setExpectedException('InvalidArgumentException');
+        $paymentMethodGateway->expects($this->never())->method('_doDelete');
+        $paymentMethodGateway->delete("some_token", ['invalidKey' => false]);
+    }
+
+    private function mockPaymentMethodGatewayDoDelete()
+    {
+        return $this->getMockBuilder('Braintree\PaymentMethodGateway')
+            ->setConstructorArgs(array(Braintree\Configuration::gateway()))
+            ->setMethods(array('_doDelete'))
+            ->getMock();
     }
 }

@@ -8,6 +8,8 @@ namespace Magento\Backend\Model\Menu;
 /**
  * Menu builder object. Retrieves commands (\Magento\Backend\Model\Menu\Builder\AbstractCommand)
  * to build menu (\Magento\Backend\Model\Menu)
+ * @api
+ * @since 100.0.2
  */
 class Builder
 {
@@ -100,6 +102,6 @@ class Builder
      */
     protected function _getParam($params, $paramName, $defaultValue = null)
     {
-        return isset($params[$paramName]) ? $params[$paramName] : $defaultValue;
+        return $params[$paramName] ?? $defaultValue;
     }
 }

@@ -5,7 +5,7 @@
  */
 namespace Magento\Framework\Acl\Test\Unit\AclResource\Config;
 
-class XsdTest extends \PHPUnit_Framework_TestCase
+class XsdTest extends \PHPUnit\Framework\TestCase
 {
     /**
      * @var \Magento\Framework\Acl\AclResource\Config\SchemaLocator
@@ -31,7 +31,7 @@ class XsdTest extends \PHPUnit_Framework_TestCase
         $this->_schemaLocator = new \Magento\Framework\Acl\AclResource\Config\SchemaLocator(
             new \Magento\Framework\Config\Dom\UrnResolver()
         );
-        $this->_xsdSchema = $this->_schemaLocator->getSchema();
+        $this->_xsdSchema = $this->_schemaLocator->getPerFileSchema();
         $this->_xsdValidator = new \Magento\Framework\TestFramework\Unit\Utility\XsdValidator();
     }
 

@@ -10,6 +10,7 @@ namespace Magento\Framework\Code\Generator {
 
     /**
      * @param $className
+     *
      * @return bool
      */
     function class_exists($className)
@@ -27,7 +28,7 @@ namespace Magento\Framework\Code\Test\Unit\Generator {
 
     // @codingStandardsIgnoreEnd
 
-    class DefinedClassesTest extends \PHPUnit_Framework_TestCase
+    class DefinedClassesTest extends \PHPUnit\Framework\TestCase
     {
         /** @var bool  */
         public static $definedClassesTestActive = false;
@@ -64,7 +65,7 @@ namespace Magento\Framework\Code\Test\Unit\Generator {
             /**
              * @var AutoloaderInterface | \PHPUnit_Framework_MockObject_MockObject $autoloaderMock
              */
-            $autoloaderMock = $this->getMock('\Magento\Framework\Autoload\AutoloaderInterface');
+            $autoloaderMock = $this->createMock(\Magento\Framework\Autoload\AutoloaderInterface::class);
             $autoloaderMock->expects($this->once())->method('findFile')->with($classOnDisc)->willReturn(true);
             AutoloaderRegistry::registerAutoloader($autoloaderMock);
             $this->assertTrue($this->model->isClassLoadable($classOnDisc));

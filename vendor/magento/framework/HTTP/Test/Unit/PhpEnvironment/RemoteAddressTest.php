@@ -6,13 +6,14 @@
 namespace Magento\Framework\HTTP\Test\Unit\PhpEnvironment;
 
 use Magento\Framework\HTTP\PhpEnvironment\RemoteAddress;
+use PHPUnit\Framework\TestCase;
 use Magento\Framework\App\Request\Http as HttpRequest;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
 
-class RemoteAddressTest extends \PHPUnit_Framework_TestCase
+class RemoteAddressTest extends TestCase
 {
     /**
-     * @var \PHPUnit_Framework_MockObject_MockObject|\HttpRequest
+     * @var \PHPUnit_Framework_MockObject_MockObject|HttpRequest
      */
     protected $_request;
 
@@ -23,8 +24,9 @@ class RemoteAddressTest extends \PHPUnit_Framework_TestCase
 
     protected function setUp()
     {
-        $this->_request = $this->getMockBuilder(HttpRequest::class)
-            ->disableOriginalConstructor()
+        $this->_request = $this->getMockBuilder(
+            HttpRequest::class
+        )->disableOriginalConstructor()
             ->setMethods(['getServer'])
             ->getMock();
 
@@ -37,14 +39,14 @@ class RemoteAddressTest extends \PHPUnit_Framework_TestCase
      * @param string|bool $expected
      * @param bool $ipToLong
      * @param string[]|null $trustedProxies
-     * @return void
+     *
      * @dataProvider getRemoteAddressProvider
      */
     public function testGetRemoteAddress(
         array $alternativeHeaders,
         array $serverValueMap,
         $expected,
-        $ipToLong,
+        bool $ipToLong,
         array $trustedProxies = null
     ) {
         $remoteAddress = $this->_objectManager->getObject(
@@ -52,7 +54,7 @@ class RemoteAddressTest extends \PHPUnit_Framework_TestCase
             [
                 'httpRequest' => $this->_request,
                 'alternativeHeaders' => $alternativeHeaders,
-                'trustedProxies' => $trustedProxies,
+                'trustedProxies' => $trustedProxies
             ]
         );
         $this->_request->expects($this->any())
@@ -148,12 +150,12 @@ class RemoteAddressTest extends \PHPUnit_Framework_TestCase
                     [
                         'REMOTE_ADDR',
                         null,
-                        '192.168.0.2, 192.168.0.1, 192.168.0.3',
+                        '192.168.0.2, 192.168.0.1, 192.168.0.3'
                     ],
                     [
                         'REMOTE_ADDR',
                         false,
-                        '192.168.0.2, 192.168.0.1, 192.168.0.3',
+                        '192.168.0.2, 192.168.0.1, 192.168.0.3'
                     ],
                 ],
                 'expected' => '192.168.0.1',
@@ -166,12 +168,12 @@ class RemoteAddressTest extends \PHPUnit_Framework_TestCase
                     [
                         'REMOTE_ADDR',
                         null,
-                        '192.168.0.2, 192.168.0.1, 192.168.0.3',
+                        '192.168.0.2, 192.168.0.1, 192.168.0.3'
                     ],
                     [
                         'REMOTE_ADDR',
                         false,
-                        '192.168.0.2, 192.168.0.1, 192.168.0.3',
+                        '192.168.0.2, 192.168.0.1, 192.168.0.3'
                     ],
                 ],
                 'expected' => '192.168.0.3',

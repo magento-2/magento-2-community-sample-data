@@ -5,50 +5,58 @@
  */
 namespace Magento\Widget\Helper;
 
+use Magento\Framework\Data\Wysiwyg\Normalizer;
 use Magento\Framework\App\ObjectManager;
-use Magento\Framework\Unserialize\SecureUnserializer;
+use Magento\Framework\Serialize\Serializer\Json;
 
 /**
- * Widget Conditions helper
+ * Widget Conditions helper.
  */
 class Conditions
 {
     /**
-     * @var SecureUnserializer
+     * @var Json
      */
-    private $unserializer;
+    private $serializer;
 
     /**
-     * @param SecureUnserializer|null $unserializer
+     * @var Normalizer
+     */
+    private $normalizer;
+
+    /**
+     * @param Json $serializer
+     * @param Normalizer $normalizer
      */
     public function __construct(
-        SecureUnserializer $unserializer = null
+        Json $serializer = null,
+        Normalizer $normalizer = null
     ) {
-        $this->unserializer = $unserializer ?: ObjectManager::getInstance()->get(SecureUnserializer::class);
+        $this->serializer = $serializer ?: ObjectManager::getInstance()->get(Json::class);
+        $this->normalizer = $normalizer ?: ObjectManager::getInstance()->get(Normalizer::class);
     }
 
     /**
-     * Encode widget conditions to be used with WYSIWIG
+     * Encode widget conditions to be used with WYSIWIG.
      *
      * @param array $value
      * @return string
      */
     public function encode(array $value)
     {
-        $value = str_replace(['{', '}', '"', '\\'], ['[', ']', '`', '|'], serialize($value));
-        return $value;
+        return $this->normalizer->replaceReservedCharacters($this->serializer->serialize($value));
     }
 
     /**
-     * Decode previously encoded widget conditions
+     * Decode previously encoded widget conditions.
      *
      * @param string $value
      * @return array
      */
     public function decode($value)
     {
-        $value = str_replace(['[', ']', '`', '|'], ['{', '}', '"', '\\'], $value);
-
-        return $this->unserializer->unserialize($value);
+        return $this->serializer->unserialize(
+            $this->normalizer->restoreReservedCharacters($value)
+        );
     }
 }

@@ -5,7 +5,6 @@
  */
 namespace Magento\Eav\Test\Unit\Model\Entity\Collection\VersionControl;
 
-use Magento\Eav\Test\Unit\Model\Entity\Collection\VersionControl\AbstractCollectionStub;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
 
 /**
@@ -31,16 +30,13 @@ class AbstractCollectionTest extends \Magento\Eav\Test\Unit\Model\Entity\Collect
 
         $objectManager = new ObjectManager($this);
 
-        $this->entitySnapshot = $this->getMock(
-            'Magento\Framework\Model\ResourceModel\Db\VersionControl\Snapshot',
-            ['registerSnapshot'],
-            [],
-            '',
-            false
+        $this->entitySnapshot = $this->createPartialMock(
+            \Magento\Framework\Model\ResourceModel\Db\VersionControl\Snapshot::class,
+            ['registerSnapshot']
         );
 
         $this->subject = $objectManager->getObject(
-            'Magento\Eav\Test\Unit\Model\Entity\Collection\VersionControl\AbstractCollectionStub',
+            \Magento\Eav\Test\Unit\Model\Entity\Collection\VersionControl\AbstractCollectionStub::class,
             [
                 'entityFactory' => $this->coreEntityFactoryMock,
                 'universalFactory' => $this->validatorFactoryMock,

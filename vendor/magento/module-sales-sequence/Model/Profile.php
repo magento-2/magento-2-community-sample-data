@@ -9,6 +9,9 @@ use Magento\Framework\Model\AbstractModel;
 
 /**
  * Class Profile
+ *
+ * @api
+ * @since 100.0.2
  */
 class Profile extends AbstractModel
 {
@@ -17,6 +20,6 @@ class Profile extends AbstractModel
      */
     protected function _construct()
     {
-        $this->_init('Magento\SalesSequence\Model\ResourceModel\Profile');
+        $this->_init(\Magento\SalesSequence\Model\ResourceModel\Profile::class);
     }
 }

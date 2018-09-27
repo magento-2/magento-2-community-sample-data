@@ -5,7 +5,7 @@
  */
 namespace Magento\Framework\HTTP\PhpEnvironment;
 
-class RemoteAddressTest extends \PHPUnit_Framework_TestCase
+class RemoteAddressTest extends \PHPUnit\Framework\TestCase
 {
     /**
      * @var \Magento\Framework\HTTP\PhpEnvironment\RemoteAddress
@@ -15,7 +15,7 @@ class RemoteAddressTest extends \PHPUnit_Framework_TestCase
     protected function setUp()
     {
         $objectManager = \Magento\TestFramework\Helper\Bootstrap::getObjectManager();
-        $this->_helper = $objectManager->get('Magento\Framework\HTTP\PhpEnvironment\RemoteAddress');
+        $this->_helper = $objectManager->get(\Magento\Framework\HTTP\PhpEnvironment\RemoteAddress::class);
     }
 
     public function testGetRemoteAddress()

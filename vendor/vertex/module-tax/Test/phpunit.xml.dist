@@ -1,0 +1,25 @@
+<phpunit xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:noNamespaceSchemaLocation="http://schema.phpunit.de/6.2/phpunit.xsd"
+         colors="true"
+         beStrictAboutTestsThatDoNotTestAnything="false"
+         bootstrap="./framework/unit_bootstrap.php"
+>
+    <testsuite name="Vertex Unit Tests">
+        <directory>./Unit</directory>
+    </testsuite>
+    <php>
+        <ini name="xdebug.max_nesting_level" value="250"/>
+    </php>
+    <listeners>
+        <listener class="Magento\Framework\TestFramework\Unit\Listener\ReplaceObjectManager"/>
+    </listeners>
+    <filter>
+        <whitelist>
+            <directory suffix=".php">../*</directory>
+            <exclude>
+                <directory>../vendor</directory>
+                <directory>../Test</directory>
+            </exclude>
+        </whitelist>
+    </filter>
+</phpunit>

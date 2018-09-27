@@ -7,48 +7,46 @@
 namespace Magento\Checkout\Block\Cart;
 
 /**
- * Block on checkout/cart/index page to display a pager on the  cart items grid.
+ * Block on checkout/cart/index page to display a pager on the  cart items grid
  * The pager will be displayed if items quantity in the shopping cart > than number from
  * Store->Configuration->Sales->Checkout->Shopping Cart->Number of items to display pager and
- * custom_items weren't set to cart block.
+ * custom_items weren't set to cart block
+ *
+ * @api
+ * @since 100.2.0
  */
 class Grid extends \Magento\Checkout\Block\Cart
 {
     /**
-     * Config settings path to determine when pager on checkout/cart/index will be visible.
+     * Config settings path to determine when pager on checkout/cart/index will be visible
      */
     const XPATH_CONFIG_NUMBER_ITEMS_TO_DISPLAY_PAGER = 'checkout/cart/number_items_to_display_pager';
 
     /**
-     * Quote item resource collection.
-     *
      * @var \Magento\Quote\Model\ResourceModel\Quote\Item\Collection
      */
     private $itemsCollection;
 
     /**
-     * Quote item resource collection factory.
-     *
      * @var \Magento\Quote\Model\ResourceModel\Quote\Item\CollectionFactory
      *
      */
     private $itemCollectionFactory;
 
     /**
-     * Join extension attributes processor.
-     *
      * @var \Magento\Framework\Api\ExtensionAttribute\JoinProcessorInterface
      */
     private $joinAttributeProcessor;
 
     /**
-     * Is pager displayed on shopping cart page.
+     * Is display pager on shopping cart page
      *
      * @var bool
      */
     private $isPagerDisplayed;
 
     /**
+     * Grid constructor.
      * @param \Magento\Framework\View\Element\Template\Context $context
      * @param \Magento\Customer\Model\Session $customerSession
      * @param \Magento\Checkout\Model\Session $checkoutSession
@@ -58,6 +56,7 @@ class Grid extends \Magento\Checkout\Block\Cart
      * @param \Magento\Quote\Model\ResourceModel\Quote\Item\CollectionFactory $itemCollectionFactory
      * @param \Magento\Framework\Api\ExtensionAttribute\JoinProcessorInterface $joinProcessor
      * @param array $data
+     * @since 100.2.0
      */
     public function __construct(
         \Magento\Framework\View\Element\Template\Context $context,
@@ -84,12 +83,13 @@ class Grid extends \Magento\Checkout\Block\Cart
     }
 
     /**
-     * Prepare Quote Item Product URLs.
-     * When we don't have custom_items, items URLs will be collected for Collection limited by pager.
-     * Pager limit on checkout/cart/index is determined by configuration.
-     * Configuration path is Store->Configuration->Sales->Checkout->Shopping Cart->Number of items to display pager.
+     * Prepare Quote Item Product URLs
+     * When we don't have custom_items, items URLs will be collected for Collection limited by pager
+     * Pager limit on checkout/cart/index is determined by configuration
+     * Configuration path is Store->Configuration->Sales->Checkout->Shopping Cart->Number of items to display pager
      *
      * @return void
+     * @since 100.2.0
      */
     protected function _construct()
     {
@@ -103,6 +103,7 @@ class Grid extends \Magento\Checkout\Block\Cart
 
     /**
      * {@inheritdoc}
+     * @since 100.2.0
      */
     protected function _prepareLayout()
     {
@@ -120,44 +121,45 @@ class Grid extends \Magento\Checkout\Block\Cart
             $itemsCollection->load();
             $this->prepareItemUrls();
         }
-
         return $this;
     }
 
     /**
-     * Prepare quote items collection for pager.
+     * Prepare quote items collection for pager
      *
      * @return \Magento\Quote\Model\ResourceModel\Quote\Item\Collection
+     * @since 100.2.0
      */
     public function getItemsForGrid()
     {
         if (!$this->itemsCollection) {
             /** @var \Magento\Quote\Model\ResourceModel\Quote\Item\Collection $itemCollection */
             $itemCollection = $this->itemCollectionFactory->create();
+
             $itemCollection->setQuote($this->getQuote());
             $itemCollection->addFieldToFilter('parent_item_id', ['null' => true]);
             $this->joinAttributeProcessor->process($itemCollection);
+
             $this->itemsCollection = $itemCollection;
         }
-
         return $this->itemsCollection;
     }
 
     /**
      * {@inheritdoc}
+     * @since 100.2.0
      */
     public function getItems()
     {
         if (!$this->isPagerDisplayedOnPage()) {
             return parent::getItems();
         }
-
         return $this->getItemsForGrid()->getItems();
     }
 
     /**
-     * Verify pager visibility.
-     * If cart block has custom_items and items qty in the shopping cart < limit from stores configuration.
+     * Verify if display pager on shopping cart
+     * If cart block has custom_items and items qty in the shopping cart<limit from stores configuration
      *
      * @return bool
      */
@@ -170,7 +172,6 @@ class Grid extends \Magento\Checkout\Block\Cart
             );
             $this->isPagerDisplayed = !$this->getCustomItems() && $availableLimit < $this->getItemsCount();
         }
-
         return $this->isPagerDisplayed;
     }
 }

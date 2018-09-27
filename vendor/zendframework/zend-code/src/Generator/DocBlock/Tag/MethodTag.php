@@ -3,7 +3,7 @@
  * Zend Framework (http://framework.zend.com/)
  *
  * @link      http://github.com/zendframework/zf2 for the canonical source repository
- * @copyright Copyright (c) 2005-2015 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright Copyright (c) 2005-2016 Zend Technologies USA Inc. (http://www.zend.com)
  * @license   http://framework.zend.com/license/new-bsd New BSD License
  */
 
@@ -27,7 +27,7 @@ class MethodTag extends AbstractTypeableTag implements TagInterface
      * @param string $description
      * @param bool $isStatic
      */
-    public function __construct($methodName = null, $types = array(), $description = null, $isStatic = false)
+    public function __construct($methodName = null, $types = [], $description = null, $isStatic = false)
     {
         if (!empty($methodName)) {
             $this->setMethodName($methodName);

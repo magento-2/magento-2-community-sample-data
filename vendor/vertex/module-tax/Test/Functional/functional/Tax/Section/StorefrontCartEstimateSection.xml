@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="../../../../../vendor/magento/magento2-functional-testing-framework/src/Magento/FunctionalTestingFramework/Page/etc/SectionObject.xsd">
+    <section name="StorefrontCartEstimateSection">
+        <element name="EstimateTitleExpandable" type="text"
+                 selector="#block-shipping .title"/>
+        <element name="EstimateCountrySelect" type="select"
+                 selector="div.field[name='shippingAddress.country_id'] .control .select"/>
+        <element name="EstimateRegionSelect" type="select"
+                 selector="div.field[name='shippingAddress.region_id'] .control .select"/>
+        <element name="EstimatePostcodeInput" type="input"
+                 selector="div.field[name='shippingAddress.postcode'] .control .input-text"/>
+        <element name="EstimateFlatrateRadio" type="radio"
+                 selector="#co-shipping-method-form input[value=flatrate_flatrate]" />
+
+        <element name="CartTotalsSubtotal" type="text"
+                 selector="#cart-totals .totals.sub .price" />
+        <element name="CartTotalsShipping" type="text"
+                 selector="#cart-totals .totals.shipping.excl .price" />
+        <element name="CartTotalsTax" type="text"
+                 selector="#cart-totals .totals-tax .price" />
+    </section>
+</config>

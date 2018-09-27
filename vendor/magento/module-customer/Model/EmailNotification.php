@@ -3,9 +3,12 @@
  * Copyright © Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
+
 namespace Magento\Customer\Model;
 
 use Magento\Framework\App\Config\ScopeConfigInterface;
+use Magento\Framework\App\ObjectManager;
+use Magento\Framework\Mail\Template\SenderResolverInterface;
 use Magento\Store\Model\StoreManagerInterface;
 use Magento\Framework\Mail\Template\TransportBuilder;
 use Magento\Customer\Helper\View as CustomerViewHelper;
@@ -43,11 +46,26 @@ class EmailNotification implements EmailNotificationInterface
     const XML_PATH_CONFIRM_EMAIL_TEMPLATE = 'customer/create_account/email_confirmation_template';
 
     const XML_PATH_CONFIRMED_EMAIL_TEMPLATE = 'customer/create_account/email_confirmed_template';
-    /**#@-*/
 
     /**
-     * @var CustomerRegistry
+     * self::NEW_ACCOUNT_EMAIL_REGISTERED               welcome email, when confirmation is disabled
+     *                                                  and password is set
+     * self::NEW_ACCOUNT_EMAIL_REGISTERED_NO_PASSWORD   welcome email, when confirmation is disabled
+     *                                                  and password is not set
+     * self::NEW_ACCOUNT_EMAIL_CONFIRMED                welcome email, when confirmation is enabled
+     *                                                  and password is set
+     * self::NEW_ACCOUNT_EMAIL_CONFIRMATION             email with confirmation link
      */
+    const TEMPLATE_TYPES = [
+        self::NEW_ACCOUNT_EMAIL_REGISTERED => self::XML_PATH_REGISTER_EMAIL_TEMPLATE,
+        self::NEW_ACCOUNT_EMAIL_REGISTERED_NO_PASSWORD => self::XML_PATH_REGISTER_NO_PASSWORD_EMAIL_TEMPLATE,
+        self::NEW_ACCOUNT_EMAIL_CONFIRMED => self::XML_PATH_CONFIRMED_EMAIL_TEMPLATE,
+        self::NEW_ACCOUNT_EMAIL_CONFIRMATION => self::XML_PATH_CONFIRM_EMAIL_TEMPLATE,
+    ];
+
+    /**#@-*/
+
+    /**#@-*/
     private $customerRegistry;
 
     /**
@@ -76,12 +94,18 @@ class EmailNotification implements EmailNotificationInterface
     private $scopeConfig;
 
     /**
+     * @var SenderResolverInterface
+     */
+    private $senderResolver;
+
+    /**
      * @param CustomerRegistry $customerRegistry
      * @param StoreManagerInterface $storeManager
      * @param TransportBuilder $transportBuilder
      * @param CustomerViewHelper $customerViewHelper
      * @param DataObjectProcessor $dataProcessor
      * @param ScopeConfigInterface $scopeConfig
+     * @param SenderResolverInterface|null $senderResolver
      */
     public function __construct(
         CustomerRegistry $customerRegistry,
@@ -89,7 +113,8 @@ class EmailNotification implements EmailNotificationInterface
         TransportBuilder $transportBuilder,
         CustomerViewHelper $customerViewHelper,
         DataObjectProcessor $dataProcessor,
-        ScopeConfigInterface $scopeConfig
+        ScopeConfigInterface $scopeConfig,
+        SenderResolverInterface $senderResolver = null
     ) {
         $this->customerRegistry = $customerRegistry;
         $this->storeManager = $storeManager;
@@ -97,6 +122,7 @@ class EmailNotification implements EmailNotificationInterface
         $this->customerViewHelper = $customerViewHelper;
         $this->dataProcessor = $dataProcessor;
         $this->scopeConfig = $scopeConfig;
+        $this->senderResolver = $senderResolver ?: ObjectManager::getInstance()->get(SenderResolverInterface::class);
     }
 
     /**
@@ -215,6 +241,7 @@ class EmailNotification implements EmailNotificationInterface
      * @param int|null $storeId
      * @param string $email
      * @return void
+     * @throws \Magento\Framework\Exception\MailException
      */
     private function sendEmailTemplate(
         $customer,
@@ -229,11 +256,16 @@ class EmailNotification implements EmailNotificationInterface
             $email = $customer->getEmail();
         }
 
+        /** @var array $from */
+        $from = $this->senderResolver->resolve(
+            $this->scopeConfig->getValue($sender, 'store', $storeId),
+            $storeId
+        );
+
         $transport = $this->transportBuilder->setTemplateIdentifier($templateId)
             ->setTemplateOptions(['area' => 'frontend', 'store' => $storeId])
             ->setTemplateVars($templateParams)
-            ->setScopeId($storeId)
-            ->setFrom($this->scopeConfig->getValue($sender, 'store', $storeId))
+            ->setFrom($from)
             ->addTo($email, $this->customerViewHelper->getCustomerName($customer))
             ->getTransport();
 
@@ -269,8 +301,7 @@ class EmailNotification implements EmailNotificationInterface
     {
         if ($customer->getWebsiteId() != 0 && empty($defaultStoreId)) {
             $storeIds = $this->storeManager->getWebsite($customer->getWebsiteId())->getStoreIds();
-            reset($storeIds);
-            $defaultStoreId = current($storeIds);
+            $defaultStoreId = reset($storeIds);
         }
         return $defaultStoreId;
     }
@@ -283,7 +314,7 @@ class EmailNotification implements EmailNotificationInterface
      */
     public function passwordReminder(CustomerInterface $customer)
     {
-        $storeId = $this->storeManager->getStore()->getId();
+        $storeId = $customer->getStoreId();
         if (!$storeId) {
             $storeId = $this->getWebsiteStoreId($customer);
         }
@@ -341,7 +372,7 @@ class EmailNotification implements EmailNotificationInterface
         $storeId = 0,
         $sendemailStoreId = null
     ) {
-        $types = $this->getTemplateTypes();
+        $types = self::TEMPLATE_TYPES;
 
         if (!isset($types[$type])) {
             throw new LocalizedException(__('Please correct the transactional account email type.'));
@@ -362,31 +393,5 @@ class EmailNotification implements EmailNotificationInterface
             ['customer' => $customerEmailData, 'back_url' => $backUrl, 'store' => $store],
             $storeId
         );
-    }
-
-    /**
-     * Get template types
-     *
-     * @return array
-     * @todo: consider eliminating method
-     */
-    private function getTemplateTypes()
-    {
-        /**
-         * self::NEW_ACCOUNT_EMAIL_REGISTERED               welcome email, when confirmation is disabled
-         *                                                  and password is set
-         * self::NEW_ACCOUNT_EMAIL_REGISTERED_NO_PASSWORD   welcome email, when confirmation is disabled
-         *                                                  and password is not set
-         * self::NEW_ACCOUNT_EMAIL_CONFIRMED                welcome email, when confirmation is enabled
-         *                                                  and password is set
-         * self::NEW_ACCOUNT_EMAIL_CONFIRMATION             email with confirmation link
-         */
-        $types = [
-            self::NEW_ACCOUNT_EMAIL_REGISTERED => self::XML_PATH_REGISTER_EMAIL_TEMPLATE,
-            self::NEW_ACCOUNT_EMAIL_REGISTERED_NO_PASSWORD => self::XML_PATH_REGISTER_NO_PASSWORD_EMAIL_TEMPLATE,
-            self::NEW_ACCOUNT_EMAIL_CONFIRMED => self::XML_PATH_CONFIRMED_EMAIL_TEMPLATE,
-            self::NEW_ACCOUNT_EMAIL_CONFIRMATION => self::XML_PATH_CONFIRM_EMAIL_TEMPLATE,
-        ];
-        return $types;
     }
 }

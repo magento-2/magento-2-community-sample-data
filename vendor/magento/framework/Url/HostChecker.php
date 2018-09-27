@@ -8,7 +8,7 @@ namespace Magento\Framework\Url;
 use Magento\Framework\UrlInterface;
 
 /**
- * Class provides functionality for checks of a host name.
+ * Class provides functionality for checks of a host name
  */
 class HostChecker
 {
@@ -26,7 +26,7 @@ class HostChecker
     }
 
     /**
-     * Check if provided URL is one of the domain URLs assigned to scopes.
+     * Check if provided URL is one of the domain URLs assigned to scopes
      *
      * @param string $url
      * @return bool
@@ -38,13 +38,11 @@ class HostChecker
         if (empty($hostName)) {
             return true;
         }
-        /** @var \Magento\Framework\App\ScopeInterface $scope */
         foreach ($this->scopeResolver->getScopes() as $scope) {
             $scopeHostNames[] = parse_url($scope->getBaseUrl(), PHP_URL_HOST);
             $scopeHostNames[] = parse_url($scope->getBaseUrl(UrlInterface::URL_TYPE_LINK, true), PHP_URL_HOST);
         }
         $scopeHostNames = array_unique($scopeHostNames);
-
         return in_array($hostName, $scopeHostNames);
     }
 }

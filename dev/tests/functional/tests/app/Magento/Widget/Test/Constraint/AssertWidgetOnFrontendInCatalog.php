@@ -6,11 +6,11 @@
 
 namespace Magento\Widget\Test\Constraint;
 
-use Magento\PageCache\Test\Page\Adminhtml\AdminCache;
 use Magento\Catalog\Test\Page\Category\CatalogCategoryView;
 use Magento\Cms\Test\Page\CmsIndex;
 use Magento\Widget\Test\Fixture\Widget;
 use Magento\Mtf\Constraint\AbstractConstraint;
+use Magento\Mtf\Util\Command\Cli\Cache;
 
 /**
  * Check that created widget displayed on frontend in Catalog.
@@ -23,19 +23,17 @@ class AssertWidgetOnFrontendInCatalog extends AbstractConstraint
      * @param CmsIndex $cmsIndex
      * @param CatalogCategoryView $catalogCategoryView
      * @param Widget $widget
-     * @param AdminCache $adminCache
+     * @param Cache $cache
      * @return void
      */
     public function processAssert(
         CmsIndex $cmsIndex,
         CatalogCategoryView $catalogCategoryView,
         Widget $widget,
-        AdminCache $adminCache
+        Cache $cache
     ) {
         // Flush cache
-        $adminCache->open();
-        $adminCache->getActionsBlock()->flushMagentoCache();
-        $adminCache->getMessagesBlock()->waitSuccessMessage();
+        $cache->flush();
 
         $cmsIndex->open();
         if (isset($widget->getWidgetInstance()[0]['entities'])) {

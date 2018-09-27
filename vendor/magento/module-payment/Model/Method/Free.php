@@ -10,6 +10,13 @@ use Magento\Framework\Pricing\PriceCurrencyInterface;
 /**
  * Free payment method
  * @method \Magento\Quote\Api\Data\PaymentMethodExtensionInterface getExtensionAttributes()
+ *
+ * This is an implementation of payment method that allows order for free.
+ * Magento contains special flow for handling this payment method.
+ * Inheritance is allowed to modify it behavior.
+ *
+ * @api
+ * @since 100.0.2
  */
 class Free extends \Magento\Payment\Model\Method\AbstractMethod
 {

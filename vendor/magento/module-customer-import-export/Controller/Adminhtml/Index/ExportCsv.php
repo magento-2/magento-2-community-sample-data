@@ -14,7 +14,7 @@ use Magento\Framework\App\Filesystem\DirectoryList;
 class ExportCsv extends \Magento\Backend\App\Action
 {
     /**
-     * Authorization level of a basic admin session.
+     * Authorization level of a basic admin session
      *
      * @see _isAllowed()
      */

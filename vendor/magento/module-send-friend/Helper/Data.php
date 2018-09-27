@@ -12,6 +12,9 @@ namespace Magento\SendFriend\Helper;
  * SendFriend Data Helper
  *
  * @author      Magento Core Team <core@magentocommerce.com>
+ *
+ * @api
+ * @since 100.0.2
  */
 class Data extends \Magento\Framework\App\Helper\AbstractHelper
 {

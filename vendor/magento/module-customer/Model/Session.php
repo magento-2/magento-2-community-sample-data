@@ -13,8 +13,11 @@ use Magento\Customer\Model\ResourceModel\Customer as ResourceCustomer;
 
 /**
  * Customer session model
+ *
+ * @api
  * @method string getNoReferer()
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
+ * @since 100.0.2
  */
 class Session extends \Magento\Framework\Session\SessionManager
 {
@@ -484,7 +487,7 @@ class Session extends \Magento\Framework\Session\SessionManager
             $this->response->setRedirect($loginUrl);
         } else {
             $arguments = $this->_customerUrl->getLoginUrlParams();
-            if ($this->_session->getCookieShouldBeReceived() && $this->_createUrl()->getUseSession()) {
+            if ($this->_createUrl()->getUseSession()) {
                 $arguments += [
                     '_query' => [
                         $this->sidResolver->getSessionIdQueryParam($this->_session) => $this->_session->getSessionId(),

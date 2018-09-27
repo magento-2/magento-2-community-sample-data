@@ -7,11 +7,11 @@
 namespace Magento\Catalog\Controller\Adminhtml\Product;
 
 use Magento\Framework\Controller\ResultFactory;
-use Magento\Catalog\Controller\Adminhtml\Product\Builder;
 use Magento\Backend\App\Action\Context;
-use Magento\Framework\Exception\NotFoundException;
 use Magento\Ui\Component\MassAction\Filter;
 use Magento\Catalog\Model\ResourceModel\Product\CollectionFactory;
+use Magento\Catalog\Api\ProductRepositoryInterface;
+use Magento\Framework\Exception\NotFoundException;
 
 class MassDelete extends \Magento\Catalog\Controller\Adminhtml\Product
 {
@@ -28,19 +28,28 @@ class MassDelete extends \Magento\Catalog\Controller\Adminhtml\Product
     protected $collectionFactory;
 
     /**
+     * @var ProductRepositoryInterface
+     */
+    private $productRepository;
+
+    /**
      * @param Context $context
      * @param Builder $productBuilder
      * @param Filter $filter
      * @param CollectionFactory $collectionFactory
+     * @param ProductRepositoryInterface $productRepository
      */
     public function __construct(
         Context $context,
         Builder $productBuilder,
         Filter $filter,
-        CollectionFactory $collectionFactory
+        CollectionFactory $collectionFactory,
+        ProductRepositoryInterface $productRepository = null
     ) {
         $this->filter = $filter;
         $this->collectionFactory = $collectionFactory;
+        $this->productRepository = $productRepository
+            ?: \Magento\Framework\App\ObjectManager::getInstance()->create(ProductRepositoryInterface::class);
         parent::__construct($context, $productBuilder);
     }
 
@@ -48,6 +57,7 @@ class MassDelete extends \Magento\Catalog\Controller\Adminhtml\Product
      * @return \Magento\Backend\Model\View\Result\Redirect
      * @throws NotFoundException
      * @throws \Magento\Framework\Exception\LocalizedException
+     * @throws \Magento\Framework\Exception\StateException
      */
     public function execute()
     {
@@ -56,13 +66,14 @@ class MassDelete extends \Magento\Catalog\Controller\Adminhtml\Product
         }
         $collection = $this->filter->getCollection($this->collectionFactory->create());
         $productDeleted = 0;
+        /** @var \Magento\Catalog\Model\Product $product */
         foreach ($collection->getItems() as $product) {
-            $product->delete();
+            $this->productRepository->delete($product);
             $productDeleted++;
         }
 
         if ($productDeleted) {
-            $this->messageManager->addSuccess(
+            $this->messageManager->addSuccessMessage(
                 __('A total of %1 record(s) have been deleted.', $productDeleted)
             );
         }

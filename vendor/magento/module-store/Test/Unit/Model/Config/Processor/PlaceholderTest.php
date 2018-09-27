@@ -8,7 +8,7 @@ namespace Magento\Store\Test\Unit\Model\Config\Processor;
 /**
  * Class PlaceholderTest
  */
-class PlaceholderTest extends \PHPUnit_Framework_TestCase
+class PlaceholderTest extends \PHPUnit\Framework\TestCase
 {
     /**
      * @var \Magento\Store\Model\Config\Processor\Placeholder
@@ -22,7 +22,7 @@ class PlaceholderTest extends \PHPUnit_Framework_TestCase
 
     protected function setUp()
     {
-        $this->configPlaceholderMock = $this->getMock('Magento\Store\Model\Config\Placeholder', [], [], '', false);
+        $this->configPlaceholderMock = $this->createMock(\Magento\Store\Model\Config\Placeholder::class);
 
         $this->configPlaceholderMock->expects(
             $this->any()
@@ -36,12 +36,7 @@ class PlaceholderTest extends \PHPUnit_Framework_TestCase
             ['key2' => 'value2-processed']
         );
 
-        $this->model = new \Magento\Store\Model\Config\Processor\Placeholder(
-            $this->getMock(\Magento\Framework\App\RequestInterface::class),
-            [],
-            null,
-            $this->configPlaceholderMock
-        );
+        $this->model = new \Magento\Store\Model\Config\Processor\Placeholder($this->configPlaceholderMock);
     }
 
     public function testProcess()

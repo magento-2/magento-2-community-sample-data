@@ -5,7 +5,7 @@
  */
 namespace Magento\Sales\Model\ResourceModel\Report\Bestsellers;
 
-class CollectionTest extends \PHPUnit_Framework_TestCase
+class CollectionTest extends \PHPUnit\Framework\TestCase
 {
     /**
      * @var \Magento\Sales\Model\ResourceModel\Report\Bestsellers\Collection
@@ -15,7 +15,7 @@ class CollectionTest extends \PHPUnit_Framework_TestCase
     protected function setUp()
     {
         $this->_collection = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->create(
-            'Magento\Sales\Model\ResourceModel\Report\Bestsellers\Collection'
+            \Magento\Sales\Model\ResourceModel\Report\Bestsellers\Collection::class
         );
         $this->_collection->setPeriod('day')->setDateRange(null, null)->addStoreFilter([1]);
     }

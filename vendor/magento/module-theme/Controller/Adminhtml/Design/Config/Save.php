@@ -13,6 +13,9 @@ use Magento\Backend\App\Action\Context;
 use Magento\Framework\Exception\LocalizedException;
 use Magento\Theme\Model\Data\Design\ConfigFactory;
 
+/**
+ * Save action controller
+ */
 class Save extends Action
 {
     /**
@@ -116,6 +119,15 @@ class Save extends Action
         $data = array_filter($data, function ($param) {
             return !(isset($param['error']) && $param['error'] > 0);
         });
+
+        /**
+         * Set null to theme id in case it's empty string,
+         * in order to delete value from db config but not set empty string,
+         * which may cause an error in Magento/Theme/Model/ResourceModel/Theme/Collection::getThemeByFullPath().
+         */
+        if (isset($data['theme_theme_id']) && $data['theme_theme_id'] === '') {
+            $data['theme_theme_id'] = null;
+        }
         return $data;
     }
 }

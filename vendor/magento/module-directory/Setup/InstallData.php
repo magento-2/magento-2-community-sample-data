@@ -808,7 +808,7 @@ class InstallData implements InstallDataInterface
             ['BR', 'SP', 'São Paulo'],
             ['BR', 'SE', 'Sergipe'],
             ['BR', 'TO', 'Tocantins'],
-            ['BR', 'DF', 'Distrito Federal']
+            ['BR', 'DF', 'Distrito Federal'],
         ];
 
         foreach ($data as $row) {

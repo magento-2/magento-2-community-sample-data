@@ -8,28 +8,22 @@ namespace Magento\CatalogUrlRewrite\Model\Map;
 use Magento\Framework\App\ResourceConnection;
 
 /**
- * Map that holds data for categories used by products found in root category.
+ * Map that holds data for categories used by products found in root category
  */
 class DataCategoryUsedInProductsHashMap implements HashMapInterface
 {
     /**
-     * Holds data for categories and its subcategories.
-     *
      * @var int[]
      */
     private $hashMap = [];
 
     /**
-     * Pool for hash maps.
-     *
-     * @var HashMapPool
+     * @var \Magento\CatalogUrlRewrite\Model\Map\HashMapPool
      */
     private $hashMapPool;
 
     /**
-     * Resource connection.
-     *
-     * @var ResourceConnection
+     * @var \Magento\Framework\App\ResourceConnection
      */
     private $connection;
 
@@ -47,7 +41,7 @@ class DataCategoryUsedInProductsHashMap implements HashMapInterface
 
     /**
      * Returns an array of product ids for all DataProductHashMap list,
-     * that occur in other categories not part of DataCategoryHashMap list.
+     * that occur in other categories not part of DataCategoryHashMap list
      *
      * @param int $categoryId
      * @return array
@@ -83,7 +77,6 @@ class DataCategoryUsedInProductsHashMap implements HashMapInterface
 
             $this->hashMap[$categoryId] = $productsLinkConnection->fetchCol($select);
         }
-
         return $this->hashMap[$categoryId];
     }
 
@@ -96,7 +89,6 @@ class DataCategoryUsedInProductsHashMap implements HashMapInterface
         if (isset($categorySpecificData[$key])) {
             return $categorySpecificData[$key];
         }
-
         return [];
     }
 

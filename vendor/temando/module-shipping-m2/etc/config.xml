@@ -1,0 +1,24 @@
+<?xml version="1.0"?>
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Store:etc/config.xsd">
+    <default>
+        <carriers>
+            <temando>
+                <active>0</active>
+                <title>Magento Shipping</title>
+                <sallowspecific>0</sallowspecific>
+                <active_rma>0</active_rma>
+                <collectionpoints_enabled>0</collectionpoints_enabled>
+                <collectionpoints_countries>US</collectionpoints_countries>
+                <specificerrmsg>This shipping method is not available. To use this shipping method, please contact us.</specificerrmsg>
+                <model>Temando\Shipping\Model\Shipping\Carrier</model>
+                <register_account_url>https://account.magento.com/shipping/onboarding/start</register_account_url>
+                <shipping_portal_url>https://shipping.magento.com/</shipping_portal_url>
+                <sync_enabled>0</sync_enabled>
+                <sync_stream_id>magento2</sync_stream_id>
+                <api_version>1.0</api_version>
+                <session_endpoint></session_endpoint>
+                <sovereign_endpoint></sovereign_endpoint>
+            </temando>
+        </carriers>
+    </default>
+</config>

@@ -8,7 +8,7 @@ namespace Magento\Theme\Test\Unit\Model\Layout\Source;
 use Magento\Framework\DataObject;
 use Magento\Theme\Model\Layout\Source\Layout;
 
-class LayoutTest extends \PHPUnit_Framework_TestCase
+class LayoutTest extends \PHPUnit\Framework\TestCase
 {
     /**
      * @var Layout
@@ -22,7 +22,7 @@ class LayoutTest extends \PHPUnit_Framework_TestCase
 
     protected function setUp()
     {
-        $this->config = $this->getMockBuilder('Magento\Theme\Model\Layout\Config')
+        $this->config = $this->getMockBuilder(\Magento\Theme\Model\Layout\Config::class)
             ->disableOriginalConstructor()
             ->getMock();
         $this->_model = new Layout($this->config);

@@ -7,7 +7,6 @@ namespace Magento\Framework\Data\Form;
 
 use Magento\Framework\Data\Form\Filter\FilterInterface;
 use Magento\Framework\ObjectManagerInterface;
-use Magento\Framework\Phrase;
 
 class FilterFactory
 {
@@ -42,7 +41,7 @@ class FilterFactory
             throw new \InvalidArgumentException(sprintf(
                 '%s class must implement %s',
                 $filterClass,
-                '\Magento\Framework\Data\Form\Filter\FilterInterface'
+                \Magento\Framework\Data\Form\Filter\FilterInterface::class
             ));
         }
 

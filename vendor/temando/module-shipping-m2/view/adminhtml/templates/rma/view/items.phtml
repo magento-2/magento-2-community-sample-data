@@ -1,0 +1,39 @@
+<?php
+/**
+ * Refer to LICENSE.txt distributed with the Temando Shipping module for notice of license
+ */
+?>
+<?php /** @var \Magento\Backend\Block\Template $block */ ?>
+<?php /** @var \Temando\Shipping\ViewModel\Rma\RmaShipment\Items $viewModel */ ?>
+<?php $viewModel = $block->getData('viewModel'); ?>
+<?php $items = $viewModel->getRmaShipmentItems(); ?>
+
+<?php if (!empty($items)) : ?>
+    <div class="admin__table-wrapper">
+        <table class="data-table admin__table-primary order-shipment-table">
+            <thead>
+            <tr class="headings">
+                <th class="col-product"><span><?= $block->escapeHtml(__('Product')) ?></span></th>
+                <th class="col-qty last"><span><?= $block->escapeHtml(__('Qty Shipped')) ?></span></th>
+            </tr>
+            </thead>
+
+            <?php foreach ($items as $_index => $_item) : ?>
+                <tbody class="<?= $block->escapeHtml(($_index % 2) ? 'even' : 'odd') ?>">
+                <tr class="border">
+                    <td class="col-product">
+                        <div class="product-title"><?= $block->escapeHtml($_item->getDescription()) ?></div>
+                        <?php if ($_item->getSku()) : ?>
+                            <div class="product-sku-block">
+                                <span><?= $block->escapeHtml(__('SKU')) ?>:</span>
+                                <?= $block->escapeHtml($_item->getSku()) ?>
+                            </div>
+                        <?php endif; ?>
+                    </td>
+                    <td class="col-qty last"><?= $block->escapeHtml($_item->getQty()) ?></td>
+                </tr>
+                </tbody>
+            <?php endforeach; ?>
+        </table>
+    </div>
+<?php endif; ?>

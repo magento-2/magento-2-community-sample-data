@@ -5,8 +5,14 @@
  */
 namespace Magento\Quote\Model\ResourceModel\Quote\Item;
 
+use \Magento\Catalog\Model\ResourceModel\Product\Collection as ProductCollection;
+
 /**
  * Quote item resource collection
+ *
+ * @api
+ * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
+ * @since 100.0.2
  */
 class Collection extends \Magento\Framework\Model\ResourceModel\Db\VersionControl\Collection
 {
@@ -40,6 +46,11 @@ class Collection extends \Magento\Framework\Model\ResourceModel\Db\VersionContro
     protected $_quoteConfig;
 
     /**
+     * @var \Magento\Store\Model\StoreManagerInterface|null
+     */
+    private $storeManager;
+
+    /**
      * @param \Magento\Framework\Data\Collection\EntityFactory $entityFactory
      * @param \Psr\Log\LoggerInterface $logger
      * @param \Magento\Framework\Data\Collection\Db\FetchStrategyInterface $fetchStrategy
@@ -50,6 +61,7 @@ class Collection extends \Magento\Framework\Model\ResourceModel\Db\VersionContro
      * @param \Magento\Quote\Model\Quote\Config $quoteConfig
      * @param \Magento\Framework\DB\Adapter\AdapterInterface $connection
      * @param \Magento\Framework\Model\ResourceModel\Db\AbstractDb $resource
+     * @param \Magento\Store\Model\StoreManagerInterface|null $storeManager
      * @SuppressWarnings(PHPMD.ExcessiveParameterList)
      */
     public function __construct(
@@ -62,7 +74,8 @@ class Collection extends \Magento\Framework\Model\ResourceModel\Db\VersionContro
         \Magento\Catalog\Model\ResourceModel\Product\CollectionFactory $productCollectionFactory,
         \Magento\Quote\Model\Quote\Config $quoteConfig,
         \Magento\Framework\DB\Adapter\AdapterInterface $connection = null,
-        \Magento\Framework\Model\ResourceModel\Db\AbstractDb $resource = null
+        \Magento\Framework\Model\ResourceModel\Db\AbstractDb $resource = null,
+        \Magento\Store\Model\StoreManagerInterface $storeManager = null
     ) {
         parent::__construct(
             $entityFactory,
@@ -76,6 +89,10 @@ class Collection extends \Magento\Framework\Model\ResourceModel\Db\VersionContro
         $this->_itemOptionCollectionFactory = $itemOptionCollectionFactory;
         $this->_productCollectionFactory = $productCollectionFactory;
         $this->_quoteConfig = $quoteConfig;
+
+        // Backward compatibility constructor parameters
+        $this->storeManager = $storeManager ?:
+            \Magento\Framework\App\ObjectManager::getInstance()->get(\Magento\Store\Model\StoreManagerInterface::class);
     }
 
     /**
@@ -85,7 +102,7 @@ class Collection extends \Magento\Framework\Model\ResourceModel\Db\VersionContro
      */
     protected function _construct()
     {
-        $this->_init('Magento\Quote\Model\Quote\Item', 'Magento\Quote\Model\ResourceModel\Quote\Item');
+        $this->_init(\Magento\Quote\Model\Quote\Item::class, \Magento\Quote\Model\ResourceModel\Quote\Item::class);
     }
 
     /**
@@ -95,7 +112,10 @@ class Collection extends \Magento\Framework\Model\ResourceModel\Db\VersionContro
      */
     public function getStoreId()
     {
-        return (int)$this->_productCollectionFactory->create()->getStoreId();
+        // Fallback to current storeId if no quote is provided
+        // (see https://github.com/magento/magento2/commit/9d3be732a88884a66d667b443b3dc1655ddd0721)
+        return $this->_quote === null ?
+            (int) $this->storeManager->getStore()->getId() : (int) $this->_quote->getStoreId();
     }
 
     /**
@@ -207,7 +227,10 @@ class Collection extends \Magento\Framework\Model\ResourceModel\Db\VersionContro
             $this->_productIds
         )->addAttributeToSelect(
             $this->_quoteConfig->getProductAttributes()
-        )->addOptionsToResult()->addStoreFilter()->addUrlRewrite()->addTierPriceData();
+        );
+        $this->skipStockStatusFilter($productCollection);
+        $productCollection->addOptionsToResult()->addStoreFilter()->addUrlRewrite();
+        $this->addTierPriceData($productCollection);
 
         $this->_eventManager->dispatch(
             'prepare_catalog_product_collection_prices',
@@ -263,6 +286,34 @@ class Collection extends \Magento\Framework\Model\ResourceModel\Db\VersionContro
         \Magento\Framework\Profiler::stop('QUOTE:' . __METHOD__);
 
         return $this;
+    }
+
+    /**
+     * Prevents adding stock status filter to the collection of products.
+     *
+     * @param ProductCollection $productCollection
+     * @return void
+     *
+     * @see \Magento\CatalogInventory\Helper\Stock::addIsInStockFilterToCollection
+     */
+    private function skipStockStatusFilter(ProductCollection $productCollection)
+    {
+        $productCollection->setFlag('has_stock_status_filter', true);
+    }
+
+    /**
+     * Add tier prices to product collection.
+     *
+     * @param ProductCollection $productCollection
+     * @return void
+     */
+    private function addTierPriceData(ProductCollection $productCollection)
+    {
+        if (empty($this->_quote)) {
+            $productCollection->addTierPriceData();
+        } else {
+            $productCollection->addTierPriceDataByGroupId($this->_quote->getCustomerGroupId());
+        }
     }
 
     /**

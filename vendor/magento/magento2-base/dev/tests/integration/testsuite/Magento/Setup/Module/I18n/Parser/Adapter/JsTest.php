@@ -9,7 +9,7 @@ namespace Magento\Setup\Module\I18n\Parser\Adapter;
  * @covers \Magento\Setup\Module\I18n\Parser\Adapter\Js
  *
  */
-class JsTest extends \PHPUnit_Framework_TestCase
+class JsTest extends \PHPUnit\Framework\TestCase
 {
     /**
      * @var Js
@@ -20,7 +20,7 @@ class JsTest extends \PHPUnit_Framework_TestCase
     {
         $objectManager = \Magento\TestFramework\Helper\Bootstrap::getObjectManager();
         $this->jsPhraseCollector = $objectManager->create(
-            'Magento\Setup\Module\I18n\Parser\Adapter\Js'
+            \Magento\Setup\Module\I18n\Parser\Adapter\Js::class
         );
     }
 

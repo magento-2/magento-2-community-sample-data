@@ -18,16 +18,17 @@ class FilterMapper
      */
     private $searchFieldsToFiltersMap = [];
 
-    /** @var AppliersPool */
+    /**
+     * @var \Magento\Braintree\Model\Report\ConditionAppliers\AppliersPool
+     */
     private $appliersPool;
 
-    /** @var BraintreeSearchAdapter */
+    /**
+     * @var \Magento\Braintree\Model\Adapter\BraintreeSearchAdapter
+     */
     private $braintreeSearchAdapter;
 
     /**
-     * FilterMapper constructor.
-     * @param AppliersPool $appliersPool
-     * @param BraintreeSearchAdapter $braintreeSearchAdapter
      */
     public function __construct(
         AppliersPool $appliersPool,

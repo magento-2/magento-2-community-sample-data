@@ -39,7 +39,7 @@ class BatchIteratorFactory
     }
 
     /**
-     * Create class instance with specified parameters.
+     * Create class instance with specified parameters
      *
      * @param array $data
      * @return \Magento\Framework\DB\Query\BatchIteratorInterface

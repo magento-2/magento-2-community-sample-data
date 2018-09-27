@@ -6,6 +6,12 @@
  */
 namespace Magento\Variable\Controller\Adminhtml\System\Variable;
 
+/**
+ * Retrieve variables list for WYSIWYG
+ *
+ * @api
+ * @since 100.0.2
+ */
 class WysiwygPlugin extends \Magento\Variable\Controller\Adminhtml\System\Variable
 {
     /**
@@ -15,10 +21,10 @@ class WysiwygPlugin extends \Magento\Variable\Controller\Adminhtml\System\Variab
      */
     public function execute()
     {
-        $customVariables = $this->_objectManager->create('Magento\Variable\Model\Variable')
+        $customVariables = $this->_objectManager->create(\Magento\Variable\Model\Variable::class)
             ->getVariablesOptionArray(true);
         $storeContactVariabls = $this->_objectManager->create(
-            'Magento\Email\Model\Source\Variables'
+            \Magento\Email\Model\Source\Variables::class
         )->toOptionArray(
             true
         );

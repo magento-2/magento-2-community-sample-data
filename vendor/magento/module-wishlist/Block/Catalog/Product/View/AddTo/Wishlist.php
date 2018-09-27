@@ -8,6 +8,9 @@ namespace Magento\Wishlist\Block\Catalog\Product\View\AddTo;
 
 /**
  * Product view wishlist block
+ *
+ * @api
+ * @since 100.1.1
  */
 class Wishlist extends \Magento\Catalog\Block\Product\View
 {
@@ -15,6 +18,7 @@ class Wishlist extends \Magento\Catalog\Block\Product\View
      * Return wishlist widget options json
      *
      * @return string
+     * @since 100.1.1
      */
     public function getWishlistOptionsJson()
     {
@@ -25,16 +29,18 @@ class Wishlist extends \Magento\Catalog\Block\Product\View
      * Return wishlist widget options
      *
      * @return array
+     * @since 100.1.1
      */
     public function getWishlistOptions()
     {
-        return ['productType' => $this->getProduct()->getTypeId()];
+        return ['productType' => $this->escapeHtml($this->getProduct()->getTypeId())];
     }
 
     /**
      * Return wishlist params
      *
      * @return string
+     * @since 100.1.1
      */
     public function getWishlistParams()
     {
@@ -46,6 +52,7 @@ class Wishlist extends \Magento\Catalog\Block\Product\View
      * Check whether the wishlist is allowed
      *
      * @return string
+     * @since 100.1.1
      */
     public function isWishListAllowed()
     {

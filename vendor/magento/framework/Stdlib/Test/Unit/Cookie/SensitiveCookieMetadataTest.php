@@ -13,7 +13,7 @@ use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
  * Test SensitiveCookieMetaData
  *
  */
-class SensitiveCookieMetadataTest extends \PHPUnit_Framework_TestCase
+class SensitiveCookieMetadataTest extends \PHPUnit\Framework\TestCase
 {
     /** @var  \Magento\Framework\TestFramework\Unit\Helper\ObjectManager */
     private $objectManager;
@@ -27,11 +27,11 @@ class SensitiveCookieMetadataTest extends \PHPUnit_Framework_TestCase
     protected function setUp()
     {
         $this->objectManager = new ObjectManager($this);
-        $this->requestMock = $this->getMockBuilder('Magento\Framework\App\Request\Http')
+        $this->requestMock = $this->getMockBuilder(\Magento\Framework\App\Request\Http::class)
             ->disableOriginalConstructor()
             ->getMock();
         $this->sensitiveCookieMetadata = $this->objectManager->getObject(
-            'Magento\Framework\Stdlib\Cookie\SensitiveCookieMetadata',
+            \Magento\Framework\Stdlib\Cookie\SensitiveCookieMetadata::class,
             [
                 'request' => $this->requestMock,
             ]
@@ -47,7 +47,7 @@ class SensitiveCookieMetadataTest extends \PHPUnit_Framework_TestCase
     {
         /** @var \Magento\Framework\Stdlib\Cookie\SensitiveCookieMetadata $object */
         $object = $this->objectManager->getObject(
-            'Magento\Framework\Stdlib\Cookie\SensitiveCookieMetadata',
+            \Magento\Framework\Stdlib\Cookie\SensitiveCookieMetadata::class,
             [
                 'request' => $this->requestMock,
                 'metadata' => $metadata,
@@ -98,7 +98,7 @@ class SensitiveCookieMetadataTest extends \PHPUnit_Framework_TestCase
 
         /** @var \Magento\Framework\Stdlib\Cookie\SensitiveCookieMetadata $object */
         $object = $this->objectManager->getObject(
-            'Magento\Framework\Stdlib\Cookie\SensitiveCookieMetadata',
+            \Magento\Framework\Stdlib\Cookie\SensitiveCookieMetadata::class,
             [
                 'request' => $this->requestMock,
                 'metadata' => $metadata,
@@ -157,7 +157,7 @@ class SensitiveCookieMetadataTest extends \PHPUnit_Framework_TestCase
 
         /** @var \Magento\Framework\Stdlib\Cookie\SensitiveCookieMetadata $object */
         $object = $this->objectManager->getObject(
-            'Magento\Framework\Stdlib\Cookie\SensitiveCookieMetadata',
+            \Magento\Framework\Stdlib\Cookie\SensitiveCookieMetadata::class,
             [
                 'request' => $this->requestMock,
                 'metadata' => $metadata,
@@ -222,7 +222,6 @@ class SensitiveCookieMetadataTest extends \PHPUnit_Framework_TestCase
      * @param StringUtils $expectedValue
      * @dataProvider getMethodData
      */
-
     public function testGetters($setMethodName, $getMethodName, $expectedValue)
     {
         $this->sensitiveCookieMetadata->$setMethodName($expectedValue);

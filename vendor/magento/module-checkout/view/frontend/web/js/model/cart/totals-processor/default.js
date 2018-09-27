@@ -11,7 +11,7 @@ define([
     'Magento_Checkout/js/model/totals',
     'Magento_Checkout/js/model/error-processor',
     'Magento_Checkout/js/model/cart/cache',
-    'Magento_Customer/js/customer-data',
+    'Magento_Customer/js/customer-data'
 ], function (_, resourceUrlManager, quote, storage, totalsService, errorProcessor, cartCache, customerData) {
     'use strict';
 
@@ -67,7 +67,6 @@ define([
     return {
         /**
          * Array of required address fields.
-         * 
          * @property {Array.String} requiredFields
          * @deprecated Use cart cache.
          */
@@ -75,7 +74,6 @@ define([
 
         /**
          * Get shipping rates for specified address.
-         * 
          * @param {Object} address
          */
         estimateTotals: function (address) {
@@ -93,7 +91,8 @@ define([
                 !cartCache.isChanged('shippingMethodCode', data.shippingMethodCode) &&
                 !cartCache.isChanged('shippingCarrierCode', data.shippingCarrierCode) &&
                 !cartCache.isChanged('address', address) &&
-                cartCache.get('totals')
+                cartCache.get('totals') &&
+                !cartCache.isChanged('subtotal', parseFloat(quote.totals().subtotal))
             ) {
                 quote.setTotals(cartCache.get('totals'));
             } else {

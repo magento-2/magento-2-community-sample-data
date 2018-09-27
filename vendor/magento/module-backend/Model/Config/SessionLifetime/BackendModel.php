@@ -10,6 +10,8 @@ use Magento\Framework\Exception\LocalizedException;
 
 /**
  * Backend model for the admin/security/session_lifetime configuration field. Validates session lifetime.
+ * @api
+ * @since 100.1.0
  */
 class BackendModel extends Value
 {
@@ -20,8 +22,7 @@ class BackendModel extends Value
     const MIN_LIFETIME = 60;
 
     /**
-     * @return Value
-     * @throws LocalizedException
+     * @since 100.1.0
      */
     public function beforeSave()
     {
@@ -30,7 +31,7 @@ class BackendModel extends Value
             throw new LocalizedException(
                 __('Admin session lifetime must be less than or equal to 31536000 seconds (one year)')
             );
-        } else if ($value < self::MIN_LIFETIME) {
+        } elseif ($value < self::MIN_LIFETIME) {
             throw new LocalizedException(
                 __('Admin session lifetime must be greater than or equal to 60 seconds')
             );

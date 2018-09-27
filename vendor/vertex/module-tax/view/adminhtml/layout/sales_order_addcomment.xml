@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!--
+  @copyright  Vertex. All rights reserved.  https://www.vertexinc.com/
+  @author     Mediotype                     https://www.mediotype.com/
+  -->
+<layout xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="urn:magento:framework:View/Layout/etc/layout_generic.xsd">
+    <referenceContainer name="root">
+        <block class="Magento\Framework\View\Element\Messages" name="messages" as="messages"
+               ifconfig="tax/vertex_settings/enable_vertex"
+               template="Vertex_Tax::order/view/messages.phtml"/>
+    </referenceContainer>
+</layout>

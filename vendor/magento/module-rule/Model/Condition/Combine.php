@@ -5,6 +5,10 @@
  */
 namespace Magento\Rule\Model\Condition;
 
+/**
+ * @api
+ * @since 100.0.2
+ */
 class Combine extends AbstractCondition
 {
     /**
@@ -28,7 +32,7 @@ class Combine extends AbstractCondition
 
         parent::__construct($context, $data);
         $this->setType(
-            'Magento\Rule\Model\Condition\Combine'
+            \Magento\Rule\Model\Condition\Combine::class
         )->setAggregator(
             'all'
         )->setValue(
@@ -101,7 +105,7 @@ class Combine extends AbstractCondition
                 'data-form-part' => $this->getFormName()
             ]
         )->setRenderer(
-            $this->_layout->getBlockSingleton('Magento\Rule\Block\Editable')
+            $this->_layout->getBlockSingleton(\Magento\Rule\Block\Editable::class)
         );
     }
 
@@ -273,7 +277,7 @@ class Combine extends AbstractCondition
                 'data-form-part' => $this->getFormName()
             ]
         )->setRenderer(
-            $this->_layout->getBlockSingleton('Magento\Rule\Block\Newchild')
+            $this->_layout->getBlockSingleton(\Magento\Rule\Block\Newchild::class)
         );
     }
 

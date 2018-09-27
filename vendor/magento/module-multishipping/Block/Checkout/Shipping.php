@@ -9,9 +9,11 @@ use Magento\Framework\Pricing\PriceCurrencyInterface;
 use Magento\Quote\Model\Quote\Address;
 
 /**
- * Multishipping checkout shipping
+ * Mustishipping checkout shipping
  *
+ * @api
  * @author     Magento Core Team <core@magentocommerce.com>
+ * @since 100.0.2
  */
 class Shipping extends \Magento\Sales\Block\Items\AbstractItems
 {

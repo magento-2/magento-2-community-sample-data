@@ -1,0 +1,92 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * Refer to LICENSE.txt distributed with the Temando Shipping module for notice of license
+ */
+-->
+<listing xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Ui:etc/ui_configuration.xsd">
+    <argument name="context" xsi:type="configurableObject">
+        <argument name="class" xsi:type="string">Magento\Framework\View\Element\UiComponent\Context</argument>
+        <argument name="namespace" xsi:type="string">temando_rma_available_shipment_listing</argument>
+    </argument>
+    <argument name="data" xsi:type="array">
+        <item name="js_config" xsi:type="array">
+            <item name="provider" xsi:type="string">temando_rma_available_shipment_listing.temando_rma_available_shipment_listing_data_source</item>
+        </item>
+    </argument>
+    <settings>
+        <spinner>temando_rma_columns</spinner>
+        <deps>
+            <dep>temando_rma_available_shipment_listing.temando_rma_available_shipment_listing_data_source</dep>
+        </deps>
+    </settings>
+    <dataSource name="temando_rma_available_shipment_listing_data_source" component="Magento_Ui/js/grid/provider">
+        <settings>
+            <filterUrlParams>
+                <param name="id">*</param>
+            </filterUrlParams>
+            <updateUrl path="mui/index/render"/>
+            <storageConfig>
+                <param name="indexField" xsi:type="string">shipment_id</param>
+            </storageConfig>
+            <updateUrl path="mui/index/render"/>
+        </settings>
+        <aclResource>Magento_Rma::magento_rma</aclResource>
+        <dataProvider class="Magento\Framework\View\Element\UiComponent\DataProvider\DataProvider" name="temando_rma_available_shipment_listing_data_source">
+            <settings>
+                <requestFieldName>rma_id</requestFieldName>
+                <primaryFieldName>entity_id</primaryFieldName>
+            </settings>
+        </dataProvider>
+    </dataSource>
+    <columns name="temando_rma_columns" sortOrder="10">
+        <column name="created_at" class="Magento\Ui\Component\Listing\Columns\Date" component="Magento_Ui/js/grid/columns/date" sortOrder="30">
+            <settings>
+                <filter>dateRange</filter>
+                <dataType>date</dataType>
+                <label translate="true">Ship Date</label>
+            </settings>
+        </column>
+        <column name="return_from_name" class="Temando\Shipping\Ui\Component\Listing\Column\ReturnFromName" sortOrder="40">
+            <settings>
+                <filter>textRange</filter>
+                <label translate="true">Return From Name</label>
+            </settings>
+        </column>
+        <column name="origin_location" class="Temando\Shipping\Ui\Component\Listing\Column\ReturnFromAddress" sortOrder="50">
+            <settings>
+                <filter>text</filter>
+                <label translate="true">Return From Address</label>
+                <bodyTmpl>ui/grid/cells/html</bodyTmpl>
+                <visible>true</visible>
+            </settings>
+        </column>
+        <column name="return_to_name" class="Temando\Shipping\Ui\Component\Listing\Column\ReturnToName" sortOrder="60">
+            <settings>
+                <filter>textRange</filter>
+                <label translate="true">Return To Name</label>
+            </settings>
+        </column>
+        <column name="destination_location" class="Temando\Shipping\Ui\Component\Listing\Column\ReturnToLocation" sortOrder="70">
+            <settings>
+                <filter>text</filter>
+                <bodyTmpl>ui/grid/cells/html</bodyTmpl>
+                <visible>true</visible>
+                <label translate="true">Return To Location</label>
+            </settings>
+        </column>
+        <column name="packages" class="Temando\Shipping\Ui\Component\Listing\Column\TotalPackages" sortOrder="80">
+            <settings>
+                <filter>textRange</filter>
+                <label translate="true">Total Packages</label>
+            </settings>
+        </column>
+        <actionsColumn name="actions" class="Temando\Shipping\Ui\Component\Listing\Column\RmaAvailableShipmentActions">
+            <settings>
+                <indexField>shipment_id</indexField>
+                <resizeEnabled>false</resizeEnabled>
+                <resizeDefaultWidth>107</resizeDefaultWidth>
+            </settings>
+        </actionsColumn>
+    </columns>
+</listing>

@@ -11,6 +11,9 @@ use Magento\Framework\Phrase;
 
 /**
  * Data object for sort order.
+ *
+ * @api
+ * @since 100.0.2
  */
 class SortOrder extends AbstractSimpleObject
 {
@@ -82,7 +85,7 @@ class SortOrder extends AbstractSimpleObject
 
     /**
      * Validate direction argument ASC or DESC
-     * 
+     *
      * @param mixed $direction
      * @return null
      * @throws InputException
@@ -140,7 +143,7 @@ class SortOrder extends AbstractSimpleObject
      * @return void
      * @throws InputException
      */
-    private function validateField($field)
+    private function validateField(string $field)
     {
         if (preg_match('/[^a-z0-9\_]/i', $field)) {
             throw new InputException(

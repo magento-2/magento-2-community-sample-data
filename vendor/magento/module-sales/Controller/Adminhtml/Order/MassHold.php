@@ -19,9 +19,7 @@ use Magento\Framework\App\Request\Http as HttpRequest;
 class MassHold extends \Magento\Sales\Controller\Adminhtml\Order\AbstractMassAction
 {
     /**
-     * Authorization level of a basic admin session.
-     *
-     * @see _isAllowed()
+     * Authorization level of a basic admin session
      */
     const ADMIN_RESOURCE = 'Magento_Sales::hold';
 

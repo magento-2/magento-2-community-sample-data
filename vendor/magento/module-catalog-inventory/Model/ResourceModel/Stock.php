@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © 2013-2018 Magento, Inc. All rights reserved.
+ * Copyright © Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 
@@ -75,7 +75,7 @@ class Stock extends \Magento\Framework\Model\ResourceModel\Db\AbstractDb impleme
 
     /**
      * @var StoreManagerInterface
-     * @deprecated
+     * @deprecated 100.1.0
      */
     protected $storeManager;
 
@@ -113,13 +113,13 @@ class Stock extends \Magento\Framework\Model\ResourceModel\Db\AbstractDb impleme
     }
 
     /**
-     * Lock Stock Item records
+     * Lock Stock Item records.
      *
      * @param int[] $productIds
      * @param int $websiteId
      * @return array
      */
-    public function lockProductsStock($productIds, $websiteId)
+    public function lockProductsStock(array $productIds, $websiteId)
     {
         if (empty($productIds)) {
             return [];
@@ -136,7 +136,7 @@ class Stock extends \Magento\Framework\Model\ResourceModel\Db\AbstractDb impleme
             ->columns(
                 [
                     'product_id' => 'entity_id',
-                    'type_id' => 'type_id'
+                    'type_id' => 'type_id',
                 ]
             );
         $items = [];
@@ -147,6 +147,7 @@ class Stock extends \Magento\Framework\Model\ResourceModel\Db\AbstractDb impleme
         foreach ($this->getConnection()->fetchAll($selectProducts) as $p) {
             $items[$p['product_id']]['type_id'] = $p['type_id'];
         }
+        
         return $items;
     }
 
@@ -156,7 +157,7 @@ class Stock extends \Magento\Framework\Model\ResourceModel\Db\AbstractDb impleme
     public function correctItemsQty(array $items, $websiteId, $operator)
     {
         if (empty($items)) {
-            return $this;
+            return;
         }
 
         $connection = $this->getConnection();
@@ -205,6 +206,8 @@ class Stock extends \Magento\Framework\Model\ResourceModel\Db\AbstractDb impleme
     /**
      * Set items out of stock basing on their quantities and config settings
      *
+     * @deprecated
+     * @see \Magento\CatalogInventory\Model\ResourceModel\Stock\Item::updateSetOutOfStock
      * @param string|int $website
      * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      * @return void
@@ -240,6 +243,8 @@ class Stock extends \Magento\Framework\Model\ResourceModel\Db\AbstractDb impleme
     /**
      * Set items in stock basing on their quantities and config settings
      *
+     * @deprecated
+     * @see \Magento\CatalogInventory\Model\ResourceModel\Stock\Item::updateSetInStock
      * @param int|string $website
      * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      * @return void
@@ -273,6 +278,8 @@ class Stock extends \Magento\Framework\Model\ResourceModel\Db\AbstractDb impleme
     /**
      * Update items low stock date basing on their quantities and config settings
      *
+     * @deprecated
+     * @see \Magento\CatalogInventory\Model\ResourceModel\Stock\Item::updateLowStockDate
      * @param int|string $website
      * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      * @return void

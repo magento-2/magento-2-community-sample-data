@@ -11,7 +11,7 @@ use Magento\Framework\App\PageCache\FormKey as CookieFormKey;
 use Magento\Framework\Data\Form\FormKey as DataFormKey;
 use Magento\Framework\Event\Observer;
 use Magento\PageCache\Observer\FlushFormKey;
-use PHPUnit_Framework_TestCase as TestCase;
+use PHPUnit\Framework\TestCase;
 use PHPUnit_Framework_MockObject_MockObject as MockObject;
 
 class CustomerFlushFormKeyTest extends TestCase
@@ -49,7 +49,6 @@ class CustomerFlushFormKeyTest extends TestCase
             ->disableOriginalConstructor()
             ->setMethods(['getBeforeRequestParams', 'setBeforeRequestParams'])
             ->getMock();
-
     }
 
     /**
@@ -98,9 +97,9 @@ class CustomerFlushFormKeyTest extends TestCase
     public function aroundFlushFormKeyProvider()
     {
         return [
-            'valid form key' => ['form_key_value', 'form_key_value', 2, 1],
-            'corrupted form key' => ['form_old_key_value', 'form_key_value', 1, 0],
-            'missed form key' => [null, 'form_key_value', 1, 0]
+            ['form_key_value', 'form_key_value', 2, 1],
+            ['form_old_key_value', 'form_key_value', 1, 0],
+            [null, 'form_key_value', 1, 0]
         ];
     }
 }

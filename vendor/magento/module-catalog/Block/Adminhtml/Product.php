@@ -11,6 +11,10 @@
  */
 namespace Magento\Catalog\Block\Adminhtml;
 
+/**
+ * @api
+ * @since 100.0.2
+ */
 class Product extends \Magento\Backend\Block\Widget\Container
 {
     /**
@@ -53,7 +57,7 @@ class Product extends \Magento\Backend\Block\Widget\Container
             'label' => __('Add Product'),
             'class' => 'add',
             'button_class' => '',
-            'class_name' => 'Magento\Backend\Block\Widget\Button\SplitButton',
+            'class_name' => \Magento\Backend\Block\Widget\Button\SplitButton::class,
             'options' => $this->_getAddProductButtonOptions(),
         ];
         $this->buttonList->add('add_new', $addButtonProps);

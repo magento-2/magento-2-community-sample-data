@@ -41,12 +41,5 @@ class AssertConfigurableProductInCategory extends AssertProductInCategory
                 'Product special price on category page is not correct.'
             );
         }
-
-        if (!$product->hasData('tier_price')) {
-            \PHPUnit_Framework_Assert::assertNotTrue(
-                $priceBlock->isMinimalPriceVisible(),
-                'Minimal price block mustn\'t be visible on category page.'
-            );
-        }
     }
 }

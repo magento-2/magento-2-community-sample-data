@@ -3,7 +3,7 @@
  * Copyright © Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
-use Zend\Mvc\Application;
+use Magento\Setup\Application;
 use Magento\Setup\Model\ObjectManagerProvider;
 
 if (PHP_SAPI == 'cli') {
@@ -30,7 +30,9 @@ HTML;
 $handler = new \Magento\Framework\App\ErrorHandler();
 set_error_handler([$handler, 'handler']);
 
-$application = Application::init(require __DIR__ . '/config/application.config.php');
+$configuration = require __DIR__ . '/config/application.config.php';
+$bootstrap = new Application();
+$application = $bootstrap->bootstrap($configuration);
 $application->getServiceManager()
     ->get(ObjectManagerProvider::class)
     ->setObjectManager(\Magento\Framework\App\Bootstrap::create(BP, $_SERVER)->getObjectManager());

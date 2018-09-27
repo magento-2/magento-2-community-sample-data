@@ -37,21 +37,14 @@ class DiscountCodes extends Form
     protected $couponCode = '#coupon_code';
 
     /**
-     * Locator for "Apply Discount" button.
+     * Click apply button selector
      *
      * @var string
      */
     protected $applyButton = '.action.apply';
 
     /**
-     * Locator for "Cancel Coupon" button.
-     *
-     * @var string
-     */
-    protected $cancelButton = '.action.cancel';
-
-    /**
-     * Enter Discount Code and click "Apply Discount" button.
+     * Enter discount code and click apply button
      *
      * @param string $code
      * @return void
@@ -63,18 +56,5 @@ class DiscountCodes extends Form
         }
         $this->_rootElement->find($this->couponCode, Locator::SELECTOR_CSS)->setValue($code);
         $this->_rootElement->find($this->applyButton, Locator::SELECTOR_CSS)->click();
-    }
-
-    /**
-     * Click "Cancel Coupon" button.
-     *
-     * @return void
-     */
-    public function cancelCouponCode()
-    {
-        if (!$this->_rootElement->find($this->formWrapper)->isVisible()) {
-            $this->_rootElement->find($this->openForm)->click();
-        }
-        $this->_rootElement->find($this->cancelButton)->click();
     }
 }

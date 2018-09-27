@@ -1,0 +1,47 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * This file is part of the Klarna KP module
+ *
+ * (c) Klarna Bank AB (publ)
+ *
+ * For the full copyright and license information, please view the NOTICE
+ * and LICENSE files that were distributed with this source code.
+ */
+-->
+<klarna xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="urn:magento:module:Klarna_Core:etc/klarna.xsd">
+    <api_type id="payments">
+        <class>\Klarna\Kp\Model\Api\Kasper</class>
+        <ordermanagement>\Klarna\Ordermanagement\Model\Api\Ordermanagement</ordermanagement>
+        <options>
+            <option id="payment_review">1</option>
+        </options>
+    </api_type>
+    <api_version id="kp_na" translate="label">
+        <label><![CDATA[Klarna Payments (North America)]]></label>
+        <type>payments</type>
+        <production_url><![CDATA[https://api-na.klarna.com]]></production_url>
+        <testdrive_url><![CDATA[https://api-na.playground.klarna.com]]></testdrive_url>
+        <options>
+            <option id="separate_tax_line">1</option>
+        </options>
+    </api_version>
+    <api_version id="kp_eu" translate="label">
+        <label><![CDATA[Klarna Payments (Europe)]]></label>
+        <type>payments</type>
+        <production_url><![CDATA[https://api.klarna.com]]></production_url>
+        <testdrive_url><![CDATA[https://api.playground.klarna.com]]></testdrive_url>
+    </api_version>
+    <order_lines id="payments">
+        <line id="items" class="KpItemsOrderline"/>
+        <line id="discount" class="KpDiscountOrderLine"/>
+        <line id="shipping" class="KpShippingOrderLine"/>
+        <line id="tax" class="KpTaxOrderLine"/>
+        <line id="giftcard" class="KpGiftCardOrderLine"/>
+        <line id="customer_balance" class="KpCustomerBalanceOrderLine"/>
+        <line id="reward" class="KpRewardOrderLine"/>
+        <line id="gift_wrap" class="KpGiftWrapLine"/>
+        <line id="surcharge" class="KpSurchargeLine"/>
+    </order_lines>
+</klarna>

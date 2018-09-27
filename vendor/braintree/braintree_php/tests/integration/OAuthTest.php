@@ -46,7 +46,6 @@ class OAuthTest extends Setup
         ]);
     }
 
-
     public function testCreateTokenFromCodeWithMixedCredentials()
     {
         $gateway = new Braintree\Gateway([
@@ -91,6 +90,31 @@ class OAuthTest extends Setup
         $this->assertNotNull($result->refreshToken);
         $this->assertEquals('bearer', $result->tokenType);
         $this->assertNotNull($result->expiresAt);
+    }
+
+    public function testRevokeAccessToken()
+    {
+        $gateway = new Braintree\Gateway([
+            'clientId' => 'client_id$development$integration_client_id',
+            'clientSecret' => 'client_secret$development$integration_client_secret',
+        ]);
+        $code = Test\Braintree\OAuthTestHelper::createGrant($gateway, [
+            'merchant_public_id' => 'integration_merchant_id',
+            'scope' => 'read_write'
+        ]);
+        $result = $gateway->oauth()->createTokenFromCode([
+            'code' => $code,
+            'scope' => 'read_write',
+        ]);
+
+        $revokeAccessTokenResult = $gateway->oauth()->revokeAccessToken($result->accessToken);
+
+        $this->assertTrue($revokeAccessTokenResult->success);
+        $this->assertTrue($revokeAccessTokenResult->result->success);
+
+        $gateway = new Braintree\Gateway(['accessToken' => $result->accessToken]);
+        $this->setExpectedException('Braintree\Exception\Authentication');
+        $gateway->customer()->create();
     }
 
     public function testCreateTokenFromCode_ValidationErrorTest()
@@ -166,6 +190,8 @@ class OAuthTest extends Setup
             'redirectUri' => 'http://bar.example.com',
             'scope' => 'read_write',
             'state' => 'baz_state',
+            'landingPage' => 'login',
+            'loginOnly' => 'true',
             'user' => [
                 'country' => 'USA',
                 'email' => 'foo@example.com',
@@ -212,6 +238,8 @@ class OAuthTest extends Setup
         $this->assertEquals('http://bar.example.com', $query['redirect_uri']);
         $this->assertEquals('read_write', $query['scope']);
         $this->assertEquals('baz_state', $query['state']);
+        $this->assertEquals('login', $query['landing_page']);
+        $this->assertEquals('true', $query['login_only']);
 
         $this->assertEquals('USA', $query['user']['country']);
         $this->assertEquals('foo@example.com', $query['user']['email']);
@@ -245,9 +273,6 @@ class OAuthTest extends Setup
 
         $this->assertCount(1, $query['payment_methods']);
         $this->assertEquals('credit_card', $query['payment_methods'][0]);
-
-        $this->assertEquals(64, strlen($query['signature']));
-        $this->assertEquals('SHA256', $query['algorithm']);
     }
 
     public function testBuildConnectUrlWithoutOptionalParams()

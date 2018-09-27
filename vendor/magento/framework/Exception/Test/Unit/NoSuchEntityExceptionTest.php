@@ -11,7 +11,7 @@ use Magento\Framework\Phrase;
 /**
  * Class NoSuchEntityExceptionTest
  */
-class NoSuchEntityExceptionTest extends \PHPUnit_Framework_TestCase
+class NoSuchEntityExceptionTest extends \PHPUnit\Framework\TestCase
 {
     /** @var \Magento\Framework\Phrase\RendererInterface */
     private $defaultRenderer;
@@ -30,7 +30,7 @@ class NoSuchEntityExceptionTest extends \PHPUnit_Framework_TestCase
     protected function setUp()
     {
         $this->defaultRenderer = \Magento\Framework\Phrase::getRenderer();
-        $this->rendererMock = $this->getMockBuilder('Magento\Framework\Phrase\Renderer\Placeholder')
+        $this->rendererMock = $this->getMockBuilder(\Magento\Framework\Phrase\Renderer\Placeholder::class)
             ->setMethods(['render'])
             ->disableOriginalConstructor()
             ->getMock();

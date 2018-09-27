@@ -5,13 +5,13 @@
  */
 namespace Magento\Setup\Module\I18n\Parser\Adapter\Php\Tokenizer\Translate;
 
-use Magento\Framework\ObjectManager;
+use Magento\Framework\ObjectManagerInterface;
 use Magento\TestFramework\Helper\Bootstrap;
 
 /**
  * @covers \Magento\Setup\Module\I18n\Parser\Adapter\Php\Tokenizer\Translate\MethodCollector
  */
-class MethodCollectorTest extends \PHPUnit_Framework_TestCase
+class MethodCollectorTest extends \PHPUnit\Framework\TestCase
 {
     /**
      * @var MethodCollector
@@ -19,7 +19,7 @@ class MethodCollectorTest extends \PHPUnit_Framework_TestCase
     protected $methodCollector;
 
     /**
-     * @var ObjectManager
+     * @var ObjectManagerInterface
      */
     protected $objectManager;
 
@@ -27,7 +27,7 @@ class MethodCollectorTest extends \PHPUnit_Framework_TestCase
     {
         $this->objectManager = Bootstrap::getObjectManager();
         $this->methodCollector = $this->objectManager->create(
-            'Magento\Setup\Module\I18n\Parser\Adapter\Php\Tokenizer\Translate\MethodCollector'
+            \Magento\Setup\Module\I18n\Parser\Adapter\Php\Tokenizer\Translate\MethodCollector::class
         );
     }
 

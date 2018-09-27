@@ -10,6 +10,11 @@ use Magento\Config\Model\Placeholder\PlaceholderInterface;
 use Magento\Framework\App\Config\Spi\PreProcessorInterface;
 use Magento\Framework\Stdlib\ArrayManager;
 
+/**
+ * Allows to extract configurations from environment variables.
+ * @api
+ * @since 100.1.2
+ */
 class EnvironmentPlaceholder implements PreProcessorInterface
 {
     /**
@@ -41,7 +46,11 @@ class EnvironmentPlaceholder implements PreProcessorInterface
     }
 
     /**
-     * @inheritdoc
+     * Method extracts environment variables.
+     * If environment variable is matching the desired rule - it's being used as value.
+     *
+     * {@inheritdoc}
+     * @since 100.1.2
      */
     public function process(array $config)
     {

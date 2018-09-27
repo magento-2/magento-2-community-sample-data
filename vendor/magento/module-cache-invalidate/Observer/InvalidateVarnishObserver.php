@@ -64,12 +64,11 @@ class InvalidateVarnishObserver implements ObserverInterface
             if (!empty($tags)) {
                 $this->purgeCache->sendPurgeRequest(implode('|', array_unique($tags)));
             }
-
         }
     }
 
     /**
-     * @deprecated
+     * @deprecated 100.1.2
      * @return \Magento\Framework\App\Cache\Tag\Resolver
      */
     private function getTagResolver()

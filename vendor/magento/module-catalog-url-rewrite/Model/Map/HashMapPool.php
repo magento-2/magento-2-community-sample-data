@@ -8,25 +8,23 @@ namespace Magento\CatalogUrlRewrite\Model\Map;
 use Magento\Framework\ObjectManagerInterface;
 
 /**
- * Pool for hash maps.
+ * Pool for hash maps
  */
 class HashMapPool
 {
     /**
-     * Array of hash data maps.
-     *
      * @var HashMapInterface[]
      */
     private $dataArray = [];
 
     /**
-     * Object manager.
-     *
      * @var ObjectManagerInterface
      */
     private $objectManager;
 
     /**
+     * Constructor
+     *
      * @param ObjectManagerInterface $objectManager
      */
     public function __construct(
@@ -36,7 +34,7 @@ class HashMapPool
     }
 
     /**
-     * Gets a map by instance and category Id.
+     * Gets a map by instance and category Id
      *
      * @param string $instanceName
      * @param int $categoryId
@@ -60,12 +58,11 @@ class HashMapPool
             }
             $this->dataArray[$key] = $instance;
         }
-
         return $this->dataArray[$key];
     }
 
     /**
-     * Resets data in a hash map by instance name and category Id.
+     * Resets data in a hash map by instance name and category Id
      *
      * @param string $instanceName
      * @param int $categoryId

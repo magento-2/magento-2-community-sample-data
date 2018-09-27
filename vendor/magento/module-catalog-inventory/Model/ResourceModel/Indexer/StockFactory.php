@@ -9,6 +9,10 @@
  */
 namespace Magento\CatalogInventory\Model\ResourceModel\Indexer;
 
+/**
+ * @api
+ * @since 100.0.2
+ */
 class StockFactory
 {
     /**
@@ -21,7 +25,7 @@ class StockFactory
      *
      * @var string
      */
-    protected $_defaultIndexer = 'Magento\CatalogInventory\Model\ResourceModel\Indexer\Stock\DefaultStock';
+    protected $_defaultIndexer = \Magento\CatalogInventory\Model\ResourceModel\Indexer\Stock\DefaultStock::class;
 
     /**
      * @param \Magento\Framework\ObjectManagerInterface $objectManager

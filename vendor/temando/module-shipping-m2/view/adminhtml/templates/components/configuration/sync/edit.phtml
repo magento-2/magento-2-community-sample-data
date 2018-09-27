@@ -1,0 +1,82 @@
+<?php
+/**
+ * Refer to LICENSE.txt distributed with the Temando Shipping module for notice of license
+ */
+?>
+<?php // @codingStandardsIgnoreFile ?>
+<?php /** @var \Temando\Shipping\Block\Adminhtml\EventStream\Edit $block */ ?>
+
+<p><?= $block->escapeHtml(__('Choose entities to sync into Magento created by other systems in your stack (e.g. WMS)')); ?></p>
+<form id="sync_form" method="post" action="<?= $block->escapeUrl($block->getSaveUrl()); ?>">
+
+    <div id="sync-input" data-bind="scope: 'syncSettings'">
+
+        <input name="form_key" type="hidden" value="<?= $block->escapeHtmlAttr($block->getFormKey()) ?>">
+        <?php $enableInput = $block->getInputEnable();?>
+        <fieldset class="admin__fieldset">
+            <div class="admin__field">
+                <span class="admin__field-label"><?= $block->escapeHtml($enableInput['label']); ?></span>
+                <div class="admin__field-control">
+                    <div class="admin__actions-switch" data-role="switcher">
+                        <input type="checkbox"
+                               class="admin__actions-switch-checkbox"
+                               id="<?= $block->escapeHtmlAttr($enableInput['id']) ?>"
+                               name="<?= $block->escapeHtmlAttr($enableInput['name']) ?>"
+                               value="1" data-bind="checked: sync.checked">
+                        <label class="admin__actions-switch-label" for="<?= $block->escapeHtmlAttr($enableInput['id']) ?>">
+                            <span class="admin__actions-switch-text" data-text-on="<?= $block->escapeHtmlAttr(__('Yes')); ?>"
+                                  data-text-off="<?= $block->escapeHtmlAttr(__('No')); ?>"></span>
+                        </label>
+                    </div>
+                </div>
+            </div>
+        </fieldset>
+
+        <fieldset class="admin__fieldset">
+            <!-- ko foreach: elements -->
+            <div class="admin__field admin__field-control">
+                <label class="admin__field-label">
+                    <!-- ko if: $data.heading -->
+                    <span data-bind="text: heading"></span>
+                    <!-- /ko -->
+                </label>
+                <div class="admin__field">
+                    <div class="admin__field admin__field-option">
+                        <span class="admin__actions-switch-text"></span>
+                        <input data-bind="
+                                    enable: $parent.sync.checked,
+                                    css : disabled == true ? 'disabled' : '',
+                                    checked: checked,
+                                    attr: {
+                                        id: id,
+                                        name: name
+                                    }"
+                               type="checkbox"
+                               class="admin__control-checkbox"
+                               value="1">
+                        <label class="admin__field-label" data-bind="attr: {for: id}">
+                            <span data-bind="text: label"></span>
+                        </label>
+                    </div>
+                </div>
+            </div>
+            <!-- /ko -->
+        </fieldset>
+    </div>
+</form>
+
+<script type="text/x-magento-init">
+{
+    "#sync-input": {
+        "Magento_Ui/js/core/app": {
+            "components": {
+                "syncSettings": {
+                    "component": "Temando_Shipping/js/view/components/configuration/sync/edit",
+                    "elements":  <?= /* @noEscape */ json_encode($block->getInputs()); ?>,
+                    "sync": <?= /* @noEscape */ json_encode($block->getInputEnable()); ?>
+                }
+            }
+        }
+    }
+}
+</script>

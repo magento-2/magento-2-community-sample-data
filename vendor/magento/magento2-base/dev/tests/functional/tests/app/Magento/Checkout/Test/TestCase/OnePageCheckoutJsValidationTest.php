@@ -17,10 +17,14 @@ use Magento\Mtf\TestCase\Scenario;
  * 5. Perform assertions.
  *
  * @group One_Page_Checkout
- * @ZephyrId MAGETWO-64190
+ * @ZephyrId MAGETWO-59697
  */
 class OnePageCheckoutJsValidationTest extends Scenario
 {
+    /* tags */
+    const SEVERITY = 'S2';
+    /* end tags */
+
     /**
      * Runs one page checkout js validation test.
      *

@@ -10,9 +10,10 @@
  * file that was distributed with this source code.
  */
 
-namespace Composer\Repository;
+namespace Composer\Test\Repository;
 
 use Composer\Package\Loader\ArrayLoader;
+use Composer\Repository\PathRepository;
 use Composer\Semver\VersionParser;
 use Composer\TestCase;
 
@@ -95,8 +96,12 @@ class PathRepositoryTest extends TestCase
         $loader = new ArrayLoader(new VersionParser());
         $versionGuesser = null;
 
-        $repositoryUrl = implode(DIRECTORY_SEPARATOR, array(__DIR__, 'Fixtures', 'path', 'with-version'));
-        $relativeUrl = ltrim(substr($repositoryUrl, strlen(getcwd())), DIRECTORY_SEPARATOR);
+        // realpath() does not fully expand the paths
+        // PHP Bug https://bugs.php.net/bug.php?id=72642
+        $repositoryUrl = implode(DIRECTORY_SEPARATOR, array(realpath(realpath(__DIR__)), 'Fixtures', 'path', 'with-version'));
+        // getcwd() not necessarily match __DIR__
+        // PHP Bug https://bugs.php.net/bug.php?id=73797
+        $relativeUrl = ltrim(substr($repositoryUrl, strlen(realpath(realpath(getcwd())))), DIRECTORY_SEPARATOR);
 
         $repository = new PathRepository(array('url' => $relativeUrl), $ioInterface, $config, $loader);
         $packages = $repository->getPackages();
@@ -108,6 +113,6 @@ class PathRepositoryTest extends TestCase
 
         // Convert platform specific separators back to generic URL slashes
         $relativeUrl = str_replace(DIRECTORY_SEPARATOR, '/', $relativeUrl);
-        $this->assertEquals(rtrim($relativeUrl, '/'), rtrim($package->getDistUrl(), '/'));
+        $this->assertEquals($relativeUrl, $package->getDistUrl());
     }
 }

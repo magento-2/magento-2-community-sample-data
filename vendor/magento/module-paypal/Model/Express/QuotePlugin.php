@@ -10,9 +10,8 @@ use Magento\Quote\Api\Data\CartInterface;
 use Magento\Quote\Model\Quote\ProductOptionFactory;
 
 /**
- * Plugin for Magento\Quote\Model\QuoteRepository\SaveHandler.
- *
- * Replaces cart item product options for disabled quote
+ * Plugin for Magento\Quote\Model\QuoteRepository\SaveHandler
+ * replaces cart item product options for disabled quote
  * which prevents it to be processed after placement of order
  * via PayPal Express payment solution.
  */
@@ -26,8 +25,9 @@ class QuotePlugin
     /**
      * @param ProductOptionFactory $productOptionFactory
      */
-    public function __construct(ProductOptionFactory $productOptionFactory)
-    {
+    public function __construct(
+        ProductOptionFactory $productOptionFactory
+    ) {
         $this->productOptionFactory = $productOptionFactory;
     }
     
@@ -37,7 +37,7 @@ class QuotePlugin
      * @param SaveHandler $subject
      * @param CartInterface $quote
      * @return array
-     *
+     * @see MAGETWO-70500
      * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      */
     public function beforeSave(SaveHandler $subject, CartInterface $quote)

@@ -18,7 +18,7 @@ use PHPUnit_Framework_MockObject_MockObject as MockObject;
 /**
  * Unit test for Magento\ConfigurableProduct\Observer\HideUnsupportedAttributeTypes
  */
-class HideUnsupportedAttributeTypesTest extends \PHPUnit_Framework_TestCase
+class HideUnsupportedAttributeTypesTest extends \PHPUnit\Framework\TestCase
 {
     /**
      * @var ObjectManager
@@ -44,11 +44,11 @@ class HideUnsupportedAttributeTypesTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @param RequestInterface|MockObject $request
+     * @param RequestInterface|\PHPUnit_Framework_MockObject_MockObject $request
      * @param array $supportedTypes
      * @return HideUnsupportedAttributeTypes
      */
-    private function createTarget(MockObject $request, array $supportedTypes = [])
+    private function createTarget(\PHPUnit_Framework_MockObject_MockObject $request, array $supportedTypes = [])
     {
         return $this->objectManager->getObject(
             HideUnsupportedAttributeTypes::class,
@@ -62,6 +62,7 @@ class HideUnsupportedAttributeTypesTest extends \PHPUnit_Framework_TestCase
     /**
      * @param $popup
      * @param string $productTab
+     *
      * @return MockObject
      */
     private function createRequestMock($popup, $productTab = 'variations')
@@ -86,11 +87,11 @@ class HideUnsupportedAttributeTypesTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @param MockObject|null $form
-     * @return EventObserver|MockObject
+     * @param \PHPUnit_Framework_MockObject_MockObject|null $form
+     * @return EventObserver|\PHPUnit_Framework_MockObject_MockObject
      * @internal param null|MockObject $block
      */
-    private function createEventMock(MockObject $form = null)
+    private function createEventMock(\PHPUnit_Framework_MockObject_MockObject $form = null)
     {
         $event = $this->getMockBuilder(EventObserver::class)
             ->setMethods(['getForm', 'getBlock'])
@@ -154,6 +155,7 @@ class HideUnsupportedAttributeTypesTest extends \PHPUnit_Framework_TestCase
     /**
      * @param $value
      * @param $label
+     *
      * @return array
      */
     private function createFrontendInputValue($value, $label)
@@ -164,6 +166,7 @@ class HideUnsupportedAttributeTypesTest extends \PHPUnit_Framework_TestCase
     /**
      * @param array $originalValues
      * @param array $expectedValues
+     *
      * @return MockObject
      */
     private function createForm(array $originalValues = [], array $expectedValues = [])

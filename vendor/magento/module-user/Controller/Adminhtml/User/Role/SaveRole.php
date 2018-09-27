@@ -51,7 +51,7 @@ class SaveRole extends \Magento\User\Controller\Adminhtml\User\Role
      * Get security cookie
      *
      * @return SecurityCookie
-     * @deprecated
+     * @deprecated 100.1.0
      */
     private function getSecurityCookie()
     {
@@ -80,7 +80,7 @@ class SaveRole extends \Magento\User\Controller\Adminhtml\User\Role
 
         $isAll = $this->getRequest()->getParam('all');
         if ($isAll) {
-            $resource = [$this->_objectManager->get('Magento\Framework\Acl\RootResource')->getId()];
+            $resource = [$this->_objectManager->get(\Magento\Framework\Acl\RootResource::class)->getId()];
         }
 
         $role = $this->_initRole('role_id');

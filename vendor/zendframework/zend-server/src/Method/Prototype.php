@@ -1,10 +1,8 @@
 <?php
 /**
- * Zend Framework (http://framework.zend.com/)
- *
- * @link      http://github.com/zendframework/zf2 for the canonical source repository
- * @copyright Copyright (c) 2005-2015 Zend Technologies USA Inc. (http://www.zend.com)
- * @license   http://framework.zend.com/license/new-bsd New BSD License
+ * @see       https://github.com/zendframework/zend-server for the canonical source repository
+ * @copyright Copyright (c) 2005-2018 Zend Technologies USA Inc. (https://www.zend.com)
+ * @license   https://github.com/zendframework/zend-server/blob/master/LICENSE.md New BSD License
  */
 
 namespace Zend\Server\Method;
@@ -22,12 +20,12 @@ class Prototype
     /**
      * @var array Map parameter names to parameter index
      */
-    protected $parameterNameMap = array();
+    protected $parameterNameMap = [];
 
     /**
      * @var array Method parameters
      */
-    protected $parameters = array();
+    protected $parameters = [];
 
     /**
      * Constructor
@@ -77,9 +75,9 @@ class Prototype
                 $this->parameterNameMap[$name] = count($this->parameters) - 1;
             }
         } else {
-            $parameter = new Parameter(array(
+            $parameter = new Parameter([
                 'type' => (string) $parameter,
-            ));
+            ]);
             $this->parameters[] = $parameter;
         }
         return $this;
@@ -107,8 +105,8 @@ class Prototype
      */
     public function setParameters(array $parameters)
     {
-        $this->parameters       = array();
-        $this->parameterNameMap = array();
+        $this->parameters       = [];
+        $this->parameterNameMap = [];
         $this->addParameters($parameters);
         return $this;
     }
@@ -120,7 +118,7 @@ class Prototype
      */
     public function getParameters()
     {
-        $types = array();
+        $types = [];
         foreach ($this->parameters as $parameter) {
             $types[] = $parameter->getType();
         }
@@ -145,7 +143,7 @@ class Prototype
      */
     public function getParameter($index)
     {
-        if (!is_string($index) && !is_numeric($index)) {
+        if (! is_string($index) && ! is_numeric($index)) {
             return;
         }
         if (array_key_exists($index, $this->parameterNameMap)) {
@@ -181,9 +179,9 @@ class Prototype
      */
     public function toArray()
     {
-        return array(
+        return [
             'returnType' => $this->getReturnType(),
             'parameters' => $this->getParameters(),
-        );
+        ];
     }
 }

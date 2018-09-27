@@ -5,13 +5,14 @@
  */
 namespace Magento\Braintree\Model\Paypal\Helper;
 
-use Magento\Braintree\Gateway\Config\PayPal\Config;
-use Magento\Braintree\Model\Ui\PayPal\ConfigProvider;
-use Magento\Braintree\Observer\DataAssignObserver;
-use Magento\Framework\Exception\LocalizedException;
-use Magento\Quote\Api\CartRepositoryInterface;
 use Magento\Quote\Model\Quote;
 use Magento\Quote\Model\Quote\Address;
+use Magento\Quote\Model\Quote\Payment;
+use Magento\Quote\Api\CartRepositoryInterface;
+use Magento\Braintree\Model\Ui\PayPal\ConfigProvider;
+use Magento\Framework\Exception\LocalizedException;
+use Magento\Braintree\Observer\DataAssignObserver;
+use Magento\Braintree\Gateway\Config\PayPal\Config;
 
 /**
  * Class QuoteUpdater
@@ -83,6 +84,14 @@ class QuoteUpdater extends AbstractHelper
 
         $quote->collectTotals();
 
+        /**
+         * Unset shipping assignment to prevent from saving / applying outdated data
+         * @see \Magento\Quote\Model\QuoteRepository\SaveHandler::processShippingAssignment
+         */
+        if ($quote->getExtensionAttributes()) {
+            $quote->getExtensionAttributes()->setShippingAssignments(null);
+        }
+
         $this->quoteRepository->save($quote);
     }
 
@@ -121,6 +130,11 @@ class QuoteUpdater extends AbstractHelper
         $shippingAddress->setCollectShippingRates(true);
 
         $this->updateAddressData($shippingAddress, $details['shippingAddress']);
+
+        // PayPal's address supposes not saving against customer account
+        $shippingAddress->setSaveInAddressBook(false);
+        $shippingAddress->setSameAsBilling(false);
+        $shippingAddress->unsCustomerAddressId();
     }
 
     /**
@@ -143,6 +157,11 @@ class QuoteUpdater extends AbstractHelper
         $billingAddress->setFirstname($details['firstName']);
         $billingAddress->setLastname($details['lastName']);
         $billingAddress->setEmail($details['email']);
+
+        // PayPal's address supposes not saving against customer account
+        $billingAddress->setSaveInAddressBook(false);
+        $billingAddress->setSameAsBilling(false);
+        $billingAddress->unsCustomerAddressId();
     }
 
     /**
@@ -163,5 +182,10 @@ class QuoteUpdater extends AbstractHelper
         $address->setRegionCode($addressData['region']);
         $address->setCountryId($addressData['countryCodeAlpha2']);
         $address->setPostcode($addressData['postalCode']);
+
+        // PayPal's address supposes not saving against customer account
+        $address->setSaveInAddressBook(false);
+        $address->setSameAsBilling(false);
+        $address->setCustomerAddressId(null);
     }
 }

@@ -76,18 +76,24 @@ class View extends \Magento\Catalog\Controller\Product
         $productId = (int) $this->getRequest()->getParam('id');
         $specifyOptions = $this->getRequest()->getParam('options');
 
-        if ($this->getRequest()->isPost() && $this->getRequest()->getParam(self::PARAM_NAME_URL_ENCODED)) {
+        if (!$this->_request->getParam('___from_store')
+            && $this->_request->isPost()
+            && $this->_request->getParam(self::PARAM_NAME_URL_ENCODED)
+        ) {
             $product = $this->_initProduct();
+            
             if (!$product) {
                 return $this->noProductRedirect();
             }
+            
             if ($specifyOptions) {
                 $notice = $product->getTypeInstance()->getSpecifyOptionMessage();
-                $this->messageManager->addNotice($notice);
+                $this->messageManager->addNoticeMessage($notice);
             }
+            
             if ($this->getRequest()->isAjax()) {
                 $this->getResponse()->representJson(
-                    $this->_objectManager->get('Magento\Framework\Json\Helper\Data')->jsonEncode([
+                    $this->_objectManager->get(\Magento\Framework\Json\Helper\Data::class)->jsonEncode([
                         'backUrl' => $this->_redirect->getRedirectUrl()
                     ])
                 );
@@ -111,7 +117,7 @@ class View extends \Magento\Catalog\Controller\Product
         } catch (\Magento\Framework\Exception\NoSuchEntityException $e) {
             return $this->noProductRedirect();
         } catch (\Exception $e) {
-            $this->_objectManager->get('Psr\Log\LoggerInterface')->critical($e);
+            $this->_objectManager->get(\Psr\Log\LoggerInterface::class)->critical($e);
             $resultForward = $this->resultForwardFactory->create();
             $resultForward->forward('noroute');
             return $resultForward;

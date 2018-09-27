@@ -9,7 +9,7 @@ use Magento\Cms\Model\Page\Source\Theme;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
 use Magento\Framework\View\Design\Theme\Label\ListInterface;
 
-class ThemeTest extends \PHPUnit_Framework_TestCase
+class ThemeTest extends \PHPUnit\Framework\TestCase
 {
     /**
      * @var ListInterface|\PHPUnit_Framework_MockObject_MockObject
@@ -32,7 +32,7 @@ class ThemeTest extends \PHPUnit_Framework_TestCase
     protected function setUp()
     {
         $this->objectManagerHelper = new ObjectManager($this);
-        $this->listMock = $this->getMockBuilder('Magento\Framework\View\Design\Theme\Label\ListInterface')
+        $this->listMock = $this->getMockBuilder(\Magento\Framework\View\Design\Theme\Label\ListInterface::class)
             ->disableOriginalConstructor()
             ->setMethods(['getLabels'])
             ->getMock();
@@ -47,7 +47,7 @@ class ThemeTest extends \PHPUnit_Framework_TestCase
      */
     protected function getClassName()
     {
-        return 'Magento\Cms\Model\Page\Source\Theme';
+        return \Magento\Cms\Model\Page\Source\Theme::class;
     }
 
     /**

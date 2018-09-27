@@ -30,23 +30,14 @@ class ApplySalesRuleOnFrontendStep implements TestStepInterface
     protected $salesRule;
 
     /**
-     * Sales Rule Discount Code.
-     *
-     * @var SalesRule
-     */
-    protected $couponCode;
-
-    /**
      * @constructor
      * @param CheckoutCart $checkoutCart
      * @param SalesRule $salesRule
-     * @param string $couponCode
      */
-    public function __construct(CheckoutCart $checkoutCart, SalesRule $salesRule = null, $couponCode = null)
+    public function __construct(CheckoutCart $checkoutCart, SalesRule $salesRule = null)
     {
         $this->checkoutCart = $checkoutCart;
         $this->salesRule = $salesRule;
-        $this->couponCode = $couponCode;
     }
 
     /**
@@ -58,11 +49,6 @@ class ApplySalesRuleOnFrontendStep implements TestStepInterface
     {
         if ($this->salesRule !== null) {
             $this->checkoutCart->getDiscountCodesBlock()->applyCouponCode($this->salesRule->getCouponCode());
-            $this->checkoutCart->getTotalsBlock()->waitForUpdatedTotals();
-        }
-
-        if ($this->couponCode !== null) {
-            $this->checkoutCart->getDiscountCodesBlock()->applyCouponCode($this->couponCode);
             $this->checkoutCart->getTotalsBlock()->waitForUpdatedTotals();
         }
     }

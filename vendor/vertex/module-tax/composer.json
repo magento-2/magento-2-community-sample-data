@@ -1,0 +1,106 @@
+{
+    "name": "vertex/module-tax",
+    "description": "Vertex Tax Links for Magento 2",
+    "type": "magento2-module",
+    "license": "proprietary",
+    "version": "2.1.10",
+    "require": {
+        "php": "^5.5.22|^7.0",
+        "ext-soap": "*",
+        "ext-simplexml": "*",
+        "magento/framework": "^100.0.2|^101.0.0",
+        "magento/module-backend": "^100.0.2",
+        "magento/module-catalog": "^100.0.2|^101.0.0|^102.0.0",
+        "magento/module-config": "^100.0.2|^101.0.0",
+        "magento/module-customer": "^100.0.2|^101.0.0",
+        "magento/module-directory": "^100.0.2",
+        "magento/module-eav": "^100.0.2|^101.0.0",
+        "magento/module-store": "^100.0.2",
+        "magento/module-quote": "^100.0.2|^101.0.0",
+        "magento/module-sales": "^100.0.2|^101.0.0",
+        "magento/module-shipping": "^100.0.2",
+        "magento/module-tax": "<100.3.0"
+    },
+    "suggest": {
+        "magento/module-gift-wrapping": "Vertex Tax Links for Magento 2 also supports Magento's Gift Wrapping module",
+        "magento/module-gift-card-account": "Vertex Tax Links for Magento 2 also supports Magento's Gift Card Account module",
+        "magento/module-checkout": "Vertex Tax Links for Magento 2 also supports Magento's Checkout module",
+        "magento/module-multishipping": "Vertex Tax Links for Magento 2 also supports Magento's Multishipping module",
+        "magento/module-reward": "Vertex Tax Links for Magento 2 also supports Magento's Reward module"
+    },
+    "conflict": {
+        "magento/module-gift-wrapping": ">=101.1.0",
+        "vertex/tax-ee": "*",
+        "vertex/tax": "*",
+        "pixafy/tax-ee": "*",
+        "pixafy/tax": "*"
+    },
+    "repositories": [
+        {
+            "type": "composer",
+            "url": "https://repo.magento.com/"
+        },
+        {
+            "type": "vcs",
+            "url": "https://github.com/magento/magento2-functional-testing-framework.git"
+        }
+    ],
+    "require-dev": {
+        "magento/marketplace-eqp": "^1.0",
+        "phpunit/phpunit": "~6.2.0",
+        "magento/magento2-functional-testing-framework": "^1.0",
+        "vlucas/phpdotenv": "^2.4",
+        "allure-framework/allure-codeception": "^1.2",
+        "magento/module-offline-shipping": "^100.2",
+        "magento/module-usps": "^100.2",
+        "phpmd/phpmd": "^2.6"
+    },
+    "autoload": {
+        "files": [
+            "registration.php"
+        ],
+        "psr-4": {
+            "Vertex\\Tax\\": ""
+        }
+    },
+    "autoload-dev": {
+        "Vertex\\": "Test/Functional/functional"
+    },
+    "scripts": {
+        "test": [
+            "@test:unit",
+            "@test:phpcs",
+            "@test:phpmd"
+        ],
+        "test:phpcs": [
+            "phpcs --runtime-set ignore_warnings_on_exit 1 --runtime-set installed_paths vendor/magento/marketplace-eqp --standard=MEQP2 --ignore=vendor/* --ignore=Test/tmp ."
+        ],
+        "test:phpmd": [
+            "phpmd . text Test/phpmd-ruleset.xml --exclude vendor,Test/tmp"
+        ],
+        "test:unit": [
+            "@test:unit:opensource",
+            "@test:unit:commerce"
+        ],
+        "test:unit:opensource": [
+            "phpunit -c Test/phpunit.xml --exclude-group commerceFeatures"
+        ],
+        "test:unit:commerce": [
+            "phpunit -c Test/phpunit.xml --group commerceFeatures"
+        ],
+        "test:functional": [
+            "@test:functional:build",
+            "@test:functional:run"
+        ],
+        "test:functional:build": [
+            "codecept -c Test build",
+            "Vertex\\Tax\\Test\\ComposerScript::generateFunctionalTests"
+        ],
+        "test:functional:run": [
+            "codecept -c Test run functional --skip-group skip"
+        ]
+    },
+    "archive": {
+        "exclude": ["/Vertex for Magento 2 Installation.docx", ".gitignore", ".gitattributes"]
+    }
+}

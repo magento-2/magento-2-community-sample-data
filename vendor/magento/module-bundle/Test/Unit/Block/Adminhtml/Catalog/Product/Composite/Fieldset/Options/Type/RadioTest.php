@@ -7,7 +7,7 @@ namespace Magento\Bundle\Test\Unit\Block\Adminhtml\Catalog\Product\Composite\Fie
 
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
 
-class RadioTest extends \PHPUnit_Framework_TestCase
+class RadioTest extends \PHPUnit\Framework\TestCase
 {
     /**
      * @var \Magento\Bundle\Block\Adminhtml\Catalog\Product\Composite\Fieldset\Options\Type\Radio
@@ -17,7 +17,7 @@ class RadioTest extends \PHPUnit_Framework_TestCase
     protected function setUp()
     {
         $this->block = (new ObjectManager($this))
-            ->getObject('Magento\Bundle\Block\Adminhtml\Catalog\Product\Composite\Fieldset\Options\Type\Radio');
+            ->getObject(\Magento\Bundle\Block\Adminhtml\Catalog\Product\Composite\Fieldset\Options\Type\Radio::class);
     }
 
     public function testSetValidationContainer()

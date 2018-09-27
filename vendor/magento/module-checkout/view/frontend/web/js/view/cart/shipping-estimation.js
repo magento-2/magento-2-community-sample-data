@@ -47,12 +47,22 @@ define(
                     checkoutDataResolver.resolveEstimationAddress();
                     address = quote.isVirtual() ? quote.billingAddress() : quote.shippingAddress();
 
+                    if (!address && quote.isVirtual()) {
+                        address = addressConverter.formAddressDataToQuoteAddress(
+                            checkoutData.getSelectedBillingAddress()
+                        );
+                    }
+
                     if (address) {
                         estimatedAddress = address.isEditable() ?
                             addressConverter.quoteAddressToFormAddressData(address) :
-                            addressConverter.quoteAddressToFormAddressData(
-                                addressConverter.addressToEstimationAddress(address)
-                            );
+                            {
+                                // only the following fields must be used by estimation form data provider
+                                'country_id': address.countryId,
+                                region: address.region,
+                                'region_id': address.regionId,
+                                postcode: address.postcode
+                            };
                         checkoutProvider.set(
                             'shippingAddress',
                             $.extend({}, checkoutProvider.get('shippingAddress'), estimatedAddress)

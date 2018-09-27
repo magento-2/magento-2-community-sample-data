@@ -21,7 +21,7 @@ use Magento\Framework\Message\ManagerInterface;
 /**
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  */
-class EditPostTest extends \PHPUnit_Framework_TestCase
+class EditPostTest extends \PHPUnit\Framework\TestCase
 {
     /**
      * @var EditPost
@@ -196,9 +196,6 @@ class EditPostTest extends \PHPUnit_Framework_TestCase
         $this->assertSame($this->resultRedirect, $this->model->execute());
     }
 
-    /**
-     * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
-     */
     public function testGeneralSave()
     {
         $customerId = 1;
@@ -402,7 +399,7 @@ class EditPostTest extends \PHPUnit_Framework_TestCase
             [
                 'testNumber' => 2,
                 'exceptionClass' => \Magento\Framework\Exception\State\UserLockedException::class,
-                'errorMessage' => __('Invalid login or password.')
+                'errorMessage' => __('You did not sign in correctly or your account is temporarily disabled.')
             ]
         ];
     }
@@ -561,7 +558,7 @@ class EditPostTest extends \PHPUnit_Framework_TestCase
                 'errors' => [
                     'counter' => 1,
                     'message' => 'Exception',
-                    'exception' => \Exception::class,
+                    'exception' => '\Exception',
                 ]
             ]
         ];
@@ -656,7 +653,7 @@ class EditPostTest extends \PHPUnit_Framework_TestCase
             ],
             [
                 'message' => 'Exception',
-                'exception' => \Exception::class,
+                'exception' => '\Exception',
             ],
         ];
     }

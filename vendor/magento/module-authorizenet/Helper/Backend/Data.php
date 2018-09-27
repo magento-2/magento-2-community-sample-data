@@ -13,6 +13,9 @@ use Magento\Backend\Model\UrlInterface;
 
 /**
  * Authorize.net Backend Data Helper
+ *
+ * @api
+ * @since 100.0.2
  */
 class Data extends FrontendDataHelper
 {
@@ -85,7 +88,7 @@ class Data extends FrontendDataHelper
      *
      * @param null|int|string $storeId
      * @return string
-     * 
+     *
      * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      */
     public function getRelayUrl($storeId = null)

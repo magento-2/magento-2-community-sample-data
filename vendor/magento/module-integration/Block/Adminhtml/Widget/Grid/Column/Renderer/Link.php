@@ -12,7 +12,9 @@ use Magento\Framework\DataObject;
 
 class Link extends AbstractRenderer
 {
-    /** @var \Magento\Framework\DataObject */
+    /**
+     * @var \Magento\Framework\DataObject
+     */
     protected $_row;
 
     /**
@@ -118,7 +120,7 @@ class Link extends AbstractRenderer
             if ($value === null || $value == '') {
                 continue;
             }
-            $html[] = sprintf('%s="%s"', $key, $this->escapeHtml($value));
+            $html[] = sprintf('%s="%s"', $key, $this->escapeHtmlAttr($value, false));
         }
 
         return join(' ', $html);

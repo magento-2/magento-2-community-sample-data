@@ -11,6 +11,12 @@ use Magento\Framework\Session\SessionManagerInterface;
 use Magento\Store\Model\StoreManagerInterface;
 use Magento\Vault\Api\PaymentMethodListInterface;
 
+/**
+ * Provides information about vault payemnt methods availability on storefront
+ *
+ * @api
+ * @since 100.1.0
+ */
 class VaultConfigProvider implements ConfigProviderInterface
 {
     const IS_ACTIVE_CODE = 'is_active_payment_token_enabler';
@@ -52,6 +58,7 @@ class VaultConfigProvider implements ConfigProviderInterface
      * Retrieve assoc array of checkout configuration
      *
      * @return array
+     * @since 100.1.0
      */
     public function getConfig()
     {
@@ -74,7 +81,7 @@ class VaultConfigProvider implements ConfigProviderInterface
     /**
      * Get vault payment list instance
      * @return PaymentMethodListInterface
-     * @deprecated
+     * @deprecated 100.2.0
      */
     private function getVaultPaymentList()
     {

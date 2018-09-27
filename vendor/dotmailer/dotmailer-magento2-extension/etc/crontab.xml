@@ -1,0 +1,35 @@
+<?xml version="1.0"?>
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Cron:etc/crontab.xsd">
+    <group id="ddg_automation">
+        <job name="ddg_automation_customer_subscriber_guest_sync" instance="Dotdigitalgroup\Email\Model\Cron" method="contactSync">
+            <config_path>connector_developer_settings/cron_schedules/contact</config_path>
+        </job>
+        <job name="ddg_automation_importer" instance="Dotdigitalgroup\Email\Model\Cron" method="emailImporter">
+            <config_path>connector_developer_settings/cron_schedules/importer</config_path>
+        </job>
+        <job name="ddg_automation_status" instance="Dotdigitalgroup\Email\Model\Cron" method="syncAutomation">
+            <schedule>*/15 * * * *</schedule>
+        </job>
+        <job name="ddg_automation_abandonedcarts" instance="Dotdigitalgroup\Email\Model\Cron" method="abandonedCarts">
+            <schedule>*/5 * * * *</schedule>
+        </job>
+        <job name="ddg_automation_reviews_and_wishlist" instance="Dotdigitalgroup\Email\Model\Cron" method="reviewsAndWishlist">
+            <config_path>connector_developer_settings/cron_schedules/review_wishlist</config_path>
+        </job>
+        <job name="ddg_automation_campaign" instance="Dotdigitalgroup\Email\Model\Cron" method="sendCampaigns">
+            <schedule>*/5 * * * *</schedule>
+        </job>
+        <job name="ddg_automation_order_sync" instance="Dotdigitalgroup\Email\Model\Cron" method="orderSync">
+            <config_path>connector_developer_settings/cron_schedules/order</config_path>
+        </job>
+        <job name="ddg_automation_cleaner" instance="Dotdigitalgroup\Email\Model\Cron" method="cleaning">
+            <schedule>0 0 1 * *</schedule>
+        </job>
+        <job name="ddg_automation_catalog_sync" instance="Dotdigitalgroup\Email\Model\Cron" method="catalogSync">
+            <config_path>connector_developer_settings/cron_schedules/catalog</config_path>
+        </job>
+        <job name="ddg_automation_email_templates" instance="Dotdigitalgroup\Email\Model\Cron" method="syncEmailTemplates">
+            <config_path>0 */6 * * *</config_path>
+        </job>
+    </group>
+</config>

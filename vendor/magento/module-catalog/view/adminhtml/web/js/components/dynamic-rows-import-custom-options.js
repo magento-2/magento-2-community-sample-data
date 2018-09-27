@@ -24,33 +24,20 @@ define([
             identificationDRProperty: 'option_id'
         },
 
-        /**
-         * Cleans options' values from IDs because otherwise wrong IDs will be assigned.
-         *
-         * @param {Array} values
-         * @private
-         */
-        __cleanOptionValuesUp: function (values) {
-            values.each(function (value) {
-                delete value['option_id'];
-                delete value['option_type_id'];
-            });
-        },
-
         /** @inheritdoc */
         processingInsertData: function (data) {
             var options = [],
                 currentOption,
-                self = this;
+                generalContext = this;
 
             if (!data) {
                 return;
             }
-            data.each(function (item) {
+            _.each(data, function (item) {
                 if (!item.options) {
                     return;
                 }
-                item.options.each(function (option) {
+                _.each(item.options, function (option) {
                     currentOption = utils.copy(option);
 
                     if (currentOption.hasOwnProperty('sort_order')) {
@@ -62,7 +49,7 @@ define([
                     }
 
                     if (currentOption.values.length > 0) {
-                        self.__cleanOptionValuesUp(currentOption.values);
+                        generalContext.removeOptionsIds(currentOption.values);
                     }
                     options.push(currentOption);
                 });
@@ -72,7 +59,7 @@ define([
                 return;
             }
             this.cacheGridData = options;
-            options.each(function (opt) {
+            _.each(options, function (opt) {
                 this.mappingValue(opt);
             }, this);
 
@@ -80,10 +67,15 @@ define([
         },
 
         /**
-         * Set empty array to dataProvider
+         * Removes option_id and option_type_id from every option
+         *
+         * @param {Array} options
          */
-        clearDataProvider: function () {
-            this.source.set(this.dataProvider, []);
+        removeOptionsIds: function (options) {
+            _.each(options, function (optionValue) {
+                delete optionValue['option_id'];
+                delete optionValue['option_type_id'];
+            });
         },
 
         /** @inheritdoc */
@@ -96,6 +88,13 @@ define([
             }
 
             this._super(ctx, index, prop);
+        },
+
+        /**
+         * Set empty array to dataProvider
+         */
+        clearDataProvider: function () {
+            this.source.set(this.dataProvider, []);
         },
 
         /**

@@ -6,7 +6,8 @@
 namespace Magento\Sales\Api\Exception;
 
 /**
- * Interface CouldNotRefundExceptionInterface
+ * @api
+ * @since 100.1.3
  */
 interface CouldNotRefundExceptionInterface
 {

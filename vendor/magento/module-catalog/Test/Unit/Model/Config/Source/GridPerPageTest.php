@@ -7,7 +7,7 @@ namespace Magento\Catalog\Test\Unit\Model\Config\Source;
 
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
 
-class GridPerPageTest extends \PHPUnit_Framework_TestCase
+class GridPerPageTest extends \PHPUnit\Framework\TestCase
 {
     /**
      * @var \Magento\Catalog\Model\Config\Source\GridPerPage
@@ -18,7 +18,7 @@ class GridPerPageTest extends \PHPUnit_Framework_TestCase
     {
         $helper = new ObjectManager($this);
         $this->model = $helper->getObject(
-            'Magento\Catalog\Model\Config\Source\GridPerPage',
+            \Magento\Catalog\Model\Config\Source\GridPerPage::class,
             ['perPageValues' => 'some,values']
         );
     }

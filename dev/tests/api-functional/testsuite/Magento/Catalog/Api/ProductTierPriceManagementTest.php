@@ -51,7 +51,7 @@ class ProductTierPriceManagementTest extends WebapiAbstract
     public function getListDataProvider()
     {
         return [
-            [0, 1, 5, 3],
+            [0, 2, 5, 3],
             [1, 0, null, null],
             ['all', 2, 8, 2],
         ];
@@ -60,15 +60,17 @@ class ProductTierPriceManagementTest extends WebapiAbstract
     /**
      * @param string|int $customerGroupId
      * @param int $qty
-     * @magentoApiDataFixture Magento/Catalog/_files/product_simple.php
+     * @magentoApiDataFixture Magento/Catalog/_files/product_with_image.php
      * @dataProvider deleteDataProvider
      */
     public function testDelete($customerGroupId, $qty)
     {
         $productSku = 'simple';
+        $objectManager = \Magento\TestFramework\ObjectManager::getInstance();
+        $productBefore = $objectManager->get(ProductRepositoryInterface::class)->get($productSku, false, null, true);
         $serviceInfo = [
             'rest' => [
-                'resourcePath' =>   self::RESOURCE_PATH
+                'resourcePath' => self::RESOURCE_PATH
                     . $productSku . "/group-prices/" . $customerGroupId . "/tiers/" . $qty,
                 'httpMethod' => \Magento\Framework\Webapi\Rest\Request::HTTP_METHOD_DELETE,
             ],
@@ -80,6 +82,10 @@ class ProductTierPriceManagementTest extends WebapiAbstract
         ];
         $requestData = ['sku' => $productSku, 'customerGroupId' => $customerGroupId, 'qty' => $qty];
         $this->assertTrue($this->_webApiCall($serviceInfo, $requestData));
+        $productAfter = $objectManager->get(ProductRepositoryInterface::class)->get($productSku, false, null, true);
+        $this->assertSame($productBefore->getImage(), $productAfter->getImage());
+        $this->assertSame($productBefore->getSmallImage(), $productAfter->getSmallImage());
+        $this->assertSame($productBefore->getThumbnail(), $productAfter->getThumbnail());
     }
 
     public function deleteDataProvider()
@@ -122,7 +128,7 @@ class ProductTierPriceManagementTest extends WebapiAbstract
         $this->_webApiCall($serviceInfo, $requestData);
         $objectManager = \Magento\TestFramework\ObjectManager::getInstance();
         /** @var \Magento\Catalog\Api\ProductTierPriceManagementInterface $service */
-        $service = $objectManager->get('Magento\Catalog\Api\ProductTierPriceManagementInterface');
+        $service = $objectManager->get(\Magento\Catalog\Api\ProductTierPriceManagementInterface::class);
         $prices = $service->getList($productSku, 1);
         $this->assertCount(1, $prices);
         $this->assertEquals(10, $prices[0]->getValue());
@@ -160,7 +166,7 @@ class ProductTierPriceManagementTest extends WebapiAbstract
         $this->_webApiCall($serviceInfo, $requestData);
         $objectManager = \Magento\TestFramework\ObjectManager::getInstance();
         /** @var \Magento\Catalog\Api\ProductTierPriceManagementInterface $service */
-        $service = $objectManager->get('Magento\Catalog\Api\ProductTierPriceManagementInterface');
+        $service = $objectManager->get(\Magento\Catalog\Api\ProductTierPriceManagementInterface::class);
         $prices = $service->getList($productSku, 'all');
         $this->assertCount(3, $prices);
         $this->assertEquals(20, (int)$prices[2]->getValue());
@@ -198,7 +204,7 @@ class ProductTierPriceManagementTest extends WebapiAbstract
         $this->_webApiCall($serviceInfo, $requestData);
         $objectManager = \Magento\TestFramework\ObjectManager::getInstance();
         /** @var \Magento\Catalog\Api\ProductTierPriceManagementInterface $service */
-        $service = $objectManager->get('Magento\Catalog\Api\ProductTierPriceManagementInterface');
+        $service = $objectManager->get(\Magento\Catalog\Api\ProductTierPriceManagementInterface::class);
         $prices = $service->getList($productSku, 'all');
         $this->assertCount(2, $prices);
         $this->assertEquals(20, (int)$prices[0]->getValue());

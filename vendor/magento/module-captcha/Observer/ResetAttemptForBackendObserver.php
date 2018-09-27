@@ -9,9 +9,9 @@ use Magento\Framework\Event\ObserverInterface;
 
 class ResetAttemptForBackendObserver implements ObserverInterface
 {
-    /*
-      * @var \Magento\Captcha\Model\ResourceModel\LogFactory
-      */
+    /**
+     * @var \Magento\Captcha\Model\ResourceModel\LogFactory
+     */
     public $resLogFactory;
 
     /**
@@ -22,7 +22,6 @@ class ResetAttemptForBackendObserver implements ObserverInterface
     ) {
         $this->resLogFactory = $resLogFactory;
     }
-
 
     /**
      * Reset Attempts For Backend

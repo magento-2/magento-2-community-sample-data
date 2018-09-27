@@ -5,7 +5,7 @@
  */
 namespace Magento\TestFramework\Dependency;
 
-class PhpRuleTest extends \PHPUnit_Framework_TestCase
+class PhpRuleTest extends \PHPUnit\Framework\TestCase
 {
     /**
      * @var PhpRule
@@ -208,7 +208,6 @@ class PhpRuleTest extends \PHPUnit_Framework_TestCase
             ]
         ];
     }
-
 
     /**
      * Make some fake filepath to correspond to the class name

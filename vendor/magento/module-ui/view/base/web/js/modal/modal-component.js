@@ -3,6 +3,9 @@
  * See COPYING.txt for license details.
  */
 
+/**
+ * @api
+ */
 define([
     'Magento_Ui/js/lib/view/utils/async',
     'uiCollection',
@@ -18,6 +21,7 @@ define([
             title: '',
             subTitle: '',
             options: {
+                modalClass: '',
                 title: '',
                 subTitle: '',
                 buttons: [],

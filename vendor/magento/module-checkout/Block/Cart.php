@@ -9,6 +9,8 @@ use Magento\Customer\Model\Context;
 
 /**
  * Shopping cart block
+ *
+ * @api
  */
 class Cart extends \Magento\Checkout\Block\Cart\AbstractCart
 {
@@ -234,9 +236,10 @@ class Cart extends \Magento\Checkout\Block\Cart\AbstractCart
     }
 
     /**
-     * Render pagination HTML.
+     * Render pagination HTML
      *
      * @return string
+     * @since 100.2.0
      */
     public function getPagerHtml()
     {

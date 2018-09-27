@@ -11,9 +11,6 @@ namespace Magento\Integration\Test\Unit\Controller\Adminhtml\Integration;
 use Magento\Integration\Block\Adminhtml\Integration\Edit\Tab\Info;
 use Magento\Framework\Exception\IntegrationException;
 
-/**
- * Class EditTest.
- */
 class EditTest extends \Magento\Integration\Test\Unit\Controller\Adminhtml\IntegrationTest
 {
     public function testEditAction()

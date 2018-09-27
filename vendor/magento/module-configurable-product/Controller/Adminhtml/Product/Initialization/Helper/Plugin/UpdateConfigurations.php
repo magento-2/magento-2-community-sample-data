@@ -9,13 +9,19 @@ namespace Magento\ConfigurableProduct\Controller\Adminhtml\Product\Initializatio
 
 class UpdateConfigurations
 {
-    /** @var \Magento\Catalog\Api\ProductRepositoryInterface  */
+    /**
+     * @var \Magento\Catalog\Api\ProductRepositoryInterface
+     */
     protected $productRepository;
 
-    /** @var \Magento\Framework\App\RequestInterface */
+    /**
+     * @var \Magento\Framework\App\RequestInterface
+     */
     protected $request;
 
-    /** @var \Magento\ConfigurableProduct\Model\Product\VariationHandler */
+    /**
+     * @var \Magento\ConfigurableProduct\Model\Product\VariationHandler
+     */
     protected $variationHandler;
 
     /**
@@ -63,7 +69,7 @@ class UpdateConfigurations
         \Magento\Catalog\Controller\Adminhtml\Product\Initialization\Helper $subject,
         \Magento\Catalog\Model\Product $configurableProduct
     ) {
-        $configurations = $this->getConfigurationsFromProduct($configurableProduct);
+        $configurations = $this->getConfigurations();
         $configurations = $this->variationHandler->duplicateImagesForVariations($configurations);
         if (count($configurations)) {
             foreach ($configurations as $productId => $productData) {
@@ -80,52 +86,30 @@ class UpdateConfigurations
     }
 
     /**
-     * Get configurations from product
-     *
-     * @param \Magento\Catalog\Model\Product $configurableProduct
-     * @return array
-     */
-    private function getConfigurationsFromProduct(\Magento\Catalog\Model\Product $configurableProduct)
-    {
-        $result = [];
-
-        $configurableMatrix = $configurableProduct->hasData('configurable-matrix') ?
-            $configurableProduct->getData('configurable-matrix') : [];
-        foreach ($configurableMatrix as $item) {
-            if (empty($item['was_changed'])) {
-                continue;
-            } else {
-                unset($item['was_changed']);
-            }
-
-            if (!$item['newProduct']) {
-                $result[$item['id']] = $this->mapData($item);
-
-                if (isset($item['qty'])) {
-                    $result[$item['id']]['quantity_and_stock_status']['qty'] = $item['qty'];
-                }
-            }
-        }
-
-        return $result;
-    }
-
-    /**
      * Get configurations from request
      *
      * @return array
-     * @deprecated
      */
     protected function getConfigurations()
     {
         $result = [];
-        $configurableMatrix = $this->request->getParam('configurable-matrix', []);
-        foreach ($configurableMatrix as $item) {
-            if (!$item['newProduct']) {
-                $result[$item['id']] = $this->mapData($item);
+        $configurableMatrix = $this->request->getParam('configurable-matrix-serialized', "[]");
+        if (isset($configurableMatrix) && $configurableMatrix != "") {
+            $configurableMatrix = json_decode($configurableMatrix, true);
 
-                if (isset($item['qty'])) {
-                    $result[$item['id']]['quantity_and_stock_status']['qty'] = $item['qty'];
+            foreach ($configurableMatrix as $item) {
+                if (empty($item['was_changed'])) {
+                    continue;
+                } else {
+                    unset($item['was_changed']);
+                }
+
+                if (!$item['newProduct']) {
+                    $result[$item['id']] = $this->mapData($item);
+
+                    if (isset($item['qty'])) {
+                        $result[$item['id']]['quantity_and_stock_status']['qty'] = $item['qty'];
+                    }
                 }
             }
         }

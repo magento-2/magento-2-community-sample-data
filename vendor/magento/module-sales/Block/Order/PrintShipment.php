@@ -10,6 +10,8 @@ use Magento\Framework\View\Element\AbstractBlock;
 /**
  * Order information for print
  *
+ * @api
+ * @since 100.0.2
  */
 class PrintShipment extends \Magento\Sales\Block\Items\AbstractItems
 {
@@ -61,16 +63,6 @@ class PrintShipment extends \Magento\Sales\Block\Items\AbstractItems
     }
 
     /**
-     * Disable pager for print
-     *
-     * @return bool
-     */
-    public function isPagerDisplayed()
-    {
-        return false;
-    }
-
-    /**
      * @return string
      */
     public function getPaymentInfoHtml()
@@ -87,9 +79,21 @@ class PrintShipment extends \Magento\Sales\Block\Items\AbstractItems
     }
 
     /**
+     * Disable pager for printing page
+     *
+     * @return bool
+     * @since 100.2.0
+     */
+    public function isPagerDisplayed()
+    {
+        return false;
+    }
+
+    /**
      * Get order items
      *
      * @return \Magento\Framework\DataObject[]
+     * @since 100.2.0
      */
     public function getItems()
     {

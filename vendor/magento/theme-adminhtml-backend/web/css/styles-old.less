@@ -744,6 +744,7 @@
     //  --------------------------------------
 
     fieldset {
+        min-width: 0;
         padding: 20px;
     }
 
@@ -754,10 +755,6 @@
 
     fieldset legend + br {
         display: none;
-    }
-
-    label {
-        display: inline-block;
     }
 
     label > input[type="radio"],
@@ -1386,7 +1383,6 @@
             line-height: 1.33;
             vertical-align: middle;
             white-space: normal;
-            word-break: break-all;
 
             &[data-config-scope] {
                 position: relative;
@@ -1416,7 +1412,7 @@
 
         span {
             &:after {
-                color: #eb5202;
+                color: #e22626;
                 content: '*';
                 display: inline-block;
                 font-size: 1.6rem;
@@ -3793,6 +3789,14 @@
         border-left: none !important;
     }
 
+    .rule-tree {
+        ._has-datepicker {
+            + .ui-datepicker-trigger {
+                position: static;
+            }
+        }
+    }
+
     .rule-param .label {
         color: @color-black;
         float: none;
@@ -3867,10 +3871,6 @@
         padding-top: 13px;
     }
 
-    // jstree
-    .jstree-default .disabled > a {
-        color: #a29c94;
-    }
     //
     //  debug.less (end)
     //  --------------------------------------
@@ -4716,6 +4716,20 @@
     }
 }
 
+.content-category-tree {
+    clear: both;
+
+    .jstree-default {
+        margin-bottom: 3rem;
+
+        .disabled {
+            > a {
+                color: #a29c94;
+            }
+        }
+    }
+}
+
 //  Marketing -> Reviews
 .review-product-index {
     .admin__scope-old {
@@ -5034,6 +5048,10 @@
                 }
             }
         }
+    }
+
+    .admin__control-table-wrapper {
+        clear: both;
     }
 }
 

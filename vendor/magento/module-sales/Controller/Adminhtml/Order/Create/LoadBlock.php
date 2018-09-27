@@ -55,10 +55,10 @@ class LoadBlock extends \Magento\Sales\Controller\Adminhtml\Order\Create
             $this->_initSession()->_processData();
         } catch (\Magento\Framework\Exception\LocalizedException $e) {
             $this->_reloadQuote();
-            $this->messageManager->addError($e->getMessage());
+            $this->messageManager->addErrorMessage($e->getMessage());
         } catch (\Exception $e) {
             $this->_reloadQuote();
-            $this->messageManager->addException($e, $e->getMessage());
+            $this->messageManager->addExceptionMessage($e, $e->getMessage());
         }
 
         $asJson = $request->getParam('json');
@@ -85,7 +85,7 @@ class LoadBlock extends \Magento\Sales\Controller\Adminhtml\Order\Create
 
         $result = $resultPage->getLayout()->renderElement('content');
         if ($request->getParam('as_js_varname')) {
-            $this->_objectManager->get('Magento\Backend\Model\Session')->setUpdateResult($result);
+            $this->_objectManager->get(\Magento\Backend\Model\Session::class)->setUpdateResult($result);
             return $this->resultRedirectFactory->create()->setPath('sales/*/showUpdateResult');
         }
         return $this->resultRawFactory->create()->setContents($result);

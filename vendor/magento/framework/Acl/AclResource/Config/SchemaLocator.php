@@ -1,19 +1,23 @@
 <?php
 /**
- * ACL resources configuration schema locator
- *
  * Copyright © Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Framework\Acl\AclResource\Config;
 
+/**
+ * ACL resources configuration schema locator
+ */
 class SchemaLocator implements \Magento\Framework\Config\SchemaLocatorInterface
 {
-    /** @var \Magento\Framework\Config\Dom\UrnResolver */
+    /**
+     * @var \Magento\Framework\Config\Dom\UrnResolver
+     */
     protected $urnResolver;
 
     /**
-     * SchemaLocator constructor.
+     * Initialize dependencies.
+     *
      * @param \Magento\Framework\Config\Dom\UrnResolver $urnResolver
      */
     public function __construct(\Magento\Framework\Config\Dom\UrnResolver $urnResolver)
@@ -22,22 +26,22 @@ class SchemaLocator implements \Magento\Framework\Config\SchemaLocatorInterface
     }
 
     /**
-     * Get path to merged config schema
+     * {@inheritdoc}
      *
-     * @return string
+     * @throws \Magento\Framework\Exception\NotFoundException
      */
     public function getSchema()
     {
-        return $this->urnResolver->getRealPath('urn:magento:framework:Acl/etc/acl.xsd');
+        return $this->urnResolver->getRealPath('urn:magento:framework:Acl/etc/acl_merged.xsd');
     }
 
     /**
-     * Get path to pre file validation schema
+     * {@inheritdoc}
      *
-     * @return null
+     * @throws \Magento\Framework\Exception\NotFoundException
      */
     public function getPerFileSchema()
     {
-        return null;
+        return $this->urnResolver->getRealPath('urn:magento:framework:Acl/etc/acl.xsd');
     }
 }

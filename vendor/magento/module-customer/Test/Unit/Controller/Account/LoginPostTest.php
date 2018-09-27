@@ -19,7 +19,7 @@ use Magento\Framework\Controller\Result\Redirect;
  *
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  */
-class LoginPostTest extends \PHPUnit_Framework_TestCase
+class LoginPostTest extends \PHPUnit\Framework\TestCase
 {
     /**
      * @var LoginPost
@@ -467,7 +467,7 @@ class LoginPostTest extends \PHPUnit_Framework_TestCase
             [
                 [
                     'message' => 'Exception',
-                    'exception' => \Exception::class,
+                    'exception' => '\Exception',
                 ],
             ],
             [
@@ -563,7 +563,7 @@ class LoginPostTest extends \PHPUnit_Framework_TestCase
             case \Magento\Framework\Exception\AuthenticationException::class:
                 $this->messageManager->expects($this->once())
                     ->method('addError')
-                    ->with(__('Invalid login or password.'))
+                    ->with(__('You did not sign in correctly or your account is temporarily disabled.'))
                     ->willReturnSelf();
 
                 $this->session->expects($this->once())
@@ -572,7 +572,7 @@ class LoginPostTest extends \PHPUnit_Framework_TestCase
                     ->willReturnSelf();
                 break;
 
-            case \Exception::class:
+            case '\Exception':
                 $this->messageManager->expects($this->once())
                     ->method('addError')
                     ->with(__('An unspecified error occurred. Please contact us for assistance.'))
@@ -581,7 +581,7 @@ class LoginPostTest extends \PHPUnit_Framework_TestCase
 
             case \Magento\Framework\Exception\State\UserLockedException::class:
                 $message = __(
-                    'Invalid login or password.'
+                    'You did not sign in correctly or your account is temporarily disabled.'
                 );
                 $this->messageManager->expects($this->once())
                     ->method('addError')

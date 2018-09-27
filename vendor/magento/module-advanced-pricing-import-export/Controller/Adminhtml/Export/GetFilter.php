@@ -30,17 +30,17 @@ class GetFilter extends ExportController
                 /** @var $attrFilterBlock \Magento\ImportExport\Block\Adminhtml\Export\Filter */
                 $attrFilterBlock = $resultLayout->getLayout()->getBlock('export.filter');
                 /** @var $export \Magento\ImportExport\Model\Export */
-                $export = $this->_objectManager->create('Magento\ImportExport\Model\Export');
+                $export = $this->_objectManager->create(\Magento\ImportExport\Model\Export::class);
                 $export->setData($data);
                 $export->filterAttributeCollection(
                     $attrFilterBlock->prepareCollection($export->getEntityAttributeCollection())
                 );
                 return $resultLayout;
             } catch (\Exception $e) {
-                $this->messageManager->addError($e->getMessage());
+                $this->messageManager->addErrorMessage($e->getMessage());
             }
         } else {
-            $this->messageManager->addError(__('Please correct the data sent.'));
+            $this->messageManager->addErrorMessage(__('Please correct the data sent.'));
         }
         /** @var \Magento\Backend\Model\View\Result\Redirect $resultRedirect */
         $resultRedirect = $this->resultFactory->create(ResultFactory::TYPE_REDIRECT);

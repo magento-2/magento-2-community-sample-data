@@ -1,0 +1,21 @@
+<?php
+/**
+ * Refer to LICENSE.txt distributed with the Temando Shipping module for notice of license
+ */
+?>
+
+<?php /** @var \Magento\Backend\Block\Template $block */ ?>
+<?php $capability = $block->getData('capability'); ?>
+<?php if ($capability instanceof \Temando\Shipping\Model\Shipment\CapabilityInterface) : ?>
+    <tr>
+        <th><?= $block->escapeHtml(__('Unattended Delivery')) ?></th>
+        <td>
+            <?php $properties = $capability->getProperties() ?>
+            <?php if (isset($properties['required']) && (bool)$properties['required']) :  ?>
+                <?= $block->escapeHtml(__('Yes')) ?>
+            <?php else : ?>
+                <?= $block->escapeHtml(__('No')) ?>
+            <?php endif; ?>
+        </td>
+    </tr>
+<?php endif; ?>

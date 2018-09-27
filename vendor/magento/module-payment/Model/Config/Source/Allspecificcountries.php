@@ -5,6 +5,10 @@
  */
 namespace Magento\Payment\Model\Config\Source;
 
+/**
+ * @api
+ * @since 100.0.2
+ */
 class Allspecificcountries implements \Magento\Framework\Option\ArrayInterface
 {
     /**

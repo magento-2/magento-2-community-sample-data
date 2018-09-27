@@ -12,6 +12,7 @@ use Magento\Eav\Model\Entity\Attribute\Set as AttributeSet;
 use Magento\Eav\Model\Entity\Attribute\SetFactory as AttributeSetFactory;
 use Magento\Eav\Model\ResourceModel\Entity\Attribute\Set as AttributeSetResource;
 use Magento\Eav\Model\ResourceModel\Entity\Attribute\Set\CollectionFactory;
+use Magento\Framework\Api\SearchCriteria\CollectionProcessorInterface;
 use Magento\Framework\Exception\CouldNotDeleteException;
 use Magento\Framework\Exception\CouldNotSaveException;
 use Magento\Framework\Exception\NoSuchEntityException;
@@ -52,12 +53,18 @@ class AttributeSetRepository implements AttributeSetRepositoryInterface
     protected $joinProcessor;
 
     /**
+     * @var CollectionProcessorInterface
+     */
+    private $collectionProcessor;
+
+    /**
      * @param AttributeSetResource $attributeSetResource
      * @param AttributeSetFactory $attributeSetFactory
      * @param CollectionFactory $collectionFactory
      * @param Config $eavConfig
      * @param \Magento\Eav\Api\Data\AttributeSetSearchResultsInterfaceFactory $searchResultFactory
      * @param \Magento\Framework\Api\ExtensionAttribute\JoinProcessorInterface $joinProcessor
+     * @param CollectionProcessorInterface $collectionProcessor
      * @codeCoverageIgnore
      */
     public function __construct(
@@ -66,7 +73,8 @@ class AttributeSetRepository implements AttributeSetRepositoryInterface
         CollectionFactory $collectionFactory,
         EavConfig $eavConfig,
         \Magento\Eav\Api\Data\AttributeSetSearchResultsInterfaceFactory $searchResultFactory,
-        \Magento\Framework\Api\ExtensionAttribute\JoinProcessorInterface $joinProcessor
+        \Magento\Framework\Api\ExtensionAttribute\JoinProcessorInterface $joinProcessor,
+        CollectionProcessorInterface $collectionProcessor = null
     ) {
         $this->attributeSetResource = $attributeSetResource;
         $this->attributeSetFactory = $attributeSetFactory;
@@ -74,6 +82,7 @@ class AttributeSetRepository implements AttributeSetRepositoryInterface
         $this->eavConfig = $eavConfig;
         $this->searchResultsFactory = $searchResultFactory;
         $this->joinProcessor = $joinProcessor;
+        $this->collectionProcessor = $collectionProcessor ?: $this->getCollectionProcessor();
     }
 
     /**
@@ -98,20 +107,9 @@ class AttributeSetRepository implements AttributeSetRepositoryInterface
         $collection = $this->collectionFactory->create();
         $this->joinProcessor->process($collection);
 
-        /** The only possible/meaningful search criteria for attribute set is entity type code */
-        $entityTypeCode = $this->getEntityTypeCode($searchCriteria);
+        $this->collectionProcessor->process($searchCriteria, $collection);
 
-        if ($entityTypeCode !== null) {
-            $collection->setEntityTypeFilter($this->eavConfig->getEntityType($entityTypeCode)->getId());
-        }
-
-        foreach ($searchCriteria->getFilterGroups() as $group) {
-            $this->addFilterGroupToCollection($group, $collection);
-        }
-
-        $collection->setCurPage($searchCriteria->getCurrentPage());
-        $collection->setPageSize($searchCriteria->getPageSize());
-
+        /** @var \Magento\Eav\Api\Data\AttributeSetSearchResultsInterface $searchResults */
         $searchResults = $this->searchResultsFactory->create();
         $searchResults->setSearchCriteria($searchCriteria);
         $searchResults->setItems($collection->getItems());
@@ -120,31 +118,9 @@ class AttributeSetRepository implements AttributeSetRepositoryInterface
     }
 
     /**
-     * Helper function that adds a FilterGroup to the collection.
-     *
-     * @deprecated already removed in 2.2-develop. Use CollectionProcessorInterface to process search criteria
-     *
-     * @param \Magento\Framework\Api\Search\FilterGroup $filterGroup
-     * @param \Magento\Eav\Model\ResourceModel\Entity\Attribute\Set\Collection $collection
-     * @return void
-     */
-    private function addFilterGroupToCollection(
-        \Magento\Framework\Api\Search\FilterGroup $filterGroup,
-        \Magento\Eav\Model\ResourceModel\Entity\Attribute\Set\Collection $collection
-    ) {
-        foreach ($filterGroup->getFilters() as $filter) {
-            /** entity type filter is already set on collection */
-            if ($filter->getField() === 'entity_type_code') {
-                continue;
-            }
-            $conditionType = $filter->getConditionType() ? $filter->getConditionType() : 'eq';
-            $collection->addFieldToFilter($filter->getField(), [$conditionType, $filter->getValue()]);
-        }
-    }
-
-    /**
      * Retrieve entity type code from search criteria
      *
+     * @deprecated 100.2.0
      * @param \Magento\Framework\Api\SearchCriteriaInterface $searchCriteria
      * @return null|string
      */
@@ -196,5 +172,21 @@ class AttributeSetRepository implements AttributeSetRepositoryInterface
     public function deleteById($attributeSetId)
     {
         return $this->delete($this->get($attributeSetId));
+    }
+
+    /**
+     * Retrieve collection processor
+     *
+     * @deprecated 100.2.0
+     * @return CollectionProcessorInterface
+     */
+    private function getCollectionProcessor()
+    {
+        if (!$this->collectionProcessor) {
+            $this->collectionProcessor = \Magento\Framework\App\ObjectManager::getInstance()->get(
+                'Magento\Eav\Model\Api\SearchCriteria\AttributeSetCollectionProcessor'
+            );
+        }
+        return $this->collectionProcessor;
     }
 }

@@ -23,14 +23,13 @@ use Magento\Mtf\TestCase\Injectable;
  * 4. Click "Search" button
  * 5. Perform all asserts
  *
- * @group Search_Frontend_(MX)
- * @ZephyrId MAGETWO-24729
+ * @group Search_Frontend
+ * @ZephyrId MAGETWO-24729, MAGETWO-14859
  */
 class AdvancedSearchEntityTest extends Injectable
 {
     /* tags */
     const MVP = 'yes';
-    const DOMAIN = 'MX';
     const TEST_TYPE = 'acceptance_test, extended_acceptance_test';
     /* end tags */
 

@@ -20,10 +20,10 @@ use Magento\Sales\Api\RefundOrderInterface;
 /**
  * Class ReturnToStockOrderTest
  */
-class ReturnToStockOrderTest extends \PHPUnit_Framework_TestCase
+class ReturnToStockOrderTest extends \PHPUnit\Framework\TestCase
 {
     /** @var  ReturnToStockOrder */
-    private $returnToStock;
+    private $returnTOStock;
 
     /**
      * @var \PHPUnit_Framework_MockObject_MockObject|ReturnProcessor
@@ -68,12 +68,7 @@ class ReturnToStockOrderTest extends \PHPUnit_Framework_TestCase
     /**
      * @var \PHPUnit_Framework_MockObject_MockObject|CreditmemoCreationArgumentsInterface
      */
-    private $extensionAttributesMock;
-
-    /**
-     * @var \Closure
-     */
-    private $proceed;
+    private $extencionAttributesMock;
 
     protected function setUp()
     {
@@ -92,10 +87,10 @@ class ReturnToStockOrderTest extends \PHPUnit_Framework_TestCase
         $this->creditmemoCreationArgumentsMock = $this->getMockBuilder(CreditmemoCreationArgumentsInterface::class)
             ->disableOriginalConstructor()
             ->getMock();
-        $this->extensionAttributesMock = $this->getMockBuilder(CreditmemoCreationArgumentsExtensionInterface::class)
+        $this->extencionAttributesMock = $this->getMockBuilder(CreditmemoCreationArgumentsExtensionInterface::class)
             ->disableOriginalConstructor()
             ->setMethods(['getReturnToStockItems'])
-            ->getMock();
+            ->getMockForAbstractClass();
         $this->orderMock = $this->getMockBuilder(OrderInterface::class)
             ->disableOriginalConstructor()
             ->getMock();
@@ -106,7 +101,7 @@ class ReturnToStockOrderTest extends \PHPUnit_Framework_TestCase
             ->disableOriginalConstructor()
             ->getMock();
 
-        $this->returnToStock = new ReturnToStockOrder(
+        $this->returnTOStock = new ReturnToStockOrder(
             $this->returnProcessorMock,
             $this->creditmemoRepositoryMock,
             $this->orderRepositoryMock,
@@ -114,20 +109,17 @@ class ReturnToStockOrderTest extends \PHPUnit_Framework_TestCase
         );
     }
 
-    public function testAroundExecute()
+    public function testAfterExecute()
     {
         $orderId = 1;
         $creditmemoId = 99;
         $items = [];
         $returnToStockItems = [1];
-        $this->proceed = function () use ($creditmemoId) {
-            return $creditmemoId;
-        };
         $this->creditmemoCreationArgumentsMock->expects($this->exactly(3))
             ->method('getExtensionAttributes')
-            ->willReturn($this->extensionAttributesMock);
+            ->willReturn($this->extencionAttributesMock);
 
-        $this->extensionAttributesMock->expects($this->exactly(2))
+        $this->extencionAttributesMock->expects($this->exactly(2))
             ->method('getReturnToStockItems')
             ->willReturn($returnToStockItems);
 
@@ -150,9 +142,9 @@ class ReturnToStockOrderTest extends \PHPUnit_Framework_TestCase
             ->willReturn(false);
 
         $this->assertEquals(
-            $this->returnToStock->aroundExecute(
+            $this->returnTOStock->afterExecute(
                 $this->refundOrderMock,
-                $this->proceed,
+                $creditmemoId,
                 $orderId,
                 $items,
                 false,

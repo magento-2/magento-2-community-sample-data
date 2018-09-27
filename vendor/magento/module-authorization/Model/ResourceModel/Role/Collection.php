@@ -9,6 +9,9 @@ use Magento\Authorization\Model\Acl\Role\Group as RoleGroup;
 
 /**
  * Admin role collection
+ *
+ * @api
+ * @since 100.0.2
  */
 class Collection extends \Magento\Framework\Model\ResourceModel\Db\Collection\AbstractCollection
 {
@@ -19,7 +22,7 @@ class Collection extends \Magento\Framework\Model\ResourceModel\Db\Collection\Ab
      */
     protected function _construct()
     {
-        $this->_init('Magento\Authorization\Model\Role', 'Magento\Authorization\Model\ResourceModel\Role');
+        $this->_init(\Magento\Authorization\Model\Role::class, \Magento\Authorization\Model\ResourceModel\Role::class);
     }
 
     /**

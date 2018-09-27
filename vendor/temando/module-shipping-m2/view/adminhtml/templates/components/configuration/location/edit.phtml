@@ -1,0 +1,42 @@
+<?php
+/**
+ * Refer to LICENSE.txt distributed with the Temando Shipping module for notice of license
+ */
+?>
+<?php // @codingStandardsIgnoreFile ?>
+<?php
+    /** @var \Temando\Shipping\Block\Adminhtml\ComponentContainer $block */
+    /** @var \Temando\Shipping\ViewModel\Location\LocationEdit $viewModel */
+    $viewModel = $block->getViewModel();
+?>
+<div id="temando-componentry"
+     data-bind="scope:'temando-componentry'"
+     data-component-init='[
+     {
+        "entrypoint":"LocationForm",
+        "assetsUrl":"<?= $block->escapeUrl($block->getAssetsUrl());?>",
+        "elements": {
+            "m2PageActionsButtonsId": "temando-page-actions-buttons"
+        },
+        "data" : {
+            "temandoApiEndpoint": "<?= $block->escapeUrl($viewModel->getShippingApiAccess()->getApiEndpoint()); ?>",
+            "temandoApiToken": "<?= $block->escapeHtml($viewModel->getShippingApiAccess()->getSessionToken()); ?>",
+            "temandoApiTokenTtl": "<?= $block->escapeHtml($viewModel->getShippingApiAccess()->getSessionTokenExpiry()); ?>",
+            "m2ApiTemandoTokenRefreshEndpoint": "<?= $block->escapeUrl($viewModel->getShippingApiAccess()->getSessionTokenRefreshEndpoint()); ?>",
+            "ipAddress": "<?= $block->escapeHtml($block->getIpAddress()); ?>",
+            "lang": "<?= $block->escapeHtml($block->getLanguage()); ?>",
+            "locale": "<?= $block->escapeHtml($block->getLocale()) ?>",
+            "locationId": "<?= $block->escapeHtml($viewModel->getLocationId()); ?>",
+            "locationsPageUrl": "<?= $block->escapeUrl($viewModel->getLocationUrl()->getListActionUrl()); ?>"
+        }
+     }]'
+>
+    <!-- ko template: getTemplate() --><!-- /ko -->
+    <script type="text/x-magento-init">
+    {
+        "#temando-componentry": {
+            "Magento_Ui/js/core/app":  <?= /* @noEscape */ $block->getJsLayout(); ?>
+        }
+    }
+    </script>
+</div>

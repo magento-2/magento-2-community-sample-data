@@ -40,20 +40,15 @@ class AssertShipmentInShipmentsTab extends AbstractConstraint
         foreach ($ids['shipmentIds'] as $key => $shipmentId) {
             $filter = [
                 'id' => $shipmentId,
-                'qty' => number_format($totalQty[$key], 4, '.', ''),
+                'qty_from' => number_format($totalQty[$key], 4, '.', ''),
+                'qty_to' => number_format($totalQty[$key], 4, '.', ''),
             ];
-            $filterQty = [
-                'id' => $shipmentId,
-                'qty_from' => $totalQty[$key],
-                'qty_to' => $totalQty[$key],
-            ];
-            $salesOrderView->getOrderForm()->getTab('shipments')->getGridBlock()->search($filterQty);
             \PHPUnit_Framework_Assert::assertTrue(
                 $salesOrderView
                     ->getOrderForm()
                     ->getTab('shipments')
                     ->getGridBlock()
-                    ->isRowVisible($filter, false),
+                    ->isRowVisible($filter, true, false),
                 'Shipment is absent on shipments tab.'
             );
         }

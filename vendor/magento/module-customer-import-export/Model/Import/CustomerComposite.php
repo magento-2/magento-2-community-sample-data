@@ -304,7 +304,7 @@ class CustomerComposite extends \Magento\ImportExport\Model\Import\AbstractEntit
             ];
         }
         $source->rewind();
-        $this->_addressEntity->prepareCustomerData(new \ArrayObject($rows));
+        $this->_addressEntity->prepareCustomerData($rows);
 
         return parent::validateData();
     }
@@ -510,13 +510,13 @@ class CustomerComposite extends \Magento\ImportExport\Model\Import\AbstractEntit
      */
     public function getValidColumnNames()
     {
-        $this->validColumnNames = array_merge(
-            $this->validColumnNames,
-            $this->_customerAttributes,
-            $this->_addressAttributes,
-            $this->_customerEntity->getValidColumnNames()
+        return array_unique(
+            array_merge(
+                $this->validColumnNames,
+                $this->_customerAttributes,
+                $this->_addressAttributes,
+                $this->_customerEntity->getValidColumnNames()
+            )
         );
-
-        return $this->validColumnNames;
     }
 }

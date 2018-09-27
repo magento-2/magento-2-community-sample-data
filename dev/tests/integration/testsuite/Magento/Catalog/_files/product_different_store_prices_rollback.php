@@ -10,8 +10,9 @@ $registry = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->get(\Ma
 $registry->unregister('isSecureArea');
 $registry->register('isSecureArea', true);
 
-$repository = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->
-create(\Magento\Catalog\Model\ProductRepository::class);
+$repository = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->create(
+    \Magento\Catalog\Model\ProductRepository::class
+);
 try {
     $product = $repository->get('tier_prices');
     $product->delete();

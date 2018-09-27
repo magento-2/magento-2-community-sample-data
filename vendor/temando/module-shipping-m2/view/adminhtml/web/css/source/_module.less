@@ -1,0 +1,202 @@
+@import './_popup';
+
+.rotate(@_rotation) {
+    -webkit-transform: rotate(@_rotation); // Use in 8 Safari
+    -ms-transform: rotate(@_rotation); // Use in 9 IE
+    transform: rotate(@_rotation);
+}
+
+.shipment-documentation {
+    .paperless {
+        margin-bottom: 10px;
+    }
+
+    .paperless-info {
+        font-weight: bold;
+    }
+}
+.batch-solve {
+    .list-items {
+        list-style-position: inside;
+        .sub-list {
+            padding-left: 15px;
+        }
+    }
+}
+
+.shipment-packaging {
+    .data-table.packages{
+        .package-head {
+            background-color: #F5F5F5;
+        }
+
+        .package-items {
+            background-color: #ECECEC;
+            vertical-align:top;
+
+            th {
+                vertical-align: top;
+            }
+        }
+    }
+}
+
+.shipping_portal__link {
+    // External link marker
+    position: relative;
+
+    span {
+        position: relative;
+        top: -.25em;
+        right: -.45em;
+        display: inline-block;
+        .rotate(140deg);
+        z-index: 3;
+
+        &::after {
+            &:extend(.abs-icon all);
+            content: @icon-back-arrow__content;
+            display: inline-block;
+        }
+    }
+    &::before {
+        position: absolute;
+        content: '';
+        right: -.1em;
+        bottom: .5em;
+        display: inline-block;
+        background: #fff;
+        width: .6em;
+        height: .5em;
+        z-index: 2;
+    }
+    &::after {
+        position: absolute;
+        right: .05em;
+        bottom: .2em;
+        content: ' ';
+        display:inline-block;
+        border: solid 1px #007bdb;
+        border-radius: 25%;
+        width: .6em;
+        height: .6em;
+    }
+
+}
+
+.temando-dispatch-solve .admin__page-section ol {
+    list-style-position: inside;
+    line-height: @line-height__xl;
+}
+
+#carriers_temando_getting_started {
+    .getting-started {
+        border-width: @table__border-width 0;
+        border-color: @table__border-color;
+        border-style: @table__border-style;
+
+        margin-top: @indent__base;
+        padding: @indent__base 0;
+
+        > span {
+            display: block;
+
+            &.tooltip {
+                float: left;
+            }
+
+            &.hint {
+                margin-left: @indent__base + @indent__base;
+            }
+        }
+    }
+
+    .getting-started-actions {
+        margin-left: @indent__base;
+        list-style-position: inside;
+
+        li {
+            font-weight: @font-weight__semibold;
+            padding: @indent__base;
+            border-bottom: @table__border-width @table__border-style @table__border-color;
+
+            .button {
+                margin-top: -1 * @action__padding-top;
+                float: right;
+            }
+        }
+    }
+}
+
+.custom-tooltip {
+    .question-mark {
+        &::before {
+            color: #41362f;
+            content: '\e633';
+            font-size: 1.7rem;
+            -webkit-font-smoothing: antialiased;
+            font-family: 'Admin Icons';
+            font-style: normal;
+            font-weight: normal;
+            line-height: 1;
+            speak: none;
+        }
+    }
+}
+
+
+.media-width(@extremum, @break) when (@extremum = 'min') and (@break = @screen__m) {
+    .order-shipping-export-details {
+        float: left;
+        #mix-grid .width(6,12);
+    }
+
+    .order-shipping-addons {
+        float: right;
+        #mix-grid .width(6,12);
+    }
+}
+
+.admin__page-section-item-title {
+    &.order-shipping-origin-address {
+        margin-top: 2rem;
+    }
+}
+
+.admin__page-section-item-content {
+    &.order-shipping-secondary-address {
+        .subtitle {
+            display: block;
+            margin-top: 1rem;
+        }
+    }
+
+    .subtitle {
+        font-weight: @font-weight__semibold;
+    }
+
+    #get-shipping-method-and-rates {
+        float: left;
+        margin-bottom: 10px;
+    }
+
+    .temando-rma-button-text {
+        display: block;
+        float: left;
+        margin: 0 10px 10px;
+
+        font-size: 11px;
+        color: #aeb3b7;
+        width: 50%;
+    }
+
+    .admin__control-table-wrapper {
+        clear: both;
+    }
+}
+
+@media all and (max-width: 479px) {
+    .temando-rma-button-text {
+        width: 100%;
+    }
+}

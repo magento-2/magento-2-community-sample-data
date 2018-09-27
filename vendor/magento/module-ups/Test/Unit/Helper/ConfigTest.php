@@ -8,7 +8,7 @@ namespace Magento\Ups\Test\Unit\Helper;
 /**
  * Config helper Test
  */
-class ConfigTest extends \PHPUnit_Framework_TestCase
+class ConfigTest extends \PHPUnit\Framework\TestCase
 {
     /**
      * Ups config helper
@@ -20,7 +20,7 @@ class ConfigTest extends \PHPUnit_Framework_TestCase
     protected function setUp()
     {
         $objectManagerHelper = new \Magento\Framework\TestFramework\Unit\Helper\ObjectManager($this);
-        $this->helper = $objectManagerHelper->getObject('Magento\Ups\Helper\Config');
+        $this->helper = $objectManagerHelper->getObject(\Magento\Ups\Helper\Config::class);
     }
 
     /**

@@ -11,8 +11,9 @@ use Magento\Framework\Api\SortOrder;
 
 /**
  * Integration test for \Magento\Customer\Model\ResourceModel\GroupRepository
+ * @magentoAppIsolation enabled
  */
-class GroupRepositoryTest extends \PHPUnit_Framework_TestCase
+class GroupRepositoryTest extends \PHPUnit\Framework\TestCase
 {
     /** The group id of the "NOT LOGGED IN" group */
     const NOT_LOGGED_IN_GROUP_ID = 0;
@@ -35,10 +36,12 @@ class GroupRepositoryTest extends \PHPUnit_Framework_TestCase
     protected function setUp()
     {
         $this->objectManager = \Magento\TestFramework\Helper\Bootstrap::getObjectManager();
-        $this->groupRepository = $this->objectManager->create('Magento\Customer\Api\GroupRepositoryInterface');
-        $this->groupFactory = $this->objectManager->create('Magento\Customer\Api\Data\GroupInterfaceFactory');
-        $this->searchCriteriaBuilder = $this->objectManager->create('Magento\Framework\Api\SearchCriteriaBuilder');
-        $this->sortOrderBuilder = $this->objectManager->create('Magento\Framework\Api\SortOrderBuilder');
+        $this->groupRepository = $this->objectManager->create(\Magento\Customer\Api\GroupRepositoryInterface::class);
+        $this->groupFactory = $this->objectManager->create(\Magento\Customer\Api\Data\GroupInterfaceFactory::class);
+        $this->searchCriteriaBuilder = $this->objectManager->create(
+            \Magento\Framework\Api\SearchCriteriaBuilder::class
+        );
+        $this->sortOrderBuilder = $this->objectManager->create(\Magento\Framework\Api\SortOrderBuilder::class);
     }
 
     /**
@@ -216,7 +219,7 @@ class GroupRepositoryTest extends \PHPUnit_Framework_TestCase
     public function searchGroupsDataProvider()
     {
         $builder = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()
-            ->create('Magento\Framework\Api\FilterBuilder');
+            ->create(\Magento\Framework\Api\FilterBuilder::class);
         return [
             'eq' => [
                 [$builder->setField(GroupInterface::CODE)->setValue('General')->create()],

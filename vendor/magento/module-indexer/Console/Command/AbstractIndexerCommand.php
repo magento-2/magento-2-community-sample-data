@@ -6,13 +6,10 @@
 namespace Magento\Indexer\Console\Command;
 
 use Magento\Backend\App\Area\FrontNameResolver;
-use Magento\Framework\App\ObjectManagerFactory;
-use Magento\Framework\Indexer\IndexerInterface;
 use Magento\Framework\ObjectManagerInterface;
-use Magento\Indexer\Model\Indexer\CollectionFactory as IndexerCollectionFactory;
 use Symfony\Component\Console\Command\Command;
-use Magento\Framework\App\State;
-use Magento\Framework\ObjectManager\ConfigLoaderInterface;
+use Magento\Framework\Indexer\IndexerInterface;
+use Magento\Framework\App\ObjectManagerFactory;
 
 /**
  * An Abstract class for Indexer related commands.
@@ -30,55 +27,76 @@ abstract class AbstractIndexerCommand extends Command
     private $objectManager;
 
     /**
-     * @var IndexerCollectionFactory|null
+     * @var \Magento\Indexer\Model\Indexer\CollectionFactory
      */
     private $collectionFactory;
 
     /**
+     * Constructor
+     *
      * @param ObjectManagerFactory $objectManagerFactory
-     * @param IndexerCollectionFactory|null $collectionFactory
-     * @throws \LogicException
+     * @param \Magento\Indexer\Model\Indexer\CollectionFactory|null $collectionFactory
      */
     public function __construct(
         ObjectManagerFactory $objectManagerFactory,
-        IndexerCollectionFactory $collectionFactory = null
+        \Magento\Indexer\Model\Indexer\CollectionFactory $collectionFactory = null
     ) {
         $this->objectManagerFactory = $objectManagerFactory;
-        parent::__construct();
         $this->collectionFactory = $collectionFactory;
+        parent::__construct();
     }
 
     /**
-     * Returns all indexers
+     * Return the array of all indexers with keys as indexer ids.
      *
      * @return IndexerInterface[]
-     * @throws \Magento\Framework\Exception\LocalizedException
      */
     protected function getAllIndexers()
     {
-        if (null === $this->collectionFactory) {
-            $this->collectionFactory = $this->getObjectManager()->create(IndexerCollectionFactory::class);
-        }
-        return $this->collectionFactory->create()->getItems();
+        $indexers = $this->getCollectionFactory()->create()->getItems();
+        return array_combine(
+            array_map(
+                function ($item) {
+                    /** @var IndexerInterface $item */
+                    return $item->getId();
+                },
+                $indexers
+            ),
+            $indexers
+        );
     }
 
     /**
      * Gets initialized object manager
      *
      * @return ObjectManagerInterface
-     * @throws \Magento\Framework\Exception\LocalizedException
      */
     protected function getObjectManager()
     {
-        if (null === $this->objectManager) {
+        if (null == $this->objectManager) {
             $area = FrontNameResolver::AREA_CODE;
             $this->objectManager = $this->objectManagerFactory->create($_SERVER);
             /** @var \Magento\Framework\App\State $appState */
-            $appState = $this->objectManager->get(State::class);
+            $appState = $this->objectManager->get(\Magento\Framework\App\State::class);
             $appState->setAreaCode($area);
-            $configLoader = $this->objectManager->get(ConfigLoaderInterface::class);
+            $configLoader = $this->objectManager->get(\Magento\Framework\ObjectManager\ConfigLoaderInterface::class);
             $this->objectManager->configure($configLoader->load($area));
         }
         return $this->objectManager;
+    }
+
+    /**
+     * Get collection factory
+     *
+     * @return \Magento\Indexer\Model\Indexer\CollectionFactory
+     * @deprecated 100.2.0
+     */
+    private function getCollectionFactory()
+    {
+        if (null === $this->collectionFactory) {
+            $this->collectionFactory = $this->getObjectManager()
+                ->get(\Magento\Indexer\Model\Indexer\CollectionFactory::class);
+        }
+        return $this->collectionFactory;
     }
 }

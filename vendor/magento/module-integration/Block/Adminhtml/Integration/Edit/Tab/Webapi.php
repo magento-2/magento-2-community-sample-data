@@ -6,12 +6,14 @@
 
 namespace Magento\Integration\Block\Adminhtml\Integration\Edit\Tab;
 
-use Magento\Integration\Block\Adminhtml\Integration\Edit\Tab\Info;
 use Magento\Integration\Controller\Adminhtml\Integration as IntegrationController;
 use Magento\Integration\Model\Integration as IntegrationModel;
 
 /**
  * Class for handling API section within integration.
+ *
+ * @api
+ * @since 100.0.2
  */
 class Webapi extends \Magento\Backend\Block\Widget\Form\Generic implements
     \Magento\Backend\Block\Widget\Tab\TabInterface
@@ -30,10 +32,14 @@ class Webapi extends \Magento\Backend\Block\Widget\Form\Generic implements
      */
     protected $aclResourceProvider;
 
-    /** @var \Magento\Integration\Helper\Data */
+    /**
+     * @var \Magento\Integration\Helper\Data
+     */
     protected $integrationData;
 
-    /** @var \Magento\Integration\Api\IntegrationServiceInterface */
+    /**
+     * @var \Magento\Integration\Api\IntegrationServiceInterface
+     */
     protected $integrationService;
 
     /**
@@ -143,6 +149,7 @@ class Webapi extends \Magento\Backend\Block\Widget\Form\Generic implements
      * Retrieve saved resource
      *
      * @return array|bool
+     * @since 100.1.0
      */
     protected function retrieveFormResources()
     {
@@ -175,14 +182,24 @@ class Webapi extends \Magento\Backend\Block\Widget\Form\Generic implements
      */
     public function getTree()
     {
+        return $this->integrationData->mapResources($this->getAclResources());
+    }
+
+    /**
+     * Get lit of all ACL resources declared in the system.
+     *
+     * @return array
+     */
+    private function getAclResources()
+    {
         $resources = $this->aclResourceProvider->getAclResources();
-        $configResource = array_filter($resources, function ($node) {
-            return isset($node['id']) && $node['id'] == 'Magento_Backend::admin';
-        });
-        $configResource = reset($configResource);
-        $rootArray = $this->integrationData->mapResources(
-            isset($configResource['children']) ? $configResource['children'] : []
+        $configResource = array_filter(
+            $resources,
+            function ($node) {
+                return $node['id'] == 'Magento_Backend::admin';
+            }
         );
-        return $rootArray;
+        $configResource = reset($configResource);
+        return isset($configResource['children']) ? $configResource['children'] : [];
     }
 }

@@ -3,15 +3,17 @@
  * Copyright © Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
-
-/**
- * Product type model
- */
 namespace Magento\Catalog\Model\Product;
 
 use Magento\Catalog\Model\Product;
 use Magento\Framework\Data\OptionSourceInterface;
 
+/**
+ * Product type model
+ *
+ * @api
+ * @since 100.0.2
+ */
 class Type implements OptionSourceInterface
 {
     /**#@+
@@ -32,12 +34,12 @@ class Type implements OptionSourceInterface
     /**
      * Default product type model
      */
-    const DEFAULT_TYPE_MODEL = 'Magento\Catalog\Model\Product\Type\Simple';
+    const DEFAULT_TYPE_MODEL = \Magento\Catalog\Model\Product\Type\Simple::class;
 
     /**
      * Default price model
      */
-    const DEFAULT_PRICE_MODEL = 'Magento\Catalog\Model\Product\Type\Price';
+    const DEFAULT_PRICE_MODEL = \Magento\Catalog\Model\Product\Type\Price::class;
 
     /**
      * @var \Magento\Catalog\Model\ProductTypes\ConfigInterface
@@ -230,7 +232,7 @@ class Type implements OptionSourceInterface
     public function getOptionText($optionId)
     {
         $options = $this->getOptionArray();
-        return isset($options[$optionId]) ? $options[$optionId] : null;
+        return $options[$optionId] ?? null;
     }
 
     /**

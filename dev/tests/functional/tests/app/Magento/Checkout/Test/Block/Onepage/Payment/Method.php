@@ -7,7 +7,6 @@
 namespace Magento\Checkout\Test\Block\Onepage\Payment;
 
 use Magento\Mtf\Block\Block;
-use Magento\Mtf\Client\Locator;
 
 /**
  * Checkout payment method block.
@@ -36,13 +35,6 @@ class Method extends Block
     protected $billingAddressSelector = '.payment-method-billing-address';
 
     /**
-     * Save credit card check box.
-     *
-     * @var string
-     */
-    protected $vaultCheckbox = '#%s_enable_vault';
-
-    /**
      * PayPal load spinner.
      *
      * @var string
@@ -64,6 +56,13 @@ class Method extends Block
     protected $payWithBraintreePaypalButton = '#braintree_paypal_pay_with';
 
     /**
+     * Paypal page elements locator.
+     *
+     * @var string
+     */
+    private $popupWindowContent = '#main';
+
+    /**
      * Wait for PayPal page is loaded.
      *
      * @return void
@@ -71,6 +70,7 @@ class Method extends Block
     public function waitForFormLoaded()
     {
         $this->waitForElementNotVisible($this->preloaderSpinner);
+        $this->waitForElementVisible($this->popupWindowContent);
     }
 
     /**
@@ -92,9 +92,12 @@ class Method extends Block
     public function clickContinueToPaypal()
     {
         $currentWindow = $this->browser->getCurrentWindow();
+        $windowsCount = count($this->browser->getWindowHandles());
         $this->waitForElementNotVisible($this->waitElement);
         $this->_rootElement->find($this->continueToBraintreePaypalButton)->click();
         $this->waitForElementNotVisible($this->waitElement);
+        $this->waitUntilNumberOfWindowsToBe(++$windowsCount);
+
         return $currentWindow;
     }
 
@@ -106,9 +109,12 @@ class Method extends Block
     public function clickPayWithPaypal()
     {
         $currentWindow = $this->browser->getCurrentWindow();
+        $windowsCount = count($this->browser->getWindowHandles());
         $this->waitForElementNotVisible($this->waitElement);
         $this->_rootElement->find($this->payWithBraintreePaypalButton)->click();
         $this->waitForElementNotVisible($this->waitElement);
+        $this->waitUntilNumberOfWindowsToBe(++$windowsCount);
+
         return $currentWindow;
     }
     
@@ -117,7 +123,10 @@ class Method extends Block
      */
     public function inContextPaypalCheckout()
     {
+        $this->waitForElementNotVisible($this->waitElement);
+        $windowsCount = count($this->browser->getWindowHandles());
         $this->_rootElement->find($this->placeOrderButton)->click();
+        $this->waitUntilNumberOfWindowsToBe(++$windowsCount);
         $this->browser->selectWindow();
         $this->waitForFormLoaded();
         $this->browser->closeWindow();
@@ -133,21 +142,20 @@ class Method extends Block
         $element = $this->_rootElement->find($this->billingAddressSelector);
 
         return $this->blockFactory->create(
-            '\Magento\Checkout\Test\Block\Onepage\Payment\Method\Billing',
+            \Magento\Checkout\Test\Block\Onepage\Payment\Method\Billing::class,
             ['element' => $element]
         );
     }
 
     /**
-     * Save credit card.
-     *
-     * @param string $paymentMethod
-     * @param string $creditCardSave
+     * @param int $windowsCount
      * @return void
      */
-    public function saveCreditCard($paymentMethod, $creditCardSave)
+    private function waitUntilNumberOfWindowsToBe(int $windowsCount)
     {
-        $saveCard = sprintf($this->vaultCheckbox, $paymentMethod);
-        $this->_rootElement->find($saveCard, Locator::SELECTOR_CSS, 'checkbox')->setValue($creditCardSave);
+        $browser = $this->browser;
+        $this->browser->waitUntil(function () use ($browser, $windowsCount) {
+            return count($browser->getWindowHandles()) === $windowsCount ? true : null;
+        });
     }
 }

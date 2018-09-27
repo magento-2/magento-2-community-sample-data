@@ -8,8 +8,9 @@ namespace Magento\Backend\Block\Widget;
 use Magento\Backend\Block\Widget\Tab\TabInterface;
 
 /**
- * Tabs block
+ * @api
  * @SuppressWarnings(PHPMD.NumberOfChildren)
+ * @since 100.0.2
  */
 class Tabs extends \Magento\Backend\Block\Widget
 {
@@ -34,7 +35,9 @@ class Tabs extends \Magento\Backend\Block\Widget
      */
     protected $_destElementId = 'content';
 
-    /** @var string */
+    /**
+     * @var string
+     */
     protected $_template = 'Magento_Backend::widget/tabs.phtml';
 
     /**
@@ -242,8 +245,7 @@ class Tabs extends \Magento\Backend\Block\Widget
 
         if ($this->_activeTab === null && !empty($this->_tabs)) {
             /** @var TabInterface $tab */
-            $tab = reset($this->_tabs);
-            $this->_activeTab = $tab->getId();
+            $this->_activeTab = (reset($this->_tabs))->getId();
         }
         
         $this->assign('tabs', $this->_tabs);

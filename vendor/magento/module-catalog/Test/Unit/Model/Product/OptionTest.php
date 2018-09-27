@@ -11,7 +11,7 @@ use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
 /**
  * Tests \Magento\Catalog\Model\Product\Option.
  */
-class OptionTest extends \PHPUnit_Framework_TestCase
+class OptionTest extends \PHPUnit\Framework\TestCase
 {
     /**
      * @var \Magento\Catalog\Model\Product\Option
@@ -25,7 +25,7 @@ class OptionTest extends \PHPUnit_Framework_TestCase
 
     protected function setUp()
     {
-        $this->productMock = $this->getMock(\Magento\Catalog\Model\Product::class, [], [], '', false);
+        $this->productMock = $this->createMock(\Magento\Catalog\Model\Product::class);
         $objectManager = new ObjectManager($this);
         $this->model = $objectManager->getObject(\Magento\Catalog\Model\Product\Option::class);
         $this->model->setProduct($this->productMock);
@@ -36,6 +36,15 @@ class OptionTest extends \PHPUnit_Framework_TestCase
         $productSku = 'product-sku';
         $this->productMock->expects($this->once())->method('getSku')->willReturn($productSku);
         $this->assertEquals($productSku, $this->model->getProductSku());
+    }
+
+    public function testHasValues()
+    {
+        $this->model->setType('drop_down');
+        $this->assertTrue($this->model->hasValues());
+
+        $this->model->setType('field');
+        $this->assertFalse($this->model->hasValues());
     }
 
     public function testGetRegularPrice()

@@ -8,7 +8,8 @@ namespace Magento\ImportExport\Model\ResourceModel\Import;
 /**
  * ImportExport import data resource model
  *
- * @author      Magento Core Team <core@magentocommerce.com>
+ * @api
+ * @since 100.0.2
  */
 class Data extends \Magento\Framework\Model\ResourceModel\Db\AbstractDb implements \IteratorAggregate
 {
@@ -158,18 +159,9 @@ class Data extends \Magento\Framework\Model\ResourceModel\Db\AbstractDb implemen
      */
     public function saveBunch($entity, $behavior, array $data)
     {
-
-        $encodedData = $this->jsonHelper->jsonEncode($data);
-
-        if (json_last_error() !== JSON_ERROR_NONE && empty($encodedData)) {
-            throw new \Magento\Framework\Exception\ValidatorException(
-                __('Error in CSV: ' . json_last_error_msg())
-            );
-        }
-
         return $this->getConnection()->insert(
             $this->getMainTable(),
-            ['behavior' => $behavior, 'entity' => $entity, 'data' => $encodedData]
+            ['behavior' => $behavior, 'entity' => $entity, 'data' => $this->jsonHelper->jsonEncode($data)]
         );
     }
 }
