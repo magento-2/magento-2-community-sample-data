@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  @copyright  Vertex. All rights reserved.  https://www.vertexinc.com/
+  @author     Mediotype                     https://www.mediotype.com/
+  -->
+<entities xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+          xsi:noNamespaceSchemaLocation="urn:magento:mftf:DataGenerator/etc/dataProfileSchema.xsd">
+    <entity name="Vertex_Address_PA" type="address">
+        <data key="firstname">John</data>
+        <data key="lastname">Doe</data>
+        <data key="company">qa</data>
+        <data key="telephone">13456768768</data>
+        <data key="fax">987654321</data>
+        <array key="street">
+            <item>233 West Gay St</item>
+        </array>
+        <data key="city">West Chester</data>
+        <data key="state">Pennsylvania</data>
+        <data key="postcode">19382</data>
+        <data key="country_id">US</data>
+        <data key="default_billing">Yes</data>
+        <data key="default_shipping">Yes</data>
+        <requiredEntity type="region">RegionPA</requiredEntity>
+    </entity>
+</entities>

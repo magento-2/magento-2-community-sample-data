@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<sections xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+          xsi:noNamespaceSchemaLocation="../../../../../../vendor/magento/magento2-functional-testing-framework/src/Magento/FunctionalTestingFramework/Page/etc/SectionObject.xsd">
+    <section name="MagentoShippingSection">
+        <element name="sectionHead" type="block" selector="#carriers_temando-head"/>
+        <element name="isClickAndCollectEnabled" type="select" selector="#carriers_temando_clickandcollect_enabled"/>
+        <element name="isTemandoActive" type="select" selector="#carriers_temando_active"/>
+        <element name="sessionEndpoint" type="text" selector="#carriers_temando_session_endpoint"/>
+        <element name="accountId" type="text" selector="#carriers_temando_account_id"/>
+        <element name="bearerToken" type="text" selector="#carriers_temando_bearer_token"/>
+    </section>
+</sections>

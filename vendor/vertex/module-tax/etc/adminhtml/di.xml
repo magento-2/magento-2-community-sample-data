@@ -1,0 +1,33 @@
+<?xml version="1.0"?>
+<!--
+  @copyright  Vertex. All rights reserved.  https://www.vertexinc.com/
+  @author     Mediotype                     https://www.mediotype.com/
+  -->
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="urn:magento:framework:ObjectManager/etc/config.xsd">
+    <type name="Magento\Framework\Notification\MessageList">
+        <arguments>
+            <argument name="messages" xsi:type="array">
+                <item name="vertex" xsi:type="string">Vertex\Tax\Model\System\Message\Notification\LiabilityErrors</item>
+                <item name="vertex_catalog" xsi:type="string">Vertex\Tax\Model\System\Message\Notification\DisplayTaxesInCatalog</item>
+            </argument>
+        </arguments>
+    </type>
+    <type name="Vertex\Tax\Model\Config\State">
+        <arguments>
+            <argument name="forceActive" xsi:type="boolean">true</argument>
+        </arguments>
+    </type>
+    <type name="Vertex\Tax\Model\ErrorMessageDisplayState">
+        <arguments>
+            <argument name="enabled" xsi:type="boolean">true</argument>
+        </arguments>
+    </type>
+
+    <type name="Magento\Config\Model\Config\Structure\Element\Group">
+        <plugin name="ConfigGroupPlugin" type="Vertex\Tax\Model\Plugin\GroupPlugin" sortOrder="1"/>
+    </type>
+    <type name="Magento\Customer\Model\Customer\DataProvider">
+        <plugin name="ShowCustomerCode" type="Vertex\Tax\Model\Plugin\CustomerDataProviderPlugin" />
+    </type>
+</config>

@@ -1,0 +1,48 @@
+<?php
+/**
+ * This file is part of the Klarna Core module
+ *
+ * (c) Klarna Bank AB (publ)
+ *
+ * For the full copyright and license information, please view the NOTICE
+ * and LICENSE files that were distributed with this source code.
+ */
+
+/**
+ * Klarna payment type template
+ *
+ * @var \Magento\Payment\Block\Info $block
+ * @see \Magento\Payment\Block\Info
+ */
+?>
+<?php
+$specificInfo = $block->getSpecificInformation();
+$title = $block->getMethod()->getTitle();
+$logo_locale = strtolower($block->escapeHtml($block->getLocale()));
+$logo_url = 'https://cdn.klarna.com/1.0/shared/image/generic/logo/' . $logo_locale . '/basic/logo_black.png?width=300';
+?>
+<p>
+    <img width="150"
+         src="<?= /* @noEscape */ $logo_url; ?>"
+         alt="<?= /* @noEscape */
+            strip_tags($title); ?>"/>
+<p><?= $title; ?></p>
+</p>
+<?php if ($specificInfo) : ?>
+    <table class="data-table admin__table-secondary">
+        <?php foreach ($specificInfo as $label => $value) : ?>
+            <?php $implodedValue = implode("\n", $block->getValueAsArray($value, true)); ?>
+            <tr>
+                <th><?= $block->escapeHtml($label) ?>:</th>
+                <td>
+                    <?php if ($block->isStringUrl($value)): ?>
+                       <a href="<?= /* @noEscape */ $value; ?>" target="_blank"><?= $block->escapeHtml(__('Click Here')) ?></a>
+                    <?php else: ?>
+                        <?= nl2br($block->escapeHtml($implodedValue)); ?>
+                    <?php endif; ?>
+                </td>
+            </tr>
+        <?php endforeach; ?>
+    </table>
+<?php endif; ?>
+<?= $block->getChildHtml() ?>

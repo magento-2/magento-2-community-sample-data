@@ -1,0 +1,26 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * Refer to LICENSE.txt distributed with the Temando Shipping module for notice of license
+ */
+-->
+<page xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:View/Layout/etc/page_configuration.xsd">
+    <body>
+        <referenceContainer name="content">
+            <block class="Magento\Backend\Block\Template" name="admin.temando.batch.view">
+                <arguments>
+                    <argument name="template" xsi:type="string">Temando_Shipping::batch/view.phtml</argument>
+                    <argument name="viewModel" xsi:type="object">Temando\Shipping\ViewModel\Batch\BatchDetails</argument>
+                    <argument name="shipmentViewModel" xsi:type="object">Temando\Shipping\ViewModel\Shipment\ShipmentDetails</argument>
+                </arguments>
+
+                <block class="Magento\Backend\Block\Template" name="documentation_listing"
+                       template="Temando_Shipping::shipment/documentation.phtml">
+                    <arguments>
+                        <argument name="viewModel" xsi:type="object">Temando\Shipping\ViewModel\Shipment\ShipmentDetails</argument>
+                    </arguments>
+                </block>
+            </block>
+        </referenceContainer>
+    </body>
+</page>

@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<actionGroups xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="../../../../../../vendor/magento/magento2-functional-testing-framework/src/Magento/FunctionalTestingFramework/Test/etc/actionGroupSchema.xsd">
+    <actionGroup name="ResetConfigurations">
+        <arguments>
+            <argument name="configurations" defaultValue="TemandoConfigurationData"/>
+        </arguments>
+        <amOnPage url="{{TemandoAdminConfigPage.url}}" stepKey="navigateToTemandoConfigurationPage"/>
+        <scrollTo selector="{{MagentoShippingSection.sectionHead}}" x="0" y="-85" stepKey="scrollToSection1"/>
+        <conditionalClick selector="{{MagentoShippingSection.sectionHead}}" dependentSelector="{{MagentoShippingSection.isTemandoActive}}" visible="false" stepKey="openSection"/>
+        <!-- Start Filling Fields -->
+        <scrollTo selector="{{MagentoShippingSection.isTemandoActive}}" x="0" y="-85" stepKey="scrollToFieldToConfigure"/>
+        <seeElement selector="{{MagentoShippingSection.isTemandoActive}}" stepKey="isClickAndCollectFieldVisible"/>
+        <selectOption selector="{{MagentoShippingSection.isTemandoActive}}" userInput="{{configurations.disableMagentoShipping}}" stepKey="selectOption"/>
+        <fillField selector="{{MagentoShippingSection.sessionEndpoint}}" userInput="{{configurations.emptyMagentoShippingCredentials}}" stepKey="fillField1"/>
+        <fillField selector="{{MagentoShippingSection.accountId}}" userInput="{{configurations.emptyMagentoShippingCredentials}}" stepKey="fillField2"/>
+        <fillField selector="{{MagentoShippingSection.bearerToken}}" userInput="{{configurations.emptyMagentoShippingCredentials}}" stepKey="fillField3"/>
+        <scrollTo selector="{{MagentoShippingSection.sectionHead}}" x="0" y="-85" stepKey="scrollToSection2"/>
+        <conditionalClick selector="{{MagentoShippingSection.sectionHead}}" dependentSelector="{{MagentoShippingSection.isTemandoActive}}" visible="true" stepKey="closeSection"/>
+        <click selector="{{StoreConfigSection.Save}}" stepKey="clickSubmitButton"/>
+        <waitForElementVisible time="60" selector="{{AdminCustomerMessagesSection.successMessage}}" stepKey="waitForConfirmationModal"/>
+        <see userInput="You saved the configuration." stepKey="AssertConfigurationWasSaved"/>
+        <dontSeeElement selector="{{MagentoShippingSection.isTemandoActive}}" stepKey="seeTemandoActiveConfiguration"/>
+    </actionGroup>
+</actionGroups>

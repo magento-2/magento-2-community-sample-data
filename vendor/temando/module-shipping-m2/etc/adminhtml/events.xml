@@ -1,0 +1,24 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * Refer to LICENSE.txt distributed with the Temando Shipping module for notice of license
+ */
+-->
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:Event/etc/events.xsd">
+    <event name="backend_auth_user_login_success">
+        <observer name="temando_admin_login" instance="Temando\Shipping\Observer\AdminLoginObserver" />
+    </event>
+    <event name="controller_action_postdispatch_adminhtml_auth_logout">
+        <observer name="temando_admin_logout" instance="Temando\Shipping\Observer\AdminLogoutObserver" />
+    </event>
+    <event name="layout_load_before">
+        <!-- add layout handles: order view -->
+        <observer name="temando_sales_add_order_details" instance="Temando\Shipping\Observer\AdminLayout\AddOrderDetailsObserver"/>
+        <observer name="temando_sales_add_pickups_tab" instance="Temando\Shipping\Observer\AdminLayout\AddPickupsTabObserver"/>
+        <!-- add layout handles: shipment new/view -->
+        <observer name="temando_sales_add_ship_component" instance="Temando\Shipping\Observer\AdminLayout\AddShipmentNewComponentObserver"/>
+        <observer name="temando_sales_add_shipment_details" instance="Temando\Shipping\Observer\AdminLayout\AddShipmentDetailsObserver"/>
+        <!-- add layout handles: rma -->
+        <observer name="temando_sales_add_rma_shipments_tab" instance="Temando\Shipping\Observer\AdminLayout\AddRmaShipmentsTabObserver"/>
+    </event>
+</config>

@@ -1,0 +1,6 @@
+<div data-bind="foreach: pickupLocations.getSelectedPickupLocation()">
+    <strong><!-- ko text: name --><!-- /ko --></strong><br/>
+    <!-- ko text: street --><!-- /ko --><br/>
+    <!-- ko text: city --><!-- /ko -->, <!-- ko text: $parent.getRegionNameByCode(country,region) --><!-- /ko -->, <!-- ko text: postcode --><!-- /ko --><br/>
+    <!-- ko text: $parent.getCountryName(country) --><!-- /ko -->
+</div>

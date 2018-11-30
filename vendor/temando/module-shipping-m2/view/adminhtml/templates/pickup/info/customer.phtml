@@ -1,0 +1,57 @@
+<?php /** @var \Magento\Backend\Block\Template $block */ ?>
+<?php
+    /** @var \Temando\Shipping\ViewModel\Pickup\PickupView $pickupViewModel */
+    $pickupViewModel = $block->getData('pickupViewModel');
+    /** @var \Temando\Shipping\ViewModel\Order\CustomerDetails $customerViewModel */
+    $customerViewModel = $block->getData('customerViewModel');
+
+    $order = $pickupViewModel->getOrder();
+?>
+<div class="admin__page-section-item-title">
+    <span class="title"><?= $block->escapeHtml(__('Account Information')) ?></span>
+    <div class="actions">
+        <?php if ($customerUrl = $customerViewModel->getCustomerViewUrl($order)) : ?>
+            <a href="<?= $block->escapeUrl($customerUrl) ?>" target="_blank">
+                <?= $block->escapeHtml(__('Edit Customer')) ?>
+            </a>
+        <?php endif; ?>
+    </div>
+</div>
+<div class="admin__page-section-item-content">
+    <table class="admin__table-secondary order-account-information-table">
+        <tr>
+            <th><?= $block->escapeHtml(__('Customer Name')) ?></th>
+            <td>
+                <?php if ($customerUrl = $customerViewModel->getCustomerViewUrl($order)) : ?>
+                    <a href="<?= $block->escapeUrl($customerUrl) ?>" target="_blank">
+                        <span><?= $block->escapeHtml($order->getCustomerName()) ?></span>
+                    </a>
+                <?php else : ?>
+                    <?= $block->escapeHtml($order->getCustomerName()) ?>
+                <?php endif; ?>
+            </td>
+        </tr>
+        <tr>
+            <th><?= $block->escapeHtml(__('Email')) ?></th>
+            <td>
+                <a href="mailto:<?= $block->escapeHtml($order->getCustomerEmail()) ?>">
+                    <?= $block->escapeHtml($order->getCustomerEmail()) ?>
+                </a>
+            </td>
+        </tr>
+        <?php if ($groupName = $customerViewModel->getCustomerGroupName($order)) : ?>
+            <tr>
+                <th><?= $block->escapeHtml(__('Customer Group')) ?></th>
+                <td><?= $block->escapeHtml($groupName) ?></td>
+            </tr>
+        <?php endif; ?>
+        <?php foreach ($customerViewModel->getCustomerAccountData($order) as $data) : ?>
+            <tr>
+                <th><?= $block->escapeHtml($data['label']) ?></th>
+                <td><?= $block->escapeHtml($data['value'], ['br']) ?></td>
+            </tr>
+        <?php endforeach;?>
+
+        <?= $block->getChildHtml('extra_customer_info') ?>
+    </table>
+</div>

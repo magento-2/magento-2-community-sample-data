@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  @copyright  Vertex. All rights reserved.  https://www.vertexinc.com/
+  @author     Mediotype                     https://www.mediotype.com/
+  -->
+
+<sections xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+          xsi:noNamespaceSchemaLocation="urn:magento:mftf:Page/etc/SectionObject.xsd">
+    <section name="InvoiceDetailsInformationSection">
+        <element name="tax" type="text" selector=".order-subtotal-table .summary-total .price"/>
+        <element name="totalInclTax" type="text" selector=".order-subtotal-table .col-4 .price" />
+        <element name="totalExclTax" type="text" selector=".order-subtotal-table .col-2 .price" />
+    </section>
+</sections>

@@ -1,0 +1,17 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * Refer to LICENSE.txt distributed with the Temando Shipping module for notice of license
+ */
+-->
+<page xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:View/Layout/etc/page_configuration.xsd">
+    <body>
+        <referenceContainer name="content">
+            <block class="Temando\Shipping\Block\Adminhtml\Dispatch\Solve" name="admin.temando.dispatch.solve">
+                <arguments>
+                    <argument name="template" xsi:type="string">Temando_Shipping::components/dispatch/solve.phtml</argument>
+                </arguments>
+            </block>
+        </referenceContainer>
+    </body>
+</page>

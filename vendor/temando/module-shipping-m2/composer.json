@@ -1,0 +1,53 @@
+{
+    "name": "temando/module-shipping-m2",
+    "description": "Temando multi-carrier shipping extension for Magento 2",
+    "version": "1.4.6",
+    "type": "magento2-module",
+    "license": "OSL-3.0",
+    "require": {
+        "php": "~7.1.3||~7.2.0",
+        "magento/framework": "^102.0.0",
+        "magento/module-backend": "^101.0.0",
+        "magento/module-catalog": "^103.0.0",
+        "magento/module-checkout": "^100.3.0",
+        "magento/module-config": "^101.1.0||^102.0.0",
+        "magento/module-customer": "^102.0.0",
+        "magento/module-directory": "^100.3.0",
+        "magento/module-eav": "^102.0.0",
+        "magento/module-email": "^101.0.0",
+        "magento/module-integration": "^100.3.0",
+        "magento/module-multishipping": "^100.3.0",
+        "magento/module-payment": "^100.3.0",
+        "magento/module-quote": "^101.1.0",
+        "magento/module-sales": "^102.0.0",
+        "magento/module-security": "^100.3.0",
+        "magento/module-shipping": "^100.3.0",
+        "magento/module-store": "^101.0.0",
+        "magento/module-tax": "^100.3.0",
+        "magento/module-ui": "^101.1.0",
+        "monolog/monolog": "^1.17.0",
+        "psr/log": "~1.0",
+        "zendframework/zend-http": "^2.6.0"
+    },
+    "suggest": {
+        "magento/module-rma": "^101.1.0",
+        "magento/module-scalable-checkout": "^100.3.0",
+        "magento/module-scalable-oms": "^100.3.0"
+    },
+    "authors":[
+        {
+            "name": "Christoph Aßmann",
+            "email": "christoph.assmann@netresearch.de",
+            "homepage": "https://www.netresearch.de/",
+            "role": "Developer"
+        }
+    ],
+    "autoload": {
+        "files": [
+            "registration.php"
+        ],
+        "psr-4": {
+            "Temando\\Shipping\\": ""
+        }
+    }
+}

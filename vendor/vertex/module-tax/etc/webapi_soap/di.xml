@@ -1,0 +1,13 @@
+<?xml version="1.0"?>
+<!--
+  @copyright  Vertex. All rights reserved.  https://www.vertexinc.com/
+  @author     Mediotype                     https://www.mediotype.com/
+  -->
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="urn:magento:framework:ObjectManager/etc/config.xsd">
+    <type name="Vertex\Tax\Model\ErrorMessageDisplayState">
+        <arguments>
+            <argument name="enabled" xsi:type="boolean">true</argument>
+        </arguments>
+    </type>
+</config>

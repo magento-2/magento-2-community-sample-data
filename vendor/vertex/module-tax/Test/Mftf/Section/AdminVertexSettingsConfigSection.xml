@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  @copyright  Vertex. All rights reserved.  https://www.vertexinc.com/
+  @author     Mediotype                     https://www.mediotype.com/
+  -->
+
+<sections xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+          xsi:noNamespaceSchemaLocation="urn:magento:mftf:Page/etc/SectionObject.xsd">
+    <section name="AdminVertexSettingsConfigSection">
+        <element name="enableVertex" type="select" selector="#tax_vertex_settings_enable_vertex"/>
+        <element name="vertexTrustedId" type="input" selector="#tax_vertex_settings_trustedId"/>
+        <element name="vertexTrustedIdError" type="text" selector="#tax_vertex_settings_trustedId-error"/>
+    </section>
+</sections>

@@ -1,0 +1,33 @@
+<?xml version="1.0"?>
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:Api/etc/extension_attributes.xsd">
+    <!-- Additional attributes pushed to the salesShipOrderV1 M2 API -->
+    <extension_attributes for="Magento\Sales\Api\Data\ShipmentCreationArgumentsInterface">
+        <attribute code="shipping_label" type="string" />
+        <attribute code="ext_shipment_id" type="string" />
+        <attribute code="ext_return_shipment_id" type="string" />
+        <attribute code="ext_location_id" type="string" />
+        <attribute code="ext_tracking_url" type="string" />
+        <attribute code="ext_tracking_reference" type="string" />
+    </extension_attributes>
+    <!-- Additional attributes fetched from the salesOrderRepositoryV1 M2 API -->
+    <extension_attributes for="Magento\Sales\Api\Data\ShippingInterface">
+        <attribute code="ext_order_id" type="string" />
+        <attribute code="shipping_experience" type="Temando\Shipping\Api\Data\Order\ShippingExperienceInterface" />
+        <attribute code="collection_point" type="Temando\Shipping\Api\Data\Delivery\OrderCollectionPointInterface" />
+    </extension_attributes>
+    <!-- Additional attributes for the shipment view page -->
+    <extension_attributes for="Magento\Sales\Api\Data\ShipmentInterface">
+        <attribute code="ext_shipment_id" type="string" />
+        <attribute code="ext_return_shipment_id" type="string" />
+        <attribute code="ext_location_id" type="string" />
+        <attribute code="ext_tracking_url" type="string" />
+        <attribute code="ext_tracking_reference" type="string" />
+    </extension_attributes>
+    <!-- Additional attributes used during rates requests -->
+    <extension_attributes for="Magento\Quote\Api\Data\AddressInterface">
+        <attribute code="checkout_fields" type="Magento\Framework\Api\AttributeInterface[]" />
+    </extension_attributes>
+    <extension_attributes for="Magento\Sales\Api\Data\OrderAddressInterface">
+        <attribute code="checkout_fields" type="Magento\Framework\Api\AttributeInterface[]" />
+    </extension_attributes>
+</config>

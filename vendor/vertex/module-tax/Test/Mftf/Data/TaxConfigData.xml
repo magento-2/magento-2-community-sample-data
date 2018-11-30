@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  @copyright  Vertex. All rights reserved.  https://www.vertexinc.com/
+  @author     Mediotype                     https://www.mediotype.com/
+  -->
+<entities xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+          xsi:noNamespaceSchemaLocation="urn:magento:mftf:DataGenerator/etc/dataProfileSchema.xsd">
+    <entity name="VertexTaxConfig" type="tax_config_state">
+        <!-- Calculation settings -->
+        <requiredEntity type="algorithm">TaxCalculationMethodBasedOnVertex</requiredEntity>
+        <!-- Shopping Cart Display Settings -->
+        <requiredEntity type="priceCart">DisplayPricesCart</requiredEntity>
+        <requiredEntity type="subtotalCart">DisplaySubtotalCart</requiredEntity>
+        <requiredEntity type="shippingCart">DisplayShippingAmountCart</requiredEntity>
+        <requiredEntity type="grandtotalCart">IncludeTaxInOrderTotalCart</requiredEntity>
+        <requiredEntity type="full_summaryCart">DisplayFullTaxSummaryCart</requiredEntity>
+        <requiredEntity type="zero_taxCart">DisplayZeroTaxSubtotalCart</requiredEntity>
+        <!-- Orders, Invoices, Credit Memos Display Settings -->
+        <requiredEntity type="spriceSale">DisplayPricesSales</requiredEntity>
+        <requiredEntity type="subtotalSales">DisplaySubtotalSales</requiredEntity>
+        <requiredEntity type="shippingSales">DisplayShippingAmountSales</requiredEntity>
+        <requiredEntity type="grandtotalSales">IncludeTaxInOrderTotalSales</requiredEntity>
+        <requiredEntity type="full_summarySales">DisplayFullTaxSummarySales</requiredEntity>
+        <requiredEntity type="zero_taxSales">DisplayZeroTaxSubtotalSales</requiredEntity>
+    </entity>
+    <entity name="TaxCalculationMethodBasedOnVertex" type="algorithm">
+        <data key="value">VERTEX_UNIT_BASE_CALCULATION</data>
+    </entity>
+</entities>

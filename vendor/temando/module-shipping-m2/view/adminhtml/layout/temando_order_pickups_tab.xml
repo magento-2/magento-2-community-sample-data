@@ -1,0 +1,23 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * Refer to LICENSE.txt distributed with the Temando Shipping module for notice of license
+ */
+-->
+<page xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:View/Layout/etc/page_configuration.xsd">
+    <body>
+        <referenceBlock name="sales_order_tabs">
+            <block class="Temando\Shipping\Block\Adminhtml\Sales\Order\Tab\Pickups" name="temando_sales_order_pickup.grid.container" />
+
+            <action method="addTabAfter">
+                <argument name="name" xsi:type="string">temando_sales_order_pickup</argument>
+                <argument name="block" xsi:type="string">temando_sales_order_pickup.grid.container</argument>
+                <argument name="after" xsi:type="string">order_shipments</argument>
+            </action>
+        </referenceBlock>
+
+        <referenceBlock name="temando_sales_order_pickup.grid.container">
+            <uiComponent name="sales_order_pickup_listing"/>
+        </referenceBlock>
+    </body>
+</page>

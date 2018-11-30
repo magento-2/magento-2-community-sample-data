@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  @copyright  Vertex. All rights reserved.  https://www.vertexinc.com/
+  @author     Mediotype                     https://www.mediotype.com/
+  -->
+
+<sections xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+          xsi:noNamespaceSchemaLocation="urn:magento:mftf:Page/etc/SectionObject.xsd">
+    <section name="OrderDetailsMessagesSection">
+        <element name="successMessage" type="text" selector="div.message-success:last-of-type"/>
+        <element name="vertexSuccessMessage" type="text" selector="div.message-success:first-of-type"/>
+    </section>
+</sections>

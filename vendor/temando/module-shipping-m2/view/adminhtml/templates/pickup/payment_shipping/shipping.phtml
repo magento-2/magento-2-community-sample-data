@@ -1,0 +1,39 @@
+<?php
+/**
+ * Refer to LICENSE.txt distributed with the Temando Shipping module for notice of license
+ */
+?>
+<?php
+/** @var \Magento\Backend\Block\Template $block */
+/** @var \Temando\Shipping\ViewModel\Pickup\PickupView $viewModel */
+$viewModel = $block->getData('pickupViewModel');
+$order = $viewModel->getOrder();
+?>
+<div class="admin__page-section-item-title">
+    <span class="title"><?= $block->escapeHtml(__('Shipping &amp; Handling Information')) ?></span>
+</div>
+<div class="admin__page-section-item-content">
+    <div class="shipping-description-wrapper">
+        <?php if ($viewModel->getShippingDescription()) : ?>
+            <div class="shipping-description-title">
+                <?= $block->escapeHtml($viewModel->getShippingDescription()) ?>
+            </div>
+
+            <?= $block->escapeHtml(__('Total Shipping Charges')); ?>:
+
+            <?php if ($this->helper('Magento\Tax\Helper\Data')->displayShippingPriceIncludingTax()) : ?>
+                <?php $_excl = $viewModel->displayShippingPriceInclTax($order); ?>
+            <?php else : ?>
+                <?php $_excl = $viewModel->displayPriceAttribute('shipping_amount', false, ' '); ?>
+            <?php endif; ?>
+            <?php $_incl = $viewModel->displayShippingPriceInclTax($order); ?>
+
+            <?= /* @noEscape */ $_excl ?>
+            <?php if ($this->helper('Magento\Tax\Helper\Data')->displayShippingBothPrices() && $_incl != $_excl) : ?>
+                (<?= $block->escapeHtml(__('Incl. Tax')) ?> <?= /* @noEscape */ $_incl ?>)
+            <?php endif; ?>
+        <?php else: ?>
+            <?= $block->escapeHtml(__('No shipping information available')) ?>
+        <?php endif; ?>
+    </div>
+</div>

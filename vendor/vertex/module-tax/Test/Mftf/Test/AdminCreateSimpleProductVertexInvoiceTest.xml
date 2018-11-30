@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  @copyright  Vertex. All rights reserved.  https://www.vertexinc.com/
+  @author     Mediotype                     https://www.mediotype.com/
+  -->
+
+<tests xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/testSchema.xsd">
+    <test name="AdminCreateSimpleProductVertexInvoiceTest">
+        <annotations>
+            <features value="Vertex"/>
+            <stories value="Create an Invoice for a Simple Product via the admin"/>
+            <title value="Properly invoice tax on a simple product"/>
+            <description value="Properly invoice tax on a simple product"/>
+            <severity value="MAJOR"/>
+            <group value="Vertex"/>
+        </annotations>
+        <before>
+            <createData entity="VertexTaxConfig" stepKey="createConf"/>
+            <createData entity="_defaultCategory" stepKey="createCategory"/>
+            <createData entity="_defaultProduct" stepKey="createProduct">
+                <field key="price">5.00</field>
+                <requiredEntity createDataKey="createCategory"/>
+            </createData>
+            <actionGroup ref="LoginAsAdmin" stepKey="loginAsAdmin"/>
+            <actionGroup ref="ClearCacheActionGroup" stepKey="clearCache"/>
+            <actionGroup ref="logout" stepKey="logoutOfAdminBefore"/>
+        </before>
+        <after>
+            <createData entity="DefaultTaxConfig" stepKey="defaultConf"/>
+            <deleteData createDataKey="createCategory" stepKey="deleteCategory"/>
+            <deleteData createDataKey="createProduct" stepKey="deleteProduct"/>
+            <actionGroup ref="logout" stepKey="logoutOfAdminAfter"/>
+        </after>
+
+        <!-- todo: Create an order via the api instead of driving the browser  -->
+        <amOnPage url="{{StorefrontProductPage.url($$createProduct.name$$)}}" stepKey="viewProduct"/>
+        <waitForPageLoad stepKey="waitForPageLoad"/>
+        <actionGroup stepKey="addProductToCart" ref="AddSimpleProductToCart">
+            <argument name="product" value="$$createProduct$$"/>
+            <argument name="productCount" value="1"/>
+        </actionGroup>
+        <see selector="{{StorefrontCategoryMainSection.SuccessMsg}}"
+             userInput="You added $$createProduct.name$$ to your shopping cart." stepKey="seeAddedToCartMessage"/>
+        <see selector="{{StorefrontMiniCartSection.quantity}}" userInput="1" stepKey="seeCartQuantity"/>
+
+        <!-- Navigate to checkout -->
+        <actionGroup ref="GoToCheckoutFromMinicartActionGroup" stepKey="goToCheckoutFromMinicartActionGroup"/>
+        <seeElement selector="{{CheckoutShippingSection.isShippingStep}}" stepKey="shippingStepIsOpened"/>
+
+        <!-- Update Shipping Data -->
+        <click selector="{{CheckoutShippingMethodsSection.flatRate}}" stepKey="selectShippingMethod"/>
+        <actionGroup ref="GuestCheckoutFillingShippingSectionActionGroup"
+                     stepKey="guestCheckoutFillingShippingAddress">
+            <argument name="customerVar" value="CustomerEntityOne"/>
+            <argument name="customerAddressVar" value="Vertex_Address_PA"/>
+        </actionGroup>
+
+        <!-- Go to Billing & Look at Tax -->
+        <seeInCurrentUrl url="{{CheckoutPage.url}}/#payment" stepKey="paymentStepIsOpened"/>
+        <see userInput="$0.80" selector="{{CheckoutPaymentSection.tax}}" stepKey="seeTax"/>
+        <see userInput="$10.80" selector="{{CheckoutPaymentSection.orderTotalInclTax}}" stepKey="seeTaxPrice"/>
+        <see userInput="$10.00" selector="{{CheckoutPaymentSection.orderTotalExclTax}}" stepKey="seeOrderPriceExcl"/>
+
+        <waitForElement selector="{{CheckoutPaymentSection.placeOrder}}" time="30" stepKey="waitForPlaceOrderButton"/>
+        <click selector="{{CheckoutPaymentSection.placeOrder}}" stepKey="clickPlaceOrder"/>
+        <grabTextFrom selector="{{CheckoutSuccessMainSection.orderNumber}}" stepKey="grabOrderNumber"/>
+        <!-- end todo -->
+
+        <actionGroup ref="LoginAsAdmin" stepKey="loginAsAdmin1"/>
+
+        <amOnPage url="{{AdminOrdersPage.url}}" stepKey="onAdminOrdersPage"/>
+        <waitForLoadingMaskToDisappear stepKey="waitForLoadingMask3"/>
+        <fillField selector="{{OrdersGridSection.search}}" userInput="{$grabOrderNumber}" stepKey="searchOrderNum"/>
+        <click selector="{{OrdersGridSection.submitSearch}}" stepKey="submitSearch"/>
+        <waitForLoadingMaskToDisappear stepKey="waitForLoadingMask4"/>
+
+        <click selector="{{OrdersGridSection.firstRow}}" stepKey="clickOrderRow"/>
+        <click selector="{{OrderDetailsMainActionsSection.invoice}}" stepKey="clickInvoice"/>
+
+        <see userInput="$0.80" selector="{{InvoiceDetailsInformationSection.tax}}" stepKey="seeInvoiceTax" />
+        <see userInput="$10.80" selector="{{InvoiceDetailsInformationSection.totalInclTax}}" stepKey="seeInvoiceTaxPrice" />
+        <see userInput="$10.00" selector="{{InvoiceDetailsInformationSection.totalExclTax}}" stepKey="seeInvoicePriceExcl" />
+
+        <click selector="{{InvoiceNewSection.submitInvoice}}" stepKey="clickSubmitInvoice"/>
+        <see selector="{{OrderDetailsMessagesSection.successMessage}}" userInput="The invoice has been created." stepKey="seeSuccessMessage"/>
+        <see selector="{{OrderDetailsMessagesSection.vertexSuccessMessage}}" userInput="The Vertex invoice has been sent." stepKey="seeVertexSuccessMessage" />
+
+        <see selector=".note-list-comment:first-of-type" userInput="Vertex Invoice sent successfully. Amount: $0.80" stepKey="seeVertexInvoiceAmountComment" />
+    </test>
+</tests>

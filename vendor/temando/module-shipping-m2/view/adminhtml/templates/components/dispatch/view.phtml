@@ -1,0 +1,68 @@
+<?php
+/**
+ * Refer to LICENSE.txt distributed with the Temando Shipping module for notice of license
+ */
+?>
+<?php /** @var \Temando\Shipping\Block\Adminhtml\Dispatch\View $block */ ?>
+<?php /** @var \Temando\Shipping\Model\Dispatch $dispatch */ ?>
+<?php $dispatch = $block->getDispatch(); ?>
+<?php if ($dispatch) : ?>
+    <?php $messages = $dispatch->getCarrierMessages(); ?>
+    <?php if (!empty($messages)) : ?>
+        <?php foreach ($messages as $message) : ?>
+            <p class="message message-notice"><?= $block->escapeHtml($message) ?></p>
+        <?php endforeach; ?>
+    <?php endif; ?>
+
+    <section class="admin__page-section">
+        <div class="admin__page-section-title">
+            <span class="title"><?= $block->escapeHtml(__('Dispatch Information')); ?></span>
+        </div>
+        <div class="admin__table-wrapper dispatch-information">
+            <table class="admin__table-secondary">
+                <tbody>
+                    <tr>
+                        <th><?= $block->escapeHtml(__('Carrier Name')); ?></th>
+                        <td><?= $block->escapeHtml($dispatch->getCarrierName()); ?></td>
+                    </tr>
+                    <tr>
+                        <th><?= $block->escapeHtml(__('Date Created')); ?></th>
+                        <?php // @codingStandardsIgnoreLine ?>
+                        <td><?= $block->escapeHtml($block->getDate($dispatch->getCreatedAtDate())->format('Y-m-d g:i a')); ?></td>
+                    </tr>
+                    <tr>
+                        <th><?= $block->escapeHtml(__('Ready At')); ?></th>
+                        <?php // @codingStandardsIgnoreLine ?>
+                        <td><?= $block->escapeHtml($block->getDate($dispatch->getReadyAtDate())->format('Y-m-d g:i a')); ?></td>
+                    </tr>
+                    <tr>
+                        <th><?= $block->escapeHtml(__('Number of included shipments')); ?></th>
+                        <td><?= /* @noEscape */ count($dispatch->getIncludedShipments()); ?></td>
+                    </tr>
+                    <?php $failedShipmentCount = count($dispatch->getFailedShipments()); ?>
+                    <?php if ($failedShipmentCount) : ?>
+                        <tr>
+                            <th><?= $block->escapeHtml(__('Number of failed shipments')); ?></th>
+                            <td><?= /* @noEscape */ $failedShipmentCount ?>
+                                <a href="<?= $block->escapeUrl($block->getSolveUrl()); ?>">
+                                    <?= $block->escapeHtml(__('Find Solutions')); ?>
+                                </a>
+                            </td>
+                        </tr>
+                    <?php endif; ?>
+                    <?php $pickupNumbers = $dispatch->getPickupNumbers(); ?>
+                    <?php if (!empty($pickupNumbers)) : ?>
+                        <tr>
+                            <th><?= $block->escapeHtml(__('Pickup Request No.')); ?></th>
+                            <td><?= $block->escapeHtml(implode(', ', $pickupNumbers)); ?></td>
+                        </tr>
+                    <?php endif; ?>
+                </tbody>
+            </table>
+        </div>
+    </section>
+
+    <?= /* @noEscape */ $block->getChildHtml('charges_listing') ?>
+
+    <?= /* @noEscape */ $block->getChildHtml('documentation_listing') ?>
+<?php endif; ?>

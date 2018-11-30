@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+
+<tests xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/testSchema.xsd">
+    <test name="PlaceOrderWithPayLaterTest">
+        <annotations>
+            <features value="Pay Later"/>
+            <stories value="Place order as guest with Pay Later"/>
+            <title value="You should be able to place an order as a guest using Pay Later."/>
+            <description value="You should be able to place an order as a guest using Pay Later."/>
+            <severity value="AVERAGE"/>
+            <group value="klarna"/>
+            <group value="payments"/>
+        </annotations>
+        <before>
+            <createData entity="_defaultCategory" stepKey="createCategory"/>
+            <createData entity="_defaultProduct" stepKey="createProduct">
+                <requiredEntity createDataKey="createCategory"/>
+            </createData>
+        </before>
+        <after>
+            <deleteData createDataKey="createCategory" stepKey="deleteCategory"/>
+            <deleteData createDataKey="createProduct" stepKey="deleteProduct"/>
+        </after>
+
+        <actionGroup ref="KpAddToCart" stepKey="kpAddToCart"/>
+        <actionGroup ref="KpFillInGuest" stepKey="kpFillInGuest"/>
+        <wait stepKey="paymentWait1" time="15"/>
+
+        <click selector="{{KpGuestCheckoutShippingSection.firstShippingMethod}}" stepKey="kpSelectFirstShippingMethod"/>
+        <wait stepKey="paymentWait2" time="15"/>
+
+        <waitForElement selector="{{KpGuestCheckoutShippingSection.next}}" time="30" stepKey="kpWaitForNextButton"/>
+        <click selector="{{KpGuestCheckoutShippingSection.next}}" stepKey="kpClickNext"/>
+
+        <wait stepKey="paymentWait3" time="15"/>
+
+        <!-- Change selector below to correct payment method -->
+        <waitForElement selector="#klarna_pay_later" time="30" stepKey="kpWaitForPayLater"/>
+        <click selector="#klarna_pay_later" stepKey="kpSelectPaymentMethod"/>
+        <wait stepKey="paymentWait4" time="15"/>
+        <!--TODO: <see selector="{{KpGuestCheckoutPaymentSection.billingAddress}}" userInput="{{CustomerAddressSimple.street[0]}}" stepKey="kpSeeAddress"/>-->
+        <waitForElement selector="{{KpGuestCheckoutPaymentSection.placeOrder}}" time="30" stepKey="kpWaitForPlaceOrderButton"/>
+        <!--<waitForElement selector="" time="60" stepKey="kpWaitForIframeToLoad"/>-->
+        <!-- Add any additional steps here, eg select terms, etc... -->
+
+        <conditionalClick selector="{{KpGuestCheckoutPaymentSection.cartItemsArea}}" dependentSelector="{{KpGuestCheckoutPaymentSection.cartItemsAreaActive}}" visible="false" stepKey="kpExposeMiniCart"/>
+        <see selector="{{KpGuestCheckoutPaymentSection.cartItems}}" userInput="{{_defaultProduct.name}}" stepKey="kpSeeProductInCart"/>
+        <!--<see selector="{{KpGuestCheckoutPaymentSection.billingAddress}}" userInput="{{CustomerAddressSimple.street[0]}}" stepKey="kpSeeBillingAddress"/>-->
+        <click selector=".payment-method._active button.action.primary.checkout" stepKey="kpClickPlaceOrder"/>
+        <wait stepKey="paymentWait5" time="15"/>
+        <!-- Add any additional steps here, eg enter DOB, SSN, etc... -->
+        <grabTextFrom selector="{{KpCheckoutSuccessMainSection.orderNumber}}" stepKey="kpGrabOrderNumber"/>
+        <see selector="{{KpCheckoutSuccessMainSection.success}}" userInput="Your order # is:" stepKey="kpSeeOrderNumber"/>
+        <see selector="{{KpCheckoutSuccessMainSection.success}}" userInput="We'll email you an order confirmation with details and tracking info." stepKey="kpSeeEmailYou"/>
+    </test>
+</tests>

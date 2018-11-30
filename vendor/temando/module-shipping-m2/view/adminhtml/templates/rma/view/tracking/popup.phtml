@@ -1,0 +1,109 @@
+<?php
+/**
+ * Refer to LICENSE.txt distributed with the Temando Shipping module for notice of license
+ */
+?>
+<?php
+/** @var \Magento\Backend\Block\Template $block */
+/** @var \Temando\Shipping\ViewModel\Rma\RmaShipment\Tracking\Popup $viewModel */
+$viewModel = $block->getData('viewModel');
+$trackingHistory = $viewModel->getTrackingProgressInfo();
+?>
+
+<div class="page-wrapper temando-popup">
+    <main id="maincontent" class="page-main">
+        <a id="contentarea" tabindex="-1"></a>
+        <div class="page-title-wrapper">
+            <h1 class="page-title">
+                <span class="base" data-ui-id="page-title-wrapper">
+                    <?= $block->escapeHtml('Tracking Information') ?>
+                </span>
+            </h1>
+        </div>
+        <div class="columns">
+            <div class="column main">
+                <div class="page tracking">
+
+                    <div class="table-wrapper">
+                        <table class="data table order tracking" id="tracking-table-popup">
+                            <caption class="table-caption">
+                                <?= $block->escapeHtml(__('Return Shipment Tracking')) ?>
+                            </caption>
+                            <tbody>
+                            <tr>
+                                <th class="col label" scope="row">
+                                    <?= $block->escapeHtml(__('Tracking Number:')) ?>
+                                </th>
+                                <td class="col value">
+                                    <?= $block->escapeHtml($viewModel->getTrackingNumber()) ?>
+                                </td>
+                            </tr>
+                            <tr>
+                                <th class="col label" scope="row">
+                                    <?= $block->escapeHtml(__('Carrier:')) ?>
+                                </th>
+                                <td class="col value">
+                                    <?= $block->escapeHtml($viewModel->getCarrierTitle()) ?>
+                                </td>
+                            </tr>
+                            <tr>
+                                <th class="col label" scope="row">
+                                    <?= $block->escapeHtml(__('Status:')) ?>
+                                </th>
+                                <td class="col value">
+                                    <?= $block->escapeHtml($viewModel->getTrackingStatus($trackingHistory)) ?>
+                                </td>
+                            </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="table-wrapper">
+                        <table class="data table order tracking" id="track-history-table">
+                            <caption class="table-caption"><?= $block->escapeHtml(__('Track history')) ?></caption>
+                            <thead>
+                            <tr>
+                                <th class="col location" scope="col"><?= $block->escapeHtml(__('Location')) ?></th>
+                                <th class="col date" scope="col"><?= $block->escapeHtml(__('Date')) ?></th>
+                                <th class="col time" scope="col"><?= $block->escapeHtml(__('Local Time')) ?></th>
+                                <th class="col description"
+                                    scope="col"><?= $block->escapeHtml(__('Description')) ?></th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                                <?php foreach ($trackingHistory as $event) : ?>
+                                    <?php $detailDate = $viewModel->formatDeliveryDate($event['deliverydate']); ?>
+                                    <?php $detailTime = $viewModel->formatDeliveryTime($event['deliverytime']); ?>
+                                    <tr>
+                                        <td class="col location">
+                                            <?= $block->escapeHtml($event['deliverylocation']) ?>
+                                        </td>
+                                        <td class="col date">
+                                            <?= $block->escapeHtml($detailDate) ?>
+                                        </td>
+                                        <td class="col time">
+                                            <?= $block->escapeHtml($detailTime) ?>
+                                        </td>
+                                        <td class="col description">
+                                            <?= $block->escapeHtml($event['activity']) ?>
+                                        </td>
+                                    </tr>
+                                <?php endforeach; ?>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="actions">
+                        <button type="button"
+                                title="<?= $block->escapeHtml(__('Close Window')) ?>"
+                                class="action close"
+                                onclick="window.close(); window.opener.focus();">
+                            <span><?= $block->escapeHtml(__('Close Window')) ?></span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+    <small class="copyright">
+        <span><?= $block->escapeHtml($viewModel->getCopyright()) ?></span>
+    </small>
+</div>

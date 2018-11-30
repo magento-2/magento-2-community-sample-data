@@ -1,0 +1,14 @@
+language: php
+php:
+  - 7.0
+  - 7.1
+  - 7.2
+install: composer install --no-interaction --prefer-source
+env:
+  matrix:
+    - VERIFICATION_TOOL=phpunit-checks
+    - VERIFICATION_TOOL=static-checks
+script:
+  - bin/$VERIFICATION_TOOL
+after_success:
+  - travis_retry php vendor/bin/coveralls

@@ -1,0 +1,103 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * This file is part of the Klarna KP module
+ *
+ * (c) Klarna Bank AB (publ)
+ *
+ * For the full copyright and license information, please view the NOTICE
+ * and LICENSE files that were distributed with this source code.
+ */
+-->
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Config:etc/system_file.xsd">
+    <system>
+        <section id="payment">
+            <group id="klarna_section">
+                <group id="klarna">
+                    <group id="klarna_kp_required" translate="label" sortOrder="20" showInDefault="1"
+                           showInWebsite="1" showInStore="0">
+                        <label>Klarna Payments</label>
+                        <attribute type="expanded">1</attribute>
+                        <frontend_model>Magento\Config\Block\System\Config\Form\Fieldset</frontend_model>
+                        <field id="onboarding_link" type="note" translate="label" sortOrder="0" showInDefault="1" showInWebsite="1" showInStore="1">
+                            <frontend_model>Klarna\Kp\Block\Adminhtml\System\Config\Form\Field\Onboarding</frontend_model>
+                        </field>
+                        <field id="active" translate="label" type="select" showInDefault="1" showInWebsite="1"
+                               showInStore="1">
+                            <label>Enable this Solution</label>
+                            <config_path>payment/klarna_kp/active</config_path>
+                            <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                            <comment>Note: API credentials and settings are shared with the Klarna Checkout payment method.</comment>
+                        </field>
+                        <field id="allowspecific" translate="label comment" type="select" showInDefault="1"
+                               showInWebsite="1" showInStore="1">
+                            <label>Payment from applicable countries</label>
+                            <config_path>payment/klarna_kp/allowspecific</config_path>
+                            <source_model>Magento\Payment\Model\Config\Source\Allspecificcountries</source_model>
+                            <comment>If set to specific, guest customers will not have a billing country and may not be able to checkout.</comment>
+                        </field>
+                        <field id="specificcountry" translate="label" type="multiselect" showInDefault="1"
+                               showInWebsite="1"
+                               showInStore="1">
+                            <label>Payment from Specific countries</label>
+                            <config_path>payment/klarna_kp/specificcountry</config_path>
+                            <source_model>Magento\Directory\Model\Config\Source\Country</source_model>
+                            <depends>
+                                <field id="allowspecific">1</field>
+                            </depends>
+                        </field>
+                        <field id="data_sharing" translate="label" type="select" showInDefault="1" showInWebsite="1"
+                               showInStore="1">
+                            <label>Data sharing</label>
+                            <config_path>payment/klarna_kp/data_sharing</config_path>
+                            <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                            <comment>Allow customer data to be shared with Klarna before customer places the order. (Enabling this option has an effect in the US only)</comment>
+                        </field>
+                        <field id="sort_order" translate="label" type="text" showInDefault="1" showInWebsite="1"
+                               showInStore="1">
+                            <label>Sort Order</label>
+                            <config_path>payment/klarna_kp/sort_order</config_path>
+                        </field>
+                    </group>
+                    <group id="klarna_kp_design" type="text" sortOrder="101" showInDefault="1" showInWebsite="1"
+                           showInStore="1"
+                           translate="label">
+                        <label>Klarna Payments Design</label>
+                        <field id="color_details" translate="label" type="text" showInDefault="1" showInWebsite="1"
+                               showInStore="1">
+                            <label>Details color</label>
+                            <config_path>checkout/klarna_kp_design/color_details</config_path>
+                            <comment>Example: #0072CC</comment>
+                        </field>
+                        <field id="color_border" translate="label" type="text" showInDefault="1" showInWebsite="1"
+                               showInStore="1">
+                            <label>Border color</label>
+                            <config_path>checkout/klarna_kp_design/color_border</config_path>
+                            <comment>Example: #0072CC</comment>
+                        </field>
+                        <field id="color_border_selected" translate="label" type="text" showInDefault="1"
+                               showInWebsite="1"
+                               showInStore="1">
+                            <label>Selected border color</label>
+                            <config_path>checkout/klarna_kp_design/color_border_selected</config_path>
+                            <comment>Example: #0072CC</comment>
+                        </field>
+                        <field id="color_text" translate="label" type="text" showInDefault="1" showInWebsite="1"
+                               showInStore="1">
+                            <label>Text color</label>
+                            <config_path>checkout/klarna_kp_design/color_text</config_path>
+                            <comment>Example: #0072CC</comment>
+                        </field>
+                        <field id="radius_border" translate="label" type="text" showInDefault="1" showInWebsite="1"
+                               showInStore="1">
+                            <label>Border Radius</label>
+                            <config_path>checkout/klarna_kp_design/color_radius_border</config_path>
+                            <comment>Example: 5px</comment>
+                        </field>
+                    </group>
+                </group>
+            </group>
+        </section>
+    </system>
+</config>

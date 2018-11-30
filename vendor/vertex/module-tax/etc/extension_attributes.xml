@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!--
+  @copyright  Vertex. All rights reserved.  https://www.vertexinc.com/
+  @author     Mediotype                     https://www.mediotype.com/
+  -->
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="urn:magento:framework:Api/etc/extension_attributes.xsd">
+    <extension_attributes for="Magento\Customer\Api\Data\CustomerInterface">
+        <attribute code="vertex_customer_code" type="string" />
+    </extension_attributes>
+    <extension_attributes for="Magento\Tax\Api\Data\QuoteDetailsItemInterface">
+        <attribute code="vertex_product_code" type="string" />
+    </extension_attributes>
+</config>

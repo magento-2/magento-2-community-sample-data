@@ -1,0 +1,74 @@
+<?php
+/**
+ * Refer to LICENSE.txt distributed with the Temando Shipping module for notice of license
+ */
+?>
+<?php
+/** @var \Magento\Backend\Block\Template $block */
+/** @var \Temando\Shipping\ViewModel\Pickup\PickupView $pickupViewModel */
+$pickupViewModel = $block->getData('pickupViewModel');
+/** @var \Temando\Shipping\ViewModel\Order\OrderDetails $orderViewModel */
+$orderViewModel = $block->getData('orderViewModel');
+/** @var Magento\Sales\Model\Order $order */
+$order = $pickupViewModel->getOrder();
+?>
+
+<div class="admin__page-section-item-title">
+    <span class="title">
+        <a href="<?= $block->escapeHtml($orderViewModel->getViewActionUrl($order->getId())) ?>">
+            <?= $block->escapeHtml(__('Order # %1', $order->getRealOrderId())) ?>
+        </a>
+    </span>
+</div>
+<div class="admin__page-section-item-content">
+    <table class="admin__table-secondary order-information-table">
+        <?php $orderAdminDate = $orderViewModel->getOrderAdminDate($order) ?>
+        <?php $orderStoreDate = $orderViewModel->getOrderStoreDate($order) ?>
+        <?php ?>
+        <tr>
+            <th><?= $block->escapeHtml(__('Order Date')) ?></th>
+            <td><?= $block->escapeHtml($orderAdminDate) ?></td>
+        </tr>
+        <?php if ($orderAdminDate != $orderStoreDate) : ?>
+            <tr>
+                <th><?= $block->escapeHtml(__('Order Date (%1)', $orderViewModel->getOrderTimezone($order))) ?></th>
+                <td><?= $block->escapeHtml($orderStoreDate) ?></td>
+            </tr>
+        <?php endif;?>
+        <tr>
+            <th><?= $block->escapeHtml(__('Order Status')) ?></th>
+            <td><span id="order_status"><?= $block->escapeHtml($order->getStatusLabel()) ?></span></td>
+        </tr>
+        <tr>
+            <th><?= $block->escapeHtml(__('Order ID')) ?></th>
+            <td><?= /* @noEscape */ $order->getRealOrderId() ?></td>
+        </tr>
+        <?php if ($orderViewModel->isSingleStoreMode() == false) : ?>
+            <tr>
+                <th><?= $block->escapeHtml(__('Purchased From')) ?></th>
+                <td><?= $block->escapeHtml($orderViewModel->getOrderStoreName($order), ['br']) ?></td>
+            </tr>
+        <?php endif; ?>
+        <?php if ($extOrderId = $orderViewModel->getExtOrderId($order)) : ?>
+            <tr>
+                <th><?= $block->escapeHtml(__('Magento Shipping Order ID')) ?></th>
+                <td><?= $block->escapeHtml($extOrderId) ?></td>
+            </tr>
+        <?php endif; ?>
+        <tr>
+            <th><?= $block->escapeHtml(__('Pickup ID')) ?></th>
+            <td><?= $block->escapeHtml($pickupViewModel->getPickupId()) ?></td>
+        </tr>
+        <tr>
+            <th><?= $block->escapeHtml(__('Pickup State')) ?></th>
+            <td><?= $block->escapeHtml($pickupViewModel->getPickupState()) ?></td>
+        </tr>
+        <?php $pickupReadyDate = $pickupViewModel->getReadyAtDate() ?>
+        <?php if ($pickupReadyDate) : ?>
+            <tr>
+                <th><?= $block->escapeHtml(__('Ready Date')) ?></th>
+                <td><?= $block->escapeHtml($pickupReadyDate) ?></td>
+            </tr>
+        <?php endif; ?>
+    </table>
+</div>

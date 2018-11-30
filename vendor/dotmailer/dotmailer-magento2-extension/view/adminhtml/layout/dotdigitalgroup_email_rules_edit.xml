@@ -1,0 +1,32 @@
+<?xml version="1.0"?>
+
+<page xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" layout="admin-2columns-left"
+      xsi:noNamespaceSchemaLocation="urn:magento:framework:View/Layout/etc/page_configuration.xsd">
+    <head>
+        <css src="Dotdigitalgroup_Email::styles.css"/>
+    </head>
+    <body>
+        <referenceContainer name="left">
+            <block class="Dotdigitalgroup\Email\Block\Adminhtml\Rules\Edit\Tabs" name="rules_edit_tabs">
+                <block class="Dotdigitalgroup\Email\Block\Adminhtml\Rules\Edit\Tab\Main" name="tab_main"/>
+                <block class="Dotdigitalgroup\Email\Block\Adminhtml\Rules\Edit\Tab\Conditions" name="tab_conditions"/>
+                <action method="addTab">
+                    <argument name="name" xsi:type="string">main_section</argument>
+                    <argument name="block" xsi:type="string">tab_main</argument>
+                </action>
+                <action method="addTab">
+                    <argument name="name" xsi:type="string">conditions_section</argument>
+                    <argument name="block" xsi:type="string">tab_conditions</argument>
+                </action>
+            </block>
+        </referenceContainer>
+        <referenceContainer name="content">
+            <block class="Dotdigitalgroup\Email\Block\Adminhtml\Rules\Edit"
+                   name="dotdigitalgroup.email.rules.edit"/>
+        </referenceContainer>
+        <referenceContainer name="before.body.end">
+            <block class="Magento\Backend\Block\Template"
+                   name="dotdigitalgroup.email.rules.jsInit" template="Dotdigitalgroup_Email::rulesJsInit.phtml"/>
+        </referenceContainer>
+    </body>
+</page>

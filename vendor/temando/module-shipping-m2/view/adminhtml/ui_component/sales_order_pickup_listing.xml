@@ -1,0 +1,103 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * Refer to LICENSE.txt distributed with the Temando Shipping module for notice of license
+ */
+-->
+<listing xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Ui:etc/ui_configuration.xsd">
+    <argument name="context" xsi:type="configurableObject">
+        <argument name="class" xsi:type="string">Magento\Framework\View\Element\UiComponent\Context</argument>
+        <argument name="namespace" xsi:type="string">sales_order_pickup_listing</argument>
+    </argument>
+    <argument name="data" xsi:type="array">
+        <item name="js_config" xsi:type="array">
+            <item name="provider" xsi:type="string">sales_order_pickup_listing.sales_order_pickup_listing_data_source</item>
+        </item>
+    </argument>
+    <settings>
+        <spinner>temando_pickup_columns</spinner>
+        <deps>
+            <dep>sales_order_pickup_listing.sales_order_pickup_listing_data_source</dep>
+        </deps>
+    </settings>
+    <dataSource name="sales_order_pickup_listing_data_source" component="Magento_Ui/js/grid/provider">
+        <settings>
+            <updateUrl path="mui/index/render"/>
+            <storageConfig>
+                <param name="indexField" xsi:type="string">pickup_id</param>
+            </storageConfig>
+            <filterUrlParams>
+                <param name="order_id">*</param>
+            </filterUrlParams>
+        </settings>
+        <aclResource>Temando_Shipping::pickups</aclResource>
+        <dataProvider class="Magento\Framework\View\Element\UiComponent\DataProvider\DataProvider" name="sales_order_pickup_listing_data_source">
+            <settings>
+                <requestFieldName>id</requestFieldName>
+                <primaryFieldName>pickup_id</primaryFieldName>
+            </settings>
+        </dataProvider>
+    </dataSource>
+    <listingToolbar name="listing_top">
+        <bookmark name="bookmarks"/>
+        <columnsControls name="columns_controls"/>
+        <!--<filterSearch name="fulltext"/>-->
+        <!--<filters name="listing_filters"/>-->
+        <paging name="listing_paging" displayArea="bottom">
+            <settings>
+                <storageConfig>
+                    <provider>sales_order_pickup_listing.sales_order_pickup_listing.listing_top.bookmarks</provider>
+                    <namespace>current.paging</namespace>
+                </storageConfig>
+                <sizesConfig>
+                    <component>Temando_Shipping/js/grid/paging/sizes</component>
+                </sizesConfig>
+            </settings>
+        </paging>
+    </listingToolbar>
+    <columns name="temando_pickup_columns">
+        <column name="sales_order_increment_id" sortOrder="10">
+            <settings>
+                <label translate="true">Order #</label>
+            </settings>
+        </column>
+        <column name="pickup_id" sortOrder="20">
+            <settings>
+                <label translate="true">Pickup ID</label>
+            </settings>
+        </column>
+        <column name="created_at" class="Magento\Ui\Component\Listing\Columns\Date" component="Magento_Ui/js/grid/columns/date" sortOrder="30">
+            <settings>
+                <label translate="true">Order Date</label>
+                <sorting>desc</sorting>
+            </settings>
+        </column>
+        <column name="customer_name" sortOrder="40">
+            <settings>
+                <label translate="true">Customer Name</label>
+            </settings>
+        </column>
+        <column name="pickup_location" sortOrder="50">
+            <settings>
+                <label translate="true">Origin Location</label>
+            </settings>
+        </column>
+        <column name="ready_at" class="Magento\Ui\Component\Listing\Columns\Date" component="Magento_Ui/js/grid/columns/date" sortOrder="60">
+            <settings>
+                <label translate="true">Ready for Pickup Date</label>
+            </settings>
+        </column>
+        <column name="state" sortOrder="70">
+            <settings>
+                <label translate="true">Status</label>
+            </settings>
+        </column>
+        <actionsColumn name="actions" class="Temando\Shipping\Ui\Component\Listing\Column\PickupActions" sortOrder="100">
+            <settings>
+                <indexField>pickup_id</indexField>
+                <resizeEnabled>false</resizeEnabled>
+                <resizeDefaultWidth>107</resizeDefaultWidth>
+            </settings>
+        </actionsColumn>
+    </columns>
+</listing>

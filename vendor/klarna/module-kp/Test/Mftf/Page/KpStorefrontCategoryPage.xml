@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+
+<pages xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/pageObjectSchema.xsd">
+    <page name="KpStorefrontCategoryPage" url="/{{var1}}.html" area="storefront" module="Category" parameterized="true">
+        <section name="KpStorefrontCategoryMainSection"/>
+        <!-- Can't find this next file, core in 2.2 references it also without it existing -->
+        <section name="WYSIWYGToolbarSection"/>
+    </page>
+</pages>

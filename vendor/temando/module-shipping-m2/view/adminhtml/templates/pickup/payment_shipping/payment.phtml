@@ -1,0 +1,24 @@
+<?php
+/**
+ * Refer to LICENSE.txt distributed with the Temando Shipping module for notice of license
+ */
+?>
+<?php
+/** @var \Magento\Backend\Block\Template $block */
+/** @var \Temando\Shipping\ViewModel\Pickup\PickupView $viewModel */
+$viewModel = $block->getData('pickupViewModel');
+$order = $viewModel->getOrder();
+?>
+<div class="admin__page-section-item-content">
+    <div class="admin__page-section-item order-payment-method">
+        <div class="admin__page-section-item-title">
+            <span class="title"><?= $block->escapeHtml(__('Payment Information')) ?></span>
+        </div>
+        <div class="admin__page-section-item-content">
+            <div><?= $block->escapeHtml($viewModel->getPaymentMethodTitle($order)) ?></div>
+            <div class="order-payment-currency">
+                <?= $block->escapeHtml(__('The order was placed using %1.', $order->getOrderCurrencyCode())) ?>
+            </div>
+        </div>
+    </div>
+</div>

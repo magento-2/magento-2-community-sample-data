@@ -1,0 +1,70 @@
+<form id="pickup-locations-form" class="form fieldset delivery-locations-form">
+    <div class="step-title" translate="'Select Pickup Location'" data-role="title"/>
+
+    <div class="pickup-locations-list delivery-locations-list" if="getPickupLocations().length > 0">
+        <div class="pickup-location-wrapper" data-bind="foreach: getPickupLocations()">
+            <div class="pickup-location">
+                <div class="headline columns-2">
+                    <div class="column-left">
+                        <input type="radio"
+                               id="pickup-location"
+                               name="pickup-locations"
+                               data-bind="checked: $parent.selected, value: entity_id, attr: { id: 'pickup-location-' + entity_id }"
+                        />
+                        <label for="pickup-location" data-bind="attr: { for: 'pickup-location-' + entity_id }">
+                            <span data-bind="text: name"></span>
+                        </label>
+                    </div>
+                    <div class="column-right">
+                        <span data-bind="text: street"></span>,
+                        <span data-bind="text: city"></span>,
+                        <span data-bind="text: region"></span>
+                        <span data-bind="text: postcode"></span>
+                    </div>
+                </div>
+                <div class="opening-hours columns-2">
+                    <div class="column-left">
+                        <dl class="pickup-location-opening-hours">
+                            <dt data-bind="i18n: 'Open Hours'"></dt>
+                            <dd>
+                                <ul data-bind="foreach: opening_hours.general">
+                                    <li class=open-hours>
+                                        <span class="description" data-bind="text: days"></span>
+                                        <span class="time-span" data-bind="text: times"></span>
+                                    </li>
+                                </ul>
+                            </dd>
+                        </dl>
+                    </div>
+                    <div class="column-right">
+                        <dl class="pickup-location-special-hours">
+                            <dt if="opening_hours.specific.openings.length > 0" data-bind="i18n: 'Special Opening'"></dt>
+                            <dd>
+                                <ul data-bind="foreach: opening_hours.specific.openings">
+                                    <li class=special-hours>
+                                        <span class="description" data-bind="text: description"></span>
+                                        <span class="time-span">
+                                            <span data-bind="text: from"></span> - <span data-bind="text: to"></span>
+                                        </span>
+                                    </li>
+                                </ul>
+                            </dd>
+                            <dt if="opening_hours.specific.closures.length > 0" data-bind="i18n: 'Closures'"></dt>
+                            <dd>
+                                <ul data-bind="foreach: opening_hours.specific.closures">
+                                    <li class=special-hours>
+                                        <span class="description" data-bind="text: description"></span>
+                                        <span class="time-span">
+                                            <span data-bind="text: from"></span> - <span data-bind="text: to"></span>
+                                        </span>
+                                    </li>
+                                </ul>
+                            </dd>
+                        </dl>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div if="getMessage()" data-bind="text:getMessage(), css:{'field-error':hasNoResult()}"></div>
+</form>

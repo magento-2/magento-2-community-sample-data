@@ -1,0 +1,36 @@
+<?php
+/**
+ * Refer to LICENSE.txt distributed with the Temando Shipping module for notice of license
+ */
+?>
+<?php
+/** @var \Magento\Backend\Block\Template $block */
+/** @var \Temando\Shipping\ViewModel\Dispatch\DispatchView $viewModel */
+$viewModel = $block->getData('viewModel');
+/** @var \Temando\Shipping\Model\Dispatch\PickupChargeInterface[] $charges */
+$charges = $viewModel->getPickupCharges();
+?>
+
+<?php if (!empty($charges)) : ?>
+    <section class="admin__page-section">
+        <div class="admin__page-section-title">
+            <span class="title"><?= $block->escapeHtml(__('Pickup Rates')) ?></span>
+        </div>
+
+        <div class="admin__page-section-content">
+            <div class="admin__page-section-item">
+                <table class="data-table admin__table-secondary ">
+                    <tbody>
+                    <?php foreach ($charges as $charge) : ?>
+                        <?php $priceHtml = $viewModel->formatPrice($charge->getCurrency(), $charge->getAmount()); ?>
+                        <tr>
+                            <td><?= $block->escapeHtml($charge->getDescription()); ?></td>
+                            <td><?= /* @noEscape */ $priceHtml; ?></td>
+                        </tr>
+                    <?php endforeach; ?>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </section>
+<?php endif; ?>

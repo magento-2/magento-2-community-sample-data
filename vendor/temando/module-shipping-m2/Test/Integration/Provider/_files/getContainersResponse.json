@@ -1,0 +1,88 @@
+{
+  "data": [
+    {
+      "id": "5ad6c7fd-ebb0-4b75-9d73-6b762ec41908",
+      "type": "container",
+      "attributes": {
+        "name": "C4 Letter",
+        "outerDimensions": {
+          "unitOfMeasurement": "mm",
+          "length": 324,
+          "width": 229,
+          "height": 3
+        },
+        "innerDimensions": {
+          "unitOfMeasurement": "mm",
+          "length": 319,
+          "width": 224,
+          "height": 3
+        },
+        "type": "Letter",
+        "maximumWeight": {
+          "unitOfMeasurement": "kg",
+          "value": 1
+        },
+        "tareWeight": {
+          "unitOfMeasurement": "g",
+          "value": 25
+        }
+      }
+    },
+    {
+      "id": "934ffae0-731a-47cd-89cb-9075ebc6d2f9",
+      "type": "container",
+      "attributes": {
+        "name": "Big Box",
+        "outerDimensions": {
+          "unitOfMeasurement": "cm",
+          "length": 20,
+          "width": 30,
+          "height": 15
+        },
+        "innerDimensions": {
+          "unitOfMeasurement": "cm",
+          "length": 19,
+          "width": 29,
+          "height": 14
+        },
+        "type": "Box",
+        "maximumWeight": {
+          "unitOfMeasurement": "kg",
+          "value": 10
+        },
+        "tareWeight": {
+          "unitOfMeasurement": "g",
+          "value": 300
+        }
+      }
+    },
+    {
+      "id": "f3f3693c-be02-4a61-afe7-a0f66dff7396",
+      "type": "container",
+      "attributes": {
+        "name": "C6 Letter",
+        "outerDimensions": {
+          "unitOfMeasurement": "mm",
+          "length": 162,
+          "width": 114,
+          "height": 2
+        },
+        "innerDimensions": {
+          "unitOfMeasurement": "mm",
+          "length": 157,
+          "width": 109,
+          "height": 2
+        },
+        "type": "Letter",
+        "maximumWeight": {
+          "unitOfMeasurement": "g",
+          "value": 1000
+        },
+        "tareWeight": {
+          "unitOfMeasurement": "g",
+          "value": 9
+        }
+      }
+    }
+  ]
+}

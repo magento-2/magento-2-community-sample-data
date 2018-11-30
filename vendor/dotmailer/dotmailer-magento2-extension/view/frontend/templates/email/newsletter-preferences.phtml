@@ -1,0 +1,69 @@
+<?php
+/** @var \Dotdigitalgroup\Email\Block\Customer\Account\Books $block */
+// @codingStandardsIgnoreFile
+?>
+<?php if ($block->canShowAnything()) : ?>
+    <?php
+    $additionalBooks = $block->getAdditionalBooksToShow();
+    $dataFields = $block->getDataFieldsToShow();
+    $canShowAddressBook = $block->getCanShowAdditionalBooks();
+    $canShowDataFields = $block->getCanShowDataFields();
+    ?>
+    <form id="connector-newsletter-form-validate" method="post"
+          action="<?= $block->escapeHtml($block->getSaveUrl()) ?>" style="margin-top: 35px;">
+        <div class="fieldset">
+            <?= $block->getBlockHtml('formkey') ?>
+            <legend class="legend"><span><?= $block->escapeHtml(__('Newsletter Preferences')) ?></span></legend>
+            <ul class="form-list" style="padding-left: 0">
+                <?php if (!empty($additionalBooks) && $canShowAddressBook) : ?>
+                    <h4 style="margin-top: 10px;">
+                        <?= $block->escapeHtml(__('Additional Newsletter Subscriptions')) ?>
+                    </h4>
+                    <?php foreach ($additionalBooks as $books) : ?>
+                        <li class="control" style="display: block">
+                            <input type="checkbox" name="additional_subscriptions[]"
+                                   id="<?= $block->escapeHtml($books["name"]); ?>"
+                                   value="<?= $block->escapeHtml($books["value"]) ?>"
+                                   title="<?= $block->escapeHtml($books["name"]) ?>"
+                                <?php if ($books["subscribed"]) : ?>
+                                    checked="checked"
+                                <?php endif; ?> class="checkbox" />
+                            <label
+                                for="<?= $block->escapeHtml($books["name"]); ?>"><?= $block->escapeHtml($books["name"]) ?></label>
+                        </li>
+                    <?php endforeach; ?>
+                <?php endif; ?>
+                <?php if (!empty($dataFields) && $canShowDataFields) : ?>
+                    <h4 style="margin-top: 25px;"><?= $block->escapeHtml(__('Data Fields')) ?></h4>
+                    <li class="fields" style="display: block">
+                        <div>
+                            <?php foreach ($dataFields as $dataField) : ?>
+                                <div class="field" style="margin-bottom: 10px;">
+                                    <label for="<?= $block->escapeHtml($dataField['name']) ?>">
+                                        <?= $block->escapeHtml($dataField['name']) ?>
+                                    </label>
+                                    <div class="input-box">
+                                        <input style="width: 50%" type="text"
+                                               class="input-text <?php if ($dataField['type'] == "Date") : ?>
+                                                   date-field <?php endif; ?>"
+                                               title="<?= $block->escapeHtml($dataField['name']) ?>"
+                                               value="<?= $block->escapeHtml($dataField['value']) ?>"
+                                               name="data_fields[<?= $block->escapeHtml($dataField['name']) ?>]"
+                                               id="<?= $block->escapeHtml($dataField['name']) ?>"/>
+                                    </div>
+                                </div>
+                            <?php endforeach; ?>
+                        </div>
+                    </li>
+                <?php endif; ?>
+            </ul>
+        </div>
+        <div class="actions-toolbar">
+            <div class="primary">
+                <button type="submit" title="Save" class="action save primary">
+                    <span>Save</span>
+                </button>
+            </div>
+        </div>
+    </form>
+<?php endif;

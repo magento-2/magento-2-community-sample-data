@@ -1,0 +1,55 @@
+{
+    "name": "vertex/sdk",
+    "description": "Tools for communicating with Vertex Cloud and Vertex O-Series",
+    "type": "library",
+    "license": "proprietary",
+    "version": "1.0.0",
+    "require": {
+        "php": "^5.4|^7",
+        "ext-soap": "*",
+        "ext-openssl": "*",
+        "ext-mbstring": "*"
+    },
+    "autoload": {
+        "psr-4": {
+            "Vertex\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Vertex\\Test\\": "tests/"
+        }
+    },
+    "require-dev": {
+        "php": "^7.1",
+        "squizlabs/php_codesniffer": "^3.3",
+        "phpunit/phpunit": "^7.2",
+        "phpmd/phpmd": "^2.6"
+    },
+    "scripts": {
+        "test": [
+            "@test:phpcs",
+            "@test:phpmd",
+            "@test:unit",
+            "@test:integration"
+        ],
+        "test:phpcs": [
+            "phpcs --standard=PSR2 src/"
+        ],
+        "test:phpmd": [
+            "phpmd . text tests/phpmd-ruleset.xml --exclude vendor"
+        ],
+        "test:unit": [
+            "phpunit tests/Unit"
+        ],
+        "test:integration": [
+            "phpunit tests/Integration"
+        ]
+    },
+    "archive": {
+        "exclude": [
+            "tests/",
+            ".gitignore"
+        ]
+    }
+}

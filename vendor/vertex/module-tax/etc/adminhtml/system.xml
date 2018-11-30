@@ -1,0 +1,201 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  @copyright  Vertex. All rights reserved.  https://www.vertexinc.com/
+  @author     Mediotype                     https://www.mediotype.com/
+  -->
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Config:etc/system_file.xsd">
+    <system>
+        <section id="tax" translate="label">
+            <group id="vertex_settings" translate="label" sortOrder="2" showInDefault="1" showInWebsite="1" showInStore="0">
+                <label>Vertex Settings</label>
+                <comment><![CDATA[For information on how to sign up for Vertex, please <a href="http://go.vertexsmb.com/magento_cbe">click here</a>]]></comment>
+                <field id="enable_vertex" translate="label" type="select" sortOrder="10" showInDefault="1" showInWebsite="1" showInStore="0">
+                    <label>Enable Vertex Tax Calculation</label>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                    <comment><![CDATA[Enable/Disable Extension; this field works with Tax Calculation Method Based On; see Users Guide for details]]></comment>
+                </field>
+                <field id="vertex_status" translate="label" type="text" sortOrder="20" showInDefault="1" showInWebsite="1" showInStore="0">
+                    <label>Vertex API Status</label>
+                    <frontend_model>Vertex\Tax\Block\Adminhtml\Config\Form\Field\VertexStatus</frontend_model>
+                    <comment><![CDATA[API credentials status]]></comment>
+                </field>
+                <field id="api_url" translate="label" type="text" sortOrder="20" showInDefault="1" showInWebsite="1" showInStore="0" canRestore="1">
+                    <label>Vertex Calculation API Url</label>
+                    <validate>required-entry</validate>
+                    <depends>
+                        <field id="enable_vertex">1</field>
+                    </depends>
+                </field>
+                <field id="address_api_url" translate="label" type="text" sortOrder="30" showInDefault="1" showInWebsite="1" showInStore="0" canRestore="1">
+                    <label>Vertex Address Validation API Url</label>
+                    <validate>required-entry</validate>
+                    <depends>
+                        <field id="enable_vertex">1</field>
+                    </depends>
+                </field>
+                <field id="trustedId" translate="label" type="text" sortOrder="40" showInDefault="1" showInWebsite="1" showInStore="0">
+                    <label>Vertex Trusted Id</label>
+                    <validate>required-entry validate-length maximum-length-16 minimum-length-6</validate>
+                    <depends>
+                        <field id="enable_vertex">1</field>
+                    </depends>
+                    <comment><![CDATA[An identifier supplied by an ERP.]]></comment>
+                </field>
+                <field id="invoice_order" translate="label" type="select" sortOrder="50" showInDefault="1" showInWebsite="1" showInStore="0" canRestore="1">
+                    <label>When to send invoice to Vertex</label>
+                    <depends>
+                        <field id="enable_vertex">1</field>
+                    </depends>
+                    <source_model>Vertex\Tax\Model\Config\Source\TaxInvoice</source_model>
+                    <comment><![CDATA[Please select when tax should be invoiced to Vertex]]></comment>
+                </field>
+                <field id="invoice_order_status" translate="label" type="select" sortOrder="60" showInDefault="1" showInWebsite="1" showInStore="0">
+                    <validate>required-entry</validate>
+                    <label>Invoice When Order Status</label>
+                    <depends>
+                        <field id="enable_vertex">1</field>
+                        <field id="invoice_order"><![CDATA[order_status]]></field>
+                    </depends>
+                    <source_model>Magento\Sales\Model\Config\Source\Order\Status</source_model>
+                    <comment><![CDATA[Please select order status]]></comment>
+                </field>
+            </group>
+            <group id="vertex_seller_info" translate="label" sortOrder="3" showInDefault="1" showInWebsite="1" showInStore="1">
+                <label>Vertex Company Information</label>
+                <field id="company" translate="label" type="text" sortOrder="10" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Company Code</label>
+                    <validate>validate-length maximum-length-40</validate>
+                    <comment><![CDATA[The Vertex TaxCentral user interface is used to set up any taxability rules that apply at this level.
+                    This should be a parameter that is configurable to data from the host system based on an individual company's legal and tax requirements.]]></comment>
+                </field>
+                <field id="location_code" translate="label" type="text" sortOrder="20" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Location Code</label>
+                    <validate>validate-length maximum-length-40</validate>
+                    <comment><![CDATA[The locationCode attribute on the line item represents the store location code that is used for returns filing]]></comment>
+                </field>
+                <field id="streetAddress1" translate="label" type="text" sortOrder="30" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Company Street Address</label>
+                    <validate>validate-length maximum-length-100</validate>
+                    <comment><![CDATA[The first line of the street address.]]></comment>
+                </field>
+                <field id="streetAddress2" translate="label" type="text" sortOrder="40" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Company Street Address 2</label>
+                    <validate>validate-length maximum-length-100</validate>
+                    <comment><![CDATA[The first second of the street address.]]></comment>
+                </field>
+                <field id="city" translate="label" type="text" sortOrder="50" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Company City</label>
+                    <validate>validate-length maximum-length-60</validate>
+                    <comment><![CDATA[The proper name of the city used to determine Tax Jurisdiction(s)]]></comment>
+                </field>
+                <field id="country_id" translate="label" type="select" sortOrder="60" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Company Country</label>
+                    <frontend_class>countries</frontend_class>
+                    <source_model>Magento\Directory\Model\Config\Source\Country</source_model>
+                    <comment><![CDATA[The country used to determine the Tax Jurisdiction(s)]]></comment>
+                </field>
+                <field id="region_id" translate="label" type="select" sortOrder="70" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Company State</label>
+                    <validate>validate-length maximum-length-60</validate>
+                    <comment><![CDATA[The proper name or the postal abbreviation of the state, province, or territory used to determine Tax Jurisdiction(s)]]></comment>
+                    <source_model>Magento\Directory\Model\Config\Source\Allregion</source_model>
+                </field>
+                <field id="postalCode" translate="label" type="text" sortOrder="80" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Company Postal Code</label>
+                    <validate>validate-length maximum-length-15</validate>
+                    <comment><![CDATA[The postal code used to determine Tax Jurisdiction(s)]]></comment>
+                </field>
+            </group>
+            <group id="avaiable_shipping_product_codes" translate="label" sortOrder="4" showInDefault="1" showInWebsite="1" showInStore="1">
+                <label>Shipping Product Codes</label>
+                <comment><![CDATA[<p class="message message-notification">List of shipping methods available for mapping in Vertex</p>]]></comment>
+                <field id="shipping_codes" translate="label" type="text" sortOrder="20" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Vertex API Status</label>
+                    <frontend_model>Vertex\Tax\Block\Adminhtml\Config\Form\Field\ShippingCodes</frontend_model>
+                </field>
+            </group>
+            <group id="classes">
+                <comment><![CDATA[<p class="message message-notification">You can manage customer and product tax classes at Stores->Tax Rules->Add New Tax Rule->Additional Settings</p>]]></comment>
+                <field id="shipping_tax_class" translate="label" type="select" sortOrder="10" showInDefault="1" showInWebsite="1" showInStore="1" canRestore="1">
+                    <label>Tax Class for Shipping</label>
+                    <source_model>Magento\Tax\Model\TaxClass\Source\Product</source_model>
+                </field>
+                <field id="default_product_tax_class" translate="label" type="select" sortOrder="20" showInDefault="1" showInWebsite="1" showInStore="1" canRestore="1">
+                    <label>Default Tax Class for Product</label>
+                    <source_model>Magento\Tax\Model\TaxClass\Source\Product</source_model>
+                    <backend_model>Magento\Tax\Model\Config\TaxClass</backend_model>
+                </field>
+                <field id="default_customer_tax_class" translate="label" type="select" sortOrder="30" showInDefault="1" showInWebsite="1" showInStore="1" canRestore="1">
+                    <label>Default Tax Class for Customer</label>
+                    <source_model>Magento\Tax\Model\TaxClass\Source\Customer</source_model>
+                </field>
+                <field id="default_customer_code" translate="label" type="text" sortOrder="40" showInDefault="1" showInWebsite="1" showInStore="1" canRestore="1">
+                    <label>Default Customer Code</label>
+                    <validate>required-entry</validate>
+                    <comment><![CDATA[Customer code which will be used for unregistered users and for customers without customer code value]]></comment>
+                </field>
+
+                <field id="creditmemo_adjustment_class" translate="label" type="select" sortOrder="50" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Refund Adjustments Class</label>
+                    <validate>required-entry</validate>
+                    <source_model>Magento\Tax\Model\TaxClass\Source\Product</source_model>
+                    <comment><![CDATA[Class which will be used for creditmemo adjustments]]></comment>
+                </field>
+                <field id="creditmemo_adjustment_negative_code" translate="label" type="text" sortOrder="60" showInDefault="1" showInWebsite="1" showInStore="1" canRestore="1">
+                    <label>Adjustment Fee Code</label>
+                    <validate>required-entry</validate>
+                    <comment><![CDATA[Product code which will be used for creditmemo adjustment fee]]></comment>
+                </field>
+                <field id="creditmemo_adjustment_positive_code" translate="label" type="text" sortOrder="70" showInDefault="1" showInWebsite="1" showInStore="1" canRestore="1">
+                    <label>Adjustment Refund Code</label>
+                    <validate>required-entry</validate>
+                    <comment><![CDATA[Product code which will be used for creditmemo adjustment]]></comment>
+                </field>
+                <field id="giftwrap_order_class" translate="label" type="select" sortOrder="80" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Gift Wrap For Order Class</label>
+                    <validate>required-entry</validate>
+                    <source_model>Magento\Tax\Model\TaxClass\Source\Product</source_model>
+                    <comment><![CDATA[Product class which will be used for order gift wrap]]></comment>
+                </field>
+                <field id="giftwrap_order_code" translate="label" type="text" sortOrder="90" showInDefault="1" showInWebsite="1" showInStore="1" canRestore="1">
+                    <label>Gift Wrap For Order Code</label>
+                    <validate>required-entry</validate>
+                    <comment><![CDATA[Product code which will be used for order gift wrap]]></comment>
+                </field>
+                <field id="giftwrap_item_class" translate="label" type="select" sortOrder="90" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Gift Wrap Class For Single Product</label>
+                    <validate>required-entry</validate>
+                    <source_model>Magento\Tax\Model\TaxClass\Source\Product</source_model>
+                    <comment><![CDATA[Class for gift wrap of single product]]></comment>
+                </field>
+                <field id="giftwrap_item_code" translate="label" type="text" sortOrder="100" showInDefault="1" showInWebsite="1" showInStore="1" canRestore="1">
+                    <label>Gift Wrap Code Prefix For Single Product</label>
+                    <validate>required-entry</validate>
+                    <comment><![CDATA[Prefix will be used for giftwrap item. Each code will be {{prefix}}-{{sku}}]]></comment>
+                </field>
+                <field id="printed_giftcard_class" translate="label" type="select" sortOrder="110" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Item Line Class For Printed Gift Card</label>
+                    <validate>required-entry</validate>
+                    <source_model>Magento\Tax\Model\TaxClass\Source\Product</source_model>
+                    <comment><![CDATA[Product Class for printed giftcard line item]]></comment>
+                </field>
+                <field id="printed_giftcard_code" translate="label" type="text" sortOrder="120" showInDefault="1" showInWebsite="1" showInStore="1" canRestore="1">
+                    <label>Item Line Code For Printed Gift Card</label>
+                    <validate>required-entry</validate>
+                    <comment><![CDATA[Product code for printed giftcard line item]]></comment>
+                </field>
+                <field id="reward_points_class" translate="label" type="select" sortOrder="130" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Class For Reward Points Discount Line Item</label>
+                    <validate>required-entry</validate>
+                    <source_model>Magento\Tax\Model\TaxClass\Source\Product</source_model>
+                    <comment><![CDATA[Product Class for reward points order discount.]]></comment>
+                </field>
+                <field id="reward_points_code" translate="label" type="text" sortOrder="140" showInDefault="1" showInWebsite="1" showInStore="1" canRestore="1">
+                    <label>Product Code For Reward Points Discount Line Item</label>
+                    <validate>required-entry</validate>
+                    <comment><![CDATA[Product code for reward points order discount]]></comment>
+                </field>
+            </group>
+        </section>
+    </system>
+</config>

@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<tests xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="../../../../../../vendor/magento/magento2-functional-testing-framework/src/Magento/FunctionalTestingFramework/Test/etc/testSchema.xsd">
+    <test name="AdminActivateClickAndCollectForMagentoShipping">
+        <annotations>
+            <title value="Activate Temando Click and Collect Configuration Test"/>
+            <description value="Activate Click and Collect and checks that it was saved."/>
+            <stories value="Testing if Click and Collect configurations are loaded, visible and savable."/>
+            <severity value="CRITICAL"/>
+            <group value="Magento_Shipping"/>
+        </annotations>
+        <before>
+            <actionGroup ref="LoginAsAdmin" stepKey="loginAsAdmin"/>
+            <actionGroup ref="ResetConfigurations" stepKey="ResetConfigurations"/>
+        </before>
+        <after>
+            <amOnPage url="admin/admin/auth/logout/" stepKey="amOnLogoutPage"/>
+        </after>
+        <!-- Start testing -->
+        <actionGroup ref="SetAndCheckClickAndCollectConfigurations" stepKey="checkIfClickAndCollectCanBeEnabled"/>
+    </test>
+    <test name="AdminDeactivateClickAndCollectForMagentoShipping">
+        <annotations>
+            <title value="Deactivate Temando Click and Collect Configuration Test"/>
+            <description value="Deactivate Click and Collect and checks that it was saved."/>
+            <stories value="Testing if Click and Collect configurations are loaded, visible and savable."/>
+            <severity value="CRITICAL"/>
+            <group value="Magento_Shipping"/>
+        </annotations>
+        <before>
+            <actionGroup ref="LoginAsAdmin" stepKey="loginAsAdmin"/>
+            <actionGroup ref="ResetConfigurations" stepKey="ResetConfigurations"/>
+        </before>
+        <after>
+            <amOnPage url="admin/admin/auth/logout/" stepKey="amOnLogoutPage"/>
+        </after>
+        <!-- Start testing -->
+        <actionGroup ref="SetAndCheckClickAndCollectConfigurations" stepKey="checkIfClickAndCollectCanBeDisabled">
+            <argument name="isEnabledValue" value="{{TemandoConfigurationData.disableClickAndCollectValue}}"/>
+            <argument name="isEnabledString" value="{{TemandoConfigurationData.disableClickAndCollectString}}"/>
+        </actionGroup>
+    </test>
+</tests>

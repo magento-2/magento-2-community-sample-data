@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!--
+  @copyright  Vertex. All rights reserved.  https://www.vertexinc.com/
+  @author     Mediotype                     https://www.mediotype.com/
+  -->
+<tests xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/testSchema.xsd">
+    <test name="AdminVertexTrustedIdLengthValidation">
+        <annotations>
+            <features value="Vertex"/>
+            <stories value="Validate the length of the Vertex Trusted ID in the admin"/>
+            <title value="Validate the length of the Vertex Trusted ID in the admin"/>
+            <description value="Validate the length of the Vertex Trusted ID in the admin"/>
+            <severity value="MINOR"/>
+            <group value="Vertex"/>
+        </annotations>
+
+        <actionGroup ref="LoginAsAdmin" stepKey="loginAsAdminBefore"/>
+        <amOnPage url="{{AdminTaxConfigPage.url('vertex_settings')}}" stepKey="viewConfigBefore"/>
+        <waitForPageLoad stepKey="waitForPageLoadBefore"/>
+        <grabValueFrom selector="{{AdminVertexSettingsConfigSection.vertexTrustedId}}" stepKey="backupTrustedId"/>
+
+        <seeElement selector="{{AdminVertexSettingsConfigSection.vertexTrustedId}}" stepKey="seeTrustedId"/>
+        <fillField selector="{{AdminVertexSettingsConfigSection.vertexTrustedId}}" userInput="123"
+                   stepKey="enterShortString"/>
+        <click selector="#save" stepKey="clickSaveShort"/>
+
+        <see selector="{{AdminVertexSettingsConfigSection.vertexTrustedIdError}}"
+             stepKey="seeShortError" userInput="Please enter more or equal than 6 symbols."/>
+
+        <fillField selector="{{AdminVertexSettingsConfigSection.vertexTrustedId}}" userInput="12345678901234567890"
+                   stepKey="enterLongString"/>
+        <click selector="#save" stepKey="clickSaveLong"/>
+
+        <see selector="{{AdminVertexSettingsConfigSection.vertexTrustedIdError}}"
+             stepKey="seeLongError" userInput="Please enter less or equal than 16 symbols."/>
+
+        <fillField selector="{{AdminVertexSettingsConfigSection.vertexTrustedId}}" userInput="{$backupTrustedId}"
+                   stepKey="enterBackedUpId"/>
+        <click selector="#save" stepKey="clickSaveAfter"/>
+        <waitForPageLoad stepKey="waitForPageLoadAfter"/>
+
+        <dontSeeElement selector="{{AdminVertexSettingsConfigSection.vertexTrustedIdError}}" stepKey="seeNoError"/>
+    </test>
+</tests>

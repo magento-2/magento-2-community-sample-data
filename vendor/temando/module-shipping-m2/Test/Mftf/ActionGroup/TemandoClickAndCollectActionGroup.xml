@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<actionGroups xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="../../../../../../vendor/magento/magento2-functional-testing-framework/src/Magento/FunctionalTestingFramework/Test/etc/actionGroupSchema.xsd">
+    <actionGroup name="SetAndCheckClickAndCollectConfigurations">
+        <arguments>
+            <argument name="isEnabledValue" defaultValue="{{TemandoConfigurationData.enableClickAndCollectValue}}" type="string"/>
+            <argument name="isEnabledString" defaultValue="{{TemandoConfigurationData.enableClickAndCollectString}}" type="string"/>
+        </arguments>
+        <amOnPage url="{{TemandoAdminConfigPage.url}}" stepKey="navigateToTemandoConfigurationPage"/>
+        <scrollTo selector="{{MagentoShippingSection.sectionHead}}" x="0" y="-85" stepKey="scrollToSection1"/>
+        <conditionalClick selector="{{MagentoShippingSection.sectionHead}}" dependentSelector="{{MagentoShippingSection.isClickAndCollectEnabled}}" visible="false" stepKey="openSection1"/>
+        <!-- Start Filling Fields -->
+        <scrollTo selector="{{MagentoShippingSection.isClickAndCollectEnabled}}" x="0" y="-85" stepKey="scrollToFieldToConfigure1"/>
+        <seeElement selector="{{MagentoShippingSection.isClickAndCollectEnabled}}" stepKey="seeClickAndCollectActiveConfiguration1"/>
+        <selectOption selector="{{MagentoShippingSection.isClickAndCollectEnabled}}" userInput="{{isEnabledValue}}" stepKey="selectOption"/>
+        <scrollTo selector="{{MagentoShippingSection.sectionHead}}" x="0" y="-85" stepKey="scrollToSection2"/>
+        <conditionalClick selector="{{MagentoShippingSection.sectionHead}}" dependentSelector="{{MagentoShippingSection.isTemandoActive}}" visible="true" stepKey="closeSection1"/>
+        <click selector="{{StoreConfigSection.Save}}" stepKey="clickSubmitButton"/>
+        <waitForElementVisible time="60" selector="{{AdminCustomerMessagesSection.successMessage}}" stepKey="waitForConfirmationModal"/>
+        <see userInput="You saved the configuration." stepKey="AssertConfigurationWasSaved"/>
+        <scrollTo selector="{{MagentoShippingSection.sectionHead}}" x="0" y="-85" stepKey="scrollToSection3"/>
+        <conditionalClick selector="{{MagentoShippingSection.sectionHead}}" dependentSelector="{{MagentoShippingSection.isClickAndCollectEnabled}}" visible="false" stepKey="openSection2"/>
+        <scrollTo selector="{{MagentoShippingSection.isClickAndCollectEnabled}}" x="0" y="-85" stepKey="scrollToFieldToConfigure2"/>
+        <seeElement selector="{{MagentoShippingSection.isClickAndCollectEnabled}}" stepKey="seeClickAndCollectActiveConfiguration2"/>
+        <seeOptionIsSelected selector="{{MagentoShippingSection.isClickAndCollectEnabled}}" userInput="{{isEnabledString}}" stepKey="checkIfSelectionWasSaved"/>
+    </actionGroup>
+</actionGroups>

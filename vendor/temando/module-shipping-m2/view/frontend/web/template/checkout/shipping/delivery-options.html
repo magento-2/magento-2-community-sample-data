@@ -1,0 +1,27 @@
+<!--ko if: deliveryOptions().length > 0  -->
+<form id="delivery-options-fields-block" class="form form-shipping-address form-delivery-options">
+    <fieldset class="fieldset delivery-options">
+        <dl class="delivery-options">
+                <dt class="item-title"><span data-bind="i18n:'Delivery Options'"></span></dt>
+                <!-- ko foreach: deliveryOptions -->
+                    <dd class="item-options">
+                        <input type="radio" name="delivery-options"
+                               data-bind="attr: $data, checked: $parent.radioSelectedOptionValue"
+                        />
+                        <label data-bind="i18n:label, attr:{for: $data.id }"></label>
+                    </dd>
+                <!-- /ko -->
+        </dl>
+    </fieldset>
+        <div data-bind="visible: collectionPointsVisible">
+            <!-- ko foreach: getRegion('collection-points-form') -->
+                <!-- ko template: getTemplate() --><!-- /ko -->
+            <!--/ko-->
+        </div>
+    <div data-bind="visible: clickAndCollectVisible">
+        <!-- ko foreach: getRegion('click-and-collect-form') -->
+            <!-- ko template: getTemplate() --><!-- /ko -->
+        <!--/ko-->
+    </div>
+</form>
+<!-- /ko -->

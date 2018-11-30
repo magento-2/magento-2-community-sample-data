@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  @copyright  Vertex. All rights reserved.  https://www.vertexinc.com/
+  @author     Mediotype                     https://www.mediotype.com/
+  -->
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Store:etc/config.xsd">
+    <default>
+        <tax>
+            <vertex_settings>
+                <enable_vertex><![CDATA[0]]></enable_vertex>
+                <invoice_order><![CDATA[invoice_created]]></invoice_order>
+                <api_url><![CDATA[https://mgconnect.vertexsmb.com/vertex-ws/services/CalculateTax70]]></api_url>
+                <address_api_url><![CDATA[https://mgconnect.vertexsmb.com/vertex-ws/services/LookupTaxAreas70]]></address_api_url>
+            </vertex_settings>
+            <classes>
+                <default_customer_code><![CDATA[General]]></default_customer_code>
+                <creditmemo_adjustment_negative_code><![CDATA[adjustment-negative]]></creditmemo_adjustment_negative_code>
+                <creditmemo_adjustment_positive_code><![CDATA[adjustment-positive]]></creditmemo_adjustment_positive_code>
+                <giftwrap_order_code><![CDATA[order-gift-wrapping]]></giftwrap_order_code>
+                <giftwrap_item_code><![CDATA[giftwrap-]]></giftwrap_item_code>
+                <printed_giftcard_code><![CDATA[printed-giftcard]]></printed_giftcard_code>
+                <reward_points_code><![CDATA[reward-points]]></reward_points_code>
+            </classes>
+        </tax>
+    </default>
+</config>

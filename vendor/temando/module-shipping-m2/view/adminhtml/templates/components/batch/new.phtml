@@ -1,0 +1,41 @@
+<?php
+/**
+ * Refer to LICENSE.txt distributed with the Temando Shipping module for notice of license
+ */
+?>
+<?php // @codingStandardsIgnoreFile ?>
+<?php
+/** @var \Temando\Shipping\Block\Adminhtml\ComponentContainer $block */
+/** @var \Temando\Shipping\ViewModel\Batch\BatchNew $viewModel */
+$viewModel = $block->getViewModel();
+?>
+<div id="temando-componentry"
+     data-bind="scope:'temando-componentry'"
+     data-component-init='[
+     {
+        "entrypoint": "BatchCreate",
+        "assetsUrl": "<?= $block->escapeUrl($block->getAssetsUrl()); ?>",
+        "data": {
+            "temandoApiEndpoint": "<?= $block->escapeUrl($viewModel->getShippingApiAccess()->getApiEndpoint()); ?>",
+            "temandoApiToken": "<?= $block->escapeHtml($viewModel->getShippingApiAccess()->getSessionToken()); ?>",
+            "temandoApiTokenTtl": "<?= $block->escapeHtml($viewModel->getShippingApiAccess()->getSessionTokenExpiry()); ?>",
+            "m2OrderData": <?= /* @noEscape */ str_replace("'", '\u0027', $viewModel->getOrderData()); ?>,
+            "m2ApiAccessToken": "<?= $block->escapeHtml($viewModel->getCoreApiAccess()->getAccessToken()); ?>",
+            "m2ApiAccessTokenTtl": "<?= $block->escapeHtml($viewModel->getCoreApiAccess()->getSessionExpirationTime()); ?>",
+            "m2ApiOrderEndpoint": "<?= $block->escapeHtml($viewModel->getOrderListEndpoint()); ?>",
+            "ipAddress": "<?= $block->escapeHtml($block->getIpAddress()); ?>",
+            "lang": "<?= $block->escapeHtml($block->getLanguage()); ?>",
+            "locale": "<?= $block->escapeHtml($block->getLocale()); ?>",
+            "batchListPageUrl": "<?= $block->escapeUrl($viewModel->getBatchUrl()->getListActionUrl()); ?>"
+        }
+     }]'
+>
+    <!-- ko template: getTemplate() --><!-- /ko -->
+    <script type="text/x-magento-init">
+    {
+        "#temando-componentry": {
+            "Magento_Ui/js/core/app":  <?= /* @noEscape */ $block->getJsLayout(); ?>
+        }
+    }
+    </script>
+</div>

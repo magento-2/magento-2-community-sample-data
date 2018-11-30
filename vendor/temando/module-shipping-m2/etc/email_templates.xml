@@ -1,0 +1,13 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * Refer to LICENSE.txt distributed with the Temando Shipping module for notice of license
+ */
+-->
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Email:etc/email_templates.xsd">
+    <template id="sales_email_temando_pickup_order_template" label="Pickup Order New" file="order_pickup_new.html" type="html" module="Temando_Shipping" area="frontend"/>
+    <template id="sales_email_temando_pickup_order_guest_template" label="Pickup Order New Guest" file="order_pickup_new_guest.html" type="html" module="Temando_Shipping" area="frontend"/>
+    <template id="sales_email_temando_pickup_ready_template" label="Pickup Ready" file="pickup_ready.html" type="html" module="Temando_Shipping" area="frontend"/>
+    <template id="sales_email_temando_pickup_collected_template" label="Pickup Collected" file="pickup_collected.html" type="html" module="Temando_Shipping" area="frontend"/>
+    <template id="sales_email_temando_pickup_canceled_template" label="Pickup Canceled" file="pickup_canceled.html" type="html" module="Temando_Shipping" area="frontend"/>
+</config>

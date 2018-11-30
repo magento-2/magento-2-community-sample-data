@@ -1,0 +1,94 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * Refer to LICENSE.txt distributed with the Temando Shipping module for notice of license
+ */
+-->
+<page xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+      xsi:noNamespaceSchemaLocation="urn:magento:framework:View/Layout/etc/page_configuration.xsd">
+    <head>
+        <link src="Temando_Shipping::js/view/pickup/pickup-post-wrapper.js"/>
+    </head>
+    <body>
+        <referenceBlock name="page.actions.toolbar">
+            <block class="Temando\Shipping\Block\Adminhtml\PageAction\PickupBackButton" name="pickup_prepare_btn_back"/>
+            <block class="Temando\Shipping\Block\Adminhtml\PageAction\PickupPrintButton" name="pickup_prepare_btn_print"/>
+            <block class="Temando\Shipping\Block\Adminhtml\PageAction\PickupCancelButton" name="pickup_prepare_btn_cancel"/>
+        </referenceBlock>
+        <referenceContainer name="content">
+            <!-- container block, renders all children, adds toolbar button -->
+            <block class="Magento\Backend\Block\Template" name="pickup_prepare"
+                   template="Temando_Shipping::pickup/form/prepare.phtml">
+                <arguments>
+                    <argument name="pickupViewModel" xsi:type="object">Temando\Shipping\ViewModel\Pickup\PickupUrl</argument>
+                </arguments>
+
+                <!-- Pickup/Order/Account Information -->
+                <block class="Magento\Backend\Block\Template" name="pickup_info"
+                       template="Temando_Shipping::pickup/info.phtml">
+                    <arguments>
+                        <argument name="title" translate="true" xsi:type="string">Order &amp;amp; Account Information</argument>
+                    </arguments>
+
+                    <!-- Order Information -->
+                    <block class="Magento\Backend\Block\Template" name="pickup_order_info"
+                           template="Temando_Shipping::pickup/info/order_info.phtml">
+                        <arguments>
+                            <argument name="orderViewModel" xsi:type="object">Temando\Shipping\ViewModel\Order\OrderDetails</argument>
+                            <argument name="pickupViewModel" xsi:type="object">Temando\Shipping\ViewModel\Pickup\PickupView</argument>
+                        </arguments>
+                    </block>
+
+                    <!-- Account Information -->
+                    <block class="Magento\Backend\Block\Template" name="pickup_customer_info"
+                           template="Temando_Shipping::pickup/info/customer.phtml">
+                        <arguments>
+                            <argument name="pickupViewModel" xsi:type="object">Temando\Shipping\ViewModel\Pickup\PickupView</argument>
+                            <argument name="customerViewModel" xsi:type="object">Temando\Shipping\ViewModel\Order\CustomerDetails</argument>
+                        </arguments>
+                    </block>
+                    <container name="extra_customer_info"/>
+                </block>
+
+                <!-- Address Information -->
+                <block class="Magento\Backend\Block\Template" name="pickup_address_info"
+                       template="Temando_Shipping::pickup/address.phtml">
+                    <arguments>
+                        <argument name="locationViewModel" xsi:type="object">Temando\Shipping\ViewModel\Order\Location</argument>
+                        <argument name="pickupViewModel" xsi:type="object">Temando\Shipping\ViewModel\Pickup\PickupView</argument>
+                    </arguments>
+                </block>
+
+                <!-- Payment & Shipping Method -->
+                <block class="Magento\Backend\Block\Template" name="pickup_payment_shipping"
+                       template="Temando_Shipping::pickup/payment_shipping.phtml">
+                    <block class="Magento\Backend\Block\Template" name="pickup_shipment_payment"
+                           template="Temando_Shipping::pickup/payment_shipping/payment.phtml">
+                        <arguments>
+                            <argument name="pickupViewModel" xsi:type="object">Temando\Shipping\ViewModel\Pickup\PickupView</argument>
+                        </arguments>
+                    </block>
+                    <block class="Magento\Backend\Block\Template" name="pickup_shipment_shipping"
+                           template="Temando_Shipping::pickup/payment_shipping/shipping.phtml">
+                        <arguments>
+                            <argument name="pickupViewModel" xsi:type="object">Temando\Shipping\ViewModel\Pickup\PickupView</argument>
+                        </arguments>
+                    </block>
+                </block>
+                <block class="Magento\Backend\Block\Template" name="pickup_order_items"
+                       template="Temando_Shipping::pickup/items/edit.phtml">
+                    <arguments>
+                        <argument name="pickupViewModel" xsi:type="object">Temando\Shipping\ViewModel\Pickup\PickupItems</argument>
+                    </arguments>
+                    <block class="Magento\Backend\Block\Widget\Button" name="submit_button">
+                        <arguments>
+                            <argument name="type" xsi:type="string">submit</argument>
+                            <argument name="label" translate="true" xsi:type="string">Ready for Pickup</argument>
+                            <argument name="class" xsi:type="string">save submit-button primary</argument>
+                        </arguments>
+                    </block>
+                </block>
+            </block>
+        </referenceContainer>
+    </body>
+</page>

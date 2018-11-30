@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+
+<actionGroups xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+          xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/actionGroupSchema.xsd">
+    <actionGroup name="KpFillInGuest">
+        <fillField selector="{{KpGuestCheckoutShippingSection.email}}" userInput="{{KpCustomerEntityOne.email}}" stepKey="kpEnterEmail"/>
+        <fillField selector="{{KpGuestCheckoutShippingSection.firstName}}" userInput="{{KpCustomerEntityOne.firstname}}" stepKey="kpEnterFirstName"/>
+        <fillField selector="{{KpGuestCheckoutShippingSection.lastName}}" userInput="{{KpCustomerEntityOne.lastname}}" stepKey="kpEnterLastName"/>
+        <fillField selector="{{KpGuestCheckoutShippingSection.street}}" userInput="{{KpCustomerAddressSimple.street[0]}}" stepKey="kpEnterStreet"/>
+        <fillField selector="{{KpGuestCheckoutShippingSection.city}}" userInput="{{KpCustomerAddressSimple.city}}" stepKey="kpEnterCity"/>
+        <selectOption selector="{{KpGuestCheckoutShippingSection.region}}" userInput="{{KpCustomerAddressSimple.state}}" stepKey="kpSelectRegion"/>
+        <fillField selector="{{KpGuestCheckoutShippingSection.postcode}}" userInput="{{KpCustomerAddressSimple.postcode}}" stepKey="kpEnterPostcode"/>
+        <fillField selector="{{KpGuestCheckoutShippingSection.telephone}}" userInput="6149999999" stepKey="kpEnterTelephone"/>
+        <waitForLoadingMaskToDisappear stepKey="kpWaitForLoadingMask"/>
+    </actionGroup>
+</actionGroups>

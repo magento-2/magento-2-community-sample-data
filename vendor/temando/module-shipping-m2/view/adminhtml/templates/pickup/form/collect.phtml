@@ -1,0 +1,16 @@
+<?php
+/**
+ * Refer to LICENSE.txt distributed with the Temando Shipping module for notice of license
+ */
+?>
+
+<?php
+/** @var \Magento\Backend\Block\Template $block */
+/** @var \Temando\Shipping\ViewModel\Pickup\PickupUrl $viewModel */
+$viewModel = $block->getData('pickupViewModel')
+?>
+<form data-mage-init='{"validation": {}}' id="pickup_collect_form" method="post"
+      action="<?= $block->escapeUrl($viewModel->getCollectedActionUrl($block->getRequest()->getParams())) ?>">
+    <?= $block->getBlockHtml('formkey') ?>
+    <?= $block->getChildHtml() ?>
+</form>

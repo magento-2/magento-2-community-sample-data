@@ -1,0 +1,41 @@
+<?php
+/**
+ * Refer to LICENSE.txt distributed with the Temando Shipping module for notice of license
+ */
+?>
+
+<?php
+/** @var \Magento\Framework\View\Element\Template $block */
+$openingHours = $block->getData('opening_hours');
+?>
+<?php if (is_array($openingHours['general']) && !empty($openingHours['general'])) : ?>
+    <h4><?= $block->escapeHtml(__('Opening Hours')) ?></h4>
+    <?php foreach ($openingHours['general'] as $general) : ?>
+        <p>
+            <?= $block->escapeHtml($general['days']); ?>
+            <?= $block->escapeHtml($general['times']); ?>
+        </p>
+    <?php endforeach; ?>
+<?php endif; ?>
+<?php if (is_array($openingHours['specific']) && !empty($openingHours['specific'])) : ?>
+    <?php foreach ($openingHours['specific']['openings'] as $specific) : ?>
+        <p>
+            <?= $block->escapeHtml(__(
+                'Open %1 %2 to %3',
+                $specific['description'],
+                $specific['from'],
+                $specific['to']
+            )); ?>
+        </p>
+    <?php endforeach; ?>
+    <?php foreach ($openingHours['specific']['closures'] as $specific) : ?>
+        <p>
+            <?= $block->escapeHtml(__(
+                'Closed %1 %2 to %3',
+                $specific['description'],
+                $specific['from'],
+                $specific['to']
+            )); ?>
+        </p>
+    <?php endforeach; ?>
+<?php endif; ?>

@@ -1,0 +1,49 @@
+<?php /** @var \Magento\Backend\Block\Template $block */ ?>
+<?php
+    /** @var \Temando\Shipping\ViewModel\Rma\RmaView $rmaViewModel */
+    $rmaViewModel = $block->getData('rmaViewModel');
+    /** @var \Temando\Shipping\ViewModel\Order\OrderDetails $orderViewModel */
+    $orderViewModel = $block->getData('orderViewModel');
+
+    $order = $rmaViewModel->getOrder();
+?>
+
+<div class="admin__page-section-item-title">
+    <span class="title">
+        <?= $block->escapeHtml(__('Order # %1', $order->getIncrementId())) ?>
+    </span>
+</div>
+<div class="admin__page-section-item-content">
+    <table class="admin__table-secondary order-information-table">
+        <?php $orderAdminDate = $orderViewModel->getOrderAdminDate($order) ?>
+        <?php $orderStoreDate = $orderViewModel->getOrderStoreDate($order) ?>
+        <tr>
+            <th><?= $block->escapeHtml(__('Order Date')) ?></th>
+            <td><?= $block->escapeHtml($orderAdminDate) ?></td>
+        </tr>
+        <?php if ($orderAdminDate != $orderStoreDate) : ?>
+            <tr>
+                <th><?= $block->escapeHtml(__('Order Date (%1)', $orderViewModel->getOrderTimezone($order))) ?></th>
+                <td><?= $block->escapeHtml($orderStoreDate) ?></td>
+            </tr>
+        <?php endif;?>
+        <?php if ($orderViewModel->isSingleStoreMode() == false) : ?>
+            <tr>
+                <th><?= $block->escapeHtml(__('Purchased From')) ?></th>
+                <td><?= $block->escapeHtml($orderViewModel->getOrderStoreName($order), ['br']) ?></td>
+            </tr>
+        <?php endif; ?>
+        <?php if ($extOrderId = $orderViewModel->getExtOrderId($order)) : ?>
+            <tr>
+                <th><?= $block->escapeHtml(__('Magento Shipping Order ID')) ?></th>
+                <td><?= $block->escapeHtml($extOrderId) ?></td>
+            </tr>
+        <?php endif; ?>
+        <?php if ($extShipmentId = $rmaViewModel->getReturnShipmentId()) : ?>
+            <tr>
+                <th><?= $block->escapeHtml(__('Magento Shipping Return Shipment ID')) ?></th>
+                <td><?= $block->escapeHtml($extShipmentId) ?></td>
+            </tr>
+        <?php endif; ?>
+    </table>
+</div>

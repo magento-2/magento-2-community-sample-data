@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  @copyright  Vertex. All rights reserved.  https://www.vertexinc.com/
+  @author     Mediotype                     https://www.mediotype.com/
+  -->
+<tests xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/testSchema.xsd">
+    <test name="StorefrontGuestCheckoutWithVertexTaxTest">
+        <annotations>
+            <features value="Vertex"/>
+            <stories value="Estimate tax for a product"/>
+            <title value="Customer should receive correct tax data from Vertex"/>
+            <description value="Customer should receive correct tax data from Vertex"/>
+            <severity value="MAJOR"/>
+            <group value="Vertex"/>
+        </annotations>
+        <before>
+            <createData entity="VertexTaxConfig" stepKey="createConf"/>
+            <createData entity="_defaultCategory" stepKey="createCategory"/>
+            <createData entity="_defaultProduct" stepKey="createProduct">
+                <field key="price">5.00</field>
+                <requiredEntity createDataKey="createCategory"/>
+            </createData>
+            <actionGroup ref="LoginAsAdmin" stepKey="loginAsAdmin"/>
+            <actionGroup ref="ClearCacheActionGroup" stepKey="clearCache"/>
+        </before>
+        <after>
+            <createData entity="DefaultTaxConfig" stepKey="defaultConf"/>
+            <deleteData createDataKey="createCategory" stepKey="deleteCategory"/>
+            <deleteData createDataKey="createProduct" stepKey="deleteProduct"/>
+            <actionGroup ref="logout" stepKey="logoutOfAdmin"/>
+        </after>
+
+        <!-- Add simple product to cart -->
+        <amOnPage url="{{StorefrontProductPage.url($$createProduct.name$$)}}" stepKey="viewProduct"/>
+        <waitForPageLoad stepKey="waitForPageLoad"/>
+        <actionGroup stepKey="addProductToCart" ref="AddSimpleProductToCart">
+            <argument name="product" value="$$createProduct$$"/>
+            <argument name="productCount" value="1"/>
+        </actionGroup>
+        <see selector="{{StorefrontCategoryMainSection.SuccessMsg}}"
+             userInput="You added $$createProduct.name$$ to your shopping cart." stepKey="seeAddedToCartMessage"/>
+        <see selector="{{StorefrontMiniCartSection.quantity}}" userInput="1" stepKey="seeCartQuantity"/>
+
+        <!-- Navigate to checkout -->
+        <actionGroup ref="GoToCheckoutFromMinicartActionGroup" stepKey="goToCheckoutFromMinicartActionGroup"/>
+        <seeElement selector="{{CheckoutShippingSection.isShippingStep}}" stepKey="shippingStepIsOpened"/>
+
+        <!-- Update Shipping Data -->
+        <click selector="{{CheckoutShippingMethodsSection.flatRate}}" stepKey="selectShippingMethod"/>
+        <actionGroup ref="GuestCheckoutFillingShippingSectionActionGroup"
+                     stepKey="guestCheckoutFillingShippingAddress">
+            <argument name="customerVar" value="CustomerEntityOne"/>
+            <argument name="customerAddressVar" value="Vertex_Address_PA"/>
+        </actionGroup>
+
+        <!-- Go to Billing & Look at Tax -->
+        <seeInCurrentUrl url="{{CheckoutPage.url}}/#payment" stepKey="paymentStepIsOpened"/>
+        <see userInput="$0.80" selector="{{CheckoutPaymentSection.tax}}" stepKey="seeTax"/>
+        <see userInput="$10.80" selector="{{CheckoutPaymentSection.orderTotalInclTax}}" stepKey="seeTaxPrice"/>
+        <see userInput="$10.00" selector="{{CheckoutPaymentSection.orderTotalExclTax}}" stepKey="seeOrderPriceExcl"/>
+    </test>
+</tests>

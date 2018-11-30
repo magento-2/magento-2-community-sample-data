@@ -1,0 +1,45 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * This file is part of the Klarna Order Management module
+ *
+ * (c) Klarna Bank AB (publ)
+ *
+ * For the full copyright and license information, please view the NOTICE
+ * and LICENSE files that were distributed with this source code.
+ */
+-->
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="urn:magento:framework:ObjectManager/etc/config.xsd">
+    <type name="Klarna\Ordermanagement\Controller\Api\Notification">
+        <arguments>
+            <argument name="logger" xsi:type="object">Klarna\Core\Logger\Logger</argument>
+        </arguments>
+    </type>
+    <type name="Klarna\Ordermanagement\Observer\CancelOrder">
+        <arguments>
+            <argument name="log" xsi:type="object">Klarna\Core\Logger\Logger</argument>
+        </arguments>
+    </type>
+    <virtualType name="KlarnaCommandPool" type="Magento\Payment\Gateway\Command\CommandPool">
+        <arguments>
+            <argument name="commands" xsi:type="array">
+                <item name="capture" xsi:type="string">Klarna\Ordermanagement\Gateway\Command\Capture</item>
+                <item name="cancel" xsi:type="string">Klarna\Ordermanagement\Gateway\Command\Cancel</item>
+                <item name="void" xsi:type="string">Klarna\Ordermanagement\Gateway\Command\Cancel</item>
+                <item name="refund" xsi:type="string">Klarna\Ordermanagement\Gateway\Command\Refund</item>
+                <item name="fetch_transaction_information" xsi:type="string">Klarna\Ordermanagement\Gateway\Command\FetchTransactionInfo</item>
+            </argument>
+        </arguments>
+    </virtualType>
+    <virtualType name="KPCommandPool" type="Magento\Payment\Gateway\Command\CommandPool">
+        <arguments>
+            <argument name="commands" xsi:type="array">
+                <item name="capture" xsi:type="string">Klarna\Ordermanagement\Gateway\Command\Capture</item>
+                <item name="cancel" xsi:type="string">Klarna\Ordermanagement\Gateway\Command\Cancel</item>
+                <item name="void" xsi:type="string">Klarna\Ordermanagement\Gateway\Command\Cancel</item>
+                <item name="refund" xsi:type="string">Klarna\Ordermanagement\Gateway\Command\Refund</item>
+            </argument>
+        </arguments>
+    </virtualType>
+</config>

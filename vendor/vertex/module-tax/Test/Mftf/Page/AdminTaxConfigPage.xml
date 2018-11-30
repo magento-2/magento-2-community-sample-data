@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!--
+  @copyright  Vertex. All rights reserved.  https://www.vertexinc.com/
+  @author     Mediotype                     https://www.mediotype.com/
+  -->
+<pages xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:noNamespaceSchemaLocation="urn:magento:mftf:Page/etc/PageObject.xsd">
+    <page name="AdminTaxConfigPage" url="admin/system_config/edit/section/tax/{{var1}}" area="admin" parameterized="true" module="Magento_Tax">
+        <section name="AdminVertexSettingsConfigSection"/>
+    </page>
+</pages>

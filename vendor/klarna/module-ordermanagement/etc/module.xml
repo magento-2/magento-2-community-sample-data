@@ -1,0 +1,18 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * This file is part of the Klarna Order Management module
+ *
+ * (c) Klarna Bank AB (publ)
+ *
+ * For the full copyright and license information, please view the NOTICE
+ * and LICENSE files that were distributed with this source code.
+ */
+-->
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:Module/etc/module.xsd">
+	<module name="Klarna_Ordermanagement" setup_version="5.0.2">
+		<sequence>
+			<module name="Klarna_Core" />
+		</sequence>
+	</module>
+</config>

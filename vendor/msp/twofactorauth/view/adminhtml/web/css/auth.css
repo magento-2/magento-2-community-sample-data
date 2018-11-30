@@ -1,0 +1,124 @@
+/**
+ * MageSpecialist
+ *
+ * NOTICE OF LICENSE
+ *
+ * This source file is subject to the Open Software License (OSL 3.0)
+ * that is bundled with this package in the file LICENSE.txt.
+ * It is also available through the world-wide-web at this URL:
+ * http://opensource.org/licenses/osl-3.0.php
+ * If you did not receive a copy of the license and are unable to
+ * obtain it through the world-wide-web, please send an email
+ * to info@magespecialist.it so we can send you a copy immediately.
+ *
+ * @category   MSP
+ * @package    MSP_TwoFactorAuth
+ * @copyright  Copyright (c) 2017 Skeeller srl (http://www.magespecialist.it)
+ * @license    http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
+ */
+
+.page-wrapper {
+    max-width: 55rem !important;
+}
+
+.field-tfa_trusted {
+    margin-top: -10px !important;
+    margin-left: -5px !important;
+}
+
+.field-tfa_trusted label span {
+    margin-left: 10px !important;
+}
+
+.msp-tfa-change-provider {
+    margin-bottom: 1em;
+}
+
+.msp-tfa-change-provider-trigger {
+    margin-bottom: 1em;
+    display: block;
+}
+
+.msp-tfa-provider {
+    display: block;
+    background: #f0f0f0;
+    border-top: 1px solid #cccccc;
+    height: 46px;
+    padding-top: 7px;
+    padding-left: 7px;
+    cursor: pointer;
+    color: #333;
+}
+
+.msp-tfa-provider:hover {
+    color: #888;
+}
+
+.msp-tfa-provider::after {
+    clear: both;
+}
+
+.msp-tfa-provider:first-child {
+    border-top: none !important;
+}
+
+.msp-tfa-provider img {
+    width: 32px;
+    margin-right: 1em;
+    float: left;
+}
+
+.msp-tfa-provider span {
+    font-size: 14px;
+    font-weight: bold;
+    line-height: 32px;
+    float: left;
+}
+
+.msp-tfa-change-provider-trigger:hover {
+    background: #f0f0f0;
+}
+
+#msp-twofactorauth-change-provider-container {
+    margin-top: 1em;
+}
+
+.msp-tfa-change-provider-trigger {
+    color: #333333;
+    background: #e0e0e0;
+    text-align: center;
+    padding: 8px;
+    height: 40px;
+}
+
+.msp-tfa-change-provider-trigger img {
+    margin-right: 10px;
+    width: 24px;
+    display: block;
+    float: left;
+}
+
+.msp-tfa-change-provider-trigger span {
+    float: left;
+    display: block;
+    line-height: 24px;
+}
+
+.msp-tfa-change-provider-trigger::after {
+    clear: both;
+}
+
+.msp-tfa-waitbox {
+    height: 110px;
+    text-align: center;
+    background: #f5f5f5;
+    padding: 1.5em;
+}
+
+.msp-tfa-waitbox img {
+    width: 64px;
+}
+
+.msp-tfa-waitbox .spinner {
+    margin-left: -20px;
+}
