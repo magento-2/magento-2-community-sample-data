@@ -1,9 +1,0 @@
-{
-  "errors": [
-    {
-      "status": "400",
-      "title": "Invalid or expired `bearerToken`",
-      "code": "BadRequestError"
-    }
-  ]
-}

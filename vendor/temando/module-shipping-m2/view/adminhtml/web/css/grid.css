@@ -1,9 +1,0 @@
-.admin__data-grid-outer-wrap * {
-    -webkit-box-sizing: border-box;
-    -moz-box-sizing: border-box;
-    box-sizing: border-box;
-}
-
-.admin__data-grid-outer-wrap .selectmenu-value input {
-    height: auto;
-}
