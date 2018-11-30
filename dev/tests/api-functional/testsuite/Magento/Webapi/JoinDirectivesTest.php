@@ -6,10 +6,11 @@
 
 namespace Magento\Webapi;
 
-use Magento\Framework\Api\FilterBuilder;
 use Magento\Framework\Api\SearchCriteriaBuilder;
-use Magento\Framework\Api\SortOrder;
 use Magento\Framework\Api\SortOrderBuilder;
+use Magento\Framework\Api\SortOrder;
+use Magento\Framework\Api\SearchCriteria;
+use Magento\Framework\Api\FilterBuilder;
 
 class JoinDirectivesTest extends \Magento\TestFramework\TestCase\WebapiAbstract
 {
@@ -36,15 +37,13 @@ class JoinDirectivesTest extends \Magento\TestFramework\TestCase\WebapiAbstract
     protected function setUp()
     {
         $objectManager = \Magento\TestFramework\Helper\Bootstrap::getObjectManager();
-        $this->searchBuilder = $objectManager->create(\Magento\Framework\Api\SearchCriteriaBuilder::class);
-        $this->sortOrderBuilder = $objectManager->create(\Magento\Framework\Api\SortOrderBuilder::class);
-        $this->filterBuilder = $objectManager->create(\Magento\Framework\Api\FilterBuilder::class);
-        $this->user = $objectManager->create(\Magento\User\Model\User::class);
+        $this->searchBuilder = $objectManager->create('Magento\Framework\Api\SearchCriteriaBuilder');
+        $this->sortOrderBuilder = $objectManager->create('Magento\Framework\Api\SortOrderBuilder');
+        $this->filterBuilder = $objectManager->create('Magento\Framework\Api\FilterBuilder');
+        $this->user = $objectManager->create('Magento\User\Model\User');
     }
 
     /**
-     * Rollback rules
-     * @magentoApiDataFixture Magento/SalesRule/_files/rules_rollback.php
      * @magentoApiDataFixture Magento/Sales/_files/quote.php
      */
     public function testGetList()
@@ -124,33 +123,32 @@ class JoinDirectivesTest extends \Magento\TestFramework\TestCase\WebapiAbstract
     }
 
     /**
-     * Test get list of orders with extension attributes.
+     * Test get list of orders with extension attributes
      *
      * @magentoApiDataFixture Magento/Sales/_files/order.php
      */
-    public function testGetOrdertList()
+    public function testGetOrderList()
     {
         $filter = $this->filterBuilder
-            ->setField('increment_id')
-            ->setValue('100000001')
-            ->setConditionType('eq')
-            ->create();
+                  ->setField('increment_id')
+                  ->setValue('100000001')
+                  ->setConditionType('eq')
+                  ->create();
         $this->searchBuilder->addFilters([$filter]);
         $searchData = $this->searchBuilder->create()->__toArray();
 
         $requestData = ['searchCriteria' => $searchData];
-
         $restResourcePath = '/V1/orders/';
         $soapService = 'salesOrderRepositoryV1';
         $expectedExtensionAttributes = $this->getExpectedExtensionAttributes();
 
         $serviceInfo = [
-            'rest' => [
-                'resourcePath' => $restResourcePath . '?' . http_build_query($requestData),
-                'httpMethod' => \Magento\Framework\Webapi\Rest\Request::HTTP_METHOD_GET,
+            'rest'  => [
+                'resourcePath'  => $restResourcePath . '?' . http_build_query($requestData),
+                'httpMethod'    => \Magento\Framework\Webapi\Rest\Request::HTTP_METHOD_GET,
             ],
-            'soap' => [
-                'service' => $soapService,
+            'soap'  => [
+                'service'   => $soapService,
                 'operation' => $soapService . 'GetList',
             ],
         ];

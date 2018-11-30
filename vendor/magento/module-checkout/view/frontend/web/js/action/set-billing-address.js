@@ -2,10 +2,6 @@
  * Copyright © Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
-
-/**
- * @api
- */
 define(
     [
         'jquery',
@@ -24,8 +20,7 @@ define(
               errorProcessor,
               customer,
               fullScreenLoader,
-              getPaymentInformationAction
-    ) {
+              getPaymentInformationAction) {
         'use strict';
 
         return function (messageContainer) {

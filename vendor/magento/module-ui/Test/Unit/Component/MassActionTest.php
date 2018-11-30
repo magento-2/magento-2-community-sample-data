@@ -12,7 +12,7 @@ use Magento\Framework\View\Element\UiComponent\ContextInterface;
 /**
  * Class MassActionTest
  */
-class MassActionTest extends \PHPUnit\Framework\TestCase
+class MassActionTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var ContextInterface|\PHPUnit_Framework_MockObject_MockObject
@@ -31,8 +31,12 @@ class MassActionTest extends \PHPUnit\Framework\TestCase
     {
         $this->objectManager = new ObjectManager($this);
 
-        $this->contextMock = $this->getMockBuilder(\Magento\Framework\View\Element\UiComponent\ContextInterface::class)
+        $this->contextMock = $this->getMockBuilder('Magento\Framework\View\Element\UiComponent\ContextInterface')
             ->getMockForAbstractClass();
+        $processor = $this->getMockBuilder('Magento\Framework\View\Element\UiComponent\Processor')
+            ->disableOriginalConstructor()
+            ->getMock();
+        $this->contextMock->expects($this->any())->method('getProcessor')->willReturn($processor);
     }
 
     /**
@@ -42,10 +46,9 @@ class MassActionTest extends \PHPUnit\Framework\TestCase
      */
     public function testGetComponentName()
     {
-        $this->contextMock->expects($this->never())->method('getProcessor');
         /** @var MassAction $massAction */
         $massAction = $this->objectManager->getObject(
-            \Magento\Ui\Component\MassAction::class,
+            'Magento\Ui\Component\MassAction',
             [
                 'context' => $this->contextMock,
                 'data' => []
@@ -65,13 +68,9 @@ class MassActionTest extends \PHPUnit\Framework\TestCase
      */
     public function testPrepare($componentName, $componentData)
     {
-        $processor = $this->getMockBuilder(\Magento\Framework\View\Element\UiComponent\Processor::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $this->contextMock->expects($this->atLeastOnce())->method('getProcessor')->willReturn($processor);
         /** @var \Magento\Ui\Component\Action $action */
         $action = $this->objectManager->getObject(
-            \Magento\Ui\Component\MassAction::class,
+            'Magento\Ui\Component\MassAction',
             [
                 'context' => $this->contextMock,
                 'data' => [
@@ -82,7 +81,7 @@ class MassActionTest extends \PHPUnit\Framework\TestCase
         );
         /** @var MassAction $massAction */
         $massAction = $this->objectManager->getObject(
-            \Magento\Ui\Component\MassAction::class,
+            'Magento\Ui\Component\MassAction',
             [
                 'context' => $this->contextMock,
                 'data' => []

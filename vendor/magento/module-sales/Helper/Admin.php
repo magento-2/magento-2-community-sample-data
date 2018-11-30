@@ -3,12 +3,8 @@
  * Copyright © Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
-
 namespace Magento\Sales\Helper;
 
-/**
- * Sales admin helper.
- */
 class Admin extends \Magento\Framework\App\Helper\AbstractHelper
 {
     /**
@@ -88,6 +84,7 @@ class Admin extends \Magento\Framework\App\Helper\AbstractHelper
      */
     public function displayPrices($dataObject, $basePrice, $price, $strong = false, $separator = '<br/>')
     {
+        $order = false;
         if ($dataObject instanceof \Magento\Sales\Model\Order) {
             $order = $dataObject;
         } else {
@@ -152,15 +149,22 @@ class Admin extends \Magento\Framework\App\Helper\AbstractHelper
             $links = [];
             $i = 1;
             $data = str_replace('%', '%%', $data);
-            $regexp = "#(?J)<a"
-                ."(?:(?:\s+(?:(?:href\s*=\s*(['\"])(?<link>.*?)\\1\s*)|(?:\S+\s*=\s*(['\"])(.*?)\\3)\s*)*)|>)"
-                .">?(?:(?:(?<text>.*?)(?:<\/a\s*>?|(?=<\w))|(?<text>.*)))#si";
+            $regexp = "/<a\s[^>]*href\s*?=\s*?([\"\']??)([^\" >]*?)\\1[^>]*>(.*)<\/a>/siU";
             while (preg_match($regexp, $data, $matches)) {
-                $text = '';
-                if (!empty($matches['text'])) {
-                    $text = str_replace('%%', '%', $matches['text']);
+                //Revert the sprintf escaping
+                $url = str_replace('%%', '%', $matches[2]);
+                $text = str_replace('%%', '%', $matches[3]);
+                //Check for an valid url
+                if ($url) {
+                    $urlScheme = strtolower(parse_url($url, PHP_URL_SCHEME));
+                    if ($urlScheme !== 'http' && $urlScheme !== 'https') {
+                        $url = null;
+                    }
                 }
-                $url = $this->filterUrl($matches['link'] ?? '');
+                //Use hash tag as fallback
+                if (!$url) {
+                    $url = '#';
+                }
                 //Recreate a minimalistic secure a tag
                 $links[] = sprintf(
                     '<a href="%s">%s</a>',
@@ -174,30 +178,5 @@ class Admin extends \Magento\Framework\App\Helper\AbstractHelper
             return vsprintf($data, $links);
         }
         return $this->escaper->escapeHtml($data, $allowedTags);
-    }
-
-    /**
-     * Filter the URL for allowed protocols.
-     *
-     * @param string $url
-     * @return string
-     */
-    private function filterUrl(string $url): string
-    {
-        if ($url) {
-            //Revert the sprintf escaping
-            $url = str_replace('%%', '%', $url);
-            $urlScheme = parse_url($url, PHP_URL_SCHEME);
-            $urlScheme = $urlScheme ? strtolower($urlScheme) : '';
-            if ($urlScheme !== 'http' && $urlScheme !== 'https') {
-                $url = null;
-            }
-        }
-
-        if (!$url) {
-            $url = '#';
-        }
-
-        return $url;
     }
 }

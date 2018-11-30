@@ -165,7 +165,7 @@ class InstallSchema implements InstallSchemaInterface
             'Report Id'
         )->addColumn(
             'report_date',
-            \Magento\Framework\DB\Ddl\Table::TYPE_DATE,
+            \Magento\Framework\DB\Ddl\Table::TYPE_TIMESTAMP,
             null,
             [],
             'Report Date'
@@ -421,5 +421,6 @@ class InstallSchema implements InstallSchemaInterface
          * Prepare database after install
          */
         $installer->endSetup();
+
     }
 }

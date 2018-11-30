@@ -18,6 +18,7 @@ class AssertOrderTaxOnBackendExcludingTax extends AbstractAssertOrderTaxOnBacken
      */
     protected $severeness = 'high';
 
+
     /**
      * Get order totals.
      *

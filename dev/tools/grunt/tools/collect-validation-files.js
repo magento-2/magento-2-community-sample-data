@@ -3,6 +3,10 @@
  * See COPYING.txt for license details.
  */
 
+/**
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
 'use strict';
 
 var glob = require('glob'),
@@ -23,27 +27,18 @@ module.exports = {
     },
 
     getFilesForValidate: function () {
+
         var blackListFiles = glob.sync(pc.static.blacklist + '*.txt'),
             whiteListFiles = glob.sync(pc.static.whitelist + '*.txt'),
-            blackList = this.readFiles(blackListFiles).filter(this.isListEntryValid),
-            whiteList = this.readFiles(whiteListFiles).filter(this.isListEntryValid),
-            files = [],
-            entireBlackList = [];
-
-        fst.arrayRead(blackList, function (data) {
-            entireBlackList = _.union(entireBlackList, data);
-        });
+            blackList = this.readFiles(blackListFiles),
+            whiteList = this.readFiles(whiteListFiles),
+            files = [];
 
         fst.arrayRead(whiteList, function (data) {
-            files = _.difference(data, entireBlackList);
+            files = _.difference(data, blackList);
         });
 
         return files;
-    },
-
-    isListEntryValid: function(line) {
-        line = line.trim();
-        return line.length > 0 && line.startsWith('// ') !== true;
     },
 
     getFiles: function (file) {

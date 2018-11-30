@@ -6,6 +6,8 @@
 namespace Magento\Tax\Model\Sales\Order;
 
 /**
+ * @method \Magento\Tax\Model\ResourceModel\Sales\Order\Tax _getResource()
+ * @method \Magento\Tax\Model\ResourceModel\Sales\Order\Tax getResource()
  * @method int getOrderId()
  * @method \Magento\Tax\Model\Sales\Order\Tax setOrderId(int $value)
  * @method int getPriority()
@@ -37,7 +39,7 @@ class Tax extends \Magento\Framework\Model\AbstractExtensibleModel implements
      */
     protected function _construct()
     {
-        $this->_init(\Magento\Tax\Model\ResourceModel\Sales\Order\Tax::class);
+        $this->_init('Magento\Tax\Model\ResourceModel\Sales\Order\Tax');
     }
 
     /**

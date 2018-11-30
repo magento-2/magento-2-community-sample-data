@@ -11,13 +11,15 @@ use Magento\Braintree\Model\Adapter\BraintreeAdapterFactory;
 use Magento\Braintree\Model\Ui\ConfigProvider;
 use Magento\Customer\Model\Session;
 use PHPUnit_Framework_MockObject_MockObject as MockObject;
+use Magento\Braintree\Gateway\Config\PayPal\Config as PayPalConfig;
+use Magento\Framework\Locale\ResolverInterface;
 
 /**
  * Class ConfigProviderTest
  *
  * Test for class \Magento\Braintree\Model\Ui\ConfigProvider
  */
-class ConfigProviderTest extends \PHPUnit\Framework\TestCase
+class ConfigProviderTest extends \PHPUnit_Framework_TestCase
 {
     const SDK_URL = 'https://js.braintreegateway.com/v2/braintree.js';
     const CLIENT_TOKEN = 'token';
@@ -49,6 +51,11 @@ class ConfigProviderTest extends \PHPUnit\Framework\TestCase
             ->disableOriginalConstructor()
             ->getMock();
 
+        /** @var PayPalConfig $payPalConfig */
+        $payPalConfig = $this->getMockBuilder(PayPalConfig::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+
         $this->braintreeAdapter = $this->getMockBuilder(BraintreeAdapter::class)
             ->disableOriginalConstructor()
             ->getMock();
@@ -66,10 +73,16 @@ class ConfigProviderTest extends \PHPUnit\Framework\TestCase
         $this->session->method('getStoreId')
             ->willReturn(null);
 
+        /** @var ResolverInterface $localeResolver */
+        $localeResolver = $this->getMockForAbstractClass(ResolverInterface::class);
+
         $this->configProvider = new ConfigProvider(
             $this->config,
-            $adapterFactory,
-            $this->session
+            $payPalConfig,
+            $this->braintreeAdapter,
+            $localeResolver,
+            $this->session,
+            $adapterFactory
         );
     }
 

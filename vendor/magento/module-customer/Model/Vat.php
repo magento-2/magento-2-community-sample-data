@@ -184,15 +184,10 @@ class Vat
 
             $requestParams = [];
             $requestParams['countryCode'] = $countryCode;
-            $vatNumberSanitized = $this->isCountryInEU($countryCode)
-                ? str_replace([' ', '-', $countryCode], ['', '', ''], $vatNumber)
-                : str_replace([' ', '-'], ['', ''], $vatNumber);
-            $requestParams['vatNumber'] = $vatNumberSanitized;
+            $requestParams['vatNumber'] = str_replace([' ', '-'], ['', ''], $vatNumber);
             $requestParams['requesterCountryCode'] = $requesterCountryCode;
-            $reqVatNumSanitized = $this->isCountryInEU($requesterCountryCode)
-                ? str_replace([' ', '-', $requesterCountryCode], ['', '', ''], $requesterVatNumber)
-                : str_replace([' ', '-'], ['', ''], $requesterVatNumber);
-            $requestParams['requesterVatNumber'] = $reqVatNumSanitized;
+            $requestParams['requesterVatNumber'] = str_replace([' ', '-'], ['', ''], $requesterVatNumber);
+
             // Send request to service
             $result = $soapClient->checkVatApprox($requestParams);
 

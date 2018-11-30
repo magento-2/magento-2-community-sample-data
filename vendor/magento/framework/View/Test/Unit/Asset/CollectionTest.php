@@ -5,7 +5,7 @@
  */
 namespace Magento\Framework\View\Test\Unit\Asset;
 
-class CollectionTest extends \PHPUnit\Framework\TestCase
+class CollectionTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\Framework\View\Asset\Collection

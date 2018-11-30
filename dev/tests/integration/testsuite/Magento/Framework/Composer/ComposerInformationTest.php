@@ -12,7 +12,7 @@ use Magento\TestFramework\Helper\Bootstrap;
 /**
  * Tests Magento\Framework\ComposerInformation
  */
-class ComposerInformationTest extends \PHPUnit\Framework\TestCase
+class ComposerInformationTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\Framework\ObjectManagerInterface
@@ -53,12 +53,12 @@ class ComposerInformationTest extends \PHPUnit\Framework\TestCase
         ];
 
         $this->directoryList = $this->objectManager->create(
-            \Magento\Framework\App\Filesystem\DirectoryList::class,
+            'Magento\Framework\App\Filesystem\DirectoryList',
             ['root' => __DIR__ . '/_files/' . $composerDir, 'config' => $directories]
         );
 
         $this->filesystem = $this->objectManager->create(
-            \Magento\Framework\Filesystem::class,
+            'Magento\Framework\Filesystem',
             ['directoryList' => $this->directoryList]
         );
 
@@ -77,7 +77,7 @@ class ComposerInformationTest extends \PHPUnit\Framework\TestCase
 
         /** @var \Magento\Framework\Composer\ComposerInformation $composerInfo */
         $composerInfo = $this->objectManager->create(
-            \Magento\Framework\Composer\ComposerInformation::class,
+            'Magento\Framework\Composer\ComposerInformation',
             ['composerFactory' => $this->composerFactory]
         );
 
@@ -96,7 +96,7 @@ class ComposerInformationTest extends \PHPUnit\Framework\TestCase
 
         /** @var \Magento\Framework\Composer\ComposerInformation $composerInfo */
         $composerInfo = $this->objectManager->create(
-            \Magento\Framework\Composer\ComposerInformation::class,
+            'Magento\Framework\Composer\ComposerInformation',
             ['composerFactory' => $this->composerFactory]
         );
 
@@ -115,7 +115,7 @@ class ComposerInformationTest extends \PHPUnit\Framework\TestCase
     {
         $this->setupDirectory($composerDir);
         $composerInfo = $this->objectManager->create(
-            \Magento\Framework\Composer\ComposerInformation::class,
+            'Magento\Framework\Composer\ComposerInformation',
             ['composerFactory' => $this->composerFactory]
         );
         $actualSuggestedExtensions = $composerInfo->getSuggestedPackages();
@@ -133,7 +133,7 @@ class ComposerInformationTest extends \PHPUnit\Framework\TestCase
 
         /** @var \Magento\Framework\Composer\ComposerInformation $composerInfo */
         $composerInfo = $this->objectManager->create(
-            \Magento\Framework\Composer\ComposerInformation::class,
+            'Magento\Framework\Composer\ComposerInformation',
             ['composerFactory' => $this->composerFactory]
         );
 
@@ -163,7 +163,7 @@ class ComposerInformationTest extends \PHPUnit\Framework\TestCase
 
         /** @var \Magento\Framework\Composer\ComposerInformation $composerInfo */
         $composerInfo = $this->objectManager->create(
-            \Magento\Framework\Composer\ComposerInformation::class,
+            'Magento\Framework\Composer\ComposerInformation',
             ['composerFactory' => $this->composerFactory]
         );
 
@@ -184,7 +184,7 @@ class ComposerInformationTest extends \PHPUnit\Framework\TestCase
 
         /** @var \Magento\Framework\Composer\ComposerInformation $composerInfo */
         $composerInfo = $this->objectManager->create(
-            \Magento\Framework\Composer\ComposerInformation::class,
+            'Magento\Framework\Composer\ComposerInformation',
             ['composerFactory' => $this->composerFactory]
         );
         if ($composerDir === 'testFromCreateProject') {
@@ -205,7 +205,7 @@ class ComposerInformationTest extends \PHPUnit\Framework\TestCase
 
         /** @var \Magento\Framework\Composer\ComposerInformation $composerInfo */
         $composerInfo = $this->objectManager->create(
-            \Magento\Framework\Composer\ComposerInformation::class,
+            'Magento\Framework\Composer\ComposerInformation',
             ['composerFactory' => $this->composerFactory]
         );
         if ($composerDir === 'testFromClone') {

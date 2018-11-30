@@ -14,7 +14,6 @@ use Magento\Sales\Api\Data\ShipmentInterface;
  * Calculate order shipped data based on created shipment
  *
  * @api
- * @since 100.1.2
  */
 interface OrderRegistrarInterface
 {
@@ -22,7 +21,6 @@ interface OrderRegistrarInterface
      * @param OrderInterface $order
      * @param ShipmentInterface $shipment
      * @return OrderInterface
-     * @since 100.1.2
      */
     public function register(OrderInterface $order, ShipmentInterface $shipment);
 }

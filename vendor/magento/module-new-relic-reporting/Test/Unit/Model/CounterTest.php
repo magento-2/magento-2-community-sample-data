@@ -15,9 +15,8 @@ use Magento\Store\Api\StoreManagementInterface;
 
 /**
  * Class CounterTest
- * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  */
-class CounterTest extends \PHPUnit\Framework\TestCase
+class CounterTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\NewRelicReporting\Model\Counter
@@ -61,23 +60,23 @@ class CounterTest extends \PHPUnit\Framework\TestCase
      */
     protected function setUp()
     {
-        $this->productManagement = $this->getMockBuilder(\Magento\Catalog\Api\ProductManagementInterface::class)
+        $this->productManagement = $this->getMockBuilder('Magento\Catalog\Api\ProductManagementInterface')
             ->disableOriginalConstructor()
             ->getMock();
         $this->configurableManagement = $this
-            ->getMockBuilder(\Magento\ConfigurableProduct\Api\ConfigurableProductManagementInterface::class)
+            ->getMockBuilder('Magento\ConfigurableProduct\Api\ConfigurableProductManagementInterface')
             ->disableOriginalConstructor()
             ->getMock();
-        $this->categoryManagement = $this->getMockBuilder(\Magento\Catalog\Api\CategoryManagementInterface::class)
+        $this->categoryManagement = $this->getMockBuilder('Magento\Catalog\Api\CategoryManagementInterface')
             ->disableOriginalConstructor()
             ->getMock();
-        $this->customerManagement = $this->getMockBuilder(\Magento\Customer\Api\CustomerManagementInterface::class)
+        $this->customerManagement = $this->getMockBuilder('Magento\Customer\Api\CustomerManagementInterface')
             ->disableOriginalConstructor()
             ->getMock();
-        $this->websiteManagement = $this->getMockBuilder(\Magento\Store\Api\WebsiteManagementInterface::class)
+        $this->websiteManagement = $this->getMockBuilder('Magento\Store\Api\WebsiteManagementInterface')
             ->disableOriginalConstructor()
             ->getMock();
-        $this->storeManagement = $this->getMockBuilder(\Magento\Store\Api\StoreManagementInterface::class)
+        $this->storeManagement = $this->getMockBuilder('Magento\Store\Api\StoreManagementInterface')
             ->disableOriginalConstructor()
             ->getMock();
 

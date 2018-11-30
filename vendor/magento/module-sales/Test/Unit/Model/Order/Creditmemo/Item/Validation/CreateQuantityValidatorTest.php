@@ -14,7 +14,7 @@ use Magento\Sales\Model\Order\Item;
 /**
  * Class CreateQuantityValidatorTest
  */
-class CreateQuantityValidatorTest extends \PHPUnit\Framework\TestCase
+class CreateQuantityValidatorTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var OrderItemRepositoryInterface|\PHPUnit_Framework_MockObject_MockObject

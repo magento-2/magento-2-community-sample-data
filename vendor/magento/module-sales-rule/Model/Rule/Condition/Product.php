@@ -3,7 +3,6 @@
  * Copyright © Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
-
 namespace Magento\SalesRule\Model\Rule\Condition;
 
 /**
@@ -52,58 +51,10 @@ class Product extends \Magento\Rule\Model\Condition\Product\AbstractProduct
 
         $attrCode = $this->getAttribute();
 
-        if ($attrCode === 'category_ids') {
+        if ('category_ids' == $attrCode) {
             return $this->validateAttribute($this->_getAvailableInCategories($product->getId()));
         }
 
-        if ($attrCode === 'quote_item_price') {
-            $numericOperations = $this->getDefaultOperatorInputByType()['numeric'];
-            if (in_array($this->getOperator(), $numericOperations)) {
-                $this->setData('value', $this->getFormattedPrice($this->getValue()));
-            }
-        }
-
         return parent::validate($product);
-    }
-
-    /**
-     * Retrieve value element chooser URL
-     *
-     * @return string
-     */
-    public function getValueElementChooserUrl()
-    {
-        $url = false;
-        switch ($this->getAttribute()) {
-            case 'sku':
-            case 'category_ids':
-                $url = 'sales_rule/promo_widget/chooser/attribute/' . $this->getAttribute();
-                if ($this->getJsFormObject()) {
-                    $url .= '/form/' . $this->getJsFormObject();
-                }
-                break;
-            default:
-                break;
-        }
-        return $url !== false ? $this->_backendData->getUrl($url) : '';
-    }
-
-    /**
-     * @param string $value
-     * @return float|null
-     */
-    private function getFormattedPrice($value)
-    {
-        $value = preg_replace('/[^0-9^\^.,-]/m', '', $value);
-
-        /**
-         * If the comma is the third symbol in the number, we consider it to be a decimal separator
-         */
-        $separatorComa = strpos($value, ',');
-        $separatorDot = strpos($value, '.');
-        if ($separatorComa !== false && $separatorDot === false && preg_match('/,\d{3}$/m', $value) === 1) {
-            $value .= '.00';
-        }
-        return $this->_localeFormat->getNumber($value);
     }
 }

@@ -10,7 +10,7 @@ namespace Magento\ImportExport\Model\ResourceModel\Import;
  *
  * @magentoDataFixture Magento/ImportExport/_files/import_data.php
  */
-class DataTest extends \PHPUnit\Framework\TestCase
+class DataTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\ImportExport\Model\ResourceModel\Import\Data
@@ -22,7 +22,7 @@ class DataTest extends \PHPUnit\Framework\TestCase
         parent::setUp();
 
         $this->_model = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->create(
-            \Magento\ImportExport\Model\ResourceModel\Import\Data::class
+            'Magento\ImportExport\Model\ResourceModel\Import\Data'
         );
     }
 
@@ -35,7 +35,7 @@ class DataTest extends \PHPUnit\Framework\TestCase
         $objectManager = \Magento\TestFramework\Helper\Bootstrap::getObjectManager();
 
         $expectedBunches = $objectManager->get(
-            \Magento\Framework\Registry::class
+            'Magento\Framework\Registry'
         )->registry(
             '_fixture/Magento_ImportExport_Import_Data'
         );
@@ -62,7 +62,7 @@ class DataTest extends \PHPUnit\Framework\TestCase
         $objectManager = \Magento\TestFramework\Helper\Bootstrap::getObjectManager();
 
         $expectedBunches = $objectManager->get(
-            \Magento\Framework\Registry::class
+            'Magento\Framework\Registry'
         )->registry(
             '_fixture/Magento_ImportExport_Import_Data'
         );
@@ -79,7 +79,7 @@ class DataTest extends \PHPUnit\Framework\TestCase
         $objectManager = \Magento\TestFramework\Helper\Bootstrap::getObjectManager();
 
         $expectedBunches = $objectManager->get(
-            \Magento\Framework\Registry::class
+            'Magento\Framework\Registry'
         )->registry(
             '_fixture/Magento_ImportExport_Import_Data'
         );

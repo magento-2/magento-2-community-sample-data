@@ -118,7 +118,12 @@ abstract class Cart extends \Magento\Framework\App\Action\Action implements View
             return $returnUrl;
         }
 
-        if ($this->shouldRedirectToCart() || $this->getRequest()->getParam('in_cart')) {
+        $shouldRedirectToCart = $this->_scopeConfig->getValue(
+            'checkout/cart/redirect_to_cart',
+            \Magento\Store\Model\ScopeInterface::SCOPE_STORE
+        );
+
+        if ($shouldRedirectToCart || $this->getRequest()->getParam('in_cart')) {
             if ($this->getRequest()->getActionName() == 'add' && !$this->getRequest()->getParam('in_cart')) {
                 $this->_checkoutSession->setContinueShoppingUrl($this->_redirect->getRefererUrl());
             }
@@ -126,16 +131,5 @@ abstract class Cart extends \Magento\Framework\App\Action\Action implements View
         }
 
         return $defaultUrl;
-    }
-
-    /**
-     * @return bool
-     */
-    private function shouldRedirectToCart()
-    {
-        return $this->_scopeConfig->isSetFlag(
-            'checkout/cart/redirect_to_cart',
-            \Magento\Store\Model\ScopeInterface::SCOPE_STORE
-        );
     }
 }

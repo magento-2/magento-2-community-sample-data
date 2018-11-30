@@ -9,7 +9,7 @@ use Magento\TestFramework\Integrity\Library\PhpParser\ParserFactory;
 
 /**
  */
-class ParserFactoryTest extends \PHPUnit\Framework\TestCase
+class ParserFactoryTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\TestFramework\Integrity\Library\PhpParser\Tokens
@@ -22,7 +22,7 @@ class ParserFactoryTest extends \PHPUnit\Framework\TestCase
     public function setUp()
     {
         $this->tokens = $this->getMockBuilder(
-            \Magento\TestFramework\Integrity\Library\PhpParser\Tokens::class
+            'Magento\TestFramework\Integrity\Library\PhpParser\Tokens'
         )->disableOriginalConstructor()->getMock();
     }
 
@@ -35,16 +35,13 @@ class ParserFactoryTest extends \PHPUnit\Framework\TestCase
     {
         $parseFactory = new ParserFactory();
         $parseFactory->createParsers($this->tokens);
+        $this->assertInstanceOf('Magento\TestFramework\Integrity\Library\PhpParser\Uses', $parseFactory->getUses());
         $this->assertInstanceOf(
-            \Magento\TestFramework\Integrity\Library\PhpParser\Uses::class,
-            $parseFactory->getUses()
-        );
-        $this->assertInstanceOf(
-            \Magento\TestFramework\Integrity\Library\PhpParser\StaticCalls::class,
+            'Magento\TestFramework\Integrity\Library\PhpParser\StaticCalls',
             $parseFactory->getStaticCalls()
         );
         $this->assertInstanceOf(
-            \Magento\TestFramework\Integrity\Library\PhpParser\Throws::class,
+            'Magento\TestFramework\Integrity\Library\PhpParser\Throws',
             $parseFactory->getThrows()
         );
     }

@@ -72,7 +72,9 @@ class StockRegistry implements StockRegistryInterface
      */
     public function getStock($scopeId = null)
     {
+        //if (!$scopeId) {
         $scopeId = $this->stockConfiguration->getDefaultScopeId();
+        //}
         return $this->stockRegistryProvider->getStock($scopeId);
     }
 
@@ -83,7 +85,9 @@ class StockRegistry implements StockRegistryInterface
      */
     public function getStockItem($productId, $scopeId = null)
     {
+        //if (!$scopeId) {
         $scopeId = $this->stockConfiguration->getDefaultScopeId();
+        //}
         return $this->stockRegistryProvider->getStockItem($productId, $scopeId);
     }
 
@@ -95,7 +99,9 @@ class StockRegistry implements StockRegistryInterface
      */
     public function getStockItemBySku($productSku, $scopeId = null)
     {
+        //if (!$scopeId) {
         $scopeId = $this->stockConfiguration->getDefaultScopeId();
+        //}
         $productId = $this->resolveProductId($productSku);
         return $this->stockRegistryProvider->getStockItem($productId, $scopeId);
     }
@@ -107,7 +113,9 @@ class StockRegistry implements StockRegistryInterface
      */
     public function getStockStatus($productId, $scopeId = null)
     {
+        //if (!$scopeId) {
         $scopeId = $this->stockConfiguration->getDefaultScopeId();
+        //}
         return $this->stockRegistryProvider->getStockStatus($productId, $scopeId);
     }
 
@@ -119,7 +127,9 @@ class StockRegistry implements StockRegistryInterface
      */
     public function getStockStatusBySku($productSku, $scopeId = null)
     {
+        //if (!$scopeId) {
         $scopeId = $this->stockConfiguration->getDefaultScopeId();
+        //}
         $productId = $this->resolveProductId($productSku);
         return $this->getStockStatus($productId, $scopeId);
     }
@@ -132,7 +142,9 @@ class StockRegistry implements StockRegistryInterface
      */
     public function getProductStockStatus($productId, $scopeId = null)
     {
+        //if (!$scopeId) {
         $scopeId = $this->stockConfiguration->getDefaultScopeId();
+        //}
         $stockStatus = $this->getStockStatus($productId, $scopeId);
         return $stockStatus->getStockStatus();
     }
@@ -145,7 +157,9 @@ class StockRegistry implements StockRegistryInterface
      */
     public function getProductStockStatusBySku($productSku, $scopeId = null)
     {
+        //if (!$scopeId) {
         $scopeId = $this->stockConfiguration->getDefaultScopeId();
+        //}
         $productId = $this->resolveProductId($productSku);
         return $this->getProductStockStatus($productId, $scopeId);
     }

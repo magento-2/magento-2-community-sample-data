@@ -15,7 +15,6 @@ class Message extends \Zend_Mail implements MessageInterface
     public function __construct($charset = 'utf-8')
     {
         parent::__construct($charset);
-        $this->setHeaderEncoding(\Zend_Mime::ENCODING_BASE64);
     }
 
     /**

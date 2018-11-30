@@ -1,8 +1,10 @@
 <?php
 /**
- * @see       https://github.com/zendframework/zend-server for the canonical source repository
- * @copyright Copyright (c) 2005-2018 Zend Technologies USA Inc. (https://www.zend.com)
- * @license   https://github.com/zendframework/zend-server/blob/master/LICENSE.md New BSD License
+ * Zend Framework (http://framework.zend.com/)
+ *
+ * @link      http://github.com/zendframework/zf2 for the canonical source repository
+ * @copyright Copyright (c) 2005-2015 Zend Technologies USA Inc. (http://www.zend.com)
+ * @license   http://framework.zend.com/license/new-bsd New BSD License
  */
 
 namespace Zend\Server;
@@ -17,7 +19,7 @@ class Cache
     /**
      * @var array Methods to skip when caching server
      */
-    protected static $skipMethods = [];
+    protected static $skipMethods = array();
 
     /**
      * Cache a file containing the dispatch list.
@@ -34,11 +36,22 @@ class Cache
      */
     public static function save($filename, Server $server)
     {
-        if (! is_string($filename) || (! file_exists($filename) && ! is_writable(dirname($filename)))) {
+        if (!is_string($filename) || (!file_exists($filename) && !is_writable(dirname($filename)))) {
             return false;
         }
 
-        $methods = self::createDefinition($server->getFunctions());
+        $methods = $server->getFunctions();
+
+        if ($methods instanceof Definition) {
+            $definition = new Definition();
+            foreach ($methods as $method) {
+                if (in_array($method->getName(), static::$skipMethods)) {
+                    continue;
+                }
+                $definition->addMethod($method);
+            }
+            $methods = $definition;
+        }
 
         ErrorHandler::start();
         $test = file_put_contents($filename, serialize($methods));
@@ -83,7 +96,7 @@ class Cache
      */
     public static function get($filename, Server $server)
     {
-        if (! is_string($filename) || ! file_exists($filename) || ! is_readable($filename)) {
+        if (!is_string($filename) || !file_exists($filename) || !is_readable($filename)) {
             return false;
         }
 
@@ -120,50 +133,5 @@ class Cache
         }
 
         return false;
-    }
-
-    /**
-     * @var array|Definition $methods
-     * @return array|Definition
-     */
-    private static function createDefinition($methods)
-    {
-        if ($methods instanceof Definition) {
-            return self::createDefinitionFromMethodsDefinition($methods);
-        }
-
-        if (is_array($methods)) {
-            return self::createDefinitionFromMethodsArray($methods);
-        }
-
-        return $methods;
-    }
-
-    /**
-     * @return Definition
-     */
-    private static function createDefinitionFromMethodsDefinition(Definition $methods)
-    {
-        $definition = new Definition();
-        foreach ($methods as $method) {
-            if (in_array($method->getName(), static::$skipMethods, true)) {
-                continue;
-            }
-            $definition->addMethod($method);
-        }
-        return $definition;
-    }
-
-    /**
-     * @return array
-     */
-    private static function createDefinitionFromMethodsArray(array $methods)
-    {
-        foreach (array_keys($methods) as $methodName) {
-            if (in_array($methodName, static::$skipMethods, true)) {
-                unset($methods[$methodName]);
-            }
-        }
-        return $methods;
     }
 }

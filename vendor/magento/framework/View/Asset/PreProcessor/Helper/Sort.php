@@ -5,6 +5,8 @@
  */
 namespace Magento\Framework\View\Asset\PreProcessor\Helper;
 
+use Magento\Framework\Phrase;
+
 /**
  * Class Sort
  */

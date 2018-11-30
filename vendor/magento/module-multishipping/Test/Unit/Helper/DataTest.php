@@ -8,7 +8,7 @@ namespace Magento\Multishipping\Test\Unit\Helper;
 /**
  * Multishipping data helper Test
  */
-class DataTest extends \PHPUnit\Framework\TestCase
+class DataTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * Multishipping data helper
@@ -40,11 +40,11 @@ class DataTest extends \PHPUnit\Framework\TestCase
 
     protected function setUp()
     {
-        $this->quoteMock = $this->createMock(\Magento\Quote\Model\Quote::class);
+        $this->quoteMock = $this->getMock('\Magento\Quote\Model\Quote', [], [], '', false);
 
         $objectManager = new \Magento\Framework\TestFramework\Unit\Helper\ObjectManager($this);
-        $arguments = $objectManager->getConstructArguments(\Magento\Multishipping\Helper\Data::class);
-        $this->helper = $objectManager->getObject(\Magento\Multishipping\Helper\Data::class, $arguments);
+        $arguments = $objectManager->getConstructArguments('Magento\Multishipping\Helper\Data');
+        $this->helper = $objectManager->getObject('Magento\Multishipping\Helper\Data', $arguments);
         $this->checkoutSessionMock = $arguments['checkoutSession'];
         /** @var \Magento\Framework\App\Helper\Context $context */
         $context = $arguments['context'];

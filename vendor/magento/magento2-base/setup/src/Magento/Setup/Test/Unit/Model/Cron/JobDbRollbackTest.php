@@ -7,7 +7,7 @@ namespace Magento\Setup\Test\Unit\Model\Cron;
 
 use Magento\Setup\Model\Cron\JobDbRollback;
 
-class JobDbRollbackTest extends \PHPUnit\Framework\TestCase
+class JobDbRollbackTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var JobDbRollback
@@ -36,15 +36,27 @@ class JobDbRollbackTest extends \PHPUnit\Framework\TestCase
 
     public function setup()
     {
-        $this->backupRollbackFactory = $this->createMock(\Magento\Framework\Setup\BackupRollbackFactory::class);
-        $this->backupRollback = $this->createMock(\Magento\Framework\Setup\BackupRollback::class);
-        $this->status = $this->createMock(\Magento\Setup\Model\Cron\Status::class);
+        $this->backupRollbackFactory = $this->getMock(
+            \Magento\Framework\Setup\BackupRollbackFactory::class,
+            [],
+            [],
+            '',
+            false
+        );
+        $this->backupRollback = $this->getMock(\Magento\Framework\Setup\BackupRollback::class, [], [], '', false);
+        $this->status = $this->getMock(\Magento\Setup\Model\Cron\Status::class, [], [], '', false);
         $output =
             $this->getMockForAbstractClass(\Symfony\Component\Console\Output\OutputInterface::class, [], '', false);
         $this->objectManagerProvider =
-            $this->createMock(\Magento\Setup\Model\ObjectManagerProvider::class);
+            $this->getMock(\Magento\Setup\Model\ObjectManagerProvider::class, [], [], '', false);
 
-        $appState = $this->createMock(\Magento\Framework\App\State::class);
+        $appState = $this->getMock(
+            \Magento\Framework\App\State::class,
+            [],
+            [],
+            '',
+            false
+        );
         $configLoader = $this->getMockForAbstractClass(
             \Magento\Framework\ObjectManager\ConfigLoaderInterface::class,
             [],

@@ -9,7 +9,7 @@
  */
 namespace Magento\Eav\Test\Unit\Model\Entity\Attribute;
 
-class SetTest extends \PHPUnit\Framework\TestCase
+class SetTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\Eav\Model\Entity\Attribute\Set
@@ -18,16 +18,23 @@ class SetTest extends \PHPUnit\Framework\TestCase
 
     protected function setUp()
     {
-        $resource = $this->createMock(\Magento\Eav\Model\ResourceModel\Entity\Attribute\Set::class);
-        $attrGroupFactory = $this->createMock(\Magento\Eav\Model\Entity\Attribute\GroupFactory::class);
-        $attrFactory = $this->createMock(\Magento\Eav\Model\Entity\AttributeFactory::class);
+        $resource = $this->getMock('Magento\Eav\Model\ResourceModel\Entity\Attribute\Set', [], [], '', false);
+        $attrGroupFactory = $this->getMock(
+            'Magento\Eav\Model\Entity\Attribute\GroupFactory',
+            [],
+            [],
+            '',
+            false,
+            false
+        );
+        $attrFactory = $this->getMock('Magento\Eav\Model\Entity\AttributeFactory', [], [], '', false, false);
         $arguments = [
             'attrGroupFactory' => $attrGroupFactory,
             'attributeFactory' => $attrFactory,
             'resource' => $resource,
         ];
         $objectManagerHelper = new \Magento\Framework\TestFramework\Unit\Helper\ObjectManager($this);
-        $this->_model = $objectManagerHelper->getObject(\Magento\Eav\Model\Entity\Attribute\Set::class, $arguments);
+        $this->_model = $objectManagerHelper->getObject('Magento\Eav\Model\Entity\Attribute\Set', $arguments);
     }
 
     protected function tearDown()
@@ -44,8 +51,7 @@ class SetTest extends \PHPUnit\Framework\TestCase
     {
         $this->_model->getResource()->expects($this->any())->method('validate')->will($this->returnValue(false));
 
-        $this->expectException(\Magento\Framework\Exception\LocalizedException::class);
-        $this->expectExceptionMessage($exceptionMessage);
+        $this->setExpectedException('Magento\Framework\Exception\LocalizedException', $exceptionMessage);
         $this->_model->setAttributeSetName($attributeSetName);
         $this->_model->validate();
     }

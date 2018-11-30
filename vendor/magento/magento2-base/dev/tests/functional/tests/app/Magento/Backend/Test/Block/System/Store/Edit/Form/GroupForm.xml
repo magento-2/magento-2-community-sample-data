@@ -12,7 +12,6 @@
             <input>select</input>
         </website_id>
         <name />
-        <code />
         <root_category_id>
             <input>select</input>
         </root_category_id>

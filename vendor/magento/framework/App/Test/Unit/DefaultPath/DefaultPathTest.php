@@ -5,7 +5,7 @@
  */
 namespace Magento\Framework\App\Test\Unit\DefaultPath;
 
-class DefaultPathTest extends \PHPUnit\Framework\TestCase
+class DefaultPathTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @param array $parts

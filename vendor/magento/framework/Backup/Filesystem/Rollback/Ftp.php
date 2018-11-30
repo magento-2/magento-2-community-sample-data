@@ -5,6 +5,8 @@
  */
 namespace Magento\Framework\Backup\Filesystem\Rollback;
 
+use Magento\Framework\Filesystem\DriverInterface;
+
 /**
  * Rollback worker for rolling back via ftp
  *

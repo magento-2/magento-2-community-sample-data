@@ -6,7 +6,7 @@
 
 namespace Magento\Framework\Locale\Test\Unit;
 
-class TranslatedListsTest extends \PHPUnit\Framework\TestCase
+class TranslatedListsTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\Framework\Locale\TranslatedLists
@@ -25,10 +25,10 @@ class TranslatedListsTest extends \PHPUnit\Framework\TestCase
 
     protected function setUp()
     {
-        $this->mockConfig = $this->getMockBuilder(\Magento\Framework\Locale\ConfigInterface::class)
+        $this->mockConfig = $this->getMockBuilder('\Magento\Framework\Locale\ConfigInterface')
             ->disableOriginalConstructor()
             ->getMock();
-        $this->mockLocaleResolver = $this->getMockBuilder(\Magento\Framework\Locale\ResolverInterface::class)
+        $this->mockLocaleResolver = $this->getMockBuilder('\Magento\Framework\Locale\ResolverInterface')
             ->disableOriginalConstructor()
             ->getMock();
         $this->mockLocaleResolver->expects($this->once())

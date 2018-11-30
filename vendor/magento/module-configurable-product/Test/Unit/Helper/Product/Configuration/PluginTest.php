@@ -5,7 +5,7 @@
  */
 namespace Magento\ConfigurableProduct\Test\Unit\Helper\Product\Configuration;
 
-class PluginTest extends \PHPUnit\Framework\TestCase
+class PluginTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\ConfigurableProduct\Helper\Product\Configuration\Plugin
@@ -39,17 +39,26 @@ class PluginTest extends \PHPUnit\Framework\TestCase
 
     protected function setUp()
     {
-        $this->itemMock = $this->createMock(\Magento\Catalog\Model\Product\Configuration\Item\ItemInterface::class);
-        $this->productMock = $this->createMock(\Magento\Catalog\Model\Product::class);
-        $this->typeInstanceMock = $this->createPartialMock(
-            \Magento\ConfigurableProduct\Model\Product\Type\Configurable::class,
-            ['getSelectedAttributesInfo', '__wakeup']
+        $this->itemMock = $this->getMock('Magento\Catalog\Model\Product\Configuration\Item\ItemInterface');
+        $this->productMock = $this->getMock('Magento\Catalog\Model\Product', [], [], '', false);
+        $this->typeInstanceMock = $this->getMock(
+            'Magento\ConfigurableProduct\Model\Product\Type\Configurable',
+            ['getSelectedAttributesInfo', '__wakeup'],
+            [],
+            '',
+            false
         );
         $this->itemMock->expects($this->once())->method('getProduct')->will($this->returnValue($this->productMock));
         $this->closureMock = function () {
             return ['options'];
         };
-        $this->subjectMock = $this->createMock(\Magento\Catalog\Helper\Product\Configuration::class);
+        $this->subjectMock = $this->getMock(
+            'Magento\Catalog\Helper\Product\Configuration',
+            [],
+            [],
+            '',
+            false
+        );
         $this->plugin = new \Magento\ConfigurableProduct\Helper\Product\Configuration\Plugin();
     }
 

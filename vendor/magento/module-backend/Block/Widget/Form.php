@@ -8,10 +8,7 @@ namespace Magento\Backend\Block\Widget;
 /**
  * Backend form widget
  *
- * @api
- * @deprecated 100.2.0 in favour of UI component implementation
  * @SuppressWarnings(PHPMD.NumberOfChildren)
- * @since 100.0.2
  */
 class Form extends \Magento\Backend\Block\Widget
 {
@@ -60,19 +57,19 @@ class Form extends \Magento\Backend\Block\Widget
     {
         \Magento\Framework\Data\Form::setElementRenderer(
             $this->getLayout()->createBlock(
-                \Magento\Backend\Block\Widget\Form\Renderer\Element::class,
+                'Magento\Backend\Block\Widget\Form\Renderer\Element',
                 $this->getNameInLayout() . '_element'
             )
         );
         \Magento\Framework\Data\Form::setFieldsetRenderer(
             $this->getLayout()->createBlock(
-                \Magento\Backend\Block\Widget\Form\Renderer\Fieldset::class,
+                'Magento\Backend\Block\Widget\Form\Renderer\Fieldset',
                 $this->getNameInLayout() . '_fieldset'
             )
         );
         \Magento\Framework\Data\Form::setFieldsetElementRenderer(
             $this->getLayout()->createBlock(
-                \Magento\Backend\Block\Widget\Form\Renderer\Fieldset\Element::class,
+                'Magento\Backend\Block\Widget\Form\Renderer\Fieldset\Element',
                 $this->getNameInLayout() . '_fieldset_element'
             )
         );

@@ -9,7 +9,7 @@
  */
 namespace Magento\Test\Legacy;
 
-class ObsoleteSystemConfigurationTest extends \PHPUnit\Framework\TestCase
+class ObsoleteSystemConfigurationTest extends \PHPUnit_Framework_TestCase
 {
     public function testSystemConfigurationDeclaration()
     {

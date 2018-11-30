@@ -5,18 +5,15 @@
  */
 namespace Magento\Sniffs\NamingConventions;
 
-use PHP_CodeSniffer\Sniffs\Sniff;
-use PHP_CodeSniffer\Files\File;
+use PHP_CodeSniffer_File;
+use PHP_CodeSniffer_Sniff;
 
-class ReservedWordsSniff implements Sniff
+class ReservedWordsSniff implements PHP_CodeSniffer_Sniff
 {
     /**
-     * The following words cannot be used to name a class, interface or trait,
-     * and they are also prohibited from being used in namespaces.
+     * source: http://php.net/manual/en/reserved.other-reserved-words.php
      *
-     * @link http://php.net/manual/en/reserved.other-reserved-words.php
-     *
-     * @var string[]
+     * @var array PHP 7 reserved words for name spaces
      */
     protected $reservedWords = [
         'int' => '7',
@@ -45,11 +42,11 @@ class ReservedWordsSniff implements Sniff
     /**
      * Check all namespace parts
      *
-     * @param File $sourceFile
+     * @param PHP_CodeSniffer_File $sourceFile
      * @param int $stackPtr
      * @return void
      */
-    protected function validateNamespace(File $sourceFile, $stackPtr)
+    protected function validateNamespace(PHP_CodeSniffer_File $sourceFile, $stackPtr)
     {
         $stackPtr += 2;
         $tokens = $sourceFile->getTokens();
@@ -64,7 +61,7 @@ class ReservedWordsSniff implements Sniff
                     'Cannot use "%s" in namespace as it is reserved since PHP %s',
                     $stackPtr,
                     'Namespace',
-                    [$namespacePart, $this->reservedWords[strtolower($namespacePart)]]
+                    [$namespacePart, $this->reservedWords[$namespacePart]]
                 );
             }
             $stackPtr++;
@@ -74,11 +71,11 @@ class ReservedWordsSniff implements Sniff
     /**
      * Check class name not having reserved words
      *
-     * @param File $sourceFile
+     * @param PHP_CodeSniffer_File $sourceFile
      * @param int $stackPtr
      * @return void
      */
-    protected function validateClass(File $sourceFile, $stackPtr)
+    protected function validateClass(PHP_CodeSniffer_File $sourceFile, $stackPtr)
     {
         $tokens = $sourceFile->getTokens();
         $stackPtr += 2; //skip "class" and whitespace
@@ -96,7 +93,7 @@ class ReservedWordsSniff implements Sniff
     /**
      * {@inheritdoc}
      */
-    public function process(File $sourceFile, $stackPtr)
+    public function process(PHP_CodeSniffer_File $sourceFile, $stackPtr)
     {
         $tokens = $sourceFile->getTokens();
         switch ($tokens[$stackPtr]['code']) {

@@ -8,7 +8,7 @@ namespace Magento\Reports\Test\Unit\Model\ResourceModel;
 
 use Magento\Reports\Model\ResourceModel\Helper;
 
-class HelperTest extends \PHPUnit\Framework\TestCase
+class HelperTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\Reports\Model\ResourceModel\Helper
@@ -30,11 +30,11 @@ class HelperTest extends \PHPUnit\Framework\TestCase
      */
     protected function setUp()
     {
-        $this->resourceMock = $this->getMockBuilder(\Magento\Framework\App\ResourceConnection::class)
+        $this->resourceMock = $this->getMockBuilder('Magento\Framework\App\ResourceConnection')
             ->disableOriginalConstructor()
             ->getMock();
 
-        $this->connectionMock = $this->getMockBuilder(\Magento\Framework\DB\Adapter\AdapterInterface::class)
+        $this->connectionMock = $this->getMockBuilder('Magento\Framework\DB\Adapter\AdapterInterface')
             ->getMock();
 
         $this->resourceMock
@@ -76,7 +76,7 @@ class HelperTest extends \PHPUnit\Framework\TestCase
         $column = 'column';
         $aggregationTable = 'aggregationTable';
 
-        $selectMock = $this->getMockBuilder(\Magento\Framework\DB\Select::class)
+        $selectMock = $this->getMockBuilder('Magento\Framework\DB\Select')
             ->disableOriginalConstructor()
             ->getMock();
         $selectMock

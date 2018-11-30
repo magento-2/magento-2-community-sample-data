@@ -48,27 +48,22 @@ abstract class PrintAction extends \Magento\Backend\App\Action
 
     /**
      * @return ResponseInterface|\Magento\Backend\Model\View\Result\Forward
-     * @throws \Exception
      */
     public function execute()
     {
         $shipmentId = $this->getRequest()->getParam('shipment_id');
         if ($shipmentId) {
-            $shipment = $this->_objectManager->create(\Magento\Sales\Model\Order\Shipment::class)->load($shipmentId);
+            $shipment = $this->_objectManager->create('Magento\Sales\Model\Order\Shipment')->load($shipmentId);
             if ($shipment) {
                 $pdf = $this->_objectManager->create(
-                    \Magento\Sales\Model\Order\Pdf\Shipment::class
+                    'Magento\Sales\Model\Order\Pdf\Shipment'
                 )->getPdf(
                     [$shipment]
                 );
-                $date = $this->_objectManager->get(
-                    \Magento\Framework\Stdlib\DateTime\DateTime::class
-                )->date('Y-m-d_H-i-s');
-                $fileContent = ['type' => 'string', 'value' => $pdf->render(), 'rm' => true];
-
+                $date = $this->_objectManager->get('Magento\Framework\Stdlib\DateTime\DateTime')->date('Y-m-d_H-i-s');
                 return $this->_fileFactory->create(
                     'packingslip' . $date . '.pdf',
-                    $fileContent,
+                    $pdf->render(),
                     DirectoryList::VAR_DIR,
                     'application/pdf'
                 );

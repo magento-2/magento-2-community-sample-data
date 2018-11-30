@@ -10,13 +10,12 @@ use Magento\Sales\Test\Fixture\OrderInjectable;
 use Magento\Sales\Test\Page\Adminhtml\OrderIndex;
 use Magento\Sales\Test\Page\Adminhtml\SalesOrderView;
 use Magento\Mtf\TestCase\Injectable;
-use Magento\Mtf\TestStep\TestStepFactory;
 
 /**
  * Preconditions:
- * 1. Enable payment method: "Check/Money Order/Bank Transfer/Cash on Delivery/Purchase Order/Zero Subtotal Checkout".
- * 2. Enable shipping method one of "Flat Rate/Free Shipping".
- * 3. Create order.
+ * 1. Enable payment method "Check/Money Order".
+ * 2. Enable shipping method one of "Flat Rate".
+ * 3. Create order
  *
  * Steps:
  * 1. Login to backend.
@@ -25,13 +24,14 @@ use Magento\Mtf\TestStep\TestStepFactory;
  * 4. Do cancel Order.
  * 5. Perform all assertions.
  *
- * @group Order_Management
+ * @group Order_Management_(CS)
  * @ZephyrId MAGETWO-28191
  */
 class CancelCreatedOrderTest extends Injectable
 {
     /* tags */
     const MVP = 'yes';
+    const DOMAIN = 'CS';
     /* end tags */
 
     /**
@@ -49,14 +49,20 @@ class CancelCreatedOrderTest extends Injectable
     protected $salesOrderView;
 
     /**
-     * Configuration setting.
+     * Enable "Check/Money Order" and "Flat Rate" in configuration.
      *
-     * @var string
+     * @return void
      */
-    private $configData;
+    public function __prepare()
+    {
+        $this->objectManager->create(
+            'Magento\Config\Test\TestStep\SetupConfigurationStep',
+            ['configData' => 'checkmo, flatrate', 'rollback' => true]
+        )->run();
+    }
 
     /**
-     * Inject pages.
+     * Inject pages
      *
      * @param OrderIndex $orderIndex
      * @param SalesOrderView $salesOrderView
@@ -72,18 +78,11 @@ class CancelCreatedOrderTest extends Injectable
      * Cancel created order.
      *
      * @param OrderInjectable $order
-     * @param TestStepFactory $stepFactory
-     * @param string $configData
      * @return array
      */
-    public function test(OrderInjectable $order, TestStepFactory $stepFactory, $configData)
+    public function test(OrderInjectable $order)
     {
         // Preconditions
-        $this->configData = $configData;
-        $stepFactory->create(
-            \Magento\Config\Test\TestStep\SetupConfigurationStep::class,
-            ['configData' => $configData]
-        )->run();
         $order->persist();
 
         // Steps
@@ -94,18 +93,5 @@ class CancelCreatedOrderTest extends Injectable
         return [
             'customer' => $order->getDataFieldConfig('customer_id')['source']->getCustomer(),
         ];
-    }
-
-    /**
-     * Reset config settings to default.
-     *
-     * @return void
-     */
-    public function tearDown()
-    {
-        $this->objectManager->create(
-            \Magento\Config\Test\TestStep\SetupConfigurationStep::class,
-            ['configData' => $this->configData, 'rollback' => true]
-        )->run();
     }
 }

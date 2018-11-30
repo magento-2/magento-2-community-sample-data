@@ -5,15 +5,14 @@
  */
 
 // @codingStandardsIgnoreFile
-namespace Magento\Widget\Block\Adminhtml;
 
 /**
  * WYSIWYG widget plugin main block
  *
- * @api
- * @since 100.0.2
- * @SuppressWarnings(PHPMD.RequestAwareBlockMethod)
+ * @author     Magento Core Team <core@magentocommerce.com>
  */
+namespace Magento\Widget\Block\Adminhtml;
+
 class Widget extends \Magento\Backend\Block\Widget\Form\Container
 {
     /**
@@ -38,15 +37,15 @@ class Widget extends \Magento\Backend\Block\Widget\Form\Container
         $this->buttonList->update('save', 'data_attribute', []);
 
         $this->_formScripts[] = <<<EOJS
- 		require(['mage/adminhtml/wysiwyg/widget'], function() {
- 		    wWidget = new WysiwygWidget.Widget(
- 		        'widget_options_form',
- 		        'select_widget_type',
- 		        'widget_options',
- 		        '{$this->getUrl('adminhtml/*/loadOptions')}',
- 		        '{$this->escapeJs($this->getRequest()->getParam('widget_target_id'))}'
- 		    );
- 		});
+ 	 		require(['mage/adminhtml/wysiwyg/widget'], function() {
+ 	 		    wWidget = new WysiwygWidget.Widget(
+ 	 		        'widget_options_form',
+ 	 		        'select_widget_type',
+ 	 		        'widget_options',
+ 	 		        '{$this->getUrl('adminhtml/*/loadOptions')}',
+ 	 		        '{$this->_escaper->escapeJs((string)$this->getRequest()->getParam('widget_target_id'))}'
+ 	 		    );
+ 	 		});
 EOJS;
     }
 }

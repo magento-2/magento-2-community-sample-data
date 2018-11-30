@@ -8,7 +8,7 @@ namespace Magento\Setup\Module\I18n\Dictionary;
 use Magento\Framework\Component\ComponentRegistrar;
 use Magento\Setup\Module\I18n\ServiceLocator;
 
-class GeneratorTest extends \PHPUnit\Framework\TestCase
+class GeneratorTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var string
@@ -42,7 +42,7 @@ class GeneratorTest extends \PHPUnit\Framework\TestCase
 
     protected function setUp()
     {
-        $reflection = new \ReflectionClass(\Magento\Framework\Component\ComponentRegistrar::class);
+        $reflection = new \ReflectionClass('Magento\Framework\Component\ComponentRegistrar');
         $paths = $reflection->getProperty('paths');
         $paths->setAccessible(true);
         $this->backupRegistrar = $paths->getValue();
@@ -73,6 +73,7 @@ class GeneratorTest extends \PHPUnit\Framework\TestCase
         );
 
         $this->generator = ServiceLocator::getDictionaryGenerator();
+
     }
 
     protected function tearDown()
@@ -80,12 +81,12 @@ class GeneratorTest extends \PHPUnit\Framework\TestCase
         if (file_exists($this->outputFileName)) {
             unlink($this->outputFileName);
         }
-        $property = new \ReflectionProperty(\Magento\Setup\Module\I18n\ServiceLocator::class, '_dictionaryGenerator');
+        $property = new \ReflectionProperty('Magento\Setup\Module\I18n\ServiceLocator', '_dictionaryGenerator');
         $property->setAccessible(true);
         $property->setValue(null);
         $property->setAccessible(false);
 
-        $reflection = new \ReflectionClass(\Magento\Framework\Component\ComponentRegistrar::class);
+        $reflection = new \ReflectionClass('Magento\Framework\Component\ComponentRegistrar');
         $paths = $reflection->getProperty('paths');
         $paths->setAccessible(true);
         $paths->setValue($this->backupRegistrar);

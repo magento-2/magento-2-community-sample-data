@@ -7,7 +7,7 @@ namespace Magento\Setup\Test\Unit\Module\Dependency\Report\Framework\Data;
 
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
 
-class DependencyTest extends \PHPUnit\Framework\TestCase
+class DependencyTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @param string $lib
@@ -18,7 +18,7 @@ class DependencyTest extends \PHPUnit\Framework\TestCase
     {
         $objectManagerHelper = new ObjectManager($this);
         return $objectManagerHelper->getObject(
-            \Magento\Setup\Module\Dependency\Report\Framework\Data\Dependency::class,
+            'Magento\Setup\Module\Dependency\Report\Framework\Data\Dependency',
             ['lib' => $lib, 'count' => $count]
         );
     }

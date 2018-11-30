@@ -25,7 +25,7 @@ class IntegrationTest extends \Magento\TestFramework\TestCase\AbstractBackendCon
         parent::setUp();
         /** @var $integration \Magento\Integration\Model\Integration */
         $objectManager = \Magento\TestFramework\Helper\Bootstrap::getObjectManager();
-        $integration = $objectManager->create(\Magento\Integration\Model\Integration::class);
+        $integration = $objectManager->create('Magento\Integration\Model\Integration');
         $this->_integration = $integration->load('Fixture Integration', 'name');
     }
 
@@ -35,13 +35,7 @@ class IntegrationTest extends \Magento\TestFramework\TestCase\AbstractBackendCon
         $response = $this->getResponse()->getBody();
 
         $this->assertContains('Integrations', $response);
-        $this->assertEquals(
-            1,
-            \Magento\TestFramework\Helper\Xpath::getElementsCountForXpath(
-                '//*[@id="integrationGrid"]',
-                $response
-            )
-        );
+        $this->assertSelectCount('#integrationGrid', 1, $response);
     }
 
     public function testNewAction()
@@ -52,13 +46,7 @@ class IntegrationTest extends \Magento\TestFramework\TestCase\AbstractBackendCon
         $this->assertEquals('new', $this->getRequest()->getActionName());
         $this->assertContains('entry-edit form-inline', $response);
         $this->assertContains('New Integration', $response);
-        $this->assertEquals(
-            1,
-            \Magento\TestFramework\Helper\Xpath::getElementsCountForXpath(
-                '//*[@id="integration_properties_base_fieldset"]',
-                $response
-            )
-        );
+        $this->assertSelectCount('#integration_properties_base_fieldset', 1, $response);
     }
 
     public function testEditAction()
@@ -72,20 +60,8 @@ class IntegrationTest extends \Magento\TestFramework\TestCase\AbstractBackendCon
         $this->assertContains('entry-edit form-inline', $response);
         $this->assertContains('Edit &quot;' . $this->_integration->getName() . '&quot; Integration', $response);
         $this->assertContains($saveLink, $response);
-        $this->assertEquals(
-            1,
-            \Magento\TestFramework\Helper\Xpath::getElementsCountForXpath(
-                '//*[@id="integration_properties_base_fieldset"]',
-                $response
-            )
-        );
-        $this->assertEquals(
-            1,
-            \Magento\TestFramework\Helper\Xpath::getElementsCountForXpath(
-                '//*[@id="integration_edit_tabs_info_section_content"]',
-                $response
-            )
-        );
+        $this->assertSelectCount('#integration_properties_base_fieldset', 1, $response);
+        $this->assertSelectCount('#integration_edit_tabs_info_section_content', 1, $response);
     }
 
     public function testSaveActionUpdateIntegration()

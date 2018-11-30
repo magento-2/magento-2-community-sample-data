@@ -9,7 +9,7 @@
  */
 namespace Magento\Test\Annotation;
 
-class AdminConfigFixtureTest extends \PHPUnit\Framework\TestCase
+class AdminConfigFixtureTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\TestFramework\Annotation\AdminConfigFixture|\PHPUnit_Framework_MockObject_MockObject
@@ -18,8 +18,8 @@ class AdminConfigFixtureTest extends \PHPUnit\Framework\TestCase
 
     protected function setUp()
     {
-        $this->_object = $this->createPartialMock(
-            \Magento\TestFramework\Annotation\AdminConfigFixture::class,
+        $this->_object = $this->getMock(
+            'Magento\TestFramework\Annotation\AdminConfigFixture',
             ['_getConfigValue', '_setConfigValue']
         );
     }

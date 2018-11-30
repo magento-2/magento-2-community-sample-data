@@ -5,7 +5,7 @@
  */
 namespace Magento\Cms\Block\Widget;
 
-class BlockTest extends \PHPUnit\Framework\TestCase
+class BlockTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @magentoDataFixture Magento/Cms/_files/block.php
@@ -15,15 +15,13 @@ class BlockTest extends \PHPUnit\Framework\TestCase
      */
     public function testToHtml()
     {
-        $cmsBlock = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->create(
-            \Magento\Cms\Model\Block::class
-        );
+        $cmsBlock = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->create('Magento\Cms\Model\Block');
         $cmsBlock->load('fixture_block', 'identifier');
         /** @var $block \Magento\Cms\Block\Widget\Block */
         $block = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->get(
-            \Magento\Framework\View\LayoutInterface::class
+            'Magento\Framework\View\LayoutInterface'
         )->createBlock(
-            \Magento\Cms\Block\Widget\Block::class
+            'Magento\Cms\Block\Widget\Block'
         );
         $block->setBlockId($cmsBlock->getId());
         $block->toHtml();

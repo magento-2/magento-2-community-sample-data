@@ -8,7 +8,7 @@ namespace Magento\Sitemap\Test\Unit\Controller\Adminhtml\Sitemap;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager as ObjectManagerHelper;
 use Magento\Framework\Controller\ResultFactory;
 
-class SaveTest extends \PHPUnit\Framework\TestCase
+class SaveTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\Sitemap\Controller\Adminhtml\Sitemap\Save
@@ -52,19 +52,19 @@ class SaveTest extends \PHPUnit\Framework\TestCase
 
     protected function setUp()
     {
-        $this->requestMock = $this->getMockBuilder(\Magento\Framework\App\RequestInterface::class)
+        $this->requestMock = $this->getMockBuilder('Magento\Framework\App\RequestInterface')
             ->disableOriginalConstructor()
             ->setMethods(['getPostValue'])
             ->getMockForAbstractClass();
-        $this->resultRedirectMock = $this->getMockBuilder(\Magento\Backend\Model\View\Result\Redirect::class)
+        $this->resultRedirectMock = $this->getMockBuilder('Magento\Backend\Model\View\Result\Redirect')
             ->disableOriginalConstructor()
             ->getMock();
-        $this->resultFactoryMock = $this->getMockBuilder(\Magento\Framework\Controller\ResultFactory::class)
+        $this->resultFactoryMock = $this->getMockBuilder('Magento\Framework\Controller\ResultFactory')
             ->disableOriginalConstructor()
             ->getMock();
-        $this->objectManagerMock = $this->getMockBuilder(\Magento\Framework\ObjectManagerInterface::class)
+        $this->objectManagerMock = $this->getMockBuilder('Magento\Framework\ObjectManagerInterface')
             ->getMock();
-        $this->messageManagerMock = $this->getMockBuilder(\Magento\Framework\Message\ManagerInterface::class)
+        $this->messageManagerMock = $this->getMockBuilder('Magento\Framework\Message\ManagerInterface')
             ->getMock();
 
         $this->resultFactoryMock->expects($this->once())
@@ -74,7 +74,7 @@ class SaveTest extends \PHPUnit\Framework\TestCase
 
         $this->objectManagerHelper = new ObjectManagerHelper($this);
         $this->context = $this->objectManagerHelper->getObject(
-            \Magento\Backend\App\Action\Context::class,
+            'Magento\Backend\App\Action\Context',
             [
                 'resultFactory' => $this->resultFactoryMock,
                 'request' => $this->requestMock,
@@ -83,7 +83,7 @@ class SaveTest extends \PHPUnit\Framework\TestCase
             ]
         );
         $this->saveController = $this->objectManagerHelper->getObject(
-            \Magento\Sitemap\Controller\Adminhtml\Sitemap\Save::class,
+            'Magento\Sitemap\Controller\Adminhtml\Sitemap\Save',
             [
                 'context' => $this->context
             ]
@@ -105,11 +105,11 @@ class SaveTest extends \PHPUnit\Framework\TestCase
 
     public function testTryToSaveInvalidDataShouldFailWithErrors()
     {
-        $validatorClass = \Magento\MediaStorage\Model\File\Validator\AvailablePath::class;
-        $helperClass = \Magento\Sitemap\Helper\Data::class;
+        $validatorClass = 'Magento\MediaStorage\Model\File\Validator\AvailablePath';
+        $helperClass = 'Magento\Sitemap\Helper\Data';
         $validPaths = [];
         $messages = ['message1', 'message2'];
-        $sessionClass = \Magento\Backend\Model\Session::class;
+        $sessionClass = 'Magento\Backend\Model\Session';
         $data = ['sitemap_filename' => 'sitemap_filename', 'sitemap_path' => '/sitemap_path'];
         $siteMapId = 1;
 
@@ -121,7 +121,7 @@ class SaveTest extends \PHPUnit\Framework\TestCase
             ->with('sitemap_id')
             ->willReturn($siteMapId);
 
-        $validator = $this->createMock($validatorClass);
+        $validator = $this->getMock($validatorClass, [], [], '', false);
         $validator->expects($this->once())
             ->method('setPaths')
             ->with($validPaths)
@@ -134,12 +134,12 @@ class SaveTest extends \PHPUnit\Framework\TestCase
             ->method('getMessages')
             ->willReturn($messages);
 
-        $helper = $this->createMock($helperClass);
+        $helper = $this->getMock($helperClass, [], [], '', false);
         $helper->expects($this->once())
             ->method('getValidPaths')
             ->willReturn($validPaths);
 
-        $session = $this->createPartialMock($sessionClass, ['setFormData']);
+        $session = $this->getMock($sessionClass, ['setFormData'], [], '', false);
         $session->expects($this->once())
             ->method('setFormData')
             ->with($data)
@@ -154,7 +154,7 @@ class SaveTest extends \PHPUnit\Framework\TestCase
             ->willReturnMap([[$helperClass, $helper], [$sessionClass, $session]]);
 
         $this->messageManagerMock->expects($this->at(0))
-            ->method('addErrorMessage')
+            ->method('addError')
             ->withConsecutive(
                 [$messages[0]],
                 [$messages[1]]

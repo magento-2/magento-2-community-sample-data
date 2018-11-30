@@ -9,9 +9,9 @@
 
 namespace Magento\Quote\Test\Unit\Model;
 
-use Magento\Quote\Model\CouponManagement;
+use \Magento\Quote\Model\CouponManagement;
 
-class CouponManagementTest extends \PHPUnit\Framework\TestCase
+class CouponManagementTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var CouponManagement
@@ -40,9 +40,11 @@ class CouponManagementTest extends \PHPUnit\Framework\TestCase
 
     protected function setUp()
     {
-        $this->quoteRepositoryMock = $this->createMock(\Magento\Quote\Api\CartRepositoryInterface::class);
-        $this->storeMock = $this->createMock(\Magento\Store\Model\Store::class);
-        $this->quoteMock = $this->createPartialMock(\Magento\Quote\Model\Quote::class, [
+        $this->quoteRepositoryMock = $this->getMock('\Magento\Quote\Api\CartRepositoryInterface');
+        $this->storeMock = $this->getMock('\Magento\Store\Model\Store', [], [], '', false);
+        $this->quoteMock = $this->getMock(
+            '\Magento\Quote\Model\Quote',
+            [
                 'getItemsCount',
                 'setCouponCode',
                 'collectTotals',
@@ -51,11 +53,20 @@ class CouponManagementTest extends \PHPUnit\Framework\TestCase
                 'getCouponCode',
                 'getStoreId',
                 '__wakeup'
-            ]);
-        $this->quoteAddressMock = $this->createPartialMock(\Magento\Quote\Model\Quote\Address::class, [
+            ],
+            [],
+            '',
+            false
+        );
+        $this->quoteAddressMock = $this->getMock(
+            '\Magento\Quote\Model\Quote\Address',
+            [
                 'setCollectShippingRates',
                 '__wakeup'
-            ]);
+            ],
+            [],
+            '',
+            false);
         $this->couponManagement = new CouponManagement(
             $this->quoteRepositoryMock
         );
@@ -66,13 +77,14 @@ class CouponManagementTest extends \PHPUnit\Framework\TestCase
         $cartId = 11;
         $couponCode = 'test_coupon_code';
 
-        $quoteMock = $this->createPartialMock(\Magento\Quote\Model\Quote::class, ['getCouponCode', '__wakeup']);
+        $quoteMock = $this->getMock('\Magento\Quote\Model\Quote', ['getCouponCode', '__wakeup'], [], '', false);
         $quoteMock->expects($this->any())->method('getCouponCode')->will($this->returnValue($couponCode));
 
         $this->quoteRepositoryMock->expects($this->once())
             ->method('getActive')
             ->with($cartId)
             ->will($this->returnValue($quoteMock));
+
 
         $this->assertEquals($couponCode, $this->couponManagement->get($cartId));
     }

@@ -7,7 +7,7 @@ namespace Magento\Framework\Pricing\Test\Unit\Adjustment;
 
 use \Magento\Framework\Pricing\Adjustment\Pool;
 
-class PoolTest extends \PHPUnit\Framework\TestCase
+class PoolTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\Framework\Pricing\Adjustment\Pool
@@ -25,7 +25,7 @@ class PoolTest extends \PHPUnit\Framework\TestCase
         ];
 
         /** @var Factory|\PHPUnit_Framework_MockObject_MockObject $adjustmentFactory */
-        $adjustmentFactory = $this->getMockBuilder(\Magento\Framework\Pricing\Adjustment\Factory::class)
+        $adjustmentFactory = $this->getMockBuilder('Magento\Framework\Pricing\Adjustment\Factory')
             ->disableOriginalConstructor()
             ->setMethods(['create'])
             ->getMock();

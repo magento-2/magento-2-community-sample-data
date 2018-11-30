@@ -43,7 +43,8 @@ class Minify implements PreProcessorInterface
      */
     public function process(PreProcessor\Chain $chain)
     {
-        if ($this->minification->isEnabled(pathinfo($chain->getTargetAssetPath(), PATHINFO_EXTENSION)) &&
+        if (
+            $this->minification->isEnabled(pathinfo($chain->getTargetAssetPath(), PATHINFO_EXTENSION)) &&
             $this->minification->isMinifiedFilename($chain->getTargetAssetPath()) &&
             !$this->minification->isMinifiedFilename($chain->getOrigAssetPath())
         ) {

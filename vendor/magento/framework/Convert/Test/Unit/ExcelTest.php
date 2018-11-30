@@ -9,7 +9,7 @@
  */
 namespace Magento\Framework\Convert\Test\Unit;
 
-class ExcelTest extends \PHPUnit\Framework\TestCase
+class ExcelTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * Test data

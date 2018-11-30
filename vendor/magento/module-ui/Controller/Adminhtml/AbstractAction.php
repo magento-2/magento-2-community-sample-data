@@ -12,8 +12,6 @@ use Magento\Framework\View\Element\UiComponentFactory;
 
 /**
  * Class Render
- * @api
- * @since 100.0.2
  */
 abstract class AbstractAction extends Action implements UiActionInterface
 {

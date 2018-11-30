@@ -9,8 +9,6 @@
  */
 namespace Magento\Catalog\Model\ResourceModel\Product\Indexer\Price;
 
-use Magento\Framework\Indexer\DimensionalIndexerInterface;
-
 class Factory
 {
     /**
@@ -42,17 +40,14 @@ class Factory
     {
         $indexerPrice = $this->_objectManager->create($className, $data);
 
-        if ($indexerPrice instanceof PriceInterface || $indexerPrice instanceof DimensionalIndexerInterface) {
-            return $indexerPrice;
+        if (!$indexerPrice instanceof \Magento\Catalog\Model\ResourceModel\Product\Indexer\Price\DefaultPrice) {
+            throw new \Magento\Framework\Exception\LocalizedException(
+                __(
+                    '%1 doesn\'t extend \Magento\Catalog\Model\ResourceModel\Product\Indexer\Price\DefaultPrice',
+                    $className
+                )
+            );
         }
-
-        throw new \Magento\Framework\Exception\LocalizedException(
-            __(
-                'Price indexer "%1" must implement %2 or %3',
-                $className,
-                PriceInterface::class,
-                DimensionalIndexerInterface::class
-            )
-        );
+        return $indexerPrice;
     }
 }

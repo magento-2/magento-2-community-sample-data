@@ -7,9 +7,10 @@ namespace Magento\Framework\Composer\Test\Unit;
 
 use Composer\Composer;
 use Composer\Package\Locker;
+use Magento\Framework\Composer\ComposerInformation;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
 
-class ComposerInformationTest extends \PHPUnit\Framework\TestCase
+class ComposerInformationTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\Framework\Composer\ComposerInformation
@@ -27,12 +28,12 @@ class ComposerInformationTest extends \PHPUnit\Framework\TestCase
     private $lockerMock;
 
     /**
-     * @var \Composer\Repository\RepositoryInterface|\PHPUnit\Framework_MockObject_Builder_InvocationMocker:
+     * @var \Composer\Repository\RepositoryInterface|\PHPUnit_Framework_MockObject_Builder_InvocationMocker:
      */
     private $lockerRepositoryMock;
 
     /**
-     * @var \Composer\Package\CompletePackageInterface|\PHPUnit\Framework_MockObject_Builder_InvocationMocker:
+     * @var \Composer\Package\CompletePackageInterface|\PHPUnit_Framework_MockObject_Builder_InvocationMocker:
      */
     private $packageMock;
 

@@ -9,7 +9,7 @@ namespace Magento\Framework\View;
 
 use Magento\Framework\App\State;
 
-class LayoutDirectivesTest extends \PHPUnit\Framework\TestCase
+class LayoutDirectivesTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\Framework\View\LayoutFactory
@@ -34,8 +34,8 @@ class LayoutDirectivesTest extends \PHPUnit\Framework\TestCase
     protected function setUp()
     {
         $this->objectManager = \Magento\TestFramework\Helper\Bootstrap::getObjectManager();
-        $this->layoutFactory = $this->objectManager->get(\Magento\Framework\View\LayoutFactory::class);
-        $this->state = $this->objectManager->get(\Magento\Framework\App\State::class);
+        $this->layoutFactory = $this->objectManager->get('Magento\Framework\View\LayoutFactory');
+        $this->state = $this->objectManager->get('Magento\Framework\App\State');
     }
 
     /**
@@ -46,12 +46,12 @@ class LayoutDirectivesTest extends \PHPUnit\Framework\TestCase
      */
     protected function _getLayoutModel($fixtureFile)
     {
-        $this->objectManager->get(\Magento\Framework\App\Cache\Type\Layout::class)->clean();
+        $this->objectManager->get('Magento\Framework\App\Cache\Type\Layout')->clean();
         $layout = $this->layoutFactory->create();
         /** @var $xml \Magento\Framework\View\Layout\Element */
         $xml = simplexml_load_file(
             __DIR__ . "/_files/layout_directives_test/{$fixtureFile}",
-            \Magento\Framework\View\Layout\Element::class
+            'Magento\Framework\View\Layout\Element'
         );
         $layout->loadString($xml->asXml());
         $layout->generateElements();
@@ -99,8 +99,8 @@ class LayoutDirectivesTest extends \PHPUnit\Framework\TestCase
     public function testGetBlockUnscheduled()
     {
         $layout = $this->_getLayoutModel('get_block.xml');
-        $this->assertInstanceOf(\Magento\Framework\View\Element\Text::class, $layout->getBlock('block_first'));
-        $this->assertInstanceOf(\Magento\Framework\View\Element\Text::class, $layout->getBlock('block_second'));
+        $this->assertInstanceOf('Magento\Framework\View\Element\Text', $layout->getBlock('block_first'));
+        $this->assertInstanceOf('Magento\Framework\View\Element\Text', $layout->getBlock('block_second'));
     }
 
     public function testLayoutArgumentsDirective()
@@ -129,11 +129,11 @@ class LayoutDirectivesTest extends \PHPUnit\Framework\TestCase
     {
         $layout = $this->_getLayoutModel('arguments_object_type.xml');
         $this->assertInstanceOf(
-            \Magento\Framework\Data\Collection::class,
+            'Magento\Framework\Data\Collection',
             $layout->getBlock('block_with_object_args')->getOne()
         );
         $this->assertInstanceOf(
-            \Magento\Framework\Data\Collection::class,
+            'Magento\Framework\Data\Collection',
             $layout->getBlock('block_with_object_args')->getTwo()
         );
         $this->assertEquals(3, $layout->getBlock('block_with_object_args')->getThree());
@@ -157,7 +157,7 @@ class LayoutDirectivesTest extends \PHPUnit\Framework\TestCase
         $expectedSimpleData = 1;
 
         $dataSource = $layout->getBlock('block_with_object_updater_args')->getOne();
-        $this->assertInstanceOf(\Magento\Framework\Data\Collection::class, $dataSource);
+        $this->assertInstanceOf('Magento\Framework\Data\Collection', $dataSource);
         $this->assertEquals($expectedObjectData, $dataSource->getUpdaterCall());
         $this->assertEquals($expectedSimpleData, $layout->getBlock('block_with_object_updater_args')->getTwo());
     }
@@ -254,7 +254,7 @@ class LayoutDirectivesTest extends \PHPUnit\Framework\TestCase
     public function testRemoveBroken()
     {
         if ($this->state->getMode() === State::MODE_DEVELOPER) {
-            $this->expectException('OutOfBoundsException');
+            $this->setExpectedException('OutOfBoundsException');
         }
         $this->_getLayoutModel('remove_broken.xml');
     }
@@ -293,7 +293,7 @@ class LayoutDirectivesTest extends \PHPUnit\Framework\TestCase
         $layout = $this->_getLayoutModel('ifconfig.xml');
         $this->assertFalse($layout->getBlock('block1'));
         $this->assertFalse($layout->getBlock('block2'));
-        $this->assertInstanceOf(\Magento\Framework\View\Element\BlockInterface::class, $layout->getBlock('block3'));
+        $this->assertInstanceOf('Magento\Framework\View\Element\BlockInterface', $layout->getBlock('block3'));
         $this->assertFalse($layout->getBlock('block4'));
     }
 

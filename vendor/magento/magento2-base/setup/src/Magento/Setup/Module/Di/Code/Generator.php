@@ -40,6 +40,7 @@ class Generator extends FrameworkGenerator
         $this->setObjectManager($objectManagerInterface);
     }
 
+
     /**
      * Create entity generator
      *

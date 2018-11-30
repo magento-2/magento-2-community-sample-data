@@ -6,12 +6,11 @@
 namespace Magento\Sales\Model\ResourceModel\Order;
 
 use Magento\Sales\Model\ResourceModel\EntityAbstract as SalesResource;
-use Magento\Sales\Model\Spi\OrderItemResourceInterface;
 
 /**
  * Flat sales order item resource
  */
-class Item extends SalesResource implements OrderItemResourceInterface
+class Item extends SalesResource
 {
     /**
      * Event prefix

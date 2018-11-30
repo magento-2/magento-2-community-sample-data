@@ -3,13 +3,8 @@
  * Copyright © Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
-use Magento\Customer\Model\CustomerRegistry;
-
 /** @var \Magento\Customer\Model\Customer $customer */
-$customer = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()
-    ->create(\Magento\Customer\Model\Customer::class);
-/** @var CustomerRegistry $customerRegistry */
-$customerRegistry = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->get(CustomerRegistry::class);
+$customer = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->create('Magento\Customer\Model\Customer');
 
 $customerData = [
     'group_id' => 1,
@@ -26,9 +21,7 @@ $customer->setData($customerData);
 $customer->setId(1);
 
 /** @var \Magento\Customer\Model\Address $addressOne  */
-$addressOne = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->create(
-    \Magento\Customer\Model\Address::class
-);
+$addressOne = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->create('Magento\Customer\Model\Address');
 $addressOneData = [
     'firstname' => 'test firstname',
     'lastname' => 'test lastname',
@@ -44,9 +37,7 @@ $addressOne->setData($addressOneData);
 $customer->addAddress($addressOne);
 
 /** @var \Magento\Customer\Model\Address $addressTwo  */
-$addressTwo = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->create(
-    \Magento\Customer\Model\Address::class
-);
+$addressTwo = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->create('Magento\Customer\Model\Address');
 $addressTwoData = [
     'firstname' => 'test firstname',
     'lastname' => 'test lastname',
@@ -62,9 +53,7 @@ $addressTwo->setData($addressTwoData);
 $customer->addAddress($addressTwo);
 
 /** @var \Magento\Customer\Model\Address $addressThree  */
-$addressThree = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->create(
-    \Magento\Customer\Model\Address::class
-);
+$addressThree = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->create('Magento\Customer\Model\Address');
 $addressThreeData = [
     'firstname' => 'removed firstname',
     'lastname' => 'removed lastname',
@@ -80,4 +69,3 @@ $addressThree->setData($addressThreeData);
 $customer->addAddress($addressThree);
 
 $customer->save();
-$customerRegistry->remove($customer->getId());

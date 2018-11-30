@@ -5,5 +5,5 @@
  */
 require_once dirname(__DIR__) . '/' . 'bootstrap.php';
 
-$magentoObjectManager->create(\Magento\Mtf\Util\Generate\Factory::class)->launch();
+$magentoObjectManager->create('Magento\Mtf\Util\Generate\Factory')->launch();
 \Magento\Mtf\Util\Generate\GenerateResult::displayResults();

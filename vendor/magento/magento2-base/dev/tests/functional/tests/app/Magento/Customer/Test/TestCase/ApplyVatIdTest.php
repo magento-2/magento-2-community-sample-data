@@ -25,13 +25,14 @@ use Magento\Customer\Test\Fixture\Customer;
  * 5. Save Customer Address.
  * 6. Perform assertions.
  *
- * @group VAT_ID
+ * @group VAT_ID_(CS)
  * @ZephyrId MAGETWO-12447
  */
 class ApplyVatIdTest extends AbstractApplyVatIdTest
 {
     /* tags */
     const MVP = 'no';
+    const DOMAIN = 'CS';
     const TEST_TYPE = '3rd_party_test';
     /* end tags */
 
@@ -83,7 +84,7 @@ class ApplyVatIdTest extends AbstractApplyVatIdTest
         $this->configData = $configData;
         $this->customer = $customer;
         $this->objectManager->create(
-            \Magento\Config\Test\TestStep\SetupConfigurationStep::class,
+            'Magento\Config\Test\TestStep\SetupConfigurationStep',
             ['configData' => $this->configData]
         )->run();
         $this->customer->persist();
@@ -91,7 +92,7 @@ class ApplyVatIdTest extends AbstractApplyVatIdTest
 
         // Steps
         $this->objectManager->create(
-            \Magento\Customer\Test\TestStep\LoginCustomerOnFrontendStep::class,
+            'Magento\Customer\Test\TestStep\LoginCustomerOnFrontendStep',
             ['customer' => $this->customer]
         )->run();
         $this->customerAccountIndex->getDashboardAddress()->editBillingAddress();

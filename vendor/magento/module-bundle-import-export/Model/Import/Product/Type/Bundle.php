@@ -8,18 +8,14 @@
  */
 namespace Magento\BundleImportExport\Model\Import\Product\Type;
 
-use Magento\Framework\App\ObjectManager;
-use Magento\Bundle\Model\Product\Price as BundlePrice;
-use Magento\Catalog\Model\Product\Type\AbstractType;
-use Magento\CatalogImportExport\Model\Import\Product;
-use Magento\Store\Model\StoreManagerInterface;
-use Magento\Bundle\Model\ResourceModel\Bundle as BundleResourceModel;
+use \Magento\Bundle\Model\Product\Price as BundlePrice;
+use \Magento\BundleImportExport\Model\Export\RowCustomizer;
+use \Magento\Catalog\Model\Product\Type\AbstractType;
 
 /**
  * Class Bundle
  * @package Magento\BundleImportExport\Model\Import\Product\Type
  * @SuppressWarnings(PHPMD.ExcessiveClassComplexity)
- * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  */
 class Bundle extends \Magento\CatalogImportExport\Model\Import\Product\Type\AbstractType
 {
@@ -58,6 +54,20 @@ class Bundle extends \Magento\CatalogImportExport\Model\Import\Product\Type\Abst
      * Selection price type percent.
      */
     const SELECTION_PRICE_TYPE_PERCENT = 1;
+
+    /**
+     * Instance of database adapter.
+     *
+     * @var \Magento\Framework\DB\Adapter\AdapterInterface
+     */
+    protected $connection;
+
+    /**
+     * Instance of application resource.
+     *
+     * @var \Magento\Framework\App\ResourceConnection
+     */
+    protected $_resource;
 
     /**
      * Array of cached options.
@@ -135,53 +145,20 @@ class Bundle extends \Magento\CatalogImportExport\Model\Import\Product\Type\Abst
     ];
 
     /**
-     * @var Bundle\RelationsDataSaver
-     */
-    private $relationsDataSaver;
-
-    /**
-     * @var StoreManagerInterface
-     */
-    private $storeManager;
-
-    /**
-     * @var array
-     */
-    private $storeCodeToId = [];
-
-    /**
-     * @var BundleResourceModel
-     */
-    private $bundleResourceModel;
-
-    /**
      * @param \Magento\Eav\Model\ResourceModel\Entity\Attribute\Set\CollectionFactory $attrSetColFac
      * @param \Magento\Catalog\Model\ResourceModel\Product\Attribute\CollectionFactory $prodAttrColFac
      * @param \Magento\Framework\App\ResourceConnection $resource
      * @param array $params
-     * @param \Magento\Framework\EntityManager\MetadataPool|null $metadataPool
-     * @param Bundle\RelationsDataSaver|null $relationsDataSaver
-     * @param StoreManagerInterface $storeManager
-     * @param BundleResourceModel $bundleResourceModel
-     * @throws \Magento\Framework\Exception\LocalizedException
      */
     public function __construct(
         \Magento\Eav\Model\ResourceModel\Entity\Attribute\Set\CollectionFactory $attrSetColFac,
         \Magento\Catalog\Model\ResourceModel\Product\Attribute\CollectionFactory $prodAttrColFac,
         \Magento\Framework\App\ResourceConnection $resource,
-        array $params,
-        \Magento\Framework\EntityManager\MetadataPool $metadataPool = null,
-        Bundle\RelationsDataSaver $relationsDataSaver = null,
-        StoreManagerInterface $storeManager = null,
-        BundleResourceModel $bundleResourceModel = null
+        array $params
     ) {
-        parent::__construct($attrSetColFac, $prodAttrColFac, $resource, $params, $metadataPool);
-        $this->relationsDataSaver = $relationsDataSaver
-            ?: ObjectManager::getInstance()->get(Bundle\RelationsDataSaver::class);
-        $this->storeManager = $storeManager
-            ?: ObjectManager::getInstance()->get(StoreManagerInterface::class);
-        $this->bundleResourceModel = $bundleResourceModel
-            ?: ObjectManager::getInstance()->get(BundleResourceModel::class);
+        parent::__construct($attrSetColFac, $prodAttrColFac, $resource, $params);
+        $this->_resource = $resource;
+        $this->connection = $resource->getConnection(\Magento\Framework\App\ResourceConnection::DEFAULT_CONNECTION);
     }
 
     /**
@@ -204,7 +181,7 @@ class Bundle extends \Magento\CatalogImportExport\Model\Import\Product\Type\Abst
             $rowData['bundle_values']
         );
         $selections = explode(
-            Product::PSEUDO_MULTI_LINE_SEPARATOR,
+            \Magento\CatalogImportExport\Model\Import\Product::PSEUDO_MULTI_LINE_SEPARATOR,
             $rowData['bundle_values']
         );
         foreach ($selections as $selection) {
@@ -287,28 +264,19 @@ class Bundle extends \Magento\CatalogImportExport\Model\Import\Product\Type\Abst
      * @param array $option
      * @param int $optionId
      * @param int $storeId
-     * @return array
+     *
+     * @return array|bool
      */
     protected function populateOptionValueTemplate($option, $optionId, $storeId = 0)
     {
-        $optionValues = [];
-        if (isset($option['name']) && isset($option['parent_id']) && $optionId) {
-            $pattern = '/^name[_]?(.*)/';
-            $keys = array_keys($option);
-            $optionNames = preg_grep($pattern, $keys);
-            foreach ($optionNames as $optionName) {
-                preg_match($pattern, $optionName, $storeCodes);
-                $storeCode = array_pop($storeCodes);
-                $storeId = $storeCode ? $this->getStoreIdByCode($storeCode) : $storeId;
-                $optionValues[] = [
-                    'option_id' => $optionId,
-                    'parent_product_id' => $option['parent_id'],
-                    'store_id' => $storeId,
-                    'title' => $option[$optionName],
-                ];
-            }
+        if (!isset($option['name']) || !$optionId) {
+            return false;
         }
-        return $optionValues;
+        return [
+            'option_id' => $optionId,
+            'store_id' => $storeId,
+            'title' => $option['name'],
+        ];
     }
 
     /**
@@ -318,7 +286,7 @@ class Bundle extends \Magento\CatalogImportExport\Model\Import\Product\Type\Abst
      * @param int $optionId
      * @param int $parentId
      * @param int $index
-     * @return array|bool
+     * @return array
      * @SuppressWarnings(PHPMD.NPathComplexity)
      * @SuppressWarnings(PHPMD.CyclomaticComplexity)
      */
@@ -382,7 +350,7 @@ class Bundle extends \Magento\CatalogImportExport\Model\Import\Product\Type\Abst
             $newSku = $this->_entityModel->getNewSku();
             while ($bunch = $this->_entityModel->getNextBunch()) {
                 foreach ($bunch as $rowNum => $rowData) {
-                    $productData = $newSku[strtolower($rowData[Product::COL_SKU])];
+                    $productData = $newSku[$rowData[\Magento\CatalogImportExport\Model\Import\Product::COL_SKU]];
                     $productIds[] = $productData[$this->getProductEntityLinkField()];
                 }
                 $this->deleteOptionsAndSelections($productIds);
@@ -394,19 +362,17 @@ class Bundle extends \Magento\CatalogImportExport\Model\Import\Product\Type\Abst
                     if (!$this->_entityModel->isRowAllowedToImport($rowData, $rowNum)) {
                         continue;
                     }
-                    $productData = $newSku[strtolower($rowData[Product::COL_SKU])];
+                    $productData = $newSku[$rowData[\Magento\CatalogImportExport\Model\Import\Product::COL_SKU]];
                     if ($this->_type != $productData['type_id']) {
                         continue;
                     }
-                    $productId = $productData[$this->getProductEntityLinkField()];
-                    $this->parseSelections($rowData, $productId);
+                    $this->parseSelections($rowData, $productData[$this->getProductEntityLinkField()]);
                 }
                 if (!empty($this->_cachedOptions)) {
                     $this->retrieveProducsByCachedSkus();
                     $this->populateExistingOptions();
                     $this->insertOptions();
                     $this->insertSelections();
-                    $this->insertProductRelations();
                     $this->clear();
                 }
             }
@@ -556,9 +522,10 @@ class Bundle extends \Magento\CatalogImportExport\Model\Import\Product\Type\Abst
      */
     protected function insertOptions()
     {
+        $optionTable = $this->_resource->getTableName('catalog_product_bundle_option');
+        $optionValueTable = $this->_resource->getTableName('catalog_product_bundle_option_value');
         $productIds = [];
         $insert = [];
-
         foreach ($this->_cachedOptions as $entityId => $options) {
             $index = 0;
             $productIds[] = $entityId;
@@ -573,23 +540,20 @@ class Bundle extends \Magento\CatalogImportExport\Model\Import\Product\Type\Abst
                 }
             }
         }
-
-        $this->relationsDataSaver->saveOptions($insert);
-
+        $this->connection->insertOnDuplicate($optionTable, $insert, ['required', 'position', 'type']);
         $optionIds = $this->connection->fetchAssoc(
             $this->connection->select()->from(
-                $this->_resource->getTableName('catalog_product_bundle_option'),
+                $optionTable,
                 ['option_id', 'position', 'parent_id']
             )->where(
                 'parent_id IN (?)',
                 $productIds
             )
         );
-
-        $this->relationsDataSaver->saveOptionValues(
-            $this->populateInsertOptionValues($optionIds)
-        );
-
+        $insertValues = $this->populateInsertOptionValues($optionIds);
+        if (!empty($insertValues)) {
+            $this->connection->insertOnDuplicate($optionValueTable, $insertValues, ['title']);
+        }
         return $this;
     }
 
@@ -600,24 +564,20 @@ class Bundle extends \Magento\CatalogImportExport\Model\Import\Product\Type\Abst
      */
     protected function populateInsertOptionValues($optionIds)
     {
-        $optionValues = [];
+        $insertValues = [];
         foreach ($this->_cachedOptions as $entityId => $options) {
             foreach ($options as $key => $option) {
                 foreach ($optionIds as $optionId => $assoc) {
                     if ($assoc['position'] == $this->_cachedOptions[$entityId][$key]['index']
                         && $assoc['parent_id'] == $entityId) {
-                        $option['parent_id'] = $entityId;
-                        $optionValues = array_merge(
-                            $optionValues,
-                            $this->populateOptionValueTemplate($option, $optionId)
-                        );
+                        $insertValues[] = $this->populateOptionValueTemplate($option, $optionId);
                         $this->_cachedOptions[$entityId][$key]['option_id'] = $optionId;
                         break;
                     }
                 }
             }
         }
-        return $optionValues;
+        return $insertValues;
     }
 
     /**
@@ -627,8 +587,8 @@ class Bundle extends \Magento\CatalogImportExport\Model\Import\Product\Type\Abst
      */
     protected function insertSelections()
     {
+        $selectionTable = $this->_resource->getTableName('catalog_product_bundle_selection');
         $selections = [];
-
         foreach ($this->_cachedOptions as $productId => $options) {
             foreach ($options as $option) {
                 $index = 0;
@@ -648,33 +608,23 @@ class Bundle extends \Magento\CatalogImportExport\Model\Import\Product\Type\Abst
                 }
             }
         }
-
-        $this->relationsDataSaver->saveSelections($selections);
-
-        return $this;
-    }
-
-    /**
-     * Insert product relations.
-     *
-     * @return void
-     */
-    private function insertProductRelations()
-    {
-        foreach ($this->_cachedOptions as $productId => $options) {
-            $childIds = [];
-            foreach ($options as $option) {
-                foreach ($option['selections'] as $selection) {
-                    if (isset($this->_cachedSkuToProducts[$selection['sku']])) {
-                        $childIds[] = $this->_cachedSkuToProducts[$selection['sku']];
-                    }
-                }
-            }
-            if (!empty($childIds)) {
-                $childIds = array_unique($childIds);
-                $this->bundleResourceModel->saveProductRelations($productId, $childIds);
-            }
+        if (!empty($selections)) {
+            $this->connection->insertOnDuplicate(
+                $selectionTable,
+                $selections,
+                [
+                    'selection_id',
+                    'product_id',
+                    'position',
+                    'is_default',
+                    'selection_price_type',
+                    'selection_price_value',
+                    'selection_qty',
+                    'selection_can_change_qty'
+                ]
+            );
         }
+        return $this;
     }
 
     /**
@@ -756,22 +706,5 @@ class Bundle extends \Magento\CatalogImportExport\Model\Import\Product\Type\Abst
         $this->_cachedSkus = [];
         $this->_cachedSkuToProducts = [];
         return $this;
-    }
-
-    /**
-     * Get store id by store code.
-     *
-     * @param string $storeCode
-     * @return int
-     */
-    private function getStoreIdByCode(string $storeCode): int
-    {
-        if (!isset($this->storeIdToCode[$storeCode])) {
-            /** @var $store \Magento\Store\Model\Store */
-            foreach ($this->storeManager->getStores() as $store) {
-                $this->storeCodeToId[$store->getCode()] = $store->getId();
-            }
-        }
-        return $this->storeCodeToId[$storeCode];
     }
 }

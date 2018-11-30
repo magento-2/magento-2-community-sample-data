@@ -14,7 +14,6 @@ use Magento\Framework\Setup\ModuleDataSetupInterface;
 
 /**
  * @codeCoverageIgnore
- * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  */
 class InstallData implements InstallDataInterface
 {
@@ -56,7 +55,7 @@ class InstallData implements InstallDataInterface
             'msrp',
             [
                 'group' => 'Advanced Pricing',
-                'backend' => \Magento\Catalog\Model\Product\Attribute\Backend\Price::class,
+                'backend' => 'Magento\Catalog\Model\Product\Attribute\Backend\Price',
                 'frontend' => '',
                 'label' => 'Manufacturer\'s Suggested Retail Price',
                 'type' => 'decimal',
@@ -66,8 +65,8 @@ class InstallData implements InstallDataInterface
                 'required' => false,
                 'user_defined' => false,
                 'apply_to' => $productTypes,
-                'input_renderer' => \Magento\Msrp\Block\Adminhtml\Product\Helper\Form\Type::class,
-                'frontend_input_renderer' => \Magento\Msrp\Block\Adminhtml\Product\Helper\Form\Type::class,
+                'input_renderer' => 'Magento\Msrp\Block\Adminhtml\Product\Helper\Form\Type',
+                'frontend_input_renderer' => 'Magento\Msrp\Block\Adminhtml\Product\Helper\Form\Type',
                 'visible_on_front' => false,
                 'used_in_product_listing' => true,
                 'is_used_in_grid' => true,
@@ -81,12 +80,12 @@ class InstallData implements InstallDataInterface
             'msrp_display_actual_price_type',
             [
                 'group' => 'Advanced Pricing',
-                'backend' => \Magento\Catalog\Model\Product\Attribute\Backend\Boolean::class,
+                'backend' => 'Magento\Catalog\Model\Product\Attribute\Backend\Boolean',
                 'frontend' => '',
                 'label' => 'Display Actual Price',
                 'input' => 'select',
-                'source' => \Magento\Msrp\Model\Product\Attribute\Source\Type\Price::class,
-                'source_model' => \Magento\Msrp\Model\Product\Attribute\Source\Type\Price::class,
+                'source' => 'Magento\Msrp\Model\Product\Attribute\Source\Type\Price',
+                'source_model' => 'Magento\Msrp\Model\Product\Attribute\Source\Type\Price',
                 'global' => \Magento\Eav\Model\Entity\Attribute\ScopedAttributeInterface::SCOPE_WEBSITE,
                 'visible' => true,
                 'required' => false,
@@ -94,8 +93,8 @@ class InstallData implements InstallDataInterface
                 'default' => \Magento\Msrp\Model\Product\Attribute\Source\Type\Price::TYPE_USE_CONFIG,
                 'default_value' => \Magento\Msrp\Model\Product\Attribute\Source\Type\Price::TYPE_USE_CONFIG,
                 'apply_to' => $productTypes,
-                'input_renderer' => \Magento\Msrp\Block\Adminhtml\Product\Helper\Form\Type\Price::class,
-                'frontend_input_renderer' => \Magento\Msrp\Block\Adminhtml\Product\Helper\Form\Type\Price::class,
+                'input_renderer' => 'Magento\Msrp\Block\Adminhtml\Product\Helper\Form\Type\Price',
+                'frontend_input_renderer' => 'Magento\Msrp\Block\Adminhtml\Product\Helper\Form\Type\Price',
                 'visible_on_front' => false,
                 'used_in_product_listing' => true
             ]

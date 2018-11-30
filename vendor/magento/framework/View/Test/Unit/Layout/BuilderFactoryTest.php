@@ -8,7 +8,7 @@ namespace Magento\Framework\View\Test\Unit\Layout;
 
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager as ObjectManagerHelper;
 
-class BuilderFactoryTest extends \PHPUnit\Framework\TestCase
+class BuilderFactoryTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var ObjectManagerHelper
@@ -29,16 +29,16 @@ class BuilderFactoryTest extends \PHPUnit\Framework\TestCase
     {
         $this->objectManagerHelper = new ObjectManagerHelper($this);
 
-        $this->objectManagerMock = $this->createMock(\Magento\Framework\ObjectManagerInterface::class);
+        $this->objectManagerMock = $this->getMock('Magento\Framework\ObjectManagerInterface');
 
         $this->buildFactory = $this->objectManagerHelper->getObject(
-            \Magento\Framework\View\Layout\BuilderFactory::class,
+            'Magento\Framework\View\Layout\BuilderFactory',
             [
                 'objectManager' => $this->objectManagerMock,
                 'typeMap' => [
                     [
                         'type' => 'invalid_type',
-                        'class' => \Magento\Framework\View\Layout\BuilderFactory::class,
+                        'class' => 'Magento\Framework\View\Layout\BuilderFactory',
                     ],
                 ]
             ]
@@ -53,7 +53,7 @@ class BuilderFactoryTest extends \PHPUnit\Framework\TestCase
      */
     public function testCreate($type, $arguments, $layoutBuilderClass)
     {
-        $layoutBuilderMock = $this->getMockBuilder(\Magento\Framework\View\Layout\Builder::class)
+        $layoutBuilderMock = $this->getMockBuilder('Magento\Framework\View\Layout\Builder')
             ->disableOriginalConstructor()
             ->getMock();
 
@@ -74,7 +74,7 @@ class BuilderFactoryTest extends \PHPUnit\Framework\TestCase
             'layout_type' => [
                 'type' => \Magento\Framework\View\Layout\BuilderFactory::TYPE_LAYOUT,
                 'arguments' => ['key' => 'val'],
-                'layoutBuilderClass' => \Magento\Framework\View\Layout\Builder::class,
+                'layoutBuilderClass' => 'Magento\Framework\View\Layout\Builder',
             ]
         ];
     }
@@ -92,7 +92,7 @@ class BuilderFactoryTest extends \PHPUnit\Framework\TestCase
      */
     public function testCreateWithNonBuilderClass()
     {
-        $wrongClass = $this->getMockBuilder(\Magento\Framework\View\Layout\BuilderFactory::class)
+        $wrongClass = $this->getMockBuilder('Magento\Framework\View\Layout\BuilderFactory')
             ->disableOriginalConstructor()
             ->getMock();
 

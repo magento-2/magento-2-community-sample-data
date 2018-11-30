@@ -18,10 +18,8 @@ var app = angular.module(
         'create-admin-account',
         'install',
         'success',
-        'module-grid',
-        'extension-grid',
+        'component-grid',
         'install-extension-grid',
-        'update-extension-grid',
         'create-backup',
         'complete-backup',
         'data-option',
@@ -31,8 +29,7 @@ var app = angular.module(
         'home',
         'auth-dialog',
         'system-config',
-        'marketplace-credentials',
-        'ngSanitize'
+        'marketplace-credentials'
     ]);
 
 app.config(['$httpProvider', '$stateProvider', function ($httpProvider, $stateProvider) {
@@ -56,9 +53,6 @@ app.config(['$httpProvider', '$stateProvider', function ($httpProvider, $statePr
             return $delegate;
         });
     })
-    .config(['$locationProvider', function($locationProvider) {
-        $locationProvider.hashPrefix('');
-    }])
     .run(function ($rootScope, $state) {
         $rootScope.$state = $state;
     });

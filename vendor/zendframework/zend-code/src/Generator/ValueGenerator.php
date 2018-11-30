@@ -3,7 +3,7 @@
  * Zend Framework (http://framework.zend.com/)
  *
  * @link      http://github.com/zendframework/zf2 for the canonical source repository
- * @copyright Copyright (c) 2005-2016 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright Copyright (c) 2005-2015 Zend Technologies USA Inc. (http://www.zend.com)
  * @license   http://framework.zend.com/license/new-bsd New BSD License
  */
 
@@ -18,22 +18,20 @@ class ValueGenerator extends AbstractGenerator
     /**#@+
      * Constant values
      */
-    const TYPE_AUTO        = 'auto';
-    const TYPE_BOOLEAN     = 'boolean';
-    const TYPE_BOOL        = 'bool';
-    const TYPE_NUMBER      = 'number';
-    const TYPE_INTEGER     = 'integer';
-    const TYPE_INT         = 'int';
-    const TYPE_FLOAT       = 'float';
-    const TYPE_DOUBLE      = 'double';
-    const TYPE_STRING      = 'string';
-    const TYPE_ARRAY       = 'array';
-    const TYPE_ARRAY_SHORT = 'array_short';
-    const TYPE_ARRAY_LONG  = 'array_long';
-    const TYPE_CONSTANT    = 'constant';
-    const TYPE_NULL        = 'null';
-    const TYPE_OBJECT      = 'object';
-    const TYPE_OTHER       = 'other';
+    const TYPE_AUTO     = 'auto';
+    const TYPE_BOOLEAN  = 'boolean';
+    const TYPE_BOOL     = 'bool';
+    const TYPE_NUMBER   = 'number';
+    const TYPE_INTEGER  = 'integer';
+    const TYPE_INT      = 'int';
+    const TYPE_FLOAT    = 'float';
+    const TYPE_DOUBLE   = 'double';
+    const TYPE_STRING   = 'string';
+    const TYPE_ARRAY    = 'array';
+    const TYPE_CONSTANT = 'constant';
+    const TYPE_NULL     = 'null';
+    const TYPE_OBJECT   = 'object';
+    const TYPE_OTHER    = 'other';
     /**#@-*/
 
     const OUTPUT_MULTIPLE_LINE = 'multipleLine';
@@ -75,12 +73,8 @@ class ValueGenerator extends AbstractGenerator
      * @param string      $outputMode
      * @param null|SplArrayObject|StdlibArrayObject $constants
      */
-    public function __construct(
-        $value = null,
-        $type = self::TYPE_AUTO,
-        $outputMode = self::OUTPUT_MULTIPLE_LINE,
-        $constants = null
-    ) {
+    public function __construct($value = null, $type = self::TYPE_AUTO, $outputMode = self::OUTPUT_MULTIPLE_LINE, $constants = null)
+    {
         // strict check is important here if $type = AUTO
         if ($value !== null) {
             $this->setValue($value);
@@ -172,10 +166,8 @@ class ValueGenerator extends AbstractGenerator
             $type = $this->type;
         }
 
-        $validConstantTypes = [
-            self::TYPE_ARRAY,
-            self::TYPE_ARRAY_LONG,
-            self::TYPE_ARRAY_SHORT,
+        // valid types for constants
+        $scalarTypes = [
             self::TYPE_BOOLEAN,
             self::TYPE_BOOL,
             self::TYPE_NUMBER,
@@ -188,7 +180,7 @@ class ValueGenerator extends AbstractGenerator
             self::TYPE_NULL
         ];
 
-        return in_array($type, $validConstantTypes);
+        return in_array($type, $scalarTypes);
     }
 
     /**
@@ -262,8 +254,6 @@ class ValueGenerator extends AbstractGenerator
             self::TYPE_DOUBLE,
             self::TYPE_STRING,
             self::TYPE_ARRAY,
-            self::TYPE_ARRAY_SHORT,
-            self::TYPE_ARRAY_LONG,
             self::TYPE_CONSTANT,
             self::TYPE_NULL,
             self::TYPE_OBJECT,
@@ -327,21 +317,12 @@ class ValueGenerator extends AbstractGenerator
             $type = $this->getAutoDeterminedType($value);
         }
 
-        $isArrayType = in_array($type, [self::TYPE_ARRAY, self::TYPE_ARRAY_LONG, self::TYPE_ARRAY_SHORT]);
-
-        if ($isArrayType) {
+        if ($type == self::TYPE_ARRAY) {
             foreach ($value as &$curValue) {
                 if ($curValue instanceof self) {
                     continue;
                 }
-
-                if (is_array($curValue)) {
-                    $newType = $type;
-                } else {
-                    $newType = self::TYPE_AUTO;
-                }
-
-                $curValue = new self($curValue, $newType, self::OUTPUT_MULTIPLE_LINE, $this->getConstants());
+                $curValue = new self($curValue, self::TYPE_AUTO, self::OUTPUT_MULTIPLE_LINE, $this->getConstants());
             }
         }
 
@@ -367,17 +348,7 @@ class ValueGenerator extends AbstractGenerator
                 $output .= $value;
                 break;
             case self::TYPE_ARRAY:
-            case self::TYPE_ARRAY_LONG:
-            case self::TYPE_ARRAY_SHORT:
-                if ($type == self::TYPE_ARRAY_SHORT) {
-                    $startArray = '[';
-                    $endArray   = ']';
-                } else {
-                    $startArray = 'array(';
-                    $endArray = ')';
-                }
-
-                $output .= $startArray;
+                $output .= 'array(';
                 if ($this->outputMode == self::OUTPUT_MULTIPLE_LINE) {
                     $output .= self::LINE_FEED . str_repeat($this->indentation, $this->arrayDepth + 1);
                 }
@@ -413,7 +384,7 @@ class ValueGenerator extends AbstractGenerator
                     }
                     $output .= self::LINE_FEED . str_repeat($this->indentation, $this->arrayDepth);
                 }
-                $output .= $endArray;
+                $output .= ')';
                 break;
             case self::TYPE_OTHER:
             default:

@@ -6,8 +6,8 @@
 namespace Magento\Braintree\Gateway\Request;
 
 use Magento\Braintree\Gateway\Config\Config;
-use Magento\Braintree\Gateway\SubjectReader;
 use Magento\Braintree\Observer\DataAssignObserver;
+use Magento\Braintree\Gateway\Helper\SubjectReader;
 use Magento\Payment\Gateway\Request\BuilderInterface;
 use Magento\Payment\Helper\Formatter;
 
@@ -36,8 +36,9 @@ class PaymentDataBuilder implements BuilderInterface
     const PAYMENT_METHOD_NONCE = 'paymentMethodNonce';
 
     /**
-     * @deprecated
-     * @see \Magento\Braintree\Gateway\Request\MerchantAccountDataBuilder
+     * The merchant account ID used to create a transaction.
+     * Currency is also determined by merchant account ID.
+     * If no merchant account ID is specified, Braintree will use your default merchant account.
      */
     const MERCHANT_ACCOUNT_ID = 'merchantAccountId';
 
@@ -47,17 +48,24 @@ class PaymentDataBuilder implements BuilderInterface
     const ORDER_ID = 'orderId';
 
     /**
+     * @var Config
+     */
+    private $config;
+
+    /**
      * @var SubjectReader
      */
     private $subjectReader;
 
     /**
+     * Constructor
+     *
      * @param Config $config
      * @param SubjectReader $subjectReader
-     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      */
     public function __construct(Config $config, SubjectReader $subjectReader)
     {
+        $this->config = $config;
         $this->subjectReader = $subjectReader;
     }
 
@@ -78,6 +86,11 @@ class PaymentDataBuilder implements BuilderInterface
             ),
             self::ORDER_ID => $order->getOrderIncrementId()
         ];
+
+        $merchantAccountId = $this->config->getMerchantAccountId($order->getStoreId());
+        if (!empty($merchantAccountId)) {
+            $result[self::MERCHANT_ACCOUNT_ID] = $merchantAccountId;
+        }
 
         return $result;
     }

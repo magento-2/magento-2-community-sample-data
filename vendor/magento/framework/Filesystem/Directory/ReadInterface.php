@@ -5,10 +5,6 @@
  */
 namespace Magento\Framework\Filesystem\Directory;
 
-/**
- * Interface \Magento\Framework\Filesystem\Directory\ReadInterface
- *
- */
 interface ReadInterface
 {
     /**

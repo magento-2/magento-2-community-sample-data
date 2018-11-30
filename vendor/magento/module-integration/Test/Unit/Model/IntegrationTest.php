@@ -8,7 +8,7 @@ namespace Magento\Integration\Test\Unit\Model;
 /**
  * Unit test for \Magento\Integration\Model\Integration
  */
-class IntegrationTest extends \PHPUnit\Framework\TestCase
+class IntegrationTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\Integration\Model\Integration
@@ -37,9 +37,15 @@ class IntegrationTest extends \PHPUnit\Framework\TestCase
 
     protected function setUp()
     {
-        $this->contextMock = $this->createPartialMock(\Magento\Framework\Model\Context::class, ['getEventDispatcher']);
+        $this->contextMock = $this->getMock(
+            'Magento\Framework\Model\Context',
+            ['getEventDispatcher'],
+            [],
+            '',
+            false
+        );
         $eventManagerMock = $this->getMockForAbstractClass(
-            \Magento\Framework\Event\ManagerInterface::class,
+            'Magento\Framework\Event\ManagerInterface',
             [],
             '',
             false,
@@ -50,9 +56,15 @@ class IntegrationTest extends \PHPUnit\Framework\TestCase
         $this->contextMock->expects($this->once())
             ->method('getEventDispatcher')
             ->will($this->returnValue($eventManagerMock));
-        $this->registryMock = $this->createMock(\Magento\Framework\Registry::class);
+        $this->registryMock = $this->getMock(
+            'Magento\Framework\Registry',
+            [],
+            [],
+            '',
+            false
+        );
         $this->resourceMock = $this->getMockForAbstractClass(
-            \Magento\Framework\Model\ResourceModel\AbstractResource::class,
+            'Magento\Framework\Model\ResourceModel\AbstractResource',
             [],
             '',
             false,
@@ -60,7 +72,13 @@ class IntegrationTest extends \PHPUnit\Framework\TestCase
             true,
             ['getIdFieldName', 'load', 'selectActiveIntegrationByConsumerId']
         );
-        $this->resourceCollectionMock = $this->createMock(\Magento\Framework\Data\Collection\AbstractDb::class);
+        $this->resourceCollectionMock = $this->getMock(
+            'Magento\Framework\Data\Collection\AbstractDb',
+            [],
+            [],
+            '',
+            false
+        );
         $this->integrationModel = new \Magento\Integration\Model\Integration(
             $this->contextMock,
             $this->registryMock,

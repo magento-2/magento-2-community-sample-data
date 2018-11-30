@@ -99,10 +99,6 @@ class Product extends \Magento\Rule\Model\Condition\Product\AbstractProduct
     {
         $attribute = $model->getResource()->getAttribute($this->getAttribute());
         if ($attribute && $attribute->getBackendType() == 'datetime') {
-            if (!$value) {
-                return null;
-            }
-            $this->setValue(strtotime($this->getValue()));
             $value = strtotime($value);
         }
 

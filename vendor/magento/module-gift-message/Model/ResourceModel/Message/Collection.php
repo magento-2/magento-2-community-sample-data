@@ -19,9 +19,6 @@ class Collection extends \Magento\Framework\Model\ResourceModel\Db\Collection\Ab
      */
     protected function _construct()
     {
-        $this->_init(
-            \Magento\GiftMessage\Model\Message::class,
-            \Magento\GiftMessage\Model\ResourceModel\Message::class
-        );
+        $this->_init('Magento\GiftMessage\Model\Message', 'Magento\GiftMessage\Model\ResourceModel\Message');
     }
 }

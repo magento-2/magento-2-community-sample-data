@@ -7,7 +7,7 @@ namespace Magento\Directory\Model\Country\Postcode;
 
 use Magento\TestFramework\Helper\Bootstrap;
 
-class ValidatorTest extends \PHPUnit\Framework\TestCase
+class ValidatorTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\Directory\Model\Country\Postcode\ValidatorInterface
@@ -17,7 +17,7 @@ class ValidatorTest extends \PHPUnit\Framework\TestCase
     protected function setUp()
     {
         $objectManager = Bootstrap::getObjectManager();
-        $this->validator = $objectManager->create(\Magento\Directory\Model\Country\Postcode\ValidatorInterface::class);
+        $this->validator = $objectManager->create('Magento\Directory\Model\Country\Postcode\ValidatorInterface');
     }
 
     /**
@@ -130,14 +130,14 @@ class ValidatorTest extends \PHPUnit\Framework\TestCase
             ['countryId' => 'IS', 'postcode' => '123'],
             ['countryId' => 'IN', 'postcode' => '123456'],
             ['countryId' => 'ID', 'postcode' => '12345'],
-            ['countryId' => 'IL', 'postcode' => '1234567'],
+            ['countryId' => 'IL', 'postcode' => '12345'],
             ['countryId' => 'IT', 'postcode' => '12345'],
             ['countryId' => 'JP', 'postcode' => '123-4567'],
-            ['countryId' => 'JP', 'postcode' => '1234567'],
+            ['countryId' => 'JP', 'postcode' => '123'],
             ['countryId' => 'JE', 'postcode' => 'TY8 9PL'],
             ['countryId' => 'KZ', 'postcode' => '123456'],
             ['countryId' => 'KE', 'postcode' => '12345'],
-            ['countryId' => 'KR', 'postcode' => '12345'],
+            ['countryId' => 'KR', 'postcode' => '123-456'],
             ['countryId' => 'KG', 'postcode' => '123456'],
             ['countryId' => 'LV', 'postcode' => '1234'],
             ['countryId' => 'LI', 'postcode' => '1234'],

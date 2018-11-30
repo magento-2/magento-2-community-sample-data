@@ -3,9 +3,6 @@
  * See COPYING.txt for license details.
  */
 
-/**
- * @api
- */
 define([
     'underscore',
     'uiRegistry',
@@ -175,14 +172,11 @@ define([
          *      invoked if action is confirmed.
          */
         _confirm: function (action, callback) {
-            var confirmData = action.confirm,
-                data = this.getSelections(),
-                total = data.total ? data.total : 0,
-                confirmMessage = confirmData.message + ' (' + total + ' record' + (total > 1 ? 's' : '') + ')';
+            var confirmData = action.confirm;
 
             confirm({
                 title: confirmData.title,
-                content: confirmMessage,
+                content: confirmData.message,
                 actions: {
                     confirm: callback
                 }

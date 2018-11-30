@@ -248,7 +248,7 @@ abstract class PHPParserVersion70 extends PHPParserVersion56
      * @param string $image
      * @return boolean
      */
-    protected function isScalarOrCallableTypeHint($image)
+    private function isScalarOrCallableTypeHint($image)
     {
         switch (strtolower($image)) {
             case 'int':
@@ -268,7 +268,7 @@ abstract class PHPParserVersion70 extends PHPParserVersion56
      * @param string $image
      * @return \PDepend\Source\AST\ASTType
      */
-    protected function parseScalarOrCallableTypeHint($image)
+    private function parseScalarOrCallableTypeHint($image)
     {
         switch (strtolower($image)) {
             case 'int':

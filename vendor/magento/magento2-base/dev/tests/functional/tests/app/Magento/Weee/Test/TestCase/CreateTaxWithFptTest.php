@@ -41,13 +41,14 @@ use Magento\Mtf\TestCase\Injectable;
  * 9. Go to frontend and login with customer
  * 10. Perform all assertions.
  *
- * @group Tax
+ * @group Tax_(CS)
  * @ZephyrId MAGETWO-29551
  */
 class CreateTaxWithFptTest extends Injectable
 {
     /* tags */
     const MVP = 'no';
+    const DOMAIN = 'CS';
     /* end tags */
 
     /**
@@ -86,7 +87,7 @@ class CreateTaxWithFptTest extends Injectable
     protected function loginCustomer(Customer $customer)
     {
         $this->objectManager->create(
-            \Magento\Customer\Test\TestStep\LoginCustomerOnFrontendStep::class,
+            'Magento\Customer\Test\TestStep\LoginCustomerOnFrontendStep',
             ['customer' => $customer]
         )->run();
     }
@@ -113,7 +114,7 @@ class CreateTaxWithFptTest extends Injectable
         );
         $product->persist();
         $this->objectManager->create(
-            \Magento\Config\Test\TestStep\SetupConfigurationStep::class,
+            'Magento\Config\Test\TestStep\SetupConfigurationStep',
             ['configData' => $configData]
         )->run();
         $this->loginCustomer($customer);
@@ -128,9 +129,9 @@ class CreateTaxWithFptTest extends Injectable
      */
     public function tearDown()
     {
-        $this->objectManager->create(\Magento\Tax\Test\TestStep\DeleteAllTaxRulesStep::class)->run();
+        $this->objectManager->create('\Magento\Tax\Test\TestStep\DeleteAllTaxRulesStep')->run();
         $this->objectManager->create(
-            \Magento\Config\Test\TestStep\SetupConfigurationStep::class,
+            'Magento\Config\Test\TestStep\SetupConfigurationStep',
             ['configData' => 'default_tax_configuration,shipping_tax_class_taxable_goods_rollback']
         )->run();
     }

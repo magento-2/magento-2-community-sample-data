@@ -5,10 +5,12 @@
  */
 namespace Magento\Sitemap\Test\Unit\Block;
 
+use Magento\Framework\App\Config\ScopeConfigInterface;
+
 /**
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  */
-class RobotsTest extends \PHPUnit\Framework\TestCase
+class RobotsTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\Framework\View\Element\Context|\PHPUnit_Framework_MockObject_MockObject
@@ -41,7 +43,7 @@ class RobotsTest extends \PHPUnit\Framework\TestCase
     private $eventManagerMock;
 
     /**
-     * @var \Magento\Framework\App\Config\ScopeConfigInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @var ScopeConfigInterface|\PHPUnit_Framework_MockObject_MockObject
      */
     private $scopeConfigMock;
 
@@ -55,9 +57,6 @@ class RobotsTest extends \PHPUnit\Framework\TestCase
         $this->eventManagerMock = $this->getMockBuilder(\Magento\Framework\Event\ManagerInterface::class)
             ->getMockForAbstractClass();
 
-        $this->scopeConfigMock = $this->getMockBuilder(\Magento\Framework\App\Config\ScopeConfigInterface::class)
-            ->getMockForAbstractClass();
-
         $this->context = $this->getMockBuilder(\Magento\Framework\View\Element\Context::class)
             ->disableOriginalConstructor()
             ->getMock();
@@ -66,6 +65,8 @@ class RobotsTest extends \PHPUnit\Framework\TestCase
             ->method('getEventManager')
             ->willReturn($this->eventManagerMock);
 
+        $this->scopeConfigMock = $this->getMockBuilder(ScopeConfigInterface::class)
+            ->getMockForAbstractClass();
         $this->context->expects($this->any())
             ->method('getScopeConfig')
             ->willReturn($this->scopeConfigMock);
@@ -78,6 +79,7 @@ class RobotsTest extends \PHPUnit\Framework\TestCase
             \Magento\Sitemap\Model\ResourceModel\Sitemap\CollectionFactory::class
         )
             ->disableOriginalConstructor()
+            ->setMethods(['create'])
             ->getMock();
 
         $this->sitemapHelper = $this->getMockBuilder(\Magento\Sitemap\Helper\Data::class)
@@ -107,7 +109,15 @@ class RobotsTest extends \PHPUnit\Framework\TestCase
         $expected = '';
 
         $this->initEventManagerMock($expected);
-        $this->scopeConfigMock->expects($this->once())->method('getValue')->willReturn(false);
+
+        $this->scopeConfigMock->expects($this->once())
+            ->method('getValue')
+            ->with(
+                'advanced/modules_disable_output/Magento_Sitemap',
+                \Magento\Store\Model\ScopeInterface::SCOPE_STORE,
+                null
+            )
+            ->willReturn(false);
 
         $this->storeResolver->expects($this->once())
             ->method('getCurrentStoreId')
@@ -163,7 +173,6 @@ class RobotsTest extends \PHPUnit\Framework\TestCase
             . PHP_EOL;
 
         $this->initEventManagerMock($expected);
-        $this->scopeConfigMock->expects($this->once())->method('getValue')->willReturn(false);
 
         $this->storeResolver->expects($this->once())
             ->method('getCurrentStoreId')

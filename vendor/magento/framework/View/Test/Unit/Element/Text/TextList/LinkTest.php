@@ -11,7 +11,7 @@ namespace Magento\Framework\View\Test\Unit\Element\Text\TextList;
 
 use \Magento\Framework\View\Element\Text\TextList\Link;
 
-class LinkTest extends \PHPUnit\Framework\TestCase
+class LinkTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var Link
@@ -21,7 +21,7 @@ class LinkTest extends \PHPUnit\Framework\TestCase
     protected function setUp()
     {
         $objectManager = new \Magento\Framework\TestFramework\Unit\Helper\ObjectManager($this);
-        $this->link = $objectManager->getObject(\Magento\Framework\View\Element\Text\TextList\Link::class);
+        $this->link = $objectManager->getObject('Magento\Framework\View\Element\Text\TextList\Link');
     }
 
     public function testSetLink()
@@ -47,11 +47,19 @@ class LinkTest extends \PHPUnit\Framework\TestCase
     /**
      * @dataProvider toHtmlDataProvider
      */
-    public function testToHtml($liParams, $aParams, $innerText, $afterText, $expectedHtml)
+    public function testToHtml($liParams, $liAttr, $aParams, $aAttr, $innerText, $afterText)
     {
         $this->link->setLink($liParams, $aParams, $innerText, $afterText);
-
-        $this->assertEquals($expectedHtml, $this->link->toHtml());
+        $this->assertTag([
+            'tag' => 'li',
+            'attributes' => [$liAttr['name'] => $liAttr['value']],
+            'child' => [
+                'tag' => 'a',
+                'attributes' => [$aAttr['name'] => $aAttr['value']],
+                'content' => $innerText,
+            ],
+            'content' => $afterText,
+        ], $this->link->toHtml());
     }
 
     /**
@@ -62,17 +70,19 @@ class LinkTest extends \PHPUnit\Framework\TestCase
         return [
             [
                 'liParams' => ['class' => 'some-css-class'],
+                'liAttr' => ['name' => 'class', 'value' => 'some-css-class'],
                 'aParams' => ['href' => 'url'],
+                'aAttr' => ['name' => 'href', 'value' => 'url'],
                 'innerText' => 'text',
                 'afterText' => 'afterText',
-                'expectedHtml' => '<li class="some-css-class"><a href="url">text</a>afterText</li>' . "\r\n"
             ],
             [
                 'liParams' => 'class="some-css-class"',
+                'liAttr' => ['name' => 'class', 'value' => 'some-css-class'],
                 'aParams' => 'href="url"',
+                'aAttr' => ['name' => 'href', 'value' => 'url'],
                 'innerText' => 'text',
                 'afterText' => 'afterText',
-                'expectedHtml' => '<li class="some-css-class"><a href="url">text</a>afterText</li>' . "\r\n"
             ]
         ];
     }

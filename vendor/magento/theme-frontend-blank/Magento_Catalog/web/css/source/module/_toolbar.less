@@ -50,6 +50,8 @@
         }
 
         .limiter {
+            display: none;
+
             .control {
                 display: inline-block;
             }
@@ -81,11 +83,9 @@
         );
     }
 
-    .sorter {
-        .sort-desc {
-            &:before {
-                content: @icon-arrow-down;
-            }
+    .sorter.sort-desc {
+        &:before {
+            content: @icon-arrow-down;
         }
     }
 

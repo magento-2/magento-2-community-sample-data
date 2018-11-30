@@ -9,11 +9,13 @@
  */
 namespace Magento\CatalogWidget\Model\Rule\Condition;
 
-use Magento\Catalog\Api\Data\ProductInterface;
-use Magento\Catalog\Model\ProductCategoryList;
+use \Magento\Catalog\Model\ResourceModel\Product\Collection as ProductCollection;
+use \Magento\Catalog\Model\ResourceModel\Eav\Attribute as EavAttribute;
+use \Magento\Store\Model\StoreManagerInterface;
 
 /**
  * Class Product
+ *
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  */
 class Product extends \Magento\Rule\Model\Condition\Product\AbstractProduct
@@ -31,7 +33,7 @@ class Product extends \Magento\Rule\Model\Condition\Product\AbstractProduct
     /**
      * Store manager
      *
-     * @var \Magento\Store\Model\StoreManagerInterface
+     * @var StoreManagerInterface
      */
     protected $storeManager;
 
@@ -44,9 +46,9 @@ class Product extends \Magento\Rule\Model\Condition\Product\AbstractProduct
      * @param \Magento\Catalog\Model\ResourceModel\Product $productResource
      * @param \Magento\Eav\Model\ResourceModel\Entity\Attribute\Set\Collection $attrSetCollection
      * @param \Magento\Framework\Locale\FormatInterface $localeFormat
-     * @param \Magento\Store\Model\StoreManagerInterface $storeManager
+     * @param StoreManagerInterface $storeManager
      * @param array $data
-     * @param ProductCategoryList $categoryList
+     * @param \Magento\Catalog\Model\ResourceModel\Category $category
      * @SuppressWarnings(PHPMD.ExcessiveParameterList)
      */
     public function __construct(
@@ -58,9 +60,9 @@ class Product extends \Magento\Rule\Model\Condition\Product\AbstractProduct
         \Magento\Catalog\Model\ResourceModel\Product $productResource,
         \Magento\Eav\Model\ResourceModel\Entity\Attribute\Set\Collection $attrSetCollection,
         \Magento\Framework\Locale\FormatInterface $localeFormat,
-        \Magento\Store\Model\StoreManagerInterface $storeManager,
+        StoreManagerInterface $storeManager,
         array $data = [],
-        ProductCategoryList $categoryList = null
+        \Magento\Catalog\Model\ResourceModel\Category $category = null
     ) {
         $this->storeManager = $storeManager;
         parent::__construct(
@@ -73,7 +75,7 @@ class Product extends \Magento\Rule\Model\Condition\Product\AbstractProduct
             $attrSetCollection,
             $localeFormat,
             $data,
-            $categoryList
+            $category
         );
     }
 
@@ -83,17 +85,12 @@ class Product extends \Magento\Rule\Model\Condition\Product\AbstractProduct
     public function loadAttributeOptions()
     {
         $productAttributes = $this->_productResource->loadAllAttributes()->getAttributesByCode();
-        $productAttributes = array_filter(
-            $productAttributes,
-            function ($attribute) {
-                return $attribute->getFrontendLabel() &&
-                    $attribute->getFrontendInput() !== 'text' &&
-                    $attribute->getAttributeCode() !== ProductInterface::STATUS;
-            }
-        );
 
         $attributes = [];
         foreach ($productAttributes as $attribute) {
+            if (!$attribute->getFrontendLabel() || $attribute->getFrontendInput() == 'text') {
+                continue;
+            }
             $attributes[$attribute->getAttributeCode()] = $attribute->getFrontendLabel();
         }
 
@@ -117,7 +114,7 @@ class Product extends \Magento\Rule\Model\Condition\Product\AbstractProduct
     /**
      * Add condition to collection
      *
-     * @param \Magento\Catalog\Model\ResourceModel\Product\Collection $collection
+     * @param ProductCollection $collection
      * @return $this
      */
     public function addToCollection($collection)
@@ -125,21 +122,8 @@ class Product extends \Magento\Rule\Model\Condition\Product\AbstractProduct
         $attribute = $this->getAttributeObject();
 
         if ($collection->isEnabledFlat()) {
-            if ($this->isEnabledInFlat($attribute)) {
-                $alias = array_keys($collection->getSelect()->getPart('from'))[0];
-                $this->joinedAttributes[$attribute->getAttributeCode()] = $alias . '.' . $attribute->getAttributeCode();
-            } else {
-                $alias = 'at_' . $attribute->getAttributeCode();
-                if (!in_array($alias, array_keys($collection->getSelect()->getPart('from')))) {
-                    $collection->joinAttribute(
-                        $attribute->getAttributeCode(),
-                        'catalog_product/'.$attribute->getAttributeCode(),
-                        'entity_id'
-                    );
-                }
-
-                $this->joinedAttributes[$attribute->getAttributeCode()] = $alias . '.value';
-            }
+            $alias = array_keys($collection->getSelect()->getPart('from'))[0];
+            $this->joinedAttributes[$attribute->getAttributeCode()] = $alias . '.' . $attribute->getAttributeCode();
             return $this;
         }
 
@@ -161,14 +145,14 @@ class Product extends \Magento\Rule\Model\Condition\Product\AbstractProduct
     }
 
     /**
-     * @param \Magento\Catalog\Model\ResourceModel\Eav\Attribute $attribute
-     * @param \Magento\Catalog\Model\ResourceModel\Product\Collection $collection
+     * @param EavAttribute $attribute
+     * @param ProductCollection $collection
      * @return $this
      */
-    protected function addGlobalAttribute(
-        \Magento\Catalog\Model\ResourceModel\Eav\Attribute $attribute,
-        \Magento\Catalog\Model\ResourceModel\Product\Collection $collection
-    ) {
+    protected function addGlobalAttribute(EavAttribute $attribute, ProductCollection $collection)
+    {
+        $storeId =  $this->storeManager->getStore()->getId();
+
         switch ($attribute->getBackendType()) {
             case 'decimal':
             case 'datetime':
@@ -177,15 +161,10 @@ class Product extends \Magento\Rule\Model\Condition\Product\AbstractProduct
                 $collection->addAttributeToSelect($attribute->getAttributeCode(), 'inner');
                 break;
             default:
-                $alias = 'at_' . sha1($this->getId()) . $attribute->getAttributeCode();
-
-                $connection = $this->_productResource->getConnection();
-                $storeId = $connection->getIfNullSql($alias . '.store_id', $this->storeManager->getStore()->getId());
-                $linkField = $attribute->getEntity()->getLinkField();
-
+                $alias = 'at_'. md5($this->getId()) . $attribute->getAttributeCode();
                 $collection->getSelect()->join(
-                    [$alias => $collection->getTable('catalog_product_entity_varchar')],
-                    "($alias.$linkField = e.$linkField) AND ($alias.store_id = $storeId)" .
+                    [$alias => $collection->getTable('catalog_product_index_eav')],
+                    "($alias.entity_id = e.entity_id) AND ($alias.store_id = $storeId)" .
                     " AND ($alias.attribute_id = {$attribute->getId()})",
                     []
                 );
@@ -197,14 +176,12 @@ class Product extends \Magento\Rule\Model\Condition\Product\AbstractProduct
     }
 
     /**
-     * @param \Magento\Catalog\Model\ResourceModel\Eav\Attribute $attribute
-     * @param \Magento\Catalog\Model\ResourceModel\Product\Collection $collection
+     * @param EavAttribute $attribute
+     * @param ProductCollection $collection
      * @return $this
      */
-    protected function addNotGlobalAttribute(
-        \Magento\Catalog\Model\ResourceModel\Eav\Attribute $attribute,
-        \Magento\Catalog\Model\ResourceModel\Product\Collection $collection
-    ) {
+    protected function addNotGlobalAttribute(EavAttribute $attribute, ProductCollection $collection)
+    {
         $storeId =  $this->storeManager->getStore()->getId();
         $values = $collection->getAllAttributeValues($attribute);
         $validEntities = [];
@@ -238,7 +215,7 @@ class Product extends \Magento\Rule\Model\Condition\Product\AbstractProduct
     public function getMappedSqlField()
     {
         $result = '';
-        if (in_array($this->getAttribute(), ['category_ids', 'sku'])) {
+        if ($this->getAttribute() == 'category_ids') {
             $result = parent::getMappedSqlField();
         } elseif (isset($this->joinedAttributes[$this->getAttribute()])) {
             $result = $this->joinedAttributes[$this->getAttribute()];
@@ -249,24 +226,5 @@ class Product extends \Magento\Rule\Model\Condition\Product\AbstractProduct
         }
 
         return $result;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function collectValidatedAttributes($productCollection)
-    {
-        return $this->addToCollection($productCollection);
-    }
-
-    /**
-     * @param \Magento\Framework\DataObject $attribute
-     * @return bool
-     */
-    private function isEnabledInFlat(\Magento\Framework\DataObject $attribute): bool
-    {
-        return $attribute->getData('backend_type') === 'static'
-            || (int) $attribute->getData('used_in_product_listing') === 1
-            || (int) $attribute->getData('used_for_sort_by') === 1;
     }
 }

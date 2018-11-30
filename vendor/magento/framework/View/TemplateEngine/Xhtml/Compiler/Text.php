@@ -37,14 +37,14 @@ class Text implements TextInterface
      */
     public function compile(\DOMText $node, DataObject $processedObject)
     {
-        $result = $node->textContent;
+        $result = '';
         foreach ($this->directivePool as $directive) {
             $result = preg_replace_callback(
                 $directive->getPattern(),
                 function ($match) use ($directive, $processedObject) {
                     return $directive->execute($match, $processedObject);
                 },
-                $result
+                $node->textContent
             );
         }
 

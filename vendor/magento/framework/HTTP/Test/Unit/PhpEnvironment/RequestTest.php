@@ -9,7 +9,7 @@ use \Magento\Framework\HTTP\PhpEnvironment\Request;
 
 use Zend\Stdlib\Parameters;
 
-class RequestTest extends \PHPUnit\Framework\TestCase
+class RequestTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var Request
@@ -38,9 +38,9 @@ class RequestTest extends \PHPUnit\Framework\TestCase
 
     protected function setUp()
     {
-        $this->objectManager = $this->createMock(\Magento\Framework\ObjectManagerInterface::class);
-        $this->cookieReader = $this->createMock(\Magento\Framework\Stdlib\Cookie\CookieReaderInterface::class);
-        $this->converter = $this->createMock(\Magento\Framework\Stdlib\StringUtils::class);
+        $this->objectManager = $this->getMock('Magento\Framework\ObjectManagerInterface');
+        $this->cookieReader = $this->getMock('Magento\Framework\Stdlib\Cookie\CookieReaderInterface');
+        $this->converter = $this->getMock('Magento\Framework\Stdlib\StringUtils');
         // Stash the $_SERVER array to protect it from modification in test
         $this->serverArray = $_SERVER;
     }
@@ -52,7 +52,6 @@ class RequestTest extends \PHPUnit\Framework\TestCase
 
     /**
      * @param null $uri
-     *
      * @return Request
      */
     private function getModel($uri = null)

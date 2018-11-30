@@ -10,7 +10,7 @@ use Magento\Integration\Model\Integration;
 /**
  * Unit test for \Magento\Integration\Model\Plugin\Integration
  */
-class IntegrationTest extends \PHPUnit\Framework\TestCase
+class IntegrationTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * API setup plugin
@@ -46,20 +46,26 @@ class IntegrationTest extends \PHPUnit\Framework\TestCase
 
     protected function setUp()
     {
-        $this->subjectMock = $this->createMock(\Magento\Integration\Model\IntegrationService::class);
-        $this->integrationAuthServiceMock = $this->createPartialMock(
-            \Magento\Integration\Api\AuthorizationServiceInterface::class,
-            ['removePermissions', 'grantAllPermissions', 'grantPermissions']
+        $this->subjectMock = $this->getMock('Magento\Integration\Model\IntegrationService', [], [], '', false);
+        $this->integrationAuthServiceMock = $this->getMock(
+            'Magento\Integration\Api\AuthorizationServiceInterface',
+            ['removePermissions', 'grantAllPermissions', 'grantPermissions'],
+            [],
+            '',
+            false
         );
-        $this->aclRetrieverMock = $this->createPartialMock(
-            \Magento\Authorization\Model\Acl\AclRetriever::class,
-            ['getAllowedResourcesByUser']
+        $this->aclRetrieverMock = $this->getMock(
+            'Magento\Authorization\Model\Acl\AclRetriever',
+            ['getAllowedResourcesByUser'],
+            [],
+            '',
+            false
         );
-        $this->integrationConfigMock = $this->getMockBuilder(\Magento\Integration\Model\IntegrationConfig::class)
+        $this->integrationConfigMock = $this->getMockBuilder('Magento\Integration\Model\IntegrationConfig')
             ->disableOriginalConstructor()
             ->setMethods([])
             ->getMock();
-        $this->consolidatedConfigMock = $this->getMockBuilder(\Magento\Integration\Model\ConsolidatedConfig::class)
+        $this->consolidatedConfigMock = $this->getMockBuilder('Magento\Integration\Model\ConsolidatedConfig')
             ->disableOriginalConstructor()
             ->setMethods([])
             ->getMock();
@@ -67,7 +73,7 @@ class IntegrationTest extends \PHPUnit\Framework\TestCase
         $objectManagerHelper = new \Magento\Framework\TestFramework\Unit\Helper\ObjectManager($this);
 
         $this->integrationPlugin = $objectManagerHelper->getObject(
-            \Magento\Integration\Model\Plugin\Integration::class,
+            'Magento\Integration\Model\Plugin\Integration',
             [
                 'integrationAuthorizationService' => $this->integrationAuthServiceMock,
                 'aclRetriever' => $this->aclRetrieverMock,
@@ -97,7 +103,7 @@ class IntegrationTest extends \PHPUnit\Framework\TestCase
     public function testAfterCreateAllResources()
     {
         $integrationId = 1;
-        $integrationModelMock = $this->getMockBuilder(\Magento\Integration\Model\Integration::class)
+        $integrationModelMock = $this->getMockBuilder('Magento\Integration\Model\Integration')
             ->disableOriginalConstructor()
             ->getMock();
         $integrationModelMock->expects($this->exactly(2))
@@ -118,7 +124,7 @@ class IntegrationTest extends \PHPUnit\Framework\TestCase
     public function testAfterCreateSomeResources()
     {
         $integrationId = 1;
-        $integrationModelMock = $this->getMockBuilder(\Magento\Integration\Model\Integration::class)
+        $integrationModelMock = $this->getMockBuilder('Magento\Integration\Model\Integration')
             ->disableOriginalConstructor()
             ->getMock();
         $integrationModelMock->expects($this->exactly(2))
@@ -147,7 +153,7 @@ class IntegrationTest extends \PHPUnit\Framework\TestCase
     public function testAfterCreateNoResource()
     {
         $integrationId = 1;
-        $integrationModelMock = $this->getMockBuilder(\Magento\Integration\Model\Integration::class)
+        $integrationModelMock = $this->getMockBuilder('Magento\Integration\Model\Integration')
             ->disableOriginalConstructor()
             ->getMock();
         $integrationModelMock->expects($this->exactly(2))
@@ -172,7 +178,7 @@ class IntegrationTest extends \PHPUnit\Framework\TestCase
     public function testAfterUpdateAllResources()
     {
         $integrationId = 1;
-        $integrationModelMock = $this->getMockBuilder(\Magento\Integration\Model\Integration::class)
+        $integrationModelMock = $this->getMockBuilder('Magento\Integration\Model\Integration')
             ->disableOriginalConstructor()
             ->getMock();
         $integrationModelMock->expects($this->exactly(2))
@@ -193,7 +199,7 @@ class IntegrationTest extends \PHPUnit\Framework\TestCase
     public function testAfterGet()
     {
         $integrationId = 1;
-        $integrationModelMock = $this->getMockBuilder(\Magento\Integration\Model\Integration::class)
+        $integrationModelMock = $this->getMockBuilder('Magento\Integration\Model\Integration')
             ->disableOriginalConstructor()
             ->getMock();
         $integrationModelMock->expects($this->exactly(2))

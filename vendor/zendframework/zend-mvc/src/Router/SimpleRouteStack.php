@@ -10,7 +10,6 @@
 namespace Zend\Mvc\Router;
 
 use Traversable;
-use Zend\ServiceManager\ServiceManager;
 use Zend\Stdlib\ArrayUtils;
 use Zend\Stdlib\RequestInterface as Request;
 
@@ -50,7 +49,7 @@ class SimpleRouteStack implements RouteStackInterface
         $this->routes = new PriorityList();
 
         if (null === $routePluginManager) {
-            $routePluginManager = new RoutePluginManager(new ServiceManager());
+            $routePluginManager = new RoutePluginManager();
         }
 
         $this->routePluginManager = $routePluginManager;
@@ -262,17 +261,13 @@ class SimpleRouteStack implements RouteStackInterface
     {
         if ($specs instanceof Traversable) {
             $specs = ArrayUtils::iteratorToArray($specs);
-        }
-
-        if (! is_array($specs)) {
+        } elseif (!is_array($specs)) {
             throw new Exception\InvalidArgumentException('Route definition must be an array or Traversable object');
         }
 
-        if (! isset($specs['type'])) {
+        if (!isset($specs['type'])) {
             throw new Exception\InvalidArgumentException('Missing "type" option');
-        }
-
-        if (! isset($specs['options'])) {
+        } elseif (!isset($specs['options'])) {
             $specs['options'] = [];
         }
 

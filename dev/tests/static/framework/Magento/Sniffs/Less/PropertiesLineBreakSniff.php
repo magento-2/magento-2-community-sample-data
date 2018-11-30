@@ -5,8 +5,8 @@
  */
 namespace Magento\Sniffs\Less;
 
-use PHP_CodeSniffer\Sniffs\Sniff;
-use PHP_CodeSniffer\Files\File;
+use PHP_CodeSniffer_File;
+use PHP_CodeSniffer_Sniff;
 
 /**
  * Class PropertiesLineBreakSniff
@@ -16,7 +16,7 @@ use PHP_CodeSniffer\Files\File;
  * @link http://devdocs.magento.com/guides/v2.0/coding-standards/code-standard-less.html#properties-line-break
  *
  */
-class PropertiesLineBreakSniff implements Sniff
+class PropertiesLineBreakSniff implements PHP_CodeSniffer_Sniff
 {
     /**
      * A list of tokenizers this sniff supports.
@@ -36,7 +36,7 @@ class PropertiesLineBreakSniff implements Sniff
     /**
      * {@inheritdoc}
      */
-    public function process(File $phpcsFile, $stackPtr)
+    public function process(PHP_CodeSniffer_File $phpcsFile, $stackPtr)
     {
         $tokens = $phpcsFile->getTokens();
 

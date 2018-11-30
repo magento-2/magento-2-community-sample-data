@@ -10,6 +10,7 @@
 namespace Zend\View\Helper;
 
 use Zend\Navigation\AbstractContainer;
+use Zend\ServiceManager\ServiceLocatorAwareInterface;
 use Zend\View\Exception;
 use Zend\View\Helper\Navigation\AbstractHelper as AbstractNavigationHelper;
 use Zend\View\Helper\Navigation\HelperInterface as NavigationHelper;
@@ -17,11 +18,6 @@ use Zend\View\Renderer\RendererInterface as Renderer;
 
 /**
  * Proxy helper for retrieving navigational helpers and forwarding calls
- *
- * @method \Zend\View\Helper\Navigation\Breadcrumbs breadcrumbs($container = null)
- * @method \Zend\View\Helper\Navigation\Links links($container = null)
- * @method \Zend\View\Helper\Navigation\Menu menu($container = null)
- * @method \Zend\View\Helper\Navigation\Sitemap sitemap($container = null)
  */
 class Navigation extends AbstractNavigationHelper
 {
@@ -116,7 +112,7 @@ class Navigation extends AbstractNavigationHelper
         // check if call should proxy to another helper
         $helper = $this->findHelper($method, false);
         if ($helper) {
-            if (method_exists($helper, 'setServiceLocator') && $this->getServiceLocator()) {
+            if ($helper instanceof ServiceLocatorAwareInterface && $this->getServiceLocator()) {
                 $helper->setServiceLocator($this->getServiceLocator());
             }
             return call_user_func_array($helper, $arguments);
@@ -154,7 +150,7 @@ class Navigation extends AbstractNavigationHelper
     public function findHelper($proxy, $strict = true)
     {
         $plugins = $this->getPluginManager();
-        if (! $plugins->has($proxy)) {
+        if (!$plugins->has($proxy)) {
             if ($strict) {
                 throw new Exception\RuntimeException(sprintf(
                     'Failed to find plugin for %s',
@@ -168,7 +164,7 @@ class Navigation extends AbstractNavigationHelper
         $container = $this->getContainer();
         $hash      = spl_object_hash($container) . spl_object_hash($helper);
 
-        if (! isset($this->injected[$hash])) {
+        if (!isset($this->injected[$hash])) {
             $helper->setContainer();
             $this->inject($helper);
             $this->injected[$hash] = true;
@@ -190,20 +186,20 @@ class Navigation extends AbstractNavigationHelper
      */
     protected function inject(NavigationHelper $helper)
     {
-        if ($this->getInjectContainer() && ! $helper->hasContainer()) {
+        if ($this->getInjectContainer() && !$helper->hasContainer()) {
             $helper->setContainer($this->getContainer());
         }
 
         if ($this->getInjectAcl()) {
-            if (! $helper->hasAcl()) {
+            if (!$helper->hasAcl()) {
                 $helper->setAcl($this->getAcl());
             }
-            if (! $helper->hasRole()) {
+            if (!$helper->hasRole()) {
                 $helper->setRole($this->getRole());
             }
         }
 
-        if ($this->getInjectTranslator() && ! $helper->hasTranslator()) {
+        if ($this->getInjectTranslator() && !$helper->hasTranslator()) {
             $helper->setTranslator(
                 $this->getTranslator(),
                 $this->getTranslatorTextDomain()
@@ -327,7 +323,7 @@ class Navigation extends AbstractNavigationHelper
     public function getPluginManager()
     {
         if (null === $this->plugins) {
-            $this->setPluginManager(new Navigation\PluginManager($this->getServiceLocator()));
+            $this->setPluginManager(new Navigation\PluginManager());
         }
 
         return $this->plugins;

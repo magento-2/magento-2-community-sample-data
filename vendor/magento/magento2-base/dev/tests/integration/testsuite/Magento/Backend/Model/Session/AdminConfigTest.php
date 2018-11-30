@@ -5,14 +5,14 @@
  */
 namespace Magento\Backend\Model\Session;
 
-use PHPUnit\Framework\TestCase;
+use PHPUnit_Framework_TestCase;
 
 /**
  * Test class for \Magento\Backend\Model\Session\AdminConfig.
  *
  * @magentoAppArea adminhtml
  */
-class AdminConfigTest extends \PHPUnit\Framework\TestCase
+class AdminConfigTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\Framework\ObjectManagerInterface
@@ -30,7 +30,7 @@ class AdminConfigTest extends \PHPUnit\Framework\TestCase
 
     public function testConstructor()
     {
-        $model = $this->objectManager->create(\Magento\Backend\Model\Session\AdminConfig::class);
+        $model = $this->objectManager->create('Magento\Backend\Model\Session\AdminConfig');
         $this->assertEquals('/index.php/backend', $model->getCookiePath());
     }
 
@@ -42,7 +42,7 @@ class AdminConfigTest extends \PHPUnit\Framework\TestCase
     {
         $sessionName = 'adminHtmlSession';
         $adminConfig = $this->objectManager->create(
-            \Magento\Backend\Model\Session\AdminConfig::class,
+            'Magento\Backend\Model\Session\AdminConfig',
             ['sessionName' => $sessionName]
         );
         $this->assertSame($sessionName, $adminConfig->getName());

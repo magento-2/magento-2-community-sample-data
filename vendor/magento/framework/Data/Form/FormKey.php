@@ -5,9 +5,6 @@
  */
 namespace Magento\Framework\Data\Form;
 
-/**
- * @api
- */
 class FormKey
 {
     /**
@@ -27,7 +24,6 @@ class FormKey
 
     /**
      * @var \Magento\Framework\Escaper
-     * @since 100.0.3
      */
     protected $escaper;
 

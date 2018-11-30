@@ -10,7 +10,7 @@ use \Magento\Shipping\Model\Carrier\AbstractCarrierOnline;
 use Magento\Quote\Model\Quote\Address\RateRequest;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager as ObjectManagerHelper;
 
-class AbstractCarrierOnlineTest extends \PHPUnit\Framework\TestCase
+class AbstractCarrierOnlineTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * Test identification number of product
@@ -36,8 +36,14 @@ class AbstractCarrierOnlineTest extends \PHPUnit\Framework\TestCase
 
     protected function setUp()
     {
-        $this->stockRegistry = $this->createMock(\Magento\CatalogInventory\Model\StockRegistry::class);
-        $this->stockItemData = $this->createMock(\Magento\CatalogInventory\Model\Stock\Item::class);
+        $this->stockRegistry = $this->getMock(
+            'Magento\CatalogInventory\Model\StockRegistry',
+            [],
+            [],
+            '',
+            false
+        );
+        $this->stockItemData = $this->getMock('Magento\CatalogInventory\Model\Stock\Item', [], [], '', false);
 
         $this->stockRegistry->expects($this->any())->method('getStockItem')
             ->with($this->productId, 10)
@@ -45,13 +51,13 @@ class AbstractCarrierOnlineTest extends \PHPUnit\Framework\TestCase
 
         $objectManagerHelper = new ObjectManagerHelper($this);
         $carrierArgs = $objectManagerHelper->getConstructArguments(
-            \Magento\Shipping\Model\Carrier\AbstractCarrierOnline::class,
+            'Magento\Shipping\Model\Carrier\AbstractCarrierOnline',
             [
                 'stockRegistry' => $this->stockRegistry,
                 'xmlSecurity' => new \Magento\Framework\Xml\Security(),
             ]
         );
-        $this->carrier = $this->getMockBuilder(\Magento\Shipping\Model\Carrier\AbstractCarrierOnline::class)
+        $this->carrier = $this->getMockBuilder('Magento\Shipping\Model\Carrier\AbstractCarrierOnline')
             ->setConstructorArgs($carrierArgs)
             ->setMethods(['getConfigData', '_doShipmentRequest', 'collectRates'])
             ->getMock();
@@ -70,16 +76,16 @@ class AbstractCarrierOnlineTest extends \PHPUnit\Framework\TestCase
             return isset($configData[$key]) ? $configData[$key] : 0;
         }));
 
-        $product = $this->createMock(\Magento\Catalog\Model\Product::class);
+        $product = $this->getMock('Magento\Catalog\Model\Product', [], [], '', false);
         $product->expects($this->any())->method('getId')->will($this->returnValue($this->productId));
 
-        $item = $this->getMockBuilder(\Magento\Quote\Model\Quote\Item::class)
+        $item = $this->getMockBuilder('\Magento\Quote\Model\Quote\Item')
             ->disableOriginalConstructor()
             ->setMethods(['getProduct', 'getQty', 'getWeight', '__wakeup', 'getStore'])
             ->getMock();
         $item->expects($this->any())->method('getProduct')->will($this->returnValue($product));
 
-        $store = $this->createPartialMock(\Magento\Store\Model\Store::class, ['getWebsiteId']);
+        $store = $this->getMock('Magento\Store\Model\Store', ['getWebsiteId'], [], '', false);
         $store->expects($this->any())
             ->method('getWebsiteId')
             ->will($this->returnValue(10));
@@ -99,7 +105,7 @@ class AbstractCarrierOnlineTest extends \PHPUnit\Framework\TestCase
         $this->stockItemData->expects($this->atLeastOnce())->method('getIsDecimalDivided')
             ->will($this->returnValue(true));
 
-        $this->carrier->processAdditionalValidation($request);
+        $this->carrier->proccessAdditionalValidation($request);
     }
 
     public function testParseXml()
@@ -109,11 +115,8 @@ class AbstractCarrierOnlineTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals('GetResponse', $simpleXmlElement->getName());
         $this->assertEquals(42, (int)$simpleXmlElement->value);
         $this->assertInstanceOf('SimpleXMLElement', $simpleXmlElement);
-        $customSimpleXmlElement = $this->carrier->parseXml(
-            $xmlString,
-            \Magento\Shipping\Model\Simplexml\Element::class
-        );
-        $this->assertInstanceOf(\Magento\Shipping\Model\Simplexml\Element::class, $customSimpleXmlElement);
+        $customSimpleXmlElement = $this->carrier->parseXml($xmlString, 'Magento\Shipping\Model\Simplexml\Element');
+        $this->assertInstanceOf('Magento\Shipping\Model\Simplexml\Element', $customSimpleXmlElement);
     }
 
     /**

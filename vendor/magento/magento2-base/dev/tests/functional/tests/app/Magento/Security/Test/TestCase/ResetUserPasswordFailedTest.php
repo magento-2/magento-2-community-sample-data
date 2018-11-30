@@ -6,10 +6,10 @@
 
 namespace Magento\Security\Test\TestCase;
 
-use Magento\Backend\Test\Page\Adminhtml\SystemConfigEdit;
 use Magento\Mtf\TestCase\Injectable;
-use Magento\Security\Test\Page\UserAccountForgotPassword;
+use Magento\Mtf\ObjectManager;
 use Magento\User\Test\Fixture\User;
+use Magento\Security\Test\Page\UserAccountForgotPassword;
 
 /**
  * Preconditions:
@@ -27,7 +27,7 @@ class ResetUserPasswordFailedTest extends Injectable
 {
     /* tags */
     const MVP = 'yes';
-    const SEVERITY = 'S1';
+    const DOMAIN = 'PS';
     /* end tags */
 
     /**
@@ -40,62 +40,27 @@ class ResetUserPasswordFailedTest extends Injectable
     protected $systemConfig;
 
     /**
-     * Configuration setting.
-     *
-     * @var string
-     */
-    protected $configData;
-
-    /**
-     * System configuration page.
-     *
-     * @var SystemConfigEdit
-     */
-    private $systemConfigEditPage;
-
-    /**
      * Preparing pages for test.
      *
      * @param UserAccountForgotPassword $userAccountForgotPassword
-     * @param SystemConfigEdit $systemConfigEditPage
      * @return void
      */
     public function __inject(
-        UserAccountForgotPassword $userAccountForgotPassword,
-        SystemConfigEdit $systemConfigEditPage
+        UserAccountForgotPassword $userAccountForgotPassword
     ) {
         $this->userAccountForgotPassword = $userAccountForgotPassword;
-        $this->systemConfigEditPage = $systemConfigEditPage;
     }
 
     /**
      * Run reset user password failed test.
      * @param User $customAdmin
      * @param int $attempts
-     * @param string $configData
      * @return void
      */
-    public function test(
-        User $customAdmin,
-        $attempts,
-        $configData = null
-    ) {
-        $this->configData = $configData;
-
+    public function test(User $customAdmin, $attempts)
+    {
         // Steps
         $customAdmin->persist();
-
-        // Preconditions
-        $this->objectManager->create(
-            \Magento\Config\Test\TestStep\SetupConfigurationStep::class,
-            ['configData' => $this->configData]
-        )->run();
-
-        $this->systemConfigEditPage->open();
-        $this->systemConfigEditPage->getForm()
-            ->getGroup('admin', 'captcha')->setValue('admin', 'captcha', 'enable', 'No');
-        $this->systemConfigEditPage->getPageActions()->save();
-
         for ($i = 0; $i < $attempts; $i++) {
             $this->userAccountForgotPassword->open();
             $this->userAccountForgotPassword->getForgotPasswordForm()->fill($customAdmin);

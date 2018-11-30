@@ -17,25 +17,28 @@
                     class="search-global-input"
                     id="search-global"
                     name="query"
-                    data-mage-init='<?= /* @noEscape */ $this->helper('Magento\Framework\Json\Helper\Data')->jsonEncode($block->getWidgetInitOptions()) ?>'>
+                    data-mage-init='<?php echo $block->escapeHtml($this->helper('Magento\Framework\Json\Helper\Data')->jsonEncode($block->getWidgetInitOptions()))?>'>
             <button
                 type="submit"
                 class="search-global-action"
-                title="<?= /* @escapeNotVerified */ __('Search') ?>"
+                title="<?php /* @escapeNotVerified */ echo __('Search') ?>"
                 ></button>
         </div>
     </form>
     <script data-template="search-suggest" type="text/x-magento-template">
         <ul class="search-global-menu">
-            <?php foreach ($block->getEntitiesToShow() as $entity): ?>
-                <li class="item">
-                    <a id="<?= /* @escapeNotVerified */ $entity->getId(); ?>"
-                       href="<?= /* @escapeNotVerified */ $entity->getUrl() ?>?search=<%- data.term%>"
-                       class="title">
-                        "<%- data.term%>" <?= /* @escapeNotVerified */ __($entity->getTitle()); ?>
-                    </a>
-                </li>
-            <?php endforeach; ?>
+        <li class="item">
+            <a id="searchPreviewProducts" href="<?php /* @escapeNotVerified */ echo $block->getUrl('catalog/product/index/'); ?>?search=<%- data.term%>" class="title">"<%- data.term%>" in Products</a>
+        </li>
+        <li class="item">
+            <a id="searchPreviewOrders" href="<?php /* @escapeNotVerified */ echo $block->getUrl('sales/order/index/'); ?>?search=<%- data.term%>" class="title">"<%- data.term%>" in Orders</a>
+        </li>
+        <li class="item">
+            <a id="searchPreviewCustomers" href="<?php /* @escapeNotVerified */ echo $block->getUrl('customer/index/index/'); ?>?search=<%- data.term%>" class="title">"<%- data.term%>" in Customers</a>
+        </li>
+        <li class="item">
+            <a id="searchPreviewPages" href="<?php /* @escapeNotVerified */ echo $block->getUrl('cms/page/index/'); ?>?search=<%- data.term%>" class="title">"<%- data.term%>" in Pages</a>
+        </li>
             <% if (data.items.length) { %>
             <% _.each(data.items, function(value){ %>
             <li class="item"
@@ -49,7 +52,7 @@
         <% } else { %>
             <li>
                 <span class="mage-suggest-no-records">
-                    <?= /* @escapeNotVerified */ __('No records found.') ?>
+                    <?php /* @escapeNotVerified */ echo __('No records found.') ?>
                 </span>
             </li>
         <% } %>

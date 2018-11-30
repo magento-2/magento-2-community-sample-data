@@ -16,7 +16,7 @@ use Magento\TestFramework\Helper\Bootstrap;
  * Test for Magento\Framework\Filesystem class
  *
  */
-class FilesystemTest extends \PHPUnit\Framework\TestCase
+class FilesystemTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var Filesystem
@@ -25,7 +25,7 @@ class FilesystemTest extends \PHPUnit\Framework\TestCase
 
     protected function setUp()
     {
-        $this->filesystem = Bootstrap::getObjectManager()->create(\Magento\Framework\Filesystem::class);
+        $this->filesystem = Bootstrap::getObjectManager()->create('Magento\Framework\Filesystem');
     }
 
     /**
@@ -34,7 +34,7 @@ class FilesystemTest extends \PHPUnit\Framework\TestCase
     public function testGetDirectoryReadInstance()
     {
         $dir = $this->filesystem->getDirectoryRead(AppDirectoryList::VAR_DIR);
-        $this->assertInstanceOf(\Magento\Framework\Filesystem\Directory\Read::class, $dir);
+        $this->assertInstanceOf('\Magento\Framework\Filesystem\Directory\Read', $dir);
     }
 
     /**
@@ -43,7 +43,7 @@ class FilesystemTest extends \PHPUnit\Framework\TestCase
     public function testGetDirectoryWriteInstance()
     {
         $dir = $this->filesystem->getDirectoryWrite(AppDirectoryList::VAR_DIR);
-        $this->assertInstanceOf(\Magento\Framework\Filesystem\Directory\Write::class, $dir);
+        $this->assertInstanceOf('\Magento\Framework\Filesystem\Directory\Write', $dir);
     }
 
     /**

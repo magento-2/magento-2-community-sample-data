@@ -32,8 +32,7 @@ class Curl extends AbstractCurl implements CustomerInterface
     protected $mappingData = [
         'country_id' => [
             'United States' => 'US',
-            'United Kingdom' => 'GB',
-            'Germany' => 'DE'
+            'United Kingdom' => 'GB'
         ],
         'gender' => [
             'Male' => 1,
@@ -87,7 +86,6 @@ class Curl extends AbstractCurl implements CustomerInterface
         /** @var Customer $customer */
         $data = $customer->getData();
         $data['group_id'] = $this->getCustomerGroup($customer);
-        $data['website_id'] = $this->getCustomerWebsite($customer);
         $address = [];
         $url = $_ENV['app_frontend_url'] . 'customer/account/createpost/?nocookie=true';
 
@@ -229,16 +227,5 @@ class Curl extends AbstractCurl implements CustomerInterface
         $curlData['address'] = $address;
 
         return $curlData;
-    }
-
-    /**
-     * Prepare customer website data.
-     *
-     * @param Customer $customer
-     * @return int
-     */
-    private function getCustomerWebsite(Customer $customer)
-    {
-        return $customer->getDataFieldConfig('website_id')['source']->getWebsite()->getWebsiteId();
     }
 }

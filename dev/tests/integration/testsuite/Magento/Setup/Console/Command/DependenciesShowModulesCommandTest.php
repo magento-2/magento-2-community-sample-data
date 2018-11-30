@@ -8,7 +8,7 @@ namespace Magento\Setup\Console\Command;
 use Magento\Framework\Component\ComponentRegistrar;
 use Symfony\Component\Console\Tester\CommandTester;
 
-class DependenciesShowModulesCommandTest extends \PHPUnit\Framework\TestCase
+class DependenciesShowModulesCommandTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var DependenciesShowModulesCommand
@@ -28,18 +28,24 @@ class DependenciesShowModulesCommandTest extends \PHPUnit\Framework\TestCase
             'Magento_B' => __DIR__ . '/_files/root/app/code/Magento/B'
         ];
 
-        $objectManagerProvider = $this->createMock(\Magento\Setup\Model\ObjectManagerProvider::class);
-        $objectManager = $this->createMock(\Magento\Framework\App\ObjectManager::class);
+        $objectManagerProvider = $this->getMock('Magento\Setup\Model\ObjectManagerProvider', [], [], '', false);
+        $objectManager = $this->getMock('\Magento\Framework\App\ObjectManager', [], [], '', false);
         $objectManagerProvider->expects($this->once())->method('get')->willReturn($objectManager);
 
-        $themePackageListMock = $this->createMock(\Magento\Framework\View\Design\Theme\ThemePackageList::class);
-        $componentRegistrarMock = $this->createMock(\Magento\Framework\Component\ComponentRegistrar::class);
+        $themePackageListMock = $this->getMock(
+            'Magento\Framework\View\Design\Theme\ThemePackageList',
+            [],
+            [],
+            '',
+            false
+        );
+        $componentRegistrarMock = $this->getMock('Magento\Framework\Component\ComponentRegistrar', [], [], '', false);
         $componentRegistrarMock->expects($this->any())->method('getPaths')->will($this->returnValue($modules));
-        $dirSearchMock = $this->createMock(\Magento\Framework\Component\DirSearch::class);
+        $dirSearchMock = $this->getMock('Magento\Framework\Component\DirSearch', [], [], '', false);
         $objectManager->expects($this->any())->method('get')->will($this->returnValueMap([
-            [\Magento\Framework\View\Design\Theme\ThemePackageList::class, $themePackageListMock],
-            [\Magento\Framework\Component\ComponentRegistrar::class, $componentRegistrarMock],
-            [\Magento\Framework\Component\DirSearch::class, $dirSearchMock]
+            ['Magento\Framework\View\Design\Theme\ThemePackageList', $themePackageListMock],
+            ['Magento\Framework\Component\ComponentRegistrar', $componentRegistrarMock],
+            ['Magento\Framework\Component\DirSearch', $dirSearchMock]
         ]));
 
         $this->command = new DependenciesShowModulesCommand($objectManagerProvider);

@@ -11,10 +11,7 @@ use Magento\Catalog\Model\Product;
 /**
  * Catalog bundle product info block
  *
- * @api
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
- * @api
- * @since 100.0.2
  */
 class Bundle extends \Magento\Catalog\Block\Product\View\AbstractView
 {
@@ -52,16 +49,6 @@ class Bundle extends \Magento\Catalog\Block\Product\View\AbstractView
     private $selectedOptions = [];
 
     /**
-     * @var \Magento\CatalogRule\Model\ResourceModel\Product\CollectionProcessor
-     */
-    private $catalogRuleProcessor;
-
-    /**
-     * @var array
-     */
-    private $optionsPosition = [];
-
-    /**
      * @param \Magento\Catalog\Block\Product\Context $context
      * @param \Magento\Framework\Stdlib\ArrayUtils $arrayUtils
      * @param \Magento\Catalog\Helper\Product $catalogProduct
@@ -91,32 +78,12 @@ class Bundle extends \Magento\Catalog\Block\Product\View\AbstractView
     }
 
     /**
-     * @deprecated 100.2.0
-     * @return \Magento\CatalogRule\Model\ResourceModel\Product\CollectionProcessor
-     */
-    private function getCatalogRuleProcessor()
-    {
-        if ($this->catalogRuleProcessor === null) {
-            $this->catalogRuleProcessor = \Magento\Framework\App\ObjectManager::getInstance()
-                ->get(\Magento\CatalogRule\Model\ResourceModel\Product\CollectionProcessor::class);
-        }
-
-        return $this->catalogRuleProcessor;
-    }
-
-    /**
-     * Returns the bundle product options
-     * Will return cached options data if the product options are already initialized
-     * In a case when $stripSelection parameter is true will reload stored bundle selections collection from DB
-     *
-     * @param bool $stripSelection
      * @return array
      */
-    public function getOptions($stripSelection = false)
+    public function getOptions()
     {
         if (!$this->options) {
             $product = $this->getProduct();
-            /** @var \Magento\Bundle\Model\Product\Type $typeInstance */
             $typeInstance = $product->getTypeInstance();
             $typeInstance->setStoreFilter($product->getStoreId(), $product);
 
@@ -126,12 +93,10 @@ class Bundle extends \Magento\Catalog\Block\Product\View\AbstractView
                 $typeInstance->getOptionsIds($product),
                 $product
             );
-            $this->getCatalogRuleProcessor()->addPriceData($selectionCollection);
-            $selectionCollection->addTierPriceData();
 
             $this->options = $optionCollection->appendSelections(
                 $selectionCollection,
-                $stripSelection,
+                false,
                 $this->catalogProduct->getSkipSaleableCheck()
             );
         }
@@ -177,7 +142,6 @@ class Bundle extends \Magento\Catalog\Block\Product\View\AbstractView
             }
             $optionId = $optionItem->getId();
             $options[$optionId] = $this->getOptionItemData($optionItem, $currentProduct, $position);
-            $this->optionsPosition[$position] = $optionId;
 
             // Add attribute default value (if set)
             if ($preConfiguredFlag) {
@@ -234,15 +198,10 @@ class Bundle extends \Magento\Catalog\Block\Product\View\AbstractView
         $qty = ($selection->getSelectionQty() * 1) ?: '1';
 
         $optionPriceAmount = $product->getPriceInfo()
-            ->getPrice(\Magento\Bundle\Pricing\Price\BundleOptionPrice::PRICE_CODE)
+            ->getPrice('bundle_option')
             ->getOptionSelectionAmount($selection);
         $finalPrice = $optionPriceAmount->getValue();
         $basePrice = $optionPriceAmount->getBaseAmount();
-
-        $oldPrice = $product->getPriceInfo()
-            ->getPrice(\Magento\Bundle\Pricing\Price\BundleOptionRegularPrice::PRICE_CODE)
-            ->getOptionSelectionAmount($selection)
-            ->getValue();
 
         $selection = [
             'qty' => $qty,
@@ -250,7 +209,7 @@ class Bundle extends \Magento\Catalog\Block\Product\View\AbstractView
             'optionId' => $selection->getId(),
             'prices' => [
                 'oldPrice' => [
-                    'amount' => $oldPrice
+                    'amount' => $basePrice
                 ],
                 'basePrice' => [
                     'amount' => $basePrice
@@ -374,7 +333,6 @@ class Bundle extends \Magento\Catalog\Block\Product\View\AbstractView
         $config = [
             'options' => $options,
             'selected' => $this->selectedOptions,
-            'positions' => $this->optionsPosition,
             'bundleId' => $product->getId(),
             'priceFormat' => $this->localeFormat->getPriceFormat(),
             'prices' => [

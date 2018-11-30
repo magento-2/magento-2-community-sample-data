@@ -15,10 +15,6 @@ use Magento\Framework\Data\Collection;
 use Magento\Framework\Json\EncoderInterface;
 use Magento\Catalog\Helper\Image;
 
-/**
- * @api
- * @since 100.0.2
- */
 class Gallery extends \Magento\Catalog\Block\Product\View\AbstractView
 {
     /**
@@ -67,13 +63,15 @@ class Gallery extends \Magento\Catalog\Block\Product\View\AbstractView
                 );
                 $image->setData(
                     'medium_image_url',
-                    $this->_imageHelper->init($product, 'product_page_image_medium_no_frame')
+                    $this->_imageHelper->init($product, 'product_page_image_medium')
+                        ->constrainOnly(true)->keepAspectRatio(true)->keepFrame(false)
                         ->setImageFile($image->getFile())
                         ->getUrl()
                 );
                 $image->setData(
                     'large_image_url',
-                    $this->_imageHelper->init($product, 'product_page_image_large_no_frame')
+                    $this->_imageHelper->init($product, 'product_page_image_large')
+                        ->constrainOnly(true)->keepAspectRatio(true)->keepFrame(false)
                         ->setImageFile($image->getFile())
                         ->getUrl()
                 );
@@ -116,7 +114,7 @@ class Gallery extends \Magento\Catalog\Block\Product\View\AbstractView
                 'thumb' => $image->getData('small_image_url'),
                 'img' => $image->getData('medium_image_url'),
                 'full' => $image->getData('large_image_url'),
-                'caption' => ($image->getLabel() ?: $this->getProduct()->getName()),
+                'caption' => $image->getLabel(),
                 'position' => $image->getPosition(),
                 'isMain' => $this->isMainImage($image),
                 'type' => str_replace('external-', '', $image->getMediaType()),
@@ -175,7 +173,7 @@ class Gallery extends \Magento\Catalog\Block\Product\View\AbstractView
     {
         $attributes =
             $this->getConfigView()->getMediaAttributes('Magento_Catalog', Image::MEDIA_TYPE_CONFIG_NODE, $imageId);
-        return $attributes[$attributeName] ?? $default;
+        return isset($attributes[$attributeName]) ? $attributes[$attributeName] : $default;
     }
 
     /**

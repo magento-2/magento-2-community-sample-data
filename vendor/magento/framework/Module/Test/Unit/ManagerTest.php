@@ -5,7 +5,9 @@
  */
 namespace Magento\Framework\Module\Test\Unit;
 
-class ManagerTest extends \PHPUnit\Framework\TestCase
+use Magento\Framework\Module\Plugin\DbStatusValidator;
+
+class ManagerTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * XPath in the configuration of a module output flag
@@ -27,12 +29,9 @@ class ManagerTest extends \PHPUnit\Framework\TestCase
      */
     private $_outputConfig;
 
-    /**
-     * @inheritdoc
-     */
     protected function setUp()
     {
-        $this->_moduleList = $this->getMockForAbstractClass(\Magento\Framework\Module\ModuleListInterface::class);
+        $this->_moduleList = $this->getMockForAbstractClass('Magento\Framework\Module\ModuleListInterface');
         $this->_moduleList->expects($this->any())
             ->method('getOne')
             ->will($this->returnValueMap([
@@ -40,7 +39,7 @@ class ManagerTest extends \PHPUnit\Framework\TestCase
                 ['Module_Two', ['name' => 'Two_Module', 'setup_version' => '2']],
                 ['Module_Three', ['name' => 'Two_Three']],
             ]));
-        $this->_outputConfig = $this->getMockForAbstractClass(\Magento\Framework\Module\Output\ConfigInterface::class);
+        $this->_outputConfig = $this->getMockForAbstractClass('Magento\Framework\Module\Output\ConfigInterface');
         $this->_model = new \Magento\Framework\Module\Manager(
             $this->_outputConfig,
             $this->_moduleList,

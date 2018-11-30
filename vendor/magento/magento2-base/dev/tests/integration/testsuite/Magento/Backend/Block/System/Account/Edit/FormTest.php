@@ -8,34 +8,34 @@ namespace Magento\Backend\Block\System\Account\Edit;
 /**
  * @magentoAppArea adminhtml
  */
-class FormTest extends \PHPUnit\Framework\TestCase
+class FormTest extends \PHPUnit_Framework_TestCase
 {
     public function testPrepareForm()
     {
         $user = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->create(
-            \Magento\User\Model\User::class
+            'Magento\User\Model\User'
         )->loadByUsername(
             \Magento\TestFramework\Bootstrap::ADMIN_NAME
         );
 
         /** @var $session \Magento\Backend\Model\Auth\Session */
         $session = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->get(
-            \Magento\Backend\Model\Auth\Session::class
+            'Magento\Backend\Model\Auth\Session'
         );
         $session->setUser($user);
 
         /** @var $layout \Magento\Framework\View\Layout */
         $layout = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->get(
-            \Magento\Framework\View\LayoutInterface::class
+            'Magento\Framework\View\LayoutInterface'
         );
 
         /** @var \Magento\Backend\Block\System\Account\Edit\Form */
-        $block = $layout->createBlock(\Magento\Backend\Block\System\Account\Edit\Form::class);
+        $block = $layout->createBlock('Magento\Backend\Block\System\Account\Edit\Form');
         $block->toHtml();
 
         $form = $block->getForm();
 
-        $this->assertInstanceOf(\Magento\Framework\Data\Form::class, $form);
+        $this->assertInstanceOf('Magento\Framework\Data\Form', $form);
         $this->assertEquals('post', $form->getData('method'));
         $this->assertEquals($block->getUrl('adminhtml/system_account/save'), $form->getData('action'));
         $this->assertEquals('edit_form', $form->getId());
@@ -73,7 +73,7 @@ class FormTest extends \PHPUnit\Framework\TestCase
 
         foreach ($expectedFieldset as $fieldId => $field) {
             $element = $form->getElement($fieldId);
-            $this->assertInstanceOf(\Magento\Framework\Data\Form\Element\AbstractElement::class, $element);
+            $this->assertInstanceOf('Magento\Framework\Data\Form\Element\AbstractElement', $element);
             $this->assertEquals($field['name'], $element->getName(), 'Wrong \'' . $fieldId . '\' field name');
             $this->assertEquals($field['type'], $element->getType(), 'Wrong \'' . $fieldId . ' field type');
             $this->assertEquals(

@@ -121,7 +121,7 @@ class Grid extends \Magento\Backend\Block\Widget\Grid\Extended
                 'filter' => false,
                 'index' => 'purchases',
                 'type' => 'number',
-                'renderer' => \Magento\Reports\Block\Adminhtml\Product\Downloads\Renderer\Purchases::class,
+                'renderer' => 'Magento\Reports\Block\Adminhtml\Product\Downloads\Renderer\Purchases',
                 'header_css_class' => 'col-purchases',
                 'column_css_class' => 'col-purchases'
             ]

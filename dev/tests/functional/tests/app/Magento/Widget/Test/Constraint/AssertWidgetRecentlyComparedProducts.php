@@ -6,7 +6,7 @@
 
 namespace Magento\Widget\Test\Constraint;
 
-use Magento\Mtf\Util\Command\Cli\Cache;
+use Magento\PageCache\Test\Page\Adminhtml\AdminCache;
 use Magento\Catalog\Test\Fixture\CatalogProductSimple;
 use Magento\Catalog\Test\Page\Product\CatalogProductCompare;
 use Magento\Catalog\Test\Page\Product\CatalogProductView;
@@ -58,7 +58,7 @@ class AssertWidgetRecentlyComparedProducts extends AbstractConstraint
      * @param Widget $widget
      * @param CatalogProductSimple $productSimple1
      * @param CatalogProductSimple $productSimple2
-     * @param Cache $cache
+     * @param AdminCache $adminCache
      * @var string
      * @return void
      */
@@ -70,10 +70,12 @@ class AssertWidgetRecentlyComparedProducts extends AbstractConstraint
         Widget $widget,
         CatalogProductSimple $productSimple1,
         CatalogProductSimple $productSimple2,
-        Cache $cache
+        AdminCache $adminCache
     ) {
         // Flush cache
-        $cache->flush();
+        $adminCache->open();
+        $adminCache->getActionsBlock()->flushMagentoCache();
+        $adminCache->getMessagesBlock()->waitSuccessMessage();
 
         $this->catalogProductCompare = $catalogProductCompare;
         $this->catalogProductView = $catalogProductView;
@@ -118,7 +120,6 @@ class AssertWidgetRecentlyComparedProducts extends AbstractConstraint
     protected function removeCompareProducts()
     {
         $this->cmsIndex->open();
-        $this->cmsIndex->getCompareLinkBlock()->waitForCompareProductsLinks();
         $this->cmsIndex->getLinksBlock()->openLink("Compare Products");
         $this->catalogProductCompare->getCompareProductsBlock()->removeAllProducts();
     }

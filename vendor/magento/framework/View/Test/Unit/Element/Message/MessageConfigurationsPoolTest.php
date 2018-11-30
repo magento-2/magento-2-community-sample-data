@@ -7,7 +7,7 @@ namespace Magento\Framework\View\Test\Unit\Element\Message;
 
 use Magento\Framework\View\Element\Message\MessageConfigurationsPool;
 
-class MessageConfigurationsPoolTest extends \PHPUnit\Framework\TestCase
+class MessageConfigurationsPoolTest extends \PHPUnit_Framework_TestCase
 {
     public function testGetMessageConfiguration()
     {
@@ -38,7 +38,7 @@ class MessageConfigurationsPoolTest extends \PHPUnit\Framework\TestCase
      */
     public function testConstructNoRendererException(array $configuration)
     {
-        static::expectException(
+        static::setExpectedException(
             '\InvalidArgumentException',
             'Renderer should be defined.'
         );
@@ -54,7 +54,7 @@ class MessageConfigurationsPoolTest extends \PHPUnit\Framework\TestCase
         return [
             [['message_identifier' => []]],
             [['message_identifier' => ['renderer' => 5]]],
-            [['message_identifier' => ['renderer' => new \stdClass]]],
+            [['message_identifier' => ['renderer' => new \StdClass]]],
         ];
     }
 
@@ -64,7 +64,7 @@ class MessageConfigurationsPoolTest extends \PHPUnit\Framework\TestCase
      */
     public function testConstructWrongDataException(array $configuration)
     {
-        static::expectException(
+        static::setExpectedException(
             '\InvalidArgumentException',
             'Data should be of array type.'
         );
@@ -87,7 +87,7 @@ class MessageConfigurationsPoolTest extends \PHPUnit\Framework\TestCase
             [
                 [
                     'message_identifier' =>
-                        ['renderer' => 'RendererCode', 'data' => new \stdClass]
+                        ['renderer' => 'RendererCode', 'data' => new \StdClass]
                 ]
             ],
         ];

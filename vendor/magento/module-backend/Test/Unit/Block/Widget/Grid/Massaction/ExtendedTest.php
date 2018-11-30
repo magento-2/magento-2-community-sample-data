@@ -9,7 +9,7 @@
  */
 namespace Magento\Backend\Test\Unit\Block\Widget\Grid\Massaction;
 
-class ExtendedTest extends \PHPUnit\Framework\TestCase
+class ExtendedTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\Backend\Block\Widget\Grid\Massaction
@@ -43,15 +43,22 @@ class ExtendedTest extends \PHPUnit\Framework\TestCase
 
     protected function setUp()
     {
-        $this->_gridMock = $this->createPartialMock(
-            \Magento\Backend\Block\Widget\Grid::class,
-            ['getId', 'getCollection']
+        $this->_gridMock = $this->getMock(
+            'Magento\Backend\Block\Widget\Grid',
+            ['getId', 'getCollection'],
+            [],
+            '',
+            false
         );
         $this->_gridMock->expects($this->any())->method('getId')->will($this->returnValue('test_grid'));
 
-        $this->_layoutMock = $this->createPartialMock(
-            \Magento\Framework\View\Layout::class,
-            ['getParentName', 'getBlock', 'helper']
+        $this->_layoutMock = $this->getMock(
+            'Magento\Framework\View\Layout',
+            ['getParentName', 'getBlock', 'helper'],
+            [],
+            '',
+            false,
+            false
         );
 
         $this->_layoutMock->expects(
@@ -73,9 +80,9 @@ class ExtendedTest extends \PHPUnit\Framework\TestCase
             $this->returnValue($this->_gridMock)
         );
 
-        $this->_requestMock = $this->createMock(\Magento\Framework\App\Request\Http::class);
+        $this->_requestMock = $this->getMock('Magento\Framework\App\Request\Http', [], [], '', false);
 
-        $this->_urlModelMock = $this->createMock(\Magento\Backend\Model\Url::class);
+        $this->_urlModelMock = $this->getMock('Magento\Backend\Model\Url', [], [], '', false);
 
         $arguments = [
             'layout' => $this->_layoutMock,
@@ -86,7 +93,7 @@ class ExtendedTest extends \PHPUnit\Framework\TestCase
 
         $objectManagerHelper = new \Magento\Framework\TestFramework\Unit\Helper\ObjectManager($this);
         $this->_block = $objectManagerHelper->getObject(
-            \Magento\Backend\Block\Widget\Grid\Massaction\Extended::class,
+            'Magento\Backend\Block\Widget\Grid\Massaction\Extended',
             $arguments
         );
         $this->_block->setNameInLayout('test_grid_massaction');
@@ -125,14 +132,8 @@ class ExtendedTest extends \PHPUnit\Framework\TestCase
     public function testGetGridIdsJsonWithUseSelectAll(array $items, $result)
     {
         $this->_block->setUseSelectAll(true);
-        
-        if ($this->_block->getMassactionIdField()) {
-            $massActionIdField = $this->_block->getMassactionIdField();
-        } else {
-            $massActionIdField = $this->_block->getParentBlock()->getMassactionIdField();
-        }
-        
-        $collectionMock = $this->getMockBuilder(\Magento\Framework\Data\Collection::class)
+
+        $collectionMock = $this->getMockBuilder('Magento\Framework\Data\Collection')
             ->disableOriginalConstructor()
             ->getMock();
 
@@ -141,12 +142,14 @@ class ExtendedTest extends \PHPUnit\Framework\TestCase
             ->willReturn($collectionMock);
 
         $collectionMock->expects($this->once())
+            ->method('clear')
+            ->willReturnSelf();
+        $collectionMock->expects($this->once())
             ->method('setPageSize')
             ->with(0)
             ->willReturnSelf();
         $collectionMock->expects($this->once())
-            ->method('getColumnValues')
-            ->with($massActionIdField)
+            ->method('getAllIds')
             ->willReturn($items);
 
         $this->assertEquals($result, $this->_block->getGridIdsJson());

@@ -28,7 +28,7 @@ abstract class Address extends \Magento\Framework\App\Action\Action
      */
     protected function _getCheckout()
     {
-        return $this->_objectManager->get(\Magento\Multishipping\Model\Checkout\Type\Multishipping::class);
+        return $this->_objectManager->get('Magento\Multishipping\Model\Checkout\Type\Multishipping');
     }
 
     /**
@@ -38,6 +38,6 @@ abstract class Address extends \Magento\Framework\App\Action\Action
      */
     protected function _getState()
     {
-        return $this->_objectManager->get(\Magento\Multishipping\Model\Checkout\Type\Multishipping\State::class);
+        return $this->_objectManager->get('Magento\Multishipping\Model\Checkout\Type\Multishipping\State');
     }
 }

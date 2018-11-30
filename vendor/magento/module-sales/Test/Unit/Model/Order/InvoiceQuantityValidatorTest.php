@@ -12,7 +12,7 @@ use Magento\Sales\Model\Order;
 /**
  * Test for \Magento\Sales\Model\Order\InvoiceValidator class
  */
-class InvoiceQuantityValidatorTest extends \PHPUnit\Framework\TestCase
+class InvoiceQuantityValidatorTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\Sales\Model\Order\InvoiceQuantityValidator|\PHPUnit_Framework_MockObject_MockObject
@@ -159,7 +159,6 @@ class InvoiceQuantityValidatorTest extends \PHPUnit\Framework\TestCase
     /**
      * @param $orderItemId
      * @param $qty
-     *
      * @return \PHPUnit_Framework_MockObject_MockObject
      */
     private function getInvoiceItemMock($orderItemId, $qty)
@@ -177,7 +176,6 @@ class InvoiceQuantityValidatorTest extends \PHPUnit\Framework\TestCase
      * @param $id
      * @param $qtyToInvoice
      * @param $isDummy
-     *
      * @return \PHPUnit_Framework_MockObject_MockObject
      */
     private function getOrderItemMock($id, $qtyToInvoice, $isDummy)

@@ -3,8 +3,6 @@
  * Copyright © Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
-declare(strict_types=1);
-
 namespace Magento\ConfigurableProduct\Model\Plugin;
 
 use Magento\ConfigurableProduct\Model\Product\Type\Configurable;
@@ -44,7 +42,7 @@ class ProductIdentitiesExtender
      * @return array
      * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      */
-    public function afterGetIdentities(Product $subject, array $identities): array
+    public function afterGetIdentities(Product $subject, $identities)
     {
         $identities = (array) $identities;
 

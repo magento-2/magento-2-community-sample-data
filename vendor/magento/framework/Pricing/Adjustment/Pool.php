@@ -10,8 +10,6 @@ use Magento\Framework\Pricing\Adjustment\Factory as AdjustmentFactory;
 
 /**
  * Global adjustment pool model
- *
- * @api
  */
 class Pool
 {

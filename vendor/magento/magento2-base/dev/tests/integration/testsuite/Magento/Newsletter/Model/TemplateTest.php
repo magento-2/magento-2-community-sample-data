@@ -8,7 +8,7 @@ namespace Magento\Newsletter\Model;
 /**
  * @magentoDataFixture Magento/Store/_files/core_fixturestore.php
  */
-class TemplateTest extends \PHPUnit\Framework\TestCase
+class TemplateTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\Newsletter\Model\Template
@@ -18,7 +18,7 @@ class TemplateTest extends \PHPUnit\Framework\TestCase
     protected function setUp()
     {
         $this->_model = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->create(
-            \Magento\Newsletter\Model\Template::class
+            'Magento\Newsletter\Model\Template'
         );
     }
 
@@ -36,7 +36,7 @@ class TemplateTest extends \PHPUnit\Framework\TestCase
         $this->_model->setTemplateText('{{view url="Magento_Theme::favicon.ico"}}');
         if ($store != 'default') {
             \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->get(
-                \Magento\Framework\App\Config\MutableScopeConfigInterface::class
+                'Magento\Framework\App\Config\MutableScopeConfigInterface'
             )->setValue(
                 \Magento\Theme\Model\View\Design::XML_PATH_THEME_ID,
                 $design,
@@ -46,7 +46,7 @@ class TemplateTest extends \PHPUnit\Framework\TestCase
         }
         $this->_model->emulateDesign($store, 'frontend');
         $processedTemplate = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->get(
-            \Magento\Framework\App\State::class
+            'Magento\Framework\App\State'
         )->emulateAreaCode(
             'frontend',
             [$this->_model, 'getProcessedTemplate']
@@ -79,7 +79,7 @@ class TemplateTest extends \PHPUnit\Framework\TestCase
         $this->_model->setTemplateText('{{view url="Magento_Theme::favicon.ico"}}');
         $this->_model->emulateDesign('default', $area);
         $processedTemplate = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->get(
-            \Magento\Framework\App\State::class
+            'Magento\Framework\App\State'
         )->emulateAreaCode(
             $area,
             [$this->_model, 'getProcessedTemplate']

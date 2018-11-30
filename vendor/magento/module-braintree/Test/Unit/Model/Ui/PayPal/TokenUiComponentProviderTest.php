@@ -15,7 +15,7 @@ use PHPUnit_Framework_MockObject_MockObject as MockObject;
 /**
  * Class TokenUiComponentProviderTest
  */
-class TokenUiComponentProviderTest extends \PHPUnit\Framework\TestCase
+class TokenUiComponentProviderTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var UrlInterface|MockObject

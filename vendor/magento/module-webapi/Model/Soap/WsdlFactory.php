@@ -33,7 +33,7 @@ class WsdlFactory
     public function create($wsdlName, $endpointUrl)
     {
         return $this->_objectManager->create(
-            \Magento\Webapi\Model\Soap\Wsdl::class,
+            'Magento\Webapi\Model\Soap\Wsdl',
             ['name' => $wsdlName, 'uri' => $endpointUrl]
         );
     }

@@ -70,13 +70,13 @@ class Edit extends \Magento\Backend\App\Action
     {
         // 1. Get ID and create model
         $id = $this->getRequest()->getParam('page_id');
-        $model = $this->_objectManager->create(\Magento\Cms\Model\Page::class);
+        $model = $this->_objectManager->create('Magento\Cms\Model\Page');
 
         // 2. Initial checking
         if ($id) {
             $model->load($id);
             if (!$model->getId()) {
-                $this->messageManager->addErrorMessage(__('This page no longer exists.'));
+                $this->messageManager->addError(__('This page no longer exists.'));
                 /** \Magento\Backend\Model\View\Result\Redirect $resultRedirect */
                 $resultRedirect = $this->resultRedirectFactory->create();
                 return $resultRedirect->setPath('*/*/');

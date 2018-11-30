@@ -1,13 +1,11 @@
 <?php
 /**
+ *
  * Copyright © Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 
-/**
- * @codingStandardsIgnoreFile
- * Coding Standards have to be ignored in this file, as it is just a data source for tests.
- */
+// @codingStandardsIgnoreFile
 
 class ClassA
 {
@@ -18,16 +16,16 @@ class ClassB
 class ClassC
 {
 }
-interface FirstInterface
+interface InterfaceA
 {
 }
-class ImplementationOfFirstInterface implements FirstInterface
+class ImplementationOfInterfaceA implements InterfaceA
 {
 }
-interface SecondInterface
+interface InterfaceB
 {
 }
-class ImplementationOfSecondInterface implements SecondInterface
+class ImplementationOfInterfaceB implements InterfaceB
 {
 }
 class Context implements \Magento\Framework\ObjectManager\ContextInterface
@@ -48,30 +46,29 @@ class Context implements \Magento\Framework\ObjectManager\ContextInterface
     protected $_exC;
 
     /**
-     * @var FirstInterface
+     * @var InterfaceA
      */
     protected $_interfaceA;
 
     /**
-     * @var ImplementationOfSecondInterface
+     * @var ImplementationOfInterfaceB
      */
     protected $_implOfBInterface;
 
     /**
      * Context constructor.
-     *
      * @param ClassA $exA
      * @param ClassB $exB
      * @param ClassC $exC
-     * @param FirstInterface $interfaceA
-     * @param ImplementationOfSecondInterface $implOfBInterface
+     * @param InterfaceA $interfaceA
+     * @param ImplementationOfInterfaceB $implOfBInterface
      */
     public function __construct(
         \ClassA $exA,
         \ClassB $exB,
         \ClassC $exC,
-        \FirstInterface $interfaceA,
-        \ImplementationOfSecondInterface $implOfBInterface
+        \InterfaceA $interfaceA,
+        \ImplementationOfInterfaceB $implOfBInterface
     ) {
         $this->_exA = $exA;
         $this->_exB = $exB;

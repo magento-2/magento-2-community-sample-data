@@ -9,7 +9,7 @@
  */
 namespace Magento\Payment\Test\Unit\Block\Form;
 
-class ContainerTest extends \PHPUnit\Framework\TestCase
+class ContainerTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @covers \Magento\Payment\Block\Form\Container::getChildBlock
@@ -29,7 +29,7 @@ class ContainerTest extends \PHPUnit\Framework\TestCase
             }
             return null;
         };
-        $block = $this->createPartialMock(\Magento\Payment\Block\Form\Container::class, ['getChildBlock']);
+        $block = $this->getMock(\Magento\Payment\Block\Form\Container::class, ['getChildBlock'], [], '', false);
         $block->expects($this->atLeastOnce())->method('getChildBlock')->will($this->returnCallback($func));
 
         $template = 'any_template.phtml';

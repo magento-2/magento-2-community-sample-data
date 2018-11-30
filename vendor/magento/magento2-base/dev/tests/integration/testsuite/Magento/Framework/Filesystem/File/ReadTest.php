@@ -9,7 +9,7 @@ namespace Magento\Framework\Filesystem\File;
 
 use Magento\TestFramework\Helper\Bootstrap;
 
-class ReadTest extends \PHPUnit\Framework\TestCase
+class ReadTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * Test instance of Read
@@ -305,7 +305,7 @@ class ReadTest extends \PHPUnit\Framework\TestCase
     {
         $fullPath = __DIR__ . '/../_files/' . $path;
         return Bootstrap::getObjectManager()->create(
-            \Magento\Framework\Filesystem\File\Read::class,
+            'Magento\Framework\Filesystem\File\Read',
             ['path' => $fullPath, 'driver' => new \Magento\Framework\Filesystem\Driver\File()]
         );
     }

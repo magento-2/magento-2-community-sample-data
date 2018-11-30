@@ -7,7 +7,7 @@ namespace Magento\Catalog\Test\Unit\Model\Product;
 
 use \Magento\Catalog\Model\Product\Link;
 
-class LinkTest extends \PHPUnit\Framework\TestCase
+class LinkTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var Link
@@ -32,13 +32,13 @@ class LinkTest extends \PHPUnit\Framework\TestCase
     protected function setUp()
     {
         $linkCollection = $this->getMockBuilder(
-            \Magento\Catalog\Model\ResourceModel\Product\Link\Collection::class
+            'Magento\Catalog\Model\ResourceModel\Product\Link\Collection'
         )->disableOriginalConstructor()->setMethods(
             ['setLinkModel']
         )->getMock();
         $linkCollection->expects($this->any())->method('setLinkModel')->will($this->returnSelf());
         $linkCollectionFactory = $this->getMockBuilder(
-            \Magento\Catalog\Model\ResourceModel\Product\Link\CollectionFactory::class
+            'Magento\Catalog\Model\ResourceModel\Product\Link\CollectionFactory'
         )->disableOriginalConstructor()->setMethods(
             ['create']
         )->getMock();
@@ -46,13 +46,13 @@ class LinkTest extends \PHPUnit\Framework\TestCase
             ->method('create')
             ->will($this->returnValue($linkCollection));
         $this->productCollection = $this->getMockBuilder(
-            \Magento\Catalog\Model\ResourceModel\Product\Link\Product\Collection::class
+            'Magento\Catalog\Model\ResourceModel\Product\Link\Product\Collection'
         )->disableOriginalConstructor()->setMethods(
             ['setLinkModel']
         )->getMock();
         $this->productCollection->expects($this->any())->method('setLinkModel')->will($this->returnSelf());
         $productCollectionFactory = $this->getMockBuilder(
-            \Magento\Catalog\Model\ResourceModel\Product\Link\Product\CollectionFactory::class
+            'Magento\Catalog\Model\ResourceModel\Product\Link\Product\CollectionFactory'
         )->disableOriginalConstructor()->setMethods(
             ['create']
         )->getMock();
@@ -60,8 +60,8 @@ class LinkTest extends \PHPUnit\Framework\TestCase
             ->method('create')
             ->will($this->returnValue($this->productCollection));
 
-        $this->resource = $this->createPartialMock(
-            \Magento\Framework\Model\ResourceModel\AbstractResource::class,
+        $this->resource = $this->getMock(
+            'Magento\Framework\Model\ResourceModel\AbstractResource',
             [
                 'saveProductLinks',
                 'getAttributeTypeTable',
@@ -73,13 +73,13 @@ class LinkTest extends \PHPUnit\Framework\TestCase
             ]
         );
 
-        $this->saveProductLinksMock = $this->getMockBuilder(\Magento\Catalog\Model\Product\Link\SaveHandler::class)
+        $this->saveProductLinksMock = $this->getMockBuilder('Magento\Catalog\Model\Product\Link\SaveHandler')
             ->disableOriginalConstructor()
             ->getMock();
 
         $objectManager = new \Magento\Framework\TestFramework\Unit\Helper\ObjectManager($this);
         $this->model = $objectManager->getObject(
-            \Magento\Catalog\Model\Product\Link::class,
+            'Magento\Catalog\Model\Product\Link',
             [
                 'linkCollectionFactory' => $linkCollectionFactory,
                 'productCollectionFactory' => $productCollectionFactory,
@@ -128,7 +128,7 @@ class LinkTest extends \PHPUnit\Framework\TestCase
     public function testGetProductCollection()
     {
         $this->assertInstanceOf(
-            \Magento\Catalog\Model\ResourceModel\Product\Link\Product\Collection::class,
+            'Magento\Catalog\Model\ResourceModel\Product\Link\Product\Collection',
             $this->model->getProductCollection()
         );
     }
@@ -136,7 +136,7 @@ class LinkTest extends \PHPUnit\Framework\TestCase
     public function testGetLinkCollection()
     {
         $this->assertInstanceOf(
-            \Magento\Catalog\Model\ResourceModel\Product\Link\Collection::class,
+            'Magento\Catalog\Model\ResourceModel\Product\Link\Collection',
             $this->model->getLinkCollection()
         );
     }
@@ -155,7 +155,7 @@ class LinkTest extends \PHPUnit\Framework\TestCase
 
     public function testSaveProductRelations()
     {
-        $product = $this->getMockBuilder(\Magento\Catalog\Model\Product::class)
+        $product = $this->getMockBuilder('Magento\Catalog\Model\Product')
             ->disableOriginalConstructor()
             ->getMock();
         $this->saveProductLinksMock

@@ -846,7 +846,7 @@ class Nvp extends \Magento\Paypal\Model\Api\AbstractApi
         $request = $this->_exportToRequest($this->_getExpressCheckoutDetailsRequest);
         $response = $this->call(self::GET_EXPRESS_CHECKOUT_DETAILS, $request);
         $this->_importFromResponse($this->_paymentInformationResponse, $response);
-        $this->_exportAddresses($response);
+        $this->_exportAddressses($response);
     }
 
     /**
@@ -914,15 +914,15 @@ class Nvp extends \Magento\Paypal\Model\Api\AbstractApi
     }
 
     /**
-     * Made additional request to PayPal to get authorization id
+     * Made additional request to paypal to get autharization id
      *
      * @return void
      */
     public function callDoReauthorization()
     {
-        $request = $this->_exportToRequest($this->_doReauthorizationRequest);
+        $request = $this->_export($this->_doReauthorizationRequest);
         $response = $this->call('DoReauthorization', $request);
-        $this->_importFromResponse($this->_doReauthorizationResponse, $response);
+        $this->_import($response, $this->_doReauthorizationResponse);
     }
 
     /**
@@ -991,7 +991,7 @@ class Nvp extends \Magento\Paypal\Model\Api\AbstractApi
     {
         $request = $this->_exportToRequest($this->_refundTransactionRequest);
         if ($this->getRefundType() === \Magento\Paypal\Model\Config::REFUND_TYPE_PARTIAL) {
-            $request['AMT'] = $this->formatPrice($this->getAmount());
+            $request['AMT'] = $this->getAmount();
         }
         $response = $this->call(self::REFUND_TRANSACTION, $request);
         $this->_importFromResponse($this->_refundTransactionResponse, $response);
@@ -1285,15 +1285,6 @@ class Nvp extends \Magento\Paypal\Model\Api\AbstractApi
         );
         $this->_logger->critical($exceptionLogMessage);
 
-        /**
-         * The response code 10415 'Transaction has already been completed for this token'
-         * must not fails place order. The old Paypal interface does not lock 'Send' button
-         * it may result to re-send data.
-         */
-        if (in_array((string)ProcessableException::API_TRANSACTION_HAS_BEEN_COMPLETED, $this->_callErrors)) {
-            return;
-        }
-
         $exceptionPhrase = __('PayPal gateway has rejected request. %1', $errorMessages);
 
         /** @var \Magento\Framework\Exception\LocalizedException $exception */
@@ -1463,21 +1454,8 @@ class Nvp extends \Magento\Paypal\Model\Api\AbstractApi
      *
      * @param array $data
      * @return void
-     * @deprecated 100.2.2 typo in method name
-     * @see _exportAddresses
      */
     protected function _exportAddressses($data)
-    {
-        $this->_exportAddresses($data);
-    }
-
-    /**
-     * Create billing and shipping addresses basing on response data
-     *
-     * @param array $data
-     * @return void
-     */
-    protected function _exportAddresses($data)
     {
         $address = new \Magento\Framework\DataObject();
         \Magento\Framework\DataObject\Mapper::accumulateByMap($data, $address, $this->_billingAddressMap);
@@ -1504,9 +1482,9 @@ class Nvp extends \Magento\Paypal\Model\Api\AbstractApi
     protected function _applyStreetAndRegionWorkarounds(\Magento\Framework\DataObject $address)
     {
         // merge street addresses into 1
-        if ($address->getData('street2') !== null) {
-            $address->setStreet(implode("\n", [$address->getData('street'), $address->getData('street2')]));
-            $address->unsetData('street2');
+        if ($address->hasStreet2()) {
+            $address->setStreet(implode("\n", [$address->getStreet(), $address->getStreetLine(2)]));
+            $address->unsStreet2();
         }
         // attempt to fetch region_id from directory
         if ($address->getCountryId() && $address->getRegion()) {

@@ -5,12 +5,14 @@
  */
 
 // @codingStandardsIgnoreFile
+?>
+<?php
 /* @var $block \Magento\Customer\Block\CustomerScopeData */
 ?>
 <script type="text/x-magento-init">
 <?php
     /* @noEscape */
-    echo \Magento\Framework\Serialize\JsonConverter::convert([
+    echo \Zend_Json::encode([
         '*' => ['Magento_Customer/js/invalidation-processor' => [
             'invalidationRules' => [
                 'website-rule' => [

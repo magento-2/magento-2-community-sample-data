@@ -11,13 +11,12 @@ use Magento\Framework\App\RequestInterface;
 use Magento\Swatches\Model\Swatch;
 
 /**
- * Plugin for product attribute save controller.
+ * Class Save
+ * @package Magento\Swatches\Controller\Adminhtml\Product\Attribute\Plugin
  */
 class Save
 {
     /**
-     * Performs the conversion of the frontend input value.
-     *
      * @param Attribute\Save $subject
      * @param RequestInterface $request
      * @return array
@@ -26,7 +25,6 @@ class Save
     public function beforeDispatch(Attribute\Save $subject, RequestInterface $request)
     {
         $data = $request->getPostValue();
-
         if (isset($data['frontend_input'])) {
             switch ($data['frontend_input']) {
                 case 'swatch_visual':

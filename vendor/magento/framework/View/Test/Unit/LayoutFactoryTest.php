@@ -8,7 +8,7 @@ namespace Magento\Framework\View\Test\Unit;
 
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager as ObjectManagerHelper;
 
-class LayoutFactoryTest extends \PHPUnit\Framework\TestCase
+class LayoutFactoryTest extends \PHPUnit_Framework_TestCase
 {
     /** @var \Magento\Framework\View\LayoutFactory */
     protected $layoutFactory;
@@ -21,11 +21,11 @@ class LayoutFactoryTest extends \PHPUnit\Framework\TestCase
 
     protected function setUp()
     {
-        $this->objectManagerMock = $this->createMock(\Magento\Framework\ObjectManagerInterface::class);
+        $this->objectManagerMock = $this->getMock('Magento\Framework\ObjectManagerInterface');
 
         $this->objectManagerHelper = new ObjectManagerHelper($this);
         $this->layoutFactory = $this->objectManagerHelper->getObject(
-            \Magento\Framework\View\LayoutFactory::class,
+            'Magento\Framework\View\LayoutFactory',
             [
                 'objectManager' => $this->objectManagerMock
             ]
@@ -34,8 +34,8 @@ class LayoutFactoryTest extends \PHPUnit\Framework\TestCase
 
     public function testCreate()
     {
-        $instance = \Magento\Framework\View\LayoutInterface::class;
-        $layoutMock = $this->createMock($instance);
+        $instance = 'Magento\Framework\View\LayoutInterface';
+        $layoutMock = $this->getMock($instance, [], [], '', false);
         $data = ['some' => 'data'];
         $this->objectManagerMock->expects($this->once())
             ->method('create')

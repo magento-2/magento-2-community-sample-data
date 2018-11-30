@@ -4,14 +4,11 @@
  * See COPYING.txt for license details.
  */
 
-namespace Magento\Catalog\Model\Product;
-
 /**
  * Product price interface for external catalogs
- *
- * @api
- * @since 100.0.2
  */
+namespace Magento\Catalog\Model\Product;
+
 interface CatalogPriceInterface
 {
     /**

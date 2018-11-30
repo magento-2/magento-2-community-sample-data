@@ -5,7 +5,7 @@
  */
 namespace Magento\ConfigurableProduct\Test\Unit\Block\Product\Configurable;
 
-class AttributeSelectorTest extends \PHPUnit\Framework\TestCase
+class AttributeSelectorTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\ConfigurableProduct\Block\Product\Configurable\AttributeSelector
@@ -20,9 +20,9 @@ class AttributeSelectorTest extends \PHPUnit\Framework\TestCase
     protected function setUp()
     {
         $helper = new \Magento\Framework\TestFramework\Unit\Helper\ObjectManager($this);
-        $this->urlBuilder = $this->createMock(\Magento\Framework\UrlInterface::class);
+        $this->urlBuilder = $this->getMock('Magento\Framework\UrlInterface');
         $this->attributeSelector = $helper->getObject(
-            \Magento\ConfigurableProduct\Block\Product\Configurable\AttributeSelector::class,
+            'Magento\ConfigurableProduct\Block\Product\Configurable\AttributeSelector',
             ['urlBuilder' => $this->urlBuilder]
         );
     }

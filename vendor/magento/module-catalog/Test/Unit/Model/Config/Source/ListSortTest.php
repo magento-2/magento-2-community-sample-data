@@ -7,7 +7,7 @@ namespace Magento\Catalog\Test\Unit\Model\Config\Source;
 
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
 
-class ListSortTest extends \PHPUnit\Framework\TestCase
+class ListSortTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\Catalog\Model\Config\Source\ListSort
@@ -21,12 +21,13 @@ class ListSortTest extends \PHPUnit\Framework\TestCase
 
     protected function setUp()
     {
-        $this->catalogConfig = $this->getMockBuilder(\Magento\Catalog\Model\Config::class)
-            ->disableOriginalConstructor()->getMock();
+        $this->catalogConfig = $this->getMockBuilder('Magento\Catalog\Model\Config')->
+            disableOriginalConstructor()->
+            getMock();
 
         $helper = new ObjectManager($this);
         $this->model = $helper->getObject(
-            \Magento\Catalog\Model\Config\Source\ListSort::class,
+            'Magento\Catalog\Model\Config\Source\ListSort',
             ['catalogConfig' => $this->catalogConfig]
         );
     }

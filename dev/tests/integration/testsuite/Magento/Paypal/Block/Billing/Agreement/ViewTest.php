@@ -16,7 +16,7 @@ class ViewTest extends \Magento\TestFramework\TestCase\AbstractBackendController
 
     protected function setUp()
     {
-        $this->_block = Bootstrap::getObjectManager()->create(\Magento\Paypal\Block\Billing\Agreement\View::class);
+        $this->_block = Bootstrap::getObjectManager()->create('Magento\Paypal\Block\Billing\Agreement\View');
         parent::setUp();
     }
 
@@ -37,11 +37,11 @@ class ViewTest extends \Magento\TestFramework\TestCase\AbstractBackendController
         $customerId = 1;
         /** Assign first order to the active customer */
         /** @var \Magento\Sales\Model\Order $orderA */
-        $orderA = Bootstrap::getObjectManager()->create(\Magento\Sales\Model\Order::class);
+        $orderA = Bootstrap::getObjectManager()->create('Magento\Sales\Model\Order');
         $orderA->loadByIncrementId('100000001');
         $orderA->setCustomerIsGuest(false)->setCustomerId($customerId)->save();
         /** @var \Magento\Customer\Model\Session $customerSession */
-        $customerSession = Bootstrap::getObjectManager()->create(\Magento\Customer\Model\Session::class);
+        $customerSession = Bootstrap::getObjectManager()->create('Magento\Customer\Model\Session');
         $customerSession->setCustomerId($customerId);
 
         /** Assign second order to the active customer */
@@ -57,18 +57,18 @@ class ViewTest extends \Magento\TestFramework\TestCase\AbstractBackendController
         )->save();
 
         /** @var \Magento\Customer\Model\Session $customerSession */
-        $customerSession = Bootstrap::getObjectManager()->create(\Magento\Customer\Model\Session::class);
+        $customerSession = Bootstrap::getObjectManager()->create('Magento\Customer\Model\Session');
         $customerSession->setCustomerId($customerId);
 
         /** @var \Magento\Paypal\Model\ResourceModel\Billing\Agreement\Collection $billingAgreementCollection */
         $billingAgreementCollection = Bootstrap::getObjectManager()->create(
-            \Magento\Paypal\Model\ResourceModel\Billing\Agreement\Collection::class
+            'Magento\Paypal\Model\ResourceModel\Billing\Agreement\Collection'
         );
         /** @var \Magento\Paypal\Model\Billing\Agreement $billingAgreement */
         $billingAgreement = $billingAgreementCollection->getFirstItem();
         $billingAgreement->addOrderRelation($orderA->getId())->save();
 
-        $registry = Bootstrap::getObjectManager()->get(\Magento\Framework\Registry::class);
+        $registry = Bootstrap::getObjectManager()->get('Magento\Framework\Registry');
         $registry->register('current_billing_agreement', $billingAgreement);
 
         $relatedOrders = $this->_block->getRelatedOrders();

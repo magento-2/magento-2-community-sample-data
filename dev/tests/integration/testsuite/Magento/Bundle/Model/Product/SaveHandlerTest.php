@@ -12,10 +12,10 @@ namespace Magento\Bundle\Model\Product;
  *
  * @magentoDataFixture Magento/Bundle/_files/product.php
  * @magentoDataFixture Magento/Store/_files/second_website_with_two_stores.php
- * @magentoDbIsolation disabled
+ * @magentoDbIsolation enabled
  * @magentoAppIsolation enabled
  */
-class SaveHandlerTest extends \PHPUnit\Framework\TestCase
+class SaveHandlerTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\Framework\ObjectManagerInterface

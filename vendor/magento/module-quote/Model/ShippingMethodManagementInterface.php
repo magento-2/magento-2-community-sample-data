@@ -5,10 +5,6 @@
  */
 namespace Magento\Quote\Model;
 
-/**
- * Interface \Magento\Quote\Model\ShippingMethodManagementInterface
- *
- */
 interface ShippingMethodManagementInterface
 {
     /**

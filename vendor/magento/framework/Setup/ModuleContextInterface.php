@@ -7,7 +7,6 @@ namespace Magento\Framework\Setup;
 
 /**
  * Context of a module being installed/updated: version, user data, etc.
- * @api
  */
 interface ModuleContextInterface
 {

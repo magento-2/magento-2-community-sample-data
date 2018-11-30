@@ -2,25 +2,15 @@
  * Copyright © Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
-
-/**
- * @deprecated since version 2.2.0
- */
-/* eslint-disable strict */
+/*jshint regexdash:true eqnull:true browser:true jquery:true*/
 define([], function () {
+    var baseUrl = '';
     return {
-        /**
-         * Get base url.
-         */
         getBaseUrl: function () {
             return this.values.baseUrl;
         },
-
-        /**
-         * Get form key.
-         */
-        getFormKey: function () {
+        getFormKey: function() {
             return this.values.formKey;
         }
-    };
+    }
 });

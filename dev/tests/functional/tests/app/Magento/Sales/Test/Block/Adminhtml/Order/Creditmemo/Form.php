@@ -29,7 +29,7 @@ class Form extends AbstractForm
     public function getItemsBlock()
     {
         return $this->blockFactory->create(
-            \Magento\Sales\Test\Block\Adminhtml\Order\Creditmemo\Form\Items::class,
+            'Magento\Sales\Test\Block\Adminhtml\Order\Creditmemo\Form\Items',
             ['element' => $this->_rootElement->find($this->items)]
         );
     }

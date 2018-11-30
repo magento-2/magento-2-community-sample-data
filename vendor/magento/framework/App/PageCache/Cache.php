@@ -8,14 +8,14 @@ namespace Magento\Framework\App\PageCache;
 /**
  * Cache model for builtin cache
  *
- * @deprecated 100.1.0
+ * @deprecated
  */
 class Cache extends \Magento\Framework\App\Cache
 {
     /**
      * @var string
      *
-     * @deprecated 100.1.0
+     * @deprecated
      */
     protected $_frontendIdentifier = 'page_cache';
 }

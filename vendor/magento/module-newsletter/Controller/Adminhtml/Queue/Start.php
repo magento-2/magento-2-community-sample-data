@@ -16,7 +16,7 @@ class Start extends \Magento\Newsletter\Controller\Adminhtml\Queue
     public function execute()
     {
         $queue = $this->_objectManager->create(
-            \Magento\Newsletter\Model\Queue::class
+            'Magento\Newsletter\Model\Queue'
         )->load(
             $this->getRequest()->getParam('id')
         );
@@ -31,7 +31,7 @@ class Start extends \Magento\Newsletter\Controller\Adminhtml\Queue
             }
 
             $queue->setQueueStartAt(
-                $this->_objectManager->get(\Magento\Framework\Stdlib\DateTime\DateTime::class)->gmtDate()
+                $this->_objectManager->get('Magento\Framework\Stdlib\DateTime\DateTime')->gmtDate()
             )->setQueueStatus(
                 \Magento\Newsletter\Model\Queue::STATUS_SENDING
             )->save();

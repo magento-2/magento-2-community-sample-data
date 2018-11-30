@@ -5,7 +5,7 @@
  */
 namespace Magento\Sales\Block\Order\Invoice;
 
-class ItemsTest extends \PHPUnit\Framework\TestCase
+class ItemsTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\Framework\View\LayoutInterface
@@ -25,11 +25,11 @@ class ItemsTest extends \PHPUnit\Framework\TestCase
     protected function setUp()
     {
         $this->_layout = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->get(
-            \Magento\Framework\View\LayoutInterface::class
+            'Magento\Framework\View\LayoutInterface'
         );
-        $this->_block = $this->_layout->createBlock(\Magento\Sales\Block\Order\Invoice\Items::class, 'block');
+        $this->_block = $this->_layout->createBlock('Magento\Sales\Block\Order\Invoice\Items', 'block');
         $this->_invoice = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->create(
-            \Magento\Sales\Model\Order\Invoice::class
+            'Magento\Sales\Model\Order\Invoice'
         );
     }
 
@@ -38,7 +38,7 @@ class ItemsTest extends \PHPUnit\Framework\TestCase
      */
     public function testGetInvoiceTotalsHtml()
     {
-        $childBlock = $this->_layout->addBlock(\Magento\Framework\View\Element\Text::class, 'invoice_totals', 'block');
+        $childBlock = $this->_layout->addBlock('Magento\Framework\View\Element\Text', 'invoice_totals', 'block');
 
         $expectedHtml = '<b>Any html</b>';
         $this->assertEmpty($childBlock->getInvoice());
@@ -52,11 +52,7 @@ class ItemsTest extends \PHPUnit\Framework\TestCase
 
     public function testGetInvoiceCommentsHtml()
     {
-        $childBlock = $this->_layout->addBlock(
-            \Magento\Framework\View\Element\Text::class,
-            'invoice_comments',
-            'block'
-        );
+        $childBlock = $this->_layout->addBlock('Magento\Framework\View\Element\Text', 'invoice_comments', 'block');
 
         $expectedHtml = '<b>Any html</b>';
         $this->assertEmpty($childBlock->getEntity());

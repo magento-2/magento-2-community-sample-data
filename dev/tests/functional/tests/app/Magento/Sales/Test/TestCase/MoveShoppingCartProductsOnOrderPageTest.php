@@ -29,7 +29,7 @@ use Magento\Mtf\TestCase\Injectable;
  * 5. Click Update Changes.
  * 6. Perform all assertions.
  *
- * @group Order_Management
+ * @group Order_Management_(CS)
  * @ZephyrId MAGETWO-28540
  *
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
@@ -38,6 +38,7 @@ class MoveShoppingCartProductsOnOrderPageTest extends Injectable
 {
     /* tags */
     const MVP = 'yes';
+    const DOMAIN = 'CS';
     /* end tags */
 
     /**
@@ -134,17 +135,16 @@ class MoveShoppingCartProductsOnOrderPageTest extends Injectable
         //Preconditions
         // Create product
         $product = $this->objectManager->create(
-            \Magento\Catalog\Test\TestStep\CreateProductStep::class,
+            '\Magento\Catalog\Test\TestStep\CreateProductStep',
             ['product' => $product]
         )->run()['product'];
         // Login under customer
         $this->objectManager->create(
-            \Magento\Customer\Test\TestStep\LoginCustomerOnFrontendStep::class,
+            'Magento\Customer\Test\TestStep\LoginCustomerOnFrontendStep',
             ['customer' => $customer]
         )->run();
         $this->browser->open($_ENV['app_frontend_url'] . $product->getUrlKey() . '.html');
         $this->catalogProductView->getViewBlock()->addToCart($product);
-        $this->catalogProductView->getMessagesBlock()->waitSuccessMessage();
 
         //Steps
         $this->customerIndex->open();

@@ -43,18 +43,16 @@ class Form extends \Magento\Mtf\Block\Form
     public function fill(FixtureInterface $fixture, SimpleElement $element = null, $isSearchByEmail = true)
     {
         /** @var OrderInjectable $fixture */
-        $searchData = $fixture->getData('customer_id')
-            ? $fixture->getDataFieldConfig('customer_id')['source']->getCustomer()->getData()
-            : $fixture->getDataFieldConfig('billing_address_id')['source']->getData();
-        
+        /** @var Customer $customer */
+        $customer = $fixture->getDataFieldConfig('customer_id')['source']->getCustomer();
         $data = [
             'order_id' => $fixture->getId(),
-            'billing_last_name' => $searchData['lastname'],
+            'billing_last_name' => $customer->getLastname(),
         ];
 
         if ($isSearchByEmail) {
             $data['find_order_by'] = 'Email';
-            $data['email_address'] = $searchData['email'];
+            $data['email_address'] = $customer->getEmail();
         } else {
             $data['find_order_by'] = 'ZIP Code';
             $data['billing_zip_code'] = $fixture->getDataFieldConfig('billing_address_id')['source']->getPostcode();

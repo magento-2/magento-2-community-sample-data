@@ -8,9 +8,6 @@ namespace Magento\Checkout\Block\Cart\Item\Renderer\Actions;
 use Magento\Checkout\Helper\Cart;
 use Magento\Framework\View\Element\Template;
 
-/**
- * @api
- */
 class Remove extends Generic
 {
     /**

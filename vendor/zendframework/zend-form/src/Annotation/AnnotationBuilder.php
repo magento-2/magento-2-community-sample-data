@@ -126,8 +126,8 @@ class AnnotationBuilder implements EventManagerAwareInterface, FormFactoryAwareI
             __CLASS__,
             get_class($this),
         ]);
-        (new ElementAnnotationsListener())->attach($events);
-        (new FormAnnotationsListener())->attach($events);
+        $events->attach(new ElementAnnotationsListener());
+        $events->attach(new FormAnnotationsListener());
         $this->events = $events;
         return $this;
     }
@@ -192,9 +192,9 @@ class AnnotationBuilder implements EventManagerAwareInterface, FormFactoryAwareI
      */
     public function getFormSpecification($entity)
     {
-        if (! is_object($entity)) {
-            if ((is_string($entity) && (! class_exists($entity))) // non-existent class
-                || (! is_string($entity)) // not an object or string
+        if (!is_object($entity)) {
+            if ((is_string($entity) && (!class_exists($entity))) // non-existent class
+                || (!is_string($entity)) // not an object or string
             ) {
                 throw new Exception\InvalidArgumentException(sprintf(
                     '%s expects an object or valid class name; received "%s"',
@@ -224,7 +224,7 @@ class AnnotationBuilder implements EventManagerAwareInterface, FormFactoryAwareI
             }
         }
 
-        if (! isset($formSpec['input_filter'])) {
+        if (!isset($formSpec['input_filter'])) {
             $formSpec['input_filter'] = $filterSpec;
         } elseif (is_array($formSpec['input_filter'])) {
             $formSpec['input_filter'] = ArrayUtils::merge($filterSpec->getArrayCopy(), $formSpec['input_filter']);
@@ -279,7 +279,7 @@ class AnnotationBuilder implements EventManagerAwareInterface, FormFactoryAwareI
         foreach ($annotations as $annotation) {
             $events->trigger(__FUNCTION__, $this, [
                 'annotation' => $annotation,
-                'name'       => $name,
+                'name'        => $name,
                 'formSpec'   => $formSpec,
                 'filterSpec' => $filterSpec,
             ]);
@@ -318,43 +318,44 @@ class AnnotationBuilder implements EventManagerAwareInterface, FormFactoryAwareI
             'name' => $name,
         ]);
 
-        $params = [
+        $event = new Event();
+        $event->setParams([
             'name'        => $name,
             'elementSpec' => $elementSpec,
             'inputSpec'   => $inputSpec,
             'formSpec'    => $formSpec,
             'filterSpec'  => $filterSpec,
-        ];
+        ]);
         foreach ($annotations as $annotation) {
-            $params['annotation'] = $annotation;
-            $events->trigger(__FUNCTION__, $this, $params);
+            $event->setParam('annotation', $annotation);
+            $events->trigger(__FUNCTION__, $this, $event);
         }
 
         // Since "type" is a reserved name in the filter specification,
         // we need to add the specification without the name as the key.
         // In all other cases, though, the name is fine.
-        if ($params['inputSpec']->count() > 1) {
+        if ($event->getParam('inputSpec')->count() > 1) {
             if ($name === 'type') {
-                $filterSpec[] = $params['inputSpec'];
+                $filterSpec[] = $event->getParam('inputSpec');
             } else {
-                $filterSpec[$name] = $params['inputSpec'];
+                $filterSpec[$name] = $event->getParam('inputSpec');
             }
         }
 
-        $elementSpec = $params['elementSpec'];
+        $elementSpec = $event->getParam('elementSpec');
         $type        = (isset($elementSpec['spec']['type']))
             ? $elementSpec['spec']['type']
             : 'Zend\Form\Element';
 
         // Compose as a fieldset or an element, based on specification type.
         // If preserve defined order is true, all elements are composed as elements to keep their ordering
-        if (! $this->preserveDefinedOrder() && is_subclass_of($type, 'Zend\Form\FieldsetInterface')) {
-            if (! isset($formSpec['fieldsets'])) {
+        if (!$this->preserveDefinedOrder() && is_subclass_of($type, 'Zend\Form\FieldsetInterface')) {
+            if (!isset($formSpec['fieldsets'])) {
                 $formSpec['fieldsets'] = [];
             }
             $formSpec['fieldsets'][] = $elementSpec;
         } else {
-            if (! isset($formSpec['elements'])) {
+            if (!isset($formSpec['elements'])) {
                 $formSpec['elements'] = [];
             }
             $formSpec['elements'][] = $elementSpec;
@@ -388,20 +389,12 @@ class AnnotationBuilder implements EventManagerAwareInterface, FormFactoryAwareI
      */
     protected function discoverName($annotations, $reflection)
     {
-        $event = new Event();
-        $event->setName(__FUNCTION__);
-        $event->setTarget($this);
-        $event->setParams([
+        $results = $this->getEventManager()->trigger('discoverName', $this, [
             'annotations' => $annotations,
             'reflection'  => $reflection,
-        ]);
-
-        $results = $this->getEventManager()->triggerEventUntil(
-            function ($r) {
-                return (is_string($r) && ! empty($r));
-            },
-            $event
-        );
+        ], function ($r) {
+            return (is_string($r) && !empty($r));
+        });
         return $results->last();
     }
 
@@ -413,17 +406,11 @@ class AnnotationBuilder implements EventManagerAwareInterface, FormFactoryAwareI
      */
     protected function checkForExclude($annotations)
     {
-        $event = new Event();
-        $event->setName(__FUNCTION__);
-        $event->setTarget($this);
-        $event->setParams(['annotations' => $annotations]);
-
-        $results = $this->getEventManager()->triggerEventUntil(
-            function ($r) {
-                return (true === $r);
-            },
-            $event
-        );
+        $results = $this->getEventManager()->trigger('checkForExclude', $this, [
+            'annotations' => $annotations,
+        ], function ($r) {
+            return (true === $r);
+        });
         return (bool) $results->last();
     }
 

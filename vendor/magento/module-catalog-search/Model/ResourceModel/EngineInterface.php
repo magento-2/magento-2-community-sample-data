@@ -9,19 +9,8 @@
  */
 namespace Magento\CatalogSearch\Model\ResourceModel;
 
-/**
- * @api
- * @since 100.0.2
- */
 interface EngineInterface
 {
-    const FIELD_PREFIX = 'attr_';
-
-    /**
-     * Scope identifier
-     */
-    const SCOPE_IDENTIFIER = 'scope';
-
     /**
      * Configuration path by which current indexer handler stored
      */
@@ -50,12 +39,13 @@ interface EngineInterface
      */
     public function processAttributeValue($attribute, $value);
 
+
     /**
      * Prepare index array as a string glued by separator
      *
      * @param array $index
      * @param string $separator
-     * @return array
+     * @return string
      */
     public function prepareEntityIndex($index, $separator = ' ');
 }

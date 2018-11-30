@@ -5,19 +5,19 @@
  */
 namespace Magento\Eav\Model\ResourceModel\Entity;
 
-use Magento\Eav\Model\Config;
-use Magento\Eav\Model\Entity\Attribute\AbstractAttribute;
 use Magento\Eav\Model\Entity\Attribute as EntityAttribute;
-use Magento\Framework\App\ObjectManager;
+use Magento\Eav\Model\Entity\Attribute\AbstractAttribute;
+use Magento\Eav\Model\Entity\AttributeCache;
 use Magento\Framework\DB\Select;
 use Magento\Framework\Model\AbstractModel;
+use Magento\Eav\Model\Config;
+use Magento\Framework\App\ObjectManager;
 
 /**
  * EAV attribute resource model
  *
- * @api
+ * @author      Magento Core Team <core@magentocommerce.com>
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
- * @since 100.0.2
  */
 class Attribute extends \Magento\Framework\Model\ResourceModel\Db\AbstractDb
 {
@@ -42,6 +42,11 @@ class Attribute extends \Magento\Framework\Model\ResourceModel\Db\AbstractDb
      * @var Config
      */
     private $config;
+
+    /**
+     * @var AttributeCache
+     */
+    private $attributeCache;
 
     /**
      * Class constructor
@@ -170,10 +175,10 @@ class Attribute extends \Magento\Framework\Model\ResourceModel\Db\AbstractDb
     {
         $frontendLabel = $object->getFrontendLabel();
         if (is_array($frontendLabel)) {
-            $this->checkDefaultFrontendLabelExists($frontendLabel, $frontendLabel);
+            if (!isset($frontendLabel[0]) || $frontendLabel[0] === null || $frontendLabel[0] == '') {
+                throw new \Magento\Framework\Exception\LocalizedException(__('The storefront label is not defined.'));
+            }
             $object->setFrontendLabel($frontendLabel[0])->setStoreLabels($frontendLabel);
-        } else {
-            $this->setStoreLabels($object, $frontendLabel);
         }
 
         /**
@@ -181,7 +186,7 @@ class Attribute extends \Magento\Framework\Model\ResourceModel\Db\AbstractDb
          */
         if (!$object->getId()) {
             if ($object->getFrontendInput() == 'select') {
-                $object->setSourceModel(\Magento\Eav\Model\Entity\Attribute\Source\Table::class);
+                $object->setSourceModel('Magento\Eav\Model\Entity\Attribute\Source\Table');
             }
         }
 
@@ -206,6 +211,7 @@ class Attribute extends \Magento\Framework\Model\ResourceModel\Db\AbstractDb
             $object
         );
         $this->getConfig()->clear();
+        $this->getAttributeCache()->clear();
         return parent::_afterSave($object);
     }
 
@@ -215,17 +221,29 @@ class Attribute extends \Magento\Framework\Model\ResourceModel\Db\AbstractDb
      * @param \Magento\Framework\Model\AbstractModel|\Magento\Framework\DataObject $object
      * @return $this
      * @SuppressWarnings(PHPMD.UnusedFormalParameter)
-     * @since 100.0.7
      */
     protected function _afterDelete(\Magento\Framework\Model\AbstractModel $object)
     {
         $this->getConfig()->clear();
+        $this->getAttributeCache()->clear();
         return $this;
     }
 
     /**
+     * @return AttributeCache
+     * @deprecated
+     */
+    private function getAttributeCache()
+    {
+        if (!$this->attributeCache) {
+            $this->attributeCache = ObjectManager::getInstance()->get(Config::class);
+        }
+        return $this->attributeCache;
+    }
+
+    /**
      * @return Config
-     * @deprecated 100.0.7
+     * @deprecated
      */
     private function getConfig()
     {
@@ -446,8 +464,7 @@ class Attribute extends \Magento\Framework\Model\ResourceModel\Db\AbstractDb
     {
         $connection = $this->getConnection();
         $table = $this->getTable('eav_attribute_option');
-        // ignore strings that start with a number
-        $intOptionId = is_numeric($optionId) ? (int)$optionId : 0;
+        $intOptionId = (int)$optionId;
 
         if (!empty($option['delete'][$optionId])) {
             if ($intOptionId) {
@@ -526,7 +543,6 @@ class Attribute extends \Magento\Framework\Model\ResourceModel\Db\AbstractDb
      *
      * @param int|string $entityAttributeId
      * @return array
-     * @since 100.1.0
      */
     public function getEntityAttribute($entityAttributeId)
     {
@@ -667,11 +683,6 @@ class Attribute extends \Magento\Framework\Model\ResourceModel\Db\AbstractDb
     }
 
     /**
-     * @var array
-     */
-    private $storeLabelsCache = [];
-
-    /**
      * Retrieve store labels by given attribute id
      *
      * @param int $attributeId
@@ -679,19 +690,16 @@ class Attribute extends \Magento\Framework\Model\ResourceModel\Db\AbstractDb
      */
     public function getStoreLabelsByAttributeId($attributeId)
     {
-        if (!isset($this->storeLabelsCache[$attributeId])) {
-            $connection = $this->getConnection();
-            $bind = [':attribute_id' => $attributeId];
-            $select = $connection->select()->from(
-                $this->getTable('eav_attribute_label'),
-                ['store_id', 'value']
-            )->where(
-                'attribute_id = :attribute_id'
-            );
-            $this->storeLabelsCache[$attributeId] = $connection->fetchPairs($select, $bind);
-        }
+        $connection = $this->getConnection();
+        $bind = [':attribute_id' => $attributeId];
+        $select = $connection->select()->from(
+            $this->getTable('eav_attribute_label'),
+            ['store_id', 'value']
+        )->where(
+            'attribute_id = :attribute_id'
+        );
 
-        return $this->storeLabelsCache[$attributeId];
+        return $connection->fetchPairs($select, $bind);
     }
 
     /**
@@ -718,7 +726,6 @@ class Attribute extends \Magento\Framework\Model\ResourceModel\Db\AbstractDb
      * Provide variables to serialize
      *
      * @return array
-     * @since 100.0.7
      */
     public function __sleep()
     {
@@ -731,51 +738,11 @@ class Attribute extends \Magento\Framework\Model\ResourceModel\Db\AbstractDb
      * Restore global dependencies
      *
      * @return void
-     * @since 100.0.7
      */
     public function __wakeup()
     {
         parent::__wakeup();
         $this->_storeManager = \Magento\Framework\App\ObjectManager::getInstance()
             ->get(\Magento\Store\Model\StoreManagerInterface::class);
-    }
-
-    /**
-     * This method extracts frontend labels into array and sets array values as storeLabels into an object.
-     *
-     * @param AbstractModel $object
-     * @param string|null $frontendLabel
-     * @return void
-     * @throws \Magento\Framework\Exception\LocalizedException
-     */
-    private function setStoreLabels(AbstractModel $object, $frontendLabel)
-    {
-        $resultLabel = [];
-        $frontendLabels = $object->getFrontendLabels();
-        if (isset($frontendLabels[0])
-            && $frontendLabels[0] instanceof \Magento\Eav\Model\Entity\Attribute\FrontendLabel
-        ) {
-            foreach ($frontendLabels as $label) {
-                $resultLabel[$label->getStoreId()] = $label->getLabel();
-            }
-            $this->checkDefaultFrontendLabelExists($frontendLabel, $resultLabel);
-            $object->setStoreLabels($resultLabel);
-        }
-    }
-
-    /**
-     * This method checks whether value for default frontend label exists in attribute data.
-     *
-     * @param array|string|null $frontendLabel
-     * @param array $resultLabels
-     * @return void
-     * @throws \Magento\Framework\Exception\LocalizedException
-     */
-    private function checkDefaultFrontendLabelExists($frontendLabel, $resultLabels)
-    {
-        $isAdminStoreLabel = (isset($resultLabels[0]) && !empty($resultLabels[0]));
-        if (empty($frontendLabel) && !$isAdminStoreLabel) {
-            throw new \Magento\Framework\Exception\LocalizedException(__('The storefront label is not defined.'));
-        }
     }
 }

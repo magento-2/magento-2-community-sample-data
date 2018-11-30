@@ -11,7 +11,6 @@ use Magento\Cms\Test\Page\CmsIndex;
 use Magento\Mtf\Fixture\FixtureFactory;
 use Magento\Mtf\Fixture\FixtureInterface;
 use Magento\Mtf\TestCase\Injectable;
-use Magento\Customer\Test\Fixture\Customer;
 
 /**
  * Preconditions:
@@ -26,15 +25,15 @@ use Magento\Customer\Test\Fixture\Customer;
  * 4. Click Update.
  * 5. Perform all assertions.
  *
- * @group Mini_Shopping_Cart
+ * @group Mini_Shopping_Cart_(CS)
  * @ZephyrId MAGETWO-29812
  */
 class UpdateProductFromMiniShoppingCartEntityTest extends Injectable
 {
     /* tags */
     const MVP = 'yes';
+    const DOMAIN = 'CS';
     const TEST_TYPE = 'extended_acceptance_test';
-    const SEVERITY = 'S0';
     /* end tags */
 
     /**
@@ -78,71 +77,47 @@ class UpdateProductFromMiniShoppingCartEntityTest extends Injectable
 
     /**
      * Update product from mini shopping cart.
-     * @param array $originalProduct
+     *
+     * @param string $originalProduct
      * @param array $checkoutData
-     * @param boolean $useMiniCartToEditQty
-     * @param array $shippingAddress
-     * @param array $shipping
-     * @param array $payment
-     * @param Customer $customer
      * @return array
      */
-    public function test(
-        array $originalProduct,
-        array $checkoutData,
-        $useMiniCartToEditQty = false,
-        $shippingAddress = null,
-        $shipping = null,
-        $payment = null,
-        Customer $customer = null
-    ) {
+    public function test($originalProduct, $checkoutData)
+    {
         // Preconditions:
-        if ($customer !== null) {
-            $customer->persist();
-        }
         $product = $this->createProduct($originalProduct);
         $this->addToCart($product);
 
         // Steps:
         $productData = $product->getData();
         $productData['checkout_data'] = $checkoutData;
-        $newProduct = $this->createProduct([explode('::', $originalProduct[0])[0]], [$productData]);
+        $newProduct = $this->createProduct(explode('::', $originalProduct)[0], [$productData]);
         $miniShoppingCart = $this->cmsIndex->getCartSidebarBlock();
         $miniShoppingCart->openMiniCart();
+        $miniShoppingCart->getCartItem($newProduct)->clickEditItem();
+        $this->catalogProductView->getViewBlock()->addToCart($newProduct);
 
-        if ($useMiniCartToEditQty) {
-            $miniShoppingCart->getCartItem($newProduct)->editQty($newProduct->getCheckoutData());
-        } else {
-            $miniShoppingCart->getCartItem($newProduct)->clickEditItem();
-            $this->catalogProductView->getViewBlock()->addToCart($newProduct);
-            $this->catalogProductView->getMessagesBlock()->waitSuccessMessage();
-        }
         // Prepare data for asserts:
         $cart['data']['items'] = ['products' => [$newProduct]];
         $deletedCart['data']['items'] = ['products' => [$product]];
 
         return [
             'deletedCart' => $this->fixtureFactory->createByCode('cart', $deletedCart),
-            'cart' => $this->fixtureFactory->createByCode('cart', $cart),
-            'checkoutData' => [
-                'shippingAddress' => $shippingAddress,
-                'shipping' => $shipping,
-                'payment' => $payment
-            ]
+            'cart' => $this->fixtureFactory->createByCode('cart', $cart)
         ];
     }
 
     /**
      * Create product.
      *
-     * @param array $product
+     * @param string $product
      * @param array $data [optional]
      * @return FixtureInterface
      */
-    protected function createProduct(array $product, array $data = [])
+    protected function createProduct($product, array $data = [])
     {
         $createProductsStep = $this->objectManager->create(
-            \Magento\Catalog\Test\TestStep\CreateProductsStep::class,
+            'Magento\Catalog\Test\TestStep\CreateProductsStep',
             ['products' => $product, 'data' => $data]
         );
         return $createProductsStep->run()['products'][0];
@@ -157,7 +132,7 @@ class UpdateProductFromMiniShoppingCartEntityTest extends Injectable
     protected function addToCart(FixtureInterface $product)
     {
         $addToCartStep = $this->objectManager->create(
-            \Magento\Checkout\Test\TestStep\AddProductsToTheCartStep::class,
+            'Magento\Checkout\Test\TestStep\AddProductsToTheCartStep',
             ['products' => [$product]]
         );
         $addToCartStep->run();

@@ -64,7 +64,7 @@ class ToOrderAddress
         $this->dataObjectHelper->populateWithArray(
             $orderAddress,
             array_merge($orderAddressData, $data),
-            \Magento\Sales\Api\Data\OrderAddressInterface::class
+            '\Magento\Sales\Api\Data\OrderAddressInterface'
         );
 
         return $orderAddress;

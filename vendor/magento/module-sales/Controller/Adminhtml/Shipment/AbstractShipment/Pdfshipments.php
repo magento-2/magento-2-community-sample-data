@@ -70,12 +70,9 @@ abstract class Pdfshipments extends \Magento\Sales\Controller\Adminhtml\Order\Ab
      */
     public function massAction(AbstractCollection $collection)
     {
-        $pdf = $this->pdfShipment->getPdf($collection);
-        $fileContent = ['type' => 'string', 'value' => $pdf->render(), 'rm' => true];
-
         return $this->fileFactory->create(
             sprintf('packingslip%s.pdf', $this->dateTime->date('Y-m-d_H-i-s')),
-            $fileContent,
+            $this->pdfShipment->getPdf($collection)->render(),
             DirectoryList::VAR_DIR,
             'application/pdf'
         );

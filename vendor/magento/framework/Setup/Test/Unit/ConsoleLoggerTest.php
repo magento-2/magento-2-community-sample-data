@@ -8,7 +8,7 @@ namespace Magento\Framework\Setup\Test\Unit;
 
 use Magento\Framework\Setup\ConsoleLogger;
 
-class ConsoleLoggerTest extends \PHPUnit\Framework\TestCase
+class ConsoleLoggerTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \PHPUnit_Framework_MockObject_MockObject|\Symfony\Component\Console\Output\OutputInterface
@@ -22,8 +22,14 @@ class ConsoleLoggerTest extends \PHPUnit\Framework\TestCase
 
     protected function setUp()
     {
-        $this->console = $this->createMock(\Symfony\Component\Console\Output\OutputInterface::class);
-        $outputFormatter = $this->createMock(\Symfony\Component\Console\Formatter\OutputFormatterInterface::class);
+        $this->console = $this->getMock('Symfony\Component\Console\Output\OutputInterface', [], [], '', false);
+        $outputFormatter = $this->getMock(
+            'Symfony\Component\Console\Formatter\OutputFormatterInterface',
+            [],
+            [],
+            '',
+            false
+        );
         $this->console
             ->expects($this->once())
             ->method('getFormatter')
@@ -42,7 +48,7 @@ class ConsoleLoggerTest extends \PHPUnit\Framework\TestCase
 
     public function testLogError()
     {
-        $exception = $this->createMock(\Exception::class);
+        $exception = $this->getMock('\Exception', [], [], '', false);
         $this->console
             ->expects($this->once())
             ->method('writeln')

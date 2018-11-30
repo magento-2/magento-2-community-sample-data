@@ -6,6 +6,9 @@
 
 namespace Magento\ConfigurableProduct\Test\Fixture\Cart;
 
+use Magento\ConfigurableProduct\Test\Fixture\ConfigurableProduct;
+use Magento\Mtf\Fixture\FixtureInterface;
+
 /**
  * Data for verify cart item block on checkout page.
  *
@@ -17,27 +20,25 @@ namespace Magento\ConfigurableProduct\Test\Fixture\Cart;
 class Item extends \Magento\Catalog\Test\Fixture\Cart\Item
 {
     /**
-     * Return prepared dataset.
-     *
-     * @param null|string $key
-     * @return array
+     * @constructor
+     * @param FixtureInterface $product
      */
-    public function getData($key = null)
+    public function __construct(FixtureInterface $product)
     {
-        parent::getData($key);
-        $productData = $this->product->getData();
-        $checkoutData = $this->product->getCheckoutData();
+        parent::__construct($product);
+
+        /** @var ConfigurableProduct $product */
+        $checkoutData = $product->getCheckoutData();
         $cartItem = isset($checkoutData['cartItem']) ? $checkoutData['cartItem'] : [];
-        $attributesData = $this->product->getConfigurableAttributesData()['attributes_data'];
+        $attributesData = $product->getConfigurableAttributesData()['attributes_data'];
         $checkoutConfigurableOptions = isset($checkoutData['options']['configurable_options'])
             ? $checkoutData['options']['configurable_options']
             : [];
 
-        $attributeKey = [];
         foreach ($checkoutConfigurableOptions as $key => $checkoutConfigurableOption) {
             $attribute = $checkoutConfigurableOption['title'];
             $option = $checkoutConfigurableOption['value'];
-            $attributeKey[] = "$attribute:$option";
+
             $checkoutConfigurableOptions[$key] = [
                 'title' => isset($attributesData[$attribute]['label'])
                     ? $attributesData[$attribute]['label']
@@ -47,19 +48,10 @@ class Item extends \Magento\Catalog\Test\Fixture\Cart\Item
                     : $option,
             ];
         }
-        $attributeKey = implode(' ', $attributeKey);
-        if (isset($productData['configurable_attributes_data']['matrix'][$attributeKey])) {
-            $cartItem['sku'] = $productData['configurable_attributes_data']['matrix'][$attributeKey]['sku'];
-        } else {
-            $cartItem['sku'] = $productData['sku'];
-        }
-        $cartItem['name'] = $productData['name'];
 
         $cartItem['options'] = isset($cartItem['options'])
             ? $cartItem['options'] + $checkoutConfigurableOptions
             : $checkoutConfigurableOptions;
         $this->data = $cartItem;
-
-        return $this->data;
     }
 }

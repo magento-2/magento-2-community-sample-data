@@ -39,7 +39,7 @@ class ProductImage
      * @param \Magento\Eav\Model\Config $eavConfig
      * @param \Magento\Framework\App\Request\Http $request
      */
-    public function __construct(
+    public function __construct (
         \Magento\Swatches\Helper\Data $swatchesHelperData,
         \Magento\Eav\Model\Config $eavConfig,
         \Magento\Framework\App\Request\Http $request
@@ -69,7 +69,7 @@ class ProductImage
             && ($location == self::CATEGORY_PAGE_GRID_LOCATION || $location == self::CATEGORY_PAGE_LIST_LOCATION)) {
             $request = $this->request->getParams();
             if (is_array($request)) {
-                $filterArray = $this->getFilterArray($request, $product);
+                $filterArray = $this->getFilterArray($request);
                 if (!empty($filterArray)) {
                     $product = $this->loadSimpleVariation($product, $filterArray);
                 }
@@ -99,18 +99,16 @@ class ProductImage
      * Get filters from request
      *
      * @param array $request
-     * @param \Magento\Catalog\Model\Product $product
      * @return array
      */
-    private function getFilterArray(array $request, \Magento\Catalog\Model\Product $product)
+    protected function getFilterArray(array $request)
     {
         $filterArray = [];
-        $attributes = $this->eavConfig->getEntityAttributes(\Magento\Catalog\Model\Product::ENTITY, $product);
-
+        $attributeCodes = $this->eavConfig->getEntityAttributeCodes(\Magento\Catalog\Model\Product::ENTITY);
         foreach ($request as $code => $value) {
-            if (isset($attributes[$code])) {
-                $attribute = $attributes[$code];
-                if ($this->canReplaceImageWithSwatch($attribute)) {
+            if (in_array($code, $attributeCodes)) {
+                $attribute = $this->eavConfig->getAttribute(\Magento\Catalog\Model\Product::ENTITY, $code);
+                if ($attribute->getId() && $this->canReplaceImageWithSwatch($attribute)) {
                     $filterArray[$code] = $value;
                 }
             }

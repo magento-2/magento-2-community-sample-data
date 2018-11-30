@@ -10,7 +10,7 @@ use Magento\Framework\DB\Adapter\AdapterInterface;
 use Magento\Framework\DB\Select;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
 
-class ConditionTest extends \PHPUnit\Framework\TestCase
+class ConditionTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\Catalog\Model\Product\Condition
@@ -21,7 +21,7 @@ class ConditionTest extends \PHPUnit\Framework\TestCase
     {
         $collection = $this->getMockedAbstractCollection();
         $this->assertInstanceOf(
-            \Magento\Catalog\Model\Product\Condition::class,
+            '\Magento\Catalog\Model\Product\Condition',
             $this->model->applyToCollection($collection)
         );
     }
@@ -29,7 +29,7 @@ class ConditionTest extends \PHPUnit\Framework\TestCase
     public function testGetIdsSelect()
     {
         $connection = $this->getMockedAdapterInterface();
-        $this->assertInstanceOf(\Magento\Framework\DB\Select::class, $this->model->getIdsSelect($connection));
+        $this->assertInstanceOf('\Magento\Framework\DB\Select', $this->model->getIdsSelect($connection));
         $this->model->setTable(null);
         $this->assertEmpty($this->model->getIdsSelect($connection));
     }
@@ -37,7 +37,7 @@ class ConditionTest extends \PHPUnit\Framework\TestCase
     protected function setUp()
     {
         $helper = new ObjectManager($this);
-        $this->model = $helper->getObject(\Magento\Catalog\Model\Product\Condition::class);
+        $this->model = $helper->getObject('Magento\Catalog\Model\Product\Condition');
         $this->model->setTable('testTable')
             ->setPkFieldName('testFieldName');
     }
@@ -47,7 +47,7 @@ class ConditionTest extends \PHPUnit\Framework\TestCase
      */
     private function getMockedAbstractCollection()
     {
-        $mockBuilder = $this->getMockBuilder(\Magento\Eav\Model\Entity\Collection\AbstractCollection::class)
+        $mockBuilder = $this->getMockBuilder('\Magento\Eav\Model\Entity\Collection\AbstractCollection')
             ->setMethods(['joinTable'])
             ->disableOriginalConstructor();
         $mock = $mockBuilder->getMockForAbstractClass();
@@ -65,7 +65,7 @@ class ConditionTest extends \PHPUnit\Framework\TestCase
     {
         $mockedDbSelect = $this->getMockedDbSelect();
 
-        $mockBuilder = $this->getMockBuilder(\Magento\Framework\DB\Adapter\AdapterInterface::class)
+        $mockBuilder = $this->getMockBuilder('\Magento\Framework\DB\Adapter\AdapterInterface')
             ->setMethods(['select'])
             ->disableOriginalConstructor();
         $mock = $mockBuilder->getMockForAbstractClass();
@@ -82,7 +82,7 @@ class ConditionTest extends \PHPUnit\Framework\TestCase
      */
     private function getMockedDbSelect()
     {
-        $mockBuilder = $this->getMockBuilder(\Magento\Framework\DB\Select::class)
+        $mockBuilder = $this->getMockBuilder('\Magento\Framework\DB\Select')
             ->setMethods(['from'])
             ->disableOriginalConstructor();
         $mock = $mockBuilder->getMockForAbstractClass();

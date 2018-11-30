@@ -16,7 +16,7 @@ namespace Monolog\Processor;
  *
  * @author Jordi Boggiano <j.boggiano@seld.be>
  */
-class WebProcessor implements ProcessorInterface
+class WebProcessor
 {
     /**
      * @var array|\ArrayAccess
@@ -24,10 +24,6 @@ class WebProcessor implements ProcessorInterface
     protected $serverData;
 
     /**
-     * Default fields
-     *
-     * Array is structured as [key in record.extra => key in $serverData]
-     *
      * @var array
      */
     protected $extraFields = array(
@@ -40,7 +36,7 @@ class WebProcessor implements ProcessorInterface
 
     /**
      * @param array|\ArrayAccess $serverData  Array or object w/ ArrayAccess that provides access to the $_SERVER data
-     * @param array|null         $extraFields Field names and the related key inside $serverData to be added. If not provided it defaults to: url, ip, http_method, server, referrer
+     * @param array|null         $extraFields Extra field names to be added (all available by default)
      */
     public function __construct($serverData = null, array $extraFields = null)
     {
@@ -53,14 +49,10 @@ class WebProcessor implements ProcessorInterface
         }
 
         if (null !== $extraFields) {
-            if (isset($extraFields[0])) {
-                foreach (array_keys($this->extraFields) as $fieldName) {
-                    if (!in_array($fieldName, $extraFields)) {
-                        unset($this->extraFields[$fieldName]);
-                    }
+            foreach (array_keys($this->extraFields) as $fieldName) {
+                if (!in_array($fieldName, $extraFields)) {
+                    unset($this->extraFields[$fieldName]);
                 }
-            } else {
-                $this->extraFields = $extraFields;
             }
         }
     }

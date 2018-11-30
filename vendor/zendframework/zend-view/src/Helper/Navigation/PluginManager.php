@@ -9,8 +9,7 @@
 
 namespace Zend\View\Helper\Navigation;
 
-use Interop\Container\ContainerInterface;
-use Zend\ServiceManager\Factory\InvokableFactory;
+use Zend\View\Exception;
 use Zend\View\HelperPluginManager;
 
 /**
@@ -23,76 +22,37 @@ use Zend\View\HelperPluginManager;
 class PluginManager extends HelperPluginManager
 {
     /**
-     * @var string Valid instance types.
-     */
-    protected $instanceOf = AbstractHelper::class;
-
-    /**
-     * Default aliases
+     * Default set of helpers
      *
-     * @var string[]
+     * @var array
      */
-    protected $aliases = [
-        'breadcrumbs' => Breadcrumbs::class,
-        'links'       => Links::class,
-        'menu'        => Menu::class,
-        'sitemap'     => Sitemap::class,
+    protected $invokableClasses = [
+        'breadcrumbs' => 'Zend\View\Helper\Navigation\Breadcrumbs',
+        'links'       => 'Zend\View\Helper\Navigation\Links',
+        'menu'        => 'Zend\View\Helper\Navigation\Menu',
+        'sitemap'     => 'Zend\View\Helper\Navigation\Sitemap',
     ];
 
     /**
-     * Default factories
+     * Validate the plugin
      *
-     * @var string[]
+     * Checks that the helper loaded is an instance of AbstractHelper.
+     *
+     * @param  mixed $plugin
+     * @return void
+     * @throws Exception\InvalidArgumentException if invalid
      */
-    protected $factories = [
-        Breadcrumbs::class => InvokableFactory::class,
-        Links::class       => InvokableFactory::class,
-        Menu::class        => InvokableFactory::class,
-        Sitemap::class     => InvokableFactory::class,
-
-        // v2 canonical FQCNs
-
-        'zendviewhelpernavigationbreadcrumbs' => InvokableFactory::class,
-        'zendviewhelpernavigationlinks'       => InvokableFactory::class,
-        'zendviewhelpernavigationmenu'        => InvokableFactory::class,
-        'zendviewhelpernavigationsitemap'     => InvokableFactory::class,
-    ];
-
-    /**
-     * @param null|ConfigInterface|ContainerInterface $configOrContainerInstance
-     * @param array $v3config If $configOrContainerInstance is a container, this
-     *     value will be passed to the parent constructor.
-     */
-    public function __construct($configOrContainerInstance = null, array $v3config = [])
+    public function validatePlugin($plugin)
     {
-        $this->initializers[] = function ($first, $second) {
-            // v2 vs v3 argument order
-            if ($first instanceof ContainerInterface) {
-                // v3
-                $container = $first;
-                $instance = $second;
-            } else {
-                // v2
-                $container = $second;
-                $instance = $first;
-            }
+        if ($plugin instanceof AbstractHelper) {
+            // we're okay
+            return;
+        }
 
-            if (! $instance instanceof AbstractHelper) {
-                return;
-            }
-
-            // This initializer was written with v2 functionality in mind; as such,
-            // we need to test and see if we're called in a v2 context, and, if so,
-            // set the service locator to the parent locator.
-            //
-            // Under v3, the parent locator is what is passed to the method already.
-            if (! method_exists($container, 'configure') && $container->getServiceLocator()) {
-                $container = $container->getServiceLocator();
-            }
-
-            $instance->setServiceLocator($container);
-        };
-
-        parent::__construct($configOrContainerInstance, $v3config);
+        throw new Exception\InvalidArgumentException(sprintf(
+            'Plugin of type %s is invalid; must implement %s\AbstractHelper',
+            (is_object($plugin) ? get_class($plugin) : gettype($plugin)),
+            __NAMESPACE__
+        ));
     }
 }

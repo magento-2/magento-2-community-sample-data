@@ -7,7 +7,7 @@ namespace Magento\Catalog\Test\Unit\Model\Product\Attribute\Source;
 
 use Magento\Catalog\Model\Product\Attribute\Source\Boolean as BooleanSource;
 
-class BooleanTest extends \PHPUnit\Framework\TestCase
+class BooleanTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \PHPUnit_Framework_MockObject_MockObject
@@ -21,8 +21,12 @@ class BooleanTest extends \PHPUnit\Framework\TestCase
 
     protected function setUp()
     {
-        $this->attributeFactoryMock = $this->createMock(
-            \Magento\Eav\Model\ResourceModel\Entity\AttributeFactory::class
+        $this->attributeFactoryMock = $this->getMock(
+            'Magento\Eav\Model\ResourceModel\Entity\AttributeFactory',
+            [],
+            [],
+            '',
+            false
         );
         $this->model = new BooleanSource($this->attributeFactoryMock);
     }

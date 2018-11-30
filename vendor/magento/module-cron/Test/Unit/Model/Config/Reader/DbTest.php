@@ -5,20 +5,17 @@
  */
 namespace Magento\Cron\Test\Unit\Model\Config\Reader;
 
-use Magento\Framework\App\Config;
-use Magento\GoogleAdwords\Block\Code;
-
 /**
  * Test reading for cron parameters from data base storage
  *
  * @package Magento\Cron\Test\Unit\Model\Config\Reader
  */
-class DbTest extends \PHPUnit\Framework\TestCase
+class DbTest extends \PHPUnit_Framework_TestCase
 {
     /**
-     * @var Config | \PHPUnit_Framework_MockObject_MockObject
+     * @var \PHPUnit_Framework_MockObject_MockObject
      */
-    protected $config;
+    protected $_defaultReader;
 
     /**
      * @var \Magento\Cron\Model\Config\Converter\Db|\PHPUnit_Framework_MockObject_MockObject
@@ -35,11 +32,11 @@ class DbTest extends \PHPUnit\Framework\TestCase
      */
     protected function setUp()
     {
-        $this->config = $this->getMockBuilder(Config::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->_defaultReader = $this->getMockBuilder(
+            \Magento\Framework\App\Config\Scope\ReaderInterface::class
+        )->getMockForAbstractClass();
         $this->_converter = new \Magento\Cron\Model\Config\Converter\Db();
-        $this->_reader = new \Magento\Cron\Model\Config\Reader\Db($this->config, $this->_converter);
+        $this->_reader = new \Magento\Cron\Model\Config\Reader\Db($this->_defaultReader, $this->_converter);
     }
 
     /**
@@ -50,10 +47,7 @@ class DbTest extends \PHPUnit\Framework\TestCase
         $job1 = ['schedule' => ['cron_expr' => '* * * * *']];
         $job2 = ['schedule' => ['cron_expr' => '1 1 1 1 1']];
         $data = ['crontab' => ['default' => ['jobs' => ['job1' => $job1, 'job2' => $job2]]]];
-        $this->config->expects($this->once())
-            ->method('get')
-            ->with('system', 'default')
-            ->will($this->returnValue($data));
+        $this->_defaultReader->expects($this->once())->method('read')->will($this->returnValue($data));
         $expected = [
             'default' => [
                 'job1' => ['schedule' => $job1['schedule']['cron_expr']],

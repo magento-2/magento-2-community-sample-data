@@ -93,7 +93,7 @@ class BillingAgreement implements SectionSourceInterface
                         [\Magento\Paypal\Model\Express\Checkout::PAYMENT_INFO_TRANSPORT_BILLING_AGREEMENT => 1]
                     )
                 ),
-                'confirmMessage' => $this->escaper->escapeJs(
+                'confirmMessage' => $this->escaper->escapeJsQuote(
                     __('Would you like to sign a billing agreement to streamline further purchases with PayPal?')
                 )
             ];

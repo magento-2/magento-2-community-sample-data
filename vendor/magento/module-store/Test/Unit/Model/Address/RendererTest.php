@@ -9,7 +9,7 @@ namespace Magento\Store\Test\Unit\Model\Address;
 use Magento\Framework\DataObject;
 use Magento\Store\Model\Address\Renderer;
 
-class RendererTest extends \PHPUnit\Framework\TestCase
+class RendererTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var Renderer
@@ -23,14 +23,14 @@ class RendererTest extends \PHPUnit\Framework\TestCase
      */
     protected function setUp()
     {
-        $eventManager = $this->getMockBuilder(\Magento\Framework\Event\ManagerInterface::class)
+        $eventManager = $this->getMockBuilder('Magento\Framework\Event\ManagerInterface')
             ->disableOriginalConstructor()
             ->setMethods(['dispatch'])
             ->getMock();
 
         $eventManager->expects($this->once())->method('dispatch')->with('store_address_format');
 
-        $filterManager = $this->getMockBuilder(\Magento\Framework\Filter\FilterManager::class)
+        $filterManager = $this->getMockBuilder('Magento\Framework\Filter\FilterManager')
             ->disableOriginalConstructor()
             ->setMethods(['template'])
             ->getMock();

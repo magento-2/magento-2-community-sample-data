@@ -7,7 +7,6 @@
 namespace Magento\Checkout\CustomerData;
 
 use Magento\Framework\App\ObjectManager;
-use Magento\Catalog\Model\Product\Configuration\Item\ItemResolverInterface;
 
 /**
  * Default item
@@ -40,14 +39,11 @@ class DefaultItem extends AbstractItem
     protected $checkoutHelper;
 
     /**
+     * Escaper
+     *
      * @var \Magento\Framework\Escaper
      */
     private $escaper;
-
-    /**
-     * @var ItemResolverInterface
-     */
-    private $itemResolver;
 
     /**
      * @param \Magento\Catalog\Helper\Image $imageHelper
@@ -56,7 +52,6 @@ class DefaultItem extends AbstractItem
      * @param \Magento\Catalog\Helper\Product\ConfigurationPool $configurationPool
      * @param \Magento\Checkout\Helper\Data $checkoutHelper
      * @param \Magento\Framework\Escaper|null $escaper
-     * @param ItemResolverInterface|null $itemResolver
      * @codeCoverageIgnore
      */
     public function __construct(
@@ -65,8 +60,7 @@ class DefaultItem extends AbstractItem
         \Magento\Framework\UrlInterface $urlBuilder,
         \Magento\Catalog\Helper\Product\ConfigurationPool $configurationPool,
         \Magento\Checkout\Helper\Data $checkoutHelper,
-        \Magento\Framework\Escaper $escaper = null,
-        ItemResolverInterface $itemResolver = null
+        \Magento\Framework\Escaper $escaper = null
     ) {
         $this->configurationPool = $configurationPool;
         $this->imageHelper = $imageHelper;
@@ -74,7 +68,6 @@ class DefaultItem extends AbstractItem
         $this->urlBuilder = $urlBuilder;
         $this->checkoutHelper = $checkoutHelper;
         $this->escaper = $escaper ?: ObjectManager::getInstance()->get(\Magento\Framework\Escaper::class);
-        $this->itemResolver = $itemResolver ?: ObjectManager::getInstance()->get(ItemResolverInterface::class);
     }
 
     /**
@@ -126,7 +119,7 @@ class DefaultItem extends AbstractItem
      */
     protected function getProductForThumbnail()
     {
-        return $this->itemResolver->getFinalProduct($this->item);
+        return $this->getProduct();
     }
 
     /**

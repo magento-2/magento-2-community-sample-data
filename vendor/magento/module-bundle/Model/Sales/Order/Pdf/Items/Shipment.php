@@ -5,11 +5,8 @@
  */
 namespace Magento\Bundle\Model\Sales\Order\Pdf\Items;
 
-use Magento\Framework\App\ObjectManager;
-use Magento\Framework\Serialize\Serializer\Json;
-
 /**
- * Order shipment pdf items renderer
+ * Sales Order Shipment Pdf items renderer
  */
 class Shipment extends AbstractItems
 {
@@ -19,8 +16,6 @@ class Shipment extends AbstractItems
     protected $string;
 
     /**
-     * Constructor
-     *
      * @param \Magento\Framework\Model\Context $context
      * @param \Magento\Framework\Registry $registry
      * @param \Magento\Tax\Helper\Data $taxData
@@ -30,8 +25,6 @@ class Shipment extends AbstractItems
      * @param \Magento\Framework\Model\ResourceModel\AbstractResource $resource
      * @param \Magento\Framework\Data\Collection\AbstractDb $resourceCollection
      * @param array $data
-     * @param \Magento\Framework\Serialize\Serializer\Json|null $serializer
-     * @SuppressWarnings(PHPMD.ExcessiveParameterList)
      */
     public function __construct(
         \Magento\Framework\Model\Context $context,
@@ -42,8 +35,7 @@ class Shipment extends AbstractItems
         \Magento\Framework\Stdlib\StringUtils $string,
         \Magento\Framework\Model\ResourceModel\AbstractResource $resource = null,
         \Magento\Framework\Data\Collection\AbstractDb $resourceCollection = null,
-        array $data = [],
-        Json $serializer = null
+        array $data = []
     ) {
         $this->string = $string;
         parent::__construct(
@@ -54,8 +46,7 @@ class Shipment extends AbstractItems
             $filterManager,
             $resource,
             $resourceCollection,
-            $data,
-            $serializer
+            $data
         );
     }
 

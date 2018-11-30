@@ -7,7 +7,7 @@ namespace Magento\Setup\Test\Unit\Model\Cron\Queue;
 
 use Magento\Setup\Model\Cron\Queue\Writer;
 
-class WriterTest extends \PHPUnit\Framework\TestCase
+class WriterTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \PHPUnit_Framework_MockObject_MockObject|\Magento\Framework\Filesystem
@@ -26,7 +26,7 @@ class WriterTest extends \PHPUnit\Framework\TestCase
 
     public function setUp()
     {
-        $this->filesystem = $this->createMock(\Magento\Framework\Filesystem::class);
+        $this->filesystem = $this->getMock(\Magento\Framework\Filesystem::class, [], [], '', false);
         $directoryRead = $this->getMockForAbstractClass(
             \Magento\Framework\Filesystem\Directory\ReadInterface::class,
             [],

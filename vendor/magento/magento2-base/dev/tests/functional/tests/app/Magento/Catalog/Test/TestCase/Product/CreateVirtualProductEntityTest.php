@@ -23,7 +23,7 @@ use Magento\Mtf\TestCase\Injectable;
  * 5. Save product.
  * 6. Verify created product.
  *
- * @group Virtual_Product
+ * @group Virtual_Product_(CS)
  * @ZephyrId MAGETWO-23417
  */
 class CreateVirtualProductEntityTest extends Injectable
@@ -31,6 +31,7 @@ class CreateVirtualProductEntityTest extends Injectable
     /* tags */
     const TEST_TYPE = 'acceptance_test, extended_acceptance_test';
     const MVP = 'no';
+    const DOMAIN = 'MX';
     /* end tags */
 
     /**

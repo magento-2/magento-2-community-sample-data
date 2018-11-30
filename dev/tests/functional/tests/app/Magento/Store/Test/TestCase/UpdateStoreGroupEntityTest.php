@@ -27,14 +27,14 @@ use Magento\Mtf\TestCase\Injectable;
  * 5. Click "Save Store" button
  * 6. Perform all assertions
  *
- * @group Store_Management
+ * @group Store_Management_(PS)
  * @ZephyrId MAGETWO-27568
  */
 class UpdateStoreGroupEntityTest extends Injectable
 {
     /* tags */
     const MVP = 'yes';
-    const SEVERITY = 'S2';
+    const DOMAIN = 'PS';
     /* end tags */
 
     /**
@@ -71,10 +71,9 @@ class UpdateStoreGroupEntityTest extends Injectable
      *
      * @param StoreGroup $storeGroupOrigin
      * @param StoreGroup $storeGroup
-     * @param string $acceptAlert
      * @return void
      */
-    public function test(StoreGroup $storeGroupOrigin, StoreGroup $storeGroup, $acceptAlert)
+    public function test(StoreGroup $storeGroupOrigin, StoreGroup $storeGroup)
     {
 
         //Preconditions
@@ -85,8 +84,5 @@ class UpdateStoreGroupEntityTest extends Injectable
         $this->storeIndex->getStoreGrid()->searchAndOpenStoreGroup($storeGroupOrigin);
         $this->editGroup->getEditFormGroup()->fill($storeGroup);
         $this->editGroup->getFormPageActions()->save();
-        if ($acceptAlert) {
-            $this->editGroup->getModalBlock()->acceptAlert();
-        }
     }
 }

@@ -9,7 +9,7 @@ namespace Magento\User\Model\ResourceModel\Role\User;
  * Role user collection test
  * @magentoAppArea adminhtml
  */
-class CollectionTest extends \PHPUnit\Framework\TestCase
+class CollectionTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\User\Model\ResourceModel\Role\User\Collection
@@ -19,7 +19,7 @@ class CollectionTest extends \PHPUnit\Framework\TestCase
     protected function setUp()
     {
         $this->_collection = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->create(
-            \Magento\User\Model\ResourceModel\Role\User\Collection::class
+            'Magento\User\Model\ResourceModel\Role\User\Collection'
         );
     }
 

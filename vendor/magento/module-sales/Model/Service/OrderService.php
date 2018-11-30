@@ -7,6 +7,7 @@ namespace Magento\Sales\Model\Service;
 
 use Magento\Sales\Api\OrderManagementInterface;
 use Magento\Payment\Gateway\Command\CommandException;
+use Magento\Sales\Api\PaymentFailuresInterface;
 
 /**
  * Class OrderService
@@ -51,7 +52,7 @@ class OrderService implements OrderManagementInterface
     protected $orderCommentSender;
 
     /**
-     * @var \Magento\Sales\Api\PaymentFailuresInterface
+     * @var PaymentFailuresInterface
      */
     private $paymentFailures;
 
@@ -65,7 +66,7 @@ class OrderService implements OrderManagementInterface
      * @param \Magento\Sales\Model\OrderNotifier $notifier
      * @param \Magento\Framework\Event\ManagerInterface $eventManager
      * @param \Magento\Sales\Model\Order\Email\Sender\OrderCommentSender $orderCommentSender
-     * @param \Magento\Sales\Api\PaymentFailuresInterface|null $paymentFailures
+     * @param PaymentFailuresInterface|null $paymentFailures
      */
     public function __construct(
         \Magento\Sales\Api\OrderRepositoryInterface $orderRepository,
@@ -75,7 +76,7 @@ class OrderService implements OrderManagementInterface
         \Magento\Sales\Model\OrderNotifier $notifier,
         \Magento\Framework\Event\ManagerInterface $eventManager,
         \Magento\Sales\Model\Order\Email\Sender\OrderCommentSender $orderCommentSender,
-        \Magento\Sales\Api\PaymentFailuresInterface $paymentFailures = null
+        PaymentFailuresInterface $paymentFailures = null
     ) {
         $this->orderRepository = $orderRepository;
         $this->historyRepository = $historyRepository;
@@ -85,7 +86,7 @@ class OrderService implements OrderManagementInterface
         $this->eventManager = $eventManager;
         $this->orderCommentSender = $orderCommentSender;
         $this->paymentFailures = $paymentFailures ? : \Magento\Framework\App\ObjectManager::getInstance()
-            ->get(\Magento\Sales\Api\PaymentFailuresInterface::class);
+            ->get(PaymentFailuresInterface::class);
     }
 
     /**
@@ -97,8 +98,7 @@ class OrderService implements OrderManagementInterface
     public function cancel($id)
     {
         $order = $this->orderRepository->get($id);
-        if ($order->canCancel()) {
-            $order->cancel();
+        if ((bool)$order->cancel()) {
             $this->orderRepository->save($order);
             return true;
         }
@@ -203,7 +203,7 @@ class OrderService implements OrderManagementInterface
             //commit
         } catch (\Exception $e) {
             if ($e instanceof CommandException) {
-                $this->paymentFailures->handle((int)$order->getQuoteId(), __($e->getMessage()));
+                $this->paymentFailures->handle($order->getQuoteId(), __($e->getMessage()));
             }
             throw $e;
             //rollback;
@@ -224,7 +224,7 @@ class OrderService implements OrderManagementInterface
      * @param string $comment
      * @param bool $isCustomerNotified
      * @param bool $shouldProtectState
-     * @return \Magento\Sales\Model\Service\OrderService
+     * @return \Magento\Sales\Model\Order
      * @throws \Magento\Framework\Exception\LocalizedException
      */
     public function setState(

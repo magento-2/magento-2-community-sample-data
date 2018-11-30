@@ -10,10 +10,7 @@ use Magento\Framework\Search\Request\QueryInterface;
 use Magento\Framework\Search\Request\Query\Filter;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
 
-/**
- * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
- */
-class MapperTest extends \PHPUnit\Framework\TestCase
+class MapperTest extends \PHPUnit_Framework_TestCase
 {
     const ROOT_QUERY = 'someQuery';
 
@@ -66,33 +63,33 @@ class MapperTest extends \PHPUnit\Framework\TestCase
     {
         $this->helper = new ObjectManager($this);
 
-        $this->objectManager = $this->createMock(\Magento\Framework\ObjectManagerInterface::class);
+        $this->objectManager = $this->getMock('Magento\Framework\ObjectManagerInterface');
 
-        $this->queryMatch = $this->getMockBuilder(\Magento\Framework\Search\Request\Query\Match::class)
+        $this->queryMatch = $this->getMockBuilder('Magento\Framework\Search\Request\Query\Match')
             ->disableOriginalConstructor()
             ->getMock();
 
-        $this->queryBool = $this->getMockBuilder(\Magento\Framework\Search\Request\Query\BoolExpression::class)
+        $this->queryBool = $this->getMockBuilder('Magento\Framework\Search\Request\Query\BoolExpression')
             ->disableOriginalConstructor()
             ->getMock();
 
-        $this->queryFilter = $this->getMockBuilder(\Magento\Framework\Search\Request\Query\Filter::class)
+        $this->queryFilter = $this->getMockBuilder('Magento\Framework\Search\Request\Query\Filter')
             ->disableOriginalConstructor()
             ->getMock();
 
-        $this->filterTerm = $this->getMockBuilder(\Magento\Framework\Search\Request\Filter\Term::class)
+        $this->filterTerm = $this->getMockBuilder('Magento\Framework\Search\Request\Filter\Term')
             ->disableOriginalConstructor()
             ->getMock();
 
-        $this->filterRange = $this->getMockBuilder(\Magento\Framework\Search\Request\Filter\Range::class)
+        $this->filterRange = $this->getMockBuilder('Magento\Framework\Search\Request\Filter\Range')
             ->disableOriginalConstructor()
             ->getMock();
 
-        $this->filterBool = $this->getMockBuilder(\Magento\Framework\Search\Request\Filter\BoolExpression::class)
+        $this->filterBool = $this->getMockBuilder('Magento\Framework\Search\Request\Filter\BoolExpression')
             ->disableOriginalConstructor()
             ->getMock();
 
-        $this->filterWildcard = $this->getMockBuilder(\Magento\Framework\Search\Request\Filter\Wildcard::class)
+        $this->filterWildcard = $this->getMockBuilder('Magento\Framework\Search\Request\Filter\Wildcard')
             ->disableOriginalConstructor()
             ->getMock();
     }
@@ -106,7 +103,7 @@ class MapperTest extends \PHPUnit\Framework\TestCase
         $query = $queries[self::ROOT_QUERY];
         $this->objectManager->expects($this->once())->method('create')
             ->with(
-                $this->equalTo(\Magento\Framework\Search\Request\Query\Match::class),
+                $this->equalTo('Magento\Framework\Search\Request\Query\Match'),
                 $this->equalTo(
                     [
                         'name' => $query['name'],
@@ -120,7 +117,7 @@ class MapperTest extends \PHPUnit\Framework\TestCase
 
         /** @var \Magento\Framework\Search\Request\Mapper $mapper */
         $mapper = $this->helper->getObject(
-            \Magento\Framework\Search\Request\Mapper::class,
+            'Magento\Framework\Search\Request\Mapper',
             [
                 'objectManager' => $this->objectManager,
                 'queries' => $queries,
@@ -157,7 +154,7 @@ class MapperTest extends \PHPUnit\Framework\TestCase
         $query = $queries['someQuery'];
         $this->objectManager->expects($this->once())->method('create')
             ->with(
-                $this->equalTo(\Magento\Framework\Search\Request\Query\Match::class),
+                $this->equalTo('Magento\Framework\Search\Request\Query\Match'),
                 $this->equalTo(
                     [
                         'name' => $query['name'],
@@ -171,7 +168,7 @@ class MapperTest extends \PHPUnit\Framework\TestCase
 
         /** @var \Magento\Framework\Search\Request\Mapper $mapper */
         $mapper = $this->helper->getObject(
-            \Magento\Framework\Search\Request\Mapper::class,
+            'Magento\Framework\Search\Request\Mapper',
             [
                 'objectManager' => $this->objectManager,
                 'queries' => $queries,
@@ -191,7 +188,7 @@ class MapperTest extends \PHPUnit\Framework\TestCase
     {
         /** @var \Magento\Framework\Search\Request\Mapper $mapper */
         $mapper = $this->helper->getObject(
-            \Magento\Framework\Search\Request\Mapper::class,
+            'Magento\Framework\Search\Request\Mapper',
             [
                 'objectManager' => $this->objectManager,
                 'queries' => [
@@ -224,7 +221,7 @@ class MapperTest extends \PHPUnit\Framework\TestCase
         $query = $queries['someQueryMatch'];
         $this->objectManager->expects($this->at(0))->method('create')
             ->with(
-                $this->equalTo(\Magento\Framework\Search\Request\Query\Match::class),
+                $this->equalTo('Magento\Framework\Search\Request\Query\Match'),
                 $this->equalTo(
                     [
                         'name' => $query['name'],
@@ -238,7 +235,7 @@ class MapperTest extends \PHPUnit\Framework\TestCase
         $query = $queries[self::ROOT_QUERY];
         $this->objectManager->expects($this->at(1))->method('create')
             ->with(
-                $this->equalTo(\Magento\Framework\Search\Request\Query\Filter::class),
+                $this->equalTo('Magento\Framework\Search\Request\Query\Filter'),
                 $this->equalTo(
                     [
                         'name' => $query['name'],
@@ -252,7 +249,7 @@ class MapperTest extends \PHPUnit\Framework\TestCase
 
         /** @var \Magento\Framework\Search\Request\Mapper $mapper */
         $mapper = $this->helper->getObject(
-            \Magento\Framework\Search\Request\Mapper::class,
+            'Magento\Framework\Search\Request\Mapper',
             [
                 'objectManager' => $this->objectManager,
                 'queries' => $queries,
@@ -273,7 +270,7 @@ class MapperTest extends \PHPUnit\Framework\TestCase
     {
         /** @var \Magento\Framework\Search\Request\Mapper $mapper */
         $mapper = $this->helper->getObject(
-            \Magento\Framework\Search\Request\Mapper::class,
+            'Magento\Framework\Search\Request\Mapper',
             [
                 'objectManager' => $this->objectManager,
                 'queries' => [
@@ -299,7 +296,7 @@ class MapperTest extends \PHPUnit\Framework\TestCase
         $query = $queries['someQueryMatch'];
         $this->objectManager->expects($this->at(0))->method('create')
             ->with(
-                $this->equalTo(\Magento\Framework\Search\Request\Query\Match::class),
+                $this->equalTo('Magento\Framework\Search\Request\Query\Match'),
                 $this->equalTo(
                     [
                         'name' => $query['name'],
@@ -313,7 +310,7 @@ class MapperTest extends \PHPUnit\Framework\TestCase
         $query = $queries[self::ROOT_QUERY];
         $this->objectManager->expects($this->at(1))->method('create')
             ->with(
-                $this->equalTo(\Magento\Framework\Search\Request\Query\BoolExpression::class),
+                $this->equalTo('Magento\Framework\Search\Request\Query\BoolExpression'),
                 $this->equalTo(
                     [
                         'name' => $query['name'],
@@ -326,7 +323,7 @@ class MapperTest extends \PHPUnit\Framework\TestCase
 
         /** @var \Magento\Framework\Search\Request\Mapper $mapper */
         $mapper = $this->helper->getObject(
-            \Magento\Framework\Search\Request\Mapper::class,
+            'Magento\Framework\Search\Request\Mapper',
             [
                 'objectManager' => $this->objectManager,
                 'queries' => $queries,
@@ -346,7 +343,7 @@ class MapperTest extends \PHPUnit\Framework\TestCase
     {
         /** @var \Magento\Framework\Search\Request\Mapper $mapper */
         $mapper = $this->helper->getObject(
-            \Magento\Framework\Search\Request\Mapper::class,
+            'Magento\Framework\Search\Request\Mapper',
             [
                 'objectManager' => $this->objectManager,
                 'queries' => [
@@ -370,7 +367,7 @@ class MapperTest extends \PHPUnit\Framework\TestCase
     {
         /** @var \Magento\Framework\Search\Request\Mapper $mapper */
         $mapper = $this->helper->getObject(
-            \Magento\Framework\Search\Request\Mapper::class,
+            'Magento\Framework\Search\Request\Mapper',
             [
                 'objectManager' => $this->objectManager,
                 'queries' => [],
@@ -407,7 +404,7 @@ class MapperTest extends \PHPUnit\Framework\TestCase
         $filter = $filters['someFilter'];
         $this->objectManager->expects($this->at(0))->method('create')
             ->with(
-                $this->equalTo(\Magento\Framework\Search\Request\Filter\Term::class),
+                $this->equalTo('Magento\Framework\Search\Request\Filter\Term'),
                 $this->equalTo(
                     [
                         'name' => $filter['name'],
@@ -420,7 +417,7 @@ class MapperTest extends \PHPUnit\Framework\TestCase
         $query = $queries[self::ROOT_QUERY];
         $this->objectManager->expects($this->at(1))->method('create')
             ->with(
-                $this->equalTo(\Magento\Framework\Search\Request\Query\Filter::class),
+                $this->equalTo('Magento\Framework\Search\Request\Query\Filter'),
                 $this->equalTo(
                     [
                         'name' => $query['name'],
@@ -434,7 +431,7 @@ class MapperTest extends \PHPUnit\Framework\TestCase
 
         /** @var \Magento\Framework\Search\Request\Mapper $mapper */
         $mapper = $this->helper->getObject(
-            \Magento\Framework\Search\Request\Mapper::class,
+            'Magento\Framework\Search\Request\Mapper',
             [
                 'objectManager' => $this->objectManager,
                 'queries' => $queries,
@@ -472,7 +469,7 @@ class MapperTest extends \PHPUnit\Framework\TestCase
         $filter = $filters['someFilter'];
         $this->objectManager->expects($this->at(0))->method('create')
             ->with(
-                $this->equalTo(\Magento\Framework\Search\Request\Filter\Wildcard::class),
+                $this->equalTo('Magento\Framework\Search\Request\Filter\Wildcard'),
                 $this->equalTo(
                     [
                         'name' => $filter['name'],
@@ -485,7 +482,7 @@ class MapperTest extends \PHPUnit\Framework\TestCase
         $query = $queries[self::ROOT_QUERY];
         $this->objectManager->expects($this->at(1))->method('create')
             ->with(
-                $this->equalTo(\Magento\Framework\Search\Request\Query\Filter::class),
+                $this->equalTo('Magento\Framework\Search\Request\Query\Filter'),
                 $this->equalTo(
                     [
                         'name' => $query['name'],
@@ -499,7 +496,7 @@ class MapperTest extends \PHPUnit\Framework\TestCase
 
         /** @var \Magento\Framework\Search\Request\Mapper $mapper */
         $mapper = $this->helper->getObject(
-            \Magento\Framework\Search\Request\Mapper::class,
+            'Magento\Framework\Search\Request\Mapper',
             [
                 'objectManager' => $this->objectManager,
                 'queries' => $queries,
@@ -538,7 +535,7 @@ class MapperTest extends \PHPUnit\Framework\TestCase
         $filter = $filters['someFilter'];
         $this->objectManager->expects($this->at(0))->method('create')
             ->with(
-                $this->equalTo(\Magento\Framework\Search\Request\Filter\Range::class),
+                $this->equalTo('Magento\Framework\Search\Request\Filter\Range'),
                 $this->equalTo(
                     [
                         'name' => $filter['name'],
@@ -552,7 +549,7 @@ class MapperTest extends \PHPUnit\Framework\TestCase
         $query = $queries[self::ROOT_QUERY];
         $this->objectManager->expects($this->at(1))->method('create')
             ->with(
-                $this->equalTo(\Magento\Framework\Search\Request\Query\Filter::class),
+                $this->equalTo('Magento\Framework\Search\Request\Query\Filter'),
                 $this->equalTo(
                     [
                         'name' => $query['name'],
@@ -566,7 +563,7 @@ class MapperTest extends \PHPUnit\Framework\TestCase
 
         /** @var \Magento\Framework\Search\Request\Mapper $mapper */
         $mapper = $this->helper->getObject(
-            \Magento\Framework\Search\Request\Mapper::class,
+            'Magento\Framework\Search\Request\Mapper',
             [
                 'objectManager' => $this->objectManager,
                 'queries' => $queries,
@@ -614,7 +611,7 @@ class MapperTest extends \PHPUnit\Framework\TestCase
         $filter = $filters['someFilterTerm'];
         $this->objectManager->expects($this->at(0))->method('create')
             ->with(
-                $this->equalTo(\Magento\Framework\Search\Request\Filter\Term::class),
+                $this->equalTo('Magento\Framework\Search\Request\Filter\Term'),
                 $this->equalTo(
                     [
                         'name' => $filter['name'],
@@ -627,7 +624,7 @@ class MapperTest extends \PHPUnit\Framework\TestCase
         $filter = $filters['someFilter'];
         $this->objectManager->expects($this->at(1))->method('create')
             ->with(
-                $this->equalTo(\Magento\Framework\Search\Request\Filter\BoolExpression::class),
+                $this->equalTo('Magento\Framework\Search\Request\Filter\BoolExpression'),
                 $this->equalTo(
                     [
                         'name' => $filter['name'],
@@ -639,7 +636,7 @@ class MapperTest extends \PHPUnit\Framework\TestCase
         $query = $queries[self::ROOT_QUERY];
         $this->objectManager->expects($this->at(2))->method('create')
             ->with(
-                $this->equalTo(\Magento\Framework\Search\Request\Query\Filter::class),
+                $this->equalTo('Magento\Framework\Search\Request\Query\Filter'),
                 $this->equalTo(
                     [
                         'name' => $query['name'],
@@ -653,7 +650,7 @@ class MapperTest extends \PHPUnit\Framework\TestCase
 
         /** @var \Magento\Framework\Search\Request\Mapper $mapper */
         $mapper = $this->helper->getObject(
-            \Magento\Framework\Search\Request\Mapper::class,
+            'Magento\Framework\Search\Request\Mapper',
             [
                 'objectManager' => $this->objectManager,
                 'queries' => $queries,
@@ -700,7 +697,7 @@ class MapperTest extends \PHPUnit\Framework\TestCase
         $filter = $filters['someFilter'];
         $this->objectManager->expects($this->at(0))->method('create')
             ->with(
-                $this->equalTo(\Magento\Framework\Search\Request\Filter\Term::class),
+                $this->equalTo('Magento\Framework\Search\Request\Filter\Term'),
                 $this->equalTo(
                     [
                         'name' => $filter['name'],
@@ -713,7 +710,7 @@ class MapperTest extends \PHPUnit\Framework\TestCase
         $query = $queries[self::ROOT_QUERY];
         $this->objectManager->expects($this->at(1))->method('create')
             ->with(
-                $this->equalTo(\Magento\Framework\Search\Request\Query\Filter::class),
+                $this->equalTo('Magento\Framework\Search\Request\Query\Filter'),
                 $this->equalTo(
                     [
                         'name' => $query['name'],
@@ -727,7 +724,7 @@ class MapperTest extends \PHPUnit\Framework\TestCase
 
         /** @var \Magento\Framework\Search\Request\Mapper $mapper */
         $mapper = $this->helper->getObject(
-            \Magento\Framework\Search\Request\Mapper::class,
+            'Magento\Framework\Search\Request\Mapper',
             [
                 'objectManager' => $this->objectManager,
                 'queries' => $queries,
@@ -747,7 +744,7 @@ class MapperTest extends \PHPUnit\Framework\TestCase
     {
         /** @var \Magento\Framework\Search\Request\Mapper $mapper */
         $mapper = $this->helper->getObject(
-            \Magento\Framework\Search\Request\Mapper::class,
+            'Magento\Framework\Search\Request\Mapper',
             [
                 'objectManager' => $this->objectManager,
                 'queries' => [
@@ -806,7 +803,7 @@ class MapperTest extends \PHPUnit\Framework\TestCase
 
         /** @var \Magento\Framework\Search\Request\Mapper $mapper */
         $mapper = $this->helper->getObject(
-            \Magento\Framework\Search\Request\Mapper::class,
+            'Magento\Framework\Search\Request\Mapper',
             [
                 'objectManager' => $this->objectManager,
                 'queries' => $queries,
@@ -840,7 +837,7 @@ class MapperTest extends \PHPUnit\Framework\TestCase
 
         /** @var \Magento\Framework\Search\Request\Mapper $mapper */
         $mapper = $this->helper->getObject(
-            \Magento\Framework\Search\Request\Mapper::class,
+            'Magento\Framework\Search\Request\Mapper',
             [
                 'objectManager' => $this->objectManager,
                 'queries' => $queries,
@@ -1004,9 +1001,9 @@ class MapperTest extends \PHPUnit\Framework\TestCase
             ],
             "type" => "termBucket",
         ];
-        $metricClass = \Magento\Framework\Search\Request\Aggregation\Metric::class;
-        $bucketClass = \Magento\Framework\Search\Request\Aggregation\TermBucket::class;
-        $queryClass = \Magento\Framework\Search\Request\Query\Match::class;
+        $metricClass = 'Magento\Framework\Search\Request\Aggregation\Metric';
+        $bucketClass = 'Magento\Framework\Search\Request\Aggregation\TermBucket';
+        $queryClass = 'Magento\Framework\Search\Request\Query\Match';
         $queryArguments = [
             'name' => $queries[self::ROOT_QUERY]['name'],
             'value' => $queries[self::ROOT_QUERY]['value'],
@@ -1031,7 +1028,7 @@ class MapperTest extends \PHPUnit\Framework\TestCase
 
         /** @var \Magento\Framework\Search\Request\Mapper $mapper */
         $mapper = $this->helper->getObject(
-            \Magento\Framework\Search\Request\Mapper::class,
+            'Magento\Framework\Search\Request\Mapper',
             [
                 'objectManager' => $this->objectManager,
                 'queries' => $queries,
@@ -1069,10 +1066,10 @@ class MapperTest extends \PHPUnit\Framework\TestCase
             ],
             "type" => "rangeBucket",
         ];
-        $metricClass = \Magento\Framework\Search\Request\Aggregation\Metric::class;
-        $bucketClass = \Magento\Framework\Search\Request\Aggregation\RangeBucket::class;
-        $rangeClass = \Magento\Framework\Search\Request\Aggregation\Range::class;
-        $queryClass = \Magento\Framework\Search\Request\Query\Match::class;
+        $metricClass = 'Magento\Framework\Search\Request\Aggregation\Metric';
+        $bucketClass = 'Magento\Framework\Search\Request\Aggregation\RangeBucket';
+        $rangeClass = 'Magento\Framework\Search\Request\Aggregation\Range';
+        $queryClass = 'Magento\Framework\Search\Request\Query\Match';
         $queryArguments = [
             'name' => $queries[self::ROOT_QUERY]['name'],
             'value' => $queries[self::ROOT_QUERY]['value'],
@@ -1113,7 +1110,7 @@ class MapperTest extends \PHPUnit\Framework\TestCase
 
         /** @var \Magento\Framework\Search\Request\Mapper $mapper */
         $mapper = $this->helper->getObject(
-            \Magento\Framework\Search\Request\Mapper::class,
+            'Magento\Framework\Search\Request\Mapper',
             [
                 'objectManager' => $this->objectManager,
                 'queries' => $queries,

@@ -12,8 +12,9 @@ use Magento\Framework\DB\Select;
 /**
  * Class LookupExpression
  */
-class LookupExpression extends Expression
+class LookupExpression extends \Zend_Db_Expr
 {
+
     /**
      * @var Resource
      */

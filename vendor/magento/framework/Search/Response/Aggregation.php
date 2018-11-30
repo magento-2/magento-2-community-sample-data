@@ -10,7 +10,6 @@ use Magento\Framework\Api\Search\BucketInterface;
 
 /**
  * Faceted data
- * @api
  */
 class Aggregation implements AggregationInterface, \IteratorAggregate
 {
@@ -47,7 +46,7 @@ class Aggregation implements AggregationInterface, \IteratorAggregate
      */
     public function getBucket($bucketName)
     {
-        return $this->buckets[$bucketName] ?? null;
+        return isset($this->buckets[$bucketName]) ? $this->buckets[$bucketName] : null;
     }
 
     /**

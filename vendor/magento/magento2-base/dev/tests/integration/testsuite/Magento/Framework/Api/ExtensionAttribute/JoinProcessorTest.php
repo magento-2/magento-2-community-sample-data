@@ -15,11 +15,8 @@ use Magento\Framework\Api\ExtensionAttributesFactory;
 
 /**
  * Class to test the JoinProcessor functionality
- *
- * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
- * @magentoAppIsolation enabled
  */
-class JoinProcessorTest extends \PHPUnit\Framework\TestCase
+class JoinProcessorTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\Framework\Api\ExtensionAttribute\JoinProcessor
@@ -58,28 +55,27 @@ class JoinProcessorTest extends \PHPUnit\Framework\TestCase
 
     protected function setUp()
     {
-        $this->config = $this->getMockBuilder(\Magento\Framework\Api\ExtensionAttribute\Config::class)
+        $this->config = $this->getMockBuilder('Magento\Framework\Api\ExtensionAttribute\Config')
             ->disableOriginalConstructor()
             ->getMock();
         $this->extensionAttributeJoinDataFactory = $this
-            ->getMockBuilder(\Magento\Framework\Api\ExtensionAttribute\JoinDataInterfaceFactory::class)
+            ->getMockBuilder('Magento\Framework\Api\ExtensionAttribute\JoinDataInterfaceFactory')
             ->disableOriginalConstructor()
             ->getMock();
-        $this->typeProcessor = $this->getMockBuilder(\Magento\Framework\Reflection\TypeProcessor::class)
+        $this->typeProcessor = $this->getMockBuilder('Magento\Framework\Reflection\TypeProcessor')
             ->disableOriginalConstructor()
             ->getMock();
-        $this->extensionAttributesFactory = $this->getMockBuilder(
-            \Magento\Framework\Api\ExtensionAttributesFactory::class
-        )->disableOriginalConstructor()
+        $this->extensionAttributesFactory = $this->getMockBuilder('Magento\Framework\Api\ExtensionAttributesFactory')
+            ->disableOriginalConstructor()
             ->getMock();
 
         /** @var \Magento\Framework\ObjectManagerInterface */
         $objectManager = \Magento\TestFramework\Helper\Bootstrap::getObjectManager();
 
-        $this->appResource = $objectManager->get(\Magento\Framework\App\ResourceConnection::class);
+        $this->appResource = $objectManager->get('Magento\Framework\App\ResourceConnection');
 
         $this->joinProcessorHelper = $objectManager->create(
-            \Magento\Framework\Api\ExtensionAttribute\JoinProcessorHelper::class,
+            'Magento\Framework\Api\ExtensionAttribute\JoinProcessorHelper',
             [
                 'config' => $this->config,
                 'joinDataInterfaceFactory' => $this->extensionAttributeJoinDataFactory
@@ -87,7 +83,7 @@ class JoinProcessorTest extends \PHPUnit\Framework\TestCase
         );
 
         $this->joinProcessor = $objectManager->create(
-            \Magento\Framework\Api\ExtensionAttribute\JoinProcessor::class,
+            'Magento\Framework\Api\ExtensionAttribute\JoinProcessor',
             [
                 'objectManager' => $objectManager,
                 'typeProcessor' => $this->typeProcessor,
@@ -105,7 +101,7 @@ class JoinProcessorTest extends \PHPUnit\Framework\TestCase
             ->method('get')
             ->will($this->returnValue($this->getConfig()));
 
-        $collection = $this->getMockBuilder(\Magento\Framework\Data\Collection\AbstractDb::class)
+        $collection = $this->getMockBuilder('Magento\Framework\Data\Collection\AbstractDb')
             ->disableOriginalConstructor()
             ->setMethods(['joinExtensionAttribute'])
             ->getMockForAbstractClass();
@@ -118,7 +114,7 @@ class JoinProcessorTest extends \PHPUnit\Framework\TestCase
 
         $collection->expects($this->once())->method('joinExtensionAttribute')->with($extensionAttributeJoinData);
 
-        $this->joinProcessor->process($collection, \Magento\Catalog\Api\Data\ProductInterface::class);
+        $this->joinProcessor->process($collection, 'Magento\Catalog\Api\Data\ProductInterface');
         $expectedTableName = 'reviews';
         $this->assertEquals($expectedTableName, $extensionAttributeJoinData->getReferenceTable());
         $this->assertEquals('extension_attribute_review_id', $extensionAttributeJoinData->getReferenceTableAlias());
@@ -144,56 +140,58 @@ class JoinProcessorTest extends \PHPUnit\Framework\TestCase
      */
     private function getConfig()
     {
-        return [\Magento\Catalog\Api\Data\ProductInterface::class => [
-            'review_id' => [
-                Converter::DATA_TYPE => 'string',
-                Converter::RESOURCE_PERMISSIONS => [],
-                Converter::JOIN_DIRECTIVE => [
-                    Converter::JOIN_REFERENCE_TABLE => "reviews",
-                    Converter::JOIN_REFERENCE_FIELD => "product_id",
-                    Converter::JOIN_FIELDS => [
-                        [
-                            Converter::JOIN_FIELD => "review_id",
-                            Converter::JOIN_FIELD_COLUMN => "db_review_id",
+        return [
+            'Magento\Catalog\Api\Data\ProductInterface' => [
+                'review_id' => [
+                    Converter::DATA_TYPE => 'string',
+                    Converter::RESOURCE_PERMISSIONS => [],
+                    Converter::JOIN_DIRECTIVE => [
+                        Converter::JOIN_REFERENCE_TABLE => "reviews",
+                        Converter::JOIN_REFERENCE_FIELD => "product_id",
+                        Converter::JOIN_FIELDS => [
+                            [
+                                Converter::JOIN_FIELD => "review_id",
+                                Converter::JOIN_FIELD_COLUMN => "db_review_id",
+                            ],
                         ],
+                        Converter::JOIN_ON_FIELD => "id",
                     ],
-                    Converter::JOIN_ON_FIELD => "id",
                 ],
             ],
-        ], \Magento\Customer\Api\Data\CustomerInterface::class => [
-            'library_card_id' => [
-                Converter::DATA_TYPE => 'string',
-                Converter::RESOURCE_PERMISSIONS => [],
-                Converter::JOIN_DIRECTIVE => [
-                    Converter::JOIN_REFERENCE_TABLE => "library_account",
-                    Converter::JOIN_FIELDS => [
-                        [
-                            Converter::JOIN_FIELD => "library_card_id",
-                            Converter::JOIN_FIELD_COLUMN => "",
+            'Magento\Customer\Api\Data\CustomerInterface' => [
+                'library_card_id' => [
+                    Converter::DATA_TYPE => 'string',
+                    Converter::RESOURCE_PERMISSIONS => [],
+                    Converter::JOIN_DIRECTIVE => [
+                        Converter::JOIN_REFERENCE_TABLE => "library_account",
+                        Converter::JOIN_FIELDS => [
+                            [
+                                Converter::JOIN_FIELD => "library_card_id",
+                                Converter::JOIN_FIELD_COLUMN => "",
+                            ],
                         ],
+                        Converter::JOIN_ON_FIELD => "customer_id",
                     ],
-                    Converter::JOIN_ON_FIELD => "customer_id",
+                ],
+                'reviews' => [
+                    Converter::DATA_TYPE => 'Magento\Reviews\Api\Data\Reviews[]',
+                    Converter::RESOURCE_PERMISSIONS => [],
+                    Converter::JOIN_DIRECTIVE => [
+                        Converter::JOIN_REFERENCE_TABLE => "reviews",
+                        Converter::JOIN_FIELDS => [
+                            [
+                                Converter::JOIN_FIELD => "comment",
+                                Converter::JOIN_FIELD_COLUMN => "",
+                            ],
+                            [
+                                Converter::JOIN_FIELD => "rating",
+                                Converter::JOIN_FIELD_COLUMN => "",
+                            ],
+                        ],
+                        Converter::JOIN_ON_FIELD => "customer_id",
+                    ],
                 ],
             ],
-            'reviews' => [
-                Converter::DATA_TYPE => 'Magento\Reviews\Api\Data\Reviews[]',
-                Converter::RESOURCE_PERMISSIONS => [],
-                Converter::JOIN_DIRECTIVE => [
-                    Converter::JOIN_REFERENCE_TABLE => "reviews",
-                    Converter::JOIN_FIELDS => [
-                        [
-                            Converter::JOIN_FIELD => "comment",
-                            Converter::JOIN_FIELD_COLUMN => "",
-                        ],
-                        [
-                            Converter::JOIN_FIELD => "rating",
-                            Converter::JOIN_FIELD_COLUMN => "",
-                        ],
-                    ],
-                    Converter::JOIN_ON_FIELD => "customer_id",
-                ],
-            ],
-        ],
         ];
     }
 
@@ -202,10 +200,10 @@ class JoinProcessorTest extends \PHPUnit\Framework\TestCase
         /** @var \Magento\Framework\ObjectManagerInterface */
         $objectManager = \Magento\TestFramework\Helper\Bootstrap::getObjectManager();
         /** @var \Magento\Framework\Api\ExtensionAttribute\Config $config */
-        $config = $objectManager->get(\Magento\Framework\Api\ExtensionAttribute\Config::class);
+        $config = $objectManager->get('Magento\Framework\Api\ExtensionAttribute\Config');
         $config->reset();
 
-        $extensionConfigFileResolverMock = $this->getMockBuilder(\Magento\Framework\Config\FileResolverInterface::class)
+        $extensionConfigFileResolverMock = $this->getMockBuilder('Magento\Framework\Config\FileResolverInterface')
             ->disableOriginalConstructor()
             ->getMock();
         $extensionConfigFilePath = __DIR__ . '/../_files/extension_attributes.xml';
@@ -214,28 +212,28 @@ class JoinProcessorTest extends \PHPUnit\Framework\TestCase
             ->method('get')
             ->willReturn([$extensionConfigFilePath => $extensionConfigFileContent]);
         $configReader = $objectManager->create(
-            \Magento\Framework\Api\ExtensionAttribute\Config\Reader::class,
+            'Magento\Framework\Api\ExtensionAttribute\Config\Reader',
             ['fileResolver' => $extensionConfigFileResolverMock]
         );
         /** @var \Magento\Framework\Api\ExtensionAttribute\Config $config */
         $config = $objectManager->create(
-            \Magento\Framework\Api\ExtensionAttribute\Config::class,
+            'Magento\Framework\Api\ExtensionAttribute\Config',
             ['reader' => $configReader]
         );
 
         /** @var \Magento\Framework\Api\ExtensionAttribute\JoinProcessorHelper $extensionAttributesProcessorHelper */
         $extensionAttributesProcessorHelper = $objectManager->create(
-            \Magento\Framework\Api\ExtensionAttribute\JoinProcessorHelper::class,
+            'Magento\Framework\Api\ExtensionAttribute\JoinProcessorHelper',
             ['config' => $config]
         );
 
         /** @var \Magento\Framework\Api\ExtensionAttribute\JoinProcessor $extensionAttributesProcessor */
         $extensionAttributesProcessor = $objectManager->create(
-            \Magento\Framework\Api\ExtensionAttribute\JoinProcessor::class,
+            'Magento\Framework\Api\ExtensionAttribute\JoinProcessor',
             ['joinProcessorHelper' => $extensionAttributesProcessorHelper]
         );
         /** @var \Magento\Catalog\Model\ResourceModel\Product\Collection $collection */
-        $collection = $objectManager->create(\Magento\Catalog\Model\ResourceModel\Product\Collection::class);
+        $collection = $objectManager->create('Magento\Catalog\Model\ResourceModel\Product\Collection');
         $extensionAttributesProcessor->process($collection);
         $config->reset();
 
@@ -264,14 +262,14 @@ EXPECTED_SQL;
         /** @var \Magento\Framework\ObjectManagerInterface */
         $objectManager = \Magento\TestFramework\Helper\Bootstrap::getObjectManager();
         /** @var \Magento\Catalog\Api\ProductRepositoryInterface $productRepository */
-        $productRepository = $objectManager->create(\Magento\Catalog\Api\ProductRepositoryInterface::class);
+        $productRepository = $objectManager->create('Magento\Catalog\Api\ProductRepositoryInterface');
 
         $firstProductId = (int)$productRepository->get('simple')->getId();
         $firstProductQty = 11;
         $secondProductId = (int)$productRepository->get('custom-design-simple-product')->getId();
         $secondProductQty = 22;
         /** @var \Magento\CatalogInventory\Api\StockItemRepositoryInterface $stockItemRepository */
-        $stockItemRepository = $objectManager->get(\Magento\CatalogInventory\Api\StockItemRepositoryInterface::class);
+        $stockItemRepository = $objectManager->get('Magento\CatalogInventory\Api\StockItemRepositoryInterface');
 
         /** Prepare stock items */
         $firstStockItem = $productRepository->getById($firstProductId)->getExtensionAttributes()->getStockItem();
@@ -292,9 +290,9 @@ EXPECTED_SQL;
         );
 
         /** @var \Magento\Framework\Api\Search\FilterGroup $searchCriteriaGroup */
-        $searchCriteriaGroup = $objectManager->create(\Magento\Framework\Api\Search\FilterGroup::class);
+        $searchCriteriaGroup = $objectManager->create('Magento\Framework\Api\Search\FilterGroup');
         /** @var \Magento\Framework\Api\SearchCriteriaInterface $searchCriteria */
-        $searchCriteria = $objectManager->create(\Magento\Framework\Api\SearchCriteriaInterface::class);
+        $searchCriteria = $objectManager->create('Magento\Framework\Api\SearchCriteriaInterface');
         $searchCriteria->setFilterGroups([$searchCriteriaGroup]);
         $products = $productRepository->getList($searchCriteria)->getItems();
 
@@ -335,11 +333,11 @@ EXPECTED_SQL;
         $objectManager = \Magento\TestFramework\Helper\Bootstrap::getObjectManager();
 
         /** @var \Magento\Customer\Api\CustomerRepositoryInterface $customerRepository */
-        $customerRepository = $objectManager->get(\Magento\Customer\Api\CustomerRepositoryInterface::class);
+        $customerRepository = $objectManager->get('Magento\Customer\Api\CustomerRepositoryInterface');
         /** @var \Magento\Framework\Api\Search\FilterGroup $searchCriteriaGroup */
-        $searchCriteriaGroup = $objectManager->create(\Magento\Framework\Api\Search\FilterGroup::class);
+        $searchCriteriaGroup = $objectManager->create('Magento\Framework\Api\Search\FilterGroup');
         /** @var \Magento\Framework\Api\SearchCriteriaInterface $searchCriteria */
-        $searchCriteria = $objectManager->create(\Magento\Framework\Api\SearchCriteriaInterface::class);
+        $searchCriteria = $objectManager->create('Magento\Framework\Api\SearchCriteriaInterface');
         $searchCriteria->setFilterGroups([$searchCriteriaGroup]);
         $customers = $customerRepository->getList($searchCriteria)->getItems();
 
@@ -356,10 +354,10 @@ EXPECTED_SQL;
     public function testGetListWithFilterBySimpleDummyAttributeWithMapping()
     {
         $objectManager = \Magento\TestFramework\Helper\Bootstrap::getObjectManager();
-        $groupRepository = $objectManager->create(\Magento\Customer\Api\GroupRepositoryInterface::class);
+        $groupRepository = $objectManager->create('Magento\Customer\Api\GroupRepositoryInterface');
         /** @var \Magento\Framework\Api\SearchCriteriaBuilder $searchCriteriaBuilder */
-        $searchCriteriaBuilder = $objectManager->create(\Magento\Framework\Api\SearchCriteriaBuilder::class);
-        $builder = $objectManager->create(\Magento\Framework\Api\FilterBuilder::class);
+        $searchCriteriaBuilder = $objectManager->create('Magento\Framework\Api\SearchCriteriaBuilder');
+        $builder = $objectManager->create('Magento\Framework\Api\FilterBuilder');
         $joinedExtensionAttribute = 'test_dummy_attribute';
         $joinedExtensionAttributeValue = 'website_id';
         $filter = $builder->setField($joinedExtensionAttribute)
@@ -382,10 +380,10 @@ EXPECTED_SQL;
     public function testGetListWithFilterByComplexDummyAttributeWithSetterMapping()
     {
         $objectManager = \Magento\TestFramework\Helper\Bootstrap::getObjectManager();
-        $groupRepository = $objectManager->create(\Magento\Customer\Api\GroupRepositoryInterface::class);
+        $groupRepository = $objectManager->create('Magento\Customer\Api\GroupRepositoryInterface');
         /** @var \Magento\Framework\Api\SearchCriteriaBuilder $searchCriteriaBuilder */
-        $searchCriteriaBuilder = $objectManager->create(\Magento\Framework\Api\SearchCriteriaBuilder::class);
-        $builder = $objectManager->create(\Magento\Framework\Api\FilterBuilder::class);
+        $searchCriteriaBuilder = $objectManager->create('Magento\Framework\Api\SearchCriteriaBuilder');
+        $builder = $objectManager->create('Magento\Framework\Api\FilterBuilder');
         $joinedExtensionAttribute = 'test_complex_dummy_attribute.frontend_label';
         $joinedExtensionAttributeValue = 'firstname';
         $filter = $builder->setField($joinedExtensionAttribute)
@@ -423,15 +421,15 @@ EXPECTED_SQL;
             'Invoice repository is not autogenerated anymore and does not have joined extension attributes'
         );
         $objectManager = \Magento\TestFramework\Helper\Bootstrap::getObjectManager();
-        $searchCriteriaBuilder = $objectManager->create(\Magento\Framework\Api\SearchCriteriaBuilder::class);
+        $searchCriteriaBuilder = $objectManager->create('Magento\Framework\Api\SearchCriteriaBuilder');
         /** @var \Magento\Sales\Api\InvoiceRepositoryInterface $invoiceRepository */
-        $invoiceRepository = $objectManager->create(\Magento\Sales\Api\InvoiceRepositoryInterface::class);
+        $invoiceRepository = $objectManager->create('Magento\Sales\Api\InvoiceRepositoryInterface');
         $invoices = $invoiceRepository->getList($searchCriteriaBuilder->create())->getItems();
         $this->assertCount(1, $invoices, "Invalid number of loaded invoices.");
         $invoice = reset($invoices);
 
         /** @var \Magento\Eav\Model\Entity\Attribute $joinedEntity */
-        $joinedEntity = $objectManager->create(\Magento\Eav\Model\Entity\Attribute::class);
+        $joinedEntity = $objectManager->create('Magento\Eav\Model\Entity\Attribute');
         $joinedEntity->load($invoice->getId());
         $joinedExtensionAttributeValue = $joinedEntity->getAttributeCode();
 

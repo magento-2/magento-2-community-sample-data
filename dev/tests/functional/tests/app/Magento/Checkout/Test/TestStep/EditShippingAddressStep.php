@@ -21,7 +21,7 @@ class EditShippingAddressStep implements TestStepInterface
      *
      * @var \Magento\Mtf\ObjectManager
      */
-    protected $objectManager;
+    private $objectManager;
 
     /**
      * Checkout One page.

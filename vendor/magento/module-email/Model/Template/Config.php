@@ -205,9 +205,8 @@ class Config implements \Magento\Framework\Mail\Template\ConfigInterface
         $designParams['module'] = $module;
 
         $file = $this->_getInfo($templateId, 'file');
-        $filename = $this->getFilename($file, $designParams, $module);
 
-        return $filename;
+        return $this->viewFileSystem->getEmailTemplateFileName($file, $designParams, $module);
     }
 
     /**
@@ -230,25 +229,5 @@ class Config implements \Magento\Framework\Mail\Template\ConfigInterface
             );
         }
         return $data[$templateId][$fieldName];
-    }
-
-    /**
-     * @param string $file
-     * @param array $designParams
-     * @param string $module
-     *
-     * @return string
-     *
-     * @throws \UnexpectedValueException
-     */
-    private function getFilename($file, array $designParams, $module)
-    {
-        $filename = $this->viewFileSystem->getEmailTemplateFileName($file, $designParams, $module);
-
-        if ($filename === false) {
-            throw new \UnexpectedValueException("Template file '{$file}' is not found.");
-        }
-
-        return $filename;
     }
 }

@@ -6,7 +6,6 @@
 namespace Magento\Store\Url\Plugin;
 
 use \Magento\Store\Model\Store;
-use \Magento\Store\Api\Data\StoreInterface;
 use \Magento\Store\Model\ScopeInterface as StoreScopeInterface;
 
 /**
@@ -50,11 +49,13 @@ class RouteParamsResolver
      * Process scope query parameters.
      *
      * @param \Magento\Framework\Url\RouteParamsResolver $subject
+     * @param callable $proceed
      * @param array $data
      * @param bool $unsetOldParams
      * @throws \Magento\Framework\Exception\NoSuchEntityException
      *
-     * @return array
+     * @return \Magento\Framework\Url\RouteParamsResolver
+     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      */
     public function beforeSetRouteParams(
         \Magento\Framework\Url\RouteParamsResolver $subject,
@@ -66,9 +67,9 @@ class RouteParamsResolver
             unset($data['_scope']);
         }
         if (isset($data['_scope_to_url']) && (bool)$data['_scope_to_url'] === true) {
-            /** @var StoreInterface $currentScope */
+            /** @var Store $currentScope */
             $currentScope = $subject->getScope();
-            $storeCode = $currentScope && $currentScope instanceof StoreInterface ?
+            $storeCode = $currentScope && $currentScope instanceof Store ?
                 $currentScope->getCode() :
                 $this->storeManager->getStore()->getCode();
 

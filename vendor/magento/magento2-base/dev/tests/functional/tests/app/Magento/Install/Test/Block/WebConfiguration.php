@@ -21,7 +21,7 @@ class WebConfiguration extends Form
      *
      * @var string
      */
-    protected $next = "[ng-click*='validateUrl']";
+    protected $next = "[ng-click*='next']";
 
     /**
      * 'Advanced Options' locator.

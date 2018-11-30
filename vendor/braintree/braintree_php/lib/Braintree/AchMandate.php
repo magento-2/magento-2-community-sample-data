@@ -6,6 +6,7 @@ namespace Braintree;
  * PHP Version 5
  *
  * @package   Braintree
+ * @copyright 2015 Braintree, a division of PayPal, Inc.
  *
  * @property-read string $text
  * @property-read string $acceptedAt
@@ -36,6 +37,8 @@ class AchMandate extends Base
     {
         // set the attributes
         $this->_attributes = $achAttribs;
+        $date = new \DateTime($this->acceptedAt);
+        $this->_set('acceptedAt', $date);
     }
 
     /**

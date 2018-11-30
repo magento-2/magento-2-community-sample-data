@@ -22,7 +22,7 @@ class RulePricesStorage
      */
     public function getRulePrice($id)
     {
-        return $this->rulePrices[$id] ?? false;
+        return isset($this->rulePrices[$id]) ? $this->rulePrices[$id] : false;
     }
 
     /**

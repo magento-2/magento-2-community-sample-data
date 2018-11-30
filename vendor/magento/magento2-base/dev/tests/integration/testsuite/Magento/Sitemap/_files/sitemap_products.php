@@ -5,16 +5,14 @@
  */
 
 // Copy images to tmp media path
-use Magento\Catalog\Api\ProductAttributeRepositoryInterface;
-use Magento\Catalog\Model\ResourceModel\Eav\Attribute;
 use Magento\Framework\App\Filesystem\DirectoryList;
 
 $objectManager = \Magento\TestFramework\Helper\Bootstrap::getObjectManager();
 /** @var \Magento\Catalog\Model\Product\Media\Config $config */
-$config = $objectManager->get(\Magento\Catalog\Model\Product\Media\Config::class);
+$config = $objectManager->get('Magento\Catalog\Model\Product\Media\Config');
 
 /** @var \Magento\Framework\Filesystem $filesystem */
-$filesystem = $objectManager->get(\Magento\Framework\Filesystem::class);
+$filesystem = $objectManager->get('Magento\Framework\Filesystem');
 /** @var \Magento\Framework\Filesystem\Directory\WriteInterface $mediaDirectory */
 $mediaDirectory = $filesystem->getDirectoryWrite(DirectoryList::MEDIA);
 $mediaPath = $mediaDirectory->getAbsolutePath();
@@ -24,7 +22,7 @@ $mediaDirectory->create($baseTmpMediaPath);
 copy(__DIR__ . '/magento_image_sitemap.png', $mediaPath . '/' . $baseTmpMediaPath . '/magento_image_sitemap.png');
 copy(__DIR__ . '/second_image.png', $mediaPath . '/' . $baseTmpMediaPath . '/second_image.png');
 
-$product = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->create(\Magento\Catalog\Model\Product::class);
+$product = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->create('Magento\Catalog\Model\Product');
 $product->setTypeId(
     \Magento\Catalog\Model\Product\Type::TYPE_SIMPLE
 )->setId(
@@ -48,13 +46,13 @@ $product->setTypeId(
 )->save();
 
 /** @var \Magento\Catalog\Api\Data\ProductLinkInterface $productLink */
-$productLink = $objectManager->create(\Magento\Catalog\Api\Data\ProductLinkInterface::class);
+$productLink = $objectManager->create('Magento\Catalog\Api\Data\ProductLinkInterface');
 $productLink->setSku('simple_invisible');
 $productLink->setLinkedProductSku('simple_no_images');
 $productLink->setPosition(1);
 $productLink->setLinkType('related');
 
-$product = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->create(\Magento\Catalog\Model\Product::class);
+$product = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->create('Magento\Catalog\Model\Product');
 $product->setTypeId(
     \Magento\Catalog\Model\Product\Type::TYPE_SIMPLE
 )->setId(
@@ -80,13 +78,13 @@ $product->setTypeId(
 )->save();
 
 /** @var \Magento\Catalog\Api\Data\ProductLinkInterface $productLink */
-$productLink = $objectManager->create(\Magento\Catalog\Api\Data\ProductLinkInterface::class);
+$productLink = $objectManager->create('Magento\Catalog\Api\Data\ProductLinkInterface');
 $productLink->setSku('simple_disabled');
 $productLink->setLinkedProductSku('simple_no_images');
 $productLink->setPosition(1);
 $productLink->setLinkType('related');
 
-$product = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->create(\Magento\Catalog\Model\Product::class);
+$product = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->create('Magento\Catalog\Model\Product');
 $product->setTypeId(
     \Magento\Catalog\Model\Product\Type::TYPE_SIMPLE
 )->setId(
@@ -112,13 +110,13 @@ $product->setTypeId(
 )->save();
 
 /** @var \Magento\Catalog\Api\Data\ProductLinkInterface $productLink */
-$productLink = $objectManager->create(\Magento\Catalog\Api\Data\ProductLinkInterface::class);
+$productLink = $objectManager->create('Magento\Catalog\Api\Data\ProductLinkInterface');
 $productLink->setSku('simple_with_images');
 $productLink->setLinkedProductSku('simple_no_images');
 $productLink->setPosition(1);
 $productLink->setLinkType('related');
 
-$product = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->create(\Magento\Catalog\Model\Product::class);
+$product = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->create('Magento\Catalog\Model\Product');
 $product->setTypeId(
     \Magento\Catalog\Model\Product\Type::TYPE_SIMPLE
 )->setId(
@@ -160,13 +158,13 @@ $product->setTypeId(
 )->save();
 
 /** @var \Magento\Catalog\Api\Data\ProductLinkInterface $productLink */
-$productLink = $objectManager->create(\Magento\Catalog\Api\Data\ProductLinkInterface::class);
+$productLink = $objectManager->create('Magento\Catalog\Api\Data\ProductLinkInterface');
 $productLink->setSku('simple_with_images');
 $productLink->setLinkedProductSku('simple_no_images');
 $productLink->setPosition(1);
 $productLink->setLinkType('related');
 
-$product = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->create(\Magento\Catalog\Model\Product::class);
+$product = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->create('Magento\Catalog\Model\Product');
 $product->setTypeId(
     \Magento\Catalog\Model\Product\Type::TYPE_SIMPLE
 )->setId(
@@ -201,12 +199,3 @@ $product->setTypeId(
 )->setRelatedLinkData(
     [$productLink]
 )->save();
-
-// Move "name" attribute of the product to the global scope
-$attributesRepository = $objectManager->create(ProductAttributeRepositoryInterface::class);
-$attributes = $product->getAttributes();
-
-if (isset($attributes['name'])) {
-    $attributes['name']->setScope(Attribute::SCOPE_GLOBAL_TEXT);
-    $attributesRepository->save($attributes['name']);
-}

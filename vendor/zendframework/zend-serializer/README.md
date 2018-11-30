@@ -1,10 +1,12 @@
 # zend-serializer
 
 [![Build Status](https://secure.travis-ci.org/zendframework/zend-serializer.svg?branch=master)](https://secure.travis-ci.org/zendframework/zend-serializer)
-[![Coverage Status](https://coveralls.io/repos/github/zendframework/zend-serializer/badge.svg?branch=master)](https://coveralls.io/github/zendframework/zend-serializer?branch=master)
+[![Coverage Status](https://coveralls.io/repos/zendframework/zend-serializer/badge.svg?branch=master)](https://coveralls.io/r/zendframework/zend-serializer?branch=master)
 
-zend-serializer provides an adapter-based interface for generating and
-recovering from storable representations of PHP types.
+The `Zend\Serializer` component provides an adapter based interface to simply
+generate storable representation of PHP types by different facilities, and
+recover.
+
 
 - File issues at https://github.com/zendframework/zend-serializer/issues
-- Documentation is at https://docs.zendframework.com/zend-serializer/
+- Documentation is at http://framework.zend.com/manual/current/en/index.html#zend-serializer

@@ -6,7 +6,6 @@
 
 namespace Magento\Checkout\Test\Constraint;
 
-use Magento\Checkout\Test\Constraint\Utils\CartPageLoadTrait;
 use Magento\Checkout\Test\Fixture\Cart;
 use Magento\Checkout\Test\Page\CheckoutCart;
 use Magento\Mtf\Constraint\AbstractConstraint;
@@ -17,8 +16,6 @@ use Magento\Mtf\Constraint\AbstractConstraint;
  */
 class AssertGrandTotalInShoppingCart extends AbstractConstraint
 {
-    use CartPageLoadTrait;
-
     /**
      * Assert that grand total is equal to expected
      *
@@ -31,7 +28,6 @@ class AssertGrandTotalInShoppingCart extends AbstractConstraint
     {
         if ($requireReload) {
             $checkoutCart->open();
-            $this->waitForCartPageLoaded($checkoutCart);
             $checkoutCart->getTotalsBlock()->waitForUpdatedTotals();
         }
 

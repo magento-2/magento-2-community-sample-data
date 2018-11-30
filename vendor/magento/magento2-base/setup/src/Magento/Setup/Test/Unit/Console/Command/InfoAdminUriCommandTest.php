@@ -9,7 +9,7 @@ use Magento\Setup\Console\Command\InfoAdminUriCommand;
 use Symfony\Component\Console\Tester\CommandTester;
 use Magento\Framework\Setup\BackendFrontnameGenerator;
 
-class InfoAdminUriCommandTest extends \PHPUnit\Framework\TestCase
+class InfoAdminUriCommandTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\Framework\App\DeploymentConfig|\PHPUnit_Framework_MockObject_MockObject
@@ -18,7 +18,7 @@ class InfoAdminUriCommandTest extends \PHPUnit\Framework\TestCase
 
     protected function setup()
     {
-        $this->deploymentConfig = $this->createMock(\Magento\Framework\App\DeploymentConfig::class);
+        $this->deploymentConfig = $this->getMock('Magento\Framework\App\DeploymentConfig', [], [], '', false);
     }
 
     public function testExecute()

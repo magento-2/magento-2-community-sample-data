@@ -6,6 +6,7 @@
 namespace Magento\Framework\Model\ResourceModel\Db;
 
 use Magento\Framework\EntityManager\MetadataPool;
+use Magento\Framework\EntityManager\EntityMetadata;
 
 class DeleteEntityRow
 {

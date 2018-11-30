@@ -7,7 +7,7 @@ namespace Magento\Payment\Test\Unit\Gateway\Http\Converter\Soap;
 
 use Magento\Payment\Gateway\Http\Converter\Soap\ObjectToArrayConverter;
 
-class ObjectToArrayConverterTest extends \PHPUnit\Framework\TestCase
+class ObjectToArrayConverterTest extends \PHPUnit_Framework_TestCase
 {
     public function testConvert()
     {
@@ -30,5 +30,6 @@ class ObjectToArrayConverterTest extends \PHPUnit\Framework\TestCase
 
         $converter = new ObjectToArrayConverter();
         static::assertEquals($output, $converter->convert($input));
+
     }
 }

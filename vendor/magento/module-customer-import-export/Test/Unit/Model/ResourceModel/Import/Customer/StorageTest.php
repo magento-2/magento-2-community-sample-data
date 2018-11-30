@@ -13,7 +13,7 @@ use Magento\Framework\DB\Select;
 use Magento\ImportExport\Model\ResourceModel\CollectionByPagesIteratorFactory;
 use Magento\ImportExport\Model\ResourceModel\CollectionByPagesIterator;
 
-class StorageTest extends \PHPUnit\Framework\TestCase
+class StorageTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var Storage
@@ -32,26 +32,36 @@ class StorageTest extends \PHPUnit\Framework\TestCase
 
     protected function setUp()
     {
-        $this->iteratorMock = $this->createMock(
+        $this->iteratorMock = $this->getMockBuilder(
             CollectionByPagesIterator::class
-        );
+        )
+            ->disableOriginalConstructor()
+            ->getMock();
         /** @var \PHPUnit_Framework_MockObject_MockObject|CollectionByPagesIteratorFactory $iteratorFactoryMock */
-        $iteratorFactoryMock = $this->createMock(
+        $iteratorFactoryMock = $this->getMockBuilder(
             CollectionByPagesIteratorFactory::class
-        );
+        )
+            ->disableOriginalConstructor()
+            ->getMock();
         $iteratorFactoryMock->expects($this->any())
             ->method('create')
             ->willReturn($this->iteratorMock);
-        $this->collectionMock = $this->createMock(Collection::class);
+        $this->collectionMock = $this->getMockBuilder(Collection::class)
+            ->disableOriginalConstructor()
+            ->getMock();
         /** @var CollectionFactory|\PHPUnit_Framework_MockObject_MockObject $collectionFactoryMock */
-        $collectionFactoryMock = $this->createMock(
+        $collectionFactoryMock = $this->getMockBuilder(
             CollectionFactory::class
-        );
+        )
+            ->disableOriginalConstructor()
+            ->getMock();
         $collectionFactoryMock->expects($this->any())
             ->method('create')
             ->willReturn($this->collectionMock);
         /** @var \PHPUnit_Framework_MockObject_MockObject $selectMock */
-        $selectMock = $this->createMock(Select::class);
+        $selectMock = $this->getMockBuilder(Select::class)
+            ->disableOriginalConstructor()
+            ->getMock();
         $selectMock->expects($this->any())
             ->method('getPart')
             ->with(Select::FROM)

@@ -8,7 +8,7 @@ namespace Magento\Wishlist\Test\Unit\Observer;
 
 use \Magento\Wishlist\Observer\CustomerLogin as Observer;
 
-class CustomerLoginTest extends \PHPUnit\Framework\TestCase
+class CustomerLoginTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var Observer
@@ -22,7 +22,7 @@ class CustomerLoginTest extends \PHPUnit\Framework\TestCase
 
     protected function setUp()
     {
-        $this->helper = $this->getMockBuilder(\Magento\Wishlist\Helper\Data::class)
+        $this->helper = $this->getMockBuilder('Magento\Wishlist\Helper\Data')
             ->disableOriginalConstructor()
             ->getMock();
 
@@ -31,7 +31,7 @@ class CustomerLoginTest extends \PHPUnit\Framework\TestCase
 
     public function testExecute()
     {
-        $event = $this->getMockBuilder(\Magento\Framework\Event\Observer::class)
+        $event = $this->getMockBuilder('Magento\Framework\Event\Observer')
             ->disableOriginalConstructor()
             ->getMock();
         /** @var $event \Magento\Framework\Event\Observer */

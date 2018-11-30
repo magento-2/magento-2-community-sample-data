@@ -5,11 +5,9 @@
  */
 namespace Magento\Config\Test\Unit\Model\Config\Structure;
 
-use Magento\Config\Model\Config\Structure\ElementVisibilityInterface;
 use Magento\Framework\App\Config\ScopeConfigInterface;
-use Magento\Framework\TestFramework\Unit\Helper\ObjectManager as ObjectManagerHelper;
 
-class AbstractElementTest extends \PHPUnit\Framework\TestCase
+class AbstractElementTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\Config\Model\Config\Structure\AbstractElement
@@ -26,35 +24,23 @@ class AbstractElementTest extends \PHPUnit\Framework\TestCase
      */
     protected $moduleManagerMock;
 
-    /**
-     * @var ElementVisibilityInterface|\PHPUnit_Framework_MockObject_MockObject
-     */
-    private $elementVisibilityMock;
-
     protected function setUp()
     {
-        $this->elementVisibilityMock = $this->getMockBuilder(ElementVisibilityInterface::class)
-            ->getMockForAbstractClass();
-        $this->storeManagerMock = $this->createMock(\Magento\Store\Model\StoreManager::class);
-        $this->moduleManagerMock = $this->createPartialMock(
-            \Magento\Framework\Module\Manager::class,
-            ['isOutputEnabled']
+        $this->storeManagerMock = $this->getMock('Magento\Store\Model\StoreManager', [], [], '', false);
+        $this->moduleManagerMock = $this->getMock(
+            'Magento\Framework\Module\Manager',
+            ['isOutputEnabled'],
+            [],
+            '',
+            false
         );
 
         $this->_model = $this->getMockForAbstractClass(
-            \Magento\Config\Model\Config\Structure\AbstractElement::class,
+            'Magento\Config\Model\Config\Structure\AbstractElement',
             [
                 'storeManager' => $this->storeManagerMock,
                 'moduleManager' => $this->moduleManagerMock,
             ]
-        );
-
-        $objectManagerHelper = new ObjectManagerHelper($this);
-        $objectManagerHelper->setBackwardCompatibleProperty(
-            $this->_model,
-            'elementVisibility',
-            $this->elementVisibilityMock,
-            \Magento\Config\Model\Config\Structure\AbstractElement::class
         );
     }
 
@@ -210,14 +196,7 @@ class AbstractElementTest extends \PHPUnit\Framework\TestCase
             'default'
         );
         $this->assertFalse($this->_model->isVisible());
-    }
 
-    public function testIsVisibleVisibilityIsHiddenTrue()
-    {
-        $this->elementVisibilityMock->expects($this->once())
-            ->method('isHidden')
-            ->willReturn(true);
-        $this->assertFalse($this->_model->isVisible());
     }
 
     public function testGetClass()

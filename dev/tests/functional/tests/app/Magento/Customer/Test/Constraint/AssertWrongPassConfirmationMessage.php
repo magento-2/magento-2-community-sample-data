@@ -41,7 +41,7 @@ class AssertWrongPassConfirmationMessage extends AbstractConstraint
                 'Wrong password confirmation validation text message.'
             );
         } else {
-            \PHPUnit\Framework\TestCase::fail('Password confirmation validation message is absent.');
+            \PHPUnit_Framework_TestCase::fail('Password confirmation validation message is absent.');
         }
     }
 

@@ -17,16 +17,12 @@ class Area implements \Magento\Framework\App\AreaInterface
 {
     const AREA_GLOBAL = 'global';
     const AREA_FRONTEND = 'frontend';
+    const AREA_ADMIN    = 'admin';
     const AREA_ADMINHTML = 'adminhtml';
     const AREA_DOC = 'doc';
     const AREA_CRONTAB = 'crontab';
     const AREA_WEBAPI_REST = 'webapi_rest';
     const AREA_WEBAPI_SOAP = 'webapi_soap';
-
-    /**
-     * @deprecated
-     */
-    const AREA_ADMIN    = 'admin';
 
     /**
      * Area parameter.
@@ -189,7 +185,7 @@ class Area implements \Magento\Framework\App\AreaInterface
      */
     protected function _getDesign()
     {
-        return $this->_objectManager->get(\Magento\Framework\View\DesignInterface::class);
+        return $this->_objectManager->get('Magento\Framework\View\DesignInterface');
     }
 
     /**
@@ -244,7 +240,7 @@ class Area implements \Magento\Framework\App\AreaInterface
         $this->_translator->loadData(null, false);
 
         \Magento\Framework\Phrase::setRenderer(
-            $this->_objectManager->get(\Magento\Framework\Phrase\RendererInterface::class)
+            $this->_objectManager->get('Magento\Framework\Phrase\RendererInterface')
         );
 
         return $this;

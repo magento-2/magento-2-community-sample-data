@@ -7,7 +7,7 @@ namespace Magento\Customer\Test\Unit\Model\ResourceModel\Customer;
 
 use Magento\Customer\Model\ResourceModel\Customer\Grid;
 
-class GridTest extends \PHPUnit\Framework\TestCase
+class GridTest extends \PHPUnit_Framework_TestCase
 {
     /** @var \Magento\Framework\App\ResourceConnection|\PHPUnit_Framework_MockObject_MockObject */
     protected $resource;
@@ -35,24 +35,30 @@ class GridTest extends \PHPUnit\Framework\TestCase
 
     protected function setUp()
     {
-        $this->resource = $this->createMock(\Magento\Framework\App\ResourceConnection::class);
-        $this->indexerRegistry = $this->createMock(\Magento\Framework\Indexer\IndexerRegistry::class);
-        $this->flatScopeResolver = $this->createMock(\Magento\Framework\Indexer\ScopeResolver\FlatScopeResolver::class);
+        $this->resource = $this->getMock('Magento\Framework\App\ResourceConnection', [], [], '', false);
+        $this->indexerRegistry = $this->getMock('Magento\Framework\Indexer\IndexerRegistry', [], [], '', false);
+        $this->flatScopeResolver = $this->getMock(
+            'Magento\Framework\Indexer\ScopeResolver\FlatScopeResolver',
+            [],
+            [],
+            '',
+            false
+        );
         $this->indexer = $this->getMockForAbstractClass(
-            \Magento\Framework\Indexer\IndexerInterface::class,
+            'Magento\Framework\Indexer\IndexerInterface',
             [],
             '',
             false
         );
         $this->connection = $this->getMockForAbstractClass(
-            \Magento\Framework\DB\Adapter\AdapterInterface::class,
+            'Magento\Framework\DB\Adapter\AdapterInterface',
             [],
             '',
             false
         );
-        $this->select = $this->createMock(\Magento\Framework\DB\Select::class);
+        $this->select = $this->getMock('Magento\Framework\DB\Select', [], [], '', false);
         $this->queryResult = $this->getMockForAbstractClass(
-            \Zend_Db_Statement_Interface::class,
+            'Zend_Db_Statement_Interface',
             [],
             '',
             false

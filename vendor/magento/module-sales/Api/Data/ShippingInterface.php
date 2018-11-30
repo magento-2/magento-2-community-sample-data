@@ -8,7 +8,6 @@ namespace Magento\Sales\Api\Data;
 /**
  * Interface ShippingInterface
  * @api
- * @since 100.0.4
  */
 interface ShippingInterface extends \Magento\Framework\Api\ExtensibleDataInterface
 {
@@ -26,7 +25,6 @@ interface ShippingInterface extends \Magento\Framework\Api\ExtensibleDataInterfa
      * Gets shipping address
      *
      * @return \Magento\Sales\Api\Data\OrderAddressInterface|null
-     * @since 100.0.4
      */
     public function getAddress();
 
@@ -34,7 +32,6 @@ interface ShippingInterface extends \Magento\Framework\Api\ExtensibleDataInterfa
      * Gets shipping method
      *
      * @return string|null
-     * @since 100.0.4
      */
     public function getMethod();
 
@@ -42,7 +39,6 @@ interface ShippingInterface extends \Magento\Framework\Api\ExtensibleDataInterfa
      * Gets object with shipping totals
      *
      * @return \Magento\Sales\Api\Data\TotalInterface|null
-     * @since 100.0.4
      */
     public function getTotal();
 
@@ -51,7 +47,6 @@ interface ShippingInterface extends \Magento\Framework\Api\ExtensibleDataInterfa
      *
      * @param \Magento\Sales\Api\Data\OrderAddressInterface $address
      * @return $this
-     * @since 100.0.4
      */
     public function setAddress(\Magento\Sales\Api\Data\OrderAddressInterface $address);
 
@@ -60,7 +55,6 @@ interface ShippingInterface extends \Magento\Framework\Api\ExtensibleDataInterfa
      *
      * @param string $method
      * @return $this
-     * @since 100.0.4
      */
     public function setMethod($method);
 
@@ -69,7 +63,6 @@ interface ShippingInterface extends \Magento\Framework\Api\ExtensibleDataInterfa
      *
      * @param \Magento\Sales\Api\Data\TotalInterface $total
      * @return $this
-     * @since 100.0.4
      */
     public function setTotal(\Magento\Sales\Api\Data\TotalInterface $total);
 
@@ -77,7 +70,6 @@ interface ShippingInterface extends \Magento\Framework\Api\ExtensibleDataInterfa
      * Retrieve existing extension attributes object or create a new one.
      *
      * @return \Magento\Sales\Api\Data\ShippingExtensionInterface|null
-     * @since 100.0.4
      */
     public function getExtensionAttributes();
 
@@ -86,7 +78,6 @@ interface ShippingInterface extends \Magento\Framework\Api\ExtensibleDataInterfa
      *
      * @param \Magento\Sales\Api\Data\ShippingExtensionInterface $extensionAttributes
      * @return $this
-     * @since 100.0.4
      */
     public function setExtensionAttributes(
         \Magento\Sales\Api\Data\ShippingExtensionInterface $extensionAttributes

@@ -4,6 +4,7 @@
  * See COPYING.txt for license details.
  */
 
+
 return [
     'router' => [
         'routes' => [
@@ -12,7 +13,7 @@ return [
                 'options' => [
                     'route'    => '/',
                     'defaults' => [
-                        'controller' => \Magento\Setup\Controller\Index::class,
+                        'controller' => 'Magento\Setup\Controller\Index',
                         'action'     => 'index',
                     ],
                 ],

@@ -6,11 +6,9 @@
 
 namespace Magento\Webapi\Test\Unit\Model;
 
-use Magento\Framework\Serialize\SerializerInterface;
-use Magento\Framework\Reflection\DataObjectProcessor;
 use Magento\Webapi\Model\Config as ModelConfig;
 
-class DataObjectProcessorTest extends \PHPUnit\Framework\TestCase
+class DataObjectProcessorTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var DataObjectProcessor
@@ -26,29 +24,18 @@ class DataObjectProcessorTest extends \PHPUnit\Framework\TestCase
     {
         $objectManager = new \Magento\Framework\TestFramework\Unit\Helper\ObjectManager($this);
         $methodsMapProcessor = $objectManager->getObject(
-            \Magento\Framework\Reflection\MethodsMap::class,
+            'Magento\Framework\Reflection\MethodsMap',
             [
-                'fieldNamer' => $objectManager->getObject(\Magento\Framework\Reflection\FieldNamer::class),
-                'typeProcessor' => $objectManager->getObject(\Magento\Framework\Reflection\TypeProcessor::class),
+                'fieldNamer' => $objectManager->getObject('Magento\Framework\Reflection\FieldNamer'),
+                'typeProcessor' => $objectManager->getObject('Magento\Framework\Reflection\TypeProcessor'),
             ]
         );
-        $serializerMock = $this->createMock(SerializerInterface::class);
-        $serializerMock->method('serialize')
-            ->willReturn('serializedData');
-        $serializerMock->method('unserialize')
-            ->willReturn(['unserializedData']);
-
-        $objectManager->setBackwardCompatibleProperty(
-            $methodsMapProcessor,
-            'serializer',
-            $serializerMock
-        );
         $this->dataObjectProcessor = $objectManager->getObject(
-            \Magento\Framework\Reflection\DataObjectProcessor::class,
+            'Magento\Framework\Reflection\DataObjectProcessor',
             [
                 'methodsMapProcessor' => $methodsMapProcessor,
-                'typeCaster' => $objectManager->getObject(\Magento\Framework\Reflection\TypeCaster::class),
-                'fieldNamer' => $objectManager->getObject(\Magento\Framework\Reflection\FieldNamer::class),
+                'typeCaster' => $objectManager->getObject('Magento\Framework\Reflection\TypeCaster'),
+                'fieldNamer' => $objectManager->getObject('Magento\Framework\Reflection\FieldNamer'),
             ]
         );
         parent::setUp();
@@ -57,8 +44,8 @@ class DataObjectProcessorTest extends \PHPUnit\Framework\TestCase
     public function testDataObjectProcessor()
     {
         $objectManager =  new \Magento\Framework\TestFramework\Unit\Helper\ObjectManager($this);
-        /** @var \Magento\Framework\Reflection\Test\Unit\TestDataObject $testDataObject */
-        $testDataObject = $objectManager->getObject(\Magento\Framework\Reflection\Test\Unit\TestDataObject::class);
+        /** @var \Magento\Webapi\Test\Unit\Model\Files\TestDataObject $testDataObject */
+        $testDataObject = $objectManager->getObject('Magento\Webapi\Test\Unit\Model\Files\TestDataObject');
 
         $expectedOutputDataArray = [
             'id' => '1',
@@ -67,7 +54,7 @@ class DataObjectProcessorTest extends \PHPUnit\Framework\TestCase
             'required_billing' => 'false',
         ];
 
-        $testDataObjectType = \Magento\Framework\Reflection\Test\Unit\TestDataInterface::class;
+        $testDataObjectType = 'Magento\Webapi\Test\Unit\Model\Files\TestDataInterface';
         $outputData = $this->dataObjectProcessor->buildOutputDataArray($testDataObject, $testDataObjectType);
         $this->assertEquals($expectedOutputDataArray, $outputData);
     }

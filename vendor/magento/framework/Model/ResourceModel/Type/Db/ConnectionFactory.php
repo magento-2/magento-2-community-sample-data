@@ -1,5 +1,7 @@
 <?php
 /**
+ * Connection adapter factory
+ *
  * Copyright © Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
@@ -7,9 +9,6 @@ namespace Magento\Framework\Model\ResourceModel\Type\Db;
 
 use Magento\Framework\ObjectManagerInterface;
 
-/**
- * Connection adapter factory
- */
 class ConnectionFactory implements ConnectionFactoryInterface
 {
     /**
@@ -38,6 +37,6 @@ class ConnectionFactory implements ConnectionFactoryInterface
             ['config' => $connectionConfig]
         );
 
-        return $adapterInstance->getConnection();
+        return $adapterInstance->getConnection($this->objectManager->get(\Magento\Framework\DB\LoggerInterface::class));
     }
 }

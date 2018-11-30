@@ -6,9 +6,10 @@
 
 namespace Magento\Security\Test\TestCase;
 
+use Magento\Mtf\TestCase\Injectable;
+use Magento\Mtf\ObjectManager;
 use Magento\Customer\Test\Fixture\Customer;
 use Magento\Customer\Test\Page\CustomerAccountForgotPassword;
-use Magento\Mtf\TestCase\Injectable;
 
 /**
  * Preconditions:
@@ -26,7 +27,7 @@ class ResetCustomerPasswordFailedTest extends Injectable
 {
     /* tags */
     const MVP = 'yes';
-    const SEVERITY = 'S1';
+    const DOMAIN = 'PS';
     /* end tags */
 
     /**
@@ -35,13 +36,6 @@ class ResetCustomerPasswordFailedTest extends Injectable
      * @var CustomerAccountForgotPassword
      */
     protected $forgotPassword;
-
-    /**
-     * Configuration setting.
-     *
-     * @var string
-     */
-    protected $configData;
 
     /**
      * Preparing pages for test.
@@ -59,22 +53,12 @@ class ResetCustomerPasswordFailedTest extends Injectable
      * Run reset customer password failed test.
      * @param Customer $customer
      * @param int $attempts
-     * @param string $configData
      * @return void
      */
     public function test(
         Customer $customer,
-        $attempts,
-        $configData = null
+        $attempts
     ) {
-        $this->configData = $configData;
-
-        // Preconditions
-        $this->objectManager->create(
-            \Magento\Config\Test\TestStep\SetupConfigurationStep::class,
-            ['configData' => $this->configData]
-        )->run();
-
         // Steps
         $customer->persist();
         for ($i = 0; $i < $attempts; $i++) {

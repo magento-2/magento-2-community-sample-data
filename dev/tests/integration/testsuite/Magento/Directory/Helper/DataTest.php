@@ -5,7 +5,7 @@
  */
 namespace Magento\Directory\Helper;
 
-class DataTest extends \PHPUnit\Framework\TestCase
+class DataTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\Directory\Helper\Data
@@ -15,7 +15,7 @@ class DataTest extends \PHPUnit\Framework\TestCase
     protected function setUp()
     {
         $this->helper = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->get(
-            \Magento\Directory\Helper\Data::class
+            'Magento\Directory\Helper\Data'
         );
     }
 

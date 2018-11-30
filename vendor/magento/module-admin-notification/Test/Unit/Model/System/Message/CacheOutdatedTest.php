@@ -5,7 +5,7 @@
  */
 namespace Magento\AdminNotification\Test\Unit\Model\System\Message;
 
-class CacheOutdatedTest extends \PHPUnit\Framework\TestCase
+class CacheOutdatedTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \PHPUnit_Framework_MockObject_MockObject
@@ -29,9 +29,9 @@ class CacheOutdatedTest extends \PHPUnit\Framework\TestCase
 
     protected function setUp()
     {
-        $this->_authorizationMock = $this->createMock(\Magento\Framework\AuthorizationInterface::class);
-        $this->_urlInterfaceMock = $this->createMock(\Magento\Framework\UrlInterface::class);
-        $this->_cacheTypeListMock = $this->createMock(\Magento\Framework\App\Cache\TypeListInterface::class);
+        $this->_authorizationMock = $this->getMock('Magento\Framework\AuthorizationInterface');
+        $this->_urlInterfaceMock = $this->getMock('Magento\Framework\UrlInterface');
+        $this->_cacheTypeListMock = $this->getMock('Magento\Framework\App\Cache\TypeListInterface');
 
         $objectManagerHelper = new \Magento\Framework\TestFramework\Unit\Helper\ObjectManager($this);
         $arguments = [
@@ -40,7 +40,7 @@ class CacheOutdatedTest extends \PHPUnit\Framework\TestCase
             'cacheTypeList' => $this->_cacheTypeListMock,
         ];
         $this->_messageModel = $objectManagerHelper->getObject(
-            \Magento\AdminNotification\Model\System\Message\CacheOutdated::class,
+            'Magento\AdminNotification\Model\System\Message\CacheOutdated',
             $arguments
         );
     }
@@ -67,10 +67,10 @@ class CacheOutdatedTest extends \PHPUnit\Framework\TestCase
      */
     public function getIdentityDataProvider()
     {
-        $cacheTypeMock1 = $this->createPartialMock(\stdClass::class, ['getCacheType']);
+        $cacheTypeMock1 = $this->getMock('stdClass', ['getCacheType']);
         $cacheTypeMock1->expects($this->any())->method('getCacheType')->will($this->returnValue('Simple'));
 
-        $cacheTypeMock2 = $this->createPartialMock(\stdClass::class, ['getCacheType']);
+        $cacheTypeMock2 = $this->getMock('stdClass', ['getCacheType']);
         $cacheTypeMock2->expects($this->any())->method('getCacheType')->will($this->returnValue('Advanced'));
 
         return [
@@ -103,7 +103,7 @@ class CacheOutdatedTest extends \PHPUnit\Framework\TestCase
      */
     public function isDisplayedDataProvider()
     {
-        $cacheTypesMock = $this->createPartialMock(\stdClass::class, ['getCacheType']);
+        $cacheTypesMock = $this->getMock('stdClass', ['getCacheType']);
         $cacheTypesMock->expects($this->any())->method('getCacheType')->will($this->returnValue('someVal'));
         $cacheTypes = [$cacheTypesMock, $cacheTypesMock];
         return [

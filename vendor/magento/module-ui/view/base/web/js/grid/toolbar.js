@@ -3,9 +3,6 @@
  * See COPYING.txt for license details.
  */
 
-/**
- * @api
- */
 define([
     'underscore',
     'Magento_Ui/js/lib/view/utils/async',

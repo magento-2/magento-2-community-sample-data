@@ -8,7 +8,6 @@ namespace Magento\Payment\Helper;
 /**
  * Class Formatter
  * @api
- * @since 100.1.0
  */
 trait Formatter
 {
@@ -17,7 +16,6 @@ trait Formatter
      *
      * @param mixed $price
      * @return string
-     * @since 100.1.0
      */
     public function formatPrice($price)
     {

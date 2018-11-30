@@ -12,8 +12,7 @@ use Magento\Framework\ObjectManagerInterface;
  */
 class AggregatedFileCollectorFactory
 {
-    const INSTANCE_NAME =
-        \Magento\Framework\View\Element\UiComponent\Config\FileCollector\AggregatedFileCollector::class;
+    const INSTANCE_NAME = 'Magento\Framework\View\Element\UiComponent\Config\FileCollector\AggregatedFileCollector';
 
     /**
      * @var ObjectManagerInterface

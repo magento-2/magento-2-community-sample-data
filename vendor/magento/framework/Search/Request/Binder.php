@@ -5,9 +5,6 @@
  */
 namespace Magento\Framework\Search\Request;
 
-/**
- * @api
- */
 class Binder
 {
     /**

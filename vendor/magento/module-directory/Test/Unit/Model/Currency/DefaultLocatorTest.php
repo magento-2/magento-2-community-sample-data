@@ -5,7 +5,7 @@
  */
 namespace Magento\Directory\Test\Unit\Model\Currency;
 
-class DefaultLocatorTest extends \PHPUnit\Framework\TestCase
+class DefaultLocatorTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\Directory\Model\Currency\DefaultLocator
@@ -29,9 +29,9 @@ class DefaultLocatorTest extends \PHPUnit\Framework\TestCase
 
     protected function setUp()
     {
-        $backendData = $this->createMock(\Magento\Backend\Helper\Data::class);
+        $backendData = $this->getMock('Magento\Backend\Helper\Data', [], [], '', false);
         $this->_requestMock = $this->getMockForAbstractClass(
-            \Magento\Framework\App\RequestInterface::class,
+            'Magento\Framework\App\RequestInterface',
             [$backendData],
             '',
             false,
@@ -39,8 +39,8 @@ class DefaultLocatorTest extends \PHPUnit\Framework\TestCase
             true,
             ['getParam']
         );
-        $this->_configMock = $this->createMock(\Magento\Framework\App\Config\ScopeConfigInterface::class);
-        $this->_storeManagerMock = $this->createMock(\Magento\Store\Model\StoreManager::class);
+        $this->_configMock = $this->getMock('\Magento\Framework\App\Config\ScopeConfigInterface');
+        $this->_storeManagerMock = $this->getMock('Magento\Store\Model\StoreManager', [], [], '', false);
         $this->_model = new \Magento\Directory\Model\Currency\DefaultLocator(
             $this->_configMock,
             $this->_storeManagerMock
@@ -64,7 +64,7 @@ class DefaultLocatorTest extends \PHPUnit\Framework\TestCase
         )->will(
             $this->returnValue('someStore')
         );
-        $storeMock = $this->createMock(\Magento\Store\Model\Store::class);
+        $storeMock = $this->getMock('Magento\Store\Model\Store', [], [], '', false);
         $storeMock->expects($this->once())->method('getBaseCurrencyCode')->will($this->returnValue('storeCurrency'));
         $this->_storeManagerMock->expects(
             $this->once()
@@ -87,7 +87,7 @@ class DefaultLocatorTest extends \PHPUnit\Framework\TestCase
         )->will(
             $this->returnValueMap([['store', null, ''], ['website', null, 'someWebsite']])
         );
-        $websiteMock = $this->createMock(\Magento\Store\Model\Website::class);
+        $websiteMock = $this->getMock('Magento\Store\Model\Website', [], [], '', false);
         $websiteMock->expects(
             $this->once()
         )->method(
@@ -118,7 +118,7 @@ class DefaultLocatorTest extends \PHPUnit\Framework\TestCase
                 [['store', null, ''], ['website', null, ''], ['group', null, 'someGroup']]
             )
         );
-        $websiteMock = $this->createMock(\Magento\Store\Model\Website::class);
+        $websiteMock = $this->getMock('Magento\Store\Model\Website', [], [], '', false);
         $websiteMock->expects(
             $this->once()
         )->method(
@@ -127,7 +127,7 @@ class DefaultLocatorTest extends \PHPUnit\Framework\TestCase
             $this->returnValue('websiteCurrency')
         );
 
-        $groupMock = $this->createMock(\Magento\Store\Model\Group::class);
+        $groupMock = $this->getMock('Magento\Store\Model\Group', [], [], '', false);
         $groupMock->expects($this->once())->method('getWebsite')->will($this->returnValue($websiteMock));
 
         $this->_storeManagerMock->expects(

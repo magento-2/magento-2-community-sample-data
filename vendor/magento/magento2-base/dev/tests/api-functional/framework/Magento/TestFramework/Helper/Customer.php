@@ -46,12 +46,10 @@ class Customer extends WebapiAbstract
      * @var \Magento\Customer\Api\Data\AddressInterfaceFactory
      */
     private $customerAddressFactory;
-
     /**
      * @var \Magento\Customer\Api\Data\CustomerInterfaceFactory
      */
     private $customerDataFactory;
-
     /**
      * @var \Magento\Framework\Api\DataObjectHelper
      */
@@ -65,19 +63,19 @@ class Customer extends WebapiAbstract
         parent::__construct($name, $data, $dataName);
 
         $this->customerAddressFactory = Bootstrap::getObjectManager()->create(
-            \Magento\Customer\Api\Data\AddressInterfaceFactory::class
+            'Magento\Customer\Api\Data\AddressInterfaceFactory'
         );
 
         $this->customerDataFactory = Bootstrap::getObjectManager()->create(
-            \Magento\Customer\Api\Data\CustomerInterfaceFactory::class
+            'Magento\Customer\Api\Data\CustomerInterfaceFactory'
         );
 
         $this->dataObjectHelper = Bootstrap::getObjectManager()->create(
-            \Magento\Framework\Api\DataObjectHelper::class
+            'Magento\Framework\Api\DataObjectHelper'
         );
 
         $this->dataObjectProcessor = Bootstrap::getObjectManager()->create(
-            \Magento\Framework\Reflection\DataObjectProcessor::class
+            'Magento\Framework\Reflection\DataObjectProcessor'
         );
     }
 
@@ -115,8 +113,7 @@ class Customer extends WebapiAbstract
      * @param int $customerId
      * @return array|bool|float|int|string
      */
-    public function updateSampleCustomer($customerId, array $additional = [])
-    {
+    public function updateSampleCustomer(array $additional = [], $customerId) {
         $serviceInfo = [
             'rest' => [
                 'resourcePath' => self::RESOURCE_PATH . "/" . $customerId,
@@ -131,7 +128,7 @@ class Customer extends WebapiAbstract
 
         $customerDataArray = $this->dataObjectProcessor->buildOutputDataArray(
             $this->createSampleCustomerDataObject($additional),
-            \Magento\Customer\Api\Data\CustomerInterface::class
+            '\Magento\Customer\Api\Data\CustomerInterface'
         );
         $requestData = ['customer' => $customerDataArray, 'password' => self::PASSWORD];
         $customerData = $this->_webApiCall($serviceInfo, $requestData);
@@ -185,7 +182,7 @@ class Customer extends WebapiAbstract
         $customerAddress1->setIsDefaultShipping(true);
         $customerAddress1->setPostcode('75477');
         $customerAddress1->setRegion(
-            Bootstrap::getObjectManager()->create(\Magento\Customer\Api\Data\RegionInterfaceFactory::class)
+            Bootstrap::getObjectManager()->create('Magento\Customer\Api\Data\RegionInterfaceFactory')
                 ->create()
                 ->setRegionCode(self::ADDRESS_REGION_CODE1)
                 ->setRegion('Alabama')
@@ -198,7 +195,7 @@ class Customer extends WebapiAbstract
         $customerAddress1->setLastname('Smith');
         $address1 = $this->dataObjectProcessor->buildOutputDataArray(
             $customerAddress1,
-            \Magento\Customer\Api\Data\AddressInterface::class
+            'Magento\Customer\Api\Data\AddressInterface'
         );
 
         $customerAddress2 = $this->customerAddressFactory->create();
@@ -207,7 +204,7 @@ class Customer extends WebapiAbstract
         $customerAddress2->setIsDefaultShipping(false);
         $customerAddress2->setPostcode('47676');
         $customerAddress2->setRegion(
-            Bootstrap::getObjectManager()->create(\Magento\Customer\Api\Data\RegionInterfaceFactory::class)
+            Bootstrap::getObjectManager()->create('Magento\Customer\Api\Data\RegionInterfaceFactory')
                 ->create()
                 ->setRegionCode(self::ADDRESS_REGION_CODE2)
                 ->setRegion('Alabama')
@@ -220,7 +217,7 @@ class Customer extends WebapiAbstract
         $customerAddress2->setLastname('Smith');
         $address2 = $this->dataObjectProcessor->buildOutputDataArray(
             $customerAddress2,
-            \Magento\Customer\Api\Data\AddressInterface::class
+            'Magento\Customer\Api\Data\AddressInterface'
         );
 
         $customerData = $this->getCustomerSampleData(
@@ -230,7 +227,7 @@ class Customer extends WebapiAbstract
         $this->dataObjectHelper->populateWithArray(
             $customer,
             $customerData,
-            \Magento\Customer\Api\Data\CustomerInterface::class
+            '\Magento\Customer\Api\Data\CustomerInterface'
         );
         return $customer;
     }

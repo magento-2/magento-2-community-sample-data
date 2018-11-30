@@ -33,21 +33,12 @@ class Add extends \Magento\Catalog\Controller\Product\Compare
 
             if ($product) {
                 $this->_catalogProductCompareList->addProduct($product);
-                $productName = $this->_objectManager->get(
-                    \Magento\Framework\Escaper::class
-                )->escapeHtml($product->getName());
-                $this->messageManager->addComplexSuccessMessage(
-                    'addCompareSuccessMessage',
-                    [
-                        'product_name' => $productName,
-                        'compare_list_url' => $this->_url->getUrl('catalog/product_compare')
-                    ]
-                );
-
+                $productName = $this->_objectManager->get('Magento\Framework\Escaper')->escapeHtml($product->getName());
+                $this->messageManager->addSuccess(__('You added product %1 to the comparison list.', $productName));
                 $this->_eventManager->dispatch('catalog_product_compare_add_product', ['product' => $product]);
             }
 
-            $this->_objectManager->get(\Magento\Catalog\Helper\Product\Compare::class)->calculate();
+            $this->_objectManager->get('Magento\Catalog\Helper\Product\Compare')->calculate();
         }
         return $resultRedirect->setRefererOrBaseUrl();
     }

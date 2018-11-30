@@ -11,6 +11,7 @@ use Magento\Framework\Api\ExtensionAttribute\Config\Converter;
 use Magento\Framework\AuthorizationInterface;
 use Magento\Framework\Phrase;
 use Magento\Framework\Api\ExtensionAttributesInterface;
+use Magento\Framework\Reflection\MethodsMap;
 use Zend\Code\Reflection\MethodReflection;
 
 /**

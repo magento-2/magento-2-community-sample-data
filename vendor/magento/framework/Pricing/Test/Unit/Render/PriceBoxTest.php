@@ -5,14 +5,12 @@
  */
 namespace Magento\Framework\Pricing\Test\Unit\Render;
 
-use Magento\Framework\Pricing\Render\PriceBox;
+use \Magento\Framework\Pricing\Render\PriceBox;
 
 /**
  * Test class for \Magento\Framework\Pricing\Render\PriceBox
- *
- * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  */
-class PriceBoxTest extends \PHPUnit\Framework\TestCase
+class PriceBoxTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\Framework\TestFramework\Unit\Helper\ObjectManager
@@ -48,21 +46,20 @@ class PriceBoxTest extends \PHPUnit\Framework\TestCase
     {
         $this->objectManager = new \Magento\Framework\TestFramework\Unit\Helper\ObjectManager($this);
 
-        $this->rendererPool = $this->getMockBuilder(\Magento\Framework\Pricing\Render\RendererPool::class)
+        $this->rendererPool = $this->getMockBuilder('Magento\Framework\Pricing\Render\RendererPool')
             ->disableOriginalConstructor()
             ->setMethods(['createAmountRender'])
             ->getMock();
 
-        $layout = $this->createMock(\Magento\Framework\View\LayoutInterface::class);
-        $eventManager = $this->createMock(\Magento\Framework\Event\ManagerInterface::class);
-        $scopeConfigMock = $this->getMockForAbstractClass(\Magento\Framework\App\Config\ScopeConfigInterface::class);
+        $layout = $this->getMock('Magento\Framework\View\LayoutInterface');
+        $eventManager = $this->getMock('Magento\Framework\Event\ManagerInterface');
+        $scopeConfigMock = $this->getMockForAbstractClass('Magento\Framework\App\Config\ScopeConfigInterface');
         $cacheState = $this->getMockBuilder(\Magento\Framework\App\Cache\StateInterface::class)
             ->getMockForAbstractClass();
-        $storeConfig = $this->getMockBuilder(\Magento\Store\Model\Store\Config::class)
+        $storeConfig = $this->getMockBuilder('Magento\Store\Model\Store\Config')
             ->disableOriginalConstructor()
             ->getMock();
-        $this->context = $this->getMockBuilder(\Magento\Framework\View\Element\Template\Context::class)
-            ->setMethods(['getLayout', 'getEventManager', 'getStoreConfig', 'getScopeConfig', 'getCacheState'])
+        $this->context = $this->getMockBuilder('Magento\Framework\View\Element\Template\Context')
             ->disableOriginalConstructor()
             ->getMock();
         $this->context->expects($this->any())
@@ -81,19 +78,16 @@ class PriceBoxTest extends \PHPUnit\Framework\TestCase
             ->method('getCacheState')
             ->will($this->returnValue($cacheState));
 
-        $this->saleable = $this->createMock(\Magento\Framework\Pricing\SaleableInterface::class);
+        $this->saleable = $this->getMock('Magento\Framework\Pricing\SaleableInterface');
 
-        $this->price = $this->createMock(\Magento\Framework\Pricing\Price\PriceInterface::class);
+        $this->price = $this->getMock('Magento\Framework\Pricing\Price\PriceInterface');
 
-        $this->model = $this->objectManager->getObject(
-            \Magento\Framework\Pricing\Render\PriceBox::class,
-            [
-                'context' => $this->context,
-                'saleableItem' => $this->saleable,
-                'price' => $this->price,
-                'rendererPool' => $this->rendererPool
-            ]
-        );
+        $this->model = $this->objectManager->getObject('Magento\Framework\Pricing\Render\PriceBox', [
+            'context' => $this->context,
+            'saleableItem' => $this->saleable,
+            'price' => $this->price,
+            'rendererPool' => $this->rendererPool
+        ]);
     }
 
     /**
@@ -108,16 +102,13 @@ class PriceBoxTest extends \PHPUnit\Framework\TestCase
             ->method('getPriceCode')
             ->will($this->returnValue($priceCode));
 
-        $priceBox = $this->objectManager->getObject(
-            \Magento\Framework\Pricing\Render\PriceBox::class,
-            [
-                'context' => $this->context,
-                'saleableItem' => $this->saleable,
-                'price' => $this->price,
-                'rendererPool' => $this->rendererPool,
-                'data' => $data
-            ]
-        );
+        $priceBox = $this->objectManager->getObject('Magento\Framework\Pricing\Render\PriceBox', [
+            'context' => $this->context,
+            'saleableItem' => $this->saleable,
+            'price' => $this->price,
+            'rendererPool' => $this->rendererPool,
+            'data' => $data
+        ]);
         $priceBox->toHtml();
         $this->assertEquals($cssClasses, $priceBox->getData('css_classes'));
     }
@@ -137,7 +128,7 @@ class PriceBoxTest extends \PHPUnit\Framework\TestCase
                 'data' => ['css_classes' => 'some_css_class'],
                 'price_code' => 'test_price',
                 'css_classes' => 'some_css_class price-test_price'
-            ]];
+        ]];
     }
 
     public function testGetSaleableItem()
@@ -154,9 +145,9 @@ class PriceBoxTest extends \PHPUnit\Framework\TestCase
     {
         $priceCode = 'test_price';
 
-        $price = $this->createMock(\Magento\Framework\Pricing\Price\PriceInterface::class);
+        $price = $this->getMock('Magento\Framework\Pricing\Price\PriceInterface');
 
-        $priceInfo = $this->createMock(\Magento\Framework\Pricing\PriceInfo\Base::class);
+        $priceInfo = $this->getMock('Magento\Framework\Pricing\PriceInfo\Base', [], [], '', false);
         $priceInfo->expects($this->once())
             ->method('getPrice')
             ->with($priceCode)
@@ -171,11 +162,11 @@ class PriceBoxTest extends \PHPUnit\Framework\TestCase
 
     public function testRenderAmount()
     {
-        $amount = $this->createMock(\Magento\Framework\Pricing\Amount\AmountInterface::class);
+        $amount = $this->getMock('Magento\Framework\Pricing\Amount\AmountInterface');
         $arguments = [];
         $resultHtml = 'result_html';
 
-        $amountRender = $this->getMockBuilder(\Magento\Framework\Pricing\Render\Amount::class)
+        $amountRender = $this->getMockBuilder('Magento\Framework\Pricing\Render\Amount')
             ->disableOriginalConstructor()
             ->setMethods(['toHtml'])
             ->getMock();

@@ -5,7 +5,7 @@
  */
 namespace Magento\Setup\Test\Unit\Model\Description\Mixin;
 
-class BrakeMixinTest extends \PHPUnit\Framework\TestCase
+class BrakeMixinTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\Setup\Model\Description\Mixin\BrakeMixin

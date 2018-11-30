@@ -15,16 +15,6 @@ use Zend\Validator\ValidatorInterface;
 
 class Month extends DateTime
 {
-
-    const DATETIME_FORMAT = 'Y-m';
-
-    /**
-     * A valid format string accepted by date()
-     *
-     * @var string
-     */
-    protected $format = self::DATETIME_FORMAT;
-
     /**
      * Seed attributes
      *

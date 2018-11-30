@@ -7,7 +7,7 @@ namespace Magento\Setup\Test\Unit\Module\I18n\Dictionary;
 
 use \Magento\Setup\Module\I18n\Dictionary\Phrase;
 
-class PhraseTest extends \PHPUnit\Framework\TestCase
+class PhraseTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @param array $constructArguments
@@ -55,8 +55,7 @@ class PhraseTest extends \PHPUnit\Framework\TestCase
      */
     public function testWrongParametersWhilePhraseCreation($constructArguments, $message)
     {
-        $this->expectException('DomainException');
-        $this->expectExceptionMessage($message);
+        $this->setExpectedException('DomainException', $message);
 
         new Phrase(...array_values($constructArguments));
     }

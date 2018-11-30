@@ -7,7 +7,7 @@ namespace Magento\Test\Integrity\Theme;
 
 use Magento\Framework\Component\ComponentRegistrar;
 
-class XmlFilesTest extends \PHPUnit\Framework\TestCase
+class XmlFilesTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\Framework\Config\ValidationStateInterface
@@ -16,7 +16,13 @@ class XmlFilesTest extends \PHPUnit\Framework\TestCase
 
     public function setUp()
     {
-        $this->validationStateMock = $this->createMock(\Magento\Framework\Config\ValidationStateInterface::class);
+        $this->validationStateMock = $this->getMock(
+            'Magento\Framework\Config\ValidationStateInterface',
+            [],
+            [],
+            '',
+            false
+        );
         $this->validationStateMock->method('isValidationRequired')
             ->willReturn(true);
     }
@@ -48,7 +54,7 @@ class XmlFilesTest extends \PHPUnit\Framework\TestCase
         $result = [];
         /** @var \Magento\Framework\Component\DirSearch $componentDirSearch */
         $componentDirSearch = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()
-            ->get(\Magento\Framework\Component\DirSearch::class);
+            ->get('Magento\Framework\Component\DirSearch');
         $files = $componentDirSearch->collectFiles(ComponentRegistrar::THEME, 'etc/view.xml');
         foreach ($files as $file) {
             $result[substr($file, strlen(BP))] = [$file];
@@ -73,7 +79,7 @@ class XmlFilesTest extends \PHPUnit\Framework\TestCase
         $result = [];
         /** @var \Magento\Framework\Component\ComponentRegistrar $componentRegistrar */
         $componentRegistrar = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()
-            ->get(\Magento\Framework\Component\ComponentRegistrar::class);
+            ->get('\Magento\Framework\Component\ComponentRegistrar');
         foreach ($componentRegistrar->getPaths(ComponentRegistrar::THEME) as $themeDir) {
             $result[substr($themeDir, strlen(BP))] = [$themeDir];
         }
@@ -114,7 +120,7 @@ class XmlFilesTest extends \PHPUnit\Framework\TestCase
         $result = [];
         /** @var \Magento\Framework\Component\DirSearch $componentDirSearch */
         $componentDirSearch = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()
-            ->get(\Magento\Framework\Component\DirSearch::class);
+            ->get('Magento\Framework\Component\DirSearch');
         $files = $componentDirSearch->collectFiles(ComponentRegistrar::THEME, 'theme.xml');
         foreach ($files as $file) {
             $result[substr($file, strlen(BP))] = [$file];

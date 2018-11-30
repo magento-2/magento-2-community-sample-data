@@ -7,7 +7,7 @@ namespace Magento\Setup\Test\Unit\Module\Dependency\Parser\Config;
 
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
 
-class XmlTest extends \PHPUnit\Framework\TestCase
+class XmlTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\Setup\Module\Dependency\Parser\Config\Xml
@@ -17,7 +17,7 @@ class XmlTest extends \PHPUnit\Framework\TestCase
     protected function setUp()
     {
         $objectManagerHelper = new ObjectManager($this);
-        $this->parser = $objectManagerHelper->getObject(\Magento\Setup\Module\Dependency\Parser\Config\Xml::class);
+        $this->parser = $objectManagerHelper->getObject('Magento\Setup\Module\Dependency\Parser\Config\Xml');
     }
 
     /**

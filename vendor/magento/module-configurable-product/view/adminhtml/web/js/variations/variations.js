@@ -1,8 +1,9 @@
+// jscs:disable requireDotNotation
 /**
  * Copyright © Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
-
+// jscs:disable jsDoc
 define([
     'uiComponent',
     'jquery',
@@ -14,10 +15,6 @@ define([
 ], function (Component, $, ko, _, alert, registry, $t) {
     'use strict';
 
-    /**
-     * @param {*} message
-     * @constructor
-     */
     function UserException(message) {
         this.message = message;
         this.name = 'UserException';
@@ -60,8 +57,6 @@ define([
                 skeletonAttributeSet: '${ $.provider }:data.new-variations-attribute-set-id'
             }
         },
-
-        /** @inheritdoc */
         initialize: function () {
             this._super();
 
@@ -69,8 +64,6 @@ define([
             this.initProductAttributesMap();
             this.disableConfigurableAttributes(this.productAttributes);
         },
-
-        /** @inheritdoc */
         initObservable: function () {
             this._super().observe(
                 'actions opened attributes productMatrix value usedAttributes attributesData attributeCodes'
@@ -78,12 +71,6 @@ define([
 
             return this;
         },
-
-        /**
-         * @param {Object} product
-         * @return {Object}
-         * @private
-         */
         _makeProduct: function (product) {
             var productId = product['entity_id'] || product.productId || null,
                 attributes = _.pick(product, this.attributes.pluck('code')),
@@ -114,7 +101,7 @@ define([
                 },
                 name: product.name || product.sku,
                 options: options,
-                price: parseFloat(Math.round(product.price.replace(/[^\d.]+/g, '') + 'e+4') + 'e-4').toFixed(4),
+                price: parseFloat(Math.round(product.price.replace(/[^\d.]+/g, '') + "e+4") + "e-4").toFixed(4),
                 productId: productId,
                 productUrl: this.buildProductUrl(productId),
                 quantity: product.quantity || null,
@@ -124,33 +111,16 @@ define([
                 weight: product.weight || null
             };
         },
-
-        /**
-         * @param {String} name
-         * @return {String|Number|Array}
-         */
         getProductValue: function (name) {
             name = name.split('/').join('][');
 
             return $('[name="product[' + name + ']"]:enabled:not(.ignore-validate)', this.productForm).val();
         },
-
-        /**
-         * @param {Object} data
-         * @param {String} field
-         * @return {String}
-         */
         getRowId: function (data, field) {
             var key = data.variationKey;
 
             return 'variations-matrix-' + key + '-' + field;
         },
-
-        /**
-         * @param {Object} variation
-         * @param {String} field
-         * @return {String}
-         */
         getVariationRowName: function (variation, field) {
             var result;
 
@@ -162,11 +132,6 @@ define([
 
             return result;
         },
-
-        /**
-         * @param {*} variations
-         * @param {*} attributes
-         */
         render: function (variations, attributes) {
             this.changeButtonWizard();
             this.populateVariationMatrix(variations);
@@ -175,26 +140,18 @@ define([
             this.handleValue(variations);
             this.handleAttributes();
         },
-
-        /**
-         * Change button wizard.
-         */
         changeButtonWizard: function () {
             if (this.variations.length) {
                 this.wizardButtonElement().title(this.wizardModalButtonTitle);
             }
         },
-
-        /**
-         * @param {Array} variations
-         */
         handleValue: function (variations) {
             var tmpArray = [];
+
 
             _.each(variations, function (variation) {
                 var attributes = _.reduce(variation.options, function (memo, option) {
                     var attribute = {};
-
                     attribute[option['attribute_code']] = option.value;
 
                     return _.extend(memo, attribute);
@@ -233,17 +190,8 @@ define([
 
             this.value(tmpArray);
         },
-
-        /**
-         * Handle attributes.
-         */
         handleAttributes: function () {
-            var tmpArray = [],
-                codesArray = [],
-                tmpOptions = {},
-                option = {},
-                position = 0,
-                values = {};
+            var tmpArray = [], codesArray = [], tmpOptions = {}, option = {}, position = 0, values = {};
 
             _.each(this.attributes(), function (attribute) {
                 tmpArray.push(attribute.id);
@@ -251,16 +199,16 @@ define([
                 values = {};
                 _.each(attribute.chosen, function (row) {
                     values[row.value] = {
-                        'include': '1',
-                        'value_index': row.value
+                        "include": "1",
+                        "value_index": row.value
                     };
                 }, this);
                 option = {
-                    'attribute_id': attribute.id,
-                    'code': attribute.code,
-                    'label': attribute.label,
-                    'position': position,
-                    'values': values
+                    "attribute_id": attribute.id,
+                    "code": attribute.code,
+                    "label": attribute.label,
+                    "position": position,
+                    "values": values
                 };
                 tmpOptions[attribute.id] = option;
                 position++;
@@ -271,26 +219,20 @@ define([
             this.attributeCodes(codesArray);
         },
 
+
         /**
          * Get attributes options
          * @see use in matrix.phtml
-         *
-         * @returns {Array}
+         * @function
+         * @event
+         * @returns {array}
          */
         getAttributesOptions: function () {
             return this.showVariations() ? this.productMatrix()[0].options : [];
         },
-
-        /**
-         * @return {Boolean}
-         */
         showVariations: function () {
             return this.productMatrix().length > 0;
         },
-
-        /**
-         * @param {Array} variations
-         */
         populateVariationMatrix: function (variations) {
             this.productMatrix([]);
             _.each(variations, function (variation) {
@@ -301,7 +243,6 @@ define([
 
                     return _.extend(memo, attribute);
                 }, {});
-
                 this.productMatrix.push(_.extend(variation, {
                     productId: variation.productId || null,
                     name: variation.name || variation.sku,
@@ -314,33 +255,15 @@ define([
                 }));
             }, this);
         },
-
-        /**
-         * @param {*} productId
-         */
         buildProductUrl: function (productId) {
             return this.productUrl.replace('%id%', productId);
         },
-
-        /**
-         * @param {Object} options
-         * @return {String}
-         */
         getVariationKey: function (options) {
             return _.pluck(options, 'value').sort().join('-');
         },
-
-        /**
-         * @param {*} options
-         * @return {*|null}
-         */
         getProductIdByOptions: function (options) {
             return this.productAttributesMap[this.getVariationKey(options)] || null;
         },
-
-        /**
-         * Init product attributes map
-         */
         initProductAttributesMap: function () {
             if (this.productAttributesMap === null) {
                 this.productAttributesMap = {};
@@ -349,10 +272,6 @@ define([
                 }.bind(this));
             }
         },
-
-        /**
-         * @param {Array} attributes
-         */
         disableConfigurableAttributes: function (attributes) {
             var element;
 
@@ -363,7 +282,6 @@ define([
 
             _.each(attributes, function (attribute) {
                 element = registry.get('code = ' + attribute.code, 'index = ' + attribute.code);
-
                 if (!_.isUndefined(element)) {
                     element.disabled(true);
                     this.disabledAttributes.push(attribute.code);
@@ -373,7 +291,7 @@ define([
 
         /**
          * Get currency symbol
-         * @returns {String}
+         * @returns {*}
          */
         getCurrencySymbol: function () {
             return this.currencySymbol;
@@ -382,7 +300,7 @@ define([
         /**
          * Chose action for the form save button
          */
-        saveFormHandler: function () {
+        saveFormHandler: function() {
             this.serializeData();
 
             if (this.checkForNewAttributes()) {
@@ -407,17 +325,13 @@ define([
          *   - associated_product_ids_serialized.
          */
         serializeData: function () {
-            if (this.source.data['configurable-matrix']) {
-                this.source.data['configurable-matrix-serialized'] =
-                    JSON.stringify(this.source.data['configurable-matrix']);
-                delete this.source.data['configurable-matrix'];
-            }
+            this.source.data["product"]["configurable-matrix-serialized"] =
+                JSON.stringify(this.source.data["configurable-matrix"]);
+            delete this.source.data["configurable-matrix"];
 
-            if (this.source.data['associated_product_ids']) {
-                this.source.data['associated_product_ids_serialized'] =
-                    JSON.stringify(this.source.data['associated_product_ids']);
-                delete this.source.data['associated_product_ids'];
-            }
+            this.source.data["product"]["associated_product_ids_serialized"] =
+                JSON.stringify(this.source.data["associated_product_ids"]);
+            delete this.source.data["associated_product_ids"];
         },
 
         /**
@@ -442,17 +356,14 @@ define([
          * New attributes handler
          * @returns {Boolean}
          */
-        addNewAttributeSetHandler: function () {
-            var choosenAttributeSetOption;
-
+        addNewAttributeSetHandler: function() {
             this.formElement().validate();
 
             if (this.formElement().source.get('params.invalid') === false) {
-                choosenAttributeSetOption = this.attributeSetSelection;
+                var choosenAttributeSetOption = this.attributeSetSelection;
 
                 if (choosenAttributeSetOption === 'new') {
                     this.createNewAttributeSet();
-
                     return false;
                 }
 
@@ -464,7 +375,6 @@ define([
                 }
 
                 this.closeDialogAndProcessForm();
-
                 return true;
             }
         },
@@ -473,7 +383,7 @@ define([
          * Handles new attribute set creation
          * @returns {Boolean}
          */
-        createNewAttributeSet: function () {
+        createNewAttributeSet: function() {
             var messageBoxElement = registry.get('index = affectedAttributeSetError');
 
             messageBoxElement.visible(false);
@@ -483,37 +393,41 @@ define([
                 url: this.attributeSetCreationUrl,
                 data: {
                     gotoEdit: 1,
-                    'attribute_set_name': this.attributeSetName,
-                    'skeleton_set': this.skeletonAttributeSet,
-                    'return_session_messages_only': 1
+                    attribute_set_name: this.attributeSetName,
+                    skeleton_set: this.skeletonAttributeSet,
+                    return_session_messages_only: 1
                 },
                 dataType: 'json',
                 showLoader: true,
                 context: this
-            }).success(function (data) {
-                if (!data.error) {
-                    this.set(
-                        'skeletonAttributeSet',
-                        data.id
-                    );
-                    messageBoxElement.content(data.messages);
-                    messageBoxElement.visible(true);
-                    this.closeDialogAndProcessForm();
-                } else {
-                    messageBoxElement.content(data.messages);
-                    messageBoxElement.visible(true);
-                }
+            })
 
-                return false;
-            }).error(function (xhr) {
-                if (xhr.statusText === 'abort') {
-                    return;
-                }
+                .success(function (data) {
+                    if (!data.error) {
+                        this.set(
+                            'skeletonAttributeSet',
+                            data.id
+                        );
+                        messageBoxElement.content(data.messages);
+                        messageBoxElement.visible(true);
+                        this.closeDialogAndProcessForm();
+                    } else {
+                        messageBoxElement.content(data.messages);
+                        messageBoxElement.visible(true);
+                    }
 
-                alert({
-                    content: $t('Something went wrong.')
+                    return false;
+                })
+
+                .error(function (xhr) {
+                    if (xhr.statusText === 'abort') {
+                        return;
+                    }
+
+                    alert({
+                        content: $t('Something went wrong.')
+                    });
                 });
-            });
 
             return false;
         },
@@ -521,7 +435,7 @@ define([
         /**
          * Closes attribute set handler modal and process product form
          */
-        closeDialogAndProcessForm: function () {
+        closeDialogAndProcessForm: function() {
             this.attributeSetHandlerModal().closeModal();
             this.formElement().save(this.formSaveParams[0], this.formSaveParams[1]);
         },
@@ -530,7 +444,7 @@ define([
          * Retrieves product price
          * @returns {*}
          */
-        getProductPrice: function () {
+        getProductPrice: function() {
             return this.productPrice;
         }
     });

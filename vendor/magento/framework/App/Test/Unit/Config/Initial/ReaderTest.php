@@ -7,7 +7,7 @@ namespace Magento\Framework\App\Test\Unit\Config\Initial;
 
 use Magento\Framework\Filesystem;
 
-class ReaderTest extends \PHPUnit\Framework\TestCase
+class ReaderTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\Framework\TestFramework\Unit\Helper\ObjectManager
@@ -56,14 +56,20 @@ class ReaderTest extends \PHPUnit\Framework\TestCase
         }
         $this->objectManager = new \Magento\Framework\TestFramework\Unit\Helper\ObjectManager($this);
         $this->filePath = __DIR__ . '/_files/';
-        $this->fileResolverMock = $this->createMock(\Magento\Framework\Config\FileResolverInterface::class);
-        $this->converterMock = $this->createMock(\Magento\Framework\App\Config\Initial\Converter::class);
-        $this->schemaLocatorMock = $this->createMock(\Magento\Framework\App\Config\Initial\SchemaLocator::class);
-        $this->validationStateMock = $this->createMock(\Magento\Framework\Config\ValidationStateInterface::class);
+        $this->fileResolverMock = $this->getMock('Magento\Framework\Config\FileResolverInterface');
+        $this->converterMock = $this->getMock('Magento\Framework\App\Config\Initial\Converter');
+        $this->schemaLocatorMock = $this->getMock(
+            'Magento\Framework\App\Config\Initial\SchemaLocator',
+            [],
+            [],
+            '',
+            false
+        );
+        $this->validationStateMock = $this->getMock('Magento\Framework\Config\ValidationStateInterface');
         $this->validationStateMock->expects($this->any())
             ->method('isValidationRequired')
             ->will($this->returnValue(true));
-        $this->domFactoryMock = $this->createMock(\Magento\Framework\Config\DomFactory::class);
+        $this->domFactoryMock = $this->getMock('Magento\Framework\Config\DomFactory', [], [], '', false);
     }
 
     public function testConstructor()
@@ -132,7 +138,7 @@ class ReaderTest extends \PHPUnit\Framework\TestCase
     /**
      * @covers \Magento\Framework\App\Config\Initial\Reader::read
      * @expectedException \Magento\Framework\Exception\LocalizedException
-     * @expectedExceptionMessageRegExp /Invalid XML in file (.*?)/
+     * @expectedExceptionMessageRegExp /Invalid XML in file \w+/
      */
     public function testReadInvalidConfig()
     {
@@ -162,7 +168,7 @@ class ReaderTest extends \PHPUnit\Framework\TestCase
         $schemaFile = $this->filePath . 'config.xsd';
         $this->schemaLocatorMock->expects($this->once())->method('getSchema')->will($this->returnValue($schemaFile));
         $this->model = $this->objectManager->getObject(
-            \Magento\Framework\App\Config\Initial\Reader::class,
+            'Magento\Framework\App\Config\Initial\Reader',
             [
                 'fileResolver' => $this->fileResolverMock,
                 'converter' => $this->converterMock,

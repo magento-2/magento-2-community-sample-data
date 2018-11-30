@@ -10,7 +10,6 @@ namespace Magento\Webapi;
 
 use Magento\TestFramework\Helper\Bootstrap;
 use Magento\Framework\App\ProductMetadataInterface;
-use Magento\Store\Model\StoreManagerInterface;
 
 /**
  * Test REST schema generation mechanisms.
@@ -35,10 +34,10 @@ class JsonGenerationFromDataObjectTest extends \Magento\TestFramework\TestCase\W
     {
         $this->_markTestAsRestOnly("JSON generation tests are intended to be executed for REST adapter only.");
 
-        $this->storeCode = Bootstrap::getObjectManager()->get(StoreManagerInterface::class)
+        $this->storeCode = Bootstrap::getObjectManager()->get('Magento\Store\Model\StoreManagerInterface')
             ->getStore()->getCode();
 
-        $this->productMetadata =  Bootstrap::getObjectManager()->get(ProductMetadataInterface::class);
+        $this->productMetadata =  Bootstrap::getObjectManager()->get('Magento\Framework\App\ProductMetadataInterface');
 
         parent::setUp();
     }
@@ -80,7 +79,7 @@ class JsonGenerationFromDataObjectTest extends \Magento\TestFramework\TestCase\W
 
     /**
      * @expectedException \Exception
-     * @expectedExceptionMessage Specified request cannot be processed.
+     * @expectedExceptionMessage Request does not match any route.
      */
     public function testInvalidRestUrlNoServices()
     {

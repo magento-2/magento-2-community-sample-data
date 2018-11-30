@@ -11,7 +11,7 @@ use Magento\Framework\TestFramework\Unit\Helper\ObjectManager as ObjectManagerHe
  * Class LinkTest
  * @package Magento\Review\Block\Adminhtml\Rss\Grid
  */
-class LinkTest extends \PHPUnit\Framework\TestCase
+class LinkTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\Review\Block\Adminhtml\Rss\Grid\Link
@@ -30,11 +30,11 @@ class LinkTest extends \PHPUnit\Framework\TestCase
 
     protected function setUp()
     {
-        $this->urlBuilderInterface = $this->createMock(\Magento\Framework\App\Rss\UrlBuilderInterface::class);
+        $this->urlBuilderInterface = $this->getMock('Magento\Framework\App\Rss\UrlBuilderInterface');
 
         $this->objectManagerHelper = new ObjectManagerHelper($this);
         $this->link = $this->objectManagerHelper->getObject(
-            \Magento\Review\Block\Adminhtml\Rss\Grid\Link::class,
+            'Magento\Review\Block\Adminhtml\Rss\Grid\Link',
             [
                 'rssUrlBuilder' => $this->urlBuilderInterface
             ]

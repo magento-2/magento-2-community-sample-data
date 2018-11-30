@@ -23,7 +23,7 @@
  *                      'zend' => 'StringToUpper',
  *                      'args' => array('encoding' => 'utf-8'))),
  *              'item2' => array(
- *                  array('model' => \Magento\Framework\Filter\Input\MaliciousCode::class)
+ *                  array('model' => 'Magento\Framework\Filter\Input\MaliciousCode')
  *              ),
  *              'item3' => array(
  *                  array(
@@ -183,7 +183,7 @@ class Input implements \Zend_Filter_Interface
         if (null === $name) {
             return $this->_filters;
         } else {
-            return $this->_filters[$name] ?? null;
+            return isset($this->_filters[$name]) ? $this->_filters[$name] : null;
         }
     }
 

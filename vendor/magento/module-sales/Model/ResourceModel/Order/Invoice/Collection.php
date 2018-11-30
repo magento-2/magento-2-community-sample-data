@@ -11,9 +11,7 @@ use Magento\Sales\Model\ResourceModel\Order\Collection\AbstractCollection;
 /**
  * Flat sales order invoice collection
  *
- * @api
  * @author      Magento Core Team <core@magentocommerce.com>
- * @since 100.0.2
  */
 class Collection extends AbstractCollection implements InvoiceSearchResultInterface
 {
@@ -52,10 +50,7 @@ class Collection extends AbstractCollection implements InvoiceSearchResultInterf
      */
     protected function _construct()
     {
-        $this->_init(
-            \Magento\Sales\Model\Order\Invoice::class,
-            \Magento\Sales\Model\ResourceModel\Order\Invoice::class
-        );
+        $this->_init('Magento\Sales\Model\Order\Invoice', 'Magento\Sales\Model\ResourceModel\Order\Invoice');
     }
 
     /**

@@ -16,7 +16,7 @@ use Psr\Log\LoggerInterface;
 /**
  * Class TransactionSaleTest
  */
-class TransactionSaleTest extends \PHPUnit\Framework\TestCase
+class TransactionSaleTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var TransactionSale
@@ -54,7 +54,7 @@ class TransactionSaleTest extends \PHPUnit\Framework\TestCase
         $adapterFactory->method('create')
             ->willReturn($this->adapter);
 
-        $this->model = new TransactionSale($criticalLogger, $this->logger, $adapterFactory);
+        $this->model = new TransactionSale($criticalLogger, $this->logger, $this->adapter, $adapterFactory);
     }
 
     /**
@@ -119,7 +119,7 @@ class TransactionSaleTest extends \PHPUnit\Framework\TestCase
      */
     private function getTransferObjectMock()
     {
-        $transferObjectMock = $this->createMock(TransferInterface::class);
+        $transferObjectMock = $this->getMockForAbstractClass(TransferInterface::class);
         $transferObjectMock->method('getBody')
             ->willReturn($this->getTransferData());
 

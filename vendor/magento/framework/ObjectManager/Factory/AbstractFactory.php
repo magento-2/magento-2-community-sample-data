@@ -145,14 +145,15 @@ abstract class AbstractFactory implements \Magento\Framework\ObjectManager\Facto
             } else {
                 $argument = $this->objectManager->create($argumentType);
             }
-        } elseif ($argument === (array)$argument) {
+
+        } else if ($argument === (array)$argument) {
             if (isset($argument['argument'])) {
                 if (isset($this->globalArguments[$argument['argument']])) {
                     $argument = $this->globalArguments[$argument['argument']];
                 } else {
                     $argument = $paramDefault;
                 }
-            } elseif (!empty($argument)) {
+            } else if (!empty($argument)) {
                 $this->parseArray($argument);
             }
         }
@@ -181,6 +182,7 @@ abstract class AbstractFactory implements \Magento\Framework\ObjectManager\Facto
                     } else {
                         $array[$key] = $this->objectManager->create($item['instance']);
                     }
+
                 } elseif (isset($item['argument'])) {
                     if (isset($this->globalArguments[$item['argument']])) {
                         $array[$key] = $this->globalArguments[$item['argument']];

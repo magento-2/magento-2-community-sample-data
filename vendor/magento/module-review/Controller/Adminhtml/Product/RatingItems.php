@@ -47,7 +47,7 @@ class RatingItems extends ProductController
         /** @var \Magento\Framework\Controller\Result\Raw $resultRaw */
         $resultRaw = $this->resultFactory->create(ResultFactory::TYPE_RAW);
         $resultRaw->setContents(
-            $layout->createBlock(\Magento\Review\Block\Adminhtml\Rating\Detailed::class)
+            $layout->createBlock('Magento\Review\Block\Adminhtml\Rating\Detailed')
                 ->setIndependentMode()
                 ->toHtml()
         );

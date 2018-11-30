@@ -5,7 +5,6 @@
  */
 namespace Magento\Cms\Ui\Component;
 
-use Magento\Framework\Api\Filter;
 use Magento\Framework\Api\FilterBuilder;
 use Magento\Framework\Api\Search\SearchCriteriaBuilder;
 use Magento\Framework\App\ObjectManager;
@@ -16,14 +15,11 @@ use Magento\Framework\View\Element\UiComponent\DataProvider\Reporting;
 class DataProvider extends \Magento\Framework\View\Element\UiComponent\DataProvider\DataProvider
 {
     /**
+     * Authorization.
+     *
      * @var AuthorizationInterface
      */
     private $authorization;
-
-    /**
-     * @var AddFilterInterface[]
-     */
-    private $additionalFilterPool;
 
     /**
      * @param string $name
@@ -35,8 +31,6 @@ class DataProvider extends \Magento\Framework\View\Element\UiComponent\DataProvi
      * @param FilterBuilder $filterBuilder
      * @param array $meta
      * @param array $data
-     * @param array $additionalFilterPool
-     * @SuppressWarnings(PHPMD.ExcessiveParameterList)
      */
     public function __construct(
         $name,
@@ -47,8 +41,7 @@ class DataProvider extends \Magento\Framework\View\Element\UiComponent\DataProvi
         RequestInterface $request,
         FilterBuilder $filterBuilder,
         array $meta = [],
-        array $data = [],
-        array $additionalFilterPool = []
+        array $data = []
     ) {
         parent::__construct(
             $name,
@@ -63,23 +56,25 @@ class DataProvider extends \Magento\Framework\View\Element\UiComponent\DataProvi
         );
 
         $this->meta = array_replace_recursive($meta, $this->prepareMetadata());
-        $this->additionalFilterPool = $additionalFilterPool;
     }
 
     /**
-     * @deprecated 101.0.7
+     * Get Authorization instance.
+     *
+     * @deprecated
      * @return AuthorizationInterface|mixed
      */
     private function getAuthorizationInstance()
     {
-        if ($this->authorization === null) {
+        if (null === $this->authorization) {
             $this->authorization = ObjectManager::getInstance()->get(AuthorizationInterface::class);
         }
+
         return $this->authorization;
     }
 
     /**
-     * Prepares Meta
+     * Prepares Meta.
      *
      * @return array
      */
@@ -94,27 +89,15 @@ class DataProvider extends \Magento\Framework\View\Element\UiComponent\DataProvi
                         'data' => [
                             'config' => [
                                 'editorConfig' => [
-                                    'enabled' => false
-                                ]
-                            ]
-                        ]
-                    ]
-                ]
+                                    'enabled' => false,
+                                ],
+                            ],
+                        ],
+                    ],
+                ],
             ];
         }
 
         return $metadata;
-    }
-
-    /**
-     * @inheritdoc
-     */
-    public function addFilter(Filter $filter)
-    {
-        if (!empty($this->additionalFilterPool[$filter->getField()])) {
-            $this->additionalFilterPool[$filter->getField()]->addFilter($this->searchCriteriaBuilder, $filter);
-        } else {
-            parent::addFilter($filter);
-        }
     }
 }

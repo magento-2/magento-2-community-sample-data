@@ -6,12 +6,15 @@
 namespace Magento\Cms\Model;
 
 use Magento\Cms\Api\Data\BlockInterface;
+use Magento\Cms\Model\ResourceModel\Block as ResourceCmsBlock;
 use Magento\Framework\DataObject\IdentityInterface;
 use Magento\Framework\Model\AbstractModel;
 
 /**
  * CMS block model
  *
+ * @method ResourceCmsBlock _getResource()
+ * @method ResourceCmsBlock getResource()
  * @method Block setStoreId(array $storeId)
  * @method array getStoreId()
  */
@@ -20,7 +23,7 @@ class Block extends AbstractModel implements BlockInterface, IdentityInterface
     /**
      * CMS block cache tag
      */
-    const CACHE_TAG = 'cms_b';
+    const CACHE_TAG = 'cms_block';
 
     /**#@+
      * Block's statuses
@@ -29,9 +32,10 @@ class Block extends AbstractModel implements BlockInterface, IdentityInterface
     const STATUS_DISABLED = 0;
 
     /**#@-*/
-
-    /**#@-*/
-    protected $_cacheTag = self::CACHE_TAG;
+    /**
+     * @var string
+     */
+    protected $_cacheTag = 'cms_block';
 
     /**
      * Prefix of model events names
@@ -45,7 +49,7 @@ class Block extends AbstractModel implements BlockInterface, IdentityInterface
      */
     protected function _construct()
     {
-        $this->_init(\Magento\Cms\Model\ResourceModel\Block::class);
+        $this->_init('Magento\Cms\Model\ResourceModel\Block');
     }
 
     /**
@@ -57,11 +61,6 @@ class Block extends AbstractModel implements BlockInterface, IdentityInterface
     public function beforeSave()
     {
         $needle = 'block_id="' . $this->getId() . '"';
-
-        if ($this->hasDataChanges()) {
-            $this->setUpdateTime(null);
-        }
-
         if (false == strstr($this->getContent(), $needle)) {
             return parent::beforeSave();
         }

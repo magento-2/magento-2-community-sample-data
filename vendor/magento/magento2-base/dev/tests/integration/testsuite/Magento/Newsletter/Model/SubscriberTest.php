@@ -6,7 +6,7 @@
 
 namespace Magento\Newsletter\Model;
 
-class SubscriberTest extends \PHPUnit\Framework\TestCase
+class SubscriberTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var Subscriber

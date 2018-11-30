@@ -7,7 +7,7 @@
 $objectManager = \Magento\TestFramework\Helper\Bootstrap::getObjectManager();
 
 /** @var $product \Magento\Catalog\Model\Product */
-$product = $objectManager->create(\Magento\Catalog\Model\Product::class);
+$product = $objectManager->create('Magento\Catalog\Model\Product');
 
 $product->setTypeId(
     'simple'
@@ -35,10 +35,10 @@ $product->setTypeId(
     true
 )->setStockData(
     [
-        'qty' => 100,
-        'is_in_stock' => 1
+        'qty' => 0,
+        'is_in_stock' => 0
     ]
-)->setHasOptions(true);
+);
 
 $options = [
     [
@@ -46,7 +46,7 @@ $options = [
         'type' => 'field',
         'is_require' => true,
         'sort_order' => 1,
-        'price' => -10.0,
+        'price' => 10.0,
         'price_type' => 'fixed',
         'sku' => 'sku1',
         'max_characters' => 10,
@@ -194,7 +194,7 @@ $options = [
 $customOptions = [];
 
 /** @var \Magento\Catalog\Api\Data\ProductCustomOptionInterfaceFactory $customOptionFactory */
-$customOptionFactory = $objectManager->create(\Magento\Catalog\Api\Data\ProductCustomOptionInterfaceFactory::class);
+$customOptionFactory = $objectManager->create('Magento\Catalog\Api\Data\ProductCustomOptionInterfaceFactory');
 
 foreach ($options as $option) {
     /** @var \Magento\Catalog\Api\Data\ProductCustomOptionInterface $customOption */
@@ -204,8 +204,4 @@ foreach ($options as $option) {
     $customOptions[] = $customOption;
 }
 
-$product->setOptions($customOptions);
-
-/** @var \Magento\Catalog\Api\ProductRepositoryInterface $productRepositoryFactory */
-$productRepository = $objectManager->create(\Magento\Catalog\Api\ProductRepositoryInterface::class);
-$productRepository->save($product);
+$product->setOptions($customOptions)->save();

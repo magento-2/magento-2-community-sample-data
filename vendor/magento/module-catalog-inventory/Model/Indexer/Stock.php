@@ -101,7 +101,7 @@ class Stock implements \Magento\Framework\Indexer\ActionInterface, \Magento\Fram
      * Get cache context
      *
      * @return \Magento\Framework\Indexer\CacheContext
-     * @deprecated 100.0.7
+     * @deprecated
      */
     protected function getCacheContext()
     {

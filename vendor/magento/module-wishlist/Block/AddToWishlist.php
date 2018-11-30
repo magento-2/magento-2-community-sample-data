@@ -8,9 +8,6 @@ namespace Magento\Wishlist\Block;
 
 /**
  * Wishlist js plugin initialization block
- *
- * @api
- * @since 100.1.0
  */
 class AddToWishlist extends \Magento\Framework\View\Element\Template
 {
@@ -39,7 +36,6 @@ class AddToWishlist extends \Magento\Framework\View\Element\Template
      * Returns wishlist widget options
      *
      * @return array
-     * @since 100.1.0
      */
     public function getWishlistOptions()
     {
@@ -59,10 +55,9 @@ class AddToWishlist extends \Magento\Framework\View\Element\Template
             $block = $this->getLayout()->getBlock('category.products.list');
             if ($block) {
                 $productCollection = $block->getLoadedProductCollection();
-                $productTypes = [];
                 /** @var $product \Magento\Catalog\Model\Product */
                 foreach ($productCollection as $product) {
-                    $productTypes[] = $this->escapeHtml($product->getTypeId());
+                    $productTypes[] = $product->getTypeId();
                 }
                 $this->productTypes = array_unique($productTypes);
             }
@@ -72,7 +67,6 @@ class AddToWishlist extends \Magento\Framework\View\Element\Template
 
     /**
      * {@inheritdoc}
-     * @since 100.1.0
      */
     protected function _toHtml()
     {

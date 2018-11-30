@@ -13,7 +13,7 @@ use Magento\TestFramework\Helper\Bootstrap;
  *
  * @magentoAppArea adminhtml
  */
-class NewsletterTest extends \Magento\TestFramework\TestCase\AbstractBackendController
+class NewsletterTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var Newsletter
@@ -32,15 +32,14 @@ class NewsletterTest extends \Magento\TestFramework\TestCase\AbstractBackendCont
      */
     public function setUp()
     {
-        parent::setUp();
         $objectManager = Bootstrap::getObjectManager();
-        $objectManager->get(\Magento\Framework\App\State::class)->setAreaCode('adminhtml');
+        $objectManager->get('Magento\Framework\App\State')->setAreaCode('adminhtml');
 
-        $this->coreRegistry = $objectManager->get(\Magento\Framework\Registry::class);
+        $this->coreRegistry = $objectManager->get('Magento\Framework\Registry');
         $this->block = $objectManager->get(
-            \Magento\Framework\View\LayoutInterface::class
+            'Magento\Framework\View\LayoutInterface'
         )->createBlock(
-            \Magento\Customer\Block\Adminhtml\Edit\Tab\Newsletter::class,
+            'Magento\Customer\Block\Adminhtml\Edit\Tab\Newsletter',
             '',
             ['registry' => $this->coreRegistry]
         )->setTemplate(
@@ -57,18 +56,18 @@ class NewsletterTest extends \Magento\TestFramework\TestCase\AbstractBackendCont
     }
 
     /**
-     * @magentoDataFixture Magento/Customer/_files/customer_sample.php
+     * @magentoDataFixture Magento/Customer/_files/customer.php
      */
-    public function testRenderingNewsletterBlock()
+    public function testToHtml()
     {
-        $this->getRequest()->setParam('id', 1);
-        $this->dispatch('backend/customer/index/edit');
-        $body = $this->getResponse()->getBody();
+        $this->coreRegistry->register(RegistryConstants::CURRENT_CUSTOMER_ID, 1);
+        $html = $this->block->toHtml();
 
-        $this->assertContains('\u003Cspan\u003ENewsletter Information\u003C\/span\u003E', $body);
-        $this->assertContains('\u003Cinput id=\"_newslettersubscription\"', $body);
-        $this->assertNotContains('checked="checked"', $body);
-        $this->assertContains('\u003Cspan\u003ESubscribed to Newsletter\u003C\/span\u003E', $body);
-        $this->assertContains('\u003ENo Newsletter Found\u003C', $body);
+        $this->assertStringStartsWith("<div class=\"entry-edit\">", $html);
+        $this->assertContains("<span>Newsletter Information</span>", $html);
+        $this->assertContains("type=\"checkbox\"", $html);
+        $this->assertNotContains("checked=\"checked\"", $html);
+        $this->assertContains("<span>Subscribed to Newsletter</span>", $html);
+        $this->assertContains(">No Newsletter Found<", $html);
     }
 }

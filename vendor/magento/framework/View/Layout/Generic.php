@@ -105,7 +105,7 @@ class Generic implements LayoutInterface
                 if ($child instanceof DataSourceInterface) {
                     continue;
                 }
-                if ($child->getData('wrapper')) {
+                if ($child instanceof BlockWrapperInterface) {
                     $this->addWrappedBlock($child, $childrenNode);
                     continue;
                 }
@@ -144,7 +144,8 @@ class Generic implements LayoutInterface
      */
     protected function addWrappedBlock(BlockWrapperInterface $childComponent, array &$childrenNode)
     {
-        if (!($childComponent->getData('wrapper/canShow') && $childComponent->getData('wrapper/componentType'))) {
+        $config = $childComponent->getConfiguration();
+        if (!$config['canShow']) {
             return $this;
         }
 
@@ -153,10 +154,10 @@ class Generic implements LayoutInterface
         $childrenNode[$name] = [
             'type' => $panelComponent->getComponentName(),
             'dataScope' => $name,
-            'config' => $childComponent->getConfiguration(),
+            'config' => $config,
             'children' => [
                 $name => [
-                    'type' => $childComponent->getComponentName(),
+                    'type' => $this->getConfig(self::CONFIG_COMPONENT_NAME),
                     'dataScope' => $name,
                     'config' => [
                         'content' => $childComponent->render()
@@ -180,7 +181,7 @@ class Generic implements LayoutInterface
     {
         $panelComponent = $this->uiComponentFactory->create(
             $name,
-            $childComponent->getData('wrapper/componentType'),
+            $this->getConfig(self::CONFIG_PANEL_COMPONENT),
             [
                 'context' => $this->component->getContext(),
                 'components' => [$childComponent->getName() => $childComponent]
@@ -200,6 +201,6 @@ class Generic implements LayoutInterface
      */
     protected function getConfig($name)
     {
-        return $this->data['config'][$name] ?? null;
+        return isset($this->data['config'][$name]) ? $this->data['config'][$name] : null;
     }
 }

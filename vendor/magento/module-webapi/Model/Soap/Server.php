@@ -31,7 +31,7 @@ class Server
     const REQUEST_PARAM_LIST_WSDL = 'wsdl_list';
 
     /**
-     * @var \Magento\Framework\App\AreaList
+     * @var \Magento\Framework\App\AreaLIst
      */
     protected $_areaList;
 

@@ -16,12 +16,16 @@ use Magento\Mtf\Fixture\FixtureInterface;
  */
 class ListProduct extends Block
 {
+    // @codingStandardsIgnoreStart
+
     /**
      * Locator for product item block.
      *
      * @var string
      */
     protected $productItem = './/*[contains(@class,"product-item-link") and normalize-space(text())="%s"]/ancestor::li';
+
+    // @codingStandardsIgnoreEnd
 
     /**
      * Locator for product item link.
@@ -71,27 +75,14 @@ class ListProduct extends Block
     }
 
     /**
-     * Get products count on page
-     *
-     * @return int
-     */
-    public function getProductsCount()
-    {
-        return count($this->_rootElement->getElements($this->productItemLink));
-    }
-
-    /**
      * Get all terms used in sort.
      *
      * @return array
      */
     public function getSortByValues()
     {
-        $values = explode("\n", $this->_rootElement->find($this->sorter)->getText());
-        $result = [];
-        foreach ($values as $value) {
-            $result[] = trim($value);
-        }
-        return $result;
+        $sortValues = $this->_rootElement->find($this->sorter)->getText();
+        
+        return array_filter(array_map("trim", explode("\n", $sortValues)));
     }
 }

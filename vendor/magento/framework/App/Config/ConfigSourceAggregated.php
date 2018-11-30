@@ -28,7 +28,7 @@ class ConfigSourceAggregated implements ConfigSourceInterface
      * Retrieve aggregated configuration from all available sources.
      *
      * @param string $path
-     * @return string|array
+     * @return array
      */
     public function get($path = '')
     {
@@ -37,12 +37,7 @@ class ConfigSourceAggregated implements ConfigSourceInterface
         foreach ($this->sources as $sourceConfig) {
             /** @var ConfigSourceInterface $source */
             $source = $sourceConfig['source'];
-            $configData = $source->get($path);
-            if (!is_array($configData)) {
-                $data = $configData;
-            } elseif (!empty($configData)) {
-                $data = array_replace_recursive(is_array($data) ? $data : [], $configData);
-            }
+            $data = array_replace_recursive($data, $source->get($path));
         }
         return $data;
     }

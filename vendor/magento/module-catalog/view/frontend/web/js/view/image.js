@@ -9,7 +9,6 @@ define([
     'use strict';
 
     return Component.extend({
-        /** @inheritdoc */
         initialize: function () {
             this._super();
 

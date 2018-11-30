@@ -53,7 +53,7 @@ class ClientTokenGateway
      * @ignore
      * @param var $url
      * @param array $params
-     * @return string
+     * @return mixed
      */
     public function _doGenerate($subPath, $params)
     {

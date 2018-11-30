@@ -9,7 +9,7 @@ namespace Magento\Setup\Test\Unit\Fixtures;
 use Magento\Framework\Xml\Parser;
 use Magento\Setup\Fixtures\FixtureConfig;
 
-class FixtureConfigTest extends \PHPUnit\Framework\TestCase
+class FixtureConfigTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\Setup\Fixtures\FixtureConfig
@@ -23,7 +23,7 @@ class FixtureConfigTest extends \PHPUnit\Framework\TestCase
 
     public function setUp()
     {
-        $this->fileParserMock = $this->createPartialMock(Parser::class, ['getDom', 'xmlToArray']);
+        $this->fileParserMock = $this->getMock(Parser::class, ['getDom', 'xmlToArray'], [], '', false);
 
         $this->model = new FixtureConfig($this->fileParserMock);
     }
@@ -43,7 +43,7 @@ class FixtureConfigTest extends \PHPUnit\Framework\TestCase
             ['config' => [ 'profile' => ['some_key' => 'some_value']]]
         );
 
-        $domMock = $this->createPartialMock(\DOMDocument::class, ['load', 'xinclude']);
+        $domMock = $this->getMock(\DOMDocument::class, ['load', 'xinclude'], [], '', false);
         $domMock->expects($this->once())->method('load')->with('config.file')->willReturn(
             $this->fileParserMock->xmlToArray()
         );

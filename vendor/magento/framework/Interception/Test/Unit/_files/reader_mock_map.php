@@ -3,19 +3,15 @@
  * Copyright © Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
-use Magento\Framework\Interception\Test\Unit\Custom\Module\Model\ItemContainerPlugin\Simple;
-use Magento\Framework\Interception\Test\Unit\Custom\Module\Model\StartingBackslash\Plugin;
-
 return [
     [
         'global',
         [
-            \Magento\Framework\Interception\Test\Unit\Custom\Module\Model\Item::class => [
+            'Magento\Framework\Interception\Test\Unit\Custom\Module\Model\Item' => [
                 'plugins' => [
                     'simple_plugin' => [
                         'sortOrder' => 10,
-                        'instance' =>
-                            \Magento\Framework\Interception\Test\Unit\Custom\Module\Model\ItemPlugin\Simple::class,
+                        'instance' => 'Magento\Framework\Interception\Test\Unit\Custom\Module\Model\ItemPlugin\Simple',
                     ],
                 ],
             ]
@@ -24,28 +20,27 @@ return [
     [
         'backend',
         [
-            \Magento\Framework\Interception\Test\Unit\Custom\Module\Model\Item::class => [
+            'Magento\Framework\Interception\Test\Unit\Custom\Module\Model\Item' => [
                 'plugins' => [
                     'advanced_plugin' => [
                         'sortOrder' => 5,
-                        'instance' =>
-                            \Magento\Framework\Interception\Test\Unit\Custom\Module\Model\ItemPlugin\Advanced::class,
+                        'instance' => 'Magento\Framework\Interception\Test\Unit\Custom\Module\Model\ItemPlugin\Advanced',
                     ],
                 ],
             ],
-            \Magento\Framework\Interception\Test\Unit\Custom\Module\Model\ItemContainer::class => [
+            'Magento\Framework\Interception\Test\Unit\Custom\Module\Model\ItemContainer' => [
                 'plugins' => [
                     'simple_plugin' => [
                         'sortOrder' => 15,
-                        'instance' => Simple::class,
+                        'instance' => 'Magento\Framework\Interception\Test\Unit\Custom\Module\Model\ItemContainerPlugin\Simple',
                     ],
                 ],
             ],
-            \Magento\Framework\Interception\Test\Unit\Custom\Module\Model\StartingBackslash::class => [
+            'Magento\Framework\Interception\Test\Unit\Custom\Module\Model\StartingBackslash' => [
                 'plugins' => [
                     'simple_plugin' => [
                         'sortOrder' => 20,
-                        'instance' => Plugin::class,
+                        'instance' => '\Magento\Framework\Interception\Test\Unit\Custom\Module\Model\StartingBackslash\Plugin',
                     ],
                 ],
             ]
@@ -53,14 +48,15 @@ return [
     ],
     [
         'frontend',
-        [\Magento\Framework\Interception\Test\Unit\Custom\Module\Model\Item::class => [
+        [
+            'Magento\Framework\Interception\Test\Unit\Custom\Module\Model\Item' => [
                 'plugins' => ['simple_plugin' => ['disabled' => true]],
-            ], \Magento\Framework\Interception\Test\Unit\Custom\Module\Model\Item\Enhanced::class => [
+            ],
+            'Magento\Framework\Interception\Test\Unit\Custom\Module\Model\Item\Enhanced' => [
                 'plugins' => [
                     'advanced_plugin' => [
                         'sortOrder' => 5,
-                        'instance' =>
-                            \Magento\Framework\Interception\Test\Unit\Custom\Module\Model\ItemPlugin\Advanced::class,
+                        'instance' => 'Magento\Framework\Interception\Test\Unit\Custom\Module\Model\ItemPlugin\Advanced',
                     ],
                 ],
             ],
@@ -70,18 +66,7 @@ return [
                         'instance' => 'NonExistingPluginClass',
                     ],
                 ],
-            ],
-            'typeWithoutInstance' => [
-                'plugins' => [
-                    'simple_plugin' => [],
-                ],
             ]
-        ]
-    ],
-    [
-        'emptyscope',
-        [
-
         ]
     ]
 ];

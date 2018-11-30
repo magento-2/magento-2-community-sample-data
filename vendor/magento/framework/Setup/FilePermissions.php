@@ -7,8 +7,8 @@ namespace Magento\Framework\Setup;
 
 use Magento\Framework\App\Filesystem\DirectoryList;
 use Magento\Framework\Backup\Filesystem\Iterator\Filter;
-use Magento\Framework\Filesystem;
 use Magento\Framework\Filesystem\Filter\ExcludeFilter;
+use Magento\Framework\Filesystem;
 use Magento\Framework\App\State;
 use Magento\Framework\App\ObjectManager;
 
@@ -96,9 +96,6 @@ class FilePermissions
                 DirectoryList::MEDIA,
                 DirectoryList::STATIC_VIEW,
             ];
-            if ($this->state->getMode() !== State::MODE_PRODUCTION) {
-                $data[] = DirectoryList::GENERATED;
-            }
             foreach ($data as $code) {
                 $this->installationWritableDirectories[$code] = $this->directoryList->getPath($code);
             }
@@ -146,7 +143,7 @@ class FilePermissions
     }
 
     /**
-     * Check all sub-directories and files except for generated/code and generated/metadata
+     * Check all sub-directories and files except for var/generation and var/di
      *
      * @param string $directory
      * @return bool
@@ -158,12 +155,15 @@ class FilePermissions
             new \RecursiveDirectoryIterator($directory, \RecursiveDirectoryIterator::SKIP_DOTS),
             \RecursiveIteratorIterator::CHILD_FIRST
         );
-        $noWritableFilesFolders = [
-            $this->directoryList->getPath(DirectoryList::GENERATED_CODE) . '/',
-            $this->directoryList->getPath(DirectoryList::GENERATED_METADATA) . '/',
-        ];
 
-        $directoryIterator = new Filter($directoryIterator, $noWritableFilesFolders);
+        $generationPath = $this->directoryList->getPath(DirectoryList::GENERATION);
+        $diPath = $this->directoryList->getPath(DirectoryList::DI);
+
+        if ($this->state->getMode() === State::MODE_PRODUCTION) {
+            $directoryIterator = new ExcludeFilter($directoryIterator, [$generationPath, $diPath]);
+        } else {
+            $directoryIterator = new Filter($directoryIterator, [$generationPath . '/', $diPath . '/']);
+        }
 
         $directoryIterator = new ExcludeFilter(
             $directoryIterator,
@@ -275,35 +275,9 @@ class FilePermissions
     }
 
     /**
-     * Checks writable paths for database upgrade, returns array of directory paths that requires write permission
-     *
-     * @return array List of directories that requires write permission for database upgrade
-     */
-    public function getMissingWritableDirectoriesForDbUpgrade()
-    {
-        $writableDirectories = [
-            DirectoryList::CONFIG,
-            DirectoryList::VAR_DIR
-        ];
-
-        $requireWritePermission = [];
-        foreach ($writableDirectories as $code) {
-            if (!$this->isWritable($code)) {
-                $path = $this->directoryList->getPath($code);
-                if (!$this->checkRecursiveDirectories($path)) {
-                    $requireWritePermission[] = $path;
-                }
-            }
-        }
-
-        return $requireWritePermission;
-    }
-
-    /**
      * Checks writable directories for installation
      *
-     * @deprecated 100.1.0 Use getMissingWritablePathsForInstallation()
-     * to get all missing writable paths required for install.
+     * @deprecated Use getMissingWritablePathsForInstallation() to get all missing writable paths required for install
      * @return array
      */
     public function getMissingWritableDirectoriesForInstallation()

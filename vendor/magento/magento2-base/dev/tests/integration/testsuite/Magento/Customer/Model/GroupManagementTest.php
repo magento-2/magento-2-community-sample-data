@@ -12,10 +12,10 @@ use Magento\TestFramework\Helper\Bootstrap;
 /**
  * Test for Magento\Customer\Model\GroupManagement
  */
-class GroupManagementTest extends \PHPUnit\Framework\TestCase
+class GroupManagementTest extends \PHPUnit_Framework_TestCase
 {
     /**
-     * @var \Magento\Framework\ObjectManagerInterface
+     * @var \Magento\TestFramework\ObjectManager
      */
     protected $objectManager;
 
@@ -27,7 +27,7 @@ class GroupManagementTest extends \PHPUnit\Framework\TestCase
     protected function setUp()
     {
         $this->objectManager = Bootstrap::getObjectManager();
-        $this->groupManagement = $this->objectManager->get(\Magento\Customer\Api\GroupManagementInterface::class);
+        $this->groupManagement = $this->objectManager->get('Magento\Customer\Api\GroupManagementInterface');
     }
 
     /**
@@ -42,21 +42,21 @@ class GroupManagementTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * @magentoDataFixture Magento/Store/_files/core_second_third_fixturestore.php
+     * @magentoDataFixture Magento/Store/_files/core_fixturestore.php
      */
     public function testGetDefaultGroupWithNonDefaultStoreId()
     {
         /** @var \Magento\Store\Model\StoreManagerInterface  $storeManager */
-        $storeManager = Bootstrap::getObjectManager()->get(\Magento\Store\Model\StoreManagerInterface::class);
-        $nonDefaultStore = $storeManager->getStore('secondstore');
+        $storeManager = Bootstrap::getObjectManager()->get('Magento\Store\Model\StoreManagerInterface');
+        $nonDefaultStore = $storeManager->getStore('fixturestore');
         $nonDefaultStoreId = $nonDefaultStore->getId();
         /** @var \Magento\Framework\App\MutableScopeConfig $scopeConfig */
-        $scopeConfig = $this->objectManager->get(\Magento\Framework\App\MutableScopeConfig::class);
+        $scopeConfig = $this->objectManager->get('Magento\Framework\App\MutableScopeConfig');
         $scopeConfig->setValue(
             \Magento\Customer\Model\GroupManagement::XML_PATH_DEFAULT_ID,
             2,
             ScopeInterface::SCOPE_STORE,
-            'secondstore'
+            'fixturestore'
         );
         $testGroup = ['id' => 2, 'code' => 'Wholesale', 'tax_class_id' => 3, 'tax_class_name' => 'Retail Customer'];
         $this->assertDefaultGroupMatches($testGroup, $nonDefaultStoreId);
@@ -113,7 +113,7 @@ class GroupManagementTest extends \PHPUnit\Framework\TestCase
     public function getDefaultGroupDataProvider()
     {
         /** @var \Magento\Store\Model\StoreManagerInterface  $storeManager */
-        $storeManager = Bootstrap::getObjectManager()->get(\Magento\Store\Model\StoreManagerInterface::class);
+        $storeManager = Bootstrap::getObjectManager()->get('Magento\Store\Model\StoreManagerInterface');
         $defaultStoreId = $storeManager->getStore()->getId();
         return [
             'no store id' => [

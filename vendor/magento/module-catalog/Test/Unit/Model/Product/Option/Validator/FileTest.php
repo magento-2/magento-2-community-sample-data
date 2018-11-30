@@ -6,7 +6,7 @@
 
 namespace Magento\Catalog\Test\Unit\Model\Product\Option\Validator;
 
-class FileTest extends \PHPUnit\Framework\TestCase
+class FileTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\Catalog\Model\Product\Option\Validator\File
@@ -20,9 +20,8 @@ class FileTest extends \PHPUnit\Framework\TestCase
 
     protected function setUp()
     {
-        $configMock = $this->createMock(\Magento\Catalog\Model\ProductOptions\ConfigInterface::class);
-        $storeManagerMock = $this->createMock(\Magento\Store\Model\StoreManagerInterface::class);
-        $priceConfigMock = new \Magento\Catalog\Model\Config\Source\Product\Options\Price($storeManagerMock);
+        $configMock = $this->getMock('Magento\Catalog\Model\ProductOptions\ConfigInterface');
+        $priceConfigMock = new \Magento\Catalog\Model\Config\Source\Product\Options\Price();
         $config = [
             [
                 'label' => 'group label 1',
@@ -47,7 +46,7 @@ class FileTest extends \PHPUnit\Framework\TestCase
         ];
         $configMock->expects($this->once())->method('getAll')->will($this->returnValue($config));
         $methods = ['getTitle', 'getType', 'getPriceType', 'getPrice', 'getImageSizeX', 'getImageSizeY','__wakeup'];
-        $this->valueMock = $this->createPartialMock(\Magento\Catalog\Model\Product\Option::class, $methods);
+        $this->valueMock = $this->getMock('Magento\Catalog\Model\Product\Option', $methods, [], '', false);
         $this->validator = new \Magento\Catalog\Model\Product\Option\Validator\File(
             $configMock,
             $priceConfigMock
@@ -58,10 +57,8 @@ class FileTest extends \PHPUnit\Framework\TestCase
     {
         $this->valueMock->expects($this->once())->method('getTitle')->will($this->returnValue('option_title'));
         $this->valueMock->expects($this->exactly(2))->method('getType')->will($this->returnValue('name 1.1'));
-        $this->valueMock->method('getPriceType')
-            ->willReturn('fixed');
-        $this->valueMock->method('getPrice')
-            ->willReturn(10);
+        $this->valueMock->expects($this->once())->method('getPriceType')->will($this->returnValue('fixed'));
+        $this->valueMock->expects($this->once())->method('getPrice')->will($this->returnValue(10));
         $this->valueMock->expects($this->once())->method('getImageSizeX')->will($this->returnValue(10));
         $this->valueMock->expects($this->once())->method('getImageSizeY')->will($this->returnValue(15));
         $this->assertEmpty($this->validator->getMessages());
@@ -72,10 +69,8 @@ class FileTest extends \PHPUnit\Framework\TestCase
     {
         $this->valueMock->expects($this->once())->method('getTitle')->will($this->returnValue('option_title'));
         $this->valueMock->expects($this->exactly(2))->method('getType')->will($this->returnValue('name 1.1'));
-        $this->valueMock->method('getPriceType')
-            ->willReturn('fixed');
-        $this->valueMock->method('getPrice')
-            ->willReturn(10);
+        $this->valueMock->expects($this->once())->method('getPriceType')->will($this->returnValue('fixed'));
+        $this->valueMock->expects($this->once())->method('getPrice')->will($this->returnValue(10));
         $this->valueMock->expects($this->once())->method('getImageSizeX')->will($this->returnValue(-10));
         $this->valueMock->expects($this->never())->method('getImageSizeY');
         $messages = [
@@ -89,10 +84,8 @@ class FileTest extends \PHPUnit\Framework\TestCase
     {
         $this->valueMock->expects($this->once())->method('getTitle')->will($this->returnValue('option_title'));
         $this->valueMock->expects($this->exactly(2))->method('getType')->will($this->returnValue('name 1.1'));
-        $this->valueMock->method('getPriceType')
-            ->willReturn('fixed');
-        $this->valueMock->method('getPrice')
-            ->willReturn(10);
+        $this->valueMock->expects($this->once())->method('getPriceType')->will($this->returnValue('fixed'));
+        $this->valueMock->expects($this->once())->method('getPrice')->will($this->returnValue(10));
         $this->valueMock->expects($this->once())->method('getImageSizeX')->will($this->returnValue(10));
         $this->valueMock->expects($this->once())->method('getImageSizeY')->will($this->returnValue(-10));
         $messages = [

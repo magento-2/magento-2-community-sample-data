@@ -1,8 +1,10 @@
 <?php
 /**
- * @see       https://github.com/zendframework/zend-http for the canonical source repository
- * @copyright Copyright (c) 2005-2017 Zend Technologies USA Inc. (http://www.zend.com)
- * @license   https://github.com/zendframework/zend-http/blob/master/LICENSE.md New BSD License
+ * Zend Framework (http://framework.zend.com/)
+ *
+ * @link      http://github.com/zendframework/zf2 for the canonical source repository
+ * @copyright Copyright (c) 2005-2015 Zend Technologies USA Inc. (http://www.zend.com)
+ * @license   http://framework.zend.com/license/new-bsd New BSD License
  */
 
 namespace Zend\Http\Header;
@@ -29,7 +31,7 @@ abstract class AbstractLocation implements HeaderInterface
      *
      * @var UriInterface
      */
-    protected $uri;
+    protected $uri = null;
 
     /**
      * Create location-based header from string
@@ -71,12 +73,6 @@ abstract class AbstractLocation implements HeaderInterface
             try {
                 $uri = UriFactory::factory($uri);
             } catch (UriException\InvalidUriPartException $e) {
-                throw new Exception\InvalidArgumentException(
-                    sprintf('Invalid URI passed as string (%s)', (string) $uri),
-                    $e->getCode(),
-                    $e
-                );
-            } catch (UriException\InvalidArgumentException $e) {
                 throw new Exception\InvalidArgumentException(
                     sprintf('Invalid URI passed as string (%s)', (string) $uri),
                     $e->getCode(),

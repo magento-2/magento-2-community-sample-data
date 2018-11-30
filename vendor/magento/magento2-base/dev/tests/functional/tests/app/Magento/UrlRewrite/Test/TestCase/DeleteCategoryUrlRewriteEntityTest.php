@@ -23,13 +23,14 @@ use Magento\Mtf\TestCase\Injectable;
  * 4. Delete URL Rewrite.
  * 5. Perform all assertions.
  *
- * @group URL_Rewrites
+ * @group URL_Rewrites_(MX)
  * @ZephyrId MAGETWO-25086
  */
 class DeleteCategoryUrlRewriteEntityTest extends Injectable
 {
     /* tags */
     const MVP = 'yes';
+    const DOMAIN = 'MX';
     /* end tags */
 
     /**

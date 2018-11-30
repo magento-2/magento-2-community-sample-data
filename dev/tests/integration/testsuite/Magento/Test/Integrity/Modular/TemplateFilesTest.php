@@ -9,7 +9,6 @@ use Magento\Customer\Model\Context;
 
 /**
  * @magentoAppIsolation enabled
- * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  */
 class TemplateFilesTest extends \Magento\TestFramework\TestCase\AbstractIntegrity
 {
@@ -19,18 +18,18 @@ class TemplateFilesTest extends \Magento\TestFramework\TestCase\AbstractIntegrit
         $invoker(
             function ($module, $template, $class, $area) {
                 \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->get(
-                    \Magento\Framework\View\DesignInterface::class
+                    'Magento\Framework\View\DesignInterface'
                 )->setDefaultDesignTheme();
                 // intentionally to make sure the module files will be requested
                 $params = [
                     'area' => $area,
                     'themeModel' => \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->create(
-                        \Magento\Framework\View\Design\ThemeInterface::class
+                        'Magento\Framework\View\Design\ThemeInterface'
                     ),
                     'module' => $module,
                 ];
                 $file = \Magento\TestFramework\Helper\Bootstrap::getObjectmanager()->get(
-                    \Magento\Framework\View\FileSystem::class
+                    'Magento\Framework\View\FileSystem'
                 )->getTemplateFileName(
                     $template,
                     $params
@@ -52,7 +51,7 @@ class TemplateFilesTest extends \Magento\TestFramework\TestCase\AbstractIntegrit
         try {
             /** @var $website \Magento\Store\Model\Website */
             \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->get(
-                \Magento\Store\Model\StoreManagerInterface::class
+                'Magento\Store\Model\StoreManagerInterface'
             )->getStore()->setWebsiteId(
                 0
             );
@@ -64,7 +63,7 @@ class TemplateFilesTest extends \Magento\TestFramework\TestCase\AbstractIntegrit
                     continue;
                 }
                 $class = new \ReflectionClass($blockClass);
-                if ($class->isAbstract() || !$class->isSubclassOf(\Magento\Framework\View\Element\Template::class)) {
+                if ($class->isAbstract() || !$class->isSubclassOf('Magento\Framework\View\Element\Template')) {
                     continue;
                 }
 
@@ -76,31 +75,31 @@ class TemplateFilesTest extends \Magento\TestFramework\TestCase\AbstractIntegrit
                     $blockClass,
                     '\\Backend\\'
                 ) || $class->isSubclassOf(
-                    \Magento\Backend\Block\Template::class
+                    'Magento\Backend\Block\Template'
                 )
                 ) {
                     $area = 'adminhtml';
                 }
 
                 \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->get(
-                    \Magento\Framework\App\AreaList::class
+                    'Magento\Framework\App\AreaList'
                 )->getArea(
                     $area
                 )->load(
                     \Magento\Framework\App\Area::PART_CONFIG
                 );
                 \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->get(
-                    \Magento\Framework\Config\ScopeInterface::class
+                    'Magento\Framework\Config\ScopeInterface'
                 )->setCurrentScope(
                     $area
                 );
                 \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->get(
-                    \Magento\Framework\App\State::class
+                    'Magento\Framework\App\State'
                 )->setAreaCode(
                     $area
                 );
                 $context = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->get(
-                    \Magento\Framework\App\Http\Context::class
+                    'Magento\Framework\App\Http\Context'
                 );
                 $context->setValue(Context::CONTEXT_AUTH, false, false);
                 $context->setValue(

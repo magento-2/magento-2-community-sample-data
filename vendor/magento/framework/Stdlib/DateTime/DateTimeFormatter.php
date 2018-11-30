@@ -43,7 +43,7 @@ class DateTimeFormatter implements DateTimeFormatterInterface
     {
         if ($this->localeResolver === null) {
             $this->localeResolver = \Magento\Framework\App\ObjectManager::getInstance()->get(
-                \Magento\Framework\Locale\ResolverInterface::class
+                'Magento\Framework\Locale\ResolverInterface'
             );
         }
         return $this->localeResolver;
@@ -64,7 +64,7 @@ class DateTimeFormatter implements DateTimeFormatterInterface
     /**
      * Implements what IntlDateFormatter::formatObject() is in PHP 5.5+
      *
-     * @param \IntlCalendar|\DateTimeInterface $object
+     * @param \IntlCalendar|\DateTime $object
      * @param string|int|array|null $format
      * @param string|null $locale
      * @return string

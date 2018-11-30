@@ -8,7 +8,7 @@ namespace Magento\Tax\Block\Adminhtml\Rate;
 use Magento\Tax\Controller\RegistryConstants;
 use Magento\Tax\Model\Calculation\Rate;
 
-class TitleTest extends \PHPUnit\Framework\TestCase
+class TitleTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\Tax\Block\Adminhtml\Rate\Title
@@ -33,20 +33,20 @@ class TitleTest extends \PHPUnit\Framework\TestCase
     public function testGetTitles()
     {
         /** @var \Magento\Tax\Model\Calculation\Rate $rate */
-        $rate = $this->_objectManager->create(\Magento\Tax\Model\Calculation\Rate::class);
+        $rate = $this->_objectManager->create('Magento\Tax\Model\Calculation\Rate');
         $rate->load(1);
         /** @var \Magento\Store\Model\Store $store */
-        $store = $this->_objectManager->get(\Magento\Store\Model\Store::class);
+        $store = $this->_objectManager->get('Magento\Store\Model\Store');
         $store->load('test', 'code');
         $title = 'title';
         $rate->saveTitles([$store->getId() => $title]);
 
-        $coreRegistry = $this->_objectManager->create(\Magento\Framework\Registry::class);
+        $coreRegistry = $this->_objectManager->create('Magento\Framework\Registry');
         $coreRegistry->register(RegistryConstants::CURRENT_TAX_RATE_ID, 1);
 
         /** @var \Magento\Tax\Block\Adminhtml\Rate\Title $block */
         $block = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->create(
-            \Magento\Tax\Block\Adminhtml\Rate\Title::class,
+            'Magento\Tax\Block\Adminhtml\Rate\Title',
             [
                 'coreRegistry' => $coreRegistry,
             ]

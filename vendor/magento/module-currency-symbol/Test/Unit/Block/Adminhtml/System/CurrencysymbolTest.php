@@ -5,7 +5,7 @@
  */
 namespace Magento\CurrencySymbol\Test\Unit\Block\Adminhtml\System;
 
-class CurrencysymbolTest extends \PHPUnit\Framework\TestCase
+class CurrencysymbolTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * Object manager helper
@@ -26,19 +26,25 @@ class CurrencysymbolTest extends \PHPUnit\Framework\TestCase
 
     public function testPrepareLayout()
     {
-        $symbolSystemFactoryMock = $this->createPartialMock(
-            \Magento\CurrencySymbol\Model\System\CurrencysymbolFactory::class,
-            ['create']
+        $symbolSystemFactoryMock = $this->getMock(
+            'Magento\CurrencySymbol\Model\System\CurrencysymbolFactory',
+            ['create'],
+            [],
+            '',
+            false
         );
 
-        $blockMock = $this->createPartialMock(
-            \Magento\Framework\View\Element\BlockInterface::class,
-            ['addChild', 'toHtml']
+        $blockMock = $this->getMock(
+            'Magento\Framework\View\Element\BlockInterface',
+            ['addChild', 'toHtml'],
+            [],
+            '',
+            false
         );
 
         /** @var $layoutMock \Magento\Framework\View\LayoutInterface|\PHPUnit_Framework_MockObject_MockObject */
         $layoutMock = $this->getMockForAbstractClass(
-            \Magento\Framework\View\LayoutInterface::class,
+            'Magento\Framework\View\LayoutInterface',
             [],
             '',
             false,
@@ -53,7 +59,7 @@ class CurrencysymbolTest extends \PHPUnit\Framework\TestCase
             ->method('addChild')
             ->with(
                 'save_button',
-                \Magento\Backend\Block\Widget\Button::class,
+                'Magento\Backend\Block\Widget\Button',
                 [
                     'label' => __('Save Currency Symbols'),
                     'class' => 'save primary save-currency-symbols',
@@ -65,7 +71,7 @@ class CurrencysymbolTest extends \PHPUnit\Framework\TestCase
 
         /** @var $block \Magento\CurrencySymbol\Block\Adminhtml\System\Currencysymbol */
         $block = $this->objectManagerHelper->getObject(
-            \Magento\CurrencySymbol\Block\Adminhtml\System\Currencysymbol::class,
+            'Magento\CurrencySymbol\Block\Adminhtml\System\Currencysymbol',
             [
                 'symbolSystemFactory' => $symbolSystemFactoryMock,
                 'layout' => $layoutMock

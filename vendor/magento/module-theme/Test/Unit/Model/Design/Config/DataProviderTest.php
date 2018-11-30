@@ -14,10 +14,7 @@ use Magento\Theme\Model\Design\Config\DataProvider;
 use Magento\Theme\Model\Design\Config\MetadataLoader;
 use Magento\Theme\Model\ResourceModel\Design\Config\Collection;
 
-/**
- * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
- */
-class DataProviderTest extends \PHPUnit\Framework\TestCase
+class DataProviderTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var DataProvider
@@ -62,24 +59,25 @@ class DataProviderTest extends \PHPUnit\Framework\TestCase
     protected function setUp()
     {
         $this->objectManager = new ObjectManager($this);
-        $this->dataLoader = $this->getMockBuilder(\Magento\Theme\Model\Design\Config\DataProvider\DataLoader::class)
+        $this->dataLoader = $this->getMockBuilder('Magento\Theme\Model\Design\Config\DataProvider\DataLoader')
             ->disableOriginalConstructor()
             ->getMock();
 
-        $this->metadataLoader = $this->getMockBuilder(
-            \Magento\Theme\Model\Design\Config\DataProvider\MetadataLoader::class
-        )->disableOriginalConstructor()->getMock();
+        $this->metadataLoader = $this->getMockBuilder('Magento\Theme\Model\Design\Config\DataProvider\MetadataLoader')
+            ->disableOriginalConstructor()
+            ->getMock();
         $this->metadataLoader->expects($this->once())
             ->method('getData')
             ->willReturn([]);
 
-        $this->collection = $this->getMockBuilder(\Magento\Theme\Model\ResourceModel\Design\Config\Collection::class)
+        $this->collection = $this->getMockBuilder('Magento\Theme\Model\ResourceModel\Design\Config\Collection')
             ->disableOriginalConstructor()
             ->getMock();
 
-        $collectionFactory = $this->getMockBuilder(
-            \Magento\Theme\Model\ResourceModel\Design\Config\CollectionFactory::class
-        )->disableOriginalConstructor()->setMethods(['create'])->getMock();
+        $collectionFactory = $this->getMockBuilder('Magento\Theme\Model\ResourceModel\Design\Config\CollectionFactory')
+            ->disableOriginalConstructor()
+            ->setMethods(['create'])
+            ->getMock();
         $collectionFactory->expects($this->once())
             ->method('create')
             ->willReturn($this->collection);

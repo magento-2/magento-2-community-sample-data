@@ -2,7 +2,7 @@
  * Copyright © Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
-
+/*jshint browser:true*/
 (function (root, factory) {
     'use strict';
 
@@ -27,8 +27,7 @@
     $.widget('mage.suggest', {
         widgetEventPrefix: 'suggest',
         options: {
-            template: '<% if (data.items.length) { %>' +
-                '<% if (!data.term && !data.allShown() && data.recentShown()) { %>' +
+            template: '<% if (data.items.length) { %><% if (!data.term && !data.allShown() && data.recentShown()) { %>' +
                 '<h5 class="title"><%- data.recentTitle %></h5>' +
                 '<% } %>' +
                 '<ul data-mage-init=\'{"menu":[]}\'>' +
@@ -42,7 +41,6 @@
                 '<% } %>' +
                 '</ul><% } else { %><span class="mage-suggest-no-records"><%- data.noRecordsText %></span><% } %>',
             minLength: 1,
-
             /**
              * @type {(String|Array)}
              */
@@ -65,8 +63,7 @@
             inputWrapper: '<div class="mage-suggest"><div class="mage-suggest-inner"></div></div>',
             dropdownWrapper: '<div class="mage-suggest-dropdown"></div>',
             preventClickPropagation: true,
-            currentlySelected: null,
-            submitInputOnEnter: true
+            currentlySelected: null
         },
 
         /**
@@ -79,7 +76,9 @@
                 id: '',
                 label: ''
             };
+            
             this.templates = {};
+
             this._renderedContext = null;
             this._selectedItem = this._nonSelectedItem;
             this._control = this.options.controls || {};
@@ -94,10 +93,8 @@
          * @private
          */
         _render: function () {
-            var wrapper;
-
             this.dropdown = $(this.options.dropdownWrapper).hide();
-            wrapper = this.options.className ?
+            var wrapper = this.options.className ?
                 $(this.options.inputWrapper).addClass(this.options.className) :
                 $(this.options.inputWrapper);
             this.element
@@ -171,7 +168,6 @@
                     which: event.keyCode
                 }),
                 target = this._control.selector ? this.dropdown.find(this._control.selector) : this.dropdown;
-
             target.trigger(fakeEvent);
         },
 
@@ -181,9 +177,6 @@
          */
         _bind: function () {
             this._on($.extend({
-                /**
-                 * @param {jQuery.Event} event
-                 */
                 keydown: function (event) {
                     var keyCode = $.ui.keyCode,
                         suggestList,
@@ -200,17 +193,13 @@
                             }
 
                             suggestList = event.currentTarget.parentNode.getElementsByTagName('ul')[0];
-                            hasSuggestedItems = event.currentTarget
-                                    .parentNode.getElementsByTagName('ul')[0].children.length >= 0;
-
+                            hasSuggestedItems = event.currentTarget.parentNode.getElementsByTagName('ul')[0].children.length >= 0;
                             if (hasSuggestedItems) {
-                                selectedItem =  $(suggestList.getElementsByClassName('_active')[0])
-                                    .removeClass('_active').prev().addClass('_active');
-                                event.currentTarget.value = selectedItem.find('a').text();
+                                selectedItem =  $(suggestList.getElementsByClassName('_active')[0]).removeClass('_active').prev().addClass('_active');
+                                event.currentTarget.value = selectedItem.find("a").text();
                             }
 
                             break;
-
                         case keyCode.PAGE_DOWN:
                         case keyCode.DOWN:
                             if (!event.shiftKey) {
@@ -219,40 +208,32 @@
                             }
 
                             suggestList = event.currentTarget.parentNode.getElementsByTagName('ul')[0];
-                            hasSuggestedItems = event.currentTarget
-                                .parentNode.getElementsByTagName('ul')[0].children.length >= 0;
-
-                            if (hasSuggestedItems) {
+                            hasSuggestedItems = event.currentTarget.parentNode.getElementsByTagName('ul')[0].children.length >= 0;
+                            if(hasSuggestedItems){
                                 hasSelectedItems = suggestList.getElementsByClassName('_active').length === 0;
-
-                                if (hasSelectedItems) { //eslint-disable-line max-depth
+                                if(hasSelectedItems) {
                                     selectedItem = $(suggestList.children[0]).addClass('_active');
-                                    event.currentTarget.value = selectedItem.find('a').text();
-                                } else {
-                                    selectedItem = $(suggestList.getElementsByClassName('_active')[0])
-                                        .removeClass('_active').next().addClass('_active');
-                                    event.currentTarget.value = selectedItem.find('a').text();
+                                    event.currentTarget.value = selectedItem.find("a").text();
+                                }else {
+                                    selectedItem = $(suggestList.getElementsByClassName('_active')[0]).removeClass('_active').next().addClass('_active');
+                                    event.currentTarget.value = selectedItem.find("a").text();
                                 }
                             }
                             break;
-
                         case keyCode.TAB:
                             if (this.isDropdownShown()) {
                                 this._onSelectItem(event, null);
                                 event.preventDefault();
                             }
                             break;
-
                         case keyCode.ENTER:
                         case keyCode.NUMPAD_ENTER:
-                            this._toggleEnter(event);
 
                             if (this.isDropdownShown() && this._focused) {
                                 this._proxyEvents(event);
                                 event.preventDefault();
                             }
                             break;
-
                         case keyCode.ESCAPE:
                             if (this.isDropdownShown()) {
                                 event.stopPropagation();
@@ -262,13 +243,8 @@
                             break;
                     }
                 },
-
-                /**
-                 * @param {jQuery.Event} event
-                 */
                 keyup: function (event) {
                     var keyCode = $.ui.keyCode;
-
                     switch (event.keyCode) {
                         case keyCode.HOME:
                         case keyCode.END:
@@ -281,7 +257,6 @@
                         case keyCode.RIGHT:
                         case keyCode.TAB:
                             break;
-
                         case keyCode.ENTER:
                         case keyCode.NUMPAD_ENTER:
                             if (this.isDropdownShown()) {
@@ -292,10 +267,6 @@
                             this.search(event);
                     }
                 },
-
-                /**
-                 * @param {jQuery.Event} event
-                 */
                 blur: function (event) {
                     if (!this.preventBlur) {
                         this._abortSearch();
@@ -312,46 +283,7 @@
                 click: this.search
             }, this.options.events));
 
-            this._bindSubmit();
             this._bindDropdown();
-        },
-
-        /**
-         * @param {Object} event
-         * @private
-         */
-        _toggleEnter: function (event) {
-            var suggestList,
-                activeItems,
-                selectedItem;
-
-            if (!this.options.submitInputOnEnter) {
-                event.preventDefault();
-            }
-
-            suggestList = $(event.currentTarget.parentNode).find('ul').first();
-            activeItems = suggestList.find('._active');
-
-            if (activeItems.length >= 0) {
-                selectedItem = activeItems.first();
-
-                if (selectedItem.find('a') && selectedItem.find('a').attr('href') !== undefined) {
-                    window.location = selectedItem.find('a').attr('href');
-                    event.preventDefault();
-                }
-            }
-        },
-
-        /**
-         * Bind handlers for submit on enter
-         * @private
-         */
-        _bindSubmit: function () {
-            this.element.parents('form').on('submit', function (event) {
-                if (!this.submitInputOnEnter) {
-                    event.preventDefault();
-                }
-            });
         },
 
         /**
@@ -370,36 +302,26 @@
          */
         _bindDropdown: function () {
             var events = {
-                /**
-                 * @param {jQuery.Event} e
-                 */
                 click: function (e) {
                     // prevent default browser's behavior of changing location by anchor href
                     e.preventDefault();
                 },
-
-                /**
-                 * @param {jQuery.Event} e
-                 */
                 mousedown: function (e) {
                     e.preventDefault();
                 }
             };
-
             $.each(this._control.eventsMap, $.proxy(function (suggestEvent, controlEvents) {
                 $.each(controlEvents, $.proxy(function (i, handlerName) {
                     switch (suggestEvent) {
-                        case 'select':
-                            events[handlerName] = this._onSelectItem;
-                            break;
-
-                        case 'focus':
-                            events[handlerName] = this._focusItem;
-                            break;
-
-                        case 'blur':
-                            events[handlerName] = this._blurItem;
-                            break;
+                    case 'select':
+                        events[handlerName] = this._onSelectItem;
+                        break;
+                    case 'focus':
+                        events[handlerName] = this._focusItem;
+                        break;
+                    case 'blur':
+                        events[handlerName] = this._blurItem;
+                        break;
                     }
                 }, this));
             }, this));
@@ -409,16 +331,9 @@
             }
             // Fix for IE 8
             this._on(this.dropdown, {
-                /**
-                 * Mousedown.
-                 */
                 mousedown: function () {
                     this.preventBlur = true;
                 },
-
-                /**
-                 * Mouseup.
-                 */
                 mouseup: function () {
                     this.preventBlur = false;
                 }
@@ -480,8 +395,8 @@
             }
 
             if (this._trigger('beforeselect', e || null, {
-                    item: this._focused
-                }) === false) {
+                item: this._focused
+            }) === false) {
                 return;
             }
             this._selectItem(e);
@@ -577,7 +492,7 @@
                 this._term = term;
 
                 if ($.type(term) === 'string' && term.length >= this.options.minLength) {
-                    if (this._trigger('search', e) === false) { //eslint-disable-line max-depth
+                    if (this._trigger('search', e) === false) {
                         return;
                     }
                     this._search(e, term, {});
@@ -588,7 +503,7 @@
             }
         },
 
-        /**
+        /*
          * Clear suggest hidden input
          * @private
          */
@@ -607,7 +522,6 @@
             var response = $.proxy(function (items) {
                 return this._processResponse(e, items, context || {});
             }, this);
-
             this.element.addClass(this.options.loadingClass);
 
             if (this.options.delay) {
@@ -633,11 +547,6 @@
             return $.extend(context, {
                 items: this._items,
                 term: this._term,
-
-                /**
-                 * @param {Object} item
-                 * @return {String}
-                 */
                 optionData: function (item) {
                     return 'data-suggest-option="' +
                         $('<div>').text(JSON.stringify(item)).html().replace(/"/g, '&quot;') + '"';
@@ -648,12 +557,12 @@
         },
 
         /**
-         * @param {Object} item
+         * @param item
          * @return {Boolean}
          * @private
          */
         _isItemSelected: function (item) {
-            return item.id == (this._selectedItem && this._selectedItem.id ? //eslint-disable-line eqeqeq
+            return item.id == (this._selectedItem && this._selectedItem.id ?
                 this._selectedItem.id :
                 this.options.currentlySelected);
         },
@@ -677,8 +586,8 @@
             $(tmpl).appendTo(this.dropdown.empty());
 
             this.dropdown.trigger('contentUpdated')
-                .find(this._control.selector).on('focus', function (event) {
-                    event.preventDefault();
+                .find(this._control.selector).on('focus', function (e) {
+                    e.preventDefault();
                 });
 
             this._renderedContext = context;
@@ -693,8 +602,8 @@
          * @private
          */
         _processResponse: function (e, items, context) {
-            var renderer = $.proxy(function (i) {
-                return this._renderDropdown(e, i, context || {});
+            var renderer = $.proxy(function (items) {
+                return this._renderDropdown(e, items, context || {});
             }, this);
 
             if (this._trigger('response', e, [items, renderer]) === false) {
@@ -710,13 +619,15 @@
          * @private
          */
         _source: function (term, response) {
-            var o = this.options,
-                ajaxData;
+            var o = this.options;
 
             if ($.isArray(o.source)) {
                 response(this.filter(o.source, term));
             } else if ($.type(o.source) === 'string') {
-                ajaxData = {};
+                if (this._xhr) {
+                    this._xhr.abort();
+                }
+                var ajaxData = {};
                 ajaxData[this.options.termAjaxArgument] = term;
 
                 this._xhr = $.ajax($.extend(true, {
@@ -741,6 +652,10 @@
         _abortSearch: function () {
             this.element.removeClass(this.options.loadingClass);
             clearTimeout(this._searchTimeout);
+
+            if (this._xhr) {
+                this._xhr.abort();
+            }
         },
 
         /**
@@ -750,11 +665,11 @@
          * @return {Object}
          */
         filter: function (items, term) {
-            var matcher = new RegExp(term.replace(/[\-\/\\\^$*+?.()|\[\]{}]/g, '\\$&'), 'i'),
-                itemsArray = $.isArray(items) ? items : $.map(items, function (element) {
-                    return element;
-                }),
-                property = this.options.filterProperty;
+            var matcher = new RegExp(term.replace(/[\-\/\\\^$*+?.()|\[\]{}]/g, '\\$&'), 'i');
+            var itemsArray = $.isArray(items) ? items : $.map(items, function (element) {
+                return element;
+            });
+            var property = this.options.filterProperty;
 
             return $.grep(
                 itemsArray,
@@ -780,11 +695,8 @@
          * @override
          */
         _create: function () {
-            var recentItems;
-
             if (this.options.showRecent && window.localStorage) {
-                recentItems = JSON.parse(localStorage.getItem(this.options.storageKey));
-
+                var recentItems = JSON.parse(localStorage.getItem(this.options.storageKey));
                 /**
                  * @type {Array} - list of recently searched items
                  * @private
@@ -800,9 +712,6 @@
         _bind: function () {
             this._super();
             this._on(this.dropdown, {
-                /**
-                 * @param {jQuery.Event} e
-                 */
                 showAll: function (e) {
                     e.stopImmediatePropagation();
                     e.preventDefault();
@@ -812,9 +721,6 @@
 
             if (this.options.showRecent || this.options.showAll) {
                 this._on({
-                    /**
-                     * @param {jQuery.Event} e
-                     */
                     focus: function (e) {
                         if (!this.isDropdownShown()) {
                             this.search(e);
@@ -844,7 +750,7 @@
 
                 if (this.options.showRecent) {
 
-                    if (this._recentItems.length) { //eslint-disable-line max-depth
+                    if (this._recentItems.length) {
                         this._processResponse(e, this._recentItems, {});
                     } else {
                         this._showAll(e);
@@ -879,10 +785,6 @@
                 }, this),
                 recentTitle: $.mage.__('Recent items'),
                 showAllTitle: $.mage.__('Show all...'),
-
-                /**
-                 * @return {Boolean}
-                 */
                 allShown: function () {
                     return !!context._allShown;
                 }
@@ -910,11 +812,10 @@
     $.widget('mage.suggest', $.mage.suggest, {
         options: {
             multiSuggestWrapper: '<ul class="mage-suggest-choices">' +
-                '<li class="mage-suggest-search-field" data-role="parent-choice-element"><' +
-                'label class="mage-suggest-search-label"></label></li></ul>',
+                '<li class="mage-suggest-search-field" data-role="parent-choice-element"><label class="mage-suggest-search-label"></label></li></ul>',
             choiceTemplate: '<li class="mage-suggest-choice button"><div><%- text %></div>' +
-            '<span class="mage-suggest-choice-close" tabindex="-1" ' +
-            'data-mage-init=\'{"actionLink":{"event":"removeOption"}}\'></span></li>',
+                '<span class="mage-suggest-choice-close" tabindex="-1" ' +
+                'data-mage-init=\'{"actionLink":{"event":"removeOption"}}\'></span></li>',
             selectedClass: 'mage-suggest-selected'
         },
 
@@ -948,7 +849,6 @@
          */
         _renderMultiselect: function () {
             var that = this;
-
             this.element.wrap(this.options.multiSuggestWrapper);
             this.elementWrapper = this.element.closest('[data-role="parent-choice-element"]');
             $(function () {
@@ -979,9 +879,6 @@
 
             if (this.options.multiselect) {
                 this._on({
-                    /**
-                     * @param {jQuery.Event} event
-                     */
                     keydown: function (event) {
                         if (event.keyCode === $.ui.keyCode.BACKSPACE) {
                             if (!this._value()) {
@@ -996,6 +893,7 @@
 
         /**
          * @param {Array} items
+         * @param {Object} context
          * @return {Array}
          * @private
          */
@@ -1004,9 +902,8 @@
 
             return $.grep(items, function (value) {
                 var itemSelected = false;
-
                 $.each(options, function () {
-                    if (value.id == $(this).val()) { //eslint-disable-line eqeqeq
+                    if (value.id == $(this).val()) {
                         itemSelected = true;
                     }
                 });
@@ -1058,9 +955,9 @@
                     type: 'hidden',
                     multiple: 'multiple'
                 });
+            } else {
+                return this._super();
             }
-
-            return this._super();
         },
 
         /**
@@ -1071,7 +968,6 @@
                 if (this._focused) {
                     this._selectedItem = this._focused;
 
-                    /* eslint-disable max-depth */
                     if (this._selectedItem !== this._nonSelectedItem) {
                         this._term = '';
                         this.element.val(this._term);
@@ -1085,8 +981,6 @@
                             this._addOption(e, this._selectedItem);
                         }
                     }
-
-                    /* eslint-enable max-depth */
                 }
                 this.close(e);
             } else {
@@ -1100,9 +994,9 @@
         _isItemSelected: function (item) {
             if (this.options.multiselect) {
                 return this.valueField.find('option[value=' + item.id + ']').length > 0;
+            } else {
+                return this._superApply(arguments);
             }
-
-            return this._superApply(arguments);
         },
 
         /**
@@ -1127,7 +1021,7 @@
         /**
          * Add selected item in to select options
          * @param {Object} e - event object
-         * @param {*} item
+         * @param item
          * @private
          */
         _addOption: function (e, item) {
@@ -1165,8 +1059,8 @@
          * @private
          */
         removeOption: function (e, item) {
-            var option = this._getOption(item),
-                selectTarget = option.data('selectTarget');
+            var option = this._getOption(item);
+            var selectTarget = option.data('selectTarget');
 
             if (selectTarget && selectTarget.length) {
                 selectTarget.removeClass(this.options.selectedClass);

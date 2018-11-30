@@ -2,10 +2,6 @@
  * Copyright © Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
-
-/**
- * @api
- */
 define([
     'jquery',
     'mageUtils',
@@ -14,13 +10,6 @@ define([
 ], function ($, utils, storage, Class) {
     'use strict';
 
-    /**
-     * Removes ns prefix for path.
-     *
-     * @param {String} ns
-     * @param {String} path
-     * @returns {String}
-     */
     function removeNs(ns, path) {
         return path.replace(ns + '.', '');
     }

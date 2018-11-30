@@ -4,16 +4,14 @@
  * See COPYING.txt for license details.
  */
 
-namespace Magento\Backend\Block\Store\Switcher\Form\Renderer;
+// @codingStandardsIgnoreFile
 
-use \Magento\Framework\Data\Form\Element\Renderer\RendererInterface;
+namespace Magento\Backend\Block\Store\Switcher\Form\Renderer;
 
 /**
  * Form fieldset renderer
- * @api
- * @since 100.0.2
  */
-class Fieldset extends \Magento\Backend\Block\Template implements RendererInterface
+class Fieldset extends \Magento\Backend\Block\Template implements \Magento\Framework\Data\Form\Element\Renderer\RendererInterface
 {
     /**
      * Form element which re-rendering
@@ -57,7 +55,7 @@ class Fieldset extends \Magento\Backend\Block\Template implements RendererInterf
     public function getHintHtml()
     {
         /** @var $storeSwitcher \Magento\Backend\Block\Store\Switcher */
-        $storeSwitcher = $this->_layout->getBlockSingleton(\Magento\Backend\Block\Store\Switcher::class);
+        $storeSwitcher = $this->_layout->getBlockSingleton('Magento\Backend\Block\Store\Switcher');
         return $storeSwitcher->getHintHtml();
     }
 }

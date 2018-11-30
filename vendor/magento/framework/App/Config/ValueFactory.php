@@ -32,7 +32,7 @@ class ValueFactory
      */
     public function __construct(
         \Magento\Framework\ObjectManagerInterface $objectManager,
-        $instanceName = \Magento\Framework\App\Config\ValueInterface::class
+        $instanceName = 'Magento\Framework\App\Config\ValueInterface'
     ) {
         $this->_objectManager = $objectManager;
         $this->_instanceName = $instanceName;

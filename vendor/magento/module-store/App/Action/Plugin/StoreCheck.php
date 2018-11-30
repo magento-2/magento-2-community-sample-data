@@ -23,14 +23,17 @@ class StoreCheck
     }
 
     /**
-     * @param \Magento\Framework\App\Action\AbstractAction $subject
+     * @param \Magento\Framework\App\ActionInterface $subject
+     * @param callable $proceed
      * @param \Magento\Framework\App\RequestInterface $request
-     * @return void
+     *
+     * @return \Magento\Framework\App\ResponseInterface
      * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      * @throws \Magento\Framework\Exception\State\InitException
      */
-    public function beforeDispatch(
-        \Magento\Framework\App\Action\AbstractAction $subject,
+    public function aroundDispatch(
+        \Magento\Framework\App\ActionInterface $subject,
+        \Closure $proceed,
         \Magento\Framework\App\RequestInterface $request
     ) {
         if (!$this->_storeManager->getStore()->isActive()) {
@@ -38,5 +41,6 @@ class StoreCheck
                 __('Current store is not active.')
             );
         }
+        return $proceed($request);
     }
 }

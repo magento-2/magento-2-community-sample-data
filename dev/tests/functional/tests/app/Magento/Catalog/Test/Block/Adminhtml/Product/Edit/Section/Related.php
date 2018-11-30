@@ -88,7 +88,7 @@ class Related extends Section
     {
         $element = $element ?: $this->_rootElement;
         return $this->blockFactory->create(
-            \Magento\Catalog\Test\Block\Adminhtml\Product\Edit\Section\Related\Grid::class,
+            '\Magento\Catalog\Test\Block\Adminhtml\Product\Edit\Section\Related\Grid',
             ['element' => $element]
         );
     }

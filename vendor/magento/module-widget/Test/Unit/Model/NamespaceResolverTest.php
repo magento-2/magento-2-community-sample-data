@@ -5,7 +5,7 @@
  */
 namespace Magento\Widget\Test\Unit\Model;
 
-class NamespaceResolverTest extends \PHPUnit\Framework\TestCase
+class NamespaceResolverTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\Widget\Model\NamespaceResolver
@@ -20,11 +20,11 @@ class NamespaceResolverTest extends \PHPUnit\Framework\TestCase
     protected function setUp()
     {
         $objectManager = new \Magento\Framework\TestFramework\Unit\Helper\ObjectManager($this);
-        $this->moduleListMock = $this->getMockBuilder(\Magento\Framework\Module\ModuleListInterface::class)
+        $this->moduleListMock = $this->getMockBuilder('Magento\Framework\Module\ModuleListInterface')
             ->getMockForAbstractClass();
 
         $this->namespaceResolver = $objectManager->getObject(
-            \Magento\Widget\Model\NamespaceResolver::class,
+            'Magento\Widget\Model\NamespaceResolver',
             [
                 'moduleList' => $this->moduleListMock
             ]
@@ -58,13 +58,13 @@ class NamespaceResolverTest extends \PHPUnit\Framework\TestCase
     {
         return[
             [
-                'namespace' => \Magento\Widget\Test\Unit\Model\NamespaceResolverTest::class,
+                'namespace' => 'Magento\Widget\Test\Unit\Model\NamespaceResolverTest',
                 'modules' => ['Magento_Cms', 'Magento_Catalog', 'Magento_Sales', 'Magento_Widget'],
                 'expected' => 'Magento_Widget',
                 'asFullModuleName' => true
             ],
             [
-                'namespace' => \Magento\Widget\Test\Unit\Model\NamespaceResolverTest::class,
+                'namespace' => 'Magento\Widget\Test\Unit\Model\NamespaceResolverTest',
                 'modules' => ['Magento_Cms', 'Magento_Catalog', 'Magento_Sales', 'Magento_Widget'],
                 'expected' => 'magento_widget',
                 'asFullModuleName' => false

@@ -7,8 +7,6 @@ namespace Magento\Reports\Model\ResourceModel;
 
 /**
  * Report events resource model
- * @api
- * @since 100.0.2
  */
 class Event extends \Magento\Framework\Model\ResourceModel\Db\AbstractDb
 {

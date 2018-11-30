@@ -8,19 +8,8 @@ namespace Magento\Backend\App\Action;
 use Magento\Framework\Controller\ResultFactory;
 
 /**
- * Constructor modification point for Magento\Backend\App\Action.
- *
- * All context classes were introduced to allow for backwards compatible constructor modifications
- * of classes that were supposed to be extended by extension developers.
- *
- * Do not call methods of this class directly.
- *
- * As Magento moves from inheritance-based APIs all such classes will be deprecated together with
- * the classes they were introduced for.
- *
- * @api
+ * Backend Controller context
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
- * @since 100.0.2
  */
 class Context extends \Magento\Framework\App\Action\Context
 {

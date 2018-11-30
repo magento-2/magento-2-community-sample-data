@@ -6,9 +6,11 @@
 namespace Magento\Sales\Block\Adminhtml\Order\Create\Form;
 
 use Magento\Backend\Model\Session\Quote;
+use Magento\Directory\Model\CountryHandlerInterface;
 use Magento\Framework\App\ObjectManager;
 use Magento\Framework\Data\Form\Element\AbstractElement;
 use Magento\Framework\Pricing\PriceCurrencyInterface;
+use Magento\Store\Model\ScopeInterface;
 
 /**
  * Order create address form
@@ -275,13 +277,14 @@ class Address extends \Magento\Sales\Block\Adminhtml\Order\Create\Form\AbstractF
                 $this->directoryHelper->getDefaultCountry($this->getStore())
             );
         }
+
         $this->processCountryOptions($this->_form->getElement('country_id'));
         // Set custom renderer for VAT field if needed
         $vatIdElement = $this->_form->getElement('vat_id');
         if ($vatIdElement && $this->getDisplayVatValidationButton() !== false) {
             $vatIdElement->setRenderer(
                 $this->getLayout()->createBlock(
-                    \Magento\Customer\Block\Adminhtml\Sales\Order\Address\Form\Renderer\Vat::class
+                    'Magento\Customer\Block\Adminhtml\Sales\Order\Address\Form\Renderer\Vat'
                 )->setJsVariablePrefix(
                     $this->getJsVariablePrefix()
                 )
@@ -293,17 +296,11 @@ class Address extends \Magento\Sales\Block\Adminhtml\Order\Create\Form\AbstractF
 
     /**
      * @param \Magento\Framework\Data\Form\Element\AbstractElement $countryElement
-     * @param string|int $storeId
-     *
      * @return void
      */
-    protected function processCountryOptions(
-        \Magento\Framework\Data\Form\Element\AbstractElement $countryElement,
-        $storeId = null
-    ) {
-        if ($storeId === null) {
-            $storeId = $this->getBackendQuoteSession()->getStoreId();
-        }
+    private function processCountryOptions(\Magento\Framework\Data\Form\Element\AbstractElement $countryElement)
+    {
+        $storeId = $this->getBackendQuoteSession()->getStoreId();
         $options = $this->getCountriesCollection()
             ->loadByStore($storeId)
             ->toOptionArray();
@@ -313,7 +310,7 @@ class Address extends \Magento\Sales\Block\Adminhtml\Order\Create\Form\AbstractF
 
     /**
      * Retrieve Directiry Countries collection
-     * @deprecated 100.1.3
+     * @deprecated
      * @return \Magento\Directory\Model\ResourceModel\Country\Collection
      */
     private function getCountriesCollection()
@@ -328,7 +325,7 @@ class Address extends \Magento\Sales\Block\Adminhtml\Order\Create\Form\AbstractF
 
     /**
      * Retrieve Backend Quote Session
-     * @deprecated 100.1.3
+     * @deprecated
      * @return Quote
      */
     private function getBackendQuoteSession()

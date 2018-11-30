@@ -13,7 +13,7 @@ namespace Magento\Framework\Encryption\Test\Unit\Helper;
 
 use Magento\Framework\Encryption\Helper\Security;
 
-class SecurityTest extends \PHPUnit\Framework\TestCase
+class SecurityTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var Security

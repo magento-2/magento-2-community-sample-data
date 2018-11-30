@@ -12,7 +12,7 @@ use Magento\Store\Model\ScopeInterface;
 /**
  * Class ConfigTest
  */
-class ConfigTest extends \PHPUnit\Framework\TestCase
+class ConfigTest extends \PHPUnit_Framework_TestCase
 {
     /** @var Config */
     protected $model;

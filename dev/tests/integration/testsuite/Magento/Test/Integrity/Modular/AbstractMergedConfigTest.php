@@ -8,7 +8,7 @@ namespace Magento\Test\Integrity\Modular;
 /**
  * AbstractMergedConfigTest can be used to test merging of config files
  */
-abstract class AbstractMergedConfigTest extends \PHPUnit\Framework\TestCase
+abstract class AbstractMergedConfigTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * attributes represent merging rules
@@ -39,7 +39,7 @@ abstract class AbstractMergedConfigTest extends \PHPUnit\Framework\TestCase
         $invalidFiles = [];
 
         $files = $this->getConfigFiles();
-        $validationStateMock = $this->createMock(\Magento\Framework\Config\ValidationStateInterface::class);
+        $validationStateMock = $this->getMock('\Magento\Framework\Config\ValidationStateInterface', [], [], '', false);
         $validationStateMock->method('isValidationRequired')
             ->willReturn(false);
         $mergedConfig = new \Magento\Framework\Config\Dom(
@@ -51,7 +51,13 @@ abstract class AbstractMergedConfigTest extends \PHPUnit\Framework\TestCase
         foreach ($files as $file) {
             $content = file_get_contents($file[0]);
             try {
-                $validationStateMock = $this->createMock(\Magento\Framework\Config\ValidationStateInterface::class);
+                $validationStateMock = $this->getMock(
+                    '\Magento\Framework\Config\ValidationStateInterface',
+                    [],
+                    [],
+                    '',
+                    false
+                );
                 $validationStateMock->method('isValidationRequired')
                     ->willReturn(true);
                 new \Magento\Framework\Config\Dom($content, $validationStateMock, $this->getIdAttributes());

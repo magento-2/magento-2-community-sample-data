@@ -8,7 +8,7 @@ namespace Magento\Newsletter\Test\Unit\Block\Adminhtml\Template\Grid\Renderer;
 /**
  * Test for \Magento\Newsletter\Block\Adminhtml\Template\Grid\Renderer\Sender.
  */
-class SenderTest extends \PHPUnit\Framework\TestCase
+class SenderTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\Newsletter\Block\Adminhtml\Template\Grid\Renderer\Sender

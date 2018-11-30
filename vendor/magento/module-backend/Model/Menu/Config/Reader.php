@@ -7,10 +7,6 @@
  */
 namespace Magento\Backend\Model\Menu\Config;
 
-/**
- * @api
- * @since 100.0.2
- */
 class Reader extends \Magento\Framework\Config\Reader\Filesystem
 {
     /**
@@ -30,7 +26,7 @@ class Reader extends \Magento\Framework\Config\Reader\Filesystem
         \Magento\Framework\Config\ValidationStateInterface $validationState,
         $fileName = 'menu.xml',
         $idAttributes = [],
-        $domDocumentClass = \Magento\Backend\Model\Menu\Config\Menu\Dom::class,
+        $domDocumentClass = 'Magento\Backend\Model\Menu\Config\Menu\Dom',
         $defaultScope = 'global'
     ) {
         parent::__construct(

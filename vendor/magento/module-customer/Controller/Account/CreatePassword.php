@@ -13,9 +13,7 @@ use Magento\Framework\App\Action\Context;
 
 class CreatePassword extends \Magento\Customer\Controller\AbstractAccount
 {
-    /**
-     * @var \Magento\Customer\Api\AccountManagementInterface
-     */
+    /** @var AccountManagementInterface */
     protected $accountManagement;
 
     /**

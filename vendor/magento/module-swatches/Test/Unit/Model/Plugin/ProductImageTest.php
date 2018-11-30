@@ -8,7 +8,7 @@ namespace Magento\Swatches\Test\Unit\Model\Plugin;
 /**
  * Class ProductImage replace original configurable product with first child
  */
-class ProductImageTest extends \PHPUnit\Framework\TestCase
+class ProductImageTest extends \PHPUnit_Framework_TestCase
 {
     /** @var \Magento\Swatches\Helper\Data|\PHPUnit_Framework_MockObject_MockObject */
     protected $swatchesHelperMock;
@@ -33,25 +33,40 @@ class ProductImageTest extends \PHPUnit\Framework\TestCase
 
     protected function setUp()
     {
-        $this->swatchesHelperMock = $this->createPartialMock(
+        $this->swatchesHelperMock = $this->getMock(
             \Magento\Swatches\Helper\Data::class,
-            ['loadVariationByFallback', 'isSwatchAttribute', 'isProductHasSwatch']
+            ['loadVariationByFallback', 'isSwatchAttribute', 'isProductHasSwatch'],
+            [],
+            '',
+            false
         );
 
-        $this->attributeFactoryMock = $this->createPartialMock(
+        $this->attributeFactoryMock = $this->getMock(
             \Magento\Catalog\Model\ResourceModel\Eav\AttributeFactory::class,
-            ['create']
+            ['create'],
+            [],
+            '',
+            false
         );
 
-        $this->eavConfigMock = $this->createMock(\Magento\Eav\Model\Config::class);
+        $this->eavConfigMock = $this->getMock(
+            \Magento\Eav\Model\Config::class,
+            [],
+            [],
+            '',
+            false
+        );
 
-        $this->attributeMock = $this->createPartialMock(
+        $this->attributeMock = $this->getMock(
             \Magento\Catalog\Model\ResourceModel\Eav\Attribute::class,
-            ['loadByCode', 'getId', 'getUsedInProductListing', 'getIsFilterable', 'getData']
+            ['loadByCode', 'getId', 'getUsedInProductListing', 'getIsFilterable', 'getData'],
+            [],
+            '',
+            false
         );
 
-        $this->requestMock = $this->createPartialMock(\Magento\Framework\App\Request\Http::class, ['getParams']);
-        $this->productMock = $this->createMock(\Magento\Catalog\Model\Product::class);
+        $this->requestMock = $this->getMock(\Magento\Framework\App\Request\Http::class, ['getParams'], [], '', false);
+        $this->productMock = $this->getMock(\Magento\Catalog\Model\Product::class, [], [], '', false);
 
         $objectManager = new \Magento\Framework\TestFramework\Unit\Helper\ObjectManager($this);
 
@@ -77,11 +92,7 @@ class ProductImageTest extends \PHPUnit\Framework\TestCase
             ->method('getParams')
             ->willReturn($expected['getParams']);
 
-        $this->eavConfigMock
-            ->method('getEntityAttributes')
-            ->with('catalog_product')
-            ->willReturn(['color' => $this->attributeMock]);
-
+        $this->getFilterArray($expected);
         $this->canReplaceImageWithSwatch($expected);
         $this->swatchesHelperMock
             ->expects($this->exactly($expected['loadVariationByFallback_count']))
@@ -92,10 +103,31 @@ class ProductImageTest extends \PHPUnit\Framework\TestCase
             ->with($this->productMock)
             ->willReturn(false);
 
-        $productImageMock = $this->createMock(\Magento\Catalog\Block\Product\AbstractProduct::class);
+        $productImageMock = $this->getMock(\Magento\Catalog\Block\Product\AbstractProduct::class, [], [], '', false);
 
         $result = $this->pluginModel->beforeGetImage($productImageMock, $this->productMock, $expected['page_handle']);
         $this->assertEquals([$this->productMock, $expected['page_handle'], []], $result);
+    }
+
+    /**
+     * @param $expected
+     */
+    protected function getFilterArray($expected)
+    {
+        $this->eavConfigMock
+            ->method('getEntityAttributeCodes')
+            ->with('catalog_product')
+            ->willReturn($expected['attribute_codes_array']);
+
+        $this->eavConfigMock
+            ->method('getAttribute')
+            ->with('catalog_product', $expected['attribute_code'])
+            ->willReturn($this->attributeMock);
+
+        $this->attributeMock
+            ->expects($this->exactly($expected['getId_count']))
+            ->method('getId')
+            ->willReturn($expected['getId']);
     }
 
     /**
@@ -133,7 +165,7 @@ class ProductImageTest extends \PHPUnit\Framework\TestCase
      */
     public function dataForTest()
     {
-        $productMock = $this->createMock(\Magento\Catalog\Model\Product::class);
+        $productMock = $this->getMock(\Magento\Catalog\Model\Product::class, [], [], '', false);
         $productMock->expects($this->any())->method('getImage')->willReturn(false);
 
         return [
@@ -141,6 +173,7 @@ class ProductImageTest extends \PHPUnit\Framework\TestCase
                 [
                     'page_handle' => 'category_page_grid',
                     'getParams' => ['color' => 31],
+                    'attribute_codes_array' => ['color'],
                     'attribute_code' => 'color',
                     'getId_count' => 1,
                     'getId' => 332,
@@ -159,6 +192,7 @@ class ProductImageTest extends \PHPUnit\Framework\TestCase
                 [
                     'page_handle' => 'category_page_grid',
                     'getParams' => ['color' => 31],
+                    'attribute_codes_array' => ['color'],
                     'attribute_code' => 'color',
                     'getId_count' => 1,
                     'getId' => 332,
@@ -177,6 +211,7 @@ class ProductImageTest extends \PHPUnit\Framework\TestCase
                 [
                     'page_handle' => 'category_page_grid',
                     'getParams' => ['color' => 31],
+                    'attribute_codes_array' => ['color'],
                     'attribute_code' => 'color',
                     'getId_count' => 1,
                     'getId' => 332,

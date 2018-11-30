@@ -6,7 +6,7 @@
 namespace Magento\Braintree\Test\Unit\Gateway\Command;
 
 use Magento\Braintree\Gateway\Command\GetPaymentNonceCommand;
-use Magento\Braintree\Gateway\SubjectReader;
+use Magento\Braintree\Gateway\Helper\SubjectReader;
 use Magento\Braintree\Gateway\Validator\PaymentNonceResponseValidator;
 use Magento\Braintree\Model\Adapter\BraintreeAdapter;
 use Magento\Braintree\Model\Adapter\BraintreeAdapterFactory;
@@ -22,7 +22,7 @@ use PHPUnit_Framework_MockObject_MockObject as MockObject;
  *
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  */
-class GetPaymentNonceCommandTest extends \PHPUnit\Framework\TestCase
+class GetPaymentNonceCommandTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var GetPaymentNonceCommand
@@ -108,10 +108,11 @@ class GetPaymentNonceCommandTest extends \PHPUnit\Framework\TestCase
 
         $this->command = new GetPaymentNonceCommand(
             $this->tokenManagement,
-            $adapterFactory,
+            $this->adapter,
             $this->resultFactory,
             $this->subjectReader,
-            $this->responseValidator
+            $this->responseValidator,
+            $adapterFactory
         );
     }
 

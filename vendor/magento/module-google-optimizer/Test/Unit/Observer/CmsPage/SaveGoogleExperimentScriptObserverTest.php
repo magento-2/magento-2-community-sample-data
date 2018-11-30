@@ -5,7 +5,7 @@
  */
 namespace Magento\GoogleOptimizer\Test\Unit\Observer\CmsPage;
 
-class SaveGoogleExperimentScriptObserverTest extends \PHPUnit\Framework\TestCase
+class SaveGoogleExperimentScriptObserverTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \PHPUnit_Framework_MockObject_MockObject
@@ -44,19 +44,19 @@ class SaveGoogleExperimentScriptObserverTest extends \PHPUnit\Framework\TestCase
 
     protected function setUp()
     {
-        $this->_helperMock = $this->createMock(\Magento\GoogleOptimizer\Helper\Data::class);
-        $this->_codeMock = $this->createMock(\Magento\GoogleOptimizer\Model\Code::class);
-        $this->_requestMock = $this->createMock(\Magento\Framework\App\RequestInterface::class);
+        $this->_helperMock = $this->getMock('Magento\GoogleOptimizer\Helper\Data', [], [], '', false);
+        $this->_codeMock = $this->getMock('Magento\GoogleOptimizer\Model\Code', [], [], '', false);
+        $this->_requestMock = $this->getMock('Magento\Framework\App\RequestInterface', [], [], '', false);
 
-        $this->_pageMock = $this->createMock(\Magento\Cms\Model\Page::class);
-        $event = $this->createPartialMock(\Magento\Framework\Event::class, ['getObject']);
+        $this->_pageMock = $this->getMock('Magento\Cms\Model\Page', [], [], '', false);
+        $event = $this->getMock('Magento\Framework\Event', ['getObject'], [], '', false);
         $event->expects($this->once())->method('getObject')->will($this->returnValue($this->_pageMock));
-        $this->_eventObserverMock = $this->createMock(\Magento\Framework\Event\Observer::class);
+        $this->_eventObserverMock = $this->getMock('Magento\Framework\Event\Observer', [], [], '', false);
         $this->_eventObserverMock->expects($this->once())->method('getEvent')->will($this->returnValue($event));
 
         $objectManagerHelper = new \Magento\Framework\TestFramework\Unit\Helper\ObjectManager($this);
         $this->_modelObserver = $objectManagerHelper->getObject(
-            \Magento\GoogleOptimizer\Observer\CmsPage\SaveGoogleExperimentScriptObserver::class,
+            'Magento\GoogleOptimizer\Observer\CmsPage\SaveGoogleExperimentScriptObserver',
             ['helper' => $this->_helperMock, 'modelCode' => $this->_codeMock, 'request' => $this->_requestMock]
         );
     }

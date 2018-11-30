@@ -15,7 +15,7 @@ use Magento\Sales\Model\Order\Creditmemo\Validation\QuantityValidator;
 /**
  * Class QuantityValidatorTest
  */
-class QuantityValidatorTest extends \PHPUnit\Framework\TestCase
+class QuantityValidatorTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var OrderRepositoryInterface|\PHPUnit_Framework_MockObject_MockObject

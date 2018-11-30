@@ -7,8 +7,6 @@ namespace Magento\Cookie\Helper;
 
 /**
  * Cookie helper
- * @api
- * @since 100.0.2
  */
 class Cookie extends \Magento\Framework\App\Helper\AbstractHelper
 {
@@ -79,7 +77,6 @@ class Cookie extends \Magento\Framework\App\Helper\AbstractHelper
      * Check if cookie restriction mode is enabled for this store
      *
      * @return bool
-     * @since 100.2.0
      */
     public function isCookieRestrictionModeEnabled()
     {
@@ -98,7 +95,7 @@ class Cookie extends \Magento\Framework\App\Helper\AbstractHelper
     public function getAcceptedSaveCookiesWebsiteIds()
     {
         $acceptedSaveCookiesWebsites = $this->_getAcceptedSaveCookiesWebsites();
-        $acceptedSaveCookiesWebsites[(int)$this->_website->getId()] = 1;
+        $acceptedSaveCookiesWebsites[$this->_website->getId()] = 1;
         return json_encode($acceptedSaveCookiesWebsites);
     }
 

@@ -7,8 +7,8 @@
 namespace Magento\Sales\Test\Block\Order;
 
 use Magento\Mtf\Block\Block;
-use Magento\Mtf\Client\Element\SimpleElement;
 use Magento\Mtf\Client\Locator;
+use Magento\Mtf\Client\Element\SimpleElement;
 
 /**
  * Order history block on My Order page.
@@ -66,6 +66,7 @@ class History extends Block
     public function isOrderVisible($order)
     {
         $this->waitFormToLoad();
+        
         return $this->_rootElement->find(
             sprintf($this->customerOrders, $order['id'], $order['status']),
             Locator::SELECTOR_XPATH
@@ -81,6 +82,7 @@ class History extends Block
     public function getOrderTotalById($id)
     {
         $this->waitFormToLoad();
+        
         return $this->escapeCurrency($this->searchOrderById($id)->find($this->total)->getText());
     }
 
@@ -108,7 +110,7 @@ class History extends Block
     }
 
     /**
-     * Check if 'Reorder' button is visible for customer on order page
+     * Check if 'Reorder' button is visible for customer on order page.
      *
      * @param string $id
      * @return boolean
@@ -116,6 +118,7 @@ class History extends Block
     public function isReorderButtonPresentByOrderId($id)
     {
         $this->waitFormToLoad();
+        
         return $this->searchOrderById($id)->find($this->reorderButton)->isVisible();
     }
 
@@ -128,6 +131,7 @@ class History extends Block
     protected function escapeCurrency($price)
     {
         preg_match("/^\\D*\\s*([\\d,\\.]+)\\s*\\D*$/", $price, $matches);
+        
         return (isset($matches[1])) ? $matches[1] : null;
     }
 

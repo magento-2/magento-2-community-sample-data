@@ -9,7 +9,7 @@
  */
 namespace Magento\ImportExport\Test\Unit\Model\Source\Import;
 
-abstract class AbstractBehaviorTestCase extends \PHPUnit\Framework\TestCase
+abstract class AbstractBehaviorTestCase extends \PHPUnit_Framework_TestCase
 {
     /**
      * Model for testing

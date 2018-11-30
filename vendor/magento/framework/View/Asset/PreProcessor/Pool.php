@@ -14,9 +14,6 @@ use Magento\Framework\View\Asset\PreProcessorInterface;
  */
 class Pool
 {
-    /**
-     * Name of property referenced to pre-processor implementation class
-     */
     const PREPROCESSOR_CLASS = 'class';
 
     /**

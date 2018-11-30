@@ -1,56 +1,71 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2018 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 
 namespace Magento\Setup\Test\Unit\Fixtures;
 
-use \Magento\Setup\Fixtures\CartPriceRulesFixture;
+use Magento\Framework\TestFramework\Unit\Helper\ObjectManager as ObjectManagerHelper;
 
 /**
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  */
-class CartPriceRulesFixtureTest extends \PHPUnit\Framework\TestCase
+class CartPriceRulesFixtureTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \PHPUnit_Framework_MockObject_MockObject|\Magento\Setup\Fixtures\FixtureModel
      */
-    private $fixtureModelMock;
+    private $fixtureModel;
+
+    /**
+     * @var \PHPUnit_Framework_MockObject_MockObject|\Magento\SalesRule\Model\RuleFactory
+     */
+    private $ruleFactory;
 
     /**
      * @var \Magento\Setup\Fixtures\CartPriceRulesFixture
      */
     private $model;
 
-    /**
-     * @var \Magento\SalesRule\Model\RuleFactory|\PHPUnit_Framework_MockObject_MockObject
-     */
-    private $ruleFactoryMock;
-
     public function setUp()
     {
-        $this->fixtureModelMock = $this->createMock(\Magento\Setup\Fixtures\FixtureModel::class);
-        $this->ruleFactoryMock = $this->createPartialMock(\Magento\SalesRule\Model\RuleFactory::class, ['create']);
-        $this->model = new CartPriceRulesFixture($this->fixtureModelMock, $this->ruleFactoryMock);
+        $objectManagerHelper = new ObjectManagerHelper($this);
+        $this->fixtureModel = $this->getMockBuilder(\Magento\Setup\Fixtures\FixtureModel::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+        $this->ruleFactory = $this->getMockBuilder(\Magento\SalesRule\Model\RuleFactory::class)
+            ->disableOriginalConstructor()
+            ->setMethods(['create'])
+            ->getMock();
+        $this->model = $objectManagerHelper->getObject(
+            \Magento\Setup\Fixtures\CartPriceRulesFixture::class,
+            ['fixtureModel' => $this->fixtureModel, 'ruleFactory' => $this->ruleFactory]
+        );
     }
 
     public function testExecute()
     {
-        $storeMock = $this->createMock(\Magento\Store\Model\Store::class);
-        $storeMock->expects($this->once())
+        $storeMock = $this->getMockBuilder(\Magento\Store\Model\Store::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+        $storeMock->expects($this->atLeastOnce())
             ->method('getRootCategoryId')
             ->will($this->returnValue(2));
 
-        $websiteMock = $this->createMock(\Magento\Store\Model\Website::class);
-        $websiteMock->expects($this->once())
+        $websiteMock = $this->getMockBuilder(\Magento\Store\Model\Website::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+        $websiteMock->expects($this->atLeastOnce())
             ->method('getGroups')
             ->will($this->returnValue([$storeMock]));
         $websiteMock->expects($this->once())
             ->method('getId')
             ->will($this->returnValue('website_id'));
 
-        $contextMock = $this->createMock(\Magento\Framework\Model\ResourceModel\Db\Context::class);
+        $contextMock = $this->getMockBuilder(\Magento\Framework\Model\ResourceModel\Db\Context::class)
+            ->disableOriginalConstructor()
+            ->getMock();
         $abstractDbMock = $this->getMockForAbstractClass(
             \Magento\Framework\Model\ResourceModel\Db\AbstractDb::class,
             [$contextMock],
@@ -64,13 +79,17 @@ class CartPriceRulesFixtureTest extends \PHPUnit\Framework\TestCase
             ->method('getAllChildren')
             ->will($this->returnValue([1]));
 
-        $storeManagerMock = $this->createMock(\Magento\Store\Model\StoreManager::class);
-        $storeManagerMock->expects($this->once())
+        $storeManagerMock = $this->getMockBuilder(\Magento\Store\Model\StoreManager::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+        $storeManagerMock->expects($this->atLeastOnce())
             ->method('getWebsites')
             ->will($this->returnValue([$websiteMock]));
 
-        $categoryMock = $this->createMock(\Magento\Catalog\Model\Category::class);
-        $categoryMock->expects($this->once())
+        $categoryMock = $this->getMockBuilder(\Magento\Catalog\Model\Category::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+        $categoryMock->expects($this->atLeastOnce())
             ->method('getResource')
             ->will($this->returnValue($abstractDbMock));
         $categoryMock->expects($this->once())
@@ -84,8 +103,10 @@ class CartPriceRulesFixtureTest extends \PHPUnit\Framework\TestCase
             [\Magento\Catalog\Model\Category::class, $categoryMock]
         ];
 
-        $objectManagerMock = $this->createMock(\Magento\Framework\ObjectManager\ObjectManager::class);
-        $objectManagerMock->expects($this->once())
+        $objectManagerMock = $this->getMockBuilder(\Magento\Framework\ObjectManager\ObjectManager::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+        $objectManagerMock->expects($this->atLeastOnce())
             ->method('create')
             ->will($this->returnValue($storeManagerMock));
         $objectManagerMock->expects($this->once())
@@ -98,40 +119,47 @@ class CartPriceRulesFixtureTest extends \PHPUnit\Framework\TestCase
             ['cart_price_rules_advanced_type', false, false]
         ];
 
-        $this->fixtureModelMock
+        $this->fixtureModel
             ->expects($this->exactly(3))
             ->method('getValue')
             ->will($this->returnValueMap($valueMap));
-        $this->fixtureModelMock
+        $this->fixtureModel
             ->expects($this->exactly(2))
             ->method('getObjectManager')
             ->will($this->returnValue($objectManagerMock));
 
-        $ruleMock = $this->createMock(\Magento\SalesRule\Model\Rule::class);
-        $this->ruleFactoryMock->expects($this->once())
+        $rule = $this->getMockBuilder(\Magento\SalesRule\Model\Rule::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+
+        $this->ruleFactory->expects($this->once())
             ->method('create')
-            ->willReturn($ruleMock);
+            ->willReturn($rule);
 
         $this->model->execute();
     }
 
     public function testNoFixtureConfigValue()
     {
-        $ruleMock = $this->createMock(\Magento\SalesRule\Model\Rule::class);
+        $ruleMock = $this->getMockBuilder(\Magento\SalesRule\Model\Rule::class)
+            ->disableOriginalConstructor()
+            ->getMock();
         $ruleMock->expects($this->never())->method('save');
 
-        $objectManagerMock = $this->createMock(\Magento\Framework\ObjectManager\ObjectManager::class);
+        $objectManagerMock = $this->getMockBuilder(\Magento\Framework\ObjectManager\ObjectManager::class)
+            ->disableOriginalConstructor()
+            ->getMock();
         $objectManagerMock->expects($this->never())
             ->method('get')
             ->with($this->equalTo(\Magento\SalesRule\Model\Rule::class))
             ->willReturn($ruleMock);
 
-        $this->fixtureModelMock
+        $this->fixtureModel
             ->expects($this->never())
             ->method('getObjectManager')
             ->willReturn($objectManagerMock);
-        $this->fixtureModelMock
-            ->expects($this->once())
+        $this->fixtureModel
+            ->expects($this->atLeastOnce())
             ->method('getValue')
             ->willReturn(false);
 

@@ -184,7 +184,7 @@ class DataProvider extends AbstractDataProvider
     }
 
     /**
-     * @deprecated 100.1.3
+     * @deprecated
      * @return ScopeCodeResolver
      */
     private function getScopeCodeResolver()
@@ -196,7 +196,7 @@ class DataProvider extends AbstractDataProvider
     }
 
     /**
-     * @deprecated 100.1.3
+     * @deprecated
      * @return SettingChecker
      */
     private function getSettingChecker()
@@ -208,7 +208,7 @@ class DataProvider extends AbstractDataProvider
     }
 
     /**
-     * @deprecated 100.1.3
+     * @deprecated
      * @return RequestInterface
      */
     private function getRequest()

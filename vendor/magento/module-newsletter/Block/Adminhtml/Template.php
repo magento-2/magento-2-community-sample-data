@@ -25,7 +25,7 @@ class Template extends \Magento\Backend\Block\Template
     {
         $this->getToolbar()->addChild(
             'add_button',
-            \Magento\Backend\Block\Widget\Button::class,
+            'Magento\Backend\Block\Widget\Button',
             [
                 'label' => __('Add New Template'),
                 'onclick' => "window.location='" . $this->getCreateUrl() . "'",
@@ -36,7 +36,7 @@ class Template extends \Magento\Backend\Block\Template
         $this->setChild(
             'grid',
             $this->getLayout()->createBlock(
-                \Magento\Newsletter\Block\Adminhtml\Template\Grid::class,
+                'Magento\Newsletter\Block\Adminhtml\Template\Grid',
                 'newsletter.template.grid'
             )
         );

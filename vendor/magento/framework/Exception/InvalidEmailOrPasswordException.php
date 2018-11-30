@@ -6,7 +6,7 @@
 namespace Magento\Framework\Exception;
 
 /**
- * @api
+ * Class InvalidEmailOrPasswordException
  */
 class InvalidEmailOrPasswordException extends AuthenticationException
 {

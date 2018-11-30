@@ -6,57 +6,63 @@
 
 namespace Magento\Swatches\Test\Unit\Model;
 
+use Magento\Catalog\Model\ResourceModel\Eav\Attribute\Interceptor;
 use Magento\ConfigurableProduct\Model\Product\Type\Configurable;
-use Magento\Catalog\Model\ResourceModel\Eav\Attribute;
-use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
 use Magento\Swatches\Model\SwatchAttributeCodes;
 use Magento\Swatches\Model\SwatchAttributesProvider;
-use Magento\Swatches\Model\SwatchAttributeType;
 
-class SwatchAttributesProviderTest extends \PHPUnit\Framework\TestCase
+class SwatchAttributesProviderTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var SwatchAttributesProvider
      */
-    private $swatchAttributeProvider;
+    protected $swatchAttributesProvider;
 
     /**
-     * @var Configurable|\PHPUnit_Framework_MockObject_MockObject
+     * @var Configurable
      */
-    private $typeConfigurable;
+    private $typeConfigurableMock;
 
     /**
-     * @var SwatchAttributeCodes|\PHPUnit_Framework_MockObject_MockObject
+     * @var SwatchAttributeCodes
      */
-    private $swatchAttributeCodes;
+    private $swatchAttributeCodesMock;
 
     /**
-     * @var \Magento\Catalog\Model\Product|\PHPUnit_Framework_MockObject_MockObject
+     * @var \Magento\Catalog\Model\Product
      */
     private $productMock;
 
-    /**
-     * @var SwatchAttributeType | \PHPUnit_Framework_MockObject_MockObject
-     */
-    private $swatchTypeChecker;
-
     protected function setUp()
     {
-        $this->typeConfigurable = $this->createPartialMock(
+        $this->typeConfigurableMock = $this->getMock(
             Configurable::class,
-            ['getConfigurableAttributes', 'getCodes', 'getProductAttribute']
+            ['getConfigurableAttributes', 'getCodes'],
+            [],
+            '',
+            false
         );
 
-        $this->swatchAttributeCodes = $this->createMock(SwatchAttributeCodes::class);
+        $this->swatchAttributeCodesMock = $this->getMock(
+            SwatchAttributeCodes::class,
+            [],
+            [],
+            '',
+            false
+        );
 
-        $this->productMock = $this->createPartialMock(\Magento\Catalog\Model\Product::class, ['getId', 'getTypeId']);
-        $this->swatchTypeChecker = $this->createMock(SwatchAttributeType::class);
+        $this->productMock = $this->getMock(
+            \Magento\Catalog\Model\Product::class,
+            ['getId', 'getTypeId'],
+            [],
+            '',
+            false
+        );
 
-        $this->swatchAttributeProvider = (new ObjectManager($this))->getObject(SwatchAttributesProvider::class, [
-            'typeConfigurable' => $this->typeConfigurable,
-            'swatchAttributeCodes' => $this->swatchAttributeCodes,
-            'swatchTypeChecker' => $this->swatchTypeChecker,
-        ]);
+        $this->swatchAttributeProvider = new SwatchAttributesProvider(
+            $this->typeConfigurableMock,
+            $this->swatchAttributeCodesMock
+        );
     }
 
     public function testProvide()
@@ -65,14 +71,20 @@ class SwatchAttributesProviderTest extends \PHPUnit\Framework\TestCase
         $this->productMock->method('getTypeId')
             ->willReturn(Configurable::TYPE_CODE);
 
-        $attributeMock =  $this->getMockBuilder(\Magento\Catalog\Model\ResourceModel\Eav\Attribute::class)
-            ->disableOriginalConstructor()
-            ->setMethods(['setStoreId', 'getData', 'setData', 'getSource', 'hasData'])
-            ->getMock();
+        $productAttributeMock = $this->getMock(
+            Interceptor::class,
+            [],
+            [],
+            '',
+            false
+        );
 
-        $configAttributeMock = $this->createPartialMock(
+        $configAttributeMock = $this->getMock(
             Configurable\Attribute::class,
-            ['getAttributeId', 'getProductAttribute']
+            ['getAttributeId', 'getProductAttribute'],
+            [],
+            '',
+            false
         );
         $configAttributeMock
             ->method('getAttributeId')
@@ -80,22 +92,23 @@ class SwatchAttributesProviderTest extends \PHPUnit\Framework\TestCase
 
         $configAttributeMock
             ->method('getProductAttribute')
-            ->willReturn($attributeMock);
+            ->willReturn($productAttributeMock);
 
-        $this->typeConfigurable
+        $this->typeConfigurableMock
             ->method('getConfigurableAttributes')
             ->with($this->productMock)
             ->willReturn([$configAttributeMock]);
 
         $swatchAttributes = [1 => 'text_swatch'];
-        $this->swatchAttributeCodes
+
+        $this->swatchAttributeCodesMock
             ->method('getCodes')
             ->willReturn($swatchAttributes);
 
-        $this->swatchTypeChecker->expects($this->once())->method('isSwatchAttribute')->willReturn(true);
+        $expected = [1 => $productAttributeMock];
 
         $result = $this->swatchAttributeProvider->provide($this->productMock);
 
-        $this->assertEquals([1 => $attributeMock], $result);
+        $this->assertEquals($expected, $result);
     }
 }

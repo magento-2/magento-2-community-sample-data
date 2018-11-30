@@ -6,22 +6,19 @@
 
 namespace Magento\Framework\Reflection\Test\Unit;
 
-use Magento\Framework\Serialize\SerializerInterface;
 use Magento\Framework\Reflection\MethodsMap;
 use Magento\Framework\Reflection\TypeProcessor;
+use Magento\Framework\Reflection\FieldNamer;
 
 /**
  * MethodsMap test
  */
-class MethodsMapTest extends \PHPUnit\Framework\TestCase
+class MethodsMapTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var MethodsMap
      */
-    private $object;
-
-    /** @var SerializerInterface|\PHPUnit_Framework_MockObject_MockObject */
-    private $serializerMock;
+    private $model;
 
     /**
      * Set up helper.
@@ -30,7 +27,7 @@ class MethodsMapTest extends \PHPUnit\Framework\TestCase
     {
         $objectManager = new \Magento\Framework\TestFramework\Unit\Helper\ObjectManager($this);
 
-        $cacheMock = $this->getMockBuilder(\Magento\Framework\Cache\FrontendInterface::class)
+        $cacheMock = $this->getMockBuilder('Magento\Framework\Cache\FrontendInterface')
             ->getMockForAbstractClass();
         $cacheMock->expects($this->any())
             ->method('save');
@@ -38,12 +35,12 @@ class MethodsMapTest extends \PHPUnit\Framework\TestCase
             ->method('load')
             ->will($this->returnValue(null));
 
-        $attributeTypeResolverMock = $this->getMockBuilder(\Magento\Framework\Api\AttributeTypeResolverInterface::class)
+        $attributeTypeResolverMock = $this->getMockBuilder('Magento\Framework\Api\AttributeTypeResolverInterface')
             ->getMockForAbstractClass();
-        $fieldNamerMock = $this->getMockBuilder(\Magento\Framework\Reflection\FieldNamer::class)
+        $fieldNamerMock = $this->getMockBuilder('Magento\Framework\Reflection\FieldNamer')
             ->getMockForAbstractClass();
-        $this->object = $objectManager->getObject(
-            \Magento\Framework\Reflection\MethodsMap::class,
+        $this->model = $objectManager->getObject(
+            'Magento\Framework\Reflection\MethodsMap',
             [
                 'cache' => $cacheMock,
                 'typeProcessor' => new TypeProcessor(),
@@ -51,81 +48,62 @@ class MethodsMapTest extends \PHPUnit\Framework\TestCase
                 'fieldNamer' => $fieldNamerMock,
             ]
         );
-        $this->serializerMock = $this->createMock(SerializerInterface::class);
-        $objectManager->setBackwardCompatibleProperty(
-            $this->object,
-            'serializer',
-            $this->serializerMock
-        );
     }
 
     public function testGetMethodReturnType()
     {
         $this->assertEquals(
             'string',
-            $this->object->getMethodReturnType(
-                \Magento\Framework\Reflection\FieldNamer::class,
-                'getFieldNameForMethodName'
-            )
+            $this->model->getMethodReturnType('Magento\Framework\Reflection\FieldNamer', 'getFieldNameForMethodName')
         );
         $this->assertEquals(
             'mixed',
-            $this->object->getMethodReturnType(
-                \Magento\Framework\Reflection\TypeCaster::class,
-                'castValueToType'
-            )
+            $this->model->getMethodReturnType('Magento\Framework\Reflection\TypeCaster', 'castValueToType')
         );
         $this->assertEquals(
             'array',
-            $this->object->getMethodReturnType(
-                \Magento\Framework\Reflection\MethodsMap::class,
-                'getMethodsMap'
-            )
+            $this->model->getMethodReturnType('Magento\Framework\Reflection\MethodsMap', 'getMethodsMap')
         );
     }
 
     public function testGetMethodsMap()
     {
-        $data = [
-            'getMethodReturnType' => [
-                'type' => 'string',
-                'isRequired' => true,
-                'description' => null,
-                'parameterCount' => 2,
-            ],
-            'getMethodsMap' => [
-                'type' => 'array',
-                'isRequired' => true,
-                'description' => "<pre> Service methods' reflection data stored in cache as 'methodName' => "
-                    . "'returnType' ex. [ 'create' => '\Magento\Customer\Api\Data\Customer', 'validatePassword' "
-                    . "=> 'boolean' ] </pre>",
-                'parameterCount' => 1,
-            ],
-            'getMethodParams' => [
-                'type' => 'array',
-                'isRequired' => true,
-                'description' => null,
-                'parameterCount' => 2
-            ],
-            'isMethodValidForDataField' => [
-                'type' => 'bool',
-                'isRequired' => true,
-                'description' => null,
-                'parameterCount' => 2,
-            ],
-            'isMethodReturnValueRequired' => [
-                'type' => 'bool',
-                'isRequired' => true,
-                'description' => null,
-                'parameterCount' => 2,
-            ],
-        ];
-        $this->serializerMock->expects($this->once())
-            ->method('serialize')
-            ->with($data);
-        $methodsMap = $this->object->getMethodsMap(\Magento\Framework\Reflection\MethodsMap::class);
+        $methodsMap = $this->model->getMethodsMap('Magento\Framework\Reflection\MethodsMap');
         $this->assertEquals(
-            $data,
+            [
+                'getMethodReturnType' => [
+                    'type' => 'string',
+                    'isRequired' => true,
+                    'description' => null,
+                    'parameterCount' => 2,
+                ],
+                'getMethodsMap' => [
+                    'type' => 'array',
+                    'isRequired' => true,
+                    'description' => "<pre> Service methods' reflection data stored in cache as 'methodName' => "
+                        . "'returnType' ex. [ 'create' => '\Magento\Customer\Api\Data\Customer', 'validatePassword' "
+                        . "=> 'boolean' ] </pre>",
+                    'parameterCount' => 1,
+                ],
+                'getMethodParams' => [
+                    'type' => 'array',
+                    'isRequired' => true,
+                    'description' => null,
+                    'parameterCount' => 2
+                ],
+                'isMethodValidForDataField' => [
+                    'type' => 'bool',
+                    'isRequired' => true,
+                    'description' => null,
+                    'parameterCount' => 2,
+                ],
+                'isMethodReturnValueRequired' => [
+                    'type' => 'bool',
+                    'isRequired' => true,
+                    'description' => null,
+                    'parameterCount' => 2,
+                ],
+            ],
             $methodsMap
         );
     }
@@ -138,7 +116,7 @@ class MethodsMapTest extends \PHPUnit\Framework\TestCase
      */
     public function testIsMethodValidForDataField($type, $methodName, $expectedResult)
     {
-        $this->assertEquals($this->object->isMethodValidForDataField($type, $methodName), $expectedResult);
+        $this->assertEquals($this->model->isMethodValidForDataField($type, $methodName), $expectedResult);
     }
 
     /**
@@ -147,15 +125,18 @@ class MethodsMapTest extends \PHPUnit\Framework\TestCase
     public function isMethodValidForDataFieldProvider()
     {
         return [
-            'MethodsMap#isMethodValidForDataField' => [\Magento\Framework\Reflection\MethodsMap::class,
+            'MethodsMap#isMethodValidForDataField' => [
+                'Magento\Framework\Reflection\MethodsMap',
                 'isMethodValidForDataField',
                 false,
             ],
-            'DataObject#getAttrName' => [\Magento\Framework\Reflection\Test\Unit\DataObject::class,
+            'DataObject#getAttrName' => [
+                'Magento\Framework\Reflection\Test\Unit\DataObject',
                 'getAttrName',
                 true,
             ],
-            'DataObject#isActive' => [\Magento\Framework\Reflection\Test\Unit\DataObject::class,
+            'DataObject#isActive' => [
+                'Magento\Framework\Reflection\Test\Unit\DataObject',
                 'isActive',
                 true,
             ],
@@ -170,7 +151,7 @@ class MethodsMapTest extends \PHPUnit\Framework\TestCase
      */
     public function testIsMethodReturnValueRequired($type, $methodName, $expectedResult)
     {
-        $this->assertEquals($this->object->isMethodValidForDataField($type, $methodName), $expectedResult);
+        $this->assertEquals($this->model->isMethodValidForDataField($type, $methodName), $expectedResult);
     }
 
     /**
@@ -179,15 +160,18 @@ class MethodsMapTest extends \PHPUnit\Framework\TestCase
     public function isMethodReturnValueRequiredProvider()
     {
         return [
-            'DataObject#getAttrName' => [\Magento\Framework\Reflection\Test\Unit\DataObject::class,
+            'DataObject#getAttrName' => [
+                'Magento\Framework\Reflection\Test\Unit\DataObject',
                 'getAttrName',
                 true,
             ],
-            'DataObject#isActive' => [\Magento\Framework\Reflection\Test\Unit\DataObject::class,
+            'DataObject#isActive' => [
+                'Magento\Framework\Reflection\Test\Unit\DataObject',
                 'isActive',
                 true,
             ],
-            'FieldNamer#getFieldNameForMethodName' => [\Magento\Framework\Reflection\FieldNamer::class,
+            'FieldNamer#getFieldNameForMethodName' => [
+                'Magento\Framework\Reflection\FieldNamer',
                 'getFieldNameForMethodName',
                 false,
             ],

@@ -14,9 +14,8 @@ use Magento\Quote\Model\Quote;
 use Magento\TestFramework\Helper\Bootstrap;
 
 /**
- * Tests of Paypal Express actions
+ * Tests of Paypal Express actions.
  *
- * @package Magento\Paypal\Controller
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  */
 class ExpressTest extends \Magento\TestFramework\TestCase\AbstractController
@@ -24,6 +23,7 @@ class ExpressTest extends \Magento\TestFramework\TestCase\AbstractController
     /**
      * @magentoDataFixture Magento/Sales/_files/quote.php
      * @magentoDataFixture Magento/Paypal/_files/quote_payment.php
+     * @return void
      */
     public function testReviewAction()
     {
@@ -44,8 +44,9 @@ class ExpressTest extends \Magento\TestFramework\TestCase\AbstractController
     }
 
     /**
-     * @magentoDataFixture Magento/Paypal/_files/quote_payment_express.php
+     * @magentoDataFixture   Magento/Paypal/_files/quote_payment_express.php
      * @magentoConfigFixture current_store paypal/general/business_account merchant_2012050718_biz@example.com
+     * @return void
      */
     public function testCancelAction()
     {
@@ -64,7 +65,7 @@ class ExpressTest extends \Magento\TestFramework\TestCase\AbstractController
         )->setQuoteId(
             $order->getQuoteId()
         );
-        /** @var $paypalSession Generic */
+        /** @var GenericSession $paypalSession */
         $paypalSession = $this->_objectManager->get(PaypalSession::class);
         $paypalSession->setExpressCheckoutToken('token');
 
@@ -83,6 +84,7 @@ class ExpressTest extends \Magento\TestFramework\TestCase\AbstractController
      *
      * @magentoDataFixture Magento/Sales/_files/quote.php
      * @magentoDataFixture Magento/Customer/_files/customer.php
+     * @return void
      */
     public function testStartActionCustomerToQuote()
     {
@@ -141,12 +143,14 @@ class ExpressTest extends \Magento\TestFramework\TestCase\AbstractController
     /**
      * Test return action with configurable product.
      *
-     * @magentoDataFixture Magento/Paypal/_files/quote_express_configurable.php
-     * @magentoDbIsolation enabled
+     * @magentoDataFixture  Magento/Paypal/_files/quote_express_configurable.php
+     * @magentoDbIsolation  enabled
      * @magentoAppIsolation enabled
+     * @return void
      */
     public function testReturnAction()
     {
+        /** @var Quote $quote */
         $quote = $this->_objectManager->create(Quote::class);
         $quote->load('test_cart_with_configurable', 'reserved_order_id');
 
@@ -174,7 +178,6 @@ class ExpressTest extends \Magento\TestFramework\TestCase\AbstractController
             'setBillingAddress',
             'callDoExpressCheckoutPayment',
             'callGetExpressCheckoutDetails',
-            'getExportedBillingAddress'
         ];
 
         $nvpMock = $this->getMockBuilder(Nvp::class)
@@ -186,6 +189,9 @@ class ExpressTest extends \Magento\TestFramework\TestCase\AbstractController
             $nvpMock->method($method)
                 ->willReturnSelf();
         }
+
+        $exportedBillingAddress = $this->getExportedAddressFixture($quote->getBillingAddress()->toArray());
+        $nvpMock->setData('exported_billing_address', $exportedBillingAddress);
 
         $apiFactoryMock = $this->getMockBuilder(ApiFactory::class)
             ->disableOriginalConstructor()
@@ -225,5 +231,27 @@ class ExpressTest extends \Magento\TestFramework\TestCase\AbstractController
 
         $this->_objectManager->removeSharedInstance(ApiFactory::class);
         $this->_objectManager->removeSharedInstance(PaypalSession::class);
+    }
+
+    /**
+     * Prepare fixture for exported address.
+     *
+     * @param array $addressData
+     * @return \Magento\Framework\DataObject
+     */
+    private function getExportedAddressFixture(array $addressData)
+    {
+        $addressDataKeys = ['firstname', 'lastname', 'street', 'city', 'telephone'];
+        $result = [];
+        foreach ($addressDataKeys as $key) {
+            if (isset($addressData[$key])) {
+                $result[$key] = 'exported' . $addressData[$key];
+            }
+        }
+        $fixture = new \Magento\Framework\DataObject($result);
+        $fixture->setExportedKeys($addressDataKeys);
+        $fixture->setData('note', 'note');
+
+        return $fixture;
     }
 }

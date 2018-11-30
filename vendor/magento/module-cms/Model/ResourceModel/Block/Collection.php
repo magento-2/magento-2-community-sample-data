@@ -19,20 +19,6 @@ class Collection extends AbstractCollection
     protected $_idFieldName = 'block_id';
 
     /**
-     * Event prefix
-     *
-     * @var string
-     */
-    protected $_eventPrefix = 'cms_block_collection';
-
-    /**
-     * Event object
-     *
-     * @var string
-     */
-    protected $_eventObject = 'block_collection';
-
-    /**
      * Perform operations after collection load
      *
      * @return $this
@@ -53,9 +39,8 @@ class Collection extends AbstractCollection
      */
     protected function _construct()
     {
-        $this->_init(\Magento\Cms\Model\Block::class, \Magento\Cms\Model\ResourceModel\Block::class);
+        $this->_init('Magento\Cms\Model\Block', 'Magento\Cms\Model\ResourceModel\Block');
         $this->_map['fields']['store'] = 'store_table.store_id';
-        $this->_map['fields']['block_id'] = 'main_table.block_id';
     }
 
     /**

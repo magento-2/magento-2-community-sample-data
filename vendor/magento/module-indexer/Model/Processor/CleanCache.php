@@ -70,7 +70,7 @@ class CleanCache
      * Get cache interface
      *
      * @return \Magento\Framework\App\CacheInterface
-     * @deprecated 100.1.1
+     * @deprecated
      */
     private function getCache()
     {

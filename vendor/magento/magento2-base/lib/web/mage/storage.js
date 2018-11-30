@@ -2,7 +2,6 @@
  * Copyright © Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
-
 define(['jquery', 'mage/url'], function ($, urlBuilder) {
     'use strict';
 
@@ -25,7 +24,6 @@ define(['jquery', 'mage/url'], function ($, urlBuilder) {
                 contentType: contentType
             });
         },
-
         /**
          * Perform asynchronous POST request to server.
          * @param {String} url
@@ -46,7 +44,6 @@ define(['jquery', 'mage/url'], function ($, urlBuilder) {
                 contentType: contentType
             });
         },
-
         /**
          * Perform asynchronous PUT request to server.
          * @param {String} url
@@ -55,7 +52,7 @@ define(['jquery', 'mage/url'], function ($, urlBuilder) {
          * @param {String} contentType
          * @returns {Deferred}
          */
-        put: function (url, data, global, contentType) {
+        put: function(url, data, global, contentType) {
             global = global === undefined ? true : global;
             contentType = contentType || 'application/json';
 
@@ -67,7 +64,6 @@ define(['jquery', 'mage/url'], function ($, urlBuilder) {
                 contentType: contentType
             });
         },
-
         /**
          * Perform asynchronous DELETE request to server.
          * @param {String} url
@@ -75,7 +71,7 @@ define(['jquery', 'mage/url'], function ($, urlBuilder) {
          * @param {String} contentType
          * @returns {Deferred}
          */
-        delete: function (url, global, contentType) {
+        delete: function(url, global, contentType) {
             global = global === undefined ? true : global;
             contentType = contentType || 'application/json';
 

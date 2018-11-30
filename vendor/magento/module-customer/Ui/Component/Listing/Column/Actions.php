@@ -12,9 +12,6 @@ use Magento\Framework\UrlInterface;
 
 /**
  * Class ProductActions
- *
- * @api
- * @since 100.0.2
  */
 class Actions extends Column
 {

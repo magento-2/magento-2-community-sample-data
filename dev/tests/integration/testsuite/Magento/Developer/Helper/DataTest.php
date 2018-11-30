@@ -7,7 +7,7 @@ namespace Magento\Developer\Helper;
 
 use \Zend\Stdlib\Parameters;
 
-class DataTest extends \PHPUnit\Framework\TestCase
+class DataTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\Developer\Helper\Data
@@ -17,7 +17,7 @@ class DataTest extends \PHPUnit\Framework\TestCase
     protected function setUp()
     {
         $this->helper = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->get(
-            \Magento\Developer\Helper\Data::class
+            'Magento\Developer\Helper\Data'
         );
     }
 
@@ -38,7 +38,7 @@ class DataTest extends \PHPUnit\Framework\TestCase
         $objectManager = \Magento\TestFramework\Helper\Bootstrap::getObjectManager();
 
         /** @var \Magento\TestFramework\Request $request */
-        $request = $objectManager->get(\Magento\TestFramework\Request::class);
+        $request = $objectManager->get('Magento\TestFramework\Request');
         $request->setServer(new Parameters(['REMOTE_ADDR' => '192.168.0.1']));
 
         $this->assertTrue($this->helper->isDevAllowed());
@@ -53,7 +53,7 @@ class DataTest extends \PHPUnit\Framework\TestCase
         $objectManager = \Magento\TestFramework\Helper\Bootstrap::getObjectManager();
 
         /** @var \Magento\TestFramework\Request $request */
-        $request = $objectManager->get(\Magento\TestFramework\Request::class);
+        $request = $objectManager->get('Magento\TestFramework\Request');
         $request->setServer(new Parameters(['REMOTE_ADDR' => '192.168.0.3']));
 
         $this->assertFalse($this->helper->isDevAllowed());

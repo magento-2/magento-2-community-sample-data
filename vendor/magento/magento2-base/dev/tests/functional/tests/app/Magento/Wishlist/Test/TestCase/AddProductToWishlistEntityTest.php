@@ -21,13 +21,14 @@ use Magento\Customer\Test\Fixture\Customer;
  * 3. Add created product to Wishlist according to dataset
  * 4. Perform all assertions
  *
- * @group Wishlist
+ * @group Wishlist_(CS)
  * @ZephyrId MAGETWO-29045
  */
 class AddProductToWishlistEntityTest extends AbstractWishlistTest
 {
     /* tags */
     const MVP = 'no';
+    const DOMAIN = 'CS';
     /* end tags */
 
     /**

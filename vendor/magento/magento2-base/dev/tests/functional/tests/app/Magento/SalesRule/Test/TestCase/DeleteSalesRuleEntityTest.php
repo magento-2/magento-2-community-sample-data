@@ -9,13 +9,11 @@ namespace Magento\SalesRule\Test\TestCase;
 use Magento\SalesRule\Test\Fixture\SalesRule;
 use Magento\SalesRule\Test\Page\Adminhtml\PromoQuoteEdit;
 use Magento\SalesRule\Test\Page\Adminhtml\PromoQuoteIndex;
-use Magento\Catalog\Test\Fixture\CatalogProductSimple;
 use Magento\Mtf\TestCase\Injectable;
 
 /**
  * Precondition:
  * 1. Several Cart Price Rules are created.
- * 2. Create sales rule from dataset using Handler.
  *
  * Steps:
  * 1. Login to backend.
@@ -24,13 +22,14 @@ use Magento\Mtf\TestCase\Injectable;
  * 4. Click 'Delete' button.
  * 5. Perform asserts.
  *
- * @group Shopping_Cart_Price_Rules
+ * @group Shopping_Cart_Price_Rules_(CS)
  * @ZephyrId MAGETWO-24985
  */
 class DeleteSalesRuleEntityTest extends Injectable
 {
     /* tags */
     const MVP = 'yes';
+    const DOMAIN = 'CS';
     /* end tags */
 
     /**
@@ -65,17 +64,12 @@ class DeleteSalesRuleEntityTest extends Injectable
      * Delete Sales Rule Entity.
      *
      * @param SalesRule $salesRule
-     * @param CatalogProductSimple $productForSalesRule1
      * @return void
      */
-    public function test(SalesRule $salesRule, CatalogProductSimple $productForSalesRule1 = null)
+    public function testDeleteSalesRule(SalesRule $salesRule)
     {
         // Preconditions
         $salesRule->persist();
-
-        if ($productForSalesRule1) {
-            $productForSalesRule1->persist();
-        }
 
         // Steps
         $this->promoQuoteIndex->open();

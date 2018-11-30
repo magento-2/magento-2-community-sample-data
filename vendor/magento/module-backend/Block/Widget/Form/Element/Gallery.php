@@ -4,6 +4,8 @@
  * See COPYING.txt for license details.
  */
 
+// @codingStandardsIgnoreFile
+
 namespace Magento\Backend\Block\Widget\Form\Element;
 
 use Magento\Framework\Data\Form\Element\AbstractElement;
@@ -13,8 +15,7 @@ use Magento\Framework\Data\Form\Element\AbstractElement;
  *
  * @author      Magento Core Team <core@magentocommerce.com>
  */
-class Gallery extends \Magento\Backend\Block\Template implements
-    \Magento\Framework\Data\Form\Element\Renderer\RendererInterface
+class Gallery extends \Magento\Backend\Block\Template implements \Magento\Framework\Data\Form\Element\Renderer\RendererInterface
 {
     /**
      * @var AbstractElement|null
@@ -69,13 +70,13 @@ class Gallery extends \Magento\Backend\Block\Template implements
     {
         $this->addChild(
             'delete_button',
-            \Magento\Backend\Block\Widget\Button::class,
+            'Magento\Backend\Block\Widget\Button',
             ['label' => __('Delete'), 'onclick' => "deleteImage(#image#)", 'class' => 'delete']
         );
 
         $this->addChild(
             'add_button',
-            \Magento\Backend\Block\Widget\Button::class,
+            'Magento\Backend\Block\Widget\Button',
             ['label' => __('Add New Image'), 'onclick' => 'addNewImage()', 'class' => 'add']
         );
         return parent::_prepareLayout();

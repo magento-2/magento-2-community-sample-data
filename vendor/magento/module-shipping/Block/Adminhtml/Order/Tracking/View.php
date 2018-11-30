@@ -8,8 +8,6 @@ namespace Magento\Shipping\Block\Adminhtml\Order\Tracking;
 /**
  * Shipment tracking control form
  *
- * @api
- * @since 100.0.2
  */
 class View extends \Magento\Shipping\Block\Adminhtml\Order\Tracking
 {
@@ -46,7 +44,7 @@ class View extends \Magento\Shipping\Block\Adminhtml\Order\Tracking
         $onclick = "submitAndReloadArea($('shipment_tracking_info').parentNode, '" . $this->getSubmitUrl() . "')";
         $this->addChild(
             'save_button',
-            \Magento\Backend\Block\Widget\Button::class,
+            'Magento\Backend\Block\Widget\Button',
             ['label' => __('Add'), 'class' => 'save', 'onclick' => $onclick]
         );
     }

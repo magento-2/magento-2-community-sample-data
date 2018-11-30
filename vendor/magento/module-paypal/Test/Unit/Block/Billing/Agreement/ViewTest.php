@@ -9,7 +9,7 @@ namespace Magento\Paypal\Test\Unit\Block\Billing\Agreement;
  * Class ViewTest
  * @package Magento\Paypal\Block\Billing\Agreement
  */
-class ViewTest extends \PHPUnit\Framework\TestCase
+class ViewTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\Sales\Model\ResourceModel\Order\CollectionFactory | \PHPUnit_Framework_MockObject_MockObject
@@ -30,14 +30,17 @@ class ViewTest extends \PHPUnit\Framework\TestCase
     {
         $objectManager = new \Magento\Framework\TestFramework\Unit\Helper\ObjectManager($this);
 
-        $this->orderCollectionFactory = $this->createPartialMock(
-            \Magento\Sales\Model\ResourceModel\Order\CollectionFactory::class,
-            ['create']
+        $this->orderCollectionFactory = $this->getMock(
+            'Magento\Sales\Model\ResourceModel\Order\CollectionFactory',
+            ['create'],
+            [],
+            '',
+            false
         );
-        $this->orderConfig = $this->createMock(\Magento\Sales\Model\Order\Config::class);
+        $this->orderConfig = $this->getMock('Magento\Sales\Model\Order\Config', [], [], '', false);
 
         $this->block = $objectManager->getObject(
-            \Magento\Paypal\Block\Billing\Agreement\View::class,
+            'Magento\Paypal\Block\Billing\Agreement\View',
             [
                 'orderCollectionFactory' => $this->orderCollectionFactory,
                 'orderConfig' => $this->orderConfig,
@@ -49,9 +52,12 @@ class ViewTest extends \PHPUnit\Framework\TestCase
     {
         $visibleStatuses = [];
 
-        $orderCollection = $this->createPartialMock(
-            \Magento\Sales\Model\ResourceModel\Order\Collection::class,
-            ['addFieldToSelect', 'addFieldToFilter', 'setOrder']
+        $orderCollection = $this->getMock(
+            'Magento\Sales\Model\ResourceModel\Order\Collection',
+            ['addFieldToSelect', 'addFieldToFilter', 'setOrder'],
+            [],
+            '',
+            false
         );
         $orderCollection->expects($this->at(0))
             ->method('addFieldToSelect')

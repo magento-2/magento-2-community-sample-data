@@ -11,7 +11,7 @@ use Magento\Sales\Api\Data\OrderAddressInterface;
 /**
  * Class AddressAdapterTest
  */
-class AddressAdapterTest extends \PHPUnit\Framework\TestCase
+class AddressAdapterTest extends \PHPUnit_Framework_TestCase
 {
     /** @var AddressAdapter */
     protected $model;
@@ -46,7 +46,7 @@ class AddressAdapterTest extends \PHPUnit\Framework\TestCase
     /**
      * @param $street array|null
      * @param $expected string
-     * @dataProvider streetLine1DataProvider
+     * @dataProvider testStreetLine1DataProvider
      */
     public function testStreetLine1($street, $expected)
     {
@@ -57,7 +57,7 @@ class AddressAdapterTest extends \PHPUnit\Framework\TestCase
     /**
      * @return array
      */
-    public function streetLine1DataProvider()
+    public function testStreetLine1DataProvider()
     {
         return [
             [['Street Line 1'], 'Street Line 1'], //$street, $expected
@@ -68,7 +68,7 @@ class AddressAdapterTest extends \PHPUnit\Framework\TestCase
     /**
      * @param $street array|null
      * @param $expected string
-     * @dataProvider streetLine2DataProvider
+     * @dataProvider testStreetLine2DataProvider
      */
     public function testStreetLine2($street, $expected)
     {
@@ -79,7 +79,7 @@ class AddressAdapterTest extends \PHPUnit\Framework\TestCase
     /**
      * @return array
      */
-    public function streetLine2DataProvider()
+    public function testStreetLine2DataProvider()
     {
         return [
             [['Street Line 1', 'Street Line 2',], 'Street Line 2'], //$street, $expected

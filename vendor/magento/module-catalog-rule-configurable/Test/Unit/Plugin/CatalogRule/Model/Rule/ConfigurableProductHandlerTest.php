@@ -6,14 +6,14 @@
 
 namespace Magento\CatalogRuleConfigurable\Test\Unit\Plugin\CatalogRule\Model\Rule;
 
-use Magento\CatalogRuleConfigurable\Plugin\CatalogRule\Model\ConfigurableProductsProvider;
 use Magento\CatalogRuleConfigurable\Plugin\CatalogRule\Model\Rule\ConfigurableProductHandler;
 use Magento\ConfigurableProduct\Model\ResourceModel\Product\Type\Configurable;
+use Magento\CatalogRuleConfigurable\Plugin\CatalogRule\Model\ConfigurableProductsProvider;
 
 /**
  * Unit test for Magento\CatalogRuleConfigurable\Plugin\CatalogRule\Model\Rule\ConfigurableProductHandler
  */
-class ConfigurableProductHandlerTest extends \PHPUnit\Framework\TestCase
+class ConfigurableProductHandlerTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\CatalogRuleConfigurable\Plugin\CatalogRule\Model\Rule\ConfigurableProductHandler
@@ -38,15 +38,21 @@ class ConfigurableProductHandlerTest extends \PHPUnit\Framework\TestCase
      */
     protected function setUp()
     {
-        $this->configurableMock = $this->createPartialMock(
-            \Magento\ConfigurableProduct\Model\ResourceModel\Product\Type\Configurable::class,
-            ['getChildrenIds']
+        $this->configurableMock = $this->getMock(
+            'Magento\ConfigurableProduct\Model\ResourceModel\Product\Type\Configurable',
+            ['getChildrenIds'],
+            [],
+            '',
+            false
         );
-        $this->configurableProductsProviderMock = $this->createPartialMock(
-            \Magento\CatalogRuleConfigurable\Plugin\CatalogRule\Model\ConfigurableProductsProvider::class,
-            ['getIds']
+        $this->configurableProductsProviderMock = $this->getMock(
+            'Magento\CatalogRuleConfigurable\Plugin\CatalogRule\Model\ConfigurableProductsProvider',
+            ['getIds'],
+            [],
+            '',
+            false
         );
-        $this->ruleMock = $this->createMock(\Magento\CatalogRule\Model\Rule::class);
+        $this->ruleMock = $this->getMock('Magento\CatalogRule\Model\Rule', [], [], '', false);
 
         $this->configurableProductHandler = new ConfigurableProductHandler(
             $this->configurableMock,

@@ -6,7 +6,7 @@
 
 namespace Magento\Fedex\Model;
 
-class CarrierTest extends \PHPUnit\Framework\TestCase
+class CarrierTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\Fedex\Model\Carrier
@@ -16,7 +16,7 @@ class CarrierTest extends \PHPUnit\Framework\TestCase
     protected function setUp()
     {
         $this->_model = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->create(
-            \Magento\Fedex\Model\Carrier::class
+            'Magento\Fedex\Model\Carrier'
         );
     }
 

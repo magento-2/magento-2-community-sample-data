@@ -5,65 +5,50 @@
  */
 namespace Magento\Integration\Test\Unit\Model;
 
-use Magento\Framework\Serialize\SerializerInterface;
 use Magento\Integration\Model\IntegrationConfig;
 use Magento\Integration\Model\Cache\TypeIntegration;
 
 /**
  * Unit test for \Magento\Integration\Model\IntegrationConfig
  */
-class IntegrationConfigTest extends \PHPUnit\Framework\TestCase
+class IntegrationConfigTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var IntegrationConfig
      */
-    private $integrationConfigModel;
+    protected $integrationConfigModel;
 
     /**
      * @var TypeIntegration|\PHPUnit_Framework_MockObject_MockObject
      */
-    private $configCacheTypeMock;
+    protected $configCacheTypeMock;
 
     /**
      * @var  \Magento\Integration\Model\Config\Integration\Reader|\PHPUnit_Framework_MockObject_MockObject
      */
-    private $configReaderMock;
-
-    /**
-     * @var SerializerInterface|\PHPUnit_Framework_MockObject_MockObject
-     */
-    private $serializer;
+    protected $configReaderMock;
 
     protected function setUp()
     {
-        $this->configCacheTypeMock = $this->getMockBuilder(\Magento\Integration\Model\Cache\TypeIntegration::class)
+        $this->configCacheTypeMock = $this->getMockBuilder('Magento\Integration\Model\Cache\TypeIntegration')
             ->disableOriginalConstructor()
             ->getMock();
-        $this->configReaderMock = $this->getMockBuilder(\Magento\Integration\Model\Config\Integration\Reader::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $this->serializer = $this->getMockBuilder(SerializerInterface::class)
+        $this->configReaderMock = $this->getMockBuilder('Magento\Integration\Model\Config\Integration\Reader')
             ->disableOriginalConstructor()
             ->getMock();
         $this->integrationConfigModel = new IntegrationConfig(
             $this->configCacheTypeMock,
-            $this->configReaderMock,
-            $this->serializer
+            $this->configReaderMock
         );
     }
 
     public function testGetIntegrationsFromConfigCacheType()
     {
         $integrations = ['foo', 'bar', 'baz'];
-        $serializedIntegrations = '["foo","bar","baz"]';
         $this->configCacheTypeMock->expects($this->once())
             ->method('load')
             ->with(IntegrationConfig::CACHE_ID)
-            ->will($this->returnValue($serializedIntegrations));
-        $this->serializer->expects($this->once())
-            ->method('unserialize')
-            ->with($serializedIntegrations)
-            ->willReturn($integrations);
+            ->will($this->returnValue(serialize($integrations)));
 
         $this->assertEquals($integrations, $this->integrationConfigModel->getIntegrations());
     }
@@ -71,22 +56,17 @@ class IntegrationConfigTest extends \PHPUnit\Framework\TestCase
     public function testGetIntegrationsFromConfigReader()
     {
         $integrations = ['foo', 'bar', 'baz'];
-        $serializedIntegrations = '["foo","bar","baz"]';
         $this->configCacheTypeMock->expects($this->once())
             ->method('load')
             ->with(IntegrationConfig::CACHE_ID)
             ->will($this->returnValue(null));
+        $this->configCacheTypeMock->expects($this->once())
+            ->method('save')
+            ->with(serialize($integrations), IntegrationConfig::CACHE_ID, [TypeIntegration::CACHE_TAG])
+            ->will($this->returnValue(null));
         $this->configReaderMock->expects($this->once())
             ->method('read')
             ->will($this->returnValue($integrations));
-        $this->serializer->expects($this->once())
-            ->method('serialize')
-            ->with($integrations)
-            ->willReturn($serializedIntegrations);
-        $this->configCacheTypeMock->expects($this->once())
-            ->method('save')
-            ->with($serializedIntegrations, IntegrationConfig::CACHE_ID, [TypeIntegration::CACHE_TAG])
-            ->will($this->returnValue(null));
 
         $this->assertEquals($integrations, $this->integrationConfigModel->getIntegrations());
     }

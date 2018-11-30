@@ -8,7 +8,6 @@ namespace Magento\User\Observer\Backend;
 
 use Magento\Framework\Event\Observer as EventObserver;
 use Magento\Framework\Event\ObserverInterface;
-use Magento\User\Model\User;
 
 /**
  * User backend observer model for passwords
@@ -73,9 +72,10 @@ class TrackAdminNewPasswordObserver implements ObserverInterface
         $user = $observer->getEvent()->getObject();
         if ($user->getId()) {
             $passwordHash = $user->getPassword();
-            if ($passwordHash && !$user->getForceNewPassword()) {
-                $this->userResource->trackPassword($user, $passwordHash);
-                $this->messageManager->getMessages()->deleteMessageByIdentifier(User::MESSAGE_ID_PASSWORD_EXPIRED);
+            $passwordLifetime = $this->observerConfig->getAdminPasswordLifetime();
+            if ($passwordLifetime && $passwordHash && !$user->getForceNewPassword()) {
+                $this->userResource->trackPassword($user, $passwordHash, $passwordLifetime);
+                $this->messageManager->getMessages()->deleteMessageByIdentifier('magento_user_password_expired');
                 $this->authSession->unsPciAdminUserIsPasswordExpired();
             }
         }

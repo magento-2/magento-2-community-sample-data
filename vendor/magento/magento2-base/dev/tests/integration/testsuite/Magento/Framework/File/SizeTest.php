@@ -9,7 +9,7 @@
  */
 namespace Magento\Framework\File;
 
-class SizeTest extends \PHPUnit\Framework\TestCase
+class SizeTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\Framework\File\Size
@@ -19,7 +19,7 @@ class SizeTest extends \PHPUnit\Framework\TestCase
     protected function setUp()
     {
         $this->_fileSize = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()
-            ->get(\Magento\Framework\File\Size::class);
+            ->get('Magento\Framework\File\Size');
     }
 
     /**

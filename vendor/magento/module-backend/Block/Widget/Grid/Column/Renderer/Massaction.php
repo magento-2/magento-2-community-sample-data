@@ -8,9 +8,7 @@ namespace Magento\Backend\Block\Widget\Grid\Column\Renderer;
 /**
  * Grid widget column renderer massaction
  *
- * @api
- * @deprecated 100.2.0 in favour of UI component implementation
- * @since 100.0.2
+ * @author     Magento Core Team <core@magentocommerce.com>
  */
 class Massaction extends \Magento\Backend\Block\Widget\Grid\Column\Renderer\Checkbox
 {
@@ -65,7 +63,7 @@ class Massaction extends \Magento\Backend\Block\Widget\Grid\Column\Renderer\Chec
      */
     protected function _getCheckboxHtml($value, $checked)
     {
-        $id = 'id_' . random_int(0, 999);
+        $id = 'id_' . rand(0, 999);
         $html = '<label class="data-grid-checkbox-cell-inner" for="'. $id .'">';
         $html .= '<input type="checkbox" name="' . $this->getColumn()->getName() . '" ';
         $html .= 'id="' . $id . '" data-role="select-row"';

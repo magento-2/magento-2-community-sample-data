@@ -16,7 +16,7 @@ use Magento\Framework\Stdlib\ArrayManager;
  * Class AbstractDataProviderTest
  * @SuppressWarnings(PHPMD.NumberOfChildren)
  */
-abstract class AbstractModifierTest extends \PHPUnit\Framework\TestCase
+abstract class AbstractModifierTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var ModifierInterface
@@ -56,15 +56,13 @@ abstract class AbstractModifierTest extends \PHPUnit\Framework\TestCase
         $this->productMock = $this->getMockBuilder(ProductInterface::class)
             ->setMethods([
                 'getId',
-                'getTypeId',
                 'getStoreId',
                 'getResource',
                 'getData',
                 'getAttributes',
                 'getStore',
                 'getAttributeDefaultValue',
-                'getExistsStoreValueFlag',
-                'isLockedAttribute'
+                'getExistsStoreValueFlag'
             ])->getMockForAbstractClass();
         $this->storeMock = $this->getMockBuilder(StoreInterface::class)
             ->setMethods(['load', 'getId', 'getConfig'])
@@ -81,6 +79,9 @@ abstract class AbstractModifierTest extends \PHPUnit\Framework\TestCase
             ->willReturnArgument(2);
         $this->arrayManagerMock->expects($this->any())
             ->method('set')
+            ->willReturnArgument(1);
+        $this->arrayManagerMock->expects($this->any())
+            ->method('merge')
             ->willReturnArgument(1);
         $this->arrayManagerMock->expects($this->any())
             ->method('remove')

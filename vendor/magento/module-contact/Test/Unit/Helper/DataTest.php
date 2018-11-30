@@ -6,7 +6,7 @@
 
 namespace Magento\Contact\Test\Unit\Helper;
 
-class DataTest extends \PHPUnit\Framework\TestCase
+class DataTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * Helper
@@ -44,7 +44,7 @@ class DataTest extends \PHPUnit\Framework\TestCase
     protected function setUp()
     {
         $this->objectManagerHelper = new \Magento\Framework\TestFramework\Unit\Helper\ObjectManager($this);
-        $className = \Magento\Contact\Helper\Data::class;
+        $className = '\Magento\Contact\Helper\Data';
         $arguments = $this->objectManagerHelper->getConstructArguments($className);
         /**
          * @var \Magento\Framework\App\Helper\Context $context
@@ -89,7 +89,7 @@ class DataTest extends \PHPUnit\Framework\TestCase
             ->method('isLoggedIn')
             ->willReturn(true);
 
-        $customerDataObject = $this->getMockBuilder(\Magento\Customer\Model\Data\Customer::class)
+        $customerDataObject = $this->getMockBuilder('\Magento\Customer\Model\Data\Customer')
             ->disableOriginalConstructor()
             ->getMock();
         $this->customerSessionMock->expects($this->once())
@@ -118,7 +118,7 @@ class DataTest extends \PHPUnit\Framework\TestCase
             ->method('isLoggedIn')
             ->willReturn(true);
 
-        $customerDataObject = $this->createMock(\Magento\Customer\Api\Data\CustomerInterface::class);
+        $customerDataObject = $this->getMock('\Magento\Customer\Api\Data\CustomerInterface', [], [], '', false);
         $customerDataObject->expects($this->once())
             ->method('getEmail')
             ->willReturn('customer@email.com');
@@ -134,7 +134,7 @@ class DataTest extends \PHPUnit\Framework\TestCase
     {
         $postData = ['name' => 'Some Name', 'email' => 'Some Email'];
 
-        $dataPersistorMock = $this->getMockBuilder(\Magento\Framework\App\Request\DataPersistorInterface::class)
+        $dataPersistorMock = $this->getMockBuilder('Magento\Framework\App\Request\DataPersistorInterface')
             ->getMockForAbstractClass();
         $dataPersistorMock->expects($this->once())
             ->method('get')

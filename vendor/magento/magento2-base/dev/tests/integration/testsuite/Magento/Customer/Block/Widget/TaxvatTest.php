@@ -10,7 +10,7 @@ namespace Magento\Customer\Block\Widget;
  *
  * @magentoAppArea frontend
  */
-class TaxvatTest extends \PHPUnit\Framework\TestCase
+class TaxvatTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @magentoAppIsolation enabled

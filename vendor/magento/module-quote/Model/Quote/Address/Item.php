@@ -8,7 +8,8 @@ namespace Magento\Quote\Model\Quote\Address;
 use Magento\Quote\Model\Quote;
 
 /**
- * @api
+ * @method \Magento\Quote\Model\ResourceModel\Quote\Address\Item _getResource()
+ * @method \Magento\Quote\Model\ResourceModel\Quote\Address\Item getResource()
  * @method int getParentItemId()
  * @method \Magento\Quote\Model\Quote\Address\Item setParentItemId(int $value)
  * @method int getQuoteAddressId()
@@ -84,7 +85,6 @@ use Magento\Quote\Model\Quote;
  * @method \Magento\Quote\Model\Quote\Address\Item setBaseDiscountTaxCompensationAmount(float $value)
  *
  * @author      Magento Core Team <core@magentocommerce.com>
- * @since 100.0.2
  */
 class Item extends \Magento\Quote\Model\Quote\Item\AbstractItem
 {
@@ -105,7 +105,7 @@ class Item extends \Magento\Quote\Model\Quote\Item\AbstractItem
      */
     protected function _construct()
     {
-        $this->_init(\Magento\Quote\Model\ResourceModel\Quote\Address\Item::class);
+        $this->_init('Magento\Quote\Model\ResourceModel\Quote\Address\Item');
     }
 
     /**

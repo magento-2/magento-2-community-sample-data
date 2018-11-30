@@ -11,10 +11,7 @@ use Magento\Setup\Controller\ReadinessCheckUpdater;
 use Magento\Setup\Controller\ResponseTypeInterface;
 use Zend\View\Model\JsonModel;
 
-/**
- * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
- */
-class EnvironmentTest extends \PHPUnit\Framework\TestCase
+class EnvironmentTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\Framework\Setup\FilePermissions|\PHPUnit_Framework_MockObject_MockObject
@@ -43,10 +40,16 @@ class EnvironmentTest extends \PHPUnit\Framework\TestCase
 
     public function setUp()
     {
-        $this->filesystem = $this->createMock(\Magento\Framework\Filesystem::class);
-        $this->permissions = $this->createMock(\Magento\Framework\Setup\FilePermissions::class);
-        $this->cronScriptReadinessCheck = $this->createMock(\Magento\Setup\Model\CronScriptReadinessCheck::class);
-        $this->phpReadinessCheck = $this->createMock(\Magento\Setup\Model\PhpReadinessCheck::class);
+        $this->filesystem = $this->getMock('Magento\Framework\Filesystem', [], [], '', false);
+        $this->permissions = $this->getMock('Magento\Framework\Setup\FilePermissions', [], [], '', false);
+        $this->cronScriptReadinessCheck = $this->getMock(
+            'Magento\Setup\Model\CronScriptReadinessCheck',
+            [],
+            [],
+            '',
+            false
+        );
+        $this->phpReadinessCheck = $this->getMock('Magento\Setup\Model\PhpReadinessCheck', [], [], '', false);
         $this->environment = new Environment(
             $this->permissions,
             $this->filesystem,
@@ -57,11 +60,11 @@ class EnvironmentTest extends \PHPUnit\Framework\TestCase
 
     public function testFilePermissionsInstaller()
     {
-        $request = $this->createMock(\Zend\Http\PhpEnvironment\Request::class);
-        $response = $this->createMock(\Zend\Http\PhpEnvironment\Response::class);
-        $routeMatch = $this->createMock(\Zend\Mvc\Router\RouteMatch::class);
+        $request = $this->getMock('\Zend\Http\PhpEnvironment\Request', [], [], '', false);
+        $response = $this->getMock('\Zend\Http\PhpEnvironment\Response', [], [], '', false);
+        $routeMatch = $this->getMock('\Zend\Mvc\Router\RouteMatch', [], [], '', false);
 
-        $mvcEvent = $this->createMock(\Zend\Mvc\MvcEvent::class);
+        $mvcEvent = $this->getMock('\Zend\Mvc\MvcEvent', [], [], '', false);
         $mvcEvent->expects($this->once())->method('setRequest')->with($request)->willReturn($mvcEvent);
         $mvcEvent->expects($this->once())->method('setResponse')->with($response)->willReturn($mvcEvent);
         $mvcEvent->expects($this->once())->method('setTarget')->with($this->environment)->willReturn($mvcEvent);
@@ -74,11 +77,11 @@ class EnvironmentTest extends \PHPUnit\Framework\TestCase
 
     public function testPhpVersionActionInstaller()
     {
-        $request = $this->createMock(\Zend\Http\PhpEnvironment\Request::class);
-        $response = $this->createMock(\Zend\Http\PhpEnvironment\Response::class);
-        $routeMatch = $this->createMock(\Zend\Mvc\Router\RouteMatch::class);
+        $request = $this->getMock('\Zend\Http\PhpEnvironment\Request', [], [], '', false);
+        $response = $this->getMock('\Zend\Http\PhpEnvironment\Response', [], [], '', false);
+        $routeMatch = $this->getMock('\Zend\Mvc\Router\RouteMatch', [], [], '', false);
 
-        $mvcEvent = $this->createMock(\Zend\Mvc\MvcEvent::class);
+        $mvcEvent = $this->getMock('\Zend\Mvc\MvcEvent', [], [], '', false);
         $mvcEvent->expects($this->once())->method('setRequest')->with($request)->willReturn($mvcEvent);
         $mvcEvent->expects($this->once())->method('setResponse')->with($response)->willReturn($mvcEvent);
         $mvcEvent->expects($this->once())->method('setTarget')->with($this->environment)->willReturn($mvcEvent);
@@ -92,19 +95,18 @@ class EnvironmentTest extends \PHPUnit\Framework\TestCase
 
     public function testPhpVersionActionUpdater()
     {
-        $request = $this->createMock(\Zend\Http\PhpEnvironment\Request::class);
-        $response = $this->createMock(\Zend\Http\PhpEnvironment\Response::class);
-        $routeMatch = $this->createMock(\Zend\Mvc\Router\RouteMatch::class);
+        $request = $this->getMock('\Zend\Http\PhpEnvironment\Request', [], [], '', false);
+        $response = $this->getMock('\Zend\Http\PhpEnvironment\Response', [], [], '', false);
+        $routeMatch = $this->getMock('\Zend\Mvc\Router\RouteMatch', [], [], '', false);
 
-        $mvcEvent = $this->createMock(\Zend\Mvc\MvcEvent::class);
+        $mvcEvent = $this->getMock('\Zend\Mvc\MvcEvent', [], [], '', false);
         $mvcEvent->expects($this->once())->method('setRequest')->with($request)->willReturn($mvcEvent);
         $mvcEvent->expects($this->once())->method('setResponse')->with($response)->willReturn($mvcEvent);
         $mvcEvent->expects($this->once())->method('setTarget')->with($this->environment)->willReturn($mvcEvent);
         $mvcEvent->expects($this->any())->method('getRouteMatch')->willReturn($routeMatch);
         $request->expects($this->once())->method('getQuery')->willReturn(ReadinessCheckUpdater::UPDATER);
         $this->phpReadinessCheck->expects($this->never())->method('checkPhpVersion');
-        $read =
-            $this->getMockForAbstractClass(\Magento\Framework\Filesystem\Directory\ReadInterface::class, [], '', false);
+        $read = $this->getMockForAbstractClass('Magento\Framework\Filesystem\Directory\ReadInterface', [], '', false);
         $this->filesystem->expects($this->once())->method('getDirectoryRead')->willReturn($read);
         $read->expects($this->once())
             ->method('readFile')
@@ -116,11 +118,11 @@ class EnvironmentTest extends \PHPUnit\Framework\TestCase
 
     public function testPhpSettingsActionInstaller()
     {
-        $request = $this->createMock(\Zend\Http\PhpEnvironment\Request::class);
-        $response = $this->createMock(\Zend\Http\PhpEnvironment\Response::class);
-        $routeMatch = $this->createMock(\Zend\Mvc\Router\RouteMatch::class);
+        $request = $this->getMock('\Zend\Http\PhpEnvironment\Request', [], [], '', false);
+        $response = $this->getMock('\Zend\Http\PhpEnvironment\Response', [], [], '', false);
+        $routeMatch = $this->getMock('\Zend\Mvc\Router\RouteMatch', [], [], '', false);
 
-        $mvcEvent = $this->createMock(\Zend\Mvc\MvcEvent::class);
+        $mvcEvent = $this->getMock('\Zend\Mvc\MvcEvent', [], [], '', false);
         $mvcEvent->expects($this->once())->method('setRequest')->with($request)->willReturn($mvcEvent);
         $mvcEvent->expects($this->once())->method('setResponse')->with($response)->willReturn($mvcEvent);
         $mvcEvent->expects($this->once())->method('setTarget')->with($this->environment)->willReturn($mvcEvent);
@@ -134,19 +136,18 @@ class EnvironmentTest extends \PHPUnit\Framework\TestCase
 
     public function testPhpSettingsActionUpdater()
     {
-        $request = $this->createMock(\Zend\Http\PhpEnvironment\Request::class);
-        $response = $this->createMock(\Zend\Http\PhpEnvironment\Response::class);
-        $routeMatch = $this->createMock(\Zend\Mvc\Router\RouteMatch::class);
+        $request = $this->getMock('\Zend\Http\PhpEnvironment\Request', [], [], '', false);
+        $response = $this->getMock('\Zend\Http\PhpEnvironment\Response', [], [], '', false);
+        $routeMatch = $this->getMock('\Zend\Mvc\Router\RouteMatch', [], [], '', false);
 
-        $mvcEvent = $this->createMock(\Zend\Mvc\MvcEvent::class);
+        $mvcEvent = $this->getMock('\Zend\Mvc\MvcEvent', [], [], '', false);
         $mvcEvent->expects($this->once())->method('setRequest')->with($request)->willReturn($mvcEvent);
         $mvcEvent->expects($this->once())->method('setResponse')->with($response)->willReturn($mvcEvent);
         $mvcEvent->expects($this->once())->method('setTarget')->with($this->environment)->willReturn($mvcEvent);
         $mvcEvent->expects($this->any())->method('getRouteMatch')->willReturn($routeMatch);
         $request->expects($this->once())->method('getQuery')->willReturn(ReadinessCheckUpdater::UPDATER);
         $this->phpReadinessCheck->expects($this->never())->method('checkPhpSettings');
-        $read =
-            $this->getMockForAbstractClass(\Magento\Framework\Filesystem\Directory\ReadInterface::class, [], '', false);
+        $read = $this->getMockForAbstractClass('Magento\Framework\Filesystem\Directory\ReadInterface', [], '', false);
         $this->filesystem->expects($this->once())->method('getDirectoryRead')->willReturn($read);
         $read->expects($this->once())
             ->method('readFile')
@@ -158,11 +159,11 @@ class EnvironmentTest extends \PHPUnit\Framework\TestCase
 
     public function testPhpExtensionsActionInstaller()
     {
-        $request = $this->createMock(\Zend\Http\PhpEnvironment\Request::class);
-        $response = $this->createMock(\Zend\Http\PhpEnvironment\Response::class);
-        $routeMatch = $this->createMock(\Zend\Mvc\Router\RouteMatch::class);
+        $request = $this->getMock('\Zend\Http\PhpEnvironment\Request', [], [], '', false);
+        $response = $this->getMock('\Zend\Http\PhpEnvironment\Response', [], [], '', false);
+        $routeMatch = $this->getMock('\Zend\Mvc\Router\RouteMatch', [], [], '', false);
 
-        $mvcEvent = $this->createMock(\Zend\Mvc\MvcEvent::class);
+        $mvcEvent = $this->getMock('\Zend\Mvc\MvcEvent', [], [], '', false);
         $mvcEvent->expects($this->once())->method('setRequest')->with($request)->willReturn($mvcEvent);
         $mvcEvent->expects($this->once())->method('setResponse')->with($response)->willReturn($mvcEvent);
         $mvcEvent->expects($this->once())->method('setTarget')->with($this->environment)->willReturn($mvcEvent);
@@ -176,19 +177,18 @@ class EnvironmentTest extends \PHPUnit\Framework\TestCase
 
     public function testPhpExtensionsActionUpdater()
     {
-        $request = $this->createMock(\Zend\Http\PhpEnvironment\Request::class);
-        $response = $this->createMock(\Zend\Http\PhpEnvironment\Response::class);
-        $routeMatch = $this->createMock(\Zend\Mvc\Router\RouteMatch::class);
+        $request = $this->getMock('\Zend\Http\PhpEnvironment\Request', [], [], '', false);
+        $response = $this->getMock('\Zend\Http\PhpEnvironment\Response', [], [], '', false);
+        $routeMatch = $this->getMock('\Zend\Mvc\Router\RouteMatch', [], [], '', false);
 
-        $mvcEvent = $this->createMock(\Zend\Mvc\MvcEvent::class);
+        $mvcEvent = $this->getMock('\Zend\Mvc\MvcEvent', [], [], '', false);
         $mvcEvent->expects($this->once())->method('setRequest')->with($request)->willReturn($mvcEvent);
         $mvcEvent->expects($this->once())->method('setResponse')->with($response)->willReturn($mvcEvent);
         $mvcEvent->expects($this->once())->method('setTarget')->with($this->environment)->willReturn($mvcEvent);
         $mvcEvent->expects($this->any())->method('getRouteMatch')->willReturn($routeMatch);
         $request->expects($this->once())->method('getQuery')->willReturn(ReadinessCheckUpdater::UPDATER);
         $this->phpReadinessCheck->expects($this->never())->method('checkPhpExtensions');
-        $read =
-            $this->getMockForAbstractClass(\Magento\Framework\Filesystem\Directory\ReadInterface::class, [], '', false);
+        $read = $this->getMockForAbstractClass('Magento\Framework\Filesystem\Directory\ReadInterface', [], '', false);
         $this->filesystem->expects($this->once())->method('getDirectoryRead')->willReturn($read);
         $read->expects($this->once())
             ->method('readFile')
@@ -224,7 +224,6 @@ class EnvironmentTest extends \PHPUnit\Framework\TestCase
         );
         $this->assertEquals($expected, $this->environment->cronScriptAction());
     }
-
     public function testCronScriptActionUpdaterFailed()
     {
         $this->cronScriptReadinessCheck->expects($this->once())->method('checkSetup')->willReturn(['success' => true]);
@@ -311,6 +310,6 @@ class EnvironmentTest extends \PHPUnit\Framework\TestCase
     public function testIndexAction()
     {
         $model = $this->environment->indexAction();
-        $this->assertInstanceOf(\Zend\View\Model\JsonModel::class, $model);
+        $this->assertInstanceOf('Zend\View\Model\JsonModel', $model);
     }
 }

@@ -40,7 +40,7 @@ class AbstractCart extends \Magento\Framework\View\Element\Template
     protected $_customerSession;
 
     /**
-     * @var \Magento\Checkout\Model\Session
+     * @var \Magento\Customer\Model\Session
      */
     protected $_checkoutSession;
 

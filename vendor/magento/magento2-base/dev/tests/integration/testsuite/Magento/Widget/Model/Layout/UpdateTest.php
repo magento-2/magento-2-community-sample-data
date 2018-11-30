@@ -5,7 +5,7 @@
  */
 namespace Magento\Widget\Model\Layout;
 
-class UpdateTest extends \PHPUnit\Framework\TestCase
+class UpdateTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\Widget\Model\Layout\Update
@@ -15,19 +15,16 @@ class UpdateTest extends \PHPUnit\Framework\TestCase
     protected function setUp()
     {
         $this->_model = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->create(
-            \Magento\Widget\Model\Layout\Update::class
+            'Magento\Widget\Model\Layout\Update'
         );
     }
 
     public function testConstructor()
     {
         $this->_model = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->create(
-            \Magento\Widget\Model\Layout\Update::class
+            'Magento\Widget\Model\Layout\Update'
         );
-        $this->assertInstanceOf(
-            \Magento\Widget\Model\ResourceModel\Layout\Update::class,
-            $this->_model->getResource()
-        );
+        $this->assertInstanceOf('Magento\Widget\Model\ResourceModel\Layout\Update', $this->_model->getResource());
     }
 
     /**

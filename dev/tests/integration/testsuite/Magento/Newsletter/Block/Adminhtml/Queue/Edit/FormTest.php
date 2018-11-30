@@ -9,7 +9,7 @@ namespace Magento\Newsletter\Block\Adminhtml\Queue\Edit;
  * Test class for \Magento\Newsletter\Block\Adminhtml\Queue\Edit\Form
  * @magentoAppArea adminhtml
  */
-class FormTest extends \PHPUnit\Framework\TestCase
+class FormTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @magentoAppIsolation enabled
@@ -17,27 +17,27 @@ class FormTest extends \PHPUnit\Framework\TestCase
     public function testPrepareForm()
     {
         $objectManager = \Magento\TestFramework\Helper\Bootstrap::getObjectManager();
-        $queue = $objectManager->get(\Magento\Newsletter\Model\Queue::class);
+        $queue = $objectManager->get('Magento\Newsletter\Model\Queue');
         /** @var \Magento\Framework\Registry $registry */
-        $registry = $objectManager->get(\Magento\Framework\Registry::class);
+        $registry = $objectManager->get('Magento\Framework\Registry');
         $registry->register('current_queue', $queue);
 
         $objectManager->get(
-            \Magento\Framework\View\DesignInterface::class
+            'Magento\Framework\View\DesignInterface'
         )->setArea(
             \Magento\Backend\App\Area\FrontNameResolver::AREA_CODE
         )->setDefaultDesignTheme();
         $objectManager->get(
-            \Magento\Framework\Config\ScopeInterface::class
+            'Magento\Framework\Config\ScopeInterface'
         )->setCurrentScope(
             \Magento\Backend\App\Area\FrontNameResolver::AREA_CODE
         );
         $block = $objectManager->create(
-            \Magento\Newsletter\Block\Adminhtml\Queue\Edit\Form::class,
+            'Magento\Newsletter\Block\Adminhtml\Queue\Edit\Form',
             ['registry' => $registry]
         );
         $prepareFormMethod = new \ReflectionMethod(
-            \Magento\Newsletter\Block\Adminhtml\Queue\Edit\Form::class,
+            'Magento\Newsletter\Block\Adminhtml\Queue\Edit\Form',
             '_prepareForm'
         );
         $prepareFormMethod->setAccessible(true);

@@ -25,7 +25,6 @@ class InitialConfigSource implements ConfigSourceInterface
 
     /**
      * @var string
-     * @deprecated 100.2.0 Initial configs can not be separated since 2.2.0 version
      */
     private $fileKey;
 
@@ -36,7 +35,7 @@ class InitialConfigSource implements ConfigSourceInterface
      * @param string $configType
      * @param string $fileKey
      */
-    public function __construct(Reader $reader, $configType, $fileKey = null)
+    public function __construct(Reader $reader, $configType, $fileKey)
     {
         $this->reader = $reader;
         $this->configType = $configType;
@@ -48,10 +47,7 @@ class InitialConfigSource implements ConfigSourceInterface
      */
     public function get($path = '')
     {
-        $data = new DataObject($this->reader->load());
-        if ($path !== '' && $path !== null) {
-            $path = '/' . $path;
-        }
-        return $data->getData($this->configType . $path) ?: [];
+        $data = new DataObject($this->reader->load($this->fileKey));
+        return $data->getData($this->configType) ?: [];
     }
 }

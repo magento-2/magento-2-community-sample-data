@@ -6,6 +6,7 @@
  */
 namespace Magento\CatalogSearch\Controller\Advanced;
 
+use Magento\Catalog\Model\Layer\Resolver;
 use Magento\CatalogSearch\Model\Advanced as ModelAdvanced;
 use Magento\Framework\App\Action\Context;
 use Magento\Framework\UrlFactory;
@@ -44,7 +45,7 @@ class Result extends \Magento\Framework\App\Action\Action
     }
 
     /**
-     * @return \Magento\Framework\Controller\Result\Redirect
+     * @return void
      */
     public function execute()
     {
@@ -57,9 +58,7 @@ class Result extends \Magento\Framework\App\Action\Action
             $defaultUrl = $this->_urlFactory->create()
                 ->addQueryParams($this->getRequest()->getQueryValue())
                 ->getUrl('*/*/');
-            $resultRedirect = $this->resultRedirectFactory->create();
-            $resultRedirect->setUrl($this->_redirect->error($defaultUrl));
-            return $resultRedirect;
+            $this->getResponse()->setRedirect($this->_redirect->error($defaultUrl));
         }
     }
 }

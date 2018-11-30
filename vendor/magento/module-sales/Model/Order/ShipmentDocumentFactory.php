@@ -20,7 +20,6 @@ use Magento\Sales\Api\Data\OrderItemInterface;
  * Class ShipmentDocumentFactory
  *
  * @api
- * @since 100.1.2
  */
 class ShipmentDocumentFactory
 {
@@ -67,7 +66,6 @@ class ShipmentDocumentFactory
      * @param ShipmentPackageCreationInterface[] $packages
      * @param ShipmentCreationArgumentsInterface|null $arguments
      * @return ShipmentInterface
-     * @since 100.1.2
      */
     public function create(
         OrderInterface $order,
@@ -121,7 +119,7 @@ class ShipmentDocumentFactory
     {
         $shipmentItems = [];
         foreach ($items as $item) {
-            if (!$item->getIsVirtual() && (!$item->getParentItem() || $item->isShipSeparately())) {
+            if (!$item->getIsVirtual() && !$item->getParentItem()) {
                 $shipmentItems[$item->getItemId()] = $item->getQtyOrdered();
             }
         }
@@ -140,6 +138,6 @@ class ShipmentDocumentFactory
         foreach ($items as $item) {
             $shipmentItems[$item->getOrderItemId()] = $item->getQty();
         }
-        return $shipmentItems;
+         return $shipmentItems;
     }
 }

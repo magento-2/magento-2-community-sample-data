@@ -14,12 +14,16 @@ use Magento\CatalogUrlRewrite\Model\ResourceModel\Category\Product;
 class Storage
 {
     /**
-     * @var \Magento\UrlRewrite\Model\UrlFinderInterface
+     * Url Finder Interface.
+     *
+     * @var UrlFinderInterface
      */
     private $urlFinder;
 
     /**
-     * @var \Magento\CatalogUrlRewrite\Model\ResourceModel\Category\Product
+     * Product resource model.
+     *
+     * @var Product
      */
     private $productResource;
 
@@ -37,15 +41,16 @@ class Storage
 
     /**
      * @param \Magento\UrlRewrite\Model\StorageInterface $object
-     * @param \Magento\UrlRewrite\Service\V1\Data\UrlRewrite[] $result
-     * @param \Magento\UrlRewrite\Service\V1\Data\UrlRewrite[] $urls
-     * @return \Magento\UrlRewrite\Service\V1\Data\UrlRewrite[]
+     * @param callable $proceed
+     * @param array $urls
+     * @return void
      * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      */
-    public function afterReplace(StorageInterface $object, array $result, array $urls)
+    public function aroundReplace(StorageInterface $object, \Closure $proceed, array $urls)
     {
+        $proceed($urls);
         $toSave = [];
-        foreach ($this->filterUrls($result) as $record) {
+        foreach ($this->filterUrls($urls) as $record) {
             $metadata = $record->getMetadata();
             $toSave[] = [
                 'url_rewrite_id' => $record->getUrlRewriteId(),
@@ -56,7 +61,6 @@ class Storage
         if ($toSave) {
             $this->productResource->saveMultiple($toSave);
         }
-        return $result;
     }
 
     /**

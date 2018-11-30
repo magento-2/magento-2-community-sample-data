@@ -7,7 +7,7 @@ namespace Magento\Search\Test\Unit\Model;
 
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
 
-class AdapterFactoryTest extends \PHPUnit\Framework\TestCase
+class AdapterFactoryTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\Search\Model\AdapterFactory|\PHPUnit_Framework_MockObject_MockObject
@@ -33,14 +33,14 @@ class AdapterFactoryTest extends \PHPUnit\Framework\TestCase
     {
         $this->helper = new ObjectManager($this);
 
-        $this->scopeConfig = $this->getMockBuilder(\Magento\Framework\App\Config\ScopeConfigInterface::class)
+        $this->scopeConfig = $this->getMockBuilder('\Magento\Framework\App\Config\ScopeConfigInterface')
             ->disableOriginalConstructor()
             ->getMock();
 
-        $this->objectManager = $this->createMock(\Magento\Framework\ObjectManagerInterface::class);
+        $this->objectManager = $this->getMock('Magento\Framework\ObjectManagerInterface');
 
         $this->adapterFactory = $this->helper->getObject(
-            \Magento\Search\Model\AdapterFactory::class,
+            '\Magento\Search\Model\AdapterFactory',
             [
                 'objectManager' => $this->objectManager,
                 'scopeConfig' => $this->scopeConfig,
@@ -57,7 +57,7 @@ class AdapterFactoryTest extends \PHPUnit\Framework\TestCase
             ->with($this->equalTo('some_path'), $this->equalTo('some_scopeType'))
             ->will($this->returnValue('ClassName'));
 
-        $adapter = $this->getMockBuilder(\Magento\Framework\Search\AdapterInterface::class)
+        $adapter = $this->getMockBuilder('\Magento\Framework\Search\AdapterInterface')
             ->disableOriginalConstructor()
             ->getMock();
 
@@ -66,7 +66,7 @@ class AdapterFactoryTest extends \PHPUnit\Framework\TestCase
             ->will($this->returnValue($adapter));
 
         $result = $this->adapterFactory->create(['input']);
-        $this->assertInstanceOf(\Magento\Framework\Search\AdapterInterface::class, $result);
+        $this->assertInstanceOf('\Magento\Framework\Search\AdapterInterface', $result);
     }
 
     /**

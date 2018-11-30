@@ -10,7 +10,7 @@ use Magento\Framework\DB\Ddl\Table;
 /**
  * Magento Database Adapter Interface
  *
- * @api
+ * @author      Magento Core Team <core@magentocommerce.com>
  */
 interface AdapterInterface
 {
@@ -35,9 +35,6 @@ interface AdapterInterface
     const INSERT_ON_DUPLICATE = 1;
 
     const INSERT_IGNORE = 2;
-    
-    /** Strategy for updating data in table. See https://dev.mysql.com/doc/refman/5.7/en/replace.html */
-    const REPLACE = 4;
 
     const ISO_DATE_FORMAT = 'yyyy-MM-dd';
 
@@ -467,7 +464,7 @@ interface AdapterInterface
      *      array('value1', 'value2')
      *
      * @param   string $table
-     * @param   string[] $columns  the data array column map
+     * @param   array $columns  the data array column map
      * @param   array $data
      * @return  int
      */
@@ -677,7 +674,7 @@ interface AdapterInterface
     /**
      * Format Date to internal database date format
      *
-     * @param int|string|\DateTimeInterface $date
+     * @param int|string|\DateTime $date
      * @param boolean $includeTime
      * @return \Zend_Db_Expr
      */
@@ -1130,7 +1127,6 @@ interface AdapterInterface
      * @param string $tableName
      * @param string|null $schemaName
      * @return string|bool
-     * @since 100.1.0
      */
     public function getAutoIncrementField($tableName, $schemaName = null);
 }

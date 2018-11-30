@@ -15,7 +15,6 @@ class Test
 
     /**
      * Test constructor.
-     *
      * @param \Magento\SomeModule\Model\Proxy $proxy
      */
     public function __construct(\Magento\SomeModule\Model\Proxy $proxy)

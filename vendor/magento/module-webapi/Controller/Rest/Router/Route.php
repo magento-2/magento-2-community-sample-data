@@ -241,14 +241,4 @@ class Route implements RouterInterface
     {
         return $this->parameters;
     }
-
-    /**
-     * Get route path.
-     *
-     * @return string
-     */
-    public function getRoutePath()
-    {
-        return $this->route;
-    }
 }

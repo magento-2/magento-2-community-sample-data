@@ -96,6 +96,7 @@ class Upload extends \Magento\Downloadable\Controller\Adminhtml\Downloadable\Fil
                 $relativePath = rtrim($tmpPath, '/') . '/' . ltrim($result['file'], '/');
                 $this->storageDatabase->saveFile($relativePath);
             }
+
         } catch (\Exception $e) {
             $result = ['error' => $e->getMessage(), 'errorcode' => $e->getCode()];
         }

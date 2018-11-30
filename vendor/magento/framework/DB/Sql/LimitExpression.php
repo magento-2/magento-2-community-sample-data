@@ -8,7 +8,7 @@ namespace Magento\Framework\DB\Sql;
 /**
  * Class LimitExpression
  */
-class LimitExpression extends Expression
+class LimitExpression extends \Zend_Db_Expr
 {
     /**
      * @var string

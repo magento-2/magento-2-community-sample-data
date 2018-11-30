@@ -5,7 +5,7 @@
  */
 namespace Magento\Downloadable\Test\Unit\Block\Adminhtml\Catalog\Product\Edit\Tab\Downloadable;
 
-class LinksTest extends \PHPUnit\Framework\TestCase
+class LinksTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\Downloadable\Block\Adminhtml\Catalog\Product\Edit\Tab\Downloadable\Links
@@ -50,25 +50,45 @@ class LinksTest extends \PHPUnit\Framework\TestCase
     protected function setUp()
     {
         $objectManagerHelper = new \Magento\Framework\TestFramework\Unit\Helper\ObjectManager($this);
-        $this->urlBuilder = $this->createPartialMock(\Magento\Backend\Model\Url::class, ['getUrl']);
-        $attributeFactory = $this->createMock(\Magento\Eav\Model\Entity\AttributeFactory::class);
-        $urlFactory = $this->createMock(\Magento\Backend\Model\UrlFactory::class);
-        $this->fileHelper = $this->createPartialMock(\Magento\Downloadable\Helper\File::class, [
+        $this->urlBuilder = $this->getMock('Magento\Backend\Model\Url', ['getUrl'], [], '', false);
+        $attributeFactory = $this->getMock('Magento\Eav\Model\Entity\AttributeFactory', [], [], '', false);
+        $urlFactory = $this->getMock('Magento\Backend\Model\UrlFactory', [], [], '', false);
+        $this->fileHelper = $this->getMock(
+            '\Magento\Downloadable\Helper\File',
+            [
                 'getFilePath',
                 'ensureFileInFilesystem',
                 'getFileSize'
-            ]);
-        $this->productModel = $this->createPartialMock(\Magento\Catalog\Model\Product::class, [
+            ],
+            [],
+            '',
+            false
+        );
+        $this->productModel = $this->getMock(
+            'Magento\Catalog\Model\Product',
+            [
                 '__wakeup',
                 'getTypeId',
                 'getTypeInstance',
                 'getStoreId'
-            ]);
-        $this->downloadableProductModel = $this->createPartialMock(\Magento\Downloadable\Model\Product\Type::class, [
+            ],
+            [],
+            '',
+            false
+        );
+        $this->downloadableProductModel = $this->getMock(
+            '\Magento\Downloadable\Model\Product\Type',
+            [
                 '__wakeup',
                 'getLinks'
-            ]);
-        $this->downloadableLinkModel = $this->createPartialMock(\Magento\Downloadable\Model\Link::class, [
+            ],
+            [],
+            '',
+            false
+        );
+        $this->downloadableLinkModel = $this->getMock(
+            '\Magento\Downloadable\Model\Link',
+            [
                 '__wakeup',
                 'getId',
                 'getTitle',
@@ -81,17 +101,27 @@ class LinksTest extends \PHPUnit\Framework\TestCase
                 'getSortOrder',
                 'getLinkFile',
                 'getStoreTitle'
-            ]);
+            ],
+            [],
+            '',
+            false
+        );
 
-        $this->coreRegistry = $this->createPartialMock(\Magento\Framework\Registry::class, [
+        $this->coreRegistry = $this->getMock(
+            '\Magento\Framework\Registry',
+            [
                 '__wakeup',
                 'registry'
-            ]);
+            ],
+            [],
+            '',
+            false
+        );
 
-        $this->escaper = $this->createPartialMock(\Magento\Framework\Escaper::class, ['escapeHtml']);
+        $this->escaper = $this->getMock('\Magento\Framework\Escaper', ['escapeHtml'], [], '', false);
 
         $this->block = $objectManagerHelper->getObject(
-            \Magento\Downloadable\Block\Adminhtml\Catalog\Product\Edit\Tab\Downloadable\Links::class,
+            'Magento\Downloadable\Block\Adminhtml\Catalog\Product\Edit\Tab\Downloadable\Links',
             [
                 'urlBuilder' => $this->urlBuilder,
                 'attributeFactory' => $attributeFactory,
@@ -108,7 +138,7 @@ class LinksTest extends \PHPUnit\Framework\TestCase
      */
     public function testGetConfig()
     {
-        $this->assertInstanceOf(\Magento\Framework\DataObject::class, $this->block->getConfig());
+        $this->assertInstanceOf('Magento\Framework\DataObject', $this->block->getConfig());
     }
 
     public function testGetLinkData()

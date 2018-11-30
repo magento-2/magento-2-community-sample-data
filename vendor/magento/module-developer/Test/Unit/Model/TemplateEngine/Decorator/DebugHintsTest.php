@@ -5,7 +5,7 @@
  */
 namespace Magento\Developer\Test\Unit\Model\TemplateEngine\Decorator;
 
-class DebugHintsTest extends \PHPUnit\Framework\TestCase
+class DebugHintsTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @param bool $showBlockHints
@@ -13,10 +13,8 @@ class DebugHintsTest extends \PHPUnit\Framework\TestCase
      */
     public function testRender($showBlockHints)
     {
-        $subject = $this->createMock(\Magento\Framework\View\TemplateEngineInterface::class);
-        $block = $this->getMockBuilder(\Magento\Framework\View\Element\BlockInterface::class)
-            ->setMockClassName('TestBlock')
-            ->getMock();
+        $subject = $this->getMock('Magento\Framework\View\TemplateEngineInterface');
+        $block = $this->getMock('Magento\Framework\View\Element\BlockInterface', [], [], 'TestBlock', false);
         $subject->expects(
             $this->once()
         )->method(
@@ -30,7 +28,9 @@ class DebugHintsTest extends \PHPUnit\Framework\TestCase
         );
         $model = new \Magento\Developer\Model\TemplateEngine\Decorator\DebugHints($subject, $showBlockHints);
         $actualResult = $model->render($block, 'template.phtml', ['var' => 'val']);
-        $this->assertNotNull($actualResult);
+        $this->assertSelectEquals('div > div[title="template.phtml"]', 'template.phtml', 1, $actualResult);
+        $this->assertSelectCount('div > div#fixture', 1, $actualResult);
+        $this->assertSelectEquals('div > div[title="TestBlock"]', 'TestBlock', (int)$showBlockHints, $actualResult);
     }
 
     /**

@@ -8,7 +8,7 @@ namespace Magento\Directory\Test\Unit\Model;
 
 use Magento\Directory\Model\Currency;
 
-class CurrencyTest extends \PHPUnit\Framework\TestCase
+class CurrencyTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var Currency
@@ -24,25 +24,22 @@ class CurrencyTest extends \PHPUnit\Framework\TestCase
 
     protected function setUp()
     {
-        $this->localeCurrencyMock = $this->createMock(\Magento\Framework\Locale\CurrencyInterface::class);
+        $this->localeCurrencyMock = $this->getMock('\Magento\Framework\Locale\CurrencyInterface');
 
         $objectManager = new \Magento\Framework\TestFramework\Unit\Helper\ObjectManager($this);
-        $this->currency = $objectManager->getObject(
-            \Magento\Directory\Model\Currency::class,
-            [
-                'localeCurrency' => $this->localeCurrencyMock,
-                'data' => [
-                    'currency_code' => $this->currencyCode,
-                ]
+        $this->currency = $objectManager->getObject('Magento\Directory\Model\Currency', [
+            'localeCurrency' => $this->localeCurrencyMock,
+            'data' => [
+                'currency_code' => $this->currencyCode,
             ]
-        );
+        ]);
     }
 
     public function testGetCurrencySymbol()
     {
         $currencySymbol = '$';
 
-        $currencyMock = $this->getMockBuilder(\Magento\Framework\Currency::class)
+        $currencyMock = $this->getMockBuilder('\Magento\Framework\Currency')
             ->disableOriginalConstructor()
             ->getMock();
         $currencyMock->expects($this->once())
@@ -64,7 +61,7 @@ class CurrencyTest extends \PHPUnit\Framework\TestCase
      */
     public function testGetOutputFormat($withCurrency, $noCurrency, $expected)
     {
-        $currencyMock = $this->getMockBuilder(\Magento\Framework\Currency::class)
+        $currencyMock = $this->getMockBuilder('\Magento\Framework\Currency')
             ->disableOriginalConstructor()
             ->getMock();
         $currencyMock->expects($this->at(0))

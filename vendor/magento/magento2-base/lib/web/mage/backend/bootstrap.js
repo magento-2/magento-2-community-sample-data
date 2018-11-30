@@ -2,19 +2,15 @@
  * Copyright © Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
-
-/* global FORM_KEY */
+/*jshint jquery:true browser:true */
+/*global FORM_KEY:true*/
 define([
     'jquery',
     'mage/apply/main',
-    'mage/backend/notification',
     'Magento_Ui/js/lib/knockout/bootstrap',
-    'mage/mage',
-    'mage/translate'
-], function ($, mage, notification) {
+    'mage/mage'
+], function($, mage){
     'use strict';
-
-    var bootstrap;
 
     $.ajaxSetup({
         /*
@@ -22,83 +18,51 @@ define([
          */
         type: 'POST',
 
-        /**
-         * Ajax before send callback.
-         *
-         * @param {Object} jqXHR - The jQuery XMLHttpRequest object returned by $.ajax()
-         * @param {Object} settings
+        /*
+         * Ajax before send callback
+         * @param {Object} The jQuery XMLHttpRequest object returned by $.ajax()
+         * @param {Object}
          */
-        beforeSend: function (jqXHR, settings) {
-            var formKey = typeof FORM_KEY !== 'undefined' ? FORM_KEY : null;
-
+        beforeSend: function(jqXHR, settings) {
+            var form_key = typeof FORM_KEY !== 'undefined' ? FORM_KEY : null;
             if (!settings.url.match(new RegExp('[?&]isAjax=true',''))) {
                 settings.url = settings.url.match(
-                    new RegExp('\\?', 'g')) ?
+                    new RegExp('\\?',"g")) ?
                     settings.url + '&isAjax=true' :
                     settings.url + '?isAjax=true';
             }
-
             if (!settings.data) {
                 settings.data = {
-                    'form_key': formKey
+                    form_key: form_key
                 };
-            } else if ($.type(settings.data) === 'string' &&
+            } else if ($.type(settings.data) === "string" &&
                 settings.data.indexOf('form_key=') === -1) {
                 settings.data += '&' + $.param({
-                    'form_key': formKey
+                    form_key: form_key
                 });
-            } else if ($.isPlainObject(settings.data) && !settings.data['form_key']) {
-                settings.data['form_key'] = formKey;
+            } else if($.isPlainObject(settings.data) && !settings.data.form_key) {
+                settings.data.form_key = form_key;
             }
         },
 
-        /**
-         * Ajax complete callback.
-         *
-         * @param {Object} jqXHR - The jQuery XMLHttpRequest object returned by $.ajax()
+        /*
+         * Ajax complete callback
+         * @param {Object} The jQuery XMLHttpRequest object returned by $.ajax()
+         * @param {string}
          */
-        complete: function (jqXHR) {
-            var jsonObject;
-
+        complete: function(jqXHR) {
             if (jqXHR.readyState === 4) {
                 try {
-                    jsonObject = $.parseJSON(jqXHR.responseText);
-
-                    if (jsonObject.ajaxExpired && jsonObject.ajaxRedirect) { //eslint-disable-line max-depth
+                    var jsonObject = $.parseJSON(jqXHR.responseText);
+                    if (jsonObject.ajaxExpired && jsonObject.ajaxRedirect) {
                         window.location.replace(jsonObject.ajaxRedirect);
                     }
-                } catch (e) {}
+                } catch(e) {}
             }
-        },
-
-        /**
-         * Error callback.
-         */
-        error: function () {
-            $('body').notification('clear')
-                .notification('add', {
-                    error: true,
-                    message: $.mage.__(
-                        'A technical problem with the server created an error. ' +
-                        'Try again to continue what you were doing. If the problem persists, try again later.'
-                    ),
-
-                    /**
-                     * @param {String} message
-                     */
-                    insertMethod: function (message) {
-                        var $wrapper = $('<div/>').html(message);
-
-                        $('.page-main-actions').after($wrapper);
-                    }
-                });
         }
     });
 
-    /**
-     * Bootstrap application.
-     */
-    bootstrap = function () {
+    var bootstrap = function() {
         /**
          * Init all components defined via data-mage-init attribute
          * and subscribe init action on contentUpdated event
@@ -108,7 +72,7 @@ define([
         /*
          * Initialization of notification widget
          */
-        notification({}, $('body'));
+        $('body').mage('notification');
     };
 
     $(bootstrap);

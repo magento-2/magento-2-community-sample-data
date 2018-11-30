@@ -8,10 +8,6 @@
  * See COPYING.txt for license details.
  */
 
-namespace Magento\CatalogRule\Model\Rule;
-
-use Magento\CatalogRule\Model\Indexer\Rule\RuleProductProcessor;
-
 /**
  * Catalog Rule job model
  *
@@ -22,11 +18,12 @@ use Magento\CatalogRule\Model\Indexer\Rule\RuleProductProcessor;
  * @method bool hasSuccess()
  * @method bool hasError()
  *
- * @author Magento Core Team <core@magentocommerce.com>
- *
- * @api
- * @since 100.0.2
+ * @author    Magento Core Team <core@magentocommerce.com>
  */
+namespace Magento\CatalogRule\Model\Rule;
+
+use Magento\CatalogRule\Model\Indexer\Rule\RuleProductProcessor;
+
 class Job extends \Magento\Framework\DataObject
 {
     /**
@@ -38,14 +35,10 @@ class Job extends \Magento\Framework\DataObject
      * Basic object initialization
      *
      * @param RuleProductProcessor $ruleProcessor
-     * @param array $data
      */
-    public function __construct(
-        RuleProductProcessor $ruleProcessor,
-        array $data = []
-    ) {
+    public function __construct(RuleProductProcessor $ruleProcessor)
+    {
         $this->ruleProcessor = $ruleProcessor;
-        parent::__construct($data);
     }
 
     /**

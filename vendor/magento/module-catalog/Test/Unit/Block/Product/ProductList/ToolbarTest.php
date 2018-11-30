@@ -6,7 +6,7 @@
 
 namespace Magento\Catalog\Test\Unit\Block\Product\ProductList;
 
-class ToolbarTest extends \PHPUnit\Framework\TestCase
+class ToolbarTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\Catalog\Block\Product\ProductList\Toolbar
@@ -55,15 +55,23 @@ class ToolbarTest extends \PHPUnit\Framework\TestCase
 
     protected function setUp()
     {
-        $this->model = $this->createPartialMock(\Magento\Catalog\Model\Product\ProductList\Toolbar::class, [
+        $this->model = $this->getMock(
+            'Magento\Catalog\Model\Product\ProductList\Toolbar',
+            [
                 'getDirection',
                 'getOrder',
                 'getMode',
                 'getLimit',
                 'getCurrentPage'
-            ]);
-        $this->layout = $this->createPartialMock(\Magento\Framework\View\Layout::class, ['getChildName', 'getBlock']);
-        $this->pagerBlock = $this->createPartialMock(\Magento\Theme\Block\Html\Pager::class, [
+            ],
+            [],
+            '',
+            false
+        );
+        $this->layout = $this->getMock('Magento\Framework\View\Layout', ['getChildName', 'getBlock'], [], '', false);
+        $this->pagerBlock = $this->getMock(
+            'Magento\Theme\Block\Html\Pager',
+            [
                 'setUseContainer',
                 'setShowPerPage',
                 'setShowAmounts',
@@ -72,9 +80,13 @@ class ToolbarTest extends \PHPUnit\Framework\TestCase
                 'setLimit',
                 'setCollection',
                 'toHtml'
-            ]);
-        $this->urlBuilder = $this->createPartialMock(\Magento\Framework\Url::class, ['getUrl']);
-        $this->scopeConfig = $this->createMock(\Magento\Framework\App\Config\ScopeConfigInterface::class);
+            ],
+            [],
+            '',
+            false
+        );
+        $this->urlBuilder = $this->getMock('Magento\Framework\Url', ['getUrl'], [], '', false);
+        $this->scopeConfig = $this->getMock('Magento\Framework\App\Config\ScopeConfigInterface');
 
         $scopeConfig = [
             [\Magento\Catalog\Model\Config::XML_PATH_LIST_DEFAULT_SORT_BY, null, 'name'],
@@ -88,14 +100,20 @@ class ToolbarTest extends \PHPUnit\Framework\TestCase
             ->method('getValue')
             ->will($this->returnValueMap($scopeConfig));
 
-        $this->catalogConfig = $this->createPartialMock(
-            \Magento\Catalog\Model\Config::class,
-            ['getAttributeUsedForSortByArray']
+        $this->catalogConfig = $this->getMock(
+            'Magento\Catalog\Model\Config',
+            ['getAttributeUsedForSortByArray'],
+            [],
+            '',
+            false
         );
 
-        $context = $this->createPartialMock(
-            \Magento\Framework\View\Element\Template\Context::class,
-            ['getUrlBuilder', 'getScopeConfig', 'getLayout']
+        $context = $this->getMock(
+            'Magento\Framework\View\Element\Template\Context',
+            ['getUrlBuilder', 'getScopeConfig', 'getLayout'],
+            [],
+            '',
+            false
         );
         $context->expects($this->any())
             ->method('getUrlBuilder')
@@ -106,12 +124,18 @@ class ToolbarTest extends \PHPUnit\Framework\TestCase
         $context->expects($this->any())
             ->method('getlayout')
             ->will($this->returnValue($this->layout));
-        $this->productListHelper = $this->createMock(\Magento\Catalog\Helper\Product\ProductList::class);
+        $this->productListHelper = $this->getMock(
+            'Magento\Catalog\Helper\Product\ProductList',
+            [],
+            [],
+            '',
+            false
+        );
 
-        $this->urlEncoder = $this->createPartialMock(\Magento\Framework\Url\EncoderInterface::class, ['encode']);
+        $this->urlEncoder = $this->getMock('Magento\Framework\Url\EncoderInterface', ['encode'], [], '', false);
         $objectManager = new \Magento\Framework\TestFramework\Unit\Helper\ObjectManager($this);
         $this->block = $objectManager->getObject(
-            \Magento\Catalog\Block\Product\ProductList\Toolbar::class,
+            'Magento\Catalog\Block\Product\ProductList\Toolbar',
             [
                 'context' => $context,
                 'catalogConfig' => $this->catalogConfig,

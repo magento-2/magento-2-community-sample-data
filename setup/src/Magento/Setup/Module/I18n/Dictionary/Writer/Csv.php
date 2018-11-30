@@ -51,14 +51,12 @@ class Csv implements WriterInterface
     }
 
     /**
-     * Destructor for closing resource
+     * Close file handler
      *
      * @return void
      */
-    public function __destruct()
+    public function __destructor()
     {
-        if ($this->_fileHandler !== STDOUT && is_resource($this->_fileHandler)) {
-            fclose($this->_fileHandler);
-        }
+        fclose($this->_fileHandler);
     }
 }

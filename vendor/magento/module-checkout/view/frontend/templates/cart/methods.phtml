@@ -14,9 +14,8 @@
 <?php $methods = $block->getMethods('methods') ?: $block->getMethods('top_methods') ?>
 <ul class="checkout methods items checkout-methods-items">
 <?php foreach ($methods as $method): ?>
-    <?php $methodHtml = $block->getMethodHtml($method); ?>
-    <?php if (trim($methodHtml) !== ''): ?>
-    <li class="item"><?= /* @escapeNotVerified */ $methodHtml ?></li>
+    <?php if ($methodHtml = $block->getMethodHtml($method)): ?>
+    <li class="item"><?php /* @escapeNotVerified */ echo $methodHtml; ?></li>
     <?php endif; ?>
 <?php endforeach; ?>
 </ul>

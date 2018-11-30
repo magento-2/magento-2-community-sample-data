@@ -7,9 +7,11 @@
 namespace Magento\Braintree\Gateway\Command;
 
 use Exception;
-use Magento\Braintree\Gateway\SubjectReader;
+use Magento\Braintree\Gateway\Helper\SubjectReader;
 use Magento\Braintree\Gateway\Validator\PaymentNonceResponseValidator;
+use Magento\Braintree\Model\Adapter\BraintreeAdapter;
 use Magento\Braintree\Model\Adapter\BraintreeAdapterFactory;
+use Magento\Framework\App\ObjectManager;
 use Magento\Payment\Gateway\Command\Result\ArrayResultFactory;
 use Magento\Payment\Gateway\CommandInterface;
 use Magento\Vault\Api\PaymentTokenManagementInterface;
@@ -47,23 +49,26 @@ class GetPaymentNonceCommand implements CommandInterface
 
     /**
      * @param PaymentTokenManagementInterface $tokenManagement
-     * @param BraintreeAdapterFactory $adapterFactory
+     * @param BraintreeAdapter $adapter
      * @param ArrayResultFactory $resultFactory
      * @param SubjectReader $subjectReader
      * @param PaymentNonceResponseValidator $responseValidator
+     * @param BraintreeAdapterFactory|null $adapterFactory
+     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      */
     public function __construct(
         PaymentTokenManagementInterface $tokenManagement,
-        BraintreeAdapterFactory $adapterFactory,
+        BraintreeAdapter $adapter,
         ArrayResultFactory $resultFactory,
         SubjectReader $subjectReader,
-        PaymentNonceResponseValidator $responseValidator
+        PaymentNonceResponseValidator $responseValidator,
+        BraintreeAdapterFactory $adapterFactory = null
     ) {
         $this->tokenManagement = $tokenManagement;
-        $this->adapterFactory = $adapterFactory;
         $this->resultFactory = $resultFactory;
         $this->subjectReader = $subjectReader;
         $this->responseValidator = $responseValidator;
+        $this->adapterFactory = $adapterFactory ?: ObjectManager::getInstance()->get(BraintreeAdapterFactory::class);
     }
 
     /**

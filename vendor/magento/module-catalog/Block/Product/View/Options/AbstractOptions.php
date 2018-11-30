@@ -13,10 +13,6 @@ namespace Magento\Catalog\Block\Product\View\Options;
 
 use Magento\Catalog\Pricing\Price\CustomOptionPriceInterface;
 
-/**
- * @api
- * @since 100.0.2
- */
 abstract class AbstractOptions extends \Magento\Framework\View\Element\Template
 {
     /**
@@ -105,11 +101,9 @@ abstract class AbstractOptions extends \Magento\Framework\View\Element\Template
     }
 
     /**
-     * Retrieve formatted price
-     *
      * @return string
      */
-    public function getFormattedPrice()
+    public function getFormatedPrice()
     {
         if ($option = $this->getOption()) {
             return $this->_formatPrice(
@@ -120,17 +114,6 @@ abstract class AbstractOptions extends \Magento\Framework\View\Element\Template
             );
         }
         return '';
-    }
-
-    /**
-     * @return string
-     *
-     * @deprecated
-     * @see getFormattedPrice()
-     */
-    public function getFormatedPrice()
-    {
-        return $this->getFormattedPrice();
     }
 
     /**

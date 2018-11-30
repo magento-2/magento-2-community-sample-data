@@ -27,7 +27,7 @@ class AddressesAdditional extends Block
      *
      * @var string
      */
-    protected $addressesSelector = '//li[address]';
+    private $addressesSelector = '//li[address]';
 
     /**
      * Selector for delete link
@@ -83,6 +83,7 @@ class AddressesAdditional extends Block
                 break;
             }
         }
+        
         return $additionalAddressExists;
     }
 

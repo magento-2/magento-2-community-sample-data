@@ -120,7 +120,7 @@ class Edit extends \Magento\UrlRewrite\Block\Edit
     {
         $this->addChild(
             'product_link',
-            \Magento\UrlRewrite\Block\Link::class,
+            'Magento\UrlRewrite\Block\Link',
             [
                 'item_url' => $this->_adminhtmlData->getUrl('adminhtml/*/*') . 'product',
                 'item_name' => $this->_getProduct()->getName(),
@@ -138,7 +138,7 @@ class Edit extends \Magento\UrlRewrite\Block\Edit
     {
         $this->addChild(
             'category_link',
-            \Magento\UrlRewrite\Block\Link::class,
+            'Magento\UrlRewrite\Block\Link',
             [
                 'item_url' => $this->_adminhtmlData->getUrl(
                     'adminhtml/*/*',
@@ -157,7 +157,7 @@ class Edit extends \Magento\UrlRewrite\Block\Edit
      */
     private function _addProductsGridBlock()
     {
-        $this->addChild('products_grid', \Magento\UrlRewrite\Block\Catalog\Product\Grid::class);
+        $this->addChild('products_grid', 'Magento\UrlRewrite\Block\Catalog\Product\Grid');
     }
 
     /**
@@ -167,7 +167,7 @@ class Edit extends \Magento\UrlRewrite\Block\Edit
      */
     private function _addCategoriesTreeBlock()
     {
-        $this->addChild('categories_tree', \Magento\UrlRewrite\Block\Catalog\Category\Tree::class);
+        $this->addChild('categories_tree', 'Magento\UrlRewrite\Block\Catalog\Category\Tree');
     }
 
     /**
@@ -179,7 +179,7 @@ class Edit extends \Magento\UrlRewrite\Block\Edit
     {
         $this->addChild(
             'skip_categories',
-            \Magento\Backend\Block\Widget\Button::class,
+            'Magento\Backend\Block\Widget\Button',
             [
                 'label' => __('Skip Category Selection'),
                 'onclick' => 'window.location = \'' . $this->_adminhtmlData->getUrl(
@@ -200,7 +200,7 @@ class Edit extends \Magento\UrlRewrite\Block\Edit
     protected function _createEditFormBlock()
     {
         return $this->getLayout()->createBlock(
-            \Magento\UrlRewrite\Block\Catalog\Edit\Form::class,
+            'Magento\UrlRewrite\Block\Catalog\Edit\Form',
             '',
             [
                 'data' => [

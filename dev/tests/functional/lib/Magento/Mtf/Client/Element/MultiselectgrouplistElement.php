@@ -120,6 +120,19 @@ class MultiselectgrouplistElement extends MultiselectElement
     }
 
     /**
+     * {@inheritdoc}
+     */
+    public function deselectAll()
+    {
+        $options = $this->getSelectedOptions();
+
+        /** @var SimpleElement $option */
+        foreach ($options as $option) {
+            $option->click();
+        }
+    }
+
+    /**
      * Select option
      *
      * @param string $option
@@ -323,18 +336,5 @@ class MultiselectgrouplistElement extends MultiselectElement
         }
 
         return $options;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function deselectAll()
-    {
-        $options = $this->getSelectedOptions();
-
-        /** @var SimpleElement $option */
-        foreach ($options as $option) {
-            $option->click();
-        }
     }
 }

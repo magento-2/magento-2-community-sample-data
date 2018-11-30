@@ -8,7 +8,7 @@ namespace Magento\Setup\Test\Unit\Module\Di\Code\Scanner;
 
 use \Magento\Setup\Module\Di\Code\Scanner\ServiceDataAttributesScanner;
 
-class ServiceDataAttributesScannerTest extends \PHPUnit\Framework\TestCase
+class ServiceDataAttributesScannerTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\Setup\Module\Di\Code\Scanner\ServiceDataAttributesScanner
@@ -30,10 +30,10 @@ class ServiceDataAttributesScannerTest extends \PHPUnit\Framework\TestCase
     {
         $files = [$this->testFile];
         $expectedResult = [
-            \Magento\Sales\Api\Data\OrderExtensionInterface::class,
-            \Magento\Sales\Api\Data\OrderExtension::class,
-            \Magento\Sales\Api\Data\OrderItemExtensionInterface::class,
-            \Magento\Sales\Api\Data\OrderItemExtension::class,
+            'Magento\Sales\Api\Data\OrderExtensionInterface',
+            'Magento\Sales\Api\Data\OrderExtension',
+            'Magento\Sales\Api\Data\OrderItemExtensionInterface',
+            'Magento\Sales\Api\Data\OrderItemExtension',
         ];
         $this->assertSame($expectedResult, $this->model->collectEntities($files));
     }

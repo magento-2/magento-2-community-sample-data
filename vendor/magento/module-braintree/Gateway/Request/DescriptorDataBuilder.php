@@ -5,7 +5,8 @@
  */
 namespace Magento\Braintree\Gateway\Request;
 
-use Magento\Braintree\Gateway\SubjectReader;
+use Magento\Braintree\Gateway\Helper\SubjectReader;
+use Magento\Framework\App\ObjectManager;
 use Magento\Payment\Gateway\Request\BuilderInterface;
 use Magento\Braintree\Gateway\Config\Config;
 
@@ -31,12 +32,12 @@ class DescriptorDataBuilder implements BuilderInterface
 
     /**
      * @param Config $config
-     * @param SubjectReader $subjectReader
+     * @param SubjectReader|null $subjectReader
      */
-    public function __construct(Config $config, SubjectReader $subjectReader)
+    public function __construct(Config $config, SubjectReader $subjectReader = null)
     {
         $this->config = $config;
-        $this->subjectReader = $subjectReader;
+        $this->subjectReader = $subjectReader ?: ObjectManager::getInstance()->get(SubjectReader::class);
     }
 
     /**

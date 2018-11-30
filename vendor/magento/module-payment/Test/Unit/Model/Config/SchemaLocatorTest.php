@@ -7,7 +7,7 @@ namespace Magento\Payment\Test\Unit\Model\Config;
 
 use \Magento\Payment\Model\Config\SchemaLocator;
 
-class SchemaLocatorTest extends \PHPUnit\Framework\TestCase
+class SchemaLocatorTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\Payment\Model\Config\SchemaLocator

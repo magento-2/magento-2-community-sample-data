@@ -6,19 +6,17 @@
 namespace Magento\Sales\Test\Unit\Model;
 
 use Magento\Catalog\Api\Data\ProductInterface;
-use Magento\Catalog\Model\ResourceModel\Product\CollectionFactory as ProductCollectionFactory;
-use Magento\Framework\Locale\ResolverInterface;
-use Magento\Framework\Stdlib\DateTime\TimezoneInterface;
 use Magento\Sales\Api\Data\OrderInterface;
 use Magento\Sales\Model\Order;
 use Magento\Sales\Model\ResourceModel\Order\Status\History\CollectionFactory as HistoryCollectionFactory;
+use Magento\Catalog\Model\ResourceModel\Product\CollectionFactory as ProductCollectionFactory;
 
 /**
  * Test class for \Magento\Sales\Model\Order
  *
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  */
-class OrderTest extends \PHPUnit\Framework\TestCase
+class OrderTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \PHPUnit_Framework_MockObject_MockObject
@@ -73,55 +71,72 @@ class OrderTest extends \PHPUnit\Framework\TestCase
     /**
      * @var ProductCollectionFactory|\PHPUnit_Framework_MockObject_MockObject
      */
-    protected $productCollectionFactoryMock;
-
-    /**
-     * @var ResolverInterface|\PHPUnit_Framework_MockObject_MockObject
-     */
-    private $localeResolver;
-
-    /**
-     * @var TimezoneInterface|\PHPUnit_Framework_MockObject_MockObject
-     */
-    private $timezone;
+    private $productCollectionFactoryMock;
 
     protected function setUp()
     {
         $helper = new \Magento\Framework\TestFramework\Unit\Helper\ObjectManager($this);
-        $this->paymentCollectionFactoryMock = $this->createPartialMock(
+        $this->paymentCollectionFactoryMock = $this->getMock(
             \Magento\Sales\Model\ResourceModel\Order\Payment\CollectionFactory::class,
-            ['create']
+            ['create'],
+            [],
+            '',
+            false
         );
-        $this->orderItemCollectionFactoryMock = $this->createPartialMock(
+        $this->orderItemCollectionFactoryMock = $this->getMock(
             \Magento\Sales\Model\ResourceModel\Order\Item\CollectionFactory::class,
-            ['create']
+            ['create'],
+            [],
+            '',
+            false
         );
-        $this->historyCollectionFactoryMock = $this->createPartialMock(
+        $this->historyCollectionFactoryMock = $this->getMock(
             \Magento\Sales\Model\ResourceModel\Order\Status\History\CollectionFactory::class,
-            ['create']
+            ['create'],
+            [],
+            '',
+            false
         );
-        $this->productCollectionFactoryMock = $this->createPartialMock(
+        $this->productCollectionFactoryMock = $this->getMock(
             \Magento\Catalog\Model\ResourceModel\Product\CollectionFactory::class,
-            ['create']
+            ['create'],
+            [],
+            '',
+            false
         );
-        $this->salesOrderCollectionFactoryMock = $this->createPartialMock(
+        $this->salesOrderCollectionFactoryMock = $this->getMock(
             \Magento\Sales\Model\ResourceModel\Order\CollectionFactory::class,
-            ['create']
+            ['create'],
+            [],
+            '',
+            false
         );
-        $this->item = $this->createPartialMock(\Magento\Sales\Model\ResourceModel\Order\Item::class, [
+        $this->item = $this->getMock(
+            \Magento\Sales\Model\ResourceModel\Order\Item::class,
+            [
                 'isDeleted',
                 'getQtyToInvoice',
                 'getParentItemId',
                 'getQuoteItemId',
                 'getLockedDoInvoice',
                 'getProductId'
-            ]);
+            ],
+            [],
+            '',
+            false
+        );
         $this->salesOrderCollectionMock = $this->getMockBuilder(
             \Magento\Sales\Model\ResourceModel\Order\Collection::class
         )->disableOriginalConstructor()
             ->setMethods(['addFieldToFilter', 'load', 'getFirstItem'])
             ->getMock();
-        $collection = $this->createMock(\Magento\Sales\Model\ResourceModel\Order\Item\Collection::class);
+        $collection = $this->getMock(
+            \Magento\Sales\Model\ResourceModel\Order\Item\Collection::class,
+            [],
+            [],
+            '',
+            false
+        );
         $collection->expects($this->any())->method('setOrderFilter')->willReturnSelf();
         $collection->expects($this->any())->method('getItems')->willReturn([$this->item]);
         $collection->expects($this->any())->method('getIterator')->willReturn(new \ArrayIterator([$this->item]));
@@ -136,12 +151,12 @@ class OrderTest extends \PHPUnit\Framework\TestCase
             true,
             ['round']
         );
-        $this->localeResolver = $this->createMock(ResolverInterface::class);
-        $this->timezone = $this->createMock(TimezoneInterface::class);
+
         $this->incrementId = '#00000001';
-        $this->eventManager = $this->createMock(\Magento\Framework\Event\Manager::class);
-        $context = $this->createPartialMock(\Magento\Framework\Model\Context::class, ['getEventDispatcher']);
+        $this->eventManager = $this->getMock(\Magento\Framework\Event\Manager::class, [], [], '', false);
+        $context = $this->getMock(\Magento\Framework\Model\Context::class, ['getEventDispatcher'], [], '', false);
         $context->expects($this->any())->method('getEventDispatcher')->willReturn($this->eventManager);
+
         $this->order = $helper->getObject(
             \Magento\Sales\Model\Order::class,
             [
@@ -152,9 +167,7 @@ class OrderTest extends \PHPUnit\Framework\TestCase
                 'historyCollectionFactory' => $this->historyCollectionFactoryMock,
                 'salesOrderCollectionFactory' => $this->salesOrderCollectionFactoryMock,
                 'priceCurrency' => $this->priceCurrency,
-                'productListFactory' => $this->productCollectionFactoryMock,
-                'localeResolver' => $this->localeResolver,
-                'timezone' => $this->timezone,
+                'productListFactory' => $this->productCollectionFactoryMock
             ]
         );
     }
@@ -164,7 +177,13 @@ class OrderTest extends \PHPUnit\Framework\TestCase
         $realOrderItemId = 1;
         $fakeOrderItemId = 2;
 
-        $orderItem = $this->createMock(\Magento\Sales\Model\Order\Item::class);
+        $orderItem = $this->getMock(
+            \Magento\Sales\Model\Order\Item::class,
+            [],
+            [],
+            '',
+            false
+        );
 
         $this->order->setData(
             \Magento\Sales\Api\Data\OrderInterface::ITEMS,
@@ -340,34 +359,6 @@ class OrderTest extends \PHPUnit\Framework\TestCase
         $this->assertFalse($this->order->canCreditmemo());
     }
 
-    public function testCanNotCreditMemoWithAdjustmentNegative()
-    {
-        $totalPaid = 100;
-        $adjustmentNegative = 10;
-        $totalRefunded = 90;
-
-        $this->order->setTotalPaid($totalPaid);
-        $this->order->setTotalRefunded($totalRefunded);
-        $this->order->setAdjustmentNegative($adjustmentNegative);
-        $this->priceCurrency->expects($this->once())->method('round')->with($totalPaid)->willReturnArgument(0);
-
-        $this->assertFalse($this->order->canCreditmemo());
-    }
-
-    public function testCanCreditMemoWithAdjustmentNegativeLowerThanTotalPaid()
-    {
-        $totalPaid = 100;
-        $adjustmentNegative = 9;
-        $totalRefunded = 90;
-
-        $this->order->setTotalPaid($totalPaid);
-        $this->order->setTotalRefunded($totalRefunded);
-        $this->order->setAdjustmentNegative($adjustmentNegative);
-        $this->priceCurrency->expects($this->once())->method('round')->with($totalPaid)->willReturnArgument(0);
-
-        $this->assertTrue($this->order->canCreditmemo());
-    }
-
     /**
      * @param string $state
      *
@@ -511,10 +502,10 @@ class OrderTest extends \PHPUnit\Framework\TestCase
         $this->productCollectionFactoryMock->expects($this->once())
             ->method('create')
             ->willReturn($productCollection);
-
         $productCollection->expects($this->once())
             ->method('addAttributeToSelect')
             ->willReturnSelf();
+
         $this->assertFalse($this->order->canReorder());
     }
 
@@ -559,10 +550,10 @@ class OrderTest extends \PHPUnit\Framework\TestCase
         $this->productCollectionFactoryMock->expects($this->once())
             ->method('create')
             ->willReturn($productCollection);
-
         $productCollection->expects($this->once())
             ->method('addAttributeToSelect')
             ->willReturnSelf();
+
         $this->assertFalse($this->order->canReorder());
     }
 
@@ -596,9 +587,12 @@ class OrderTest extends \PHPUnit\Framework\TestCase
         $paymentMock->expects($this->any())
             ->method('canFetchTransactionInfo')
             ->will($this->returnValue(false));
-        $collectionMock = $this->createPartialMock(
+        $collectionMock = $this->getMock(
             \Magento\Sales\Model\ResourceModel\Order\Item\Collection::class,
-            ['getItems', 'setOrderFilter']
+            ['getItems', 'setOrderFilter'],
+            [],
+            '',
+            false
         );
         $this->orderItemCollectionFactoryMock->expects($this->any())
             ->method('create')
@@ -709,8 +703,8 @@ class OrderTest extends \PHPUnit\Framework\TestCase
             $canVoidOrder = false;
         }
         if ($orderState == \Magento\Sales\Model\Order::STATE_HOLDED && (!isset(
-            $actionFlags[\Magento\Sales\Model\Order::ACTION_FLAG_UNHOLD]
-        ) || $actionFlags[\Magento\Sales\Model\Order::ACTION_FLAG_UNHOLD] !== false)
+                    $actionFlags[\Magento\Sales\Model\Order::ACTION_FLAG_UNHOLD]
+                ) || $actionFlags[\Magento\Sales\Model\Order::ACTION_FLAG_UNHOLD] !== false)
         ) {
             $canVoidOrder = false;
         }
@@ -763,9 +757,9 @@ class OrderTest extends \PHPUnit\Framework\TestCase
      */
     protected function _prepareOrderPayment($order, $mockedMethods = [])
     {
-        $payment = $this->getMockBuilder(
-            \Magento\Sales\Model\Order\Payment::class
-        )->disableOriginalConstructor()->getMock();
+        $payment = $this->getMockBuilder(\Magento\Sales\Model\Order\Payment::class)
+            ->disableOriginalConstructor()
+            ->getMock();
         foreach ($mockedMethods as $method => $value) {
             $payment->expects($this->any())->method($method)->will($this->returnValue($value));
         }
@@ -903,7 +897,7 @@ class OrderTest extends \PHPUnit\Framework\TestCase
             ->setMethods(['setOrder'])
             ->disableOriginalConstructor()
             ->getMockForAbstractClass();
-        $collectionMock = $this->createPartialMock(
+        $collectionMock = $this->getMock(
             \Magento\Sales\Model\ResourceModel\Order\Status\History\Collection::class,
             [
                 'setOrderFilter',
@@ -913,7 +907,10 @@ class OrderTest extends \PHPUnit\Framework\TestCase
                 'toOptionArray',
                 'count',
                 'load'
-            ]
+            ],
+            [],
+            '',
+            false
         );
 
         $collectionItems = [$itemMock];
@@ -957,6 +954,11 @@ class OrderTest extends \PHPUnit\Framework\TestCase
         $this->assertSame($this->order, $this->order->loadByIncrementIdAndStoreId($incrementId, $storeId));
     }
 
+    /**
+     * Tests setPayment() method with Id.
+     *
+     * @return void
+     */
     public function testSetPaymentWithId()
     {
         $this->order->setId(123);
@@ -965,21 +967,17 @@ class OrderTest extends \PHPUnit\Framework\TestCase
             ->getMock();
         $this->order->setData(OrderInterface::PAYMENT, $payment);
         $this->order->setDataChanges(false);
-
         $payment->expects($this->once())
             ->method('setOrder')
             ->with($this->order)
             ->willReturnSelf();
-
         $payment->expects($this->once())
             ->method('setParentId')
             ->with(123)
             ->willReturnSelf();
-
         $payment->expects($this->any())
             ->method('getId')
             ->willReturn(1);
-
         $this->order->setPayment($payment);
 
         $this->assertEquals(
@@ -994,29 +992,29 @@ class OrderTest extends \PHPUnit\Framework\TestCase
         );
     }
 
+    /**
+     * Tests setPayment() method without Id.
+     *
+     * @return void
+     */
     public function testSetPaymentNoId()
     {
         $this->order->setId(123);
         $this->order->setDataChanges(false);
-
         $payment = $this->getMockBuilder(\Magento\Sales\Model\Order\Payment::class)
             ->disableOriginalConstructor()
             ->getMock();
-
         $payment->expects($this->once())
             ->method('setOrder')
             ->with($this->order)
             ->willReturnSelf();
-
         $payment->expects($this->once())
             ->method('setParentId')
             ->with(123)
             ->willReturnSelf();
-
         $payment->expects($this->any())
             ->method('getId')
             ->willReturn(null);
-
         $this->order->setPayment($payment);
 
         $this->assertEquals(
@@ -1029,57 +1027,6 @@ class OrderTest extends \PHPUnit\Framework\TestCase
         $this->assertTrue(
             $this->order->hasDataChanges()
         );
-    }
-
-    public function testSetPaymentNull()
-    {
-        $this->assertEquals(null, $this->order->setPayment(null));
-
-        $this->assertEquals(
-            $this->order->getData(
-                OrderInterface::PAYMENT
-            ),
-            null
-        );
-
-        $this->assertTrue(
-            $this->order->hasDataChanges()
-        );
-    }
-
-    public function testResetOrderWillResetPayment()
-    {
-        $payment = $this->getMockBuilder(\Magento\Sales\Model\Order\Payment::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $this->order->setData(OrderInterface::PAYMENT, $payment);
-        $this->order->reset();
-        $this->assertEquals(
-            $this->order->getData(
-                OrderInterface::PAYMENT
-            ),
-            null
-        );
-
-        $this->assertTrue(
-            $this->order->hasDataChanges()
-        );
-    }
-
-    public function testGetCreatedAtFormattedUsesCorrectLocale()
-    {
-        $localeCode = 'nl_NL';
-
-        $this->localeResolver->expects($this->once())->method('getDefaultLocale')->willReturn($localeCode);
-        $this->timezone->expects($this->once())->method('formatDateTime')
-            ->with(
-                $this->anything(),
-                $this->anything(),
-                $this->anything(),
-                $localeCode
-            );
-
-        $this->order->getCreatedAtFormatted(\IntlDateFormatter::SHORT);
     }
 
     /**

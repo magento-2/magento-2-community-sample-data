@@ -8,8 +8,7 @@ namespace Magento\CatalogImportExport\Model\Import\Product\Type;
 /**
  * Import entity virtual product type
  *
- * @api
- * @since 100.0.2
+ * @author      Magento Core Team <core@magentocommerce.com>
  */
 class Virtual extends \Magento\CatalogImportExport\Model\Import\Product\Type\Simple
 {

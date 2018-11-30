@@ -2,8 +2,7 @@
 ## Optional override of deployment mode. We recommend you use the
 ## command bin/magento deploy:mode:set to switch modes instead
 
-# Options are default, production, or developer
-#   SetEnv MAGE_MODE default
+#   SetEnv MAGE_MODE default # or production or developer
 
 ############################################
 ## Uncomment these lines for CGI mode.
@@ -190,13 +189,8 @@
 ## Deny access to release notes to prevent disclosure of the installed Magento version
 
     <Files RELEASE_NOTES.txt>
-        <IfVersion < 2.4>
-            order allow,deny
-            deny from all
-        </IfVersion>
-        <IfVersion >= 2.4>
-            Require all denied
-        </IfVersion>
+        order allow,deny
+        deny from all
     </Files>
 
 # For 404s and 403s that aren't handled by the application, show plain 404 response
@@ -212,13 +206,8 @@ ErrorDocument 403 /errors/404.php
 ###########################################
 ## Deny access  to cron.php
     <Files cron.php>
-        <IfVersion < 2.4>
-            order allow,deny
-            deny from all
-        </IfVersion>
-        <IfVersion >= 2.4>
-            Require all denied
-        </IfVersion>
+        order allow,deny
+        deny from all
     </Files>
 
 <IfModule mod_headers.c>

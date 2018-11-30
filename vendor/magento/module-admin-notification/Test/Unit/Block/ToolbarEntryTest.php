@@ -4,12 +4,14 @@
  * See COPYING.txt for license details.
  */
 
+// @codingStandardsIgnoreFile
+
 /**
  * Test class for \Magento\AdminNotification\Block\ToolbarEntry
  */
 namespace Magento\AdminNotification\Test\Unit\Block;
 
-class ToolbarEntryTest extends \PHPUnit\Framework\TestCase
+class ToolbarEntryTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * Retrieve toolbar entry block instance
@@ -21,14 +23,17 @@ class ToolbarEntryTest extends \PHPUnit\Framework\TestCase
     {
         $objectManagerHelper = new \Magento\Framework\TestFramework\Unit\Helper\ObjectManager($this);
         // mock collection of unread notifications
-        $notificationList = $this->createPartialMock(
-            \Magento\AdminNotification\Model\ResourceModel\Inbox\Collection\Unread::class,
-            ['getSize', 'setCurPage', 'setPageSize']
+        $notificationList = $this->getMock(
+            'Magento\AdminNotification\Model\ResourceModel\Inbox\Collection\Unread',
+            ['getSize', 'setCurPage', 'setPageSize'],
+            [],
+            '',
+            false
         );
         $notificationList->expects($this->any())->method('getSize')->will($this->returnValue($unreadNotifications));
 
         $block = $objectManagerHelper->getObject(
-            \Magento\AdminNotification\Block\ToolbarEntry::class,
+            'Magento\AdminNotification\Block\ToolbarEntry',
             ['notificationList' => $notificationList]
         );
 
@@ -47,15 +52,12 @@ class ToolbarEntryTest extends \PHPUnit\Framework\TestCase
         $helper = new \Magento\Framework\TestFramework\Unit\Helper\ObjectManager($this);
 
         // 1. Create mocks
-        $notificationList = $this->getMockBuilder(
-            \Magento\AdminNotification\Model\ResourceModel\Inbox\Collection\Unread::class
-        )
+        $notificationList = $this->getMockBuilder('Magento\AdminNotification\Model\ResourceModel\Inbox\Collection\Unread')
             ->disableOriginalConstructor()
             ->getMock();
 
         /** @var \Magento\AdminNotification\Block\ToolbarEntry $model */
-        $model = $helper->getObject(
-            \Magento\AdminNotification\Block\ToolbarEntry::class,
+        $model = $helper->getObject('Magento\AdminNotification\Block\ToolbarEntry',
             ['notificationList' => $notificationList]
         );
 

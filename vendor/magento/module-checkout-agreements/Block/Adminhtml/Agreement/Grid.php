@@ -5,42 +5,27 @@
  */
 namespace Magento\CheckoutAgreements\Block\Adminhtml\Agreement;
 
-use Magento\Framework\App\ObjectManager;
-use Magento\CheckoutAgreements\Model\ResourceModel\Agreement\Grid\CollectionFactory as GridCollectionFactory;
-
 class Grid extends \Magento\Backend\Block\Widget\Grid\Extended
 {
     /**
      * @var \Magento\CheckoutAgreements\Model\ResourceModel\Agreement\CollectionFactory
-     * @deprecated
      */
     protected $_collectionFactory;
-
-    /**
-     * @param GridCollectionFactory
-     */
-    private $gridCollectionFactory;
 
     /**
      * @param \Magento\Backend\Block\Template\Context $context
      * @param \Magento\Backend\Helper\Data $backendHelper
      * @param \Magento\CheckoutAgreements\Model\ResourceModel\Agreement\CollectionFactory $collectionFactory
      * @param array $data
-     * @param GridCollectionFactory $gridColFactory
      * @codeCoverageIgnore
      */
     public function __construct(
         \Magento\Backend\Block\Template\Context $context,
         \Magento\Backend\Helper\Data $backendHelper,
         \Magento\CheckoutAgreements\Model\ResourceModel\Agreement\CollectionFactory $collectionFactory,
-        array $data = [],
-        GridCollectionFactory $gridColFactory = null
+        array $data = []
     ) {
-
         $this->_collectionFactory = $collectionFactory;
-        $this->gridCollectionFactory = $gridColFactory
-            ? : ObjectManager::getInstance()->get(GridCollectionFactory::class);
-
         parent::__construct($context, $backendHelper, $data);
     }
 
@@ -62,7 +47,7 @@ class Grid extends \Magento\Backend\Block\Widget\Grid\Extended
      */
     protected function _prepareCollection()
     {
-        $this->setCollection($this->gridCollectionFactory->create());
+        $this->setCollection($this->_collectionFactory->create());
         return parent::_prepareCollection();
     }
 

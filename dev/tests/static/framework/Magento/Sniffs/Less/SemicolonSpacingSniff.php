@@ -5,8 +5,8 @@
  */
 namespace Magento\Sniffs\Less;
 
-use PHP_CodeSniffer\Sniffs\Sniff;
-use PHP_CodeSniffer\Files\File;
+use PHP_CodeSniffer_File;
+use PHP_CodeSniffer_Sniff;
 
 /**
  * Class SemicolonSpacingSniff
@@ -16,7 +16,7 @@ use PHP_CodeSniffer\Files\File;
  * @link http://devdocs.magento.com/guides/v2.0/coding-standards/code-standard-less.html#end-of-the-property-line
  *
  */
-class SemicolonSpacingSniff implements Sniff
+class SemicolonSpacingSniff implements PHP_CodeSniffer_Sniff
 {
     /**
      * A list of tokenizers this sniff supports.
@@ -54,7 +54,7 @@ class SemicolonSpacingSniff implements Sniff
     /**
      * {@inheritdoc}
      */
-    public function process(File $phpcsFile, $stackPtr)
+    public function process(PHP_CodeSniffer_File $phpcsFile, $stackPtr)
     {
         $tokens = $phpcsFile->getTokens();
 
@@ -72,13 +72,13 @@ class SemicolonSpacingSniff implements Sniff
     }
 
     /**
-     * @param File $phpcsFile
+     * @param PHP_CodeSniffer_File $phpcsFile
      * @param int $stackPtr
      * @param array $tokens
      * @param int $semicolonPtr
      * @return void
      */
-    private function validateSemicolon(File $phpcsFile, $stackPtr, array $tokens, $semicolonPtr)
+    private function validateSemicolon(PHP_CodeSniffer_File $phpcsFile, $stackPtr, array $tokens, $semicolonPtr)
     {
         if ((false === $semicolonPtr || $tokens[$semicolonPtr]['line'] !== $tokens[$stackPtr]['line'])
             && (isset($tokens[$stackPtr - 1]) && !in_array($tokens[$stackPtr - 1]['code'], $this->styleCodesToSkip))
@@ -90,13 +90,13 @@ class SemicolonSpacingSniff implements Sniff
     }
 
     /**
-     * @param File $phpcsFile
+     * @param PHP_CodeSniffer_File $phpcsFile
      * @param int $stackPtr
      * @param array $tokens
      * @param int $semicolonPtr
      * @return void
      */
-    private function validateSpaces(File $phpcsFile, $stackPtr, array $tokens, $semicolonPtr)
+    private function validateSpaces(PHP_CodeSniffer_File $phpcsFile, $stackPtr, array $tokens, $semicolonPtr)
     {
         if (!isset($tokens[($semicolonPtr - 1)])) {
             return;

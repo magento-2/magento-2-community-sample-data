@@ -11,8 +11,6 @@ namespace Magento\Reports\Model\ResourceModel\Customer;
 
 /**
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
- * @api
- * @since 100.0.2
  */
 class Collection extends \Magento\Customer\Model\ResourceModel\Customer\Collection
 {

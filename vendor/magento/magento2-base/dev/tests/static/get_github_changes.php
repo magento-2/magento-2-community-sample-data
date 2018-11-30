@@ -34,8 +34,6 @@ if (!validateInput($options, $requiredOptions)) {
 
 $fileExtensions = explode(',', isset($options['file-extensions']) ? $options['file-extensions'] : 'php');
 
-include_once __DIR__ . '/framework/autoload.php';
-
 $mainline = 'mainline_' . (string)rand(0, 9999);
 $repo = getRepo($options, $mainline);
 $branches = $repo->getBranches('--remotes');
@@ -43,26 +41,7 @@ generateBranchesList($options['output-file'], $branches, $options['branch']);
 $changes = retrieveChangesAcrossForks($mainline, $repo, $options['branch']);
 $changedFiles = getChangedFiles($changes, $fileExtensions);
 generateChangedFilesList($options['output-file'], $changedFiles);
-saveChangedFileContent($repo);
 cleanup($repo, $mainline);
-
-/**
- * Save changed file content.
- *
- * @param GitRepo $repo
- * @return void
- */
-function saveChangedFileContent(GitRepo $repo)
-{
-    $changedFilesContentFileName = BP . Magento\TestFramework\Utility\ChangedFiles::CHANGED_FILES_CONTENT_FILE;
-    foreach ($repo->getChangedContentFiles() as $key => $changedContentFile) {
-        $filePath = sprintf($changedFilesContentFileName, $key);
-        $oldContent = file_exists($filePath) ? file_get_contents($filePath) : '{}';
-        $oldData = json_decode($oldContent, true);
-        $data = array_merge($oldData, $changedContentFile);
-        file_put_contents($filePath, json_encode($data));
-    }
-}
 
 /**
  * Generates a file containing changed files
@@ -126,7 +105,7 @@ function getChangedFiles(array $changes, array $fileExtensions)
  *
  * @param array $options
  * @param string $mainline
- * @return GitRepo
+ * @return array
  * @throws Exception
  */
 function getRepo($options, $mainline)
@@ -176,6 +155,7 @@ function validateInput(array $options, array $requiredOptions)
     return true;
 }
 
+
 class GitRepo
 {
     /**
@@ -189,18 +169,6 @@ class GitRepo
      * @var array
      */
     private $remoteList = [];
-
-    /**
-     * Array of changed content files.
-     *
-     * Example:
-     *         'extension' =>
-     *                      'path_to_file/filename'  => 'Content that was edited',
-     *                      'path_to_file/filename2' => 'Content that was edited',
-     *
-     * @var array
-     */
-    private $changedContentFiles = [];
 
     /**
      * @param string $workTree absolute path to git project
@@ -257,7 +225,7 @@ class GitRepo
     }
 
     /**
-     * Returns branches
+     * Returns repo branches
      *
      * @param string $source
      * @return array|mixed
@@ -302,17 +270,12 @@ class GitRepo
      */
     protected function filterChangedFiles(array $changes, $remoteAlias, $remoteBranch)
     {
-        $countScannedFiles = 0;
         $changedFilesMasks = [
             'M' => "M\t",
             'A' => "A\t"
         ];
         $filteredChanges = [];
         foreach ($changes as $fileName) {
-            $countScannedFiles++;
-            if (($countScannedFiles % 5000) == 0) {
-                echo $countScannedFiles . " files scanned so far\n";
-            }
             foreach ($changedFilesMasks as $mask) {
                 if (strpos($fileName, $mask) === 0) {
                     $fileName = str_replace($mask, '', $fileName);
@@ -322,9 +285,6 @@ class GitRepo
                                 'diff HEAD %s/%s -- %s', $remoteAlias, $remoteBranch, $this->workTree . '/' . $fileName)
                         );
                         if ($result) {
-                            if (!(isset($this->changedContentFiles[$fileName]))) {
-                                $this->setChangedContentFile($result, $fileName);
-                            }
                             $filteredChanges[] = $fileName;
                         }
                     }
@@ -332,41 +292,7 @@ class GitRepo
                 }
             }
         }
-        echo $countScannedFiles . " files scanned\n";
-
         return $filteredChanges;
-    }
-
-    /**
-     * Set changed content for file.
-     *
-     * @param array $content
-     * @param string $fileName
-     * @return void
-     */
-    private function setChangedContentFile(array $content, $fileName)
-    {
-        $changedContent = '';
-        $extension = Magento\TestFramework\Utility\ChangedFiles::getFileExtension($fileName);
-
-        foreach ($content as $item) {
-            if (strpos($item, '---') !== 0 && strpos($item, '-') === 0 && $line = ltrim($item, '-')) {
-                $changedContent .= $line . "\n";
-            }
-        }
-        if ($changedContent !== '') {
-            $this->changedContentFiles[$extension][$fileName] = $changedContent;
-        }
-    }
-
-    /**
-     * Get changed content files collection.
-     *
-     * @return array
-     */
-    public function getChangedContentFiles()
-    {
-        return $this->changedContentFiles;
     }
 
     /**

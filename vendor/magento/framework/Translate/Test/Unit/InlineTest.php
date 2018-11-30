@@ -7,7 +7,7 @@ namespace Magento\Framework\Translate\Test\Unit;
 
 use \Magento\Framework\Translate\Inline;
 
-class InlineTest extends \PHPUnit\Framework\TestCase
+class InlineTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\Framework\App\ScopeResolverInterface|\PHPUnit_Framework_MockObject_MockObject
@@ -42,12 +42,30 @@ class InlineTest extends \PHPUnit\Framework\TestCase
     protected function setUp()
     {
         $this->scopeResolverMock =
-            $this->createMock(\Magento\Framework\App\ScopeResolverInterface::class);
-        $this->urlMock = $this->createMock(\Magento\Framework\UrlInterface::class);
-        $this->layoutMock = $this->createMock(\Magento\Framework\View\LayoutInterface::class);
-        $this->configMock = $this->createMock(\Magento\Framework\Translate\Inline\ConfigInterface::class);
-        $this->parserMock = $this->createMock(\Magento\Framework\Translate\Inline\ParserInterface::class);
-        $this->stateMock = $this->createMock(\Magento\Framework\Translate\Inline\StateInterface::class);
+            $this->getMock('Magento\Framework\App\ScopeResolverInterface', [], [], '', false);
+        $this->urlMock = $this->getMock('Magento\Framework\UrlInterface', [], [], '', false);
+        $this->layoutMock = $this->getMock('Magento\Framework\View\LayoutInterface', [], [], '', false);
+        $this->configMock = $this->getMock(
+            'Magento\Framework\Translate\Inline\ConfigInterface',
+            [],
+            [],
+            '',
+            false
+        );
+        $this->parserMock = $this->getMock(
+            'Magento\Framework\Translate\Inline\ParserInterface',
+            [],
+            [],
+            '',
+            false
+        );
+        $this->stateMock = $this->getMock(
+            'Magento\Framework\Translate\Inline\StateInterface',
+            [],
+            [],
+            '',
+            false
+        );
     }
 
     /**
@@ -282,7 +300,7 @@ class InlineTest extends \PHPUnit\Framework\TestCase
      */
     protected function prepareIsAllowed($isEnabled, $isActive, $isDevAllowed, $scope = null)
     {
-        $scopeMock = $this->createMock(\Magento\Framework\App\Config\ScopeConfigInterface::class);
+        $scopeMock = $this->getMock('Magento\Framework\App\Config\ScopeConfigInterface', [], [], '', false);
         $this->stateMock->expects($this->any())->method('isEnabled')->will($this->returnValue($isEnabled));
         $this->scopeResolverMock->expects(
             $this->once()

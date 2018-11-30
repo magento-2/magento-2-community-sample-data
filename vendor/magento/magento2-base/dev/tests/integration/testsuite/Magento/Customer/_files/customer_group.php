@@ -5,11 +5,11 @@
  */
 /** @var \Magento\Customer\Api\GroupRepositoryInterface $groupRepository */
 $groupRepository = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->create(
-    \Magento\Customer\Api\GroupRepositoryInterface::class
+    'Magento\Customer\Api\GroupRepositoryInterface'
 );
 
 $groupFactory = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->create(
-    \Magento\Customer\Api\Data\GroupInterfaceFactory::class
+    'Magento\Customer\Api\Data\GroupInterfaceFactory'
 );
 $groupDataObject = $groupFactory->create();
 $groupDataObject->setCode('custom_group')->setTaxClassId(3);

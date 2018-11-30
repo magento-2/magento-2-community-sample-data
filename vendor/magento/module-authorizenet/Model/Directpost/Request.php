@@ -112,50 +112,50 @@ class Request extends AuthorizenetRequest
             sprintf('%.2F', $order->getBaseShippingAmount())
         );
 
-        //need to use (string) because NULL values IE6-8 decodes as "null" in JSON in JavaScript,
+        //need to use strval() because NULL values IE6-8 decodes as "null" in JSON in JavaScript,
         //but we need "" for null values.
         $billing = $order->getBillingAddress();
         if (!empty($billing)) {
-            $this->setXFirstName((string)$billing->getFirstname())
-                ->setXLastName((string)$billing->getLastname())
-                ->setXCompany((string)$billing->getCompany())
-                ->setXAddress((string)$billing->getStreetLine(1))
-                ->setXCity((string)$billing->getCity())
-                ->setXState((string)$billing->getRegion())
-                ->setXZip((string)$billing->getPostcode())
-                ->setXCountry((string)$billing->getCountryId())
-                ->setXPhone((string)$billing->getTelephone())
-                ->setXFax((string)$billing->getFax())
-                ->setXCustId((string)$billing->getCustomerId())
-                ->setXCustomerIp((string)$order->getRemoteIp())
-                ->setXCustomerTaxId((string)$billing->getTaxId())
-                ->setXEmail((string)$order->getCustomerEmail())
-                ->setXEmailCustomer((string)$paymentMethod->getConfigData('email_customer'))
-                ->setXMerchantEmail((string)$paymentMethod->getConfigData('merchant_email'));
+            $this->setXFirstName(strval($billing->getFirstname()))
+                ->setXLastName(strval($billing->getLastname()))
+                ->setXCompany(strval($billing->getCompany()))
+                ->setXAddress(strval($billing->getStreetLine(1)))
+                ->setXCity(strval($billing->getCity()))
+                ->setXState(strval($billing->getRegion()))
+                ->setXZip(strval($billing->getPostcode()))
+                ->setXCountry(strval($billing->getCountryId()))
+                ->setXPhone(strval($billing->getTelephone()))
+                ->setXFax(strval($billing->getFax()))
+                ->setXCustId(strval($billing->getCustomerId()))
+                ->setXCustomerIp(strval($order->getRemoteIp()))
+                ->setXCustomerTaxId(strval($billing->getTaxId()))
+                ->setXEmail(strval($order->getCustomerEmail()))
+                ->setXEmailCustomer(strval($paymentMethod->getConfigData('email_customer')))
+                ->setXMerchantEmail(strval($paymentMethod->getConfigData('merchant_email')));
         }
 
         $shipping = $order->getShippingAddress();
         if (!empty($shipping)) {
             $this->setXShipToFirstName(
-                (string)$shipping->getFirstname()
+                strval($shipping->getFirstname())
             )->setXShipToLastName(
-                (string)$shipping->getLastname()
+                strval($shipping->getLastname())
             )->setXShipToCompany(
-                (string)$shipping->getCompany()
+                strval($shipping->getCompany())
             )->setXShipToAddress(
-                (string)$shipping->getStreetLine(1)
+                strval($shipping->getStreetLine(1))
             )->setXShipToCity(
-                (string)$shipping->getCity()
+                strval($shipping->getCity())
             )->setXShipToState(
-                (string)$shipping->getRegion()
+                strval($shipping->getRegion())
             )->setXShipToZip(
-                (string)$shipping->getPostcode()
+                strval($shipping->getPostcode())
             )->setXShipToCountry(
-                (string)$shipping->getCountryId()
+                strval($shipping->getCountryId())
             );
         }
 
-        $this->setXPoNum((string)$payment->getPoNumber());
+        $this->setXPoNum(strval($payment->getPoNumber()));
 
         return $this;
     }

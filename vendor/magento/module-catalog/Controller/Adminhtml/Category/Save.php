@@ -5,8 +5,8 @@
  */
 namespace Magento\Catalog\Controller\Adminhtml\Category;
 
-use Magento\Catalog\Api\Data\CategoryAttributeInterface;
 use Magento\Store\Model\StoreManagerInterface;
+use Magento\Catalog\Api\Data\CategoryAttributeInterface;
 
 /**
  * Class Save
@@ -50,6 +50,8 @@ class Save extends \Magento\Catalog\Controller\Adminhtml\Category
     private $storeManager;
 
     /**
+     * Config instance holder.
+     *
      * @var \Magento\Eav\Model\Config
      */
     private $eavConfig;
@@ -61,38 +63,33 @@ class Save extends \Magento\Catalog\Controller\Adminhtml\Category
      * @param \Magento\Framework\Controller\Result\RawFactory $resultRawFactory
      * @param \Magento\Framework\Controller\Result\JsonFactory $resultJsonFactory
      * @param \Magento\Framework\View\LayoutFactory $layoutFactory
-     * @param \Magento\Framework\Stdlib\DateTime\Filter\Date $dateFilter
      * @param StoreManagerInterface $storeManager
-     * @param \Magento\Eav\Model\Config $eavConfig
      */
     public function __construct(
         \Magento\Backend\App\Action\Context $context,
         \Magento\Framework\Controller\Result\RawFactory $resultRawFactory,
         \Magento\Framework\Controller\Result\JsonFactory $resultJsonFactory,
         \Magento\Framework\View\LayoutFactory $layoutFactory,
-        \Magento\Framework\Stdlib\DateTime\Filter\Date $dateFilter,
-        StoreManagerInterface $storeManager,
-        \Magento\Eav\Model\Config $eavConfig = null
+        StoreManagerInterface $storeManager
     ) {
-        parent::__construct($context, $dateFilter);
+        parent::__construct($context);
         $this->resultRawFactory = $resultRawFactory;
         $this->resultJsonFactory = $resultJsonFactory;
         $this->layoutFactory = $layoutFactory;
         $this->storeManager = $storeManager;
-        $this->eavConfig = $eavConfig
-            ?: \Magento\Framework\App\ObjectManager::getInstance()->get(\Magento\Eav\Model\Config::class);
     }
 
     /**
-     * Filter category data
+     * Filter category data.
      *
-     * @deprecated 101.0.8
+     * @deprecated
      * @param array $rawData
      * @return array
      */
     protected function _filterCategoryPostData(array $rawData)
     {
         $data = $rawData;
+        // @todo It is a workaround to prevent saving this data in category model and it has to be refactored in future
         if (isset($data['image']) && is_array($data['image'])) {
             if (!empty($data['image']['delete'])) {
                 $data['image'] = null;
@@ -131,16 +128,12 @@ class Save extends \Magento\Catalog\Controller\Adminhtml\Category
         $isNewCategory = !isset($categoryPostData['entity_id']);
         $categoryPostData = $this->stringToBoolConverting($categoryPostData);
         $categoryPostData = $this->imagePreprocessing($categoryPostData);
-        $categoryPostData = $this->dateTimePreprocessing($category, $categoryPostData);
         $storeId = isset($categoryPostData['store_id']) ? $categoryPostData['store_id'] : null;
         $store = $this->storeManager->getStore($storeId);
         $this->storeManager->setCurrentStore($store->getCode());
         $parentId = isset($categoryPostData['parent']) ? $categoryPostData['parent'] : null;
         if ($categoryPostData) {
             $category->addData($categoryPostData);
-            if ($parentId) {
-                $category->setParentId($parentId);
-            }
             if ($isNewCategory) {
                 $parentCategory = $this->getParentCategory($parentId, $storeId);
                 $category->setPath($parentCategory->getPath());
@@ -215,13 +208,17 @@ class Save extends \Magento\Catalog\Controller\Adminhtml\Category
                 $category->unsetData('use_post_data_config');
 
                 $category->save();
-                $this->messageManager->addSuccessMessage(__('You saved the category.'));
+                $this->messageManager->addSuccess(__('You saved the category.'));
+            } catch (\Magento\Framework\Exception\AlreadyExistsException $e) {
+                $this->messageManager->addError($e->getMessage());
+                $this->_objectManager->get(\Psr\Log\LoggerInterface::class)->critical($e);
+                $this->_getSession()->setCategoryData($categoryPostData);
             } catch (\Magento\Framework\Exception\LocalizedException $e) {
-                $this->messageManager->addExceptionMessage($e);
+                $this->messageManager->addError($e->getMessage());
                 $this->_objectManager->get(\Psr\Log\LoggerInterface::class)->critical($e);
                 $this->_getSession()->setCategoryData($categoryPostData);
             } catch (\Exception $e) {
-                $this->messageManager->addErrorMessage(__('Something went wrong while saving the category.'));
+                $this->messageManager->addError(__('Something went wrong while saving the category.'));
                 $this->_objectManager->get(\Psr\Log\LoggerInterface::class)->critical($e);
                 $this->_getSession()->setCategoryData($categoryPostData);
             }
@@ -258,31 +255,46 @@ class Save extends \Magento\Catalog\Controller\Adminhtml\Category
     }
 
     /**
-     * Sets image attribute data to false if image was removed
+     * Sets image attribute data to false, if image was removed.
+     *
+     * @param array $data
+     *
+     * @return array
+     */
+    public function imagePreprocessing(array $data)
+    {
+        $emptyImageAttributes = $this->getEmptyImageAttributes($data);
+        $attributeCodes = array_keys($emptyImageAttributes);
+        foreach ($attributeCodes as $attributeCode) {
+            $data[$attributeCode] = false;
+        }
+
+        return $data;
+    }
+
+    /**
+     * Get image attributes without value.
      *
      * @param array $data
      * @return array
      */
-    public function imagePreprocessing($data)
+    private function getEmptyImageAttributes(array $data)
     {
-        $entityType = $this->eavConfig->getEntityType(CategoryAttributeInterface::ENTITY_TYPE_CODE);
-
-        foreach ($entityType->getAttributeCollection() as $attributeModel) {
-            $attributeCode = $attributeModel->getAttributeCode();
-            $backendModel = $attributeModel->getBackend();
-
+        $result = [];
+        $entityType = $this->getConfig()->getEntityType(CategoryAttributeInterface::ENTITY_TYPE_CODE);
+        foreach ($entityType->getAttributeCollection() as $attribute) {
+            $attributeCode = $attribute->getAttributeCode();
+            $backendModel = $attribute->getBackend();
             if (isset($data[$attributeCode])) {
                 continue;
             }
-
             if (!$backendModel instanceof \Magento\Catalog\Model\Category\Attribute\Backend\Image) {
                 continue;
             }
-
-            $data[$attributeCode] = '';
+            $result[$attributeCode] = $attribute;
         }
 
-        return $data;
+        return $result;
     }
 
     /**
@@ -364,7 +376,24 @@ class Save extends \Magento\Catalog\Controller\Adminhtml\Category
         } else {
             $path = 'catalog/*/edit';
             $params['id'] = $categoryId;
+
         }
         return ['path' => $path, 'params' => $params];
+    }
+
+    /**
+     * Get Config instance.
+     *
+     * @return \Magento\Eav\Model\Config
+     */
+    private function getConfig()
+    {
+        if (null === $this->eavConfig) {
+            $this->eavConfig = \Magento\Framework\App\ObjectManager::getInstance()->get(
+                \Magento\Eav\Model\Config::class
+            );
+        }
+
+        return $this->eavConfig;
     }
 }

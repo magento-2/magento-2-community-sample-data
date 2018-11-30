@@ -8,7 +8,7 @@ namespace Magento\Catalog\Test\Unit\Model\Config\Source;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
 use PHPUnit_Framework_MockObject_MockObject as MockObject;
 
-class CategoryTest extends \PHPUnit\Framework\TestCase
+class CategoryTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\Catalog\Model\Config\Source\Category
@@ -27,13 +27,11 @@ class CategoryTest extends \PHPUnit\Framework\TestCase
 
     protected function setUp()
     {
-        $this->categoryCollection = $this->getMockBuilder(
-            \Magento\Catalog\Model\ResourceModel\Category\Collection::class
-        )
+        $this->categoryCollection = $this->getMockBuilder('Magento\Catalog\Model\ResourceModel\Category\Collection')
             ->disableOriginalConstructor()
             ->getMock();
 
-        $this->category = $this->getMockBuilder(\Magento\Catalog\Model\ResourceModel\Category::class)
+        $this->category = $this->getMockBuilder('Magento\Catalog\Model\ResourceModel\Category')
             ->setMethods(['getName', 'getId'])
             ->disableOriginalConstructor()
             ->getMock();
@@ -42,7 +40,7 @@ class CategoryTest extends \PHPUnit\Framework\TestCase
          * @var \Magento\Catalog\Model\ResourceModel\Category\CollectionFactory|MockObject $categoryCollectionFactory
          */
         $categoryCollectionFactory =
-            $this->getMockBuilder(\Magento\Catalog\Model\ResourceModel\Category\CollectionFactory::class)
+            $this->getMockBuilder('Magento\Catalog\Model\ResourceModel\Category\CollectionFactory')
             ->setMethods(['create'])
             ->disableOriginalConstructor()
             ->getMock();
@@ -51,10 +49,9 @@ class CategoryTest extends \PHPUnit\Framework\TestCase
         );
 
         $helper = new ObjectManager($this);
-        $this->model = $helper->getObject(
-            \Magento\Catalog\Model\Config\Source\Category::class,
-            ['categoryCollectionFactory' => $categoryCollectionFactory]
-        );
+        $this->model = $helper->getObject('Magento\Catalog\Model\Config\Source\Category', [
+                'categoryCollectionFactory' => $categoryCollectionFactory
+            ]);
     }
 
     public function testToOptionArray()

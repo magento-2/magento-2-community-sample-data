@@ -100,9 +100,8 @@ class Save extends \Magento\Backend\App\Action
                     }
                 }
                 $creditmemoManagement = $this->_objectManager->create(
-                    \Magento\Sales\Api\CreditmemoManagementInterface::class
+                    'Magento\Sales\Api\CreditmemoManagementInterface'
                 );
-                $creditmemo->getOrder()->setCustomerNoteNotify(!empty($data['send_email']));
                 $creditmemoManagement->refund($creditmemo, (bool)$data['do_offline']);
 
                 if (!empty($data['send_email'])) {
@@ -122,7 +121,7 @@ class Save extends \Magento\Backend\App\Action
             $this->messageManager->addError($e->getMessage());
             $this->_getSession()->setFormData($data);
         } catch (\Exception $e) {
-            $this->_objectManager->get(\Psr\Log\LoggerInterface::class)->critical($e);
+            $this->_objectManager->get('Psr\Log\LoggerInterface')->critical($e);
             $this->messageManager->addError(__('We can\'t save the credit memo right now.'));
         }
         $resultRedirect->setPath('sales/*/new', ['_current' => true]);

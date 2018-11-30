@@ -104,7 +104,7 @@ class View implements EventManagerAwareInterface
      */
     public function getEventManager()
     {
-        if (! $this->events instanceof EventManagerInterface) {
+        if (!$this->events instanceof EventManagerInterface) {
             $this->setEventManager(new EventManager());
         }
         return $this->events;
@@ -169,13 +169,12 @@ class View implements EventManagerAwareInterface
     {
         $event   = $this->getEvent();
         $event->setModel($model);
-        $event->setName(ViewEvent::EVENT_RENDERER);
         $events  = $this->getEventManager();
-        $results = $events->triggerEventUntil(function ($result) {
+        $results = $events->trigger(ViewEvent::EVENT_RENDERER, $event, function ($result) {
             return ($result instanceof Renderer);
-        }, $event);
+        });
         $renderer = $results->last();
-        if (! $renderer instanceof Renderer) {
+        if (!$renderer instanceof Renderer) {
             throw new Exception\RuntimeException(sprintf(
                 '%s: no renderer selected!',
                 __METHOD__
@@ -183,8 +182,7 @@ class View implements EventManagerAwareInterface
         }
 
         $event->setRenderer($renderer);
-        $event->setName(ViewEvent::EVENT_RENDERER_POST);
-        $events->triggerEvent($event);
+        $events->trigger(ViewEvent::EVENT_RENDERER_POST, $event);
 
         // If EVENT_RENDERER or EVENT_RENDERER_POST changed the model, make sure
         // we use this new model instead of the current $model
@@ -194,8 +192,8 @@ class View implements EventManagerAwareInterface
         // a) the renderer does not implement TreeRendererInterface, or
         // b) it does, but canRenderTrees() returns false
         if ($model->hasChildren()
-            && (! $renderer instanceof TreeRendererInterface
-                || ! $renderer->canRenderTrees())
+            && (!$renderer instanceof TreeRendererInterface
+                || !$renderer->canRenderTrees())
         ) {
             $this->renderChildren($model);
         }
@@ -214,9 +212,8 @@ class View implements EventManagerAwareInterface
         }
 
         $event->setResult($rendered);
-        $event->setName(ViewEvent::EVENT_RESPONSE);
 
-        $events->triggerEvent($event);
+        $events->trigger(ViewEvent::EVENT_RESPONSE, $event);
     }
 
     /**
@@ -236,9 +233,9 @@ class View implements EventManagerAwareInterface
             $result  = $this->render($child);
             $child->setOption('has_parent', null);
             $capture = $child->captureTo();
-            if (! empty($capture)) {
+            if (!empty($capture)) {
                 if ($child->isAppend()) {
-                    $oldResult = $model->{$capture};
+                    $oldResult=$model->{$capture};
                     $model->setVariable($capture, $oldResult . $result);
                 } else {
                     $model->setVariable($capture, $result);

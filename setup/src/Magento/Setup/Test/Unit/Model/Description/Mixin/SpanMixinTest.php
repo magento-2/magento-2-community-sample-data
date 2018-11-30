@@ -5,7 +5,7 @@
  */
 namespace Magento\Setup\Test\Unit\Model\Description\Mixin;
 
-class SpanMixinTest extends \PHPUnit\Framework\TestCase
+class SpanMixinTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\Setup\Model\Description\Mixin\SpanMixin
@@ -24,9 +24,20 @@ class SpanMixinTest extends \PHPUnit\Framework\TestCase
 
     public function setUp()
     {
-        $this->randomWordSelectorMock =
-            $this->createMock(\Magento\Setup\Model\Description\Mixin\Helper\RandomWordSelector::class);
-        $this->wordWrapperMock = $this->createMock(\Magento\Setup\Model\Description\Mixin\Helper\WordWrapper::class);
+        $this->randomWordSelectorMock = $this->getMock(
+            \Magento\Setup\Model\Description\Mixin\Helper\RandomWordSelector::class,
+            [],
+            [],
+            '',
+            false
+        );
+        $this->wordWrapperMock = $this->getMock(
+            \Magento\Setup\Model\Description\Mixin\Helper\WordWrapper::class,
+            [],
+            [],
+            '',
+            false
+        );
 
         $this->mixin = new \Magento\Setup\Model\Description\Mixin\SpanMixin(
             $this->randomWordSelectorMock,

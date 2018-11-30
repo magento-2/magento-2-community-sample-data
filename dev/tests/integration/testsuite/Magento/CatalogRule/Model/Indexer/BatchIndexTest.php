@@ -14,7 +14,7 @@ use Magento\TestFramework\Helper\Bootstrap;
  * @magentoDataFixture Magento/CatalogRule/_files/two_rules.php
  * @magentoDataFixture Magento/Catalog/_files/product_simple.php
  */
-class BatchIndexTest extends \PHPUnit\Framework\TestCase
+class BatchIndexTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\Catalog\Model\ProductRepository
@@ -33,39 +33,14 @@ class BatchIndexTest extends \PHPUnit\Framework\TestCase
 
     protected function setUp()
     {
-        $this->resourceRule = Bootstrap::getObjectManager()->get(\Magento\CatalogRule\Model\ResourceModel\Rule::class);
-        $this->product = Bootstrap::getObjectManager()->get(\Magento\Catalog\Model\Product::class);
-        $this->productRepository = Bootstrap::getObjectManager()->get(\Magento\Catalog\Model\ProductRepository::class);
-    }
-
-    protected function tearDown()
-    {
-        /** @var \Magento\Framework\Registry $registry */
-        $registry = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()
-            ->get(\Magento\Framework\Registry::class);
-
-        $registry->unregister('isSecureArea');
-        $registry->register('isSecureArea', true);
-
-        /** @var \Magento\Catalog\Model\ResourceModel\Product\Collection $productCollection */
-        $productCollection = Bootstrap::getObjectManager()->get(
-            \Magento\Catalog\Model\ResourceModel\Product\Collection::class
-        );
-        $productCollection->delete();
-
-        $registry->unregister('isSecureArea');
-        $registry->register('isSecureArea', false);
-
-        parent::tearDown();
+        $this->resourceRule = Bootstrap::getObjectManager()->get('Magento\CatalogRule\Model\ResourceModel\Rule');
+        $this->product = Bootstrap::getObjectManager()->get('Magento\Catalog\Model\Product');
+        $this->productRepository = Bootstrap::getObjectManager()->get('Magento\Catalog\Model\ProductRepository');
     }
 
     /**
-     * @magentoDbIsolation disabled
+     * @magentoDbIsolation enabled
      * @dataProvider dataProvider
-     * @magentoAppIsolation enabled
-     * @magentoAppArea adminhtml
-     * @magentoDataFixtureBeforeTransaction Magento/CatalogRule/_files/two_rules.php
-     * @magentoDataFixture Magento/Catalog/_files/product_simple.php
      */
     public function testPriceForSmallBatch($batchCount, $price, $expectedPrice)
     {
@@ -75,7 +50,7 @@ class BatchIndexTest extends \PHPUnit\Framework\TestCase
          * @var IndexBuilder $indexerBuilder
          */
         $indexerBuilder = Bootstrap::getObjectManager()->create(
-            \Magento\CatalogRule\Model\Indexer\IndexBuilder::class,
+            'Magento\CatalogRule\Model\Indexer\IndexBuilder',
             ['batchCount' => $batchCount]
         );
 

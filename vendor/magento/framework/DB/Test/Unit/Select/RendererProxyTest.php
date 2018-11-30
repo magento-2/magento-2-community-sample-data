@@ -5,21 +5,21 @@
  */
 namespace Magento\Framework\DB\Test\Unit\Select;
 
-class RendererProxyTest extends \PHPUnit\Framework\TestCase
+class RendererProxyTest extends \PHPUnit_Framework_TestCase
 {
     public function testRender()
     {
-        $objectManager = $this->getMockBuilder(\Magento\Framework\ObjectManagerInterface::class)
+        $objectManager = $this->getMockBuilder('Magento\Framework\ObjectManagerInterface')
             ->disableOriginalConstructor()
             ->getMock();
-        $selectRender = $this->getMockBuilder(\Magento\Framework\DB\Select\SelectRenderer::class)
+        $selectRender = $this->getMockBuilder('Magento\Framework\DB\Select\SelectRenderer')
             ->disableOriginalConstructor()
             ->getMock();
         $objectManager->expects($this->once())
             ->method('get')
-            ->with(\Magento\Framework\DB\Select\SelectRenderer::class)
+            ->with('\\Magento\\Framework\\DB\\Select\\SelectRenderer')
             ->willReturn($selectRender);
-        $selectMock = $this->getMockBuilder(\Magento\Framework\DB\Select::class)
+        $selectMock = $this->getMockBuilder('Magento\Framework\DB\Select')
             ->disableOriginalConstructor()
             ->getMock();
         $selectRender->expects($this->once())

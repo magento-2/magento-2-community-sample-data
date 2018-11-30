@@ -6,13 +6,13 @@
 use Magento\Framework\Exception\NoSuchEntityException;
 
 /** @var \Magento\Framework\Registry $registry */
-$registry = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->get(\Magento\Framework\Registry::class);
+$registry = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->get('Magento\Framework\Registry');
 
 $registry->unregister('isSecureArea');
 $registry->register('isSecureArea', true);
 
 $repository = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->create(
-    \Magento\Catalog\Model\ProductRepository::class
+    'Magento\Catalog\Model\ProductRepository'
 );
 try {
     $product = $repository->get('simple', false, null, true);

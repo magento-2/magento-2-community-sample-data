@@ -21,15 +21,14 @@ use Magento\Mtf\TestCase\Scenario;
  * 4. Do 'Reorder' for placed order.
  * 5. Perform all assertions.
  *
- * @group Order_Management
+ * @group Order_Management_(CS)
  * @ZephyrId MAGETWO-29007
  */
 class ReorderOrderEntityTest extends Scenario
 {
     /* tags */
     const MVP = 'yes';
-    const TEST_TYPE = '3rd_party_test';
-    const SEVERITY = 'S2';
+    const DOMAIN = 'CS';
     /* end tags */
 
     /**

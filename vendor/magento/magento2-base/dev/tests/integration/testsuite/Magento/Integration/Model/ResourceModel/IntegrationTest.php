@@ -8,7 +8,7 @@ namespace Magento\Integration\Model\ResourceModel;
 /**
  * Integration test for \Magento\Integration\Model\ResourceModel\Integration
  */
-class IntegrationTest extends \PHPUnit\Framework\TestCase
+class IntegrationTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\Integration\Model\Integration
@@ -23,7 +23,7 @@ class IntegrationTest extends \PHPUnit\Framework\TestCase
     protected function setUp()
     {
         $objectManager = \Magento\TestFramework\Helper\Bootstrap::getObjectManager();
-        $this->consumer = $objectManager->create(\Magento\Integration\Model\Oauth\Consumer::class);
+        $this->consumer = $objectManager->create('Magento\Integration\Model\Oauth\Consumer');
         $this->consumer->setData(
             [
                 'key' => md5(uniqid()),
@@ -32,7 +32,7 @@ class IntegrationTest extends \PHPUnit\Framework\TestCase
                 'rejected_callback_url' => 'http://example.com/rejectedCallback'
             ]
         )->save();
-        $this->integration = $objectManager->create(\Magento\Integration\Model\Integration::class);
+        $this->integration = $objectManager->create('Magento\Integration\Model\Integration');
         $this->integration->setName('Test Integration')
             ->setConsumerId($this->consumer->getId())
             ->setStatus(\Magento\Integration\Model\Integration::STATUS_ACTIVE)

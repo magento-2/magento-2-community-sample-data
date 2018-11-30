@@ -5,14 +5,13 @@
  */
 namespace Magento\Review\Test\Unit\Controller\Product;
 
-use Magento\Framework\Controller\ResultFactory;
 use Magento\Review\Model\Review;
+use Magento\Framework\Controller\ResultFactory;
 
 /**
  * @SuppressWarnings(PHPMD.TooManyFields)
- * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  */
-class PostTest extends \PHPUnit\Framework\TestCase
+class PostTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \PHPUnit_Framework_MockObject_MockObject
@@ -104,61 +103,87 @@ class PostTest extends \PHPUnit\Framework\TestCase
      */
     protected function setUp()
     {
-        $this->redirect = $this->createMock(\Magento\Framework\App\Response\RedirectInterface::class);
-        $this->request = $this->createPartialMock(\Magento\Framework\App\Request\Http::class, ['getParam']);
-        $this->response = $this->createPartialMock(\Magento\Framework\App\Response\Http::class, ['setRedirect']);
-        $this->formKeyValidator = $this->createPartialMock(
-            \Magento\Framework\Data\Form\FormKey\Validator::class,
-            ['validate']
+        $this->redirect = $this->getMock('\Magento\Framework\App\Response\RedirectInterface');
+        $this->request = $this->getMock('\Magento\Framework\App\Request\Http', ['getParam'], [], '', false);
+        $this->response = $this->getMock('\Magento\Framework\App\Response\Http', ['setRedirect'], [], '', false);
+        $this->formKeyValidator = $this->getMock(
+            'Magento\Framework\Data\Form\FormKey\Validator',
+            ['validate'],
+            [],
+            '',
+            false
         );
-        $this->reviewSession = $this->createPartialMock(
-            \Magento\Framework\Session\Generic::class,
-            ['getFormData', 'getRedirectUrl']
+        $this->reviewSession = $this->getMock(
+            '\Magento\Framework\Session\Generic',
+            ['getFormData', 'getRedirectUrl'],
+            [],
+            '',
+            false
         );
-        $this->eventManager = $this->createMock(\Magento\Framework\Event\ManagerInterface::class);
-        $this->productRepository = $this->createMock(\Magento\Catalog\Api\ProductRepositoryInterface::class);
-        $this->coreRegistry = $this->createMock(\Magento\Framework\Registry::class);
-        $this->review = $this->createPartialMock(
-            \Magento\Review\Model\Review::class,
+        $this->eventManager = $this->getMock('\Magento\Framework\Event\ManagerInterface');
+        $this->productRepository = $this->getMock('\Magento\Catalog\Api\ProductRepositoryInterface');
+        $this->coreRegistry = $this->getMock('\Magento\Framework\Registry');
+        $this->review = $this->getMock(
+            '\Magento\Review\Model\Review',
             [
-                'setData',
-                'validate',
-                'setEntityId',
-                'getEntityIdByCode',
-                'setEntityPkValue',
-                'setStatusId',
-                'setCustomerId',
-                'setStoreId',
-                'setStores',
-                'save',
-                'getId',
-                'aggregate',
-                'unsetData'
-            ]
+                'setData', 'validate', 'setEntityId', 'getEntityIdByCode', 'setEntityPkValue', 'setStatusId',
+                'setCustomerId', 'setStoreId', 'setStores', 'save', 'getId', 'aggregate', 'unsetData'
+            ],
+            [],
+            '',
+            false,
+            false
         );
-        $reviewFactory = $this->createPartialMock(\Magento\Review\Model\ReviewFactory::class, ['create']);
+        $reviewFactory = $this->getMock(
+            '\Magento\Review\Model\ReviewFactory',
+            ['create'],
+            [],
+            '',
+            false,
+            false
+        );
         $reviewFactory->expects($this->once())->method('create')->willReturn($this->review);
-        $this->customerSession = $this->createPartialMock(\Magento\Customer\Model\Session::class, ['getCustomerId']);
-        $this->rating = $this->createPartialMock(
-            \Magento\Review\Model\Rating::class,
-            ['setRatingId', 'setReviewId', 'setCustomerId', 'addOptionVote']
+        $this->customerSession = $this->getMock(
+            '\Magento\Customer\Model\Session',
+            ['getCustomerId'],
+            [],
+            '',
+            false,
+            false
         );
-        $ratingFactory = $this->createPartialMock(\Magento\Review\Model\RatingFactory::class, ['create']);
+        $this->rating = $this->getMock(
+            '\Magento\Review\Model\Rating',
+            ['setRatingId', 'setReviewId', 'setCustomerId', 'addOptionVote'],
+            [],
+            '',
+            false,
+            false
+        );
+        $ratingFactory = $this->getMock(
+            '\Magento\Review\Model\RatingFactory',
+            ['create'],
+            [],
+            '',
+            false,
+            false
+        );
         $ratingFactory->expects($this->once())->method('create')->willReturn($this->rating);
-        $this->messageManager = $this->createMock(\Magento\Framework\Message\ManagerInterface::class);
+        $this->messageManager = $this->getMock('\Magento\Framework\Message\ManagerInterface');
 
-        $this->store = $this->createPartialMock(
-            \Magento\Store\Model\Store::class,
-            ['getId', 'getWebsiteId']
+        $this->store = $this->getMock(
+            '\Magento\Store\Model\Store',
+            ['getId', 'getWebsiteId'],
+            [],
+            '',
+            false
         );
-
-        $storeManager = $this->getMockForAbstractClass(\Magento\Store\Model\StoreManagerInterface::class);
+        $storeManager = $this->getMockForAbstractClass('\Magento\Store\Model\StoreManagerInterface');
         $storeManager->expects($this->any())->method('getStore')->willReturn($this->store);
 
-        $this->resultFactoryMock = $this->getMockBuilder(\Magento\Framework\Controller\ResultFactory::class)
+        $this->resultFactoryMock = $this->getMockBuilder('Magento\Framework\Controller\ResultFactory')
             ->disableOriginalConstructor()
             ->getMock();
-        $this->resultRedirectMock = $this->getMockBuilder(\Magento\Framework\Controller\Result\Redirect::class)
+        $this->resultRedirectMock = $this->getMockBuilder('Magento\Framework\Controller\Result\Redirect')
             ->disableOriginalConstructor()
             ->getMock();
 
@@ -169,7 +194,7 @@ class PostTest extends \PHPUnit\Framework\TestCase
 
         $objectManagerHelper = new \Magento\Framework\TestFramework\Unit\Helper\ObjectManager($this);
         $this->context = $objectManagerHelper->getObject(
-            \Magento\Framework\App\Action\Context::class,
+            'Magento\Framework\App\Action\Context',
             [
                 'request' => $this->request,
                 'resultFactory' => $this->resultFactoryMock,
@@ -177,7 +202,7 @@ class PostTest extends \PHPUnit\Framework\TestCase
             ]
         );
         $this->model = $objectManagerHelper->getObject(
-            \Magento\Review\Controller\Product\Post::class,
+            '\Magento\Review\Controller\Product\Post',
             [
                 'response' => $this->response,
                 'redirect' => $this->redirect,
@@ -221,9 +246,12 @@ class PostTest extends \PHPUnit\Framework\TestCase
         $this->request->expects($this->at(1))->method('getParam')
             ->with('id')
             ->willReturn(1);
-        $product = $this->createPartialMock(
-            \Magento\Catalog\Model\Product::class,
-            ['__wakeup', 'isVisibleInCatalog', 'isVisibleInSiteVisibility', 'getId', 'getWebsiteIds']
+        $product = $this->getMock(
+            'Magento\Catalog\Model\Product',
+            ['__wakeup', 'isVisibleInCatalog', 'isVisibleInSiteVisibility', 'getId', 'getWebsiteIds'],
+            [],
+            '',
+            false
         );
         $product->expects($this->once())
             ->method('isVisibleInCatalog')
@@ -231,14 +259,9 @@ class PostTest extends \PHPUnit\Framework\TestCase
         $product->expects($this->once())
             ->method('isVisibleInSiteVisibility')
             ->willReturn(true);
-
         $product->expects($this->once())
             ->method('getWebsiteIds')
             ->willReturn([1]);
-
-        $this->store->expects($this->once())
-            ->method('getWebsiteId')
-            ->willReturn(1);
 
         $this->productRepository->expects($this->any())->method('getById')
             ->with(1)
@@ -275,6 +298,8 @@ class PostTest extends \PHPUnit\Framework\TestCase
         $this->review->expects($this->once())->method('setCustomerId')->with($customerId)->willReturnSelf();
         $this->store->expects($this->exactly(2))->method('getId')
             ->willReturn($storeId);
+        $this->store->expects($this->once())->method('getWebsiteId')
+            ->willReturn(1);
         $this->review->expects($this->once())->method('setStoreId')
             ->with($storeId)
             ->willReturnSelf();

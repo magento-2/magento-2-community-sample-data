@@ -2,17 +2,12 @@
  * Copyright © Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
-
-/**
- * @api
- */
 define([
     'underscore',
     'uiLayout',
     'mageUtils',
-    'Magento_Ui/js/form/components/group',
-    'mage/translate'
-], function (_, layout, utils, Group, $t) {
+    'Magento_Ui/js/form/components/group'
+], function (_, layout, utils, Group) {
     'use strict';
 
     return Group.extend({
@@ -27,19 +22,18 @@ define([
                 },
                 date: {
                     component: 'Magento_Ui/js/form/element/date',
-                    dateFormat: 'MM/dd/YYYY',
-                    shiftedValue: 'filter'
+                    dateFormat: 'MM/dd/YYYY'
                 },
                 text: {
                     component: 'Magento_Ui/js/form/element/abstract'
                 },
                 ranges: {
                     from: {
-                        label: $t('from'),
+                        label: 'from',
                         dataScope: 'from'
                     },
                     to: {
-                        label: $t('to'),
+                        label: 'to',
                         dataScope: 'to'
                     }
                 }

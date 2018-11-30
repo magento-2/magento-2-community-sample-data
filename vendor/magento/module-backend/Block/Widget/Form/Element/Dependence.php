@@ -11,10 +11,6 @@
  */
 namespace Magento\Backend\Block\Widget\Form\Element;
 
-/**
- * @api
- * @since 100.0.2
- */
 class Dependence extends \Magento\Backend\Block\AbstractBlock
 {
     /**

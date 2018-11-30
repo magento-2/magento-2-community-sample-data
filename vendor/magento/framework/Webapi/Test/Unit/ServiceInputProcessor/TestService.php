@@ -5,6 +5,11 @@
  */
 namespace Magento\Framework\Webapi\Test\Unit\ServiceInputProcessor;
 
+use Magento\Framework\Webapi\Test\Unit\ServiceInputProcessor\AssociativeArray;
+use Magento\Framework\Webapi\Test\Unit\ServiceInputProcessor\DataArray;
+use Magento\Framework\Webapi\Test\Unit\ServiceInputProcessor\Nested;
+use Magento\Framework\Webapi\Test\Unit\ServiceInputProcessor\SimpleArray;
+
 class TestService
 {
     const DEFAULT_VALUE = 42;

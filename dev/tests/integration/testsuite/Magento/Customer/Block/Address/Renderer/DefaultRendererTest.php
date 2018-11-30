@@ -10,7 +10,7 @@ use Magento\Eav\Model\AttributeDataFactory;
 /**
  * DefaultRenderer
  */
-class DefaultRendererTest extends \PHPUnit\Framework\TestCase
+class DefaultRendererTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\Customer\Model\Address\Config
@@ -20,7 +20,7 @@ class DefaultRendererTest extends \PHPUnit\Framework\TestCase
     public function setUp()
     {
         $this->_addressConfig = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->get(
-            \Magento\Customer\Model\Address\Config::class
+            'Magento\Customer\Model\Address\Config'
         );
     }
 
@@ -49,8 +49,8 @@ class DefaultRendererTest extends \PHPUnit\Framework\TestCase
             'telephone' => '3468676',
         ];
 
-        $htmlResult = "John Smith<br />\n\nGreen str, 67<br />\n\n\n\nCityM,  Alabama, " .
-            "75477<br />\nUnited States<br />\nT: <a href=\"tel:3468676\">3468676</a>\n\n";
+        $htmlResult = "John Smith<br/>\n\nGreen str, 67<br />\n\n\n\nCityM,  Alabama, " .
+            "75477<br/>\nUnited States<br/>\nT: 3468676\n\n";
         return [
             [$addressAttributes, AttributeDataFactory::OUTPUT_FORMAT_HTML, $htmlResult],
             [
@@ -97,7 +97,7 @@ class DefaultRendererTest extends \PHPUnit\Framework\TestCase
         ];
 
         $address = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->create(
-            \Magento\Customer\Model\Address::class
+            'Magento\Customer\Model\Address'
         )->setData(
             $data
         );
@@ -106,8 +106,8 @@ class DefaultRendererTest extends \PHPUnit\Framework\TestCase
             [
                 $address,
                 AttributeDataFactory::OUTPUT_FORMAT_HTML,
-                "John Smith<br />\n\nGreen str, 67<br />\n\n\n\nCityM,  Alabama, 75477<br />
-United States<br />\nT: <a href=\"tel:3468676\">3468676</a>\n\n",
+                "John Smith<br/>\n\nGreen str, 67<br />\n\n\n\nCityM,  Alabama, 75477<br/>
+United States<br/>\nT: 3468676\n\n",
             ],
             [
                 $address,

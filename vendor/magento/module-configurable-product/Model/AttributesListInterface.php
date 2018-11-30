@@ -5,10 +5,6 @@
  */
 namespace Magento\ConfigurableProduct\Model;
 
-/**
- * @api
- * @since 100.0.2
- */
 interface AttributesListInterface
 {
     /**

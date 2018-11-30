@@ -7,7 +7,7 @@ namespace Magento\Framework\Data\Test\Unit\Argument\Interpreter;
 
 use \Magento\Framework\Data\Argument\Interpreter\ArrayType;
 
-class ArrayTypeTest extends \PHPUnit\Framework\TestCase
+class ArrayTypeTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \PHPUnit_Framework_MockObject_MockObject|\Magento\Framework\Data\Argument\InterpreterInterface
@@ -22,7 +22,7 @@ class ArrayTypeTest extends \PHPUnit\Framework\TestCase
     protected function setUp()
     {
         $this->_itemInterpreter = $this->getMockForAbstractClass(
-            \Magento\Framework\Data\Argument\InterpreterInterface::class
+            'Magento\Framework\Data\Argument\InterpreterInterface'
         );
         $this->_model = new ArrayType($this->_itemInterpreter);
     }
@@ -91,56 +91,6 @@ class ArrayTypeTest extends \PHPUnit\Framework\TestCase
                     'key1' => '-value 1-',
                     'key2' => '-value 2-',
                     'key3' => '-value 3-',
-                ],
-            ],
-            'sorted array items' => [
-                [
-                    'item' => [
-                        'key1' => ['value' => 'value 1', 'sortOrder' => 50],
-                        'key2' => ['value' => 'value 2'],
-                        'key3' => ['value' => 'value 3', 'sortOrder' => 10],
-                        'key4' => ['value' => 'value 4'],
-                    ],
-                ],
-                [
-                    'key2' => '-value 2-',
-                    'key4' => '-value 4-',
-                    'key3' => '-value 3-',
-                    'key1' => '-value 1-',
-                ],
-            ],
-            'pre-sorted array items' => [
-                [
-                    'item' => [
-                        'key1' => ['value' => 'value 1'],
-                        'key4' => ['value' => 'value 4'],
-                        'key2' => ['value' => 'value 2', 'sortOrder' => 10],
-                        'key3' => ['value' => 'value 3'],
-                    ],
-                ],
-                [
-                    'key1' => '-value 1-',
-                    'key4' => '-value 4-',
-                    'key3' => '-value 3-',
-                    'key2' => '-value 2-',
-                ],
-            ],
-            'sort order edge case values' => [
-                [
-                    'item' => [
-                        'key1' => ['value' => 'value 1', 'sortOrder' => 101],
-                        'key4' => ['value' => 'value 4'],
-                        'key2' => ['value' => 'value 2', 'sortOrder' => -10],
-                        'key3' => ['value' => 'value 3'],
-                        'key5' => ['value' => 'value 5', 'sortOrder' => 20],
-                    ],
-                ],
-                [
-                    'key2' => '-value 2-',
-                    'key4' => '-value 4-',
-                    'key3' => '-value 3-',
-                    'key5' => '-value 5-',
-                    'key1' => '-value 1-',
                 ],
             ],
         ];

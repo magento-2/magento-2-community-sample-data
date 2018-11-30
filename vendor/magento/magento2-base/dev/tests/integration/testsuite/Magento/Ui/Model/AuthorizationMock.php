@@ -3,17 +3,16 @@
  * Copyright © Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
-declare(strict_types=1);
 
 namespace Magento\Ui\Model;
 
 /**
- * Check current user permission on resource and privilege.
+ * Class AuthorizationMock.
  */
 class AuthorizationMock extends \Magento\Framework\Authorization
 {
     /**
-     * Check current user permission on resource and privilege
+     * Check current user permission on resource and privilege.
      *
      * @param   string $resource
      * @param   string $privilege

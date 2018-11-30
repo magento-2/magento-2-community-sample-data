@@ -19,7 +19,7 @@ class Template extends Block
      *
      * @var string
      */
-    protected $spinner = '#container [data-role="spinner"]';
+    protected $spinner = '[data-role="spinner"]';
 
     /**
      * Magento loader.

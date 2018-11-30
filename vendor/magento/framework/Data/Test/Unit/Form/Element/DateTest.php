@@ -11,7 +11,7 @@ namespace Magento\Framework\Data\Test\Unit\Form\Element;
 
 use \Magento\Framework\Data\Form\Element\Date;
 
-class DateTest extends \PHPUnit\Framework\TestCase
+class DateTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\Framework\Data\Form\Element\Date
@@ -40,10 +40,22 @@ class DateTest extends \PHPUnit\Framework\TestCase
 
     protected function setUp()
     {
-        $this->factoryMock = $this->createMock(\Magento\Framework\Data\Form\Element\Factory::class);
-        $this->collectionFactoryMock = $this->createMock(\Magento\Framework\Data\Form\Element\CollectionFactory::class);
-        $this->escaperMock = $this->createMock(\Magento\Framework\Escaper::class);
-        $this->localeDateMock = $this->createMock(\Magento\Framework\Stdlib\DateTime\TimezoneInterface::class);
+        $this->factoryMock = $this->getMock('Magento\Framework\Data\Form\Element\Factory', [], [], '', false);
+        $this->collectionFactoryMock = $this->getMock(
+            'Magento\Framework\Data\Form\Element\CollectionFactory',
+            [],
+            [],
+            '',
+            false
+        );
+        $this->escaperMock = $this->getMock('Magento\Framework\Escaper', [], [], '', false);
+        $this->localeDateMock = $this->getMock(
+            '\Magento\Framework\Stdlib\DateTime\TimezoneInterface',
+            [],
+            [],
+            '',
+            false
+        );
         $this->model = new Date(
             $this->factoryMock,
             $this->collectionFactoryMock,
@@ -54,7 +66,7 @@ class DateTest extends \PHPUnit\Framework\TestCase
 
     public function testGetElementHtmlException()
     {
-        $this->expectException(
+        $this->setExpectedException(
             'Exception',
             'Output format is not specified. Please specify "format" key in constructor, or set it using setFormat().'
         );
@@ -93,13 +105,12 @@ class DateTest extends \PHPUnit\Framework\TestCase
 
     /**
      * @param $exactly
-     *
-     * @return \PHPUnit_Framework_MockObject_MockObject
+     * @return mixed
      */
     protected function getFormMock($exactly)
     {
         $functions = ['getFieldNameSuffix', 'getHtmlIdPrefix', 'getHtmlIdSuffix'];
-        $formMock = $this->createPartialMock(\stdClass::class, $functions);
+        $formMock = $this->getMock('stdClass', $functions);
         foreach ($functions as $method) {
             switch ($exactly) {
                 case 'once':

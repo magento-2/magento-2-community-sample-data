@@ -14,7 +14,7 @@ use Magento\TestFramework\Helper\Bootstrap;
  * @magentoComponentsDir Magento/Framework/View/_files/fallback
  * @magentoDbIsolation enabled
  */
-class FallbackTest extends \PHPUnit\Framework\TestCase
+class FallbackTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\Framework\View\Design\Theme\FlyweightFactory
@@ -26,12 +26,12 @@ class FallbackTest extends \PHPUnit\Framework\TestCase
         $objectManager = Bootstrap::getObjectManager();
         /** @var \Magento\Theme\Model\Theme\Registration $registration */
         $registration = $objectManager->get(
-            \Magento\Theme\Model\Theme\Registration::class
+            'Magento\Theme\Model\Theme\Registration'
         );
         $registration->register();
         /** @var \Magento\Framework\View\Design\Theme\FlyweightFactory $themeFactory */
         $this->themeFactory = $objectManager
-            ->get(\Magento\Framework\View\Design\Theme\FlyweightFactory::class);
+            ->get('Magento\Framework\View\Design\Theme\FlyweightFactory');
     }
 
     /**
@@ -66,8 +66,9 @@ class FallbackTest extends \PHPUnit\Framework\TestCase
         $this->reinitializeEnvironment();
         /** @var \Magento\Framework\View\Design\FileResolution\Fallback\TemplateFile $model */
         $model = Bootstrap::getObjectManager()
-            ->create(\Magento\Framework\View\Design\FileResolution\Fallback\TemplateFile::class);
+            ->create('Magento\Framework\View\Design\FileResolution\Fallback\TemplateFile');
         $themeModel = $this->themeFactory->create($themePath);
+
 
         $actualFilename = $model->getFile('frontend', $themeModel, $file, $module);
         if ($expectedFilename) {
@@ -127,9 +128,7 @@ class FallbackTest extends \PHPUnit\Framework\TestCase
     {
         $this->reinitializeEnvironment();
         /** @var \Magento\Framework\View\Design\FileResolution\Fallback\File $model */
-        $model = Bootstrap::getObjectManager()->create(
-            \Magento\Framework\View\Design\FileResolution\Fallback\File::class
-        );
+        $model = Bootstrap::getObjectManager()->create('Magento\Framework\View\Design\FileResolution\Fallback\File');
         $themeModel = $this->themeFactory->create($themePath);
 
         $actualFilename = $model->getFile('frontend', $themeModel, 'i18n/' . $locale . '.csv');
@@ -177,7 +176,7 @@ class FallbackTest extends \PHPUnit\Framework\TestCase
         $this->reinitializeEnvironment();
         /** @var \Magento\Framework\View\Design\FileResolution\Fallback\StaticFile $model */
         $model = Bootstrap::getObjectManager()
-            ->create(\Magento\Framework\View\Design\FileResolution\Fallback\StaticFile::class);
+            ->create('Magento\Framework\View\Design\FileResolution\Fallback\StaticFile');
         $themeModel = $this->themeFactory->create($themePath);
 
         $actualFilename = $model->getFile('frontend', $themeModel, $locale, $file, $module);
@@ -275,7 +274,7 @@ class FallbackTest extends \PHPUnit\Framework\TestCase
 
         /** @var \Magento\Framework\View\Design\FileResolution\Fallback\EmailTemplateFile $model */
         $model = Bootstrap::getObjectManager()
-            ->create(\Magento\Framework\View\Design\FileResolution\Fallback\EmailTemplateFile::class);
+            ->create('Magento\Framework\View\Design\FileResolution\Fallback\EmailTemplateFile');
 
         $themeModel = $this->themeFactory->create($themePath);
         $locale = \Magento\Setup\Module\I18n\Locale::DEFAULT_SYSTEM_LOCALE;

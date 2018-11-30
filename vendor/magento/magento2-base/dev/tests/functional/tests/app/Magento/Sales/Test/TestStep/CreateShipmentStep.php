@@ -19,11 +19,6 @@ use Magento\Mtf\TestStep\TestStepInterface;
 class CreateShipmentStep implements TestStepInterface
 {
     /**
-     * Shipment column title.
-     */
-    const COLUMN_NAME = 'Shipment';
-
-    /**
      * Orders Page.
      *
      * @var OrderIndex
@@ -116,15 +111,6 @@ class CreateShipmentStep implements TestStepInterface
     public function getShipmentIds()
     {
         $this->salesOrderView->getOrderForm()->openTab('shipments');
-        $this->salesOrderView->getOrderForm()->getTab('shipments')->getGridBlock()->resetFilter();
-        $shipmentIds = $this->salesOrderView->getOrderForm()->getTab('shipments')->getGridBlock()->getAllIds();
-        $incrementIds = [];
-        foreach ($shipmentIds as $shipmentId) {
-            $incrementIds[] = $this->salesOrderView->getOrderForm()
-                ->getTab('shipments')
-                ->getGridBlock()
-                ->getColumnValue($shipmentId, self::COLUMN_NAME);
-        }
-        return $incrementIds;
+        return $this->salesOrderView->getOrderForm()->getTab('shipments')->getGridBlock()->getIds();
     }
 }

@@ -13,8 +13,7 @@ use Magento\Downloadable\Model\Link\Purchased\Item;
 /**
  * Block to display downloadable links bought by customer
  *
- * @api
- * @since 100.0.2
+ * @author      Magento Core Team <core@magentocommerce.com>
  */
 class ListProducts extends \Magento\Framework\View\Element\Template
 {
@@ -95,7 +94,7 @@ class ListProducts extends \Magento\Framework\View\Element\Template
         parent::_prepareLayout();
 
         $pager = $this->getLayout()->createBlock(
-            \Magento\Theme\Block\Html\Pager::class,
+            'Magento\Theme\Block\Html\Pager',
             'downloadable.customer.products.pager'
         )->setCollection(
             $this->getItems()

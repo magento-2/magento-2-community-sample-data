@@ -5,7 +5,7 @@
  */
 namespace Magento\Directory\Test\Unit\Model\Config\Source;
 
-class CountryTest extends \PHPUnit\Framework\TestCase
+class CountryTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\Directory\Model\Config\Source\Country
@@ -20,12 +20,15 @@ class CountryTest extends \PHPUnit\Framework\TestCase
     protected function setUp()
     {
         $objectManagerHelper = new \Magento\Framework\TestFramework\Unit\Helper\ObjectManager($this);
-        $this->_collectionMock = $this->createMock(\Magento\Directory\Model\ResourceModel\Country\Collection::class);
-        $arguments = ['countryCollection' => $this->_collectionMock];
-        $this->_model = $objectManagerHelper->getObject(
-            \Magento\Directory\Model\Config\Source\Country::class,
-            $arguments
+        $this->_collectionMock = $this->getMock(
+            'Magento\Directory\Model\ResourceModel\Country\Collection',
+            [],
+            [],
+            '',
+            false
         );
+        $arguments = ['countryCollection' => $this->_collectionMock];
+        $this->_model = $objectManagerHelper->getObject('Magento\Directory\Model\Config\Source\Country', $arguments);
     }
 
     /**

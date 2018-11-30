@@ -36,7 +36,7 @@ class AssertShippingAddressJsValidationMessagesIsAbsent extends AbstractConstrai
     }
 
     /**
-     * Returns string representation of successful assertion
+     * Returns string representation of successful assertion.
      *
      * @return string
      */

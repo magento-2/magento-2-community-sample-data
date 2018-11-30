@@ -5,7 +5,7 @@
  */
 namespace Magento\Tax\Model;
 
-class ConfigTest extends \PHPUnit\Framework\TestCase
+class ConfigTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\Tax\Model\Config
@@ -15,7 +15,7 @@ class ConfigTest extends \PHPUnit\Framework\TestCase
     protected function setUp()
     {
         $this->_model = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->create(
-            \Magento\Tax\Model\Config::class
+            'Magento\Tax\Model\Config'
         );
     }
 

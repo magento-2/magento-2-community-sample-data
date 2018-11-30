@@ -15,8 +15,6 @@ use Magento\Mtf\Util\Protocol\CurlTransport;
 
 /**
  * Curl transport on webapi.
- *
- * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  */
 class WebapiDecorator implements CurlInterface
 {
@@ -104,7 +102,7 @@ class WebapiDecorator implements CurlInterface
             $this->disableSecretKey();
             /** @var \Magento\Integration\Test\Fixture\Integration $integration */
             $integration = $this->fixtureFactory->create(
-                \Magento\Integration\Test\Fixture\Integration::class,
+                'Magento\Integration\Test\Fixture\Integration',
                 ['dataset' => 'default_active']
             );
             $integration->persist();
@@ -121,7 +119,7 @@ class WebapiDecorator implements CurlInterface
     protected function disableSecretKey()
     {
         $config = $this->fixtureFactory->create(
-            \Magento\Config\Test\Fixture\ConfigData::class,
+            'Magento\Config\Test\Fixture\ConfigData',
             ['dataset' => 'secret_key_disable']
         );
         $config->persist();
@@ -151,7 +149,7 @@ class WebapiDecorator implements CurlInterface
         }
 
         $dom->save($fileConfig);
-        $this->configuration = $this->objectManager->create(\Magento\Mtf\Config\DataInterface::class);
+        $this->configuration = $this->objectManager->create('Magento\Mtf\Config\DataInterface');
     }
 
     /**

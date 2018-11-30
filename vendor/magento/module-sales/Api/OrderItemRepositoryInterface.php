@@ -12,7 +12,6 @@ namespace Magento\Sales\Api;
  * items, billing and shipping addresses, and shipping and payment methods. A corresponding external document, known as
  * a purchase order, is emailed to the customer.
  * @api
- * @since 100.0.2
  */
 interface OrderItemRepositoryInterface
 {
@@ -23,10 +22,10 @@ interface OrderItemRepositoryInterface
      * included. See http://devdocs.magento.com/codelinks/attributes.html#OrderItemRepositoryInterface to
      * determine which call to use to get detailed information about all attributes for an object.
      *
-     * @param \Magento\Framework\Api\SearchCriteriaInterface $searchCriteria The search criteria.
+     * @param \Magento\Framework\Api\SearchCriteria $searchCriteria The search criteria.
      * @return \Magento\Sales\Api\Data\OrderItemSearchResultInterface Order item search result interface.
      */
-    public function getList(\Magento\Framework\Api\SearchCriteriaInterface $searchCriteria);
+    public function getList(\Magento\Framework\Api\SearchCriteria $searchCriteria);
 
     /**
      * Loads a specified order item.

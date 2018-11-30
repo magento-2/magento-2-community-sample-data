@@ -10,7 +10,6 @@ use Magento\Catalog\Model\Product;
 use Magento\Eav\Api\AttributeRepositoryInterface;
 use Magento\Catalog\Api\ProductRepositoryInterface;
 use Magento\Eav\Model\Entity\Attribute\AbstractAttribute;
-use Magento\Framework\EntityManager\EntityMetadataInterface;
 use Magento\Store\Model\StoreManagerInterface;
 use Magento\Framework\Locale\FormatInterface;
 use Magento\Framework\Model\Entity\ScopeInterface;
@@ -114,19 +113,24 @@ class AttributePersistor
             return;
         }
         $metadata = $this->metadataPool->getMetadata($entityType);
+        $linkField = $metadata->getLinkField();
         foreach ($this->delete[$entityType] as $link => $data) {
             $attributeCodes = array_keys($data);
             foreach ($attributeCodes as $attributeCode) {
                 /** @var AbstractAttribute $attribute */
                 $attribute = $this->attributeRepository->get($metadata->getEavEntityType(), $attributeCode);
-                $conditions = $this->buildDeleteConditions($attribute, $metadata, $context, $link);
-
-                foreach ($conditions as $condition) {
-                    $metadata->getEntityConnection()->delete(
-                        $attribute->getBackend()->getTable(),
-                        $condition
-                    );
+                $conditions = [
+                    $linkField . ' = ?' => $link,
+                    'attribute_id = ?' => $attribute->getAttributeId()
+                ];
+                foreach ($context as $scope) {
+                    $conditions[$metadata->getEntityConnection()->quoteIdentifier($scope->getIdentifier()) . ' = ?']
+                        = $this->getScopeValue($scope, $attribute);
                 }
+                $metadata->getEntityConnection()->delete(
+                    $attribute->getBackend()->getTable(),
+                    $conditions
+                );
             }
         }
     }
@@ -144,31 +148,7 @@ class AttributePersistor
             return;
         }
         $metadata = $this->metadataPool->getMetadata($entityType);
-        $insertData = $this->prepareInsertDataForMultipleSave($entityType, $context);
-
-        foreach ($insertData as $table => $tableData) {
-            foreach ($tableData as $data) {
-                $metadata->getEntityConnection()->insertArray(
-                    $table,
-                    $data['columns'],
-                    $data['data'],
-                    \Magento\Framework\DB\Adapter\AdapterInterface::INSERT_IGNORE
-                );
-            }
-        }
-    }
-
-    /**
-     * Prepare data for insert multiple rows
-     *
-     * @param string $entityType
-     * @param \Magento\Framework\Model\Entity\ScopeInterface[] $context
-     * @return array
-     */
-    private function prepareInsertDataForMultipleSave($entityType, $context)
-    {
-        $metadata = $this->metadataPool->getMetadata($entityType);
-        $insertData = [];
+        $linkField = $metadata->getLinkField();
         foreach ($this->insert[$entityType] as $link => $data) {
             foreach ($data as $attributeCode => $attributeValue) {
                 /** @var AbstractAttribute $attribute */
@@ -176,21 +156,17 @@ class AttributePersistor
                     $metadata->getEavEntityType(),
                     $attributeCode
                 );
-                $attributeTable = $attribute->getBackend()->getTable();
-                $conditions = $this->buildInsertConditions($attribute, $metadata, $context, $link);
-                $value = $this->prepareValue($entityType, $attributeValue, $attribute);
-
-                foreach ($conditions as $condition) {
-                    $condition['value'] = $value;
-                    $columns = array_keys($condition);
-                    $columnsHash = implode('', $columns);
-                    $insertData[$attributeTable][$columnsHash]['columns'] = $columns;
-                    $insertData[$attributeTable][$columnsHash]['data'][] = array_values($condition);
+                $data = [
+                    $linkField => $link,
+                    'attribute_id' => $attribute->getAttributeId(),
+                    'value' => $this->prepareValue($entityType, $attributeValue, $attribute)
+                ];
+                foreach ($context as $scope) {
+                    $data[$scope->getIdentifier()] = $this->getScopeValue($scope, $attribute);
                 }
+                $metadata->getEntityConnection()->insertOnDuplicate($attribute->getBackend()->getTable(), $data);
             }
         }
-
-        return $insertData;
     }
 
     /**
@@ -206,6 +182,7 @@ class AttributePersistor
             return;
         }
         $metadata = $this->metadataPool->getMetadata($entityType);
+        $linkField = $metadata->getLinkField();
         foreach ($this->update[$entityType] as $link => $data) {
             foreach ($data as $attributeCode => $attributeValue) {
                 /** @var AbstractAttribute $attribute */
@@ -213,115 +190,30 @@ class AttributePersistor
                     $metadata->getEavEntityType(),
                     $attributeCode
                 );
-                $conditions = $this->buildUpdateConditions($attribute, $metadata, $context, $link);
-
-                foreach ($conditions as $condition) {
-                    $metadata->getEntityConnection()->update(
-                        $attribute->getBackend()->getTable(),
-                        [
-                            'value' => $this->prepareValue($entityType, $attributeValue, $attribute)
-                        ],
-                        $condition
-                    );
+                $conditions = [
+                    $linkField . ' = ?' => $link,
+                    'attribute_id = ?' => $attribute->getAttributeId(),
+                ];
+                foreach ($context as $scope) {
+                    $conditions[$metadata->getEntityConnection()->quoteIdentifier($scope->getIdentifier()) . ' = ?']
+                        = $this->getScopeValue($scope, $attribute);
                 }
+                $metadata->getEntityConnection()->update(
+                    $attribute->getBackend()->getTable(),
+                    [
+                        'value' => $this->prepareValue($entityType, $attributeValue, $attribute)
+                    ],
+                    $conditions
+                );
             }
         }
-    }
-
-    /**
-     * Builds set of update conditions (WHERE clause)
-     *
-     * @param AbstractAttribute $attribute
-     * @param EntityMetadataInterface $metadata
-     * @param ScopeInterface[] $scopes
-     * @param string $linkFieldValue
-     * @return array
-     */
-    protected function buildUpdateConditions(
-        AbstractAttribute $attribute,
-        EntityMetadataInterface $metadata,
-        array $scopes,
-        $linkFieldValue
-    ) {
-        $condition = [
-            $metadata->getLinkField() . ' = ?' => $linkFieldValue,
-            'attribute_id = ?' => $attribute->getAttributeId(),
-        ];
-
-        foreach ($scopes as $scope) {
-            $identifier = $metadata->getEntityConnection()->quoteIdentifier($scope->getIdentifier());
-            $condition[$identifier . ' = ?'] = $this->getScopeValue($scope, $attribute);
-        }
-
-        return [
-            $condition,
-        ];
-    }
-
-    /**
-     * Builds set of delete conditions (WHERE clause)
-     *
-     * @param AbstractAttribute $attribute
-     * @param EntityMetadataInterface $metadata
-     * @param ScopeInterface[] $scopes
-     * @param string $linkFieldValue
-     * @return array
-     */
-    protected function buildDeleteConditions(
-        AbstractAttribute $attribute,
-        EntityMetadataInterface $metadata,
-        array $scopes,
-        $linkFieldValue
-    ) {
-        $condition = [
-            $metadata->getLinkField() . ' = ?' => $linkFieldValue,
-            'attribute_id = ?' => $attribute->getAttributeId(),
-        ];
-
-        foreach ($scopes as $scope) {
-            $identifier = $metadata->getEntityConnection()->quoteIdentifier($scope->getIdentifier());
-            $condition[$identifier . ' = ?'] = $this->getScopeValue($scope, $attribute);
-        }
-
-        return [
-            $condition,
-        ];
-    }
-
-    /**
-     * Builds set of insert conditions
-     *
-     * @param AbstractAttribute $attribute
-     * @param EntityMetadataInterface $metadata
-     * @param ScopeInterface[] $scopes
-     * @param string $linkFieldValue
-     * @return array
-     */
-    protected function buildInsertConditions(
-        AbstractAttribute $attribute,
-        EntityMetadataInterface $metadata,
-        array $scopes,
-        $linkFieldValue
-    ) {
-        $condition = [
-            $metadata->getLinkField() => $linkFieldValue,
-            'attribute_id' => $attribute->getAttributeId(),
-        ];
-
-        foreach ($scopes as $scope) {
-            $condition[$scope->getIdentifier()] = $this->getScopeValue($scope, $attribute);
-        }
-
-        return [
-            $condition,
-        ];
     }
 
     /**
      * Flush attributes to storage
      *
      * @param string $entityType
-     * @param ScopeInterface[] $context
+     * @param string $context
      * @return void
      */
     public function flush($entityType, $context)

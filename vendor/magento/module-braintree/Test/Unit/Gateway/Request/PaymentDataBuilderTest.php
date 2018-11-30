@@ -5,21 +5,21 @@
  */
 namespace Magento\Braintree\Test\Unit\Gateway\Request;
 
+use Magento\Braintree\Gateway\Config\Config;
+use Magento\Braintree\Gateway\Helper\SubjectReader;
 use Magento\Braintree\Gateway\Request\PaymentDataBuilder;
-use Magento\Braintree\Gateway\SubjectReader;
 use Magento\Braintree\Observer\DataAssignObserver;
 use Magento\Payment\Gateway\Data\OrderAdapterInterface;
 use Magento\Payment\Gateway\Data\PaymentDataObjectInterface;
 use Magento\Sales\Model\Order\Payment;
 use PHPUnit_Framework_MockObject_MockObject as MockObject;
-use Magento\Braintree\Gateway\Config\Config;
 
 /**
  * Class PaymentDataBuilderTest
- *
+ * 
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  */
-class PaymentDataBuilderTest extends \PHPUnit\Framework\TestCase
+class PaymentDataBuilderTest extends \PHPUnit_Framework_TestCase
 {
     const PAYMENT_METHOD_NONCE = 'nonce';
     const MERCHANT_ACCOUNT_ID = '245345';
@@ -28,6 +28,11 @@ class PaymentDataBuilderTest extends \PHPUnit\Framework\TestCase
      * @var PaymentDataBuilder
      */
     private $builder;
+
+    /**
+     * @var Config|MockObject
+     */
+    private $config;
 
     /**
      * @var Payment|MockObject
@@ -46,17 +51,16 @@ class PaymentDataBuilderTest extends \PHPUnit\Framework\TestCase
 
     protected function setUp()
     {
-        $this->paymentDO = $this->createMock(PaymentDataObjectInterface::class);
+        $this->paymentDO = $this->getMockForAbstractClass(PaymentDataObjectInterface::class);
+        $this->config = $this->getMockBuilder(Config::class)
+            ->disableOriginalConstructor()
+            ->getMock();
         $this->payment = $this->getMockBuilder(Payment::class)
             ->disableOriginalConstructor()
             ->getMock();
-        $this->order = $this->createMock(OrderAdapterInterface::class);
+        $this->order = $this->getMockForAbstractClass(OrderAdapterInterface::class);
 
-        $config = $this->getMockBuilder(Config::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-
-        $this->builder = new PaymentDataBuilder($config, new SubjectReader());
+        $this->builder = new PaymentDataBuilder($this->config, new SubjectReader());
     }
 
     /**
@@ -94,7 +98,8 @@ class PaymentDataBuilderTest extends \PHPUnit\Framework\TestCase
         $expectedResult = [
             PaymentDataBuilder::AMOUNT  => 10.00,
             PaymentDataBuilder::PAYMENT_METHOD_NONCE  => self::PAYMENT_METHOD_NONCE,
-            PaymentDataBuilder::ORDER_ID => '000000101'
+            PaymentDataBuilder::ORDER_ID => '000000101',
+            PaymentDataBuilder::MERCHANT_ACCOUNT_ID  => self::MERCHANT_ACCOUNT_ID,
         ];
 
         $buildSubject = [
@@ -105,6 +110,9 @@ class PaymentDataBuilderTest extends \PHPUnit\Framework\TestCase
         $this->payment->expects(self::exactly(count($additionalData)))
             ->method('getAdditionalInformation')
             ->willReturnMap($additionalData);
+
+        $this->config->method('getMerchantAccountId')
+            ->willReturn(self::MERCHANT_ACCOUNT_ID);
 
         $this->paymentDO->method('getPayment')
             ->willReturn($this->payment);

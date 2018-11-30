@@ -7,10 +7,6 @@
  */
 namespace Magento\Framework\App;
 
-/**
- * Interface \Magento\Framework\App\RouterInterface
- *
- */
 interface RouterInterface
 {
     /**

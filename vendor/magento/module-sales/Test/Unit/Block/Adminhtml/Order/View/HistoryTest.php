@@ -5,7 +5,7 @@
  */
 namespace Magento\Sales\Test\Unit\Block\Adminhtml\Order\View;
 
-class HistoryTest extends \PHPUnit\Framework\TestCase
+class HistoryTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\Sales\Helper\Admin|\PHPUnit_Framework_MockObject_MockObject
@@ -19,12 +19,12 @@ class HistoryTest extends \PHPUnit\Framework\TestCase
 
     protected function setUp()
     {
-        $this->adminHelperMock = $this->getMockBuilder(\Magento\Sales\Helper\Admin::class)
+        $this->adminHelperMock = $this->getMockBuilder('Magento\Sales\Helper\Admin')
             ->disableOriginalConstructor()
             ->getMock();
 
         $this->viewHistory = (new \Magento\Framework\TestFramework\Unit\Helper\ObjectManager($this))->getObject(
-            \Magento\Sales\Block\Adminhtml\Order\View\History::class,
+            'Magento\Sales\Block\Adminhtml\Order\View\History',
             [
                 'adminHelper' => $this->adminHelperMock
             ]

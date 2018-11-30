@@ -82,5 +82,13 @@ class StoreCookie
                 $this->storeCookieManager->deleteStoreCookie($this->storeManager->getDefaultStoreView());
             }
         }
+        if (
+            $this->storeCookieManager->getStoreCodeFromCookie() === null
+            || $request->getParam(StoreResolverInterface::PARAM_NAME) !== null
+        ) {
+            $storeId = $this->storeResolver->getCurrentStoreId();
+            $store = $this->storeRepository->getActiveStoreById($storeId);
+            $this->storeCookieManager->setStoreCookie($store);
+        }
     }
 }

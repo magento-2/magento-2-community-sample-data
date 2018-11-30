@@ -21,7 +21,7 @@ class AccountTest extends \Magento\TestFramework\TestCase\AbstractBackendControl
         $userId = $this->_session->getUser()->getId();
         /** @var $user \Magento\User\Model\User */
         $user = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->create(
-            \Magento\User\Model\User::class
+            'Magento\User\Model\User'
         )->load(
             $userId
         );
@@ -54,7 +54,7 @@ class AccountTest extends \Magento\TestFramework\TestCase\AbstractBackendControl
 
         /** @var $user \Magento\User\Model\User */
         $user = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->create(
-            \Magento\User\Model\User::class
+            'Magento\User\Model\User'
         )->load(
             $userId
         );
@@ -63,7 +63,7 @@ class AccountTest extends \Magento\TestFramework\TestCase\AbstractBackendControl
             $this->assertNotEquals($oldPassword, $user->getPassword());
             $objectManager = \Magento\TestFramework\Helper\Bootstrap::getObjectManager();
             /** @var $encryptor \Magento\Framework\Encryption\EncryptorInterface */
-            $encryptor = $objectManager->get(\Magento\Framework\Encryption\EncryptorInterface::class);
+            $encryptor = $objectManager->get('Magento\Framework\Encryption\EncryptorInterface');
             $this->assertTrue($encryptor->validateHash($password, $user->getPassword()));
         } else {
             $this->assertEquals($oldPassword, $user->getPassword());

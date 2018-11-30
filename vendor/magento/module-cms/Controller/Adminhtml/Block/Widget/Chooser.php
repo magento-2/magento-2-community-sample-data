@@ -13,7 +13,9 @@ use Magento\Framework\Controller\Result\RawFactory;
 class Chooser extends \Magento\Backend\App\Action
 {
     /**
-     * Authorization level of a basic admin session
+     * Authorization level of a basic admin session.
+     *
+     * @see _isAllowed()
      */
     const ADMIN_RESOURCE = 'Magento_Widget::widget_instance';
 
@@ -51,7 +53,7 @@ class Chooser extends \Magento\Backend\App\Action
 
         $uniqId = $this->getRequest()->getParam('uniq_id');
         $pagesGrid = $layout->createBlock(
-            \Magento\Cms\Block\Adminhtml\Block\Widget\Chooser::class,
+            'Magento\Cms\Block\Adminhtml\Block\Widget\Chooser',
             '',
             ['data' => ['id' => $uniqId]]
         );

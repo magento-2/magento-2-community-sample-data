@@ -11,7 +11,7 @@ $objectManager = \Magento\TestFramework\Helper\Bootstrap::getObjectManager();
 $productIds = range(10, 12, 1);
 foreach ($productIds as $productId) {
     /** @var \Magento\CatalogInventory\Model\Stock\Item $stockItem */
-    $stockItem = $objectManager->create(\Magento\CatalogInventory\Model\Stock\Item::class);
+    $stockItem = $objectManager->create('Magento\CatalogInventory\Model\Stock\Item');
     $stockItem->load($productId, 'product_id');
 
     if (!$stockItem->getProductId()) {
@@ -25,7 +25,7 @@ foreach ($productIds as $productId) {
 }
 
 /** @var $product \Magento\Catalog\Model\Product */
-$product = $objectManager->create(\Magento\Catalog\Model\Product::class);
+$product = $objectManager->create('Magento\Catalog\Model\Product');
 $product->setTypeId(\Magento\Catalog\Model\Product\Type::TYPE_BUNDLE)
     ->setId(3)
     ->setAttributeSetId(4)
@@ -47,7 +47,6 @@ $product->setTypeId(\Magento\Catalog\Model\Product\Type::TYPE_BUNDLE)
                 'default_title' => 'Option 1',
                 'type' => 'select',
                 'required' => 1,
-                'position' => 1,
                 'delete' => '',
             ],
             // Required "Radio Buttons" option
@@ -56,7 +55,6 @@ $product->setTypeId(\Magento\Catalog\Model\Product\Type::TYPE_BUNDLE)
                 'default_title' => 'Option 2',
                 'type' => 'radio',
                 'required' => 1,
-                'position' => 2,
                 'delete' => '',
             ],
             // Required "Checkbox" option
@@ -65,7 +63,6 @@ $product->setTypeId(\Magento\Catalog\Model\Product\Type::TYPE_BUNDLE)
                 'default_title' => 'Option 3',
                 'type' => 'checkbox',
                 'required' => 1,
-                'position' => 3,
                 'delete' => '',
             ],
             // Required "Multiple Select" option
@@ -74,7 +71,6 @@ $product->setTypeId(\Magento\Catalog\Model\Product\Type::TYPE_BUNDLE)
                 'default_title' => 'Option 4',
                 'type' => 'multi',
                 'required' => 1,
-                'position' => 4,
                 'delete' => '',
             ],
             // Non-required "Multiple Select" option
@@ -83,7 +79,6 @@ $product->setTypeId(\Magento\Catalog\Model\Product\Type::TYPE_BUNDLE)
                 'default_title' => 'Option 5',
                 'type' => 'multi',
                 'required' => 0,
-                'position' => 5,
                 'delete' => '',
             ]
         ]
@@ -165,13 +160,13 @@ $product->setTypeId(\Magento\Catalog\Model\Product\Type::TYPE_BUNDLE)
             ]
         ]
     );
-$productRepository = $objectManager->create(\Magento\Catalog\Api\ProductRepositoryInterface::class);
+$productRepository = $objectManager->create('Magento\Catalog\Api\ProductRepositoryInterface');
 
 if ($product->getBundleOptionsData()) {
     $options = [];
     foreach ($product->getBundleOptionsData() as $key => $optionData) {
         if (!(bool)$optionData['delete']) {
-            $option = $objectManager->create(\Magento\Bundle\Api\Data\OptionInterfaceFactory::class)
+            $option = $objectManager->create('Magento\Bundle\Api\Data\OptionInterfaceFactory')
                 ->create(['data' => $optionData]);
             $option->setSku($product->getSku());
             $option->setOptionId(null);
@@ -181,7 +176,7 @@ if ($product->getBundleOptionsData()) {
             if (!empty($bundleLinks[$key])) {
                 foreach ($bundleLinks[$key] as $linkData) {
                     if (!(bool)$linkData['delete']) {
-                        $link = $objectManager->create(\Magento\Bundle\Api\Data\LinkInterfaceFactory::class)
+                        $link = $objectManager->create('Magento\Bundle\Api\Data\LinkInterfaceFactory')
                             ->create(['data' => $linkData]);
                         $linkProduct = $productRepository->getById($linkData['product_id']);
                         $link->setSku($linkProduct->getSku());

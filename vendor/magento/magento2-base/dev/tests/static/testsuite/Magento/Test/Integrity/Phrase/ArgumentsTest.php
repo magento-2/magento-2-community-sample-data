@@ -7,6 +7,7 @@
 namespace Magento\Test\Integrity\Phrase;
 
 use Magento\Framework\Component\ComponentRegistrar;
+use Magento\Setup\Module\I18n\Parser\Adapter\Php\Tokenizer;
 
 /**
  * Scan source code for detects invocations of __() function or Phrase object, analyzes placeholders with arguments
@@ -32,7 +33,7 @@ class ArgumentsTest extends \Magento\Test\Integrity\Phrase\AbstractTestCase
         $this->_phraseCollector = new \Magento\Setup\Module\I18n\Parser\Adapter\Php\Tokenizer\PhraseCollector(
             new \Magento\Setup\Module\I18n\Parser\Adapter\Php\Tokenizer(),
             true,
-            \Magento\Framework\Phrase::class
+            'Magento\Framework\Phrase'
         );
 
         $componentRegistrar = new ComponentRegistrar();
@@ -102,6 +103,7 @@ class ArgumentsTest extends \Magento\Test\Integrity\Phrase\AbstractTestCase
 
             // Check for zend placeholders %placeholder% and sprintf placeholder %s
             if (preg_match_all('/%((s)|([A-Za-z]+)%)/', $phrase['phrase'], $placeHolders, PREG_OFFSET_CAPTURE)) {
+
                 foreach ($placeHolders[0] as $ph) {
                     // Check if char after placeholder is not a digit or letter
                     $charAfterPh = $phrase['phrase'][$ph[1] + strlen($ph[0])];

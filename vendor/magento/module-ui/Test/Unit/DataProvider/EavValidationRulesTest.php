@@ -3,7 +3,6 @@
  * Copyright © Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
-
 namespace Magento\Ui\Test\Unit\DataProvider;
 
 use Magento\Eav\Model\Entity\Attribute\AbstractAttribute;
@@ -13,7 +12,7 @@ use Magento\Ui\DataProvider\EavValidationRules;
 /**
  * Class EavValidationRulesTest
  */
-class EavValidationRulesTest extends \PHPUnit\Framework\TestCase
+class EavValidationRulesTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var ObjectManager
@@ -71,25 +70,11 @@ class EavValidationRulesTest extends \PHPUnit\Framework\TestCase
             ['', ['input_validation' => 'email'], [], ['validate-email' => true]],
             ['', ['input_validation' => 'date'], [], ['validate-date' => true]],
             ['', ['input_validation' => 'other'], [], []],
-            ['', ['max_text_length' => '254'], ['required' => 1], ['required-entry' => true]],
-            [
-                '',
-                ['input_validation' => 'other', 'max_text_length' => '254'],
-                ['required' => 1],
-                ['max_text_length' => 254, 'required-entry' => true]
-            ],
-            [
-                '',
-                ['input_validation' => 'other', 'max_text_length' => '254', 'min_text_length' => 1],
-                [],
-                ['max_text_length' => 254, 'min_text_length' => 1]
-            ],
-            [
-                '',
-                ['max_text_length' => '254', 'input_validation' => 'date'],
-                [],
-                ['max_text_length' => 254, 'validate-date' => true]
-            ],
+            ['', ['max_text_length' => '254'], ['required' => 1], ['max_text_length' => 254, 'required-entry' => true]],
+            ['', ['max_text_length' => '254', 'min_text_length' => 1], [],
+                ['max_text_length' => 254, 'min_text_length' => 1]],
+            ['', ['max_text_length' => '254', 'input_validation' => 'date'], [],
+                ['max_text_length' => 254, 'validate-date' => true]],
         ];
     }
 }

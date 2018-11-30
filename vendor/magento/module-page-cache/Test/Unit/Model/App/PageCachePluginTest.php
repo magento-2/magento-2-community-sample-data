@@ -10,7 +10,7 @@ use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
 use Magento\PageCache\Model\App\PageCachePlugin;
 use Magento\PageCache\Model\Cache\Type;
 
-class PageCachePluginTest extends \PHPUnit\Framework\TestCase
+class PageCachePluginTest extends \PHPUnit_Framework_TestCase
 {
     /** @var PageCachePlugin */
     private $plugin;
@@ -20,8 +20,8 @@ class PageCachePluginTest extends \PHPUnit\Framework\TestCase
 
     protected function setUp()
     {
-        $this->plugin = (new ObjectManager($this))->getObject(\Magento\PageCache\Model\App\PageCachePlugin::class);
-        $this->subjectMock = $this->getMockBuilder(\Magento\Framework\App\PageCache\Cache::class)
+        $this->plugin = (new ObjectManager($this))->getObject('\Magento\PageCache\Model\App\PageCachePlugin');
+        $this->subjectMock = $this->getMockBuilder('\Magento\Framework\App\PageCache\Cache')
             ->disableOriginalConstructor()
             ->getMock();
     }

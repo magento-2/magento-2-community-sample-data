@@ -23,7 +23,6 @@ class Version extends Block
      */
     public function getVersion()
     {
-        $currVer = $this->_rootElement->find($this->backendVersion, Locator::SELECTOR_CLASS_NAME)->getText();
-        return str_replace('Magento ver.', '', $currVer);
+        return $this->_rootElement->find($this->backendVersion, Locator::SELECTOR_CLASS_NAME)->getText();
     }
 }

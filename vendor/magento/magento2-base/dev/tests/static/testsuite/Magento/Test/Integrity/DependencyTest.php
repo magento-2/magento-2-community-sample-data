@@ -8,19 +8,13 @@
  */
 namespace Magento\Test\Integrity;
 
-use Magento\Framework\App\Utility\Files;
 use Magento\Framework\Component\ComponentRegistrar;
-use Magento\TestFramework\Dependency\DbRule;
-use Magento\TestFramework\Dependency\DiRule;
-use Magento\TestFramework\Dependency\LayoutRule;
-use Magento\TestFramework\Dependency\PhpRule;
-use Magento\TestFramework\Dependency\ReportsConfigRule;
-use Magento\TestFramework\Dependency\VirtualType\VirtualTypeMapper;
+use Magento\Framework\App\Utility\Files;
 
 /**
  * @SuppressWarnings(PHPMD.ExcessiveClassComplexity)
  */
-class DependencyTest extends \PHPUnit\Framework\TestCase
+class DependencyTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * Types of dependencies between modules
@@ -112,7 +106,7 @@ class DependencyTest extends \PHPUnit\Framework\TestCase
      * )))
      * @var array
      */
-    protected static $mapDependencies = [];
+    protected static $_mapDependencies = [];
 
     /**
      * Regex pattern for validation file path of theme
@@ -152,6 +146,7 @@ class DependencyTest extends \PHPUnit\Framework\TestCase
         $root = BP;
         $rootJson = json_decode(file_get_contents($root . '/composer.json'), true);
         if (preg_match('/magento\/project-*/', $rootJson['name']) == 1) {
+
             // The Dependency test is skipped for vendor/magento build
             self::markTestSkipped(
                 'MAGETWO-43654: The build is running from vendor/magento. DependencyTest is skipped.'
@@ -216,15 +211,13 @@ class DependencyTest extends \PHPUnit\Framework\TestCase
             $dbRuleTables = array_merge($dbRuleTables, @include $fileName);
         }
         self::$_rulesInstances = [
-            new PhpRule(self::$_mapRouters, self::$_mapLayoutBlocks),
-            new DbRule($dbRuleTables),
-            new LayoutRule(
+            new \Magento\TestFramework\Dependency\PhpRule(self::$_mapRouters, self::$_mapLayoutBlocks),
+            new \Magento\TestFramework\Dependency\DbRule($dbRuleTables),
+            new \Magento\TestFramework\Dependency\LayoutRule(
                 self::$_mapRouters,
                 self::$_mapLayoutBlocks,
                 self::$_mapLayoutHandles
             ),
-            new DiRule(new VirtualTypeMapper()),
-            new ReportsConfigRule($dbRuleTables),
         ];
     }
 
@@ -395,7 +388,7 @@ class DependencyTest extends \PHPUnit\Framework\TestCase
             $this->_setDependencies($currentModule, $type, self::MAP_TYPE_REDUNDANT, $module);
         }
 
-        $this->addDependency($currentModule, $type, self::MAP_TYPE_FOUND, $nsModule);
+        $this->_addDependencies($currentModule, $type, self::MAP_TYPE_FOUND, $nsModule);
     }
 
     /**
@@ -406,7 +399,7 @@ class DependencyTest extends \PHPUnit\Framework\TestCase
      */
     public function collectRedundant()
     {
-        foreach (array_keys(self::$mapDependencies) as $module) {
+        foreach (array_keys(self::$_mapDependencies) as $module) {
             $declared = $this->_getDependencies($module, self::TYPE_HARD, self::MAP_TYPE_DECLARED);
             $found = $this->_getDependencies($module, self::TYPE_HARD, self::MAP_TYPE_FOUND);
             $found['Magento\Framework'] = 'Magento\Framework';
@@ -422,7 +415,7 @@ class DependencyTest extends \PHPUnit\Framework\TestCase
     public function testRedundant()
     {
         $output = [];
-        foreach (array_keys(self::$mapDependencies) as $module) {
+        foreach (array_keys(self::$_mapDependencies) as $module) {
             $result = [];
             $redundant = $this->_getDependencies($module, self::TYPE_HARD, self::MAP_TYPE_REDUNDANT);
             if (count($redundant)) {
@@ -649,16 +642,18 @@ class DependencyTest extends \PHPUnit\Framework\TestCase
      * Converts a composer json component name into the Magento Module form
      *
      * @param string $jsonName The name of a composer json component or dependency e.g. 'magento/module-theme'
-     * @param array $packageModuleMap Mapping package name with module namespace.
      * @return string The corresponding Magento Module e.g. 'Magento\Theme'
      */
-    protected static function convertModuleName($jsonName, array $packageModuleMap)
+    protected static function convertModuleName($jsonName)
     {
-        if (isset($packageModuleMap[$jsonName])) {
-            return $packageModuleMap[$jsonName];
-        }
-
-        if (strpos($jsonName, 'magento/magento') !== false || strpos($jsonName, 'magento/framework') !== false) {
+        if (strpos($jsonName, 'magento/module') !== false) {
+            $moduleName = str_replace('-', ' ', $jsonName);
+            $moduleName = ucwords($moduleName);
+            $moduleName = str_replace('module ', '', $moduleName);
+            $moduleName = str_replace(' ', '', $moduleName);
+            $moduleName = str_replace('/', '\\', $moduleName);
+            return $moduleName;
+        } elseif (strpos($jsonName, 'magento/magento') !== false || strpos($jsonName, 'magento/framework') !== false) {
             $moduleName = str_replace('/', "\t", $jsonName);
             $moduleName = str_replace('framework-', "Framework\t", $moduleName);
             $moduleName = str_replace('-', ' ', $moduleName);
@@ -667,21 +662,17 @@ class DependencyTest extends \PHPUnit\Framework\TestCase
             $moduleName = str_replace(' ', '', $moduleName);
             return $moduleName;
         }
-
         return $jsonName;
     }
 
     /**
-     * Initialise map of dependencies.
+     * Initialise map of dependencies
      *
-     * @return void
      * @SuppressWarnings(PHPMD.CyclomaticComplexity)
      * @SuppressWarnings(PHPMD.NPathComplexity)
-     * @throws \Exception
      */
     protected static function _initDependencies()
     {
-        $packageModuleMap = self::getPackageModuleMapping();
         $jsonFiles = Files::init()->getComposerFiles(ComponentRegistrar::MODULE, false);
         foreach ($jsonFiles as $file) {
             $contents = file_get_contents($file);
@@ -690,13 +681,12 @@ class DependencyTest extends \PHPUnit\Framework\TestCase
                 throw new \Exception("Invalid Json: $file");
             }
             $json = new \Magento\Framework\Config\Composer\Package(json_decode($contents));
-            $moduleName = self::convertModuleName($json->get('name'), $packageModuleMap);
-            if (!isset(self::$mapDependencies[$moduleName])) {
-                self::$mapDependencies[$moduleName] = [];
-            }
+            $moduleName = self::convertModuleName($json->get('name'));
+            self::$_mapDependencies[$moduleName] = @(self::$_mapDependencies[$moduleName] ?: []);
+
             foreach (self::_getTypes() as $type) {
-                if (!isset(self::$mapDependencies[$moduleName][$type])) {
-                    self::$mapDependencies[$moduleName][$type] = [
+                if (!isset(self::$_mapDependencies[$moduleName][$type])) {
+                    self::$_mapDependencies[$moduleName][$type] = [
                         self::MAP_TYPE_DECLARED  => [],
                         self::MAP_TYPE_FOUND     => [],
                         self::MAP_TYPE_REDUNDANT => [],
@@ -704,86 +694,59 @@ class DependencyTest extends \PHPUnit\Framework\TestCase
                 }
             }
 
-            $require = array_keys((array)$json->get('require'));
-            self::addDependencies($moduleName, $require, self::TYPE_HARD, $packageModuleMap);
-
-            $suggest = array_keys((array)$json->get('suggest'));
-            self::addDependencies($moduleName, $suggest, self::TYPE_SOFT, $packageModuleMap);
-        }
-    }
-
-    /**
-     * Add dependencies to dependency list.
-     *
-     * @param string $moduleName
-     * @param array $packageNames
-     * @param string $type
-     * @param array $packageModuleMap
-     *
-     * @return void
-     */
-    private static function addDependencies(
-        string $moduleName,
-        array $packageNames,
-        string $type,
-        array $packageModuleMap
-    ) {
-        $packageNames = array_filter($packageNames, function ($packageName) use ($packageModuleMap) {
-            return isset($packageModuleMap[$packageName]) ||
-                0 === strpos($packageName, 'magento/') && 'magento/magento-composer-installer' != $packageName;
-        });
-
-        foreach ($packageNames as $packageName) {
-            self::addDependency(
-                $moduleName,
-                $type,
-                self::MAP_TYPE_DECLARED,
-                self::convertModuleName($packageName, $packageModuleMap)
-            );
-        }
-    }
-
-    /**
-     * Add dependency map items.
-     *
-     * @param string $module
-     * @param string $type
-     * @param string $mapType
-     * @param string $dependency
-     *
-     * @return void
-     */
-    private static function addDependency(string $module, string $type, string $mapType, string $dependency)
-    {
-        if (isset(self::$mapDependencies[$module][$type][$mapType])) {
-            self::$mapDependencies[$module][$type][$mapType][$dependency] = $dependency;
-        }
-    }
-
-    /**
-     * Returns package name on module name mapping.
-     *
-     * @return array
-     * @throws \Exception
-     */
-    private static function getPackageModuleMapping()
-    {
-        $jsonFiles = Files::init()->getComposerFiles(ComponentRegistrar::MODULE, false);
-
-        $packageModuleMapping = [];
-        foreach ($jsonFiles as $file) {
-            $contents = file_get_contents($file);
-            $composerJson = json_decode($contents);
-            if (null == $composerJson) {
-                throw new \Exception("Invalid Json: $file");
+            $require = $json->get('require');
+            if (isset($require) && !empty($require)) {
+                foreach ($require as $requiredModule => $version) {
+                    if (0 === strpos($requiredModule, 'magento/')
+                        && 'magento/magento-composer-installer' != $requiredModule
+                    ) {
+                        $type = self::TYPE_HARD;
+                        self::_addDependencies(
+                            $moduleName,
+                            $type,
+                            self::MAP_TYPE_DECLARED,
+                            self::convertModuleName($requiredModule)
+                        );
+                    }
+                }
             }
-            $moduleXml = simplexml_load_file(dirname($file) . '/etc/module.xml');
-            $moduleName = str_replace('_', '\\', (string)$moduleXml->module->attributes()->name);
-            $packageName = $composerJson->name;
-            $packageModuleMapping[$packageName] = $moduleName;
+            $suggest = $json->get('suggest');
+            if (isset($suggest) && !empty($suggest)) {
+                foreach ($suggest as $requiredModule => $version) {
+                    if (0 === strpos($requiredModule, 'magento/')
+                        && 'magento/magento-composer-installer' != $requiredModule
+                    ) {
+                        $type = self::TYPE_SOFT;
+                        self::_addDependencies(
+                            $moduleName,
+                            $type,
+                            self::MAP_TYPE_DECLARED,
+                            self::convertModuleName($requiredModule)
+                        );
+                    }
+                }
+            }
         }
+    }
 
-        return $packageModuleMapping;
+    /**
+     * Add dependency map items
+     *
+     * @param $module
+     * @param $type
+     * @param $mapType
+     * @param $dependencies
+     */
+    protected static function _addDependencies($module, $type, $mapType, $dependencies)
+    {
+        if (!is_array($dependencies)) {
+            $dependencies = [$dependencies];
+        }
+        foreach ($dependencies as $dependency) {
+            if (isset(self::$_mapDependencies[$module][$type][$mapType])) {
+                self::$_mapDependencies[$module][$type][$mapType][$dependency] = $dependency;
+            }
+        }
     }
 
     /**
@@ -796,8 +759,8 @@ class DependencyTest extends \PHPUnit\Framework\TestCase
      */
     protected function _getDependencies($module, $type, $mapType)
     {
-        if (isset(self::$mapDependencies[$module][$type][$mapType])) {
-            return self::$mapDependencies[$module][$type][$mapType];
+        if (isset(self::$_mapDependencies[$module][$type][$mapType])) {
+            return self::$_mapDependencies[$module][$type][$mapType];
         }
         return [];
     }
@@ -815,8 +778,8 @@ class DependencyTest extends \PHPUnit\Framework\TestCase
         if (!is_array($dependencies)) {
             $dependencies = [$dependencies];
         }
-        if (isset(self::$mapDependencies[$module][$type][$mapType])) {
-            self::$mapDependencies[$module][$type][$mapType] = $dependencies;
+        if (isset(self::$_mapDependencies[$module][$type][$mapType])) {
+            self::$_mapDependencies[$module][$type][$mapType] = $dependencies;
         }
     }
 
@@ -828,6 +791,6 @@ class DependencyTest extends \PHPUnit\Framework\TestCase
      */
     protected function _isFake($module)
     {
-        return isset(self::$mapDependencies[$module]) ? false : true;
+        return isset(self::$_mapDependencies[$module]) ? false : true;
     }
 }

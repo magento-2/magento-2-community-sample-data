@@ -81,7 +81,7 @@ class CategoryManagementTest extends WebapiAbstract
             ];
         $this->assertTrue($this->_webApiCall($serviceInfo, $categoryData));
         /** @var \Magento\Catalog\Model\Category $model */
-        $readService = Bootstrap::getObjectManager()->create(\Magento\Catalog\Api\CategoryRepositoryInterface::class);
+        $readService = Bootstrap::getObjectManager()->create('Magento\Catalog\Api\CategoryRepositoryInterface');
         $model = $readService->get($categoryId);
         $this->assertEquals($expectedPath, $model->getPath());
         $this->assertEquals($expectedPosition, $model->getPosition());

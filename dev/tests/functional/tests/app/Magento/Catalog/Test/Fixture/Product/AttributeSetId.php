@@ -35,7 +35,7 @@ class AttributeSetId extends DataSource
     public function __construct(FixtureFactory $fixtureFactory, array $params, $data = [])
     {
         $this->params = $params;
-        if (isset($data['dataset']) && $data['dataset'] !== 'Default') {
+        if (isset($data['dataset'])) {
             /** @var CatalogAttributeSet $attributeSet */
             $attributeSet = $fixtureFactory->createByCode('catalogAttributeSet', ['dataset' => $data['dataset']]);
             if (!$attributeSet->hasData('attribute_set_id')) {

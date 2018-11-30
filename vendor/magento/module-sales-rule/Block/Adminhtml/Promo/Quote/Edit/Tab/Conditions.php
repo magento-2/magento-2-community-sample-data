@@ -6,6 +6,7 @@
 namespace Magento\SalesRule\Block\Adminhtml\Promo\Quote\Edit\Tab;
 
 use Magento\Framework\App\ObjectManager;
+use Magento\SalesRule\Model\RuleFactory;
 
 class Conditions extends \Magento\Backend\Block\Widget\Form\Generic implements
     \Magento\Ui\Component\Layout\Tabs\TabInterface
@@ -28,12 +29,12 @@ class Conditions extends \Magento\Backend\Block\Widget\Form\Generic implements
     protected $_nameInLayout = 'conditions_apply_to';
 
     /**
-     * @var \Magento\SalesRule\Model\RuleFactory
+     * @var RuleFactory
      */
     private $ruleFactory;
 
     /**
-     * Constructor
+     * Initialize dependencies.
      *
      * @param \Magento\Backend\Block\Template\Context $context
      * @param \Magento\Framework\Registry $registry
@@ -41,7 +42,8 @@ class Conditions extends \Magento\Backend\Block\Widget\Form\Generic implements
      * @param \Magento\Rule\Block\Conditions $conditions
      * @param \Magento\Backend\Block\Widget\Form\Renderer\Fieldset $rendererFieldset
      * @param array $data
-     * @param \Magento\SalesRule\Model\RuleFactory|null $ruleFactory
+     * @param RuleFactory|null $ruleFactory
+     * @throws \RuntimeException
      */
     public function __construct(
         \Magento\Backend\Block\Template\Context $context,
@@ -50,13 +52,15 @@ class Conditions extends \Magento\Backend\Block\Widget\Form\Generic implements
         \Magento\Rule\Block\Conditions $conditions,
         \Magento\Backend\Block\Widget\Form\Renderer\Fieldset $rendererFieldset,
         array $data = [],
-        \Magento\SalesRule\Model\RuleFactory $ruleFactory = null
+        RuleFactory $ruleFactory = null
     ) {
         $this->_rendererFieldset = $rendererFieldset;
         $this->_conditions = $conditions;
-        $this->ruleFactory = $ruleFactory ?: ObjectManager::getInstance()
-            ->get(\Magento\SalesRule\Model\RuleFactory::class);
         parent::__construct($context, $registry, $formFactory, $data);
+        if ($ruleFactory === null) {
+            $ruleFactory = ObjectManager::getInstance()->get(RuleFactory::class);
+        }
+        $this->ruleFactory = $ruleFactory;
     }
 
     /**
@@ -70,6 +74,7 @@ class Conditions extends \Magento\Backend\Block\Widget\Form\Generic implements
 
     /**
      * {@inheritdoc}
+     * @codeCoverageIgnore
      */
     public function getTabUrl()
     {
@@ -78,6 +83,7 @@ class Conditions extends \Magento\Backend\Block\Widget\Form\Generic implements
 
     /**
      * {@inheritdoc}
+     * @codeCoverageIgnore
      */
     public function isAjaxLoaded()
     {
@@ -86,6 +92,7 @@ class Conditions extends \Magento\Backend\Block\Widget\Form\Generic implements
 
     /**
      * {@inheritdoc}
+     * @codeCoverageIgnore
      */
     public function getTabLabel()
     {
@@ -94,6 +101,7 @@ class Conditions extends \Magento\Backend\Block\Widget\Form\Generic implements
 
     /**
      * {@inheritdoc}
+     * @codeCoverageIgnore
      */
     public function getTabTitle()
     {
@@ -102,6 +110,7 @@ class Conditions extends \Magento\Backend\Block\Widget\Form\Generic implements
 
     /**
      * {@inheritdoc}
+     * @codeCoverageIgnore
      */
     public function canShowTab()
     {
@@ -110,6 +119,7 @@ class Conditions extends \Magento\Backend\Block\Widget\Form\Generic implements
 
     /**
      * {@inheritdoc}
+     * @codeCoverageIgnore
      */
     public function isHidden()
     {

@@ -9,9 +9,9 @@ namespace Magento\Cms\Controller\Adminhtml\Wysiwyg\Images;
 use Magento\Framework\App\Filesystem\DirectoryList;
 
 /**
- * Test for \Magento\Cms\Controller\Adminhtml\Wysiwyg\Images\DeleteFiles class.
+ * Tests Magento\Cms\Controller\Adminhtml\Wysiwyg\Images\DeleteFiles.
  */
-class DeleteFilesTest extends \PHPUnit\Framework\TestCase
+class DeleteFilesTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\Cms\Controller\Adminhtml\Wysiwyg\Images\DeleteFiles
@@ -31,35 +31,30 @@ class DeleteFilesTest extends \PHPUnit\Framework\TestCase
     /**
      * @var string
      */
-    private $fileName = 'magento_small_image.jpg';
-
-    /**
-     * @var \Magento\Framework\Filesystem
-     */
-    private $filesystem;
-
-    /**
-     * @var \Magento\Framework\ObjectManagerInterface
-     */
-    private $objectManager;
+    private $fullDirectoryPath;
 
     /**
      * @var string
      */
-    private $fullDirectoryPath;
+    private $fileName = 'magento_small_image.jpg';
 
     /**
      * @inheritdoc
      */
     protected function setUp()
     {
-        $this->objectManager = \Magento\TestFramework\Helper\Bootstrap::getObjectManager();
-        $this->filesystem = $this->objectManager->get(\Magento\Framework\Filesystem::class);
+        $objectManager = \Magento\TestFramework\Helper\Bootstrap::getObjectManager();
+        $directoryName = 'directory1';
+        $filesystem = $objectManager->get(\Magento\Framework\Filesystem::class);
         /** @var \Magento\Cms\Helper\Wysiwyg\Images $imagesHelper */
-        $this->imagesHelper = $this->objectManager->get(\Magento\Cms\Helper\Wysiwyg\Images::class);
-        $this->mediaDirectory = $this->filesystem->getDirectoryWrite(DirectoryList::MEDIA);
-        $this->model = $this->objectManager->get(\Magento\Cms\Controller\Adminhtml\Wysiwyg\Images\DeleteFiles::class);
-        $this->fullDirectoryPath = $this->imagesHelper->getStorageRoot() . '/directory1';
+        $this->imagesHelper = $objectManager->get(\Magento\Cms\Helper\Wysiwyg\Images::class);
+        $this->mediaDirectory = $filesystem->getDirectoryWrite(DirectoryList::MEDIA);
+        $this->fullDirectoryPath = $this->imagesHelper->getStorageRoot() . '/' . $directoryName;
+        $this->mediaDirectory->create($this->mediaDirectory->getRelativePath($this->fullDirectoryPath));
+        $filePath =  $this->fullDirectoryPath . DIRECTORY_SEPARATOR . $this->fileName;
+        $fixtureDir = realpath(__DIR__ . '/../../../../../Catalog/_files');
+        copy($fixtureDir . '/' . $this->fileName, $filePath);
+        $this->model = $objectManager->get(\Magento\Cms\Controller\Adminhtml\Wysiwyg\Images\DeleteFiles::class);
     }
 
     /**
@@ -70,104 +65,15 @@ class DeleteFilesTest extends \PHPUnit\Framework\TestCase
      */
     public function testExecute()
     {
-        $this->mediaDirectory->create($this->mediaDirectory->getRelativePath($this->fullDirectoryPath));
-        $filePath =  $this->fullDirectoryPath . DIRECTORY_SEPARATOR . $this->fileName;
-        $fixtureDir = realpath(__DIR__ . '/../../../../../Catalog/_files');
-        copy($fixtureDir . '/' . $this->fileName, $filePath);
-
-        $this->executeFileDelete($this->fullDirectoryPath, $this->fileName);
+        $this->model->getRequest()->setMethod('POST')
+            ->setPostValue('files', [$this->imagesHelper->idEncode($this->fileName)]);
+        $this->model->getStorage()->getSession()->setCurrentPath($this->fullDirectoryPath);
+        $this->model->execute();
         $this->assertFalse(
             $this->mediaDirectory->isExist(
                 $this->mediaDirectory->getRelativePath($this->fullDirectoryPath . '/' . $this->fileName)
             )
         );
-    }
-
-    /**
-     * Execute method with correct directory path and file name to check that files under linked media directory
-     * can be removed.
-     *
-     * @return void
-     * @magentoDataFixture Magento/Cms/_files/linked_media.php
-     */
-    public function testExecuteWithLinkedMedia()
-    {
-        $directoryName = 'linked_media';
-        $fullDirectoryPath = $this->filesystem->getDirectoryRead(DirectoryList::PUB)
-                ->getAbsolutePath() . DIRECTORY_SEPARATOR . $directoryName;
-        $filePath =  $fullDirectoryPath . DIRECTORY_SEPARATOR . $this->fileName;
-        $fixtureDir = realpath(__DIR__ . '/../../../../../Catalog/_files');
-        copy($fixtureDir . '/' . $this->fileName, $filePath);
-
-        $wysiwygDir = $this->mediaDirectory->getAbsolutePath() . '/wysiwyg';
-        $this->executeFileDelete($wysiwygDir, $this->fileName);
-        $this->assertFalse(is_file($fullDirectoryPath . DIRECTORY_SEPARATOR . $this->fileName));
-    }
-
-    /**
-     * Check that htaccess file couldn't be removed via
-     * \Magento\Cms\Controller\Adminhtml\Wysiwyg\Images\DeleteFiles::execute method
-     *
-     * @return void
-     */
-    public function testDeleteHtaccess()
-    {
-        $this->createFile($this->fullDirectoryPath, '.htaccess');
-        $this->executeFileDelete($this->fullDirectoryPath, '.htaccess');
-
-        $this->assertTrue(
-            $this->mediaDirectory->isExist(
-                $this->mediaDirectory->getRelativePath($this->fullDirectoryPath . '/.htaccess')
-            )
-        );
-    }
-
-    /**
-     * Check that random file could be removed via
-     * \Magento\Cms\Controller\Adminhtml\Wysiwyg\Images\DeleteFiles::execute method
-     *
-     * @return void
-     */
-    public function testDeleteAnyFile()
-    {
-        $this->createFile($this->fullDirectoryPath, 'ahtaccess');
-        $this->executeFileDelete($this->fullDirectoryPath, 'ahtaccess');
-
-        $this->assertFalse(
-            $this->mediaDirectory->isExist(
-                $this->mediaDirectory->getRelativePath($this->fullDirectoryPath . '/ahtaccess')
-            )
-        );
-    }
-
-    /**
-     * Create file.
-     *
-     * @param string $path
-     * @param string $fileName
-     * @return void
-     */
-    private function createFile(string $path, string $fileName)
-    {
-        $file = $path . '/' . $fileName;
-        if (!$this->mediaDirectory->isFile($file)) {
-            $this->mediaDirectory->writeFile($file, 'Content');
-        }
-    }
-
-    /**
-     * Execute file delete operation.
-     *
-     * @param string $path
-     * @param string $fileName
-     * @return void
-     */
-    private function executeFileDelete(string $path, string $fileName)
-    {
-        $this->model->getRequest()->setMethod('POST')
-            ->setPostValue('files', [$this->imagesHelper->idEncode($fileName)]);
-        $this->model->getStorage()->getSession()->setCurrentPath($path);
-        $this->model->execute();
     }
 
     /**
@@ -182,5 +88,64 @@ class DeleteFilesTest extends \PHPUnit\Framework\TestCase
         if ($directory->isExist('wysiwyg')) {
             $directory->delete('wysiwyg');
         }
+        if ($directory->isExist('.htaccess')) {
+            $directory->delete('.htaccess');
+        }
+        if ($directory->isExist('thtaccess')) {
+            $directory->delete('thtaccess');
+        }
+    }
+
+    /**
+     * Creates file and tries to delete it via
+     * \Magento\Cms\Controller\Adminhtml\Wysiwyg\Images\DeleteFiles::execute method
+     *
+     * @param  string $fileName
+     * @return void
+     */
+    private function createFileAndExecuteDelete($fileName)
+    {
+        $path = '/' . $fileName;
+        if (!$this->mediaDirectory->isFile($path)) {
+            $this->mediaDirectory->writeFile($path, "Order deny,allow\nDeny from all");
+        }
+        $this->model->getRequest()->setMethod('POST')
+            ->setPostValue('files', [$this->imagesHelper->idEncode($fileName)]);
+        $this->model->getStorage()->getSession()->setCurrentPath($this->mediaDirectory->getAbsolutePath());
+        $this->model->execute();
+    }
+
+    /**
+     * Check that htaccess file couldn't be removed via
+     * \Magento\Cms\Controller\Adminhtml\Wysiwyg\Images\DeleteFiles::execute method
+     *
+     * @return void
+     */
+    public function testCouldNotDeleteHtaccess()
+    {
+        $fileName = '.htaccess';
+        $this->createFileAndExecuteDelete($fileName);
+        $this->assertTrue(
+            $this->mediaDirectory->isExist(
+                $this->mediaDirectory->getRelativePath($fileName)
+            )
+        );
+    }
+
+    /**
+     * Check that random file could be removed via
+     * \Magento\Cms\Controller\Adminhtml\Wysiwyg\Images\DeleteFiles::execute method
+     *
+     * @return void
+     */
+    public function testDeleteAnyFile()
+    {
+        $fileName = 'thtaccess';
+        $this->createFileAndExecuteDelete($fileName);
+        $this->assertFalse(
+            $this->mediaDirectory->isExist(
+                $this->mediaDirectory->getRelativePath($fileName)
+            )
+        );
     }
 }

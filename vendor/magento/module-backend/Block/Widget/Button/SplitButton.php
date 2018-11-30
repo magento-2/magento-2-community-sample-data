@@ -16,8 +16,6 @@ namespace Magento\Backend\Block\Widget\Button;
  * @method bool getDisabled()
  * @method string getStyle()
  * @method array getDataAttribute()
- * @api
- * @since 100.0.2
  */
 class SplitButton extends \Magento\Backend\Block\Widget
 {
@@ -231,7 +229,7 @@ class SplitButton extends \Magento\Backend\Block\Widget
             if ($attributeValue === null || $attributeValue == '') {
                 continue;
             }
-            $html[] = $attributeKey . '="' . $this->escapeHtmlAttr($attributeValue, false) . '"';
+            $html[] = $attributeKey . '="' . $this->escapeHtml($attributeValue) . '"';
         }
         return join(' ', $html);
     }

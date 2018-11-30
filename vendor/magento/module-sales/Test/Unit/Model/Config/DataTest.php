@@ -5,58 +5,33 @@
  */
 namespace Magento\Sales\Test\Unit\Model\Config;
 
-class DataTest extends \PHPUnit\Framework\TestCase
+class DataTest extends \PHPUnit_Framework_TestCase
 {
     /**
-     * @var \Magento\Framework\TestFramework\Unit\Helper\ObjectManager
+     * @var \PHPUnit_Framework_MockObject_MockObject
      */
-    private $objectManager;
+    protected $_readerMock;
 
     /**
      * @var \PHPUnit_Framework_MockObject_MockObject
      */
-    private $_readerMock;
-
-    /**
-     * @var \PHPUnit_Framework_MockObject_MockObject
-     */
-    private $_cacheMock;
-
-    /**
-     * @var \Magento\Framework\Serialize\SerializerInterface|\PHPUnit_Framework_MockObject_MockObject
-     */
-    private $serializerMock;
+    protected $_cacheMock;
 
     protected function setUp()
     {
-        $this->objectManager = new \Magento\Framework\TestFramework\Unit\Helper\ObjectManager($this);
         $this->_readerMock = $this->getMockBuilder(
-            \Magento\Sales\Model\Config\Reader::class
+            'Magento\Sales\Model\Config\Reader'
         )->disableOriginalConstructor()->getMock();
         $this->_cacheMock = $this->getMockBuilder(
-            \Magento\Framework\App\Cache\Type\Config::class
+            'Magento\Framework\App\Cache\Type\Config'
         )->disableOriginalConstructor()->getMock();
-        $this->serializerMock = $this->createMock(\Magento\Framework\Serialize\SerializerInterface::class);
     }
 
     public function testGet()
     {
         $expected = ['someData' => ['someValue', 'someKey' => 'someValue']];
-        $this->_cacheMock->expects($this->once())
-            ->method('load');
-
-        $this->serializerMock->expects($this->once())
-            ->method('unserialize')
-            ->willReturn($expected);
-
-        $configData = $this->objectManager->getObject(
-            \Magento\Sales\Model\Config\Data::class,
-            [
-                'reader' => $this->_readerMock,
-                'cache' => $this->_cacheMock,
-                'serializer' => $this->serializerMock,
-            ]
-        );
+        $this->_cacheMock->expects($this->any())->method('load')->will($this->returnValue(serialize($expected)));
+        $configData = new \Magento\Sales\Model\Config\Data($this->_readerMock, $this->_cacheMock);
 
         $this->assertEquals($expected, $configData->get());
     }

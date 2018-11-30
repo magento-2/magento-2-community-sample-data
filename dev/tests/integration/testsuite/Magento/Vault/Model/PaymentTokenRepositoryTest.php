@@ -8,48 +8,39 @@ namespace Magento\Vault\Model;
 use Magento\Framework\Api\FilterBuilder;
 use Magento\Framework\Api\SearchCriteriaBuilder;
 use Magento\Framework\Api\SortOrderBuilder;
-use Magento\TestFramework\Helper\Bootstrap;
-use Magento\TestFramework\ObjectManager;
 
 /**
- * PaymentTokenRepositoryTest contains tests for Vault token repository
- *
+ * Class PaymentTokenRepositoryTest
+ * @package Magento\Vault\Model
  * @magentoDbIsolation enabled
  */
-class PaymentTokenRepositoryTest extends \PHPUnit\Framework\TestCase
+class PaymentTokenRepositoryTest extends \PHPUnit_Framework_TestCase
 {
-    /**
-     * @var PaymentTokenRepository
-     */
+    /** @var  PaymentTokenRepository */
     private $repository;
 
-    /**
-     * @var SortOrderBuilder
-     */
+    /** @var  SortOrderBuilder */
     private $sortOrderBuilder;
 
-    /**
-     * @var FilterBuilder
-     */
+    /** @var FilterBuilder */
     private $filterBuilder;
 
-    /**
-     * @var SearchCriteriaBuilder
-     */
+    /** @var SearchCriteriaBuilder */
     private $searchCriteriaBuilder;
-
-    /**
-     * @var ObjectManager
-     */
-    private $objectManager;
 
     public function setUp()
     {
-        $this->objectManager = Bootstrap::getObjectManager();
-        $this->repository = $this->objectManager->create(PaymentTokenRepository::class);
-        $this->searchCriteriaBuilder = $this->objectManager->create(SearchCriteriaBuilder::class);
-        $this->filterBuilder = $this->objectManager->get(FilterBuilder::class);
-        $this->sortOrderBuilder = $this->objectManager->get(SortOrderBuilder::class);
+        $objectManager = \Magento\TestFramework\Helper\Bootstrap::getObjectManager();
+        $this->repository = $objectManager->create(PaymentTokenRepository::class);
+        $this->searchCriteriaBuilder = $objectManager->create(
+            \Magento\Framework\Api\SearchCriteriaBuilder::class
+        );
+        $this->filterBuilder = $objectManager->get(
+            \Magento\Framework\Api\FilterBuilder::class
+        );
+        $this->sortOrderBuilder = $objectManager->get(
+            \Magento\Framework\Api\SortOrderBuilder::class
+        );
     }
 
     /**
@@ -83,29 +74,7 @@ class PaymentTokenRepositoryTest extends \PHPUnit\Framework\TestCase
         $result = $this->repository->getList($searchCriteria);
         $items = $result->getItems();
         $this->assertCount(2, $items);
-        $this->assertEquals('second', array_shift($items)->getPaymentMethodCode());
         $this->assertEquals('first', array_shift($items)->getPaymentMethodCode());
-    }
-
-    /**
-     * @covers \Magento\Vault\Model\PaymentTokenRepository::delete
-     * @magentoDataFixture Magento/Vault/_files/token.php
-     */
-    public function testDelete()
-    {
-        /** @var PaymentTokenManagement $tokenManagement */
-        $tokenManagement = $this->objectManager->get(PaymentTokenManagement::class);
-
-        $token = $tokenManagement->getByPublicHash('public_hash', 0);
-
-        /** @var PaymentTokenRepository $tokenRepository */
-        $tokenRepository = $this->objectManager->get(PaymentTokenRepository::class);
-        $tokenRepository->delete($token);
-
-        $deletedToken = $tokenRepository->getById($token->getEntityId());
-
-        static::assertEquals('public_hash', $deletedToken->getPublicHash());
-        static::assertFalse($deletedToken->getIsActive());
-        static::assertFalse($deletedToken->getIsVisible());
+        $this->assertEquals('second', array_shift($items)->getPaymentMethodCode());
     }
 }

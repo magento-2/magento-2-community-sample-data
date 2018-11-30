@@ -9,7 +9,7 @@ namespace Magento\ImportExport\Block\Adminhtml\Import\Edit;
  * Tests for block \Magento\ImportExport\Block\Adminhtml\Import\Edit\FormTest
  * @magentoAppArea adminhtml
  */
-class FormTest extends \PHPUnit\Framework\TestCase
+class FormTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * List of expected fieldsets in import edit form
@@ -26,7 +26,7 @@ class FormTest extends \PHPUnit\Framework\TestCase
     protected function setUp()
     {
         $objectManager = \Magento\TestFramework\Helper\Bootstrap::getObjectManager();
-        $importModel = $objectManager->create(\Magento\ImportExport\Model\Import::class);
+        $importModel = $objectManager->create('Magento\ImportExport\Model\Import');
         $uniqueBehaviors = $importModel->getUniqueEntityBehaviors();
         foreach (array_keys($uniqueBehaviors) as $behavior) {
             $this->_expectedFieldsets[] = $behavior . '_fieldset';
@@ -39,20 +39,17 @@ class FormTest extends \PHPUnit\Framework\TestCase
     public function testPrepareForm()
     {
         $formBlock = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->get(
-            \Magento\Framework\View\LayoutInterface::class
+            'Magento\Framework\View\LayoutInterface'
         )->createBlock(
-            \Magento\ImportExport\Block\Adminhtml\Import\Edit\Form::class
+            'Magento\ImportExport\Block\Adminhtml\Import\Edit\Form'
         );
-        $prepareForm = new \ReflectionMethod(
-            \Magento\ImportExport\Block\Adminhtml\Import\Edit\Form::class,
-            '_prepareForm'
-        );
+        $prepareForm = new \ReflectionMethod('Magento\ImportExport\Block\Adminhtml\Import\Edit\Form', '_prepareForm');
         $prepareForm->setAccessible(true);
         $prepareForm->invoke($formBlock);
 
         // check form
         $form = $formBlock->getForm();
-        $this->assertInstanceOf(\Magento\Framework\Data\Form::class, $form, 'Incorrect import form class.');
+        $this->assertInstanceOf('Magento\Framework\Data\Form', $form, 'Incorrect import form class.');
         $this->assertTrue($form->getUseContainer(), 'Form should use container.');
 
         // check form fieldsets
@@ -67,7 +64,7 @@ class FormTest extends \PHPUnit\Framework\TestCase
         $this->assertSameSize($this->_expectedFieldsets, $formFieldsets);
         foreach ($formFieldsets as $fieldset) {
             $this->assertInstanceOf(
-                \Magento\Framework\Data\Form\Element\Fieldset::class,
+                'Magento\Framework\Data\Form\Element\Fieldset',
                 $fieldset,
                 'Incorrect fieldset class.'
             );

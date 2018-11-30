@@ -10,7 +10,7 @@ use Magento\Framework\Message\MessageInterface;
 /**
  * \Magento\Framework\Message\Error test case
  */
-class ErrorTest extends \PHPUnit\Framework\TestCase
+class ErrorTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\Framework\Message\Error
@@ -20,7 +20,7 @@ class ErrorTest extends \PHPUnit\Framework\TestCase
     protected function setUp()
     {
         $objectManager = new \Magento\Framework\TestFramework\Unit\Helper\ObjectManager($this);
-        $this->model = $objectManager->getObject(\Magento\Framework\Message\Error::class);
+        $this->model = $objectManager->getObject('Magento\Framework\Message\Error');
     }
 
     public function testGetType()

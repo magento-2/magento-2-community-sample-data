@@ -29,7 +29,7 @@ class State
                     $order->setState(Order::STATE_COMPLETE)
                         ->setStatus($order->getConfig()->getStateDefaultStatus(Order::STATE_COMPLETE));
                 }
-            } elseif ((float)$order->getTotalRefunded()
+            } elseif (floatval($order->getTotalRefunded())
                 || !$order->getTotalRefunded() && $order->hasForcedCanCreditmemo()
             ) {
                 if ($order->getState() !== Order::STATE_CLOSED) {

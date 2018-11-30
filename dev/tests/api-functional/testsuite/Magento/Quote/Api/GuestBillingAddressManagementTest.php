@@ -28,7 +28,7 @@ class GuestBillingAddressManagementTest extends WebapiAbstract
     protected function getQuoteMaskedId($quoteId)
     {
         /** @var \Magento\Quote\Model\QuoteIdMask $quoteIdMask */
-        $quoteIdMask = $this->objectManager->create(\Magento\Quote\Model\QuoteIdMaskFactory::class)->create();
+        $quoteIdMask = $this->objectManager->create('Magento\Quote\Model\QuoteIdMaskFactory')->create();
         $quoteIdMask->load($quoteId, 'quote_id');
         return $quoteIdMask->getMaskedId();
     }
@@ -38,7 +38,7 @@ class GuestBillingAddressManagementTest extends WebapiAbstract
      */
     public function testGetAddress()
     {
-        $quote = $this->objectManager->create(\Magento\Quote\Model\Quote::class);
+        $quote = $this->objectManager->create('Magento\Quote\Model\Quote');
         $quote->load('test_order_1', 'reserved_order_id');
 
         /** @var \Magento\Quote\Model\Quote\Address $address */
@@ -88,12 +88,11 @@ class GuestBillingAddressManagementTest extends WebapiAbstract
 
     /**
      * @magentoApiDataFixture Magento/Checkout/_files/quote_with_address_saved.php
-     * @dataProvider setAddressDataProvider
      */
-    public function testSetAddress($useForShipping)
+    public function testSetAddress()
     {
         /** @var \Magento\Quote\Model\Quote $quote */
-        $quote = $this->objectManager->create(\Magento\Quote\Model\Quote::class);
+        $quote = $this->objectManager->create('Magento\Quote\Model\Quote');
         $quote->load('test_order_1', 'reserved_order_id');
 
         $cartId = $this->getQuoteMaskedId($quote->getId());
@@ -126,15 +125,14 @@ class GuestBillingAddressManagementTest extends WebapiAbstract
             'fax' => '44332255',
         ];
         $requestData = [
-            'cartId' => $cartId,
+            "cartId" => $cartId,
             'address' => $addressData,
-            'useForShipping' => $useForShipping
         ];
 
         $addressId = $this->_webApiCall($serviceInfo, $requestData);
 
         //reset $quote to reload data
-        $quote = $this->objectManager->create(\Magento\Quote\Model\Quote::class);
+        $quote = $this->objectManager->create('Magento\Quote\Model\Quote');
         $quote->load('test_order_1', 'reserved_order_id');
         $address = $quote->getBillingAddress();
         $address->getRegionCode();
@@ -151,27 +149,5 @@ class GuestBillingAddressManagementTest extends WebapiAbstract
         foreach ($addressData as $key => $value) {
             $this->assertEquals($value, $savedData[$key]);
         }
-        $address = $quote->getShippingAddress();
-        $address->getRegionCode();
-        $savedData = $address->getData();
-        if ($useForShipping) {
-            //check that shipping address set
-            $this->assertEquals('shipping', $savedData['address_type']);
-            $this->assertEquals(1, $savedData['same_as_billing']);
-            //check the rest of fields
-            foreach ($addressData as $key => $value) {
-                $this->assertEquals($value, $savedData[$key]);
-            }
-        } else {
-            $this->assertEquals(0, $savedData['same_as_billing']);
-        }
-    }
-
-    public function setAddressDataProvider()
-    {
-        return [
-            [true],
-            [false]
-        ];
     }
 }

@@ -5,15 +5,22 @@
  */
 namespace Magento\Ui\Test\Unit\Controller\Adminhtml\Index\Render;
 
+use Magento\Backend\App\Action\Context;
+use Magento\Framework\App\Request\Http;
+use Magento\Framework\App\ViewInterface;
+use Magento\Framework\AuthorizationInterface;
+use Magento\Framework\HTTP\PhpEnvironment\Response;
+use Magento\Framework\View\Element\Template;
+use Magento\Framework\View\Element\UiComponent\Config\ManagerInterface;
+use Magento\Framework\View\Element\UiComponentFactory;
+use Magento\Framework\View\LayoutInterface;
+use Magento\Ui\Component\Wrapper\UiComponent;
 use Magento\Ui\Controller\Adminhtml\Index\Render\Handle;
-use Magento\Framework\View\Element\UiComponent\ContextInterface;
 
 /**
- * Tests \Magento\Ui\Controller\Adminhtml\Index\Render\Handle.
- *
- * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
+ * Test for Magento\Ui\Controller\Adminhtml\Index\Render\Handle class.
  */
-class HandleTest extends \PHPUnit\Framework\TestCase
+class HandleTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \PHPUnit_Framework_MockObject_MockObject
@@ -33,6 +40,11 @@ class HandleTest extends \PHPUnit\Framework\TestCase
     /**
      * @var \PHPUnit_Framework_MockObject_MockObject
      */
+    protected $componentFactoryMock;
+
+    /**
+     * @var \PHPUnit_Framework_MockObject_MockObject
+     */
     protected $viewMock;
 
     /**
@@ -41,105 +53,180 @@ class HandleTest extends \PHPUnit\Framework\TestCase
     protected $controller;
 
     /**
-     * @var \Magento\Framework\AuthorizationInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @var ManagerInterface|\PHPUnit_Framework_MockObject_MockObject
      */
-    private $authorizationMock;
+    private $uiComponentManagerMock;
 
     /**
-     * @var \PHPUnit_Framework_MockObject_MockObject
-     */
-    private $uiComponentContextMock;
-
-    /**
-     * @var \Magento\Framework\View\Element\UiComponentInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @var UiComponent|\PHPUnit_Framework_MockObject_MockObject
      */
     private $uiComponentMock;
 
     /**
-     * @var \PHPUnit_Framework_MockObject_MockObject
+     * @var AuthorizationInterface|\PHPUnit_Framework_MockObject_MockObject
      */
-    private $uiFactoryMock;
+    private $authorizationMock;
 
     /**
-     * @var \Magento\Framework\View\Element\UiComponent\DataProvider\DataProviderInterface|
-     *      \PHPUnit_Framework_MockObject_MockObject
+     * @var LayoutInterface|\PHPUnit_Framework_MockObject_MockObject
      */
-    private $dataProviderMock;
+    private $layoutMock;
 
+    /**
+     * @inheritdoc
+     */
     public function setUp()
     {
-        $this->contextMock = $this->createMock(\Magento\Backend\App\Action\Context::class);
-
-        $this->requestMock = $this->createMock(\Magento\Framework\App\RequestInterface::class);
-        $this->contextMock->expects($this->atLeastOnce())->method('getRequest')->willReturn($this->requestMock);
-
-        $this->responseMock = $this->createMock(\Magento\Framework\HTTP\PhpEnvironment\Response::class);
-        $this->contextMock->expects($this->atLeastOnce())->method('getResponse')->willReturn($this->responseMock);
-
-        $this->viewMock = $this->createMock(\Magento\Framework\App\ViewInterface::class);
-        $this->contextMock->expects($this->atLeastOnce())->method('getView')->willReturn($this->viewMock);
-        $this->authorizationMock = $this->getMockForAbstractClass(\Magento\Framework\AuthorizationInterface::class);
-        $this->authorizationMock->expects($this->any())
-            ->method('isAllowed')
-            ->willReturn(true);
-        $this->uiComponentContextMock = $this->getMockForAbstractClass(ContextInterface::class);
-        $this->uiComponentMock = $this->getMockForAbstractClass(
-            \Magento\Framework\View\Element\UiComponentInterface::class
-        );
-        $this->dataProviderMock = $this->getMockForAbstractClass(
-            \Magento\Framework\View\Element\UiComponent\DataProvider\DataProviderInterface::class
-        );
-        $this->uiComponentContextMock->expects($this->once())
-            ->method('getDataProvider')
-            ->willReturn($this->dataProviderMock);
-        $this->uiFactoryMock = $this->getMockBuilder(\Magento\Framework\View\Element\UiComponentFactory::class)
+        $this->contextMock = $this->getMockBuilder(Context::class)
             ->disableOriginalConstructor()
             ->getMock();
-        $this->uiComponentMock->expects($this->any())
-            ->method('getContext')
-            ->willReturn($this->uiComponentContextMock);
-        $this->uiFactoryMock->expects($this->any())
-            ->method('create')
-            ->willReturn($this->uiComponentMock);
-        $this->dataProviderMock->expects($this->once())
-            ->method('getConfigData')
-            ->willReturn([]);
-        $contextMock = $this->createMock(\Magento\Framework\View\Element\UiComponent\ContextFactory::class);
-        $this->controller = new Handle($this->contextMock, $this->uiFactoryMock, $contextMock);
+        $this->componentFactoryMock = $this->getMockBuilder(UiComponentFactory::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+        $this->requestMock = $this->getMockBuilder(Http::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+        $this->contextMock->expects($this->atLeastOnce())->method('getRequest')->willReturn($this->requestMock);
+        $this->responseMock = $this->getMockBuilder(Response::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+        $this->contextMock->expects($this->atLeastOnce())->method('getResponse')->willReturn($this->responseMock);
+        $this->authorizationMock = $this->getMock(AuthorizationInterface::class);
+        $this->viewMock = $this->getMockBuilder(ViewInterface::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+        $this->contextMock->expects($this->atLeastOnce())->method('getView')->willReturn($this->viewMock);
+        $this->contextMock->expects($this->atLeastOnce())
+            ->method('getAuthorization')
+            ->willReturn($this->authorizationMock);
+        $this->uiComponentManagerMock = $this->getMockForAbstractClass(ManagerInterface::class);
+        $this->uiComponentMock = $this->getMockBuilder(UiComponent::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+        $this->layoutMock = $this->getMockBuilder(LayoutInterface::class)
+            ->disableOriginalConstructor()
+            ->getMockForAbstractClass();
+
+        $this->controller = new Handle($this->contextMock, $this->componentFactoryMock, $this->uiComponentManagerMock);
+
     }
 
+    /**
+     * @return void
+     */
     public function testExecuteNoButtons()
     {
-        $result = '';
-        $this->requestMock->expects($this->exactly(3))->method('getParam')->willReturn($result);
+        $isButtonExist = false;
+        $isAllowed = true;
+        $result = 'content';
 
-        $this->viewMock->expects($this->once())
-            ->method('loadLayout')
-            ->with(['default', $result], true, true, false);
-        $layoutMock = $this->createMock(\Magento\Framework\View\LayoutInterface::class);
-        $this->viewMock->expects($this->once())->method('getLayout')->willReturn($layoutMock);
+        $this->prepareLayoutData($isButtonExist, $isAllowed);
 
-        $layoutMock->expects($this->once())->method('getBlock');
+        $this->layoutMock->expects($this->once())
+            ->method('getBlock')
+            ->with('customer_listing')
+            ->willReturn($this->uiComponentMock);
+        $this->uiComponentMock->expects($this->once())->method('toHtml')->willReturn($result);
+        $this->responseMock->expects($this->once())->method('appendBody')->with($result);
 
-        $this->responseMock->expects($this->once())->method('appendBody')->with('');
         $this->controller->execute();
     }
 
-    public function testExecute()
+    /**
+     * @return void
+     */
+    public function testExecuteWithButtons()
     {
-        $result = 'SomeRequestParam';
-        $this->requestMock->expects($this->exactly(3))->method('getParam')->willReturn($result);
+        $isButtonExist = true;
+        $isAllowed = true;
+        $uiContent = 'content';
+        $buttonContent = 'button';
+        $templateMock = $this->getMockBuilder(Template::class)
+            ->disableOriginalConstructor()
+            ->getMock();
 
+        $this->prepareLayoutData($isButtonExist, $isAllowed);
+
+        $this->layoutMock->expects($this->at(0))
+            ->method('getBlock')
+            ->with('customer_listing')
+            ->willReturn($this->uiComponentMock);
+        $this->uiComponentMock->expects($this->once())->method('toHtml')->willReturn($uiContent);
+        $this->layoutMock->expects($this->at(1))
+            ->method('getBlock')
+            ->with('page.actions.toolbar')
+            ->willReturn($templateMock);
+        $templateMock->expects($this->once())->method('toHtml')->willReturn($buttonContent);
+        $this->responseMock->expects($this->once())->method('appendBody')->with($uiContent . $buttonContent);
+
+        $this->controller->execute();
+    }
+
+    /**
+     * @return void
+     */
+    public function testExecuteWithoutPermissions()
+    {
+        $isButtonExist = false;
+        $isAllowed = false;
+
+        $this->prepareLayoutData($isButtonExist, $isAllowed);
+
+        $this->requestMock->expects($this->once())
+            ->method('isAjax')
+            ->willReturn(true);
+        $this->layoutMock->expects($this->never())
+            ->method('getBlock')
+            ->willReturn($this->uiComponentMock);
+        $this->uiComponentMock->expects($this->never())->method('toHtml');
+        $this->responseMock->expects($this->once())->method('appendBody')->with('');
+
+        $this->controller->execute();
+    }
+
+    /**
+     * @param bool $isButtonExist
+     * @param bool $isAllowed
+     * @return void
+     */
+    private function prepareLayoutData($isButtonExist, $isAllowed)
+    {
+        $aclResource = 'Magento_Customer::manage';
+        $handle = 'customer_index_index';
+        $namespace = 'customer_listing';
+        $componentConfig = [
+            $namespace => [
+                'arguments' => [
+                    'data' => [
+                        'acl' => $aclResource,
+                    ],
+                ],
+            ],
+        ];
+
+        $this->requestMock->expects($this->at(0))
+            ->method('getParam')
+            ->with('handle', null)
+            ->willReturn($handle);
+        $this->requestMock->expects($this->at(1))
+            ->method('getParam')
+            ->with('namespace', null)
+            ->willReturn($namespace);
+        $this->requestMock->expects($this->at(2))
+            ->method('getParam')
+            ->with('buttons', false)
+            ->willReturn($isButtonExist);
         $this->viewMock->expects($this->once())
             ->method('loadLayout')
-            ->with(['default', $result], true, true, false);
-
-        $layoutMock = $this->createMock(\Magento\Framework\View\LayoutInterface::class);
-        $this->viewMock->expects($this->once())->method('getLayout')->willReturn($layoutMock);
-
-        $layoutMock->expects($this->exactly(2))->method('getBlock');
-
-        $this->responseMock->expects($this->once())->method('appendBody')->with('');
-        $this->controller->execute();
+            ->with(['default', $handle], true, true, false);
+        $this->viewMock->expects($this->once())->method('getLayout')->willReturn($this->layoutMock);
+        $this->uiComponentManagerMock->expects($this->once())
+            ->method('getData')
+            ->with($namespace)
+            ->willReturn($componentConfig);
+        $this->authorizationMock->expects($this->once())
+            ->method('isAllowed')
+            ->with($aclResource)
+            ->willReturn($isAllowed);
     }
 }

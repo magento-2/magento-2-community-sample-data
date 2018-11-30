@@ -46,8 +46,7 @@ class UpgradeData implements UpgradeDataInterface
 
             $connection->query(
                 $connection->insertFromSelect(
-                    $select,
-                    $this->relationProcessor->getMainTable(),
+                    $select, $this->relationProcessor->getMainTable(),
                     ['parent_id', 'child_id'],
                     AdapterInterface::INSERT_IGNORE
                 )

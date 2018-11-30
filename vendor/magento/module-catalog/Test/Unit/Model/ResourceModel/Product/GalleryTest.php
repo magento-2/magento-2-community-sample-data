@@ -8,7 +8,7 @@ namespace Magento\Catalog\Test\Unit\Model\ResourceModel\Product;
 /**
  * Unit test for product media gallery resource.
  */
-class GalleryTest extends \PHPUnit\Framework\TestCase
+class GalleryTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\Framework\DB\Adapter\AdapterInterface | \PHPUnit_Framework_MockObject_MockObject
@@ -52,11 +52,23 @@ class GalleryTest extends \PHPUnit\Framework\TestCase
     {
         $objectManager = new \Magento\Framework\TestFramework\Unit\Helper\ObjectManager($this);
 
-        $this->connection = $this->createMock(\Magento\Framework\DB\Adapter\Pdo\Mysql::class);
+        $this->connection = $this->getMock(
+            \Magento\Framework\DB\Adapter\Pdo\Mysql::class,
+            [],
+            [],
+            '',
+            false
+        );
         $this->connection->expects($this->any())
             ->method('setCacheAdapter');
 
-        $metadata = $this->createMock(\Magento\Framework\EntityManager\EntityMetadata::class);
+        $metadata = $this->getMock(
+            \Magento\Framework\EntityManager\EntityMetadata::class,
+            [],
+            [],
+            '',
+            false
+        );
         $metadata->expects($this->any())
             ->method('getLinkField')
             ->willReturn('entity_id');
@@ -64,13 +76,19 @@ class GalleryTest extends \PHPUnit\Framework\TestCase
             ->method('getEntityConnection')
             ->willReturn($this->connection);
 
-        $metadataPool = $this->createMock(\Magento\Framework\EntityManager\MetadataPool::class);
+        $metadataPool = $this->getMock(
+            \Magento\Framework\EntityManager\MetadataPool::class,
+            [],
+            [],
+            '',
+            false
+        );
         $metadataPool->expects($this->once())
             ->method('getMetadata')
             ->with(\Magento\Catalog\Api\Data\ProductInterface::class)
             ->willReturn($metadata);
 
-        $resource = $this->createMock(\Magento\Framework\App\ResourceConnection::class);
+        $resource = $this->getMock(\Magento\Framework\App\ResourceConnection::class, [], [], '', false);
         $resource->expects($this->any())->method('getTableName')->willReturn('table');
         $this->resource = $objectManager->getObject(
             \Magento\Catalog\Model\ResourceModel\Product\Gallery::class,
@@ -79,9 +97,15 @@ class GalleryTest extends \PHPUnit\Framework\TestCase
                 'resource' => $resource
             ]
         );
-        $this->product = $this->createMock(\Magento\Catalog\Model\Product::class);
-        $this->select = $this->createMock(\Magento\Framework\DB\Select::class);
-        $this->attribute = $this->createMock(\Magento\Eav\Model\Entity\Attribute\AbstractAttribute::class);
+        $this->product = $this->getMock(\Magento\Catalog\Model\Product::class, [], [], '', false);
+        $this->select = $this->getMock(\Magento\Framework\DB\Select::class, [], [], '', false);
+        $this->attribute = $this->getMock(
+            \Magento\Eav\Model\Entity\Attribute\AbstractAttribute::class,
+            [],
+            [],
+            '',
+            false
+        );
     }
 
     public function testLoadDataFromTableByValueId()
@@ -99,11 +123,13 @@ class GalleryTest extends \PHPUnit\Framework\TestCase
         ];
         $leftJoinTables = [
             0 => [
-                0 => [
+                0 =>
+                    [
                         'store_value' => 'catalog_product_entity_media_gallery_value_video',
                     ],
                 1 => 'main.value_id = store_value.value_id AND store_value.store_id = 0',
-                2 => [
+                2 =>
+                    [
                         'video_provider' => 'provider',
                         'video_url' => 'url',
                         'video_title' => 'title',
@@ -188,12 +214,15 @@ class GalleryTest extends \PHPUnit\Framework\TestCase
         $storeId = 0;
         $cols = null;
         $leftJoinTables = [
-            0 => [
-                    0 => [
+            0 =>
+                [
+                    0 =>
+                        [
                             'store_value' => 'catalog_product_entity_media_gallery_value_video',
                         ],
                     1 => 'main.value_id = store_value.value_id AND store_value.store_id = 0',
-                    2 => [
+                    2 =>
+                        [
                             'video_provider' => 'provider',
                             'video_url' => 'url',
                             'video_title' => 'title',
@@ -281,9 +310,6 @@ class GalleryTest extends \PHPUnit\Framework\TestCase
         $this->resource->bindValueToEntity($valueId, $entityId);
     }
 
-    /**
-     * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
-     */
     public function testLoadGallery()
     {
         $productId = 5;
@@ -291,12 +317,7 @@ class GalleryTest extends \PHPUnit\Framework\TestCase
         $attributeId = 6;
         $getTableReturnValue = 'table';
         $quoteInfoReturnValue =
-            'main.value_id = value.value_id AND value.store_id = ' . $storeId
-            . ' AND value.entity_id = entity.entity_id';
-        $quoteDefaultInfoReturnValue =
-            'main.value_id = default_value.value_id AND default_value.store_id = 0'
-            . ' AND default_value.entity_id = entity.entity_id';
-
+            'main.value_id = value.value_id AND value.store_id = ' . $storeId;
         $positionCheckSql = 'testchecksql';
         $resultRow = [
             [
@@ -332,8 +353,7 @@ class GalleryTest extends \PHPUnit\Framework\TestCase
             'main.value_id = entity.value_id',
             ['entity_id']
         )->willReturnSelf();
-        $this->product->expects($this->at(0))->method('getData')
-            ->with('entity_id')->willReturn($productId);
+        $this->product->expects($this->at(0))->method('getData')->with('entity_id')->willReturn($productId);
         $this->product->expects($this->at(1))->method('getStoreId')->will($this->returnValue($storeId));
         $this->connection->expects($this->exactly(2))->method('quoteInto')->withConsecutive(
             ['value.store_id = ?'],
@@ -342,50 +362,26 @@ class GalleryTest extends \PHPUnit\Framework\TestCase
             'value.store_id = ' . $storeId,
             'default_value.store_id = ' . 0
         );
-        $this->connection->expects($this->any())->method('getIfNullSql')->will(
-            $this->returnValueMap([
-                [
-                    '`value`.`label`',
-                    '`default_value`.`label`',
-                    'IFNULL(`value`.`label`, `default_value`.`label`)'
-                ],
-                [
-                    '`value`.`position`',
-                    '`default_value`.`position`',
-                    'IFNULL(`value`.`position`, `default_value`.`position`)'
-                ],
-                [
-                    '`value`.`disabled`',
-                    '`default_value`.`disabled`',
-                    'IFNULL(`value`.`disabled`, `default_value`.`disabled`)'
-                ]
-            ])
-        );
         $this->select->expects($this->at(2))->method('joinLeft')->with(
             ['value' => $getTableReturnValue],
             $quoteInfoReturnValue,
-            []
+            [
+                'label',
+                'position',
+                'disabled'
+            ]
         )->willReturnSelf();
         $this->select->expects($this->at(3))->method('joinLeft')->with(
             ['default_value' => $getTableReturnValue],
-            $quoteDefaultInfoReturnValue,
-            []
+            'main.value_id = default_value.value_id AND default_value.store_id = 0',
+            ['label_default' => 'label', 'position_default' => 'position', 'disabled_default' => 'disabled']
         )->willReturnSelf();
-        $this->select->expects($this->at(4))->method('columns')->with([
-            'label' => 'IFNULL(`value`.`label`, `default_value`.`label`)',
-            'position' => 'IFNULL(`value`.`position`, `default_value`.`position`)',
-            'disabled' => 'IFNULL(`value`.`disabled`, `default_value`.`disabled`)',
-            'label_default' => 'default_value.label',
-            'position_default' => 'default_value.position',
-            'disabled_default' => 'default_value.disabled'
-        ])->willReturnSelf();
-        $this->select->expects($this->at(5))->method('where')->with(
+        $this->select->expects($this->at(4))->method('where')->with(
             'main.attribute_id = ?',
             $attributeId
         )->willReturnSelf();
-        $this->select->expects($this->at(6))->method('where')
-            ->with('main.disabled = 0')->willReturnSelf();
-        $this->select->expects($this->at(8))->method('where')
+        $this->select->expects($this->at(5))->method('where')->with('main.disabled = 0')->willReturnSelf();
+        $this->select->expects($this->at(7))->method('where')
                      ->with('entity.entity_id = ?', $productId)
                      ->willReturnSelf();
         $this->select->expects($this->once())->method('order')
@@ -461,19 +457,18 @@ class GalleryTest extends \PHPUnit\Framework\TestCase
         ];
 
         $this->connection->expects($this->once())->method('select')->will($this->returnValue($this->select));
-        $this->select->expects($this->at(0))->method('from')->with(
-            [
-                'main' => 'table',
-            ],
-            '*'
-        )->willReturnSelf();
-        $this->select->expects($this->at(1))->method('where')->with(
-            'value = ?',
-            1
-        )->willReturnSelf();
-        $this->connection->expects($this->once())->method('fetchAll')
+        $this->select->expects($this->at(0))
+            ->method('from')
+            ->with(['main' => 'table'], 'count(*)')
+            ->willReturnSelf();
+        $this->select->expects($this->at(1))
+            ->method('where')
+            ->with('value = ?', 1)
+            ->willReturnSelf();
+        $this->connection->expects($this->once())
+            ->method('fetchOne')
             ->with($this->select)
-            ->willReturn($results);
+            ->willReturn(count($results));
         $this->assertEquals($this->resource->countImageUses(1), count($results));
     }
 }

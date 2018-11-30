@@ -7,7 +7,7 @@ namespace Magento\Translation\Test\Unit\Model\Inline;
 
 use \Magento\Translation\Model\Inline\Config;
 
-class ConfigTest extends \PHPUnit\Framework\TestCase
+class ConfigTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var Config
@@ -26,8 +26,8 @@ class ConfigTest extends \PHPUnit\Framework\TestCase
 
     protected function setUp()
     {
-        $this->scopeConfigMock = $this->createMock(\Magento\Framework\App\Config\ScopeConfigInterface::class);
-        $this->helperMock = $this->createPartialMock(\Magento\Developer\Helper\Data::class, ['isDevAllowed']);
+        $this->scopeConfigMock = $this->getMock('Magento\Framework\App\Config\ScopeConfigInterface');
+        $this->helperMock = $this->getMock('Magento\Developer\Helper\Data', ['isDevAllowed'], [], '', false);
         $this->model = new Config(
             $this->scopeConfigMock,
             $this->helperMock
@@ -38,7 +38,7 @@ class ConfigTest extends \PHPUnit\Framework\TestCase
     {
         $store = 'some store';
         $result = 'result';
-        $scopeConfig = $this->createMock(\Magento\Framework\App\Config\ScopeConfigInterface::class);
+        $scopeConfig = $this->getMock('Magento\Framework\App\Config\ScopeConfigInterface');
         $scopeConfig->expects(
             $this->once()
         )->method(
@@ -52,7 +52,7 @@ class ConfigTest extends \PHPUnit\Framework\TestCase
         );
         $objectManager = new \Magento\Framework\TestFramework\Unit\Helper\ObjectManager($this);
         $config = $objectManager->getObject(
-            \Magento\Translation\Model\Inline\Config::class,
+            'Magento\Translation\Model\Inline\Config',
             ['scopeConfig' => $scopeConfig]
         );
         $this->assertEquals($result, $config->isActive($store));

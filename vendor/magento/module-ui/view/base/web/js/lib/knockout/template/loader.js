@@ -92,9 +92,8 @@ define([
 
             require([path], function (template) {
                 template = removeLicense(template);
+
                 loading.resolve(template);
-            }, function (err) {
-                loading.reject(err);
             });
 
             return loading.promise();

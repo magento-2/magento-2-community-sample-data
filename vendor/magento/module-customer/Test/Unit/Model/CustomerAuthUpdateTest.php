@@ -10,7 +10,7 @@ use Magento\Customer\Model\CustomerAuthUpdate;
 /**
  * Class CustomerAuthUpdateTest
  */
-class CustomerAuthUpdateTest extends \PHPUnit\Framework\TestCase
+class CustomerAuthUpdateTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var CustomerAuthUpdate
@@ -40,9 +40,9 @@ class CustomerAuthUpdateTest extends \PHPUnit\Framework\TestCase
         $this->objectManager = new \Magento\Framework\TestFramework\Unit\Helper\ObjectManager($this);
 
         $this->customerRegistry =
-            $this->createMock(\Magento\Customer\Model\CustomerRegistry::class);
+            $this->getMock(\Magento\Customer\Model\CustomerRegistry::class, [], [], '', false);
         $this->customerResourceModel =
-            $this->createMock(\Magento\Customer\Model\ResourceModel\Customer::class);
+            $this->getMock(\Magento\Customer\Model\ResourceModel\Customer::class, [], [], '', false);
 
         $this->model = $this->objectManager->getObject(
             \Magento\Customer\Model\CustomerAuthUpdate::class,
@@ -60,9 +60,21 @@ class CustomerAuthUpdateTest extends \PHPUnit\Framework\TestCase
     {
         $customerId = 1;
 
-        $customerSecureMock = $this->createMock(\Magento\Customer\Model\Data\CustomerSecure::class);
+        $customerSecureMock = $this->getMock(
+            \Magento\Customer\Model\Data\CustomerSecure::class,
+            [],
+            [],
+            '',
+            false
+        );
 
-        $dbAdapter = $this->createMock(\Magento\Framework\DB\Adapter\AdapterInterface::class);
+        $dbAdapter = $this->getMock(
+            \Magento\Framework\DB\Adapter\AdapterInterface::class,
+            [],
+            [],
+            '',
+            false
+        );
 
         $this->customerRegistry->expects($this->once())
             ->method('retrieveSecureData')

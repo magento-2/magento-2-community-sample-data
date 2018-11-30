@@ -13,6 +13,7 @@ use Braintree\Util;
  * @package    Braintree
  * @subpackage Errors
  * @category   Errors
+ * @copyright  2015 Braintree, a division of PayPal, Inc.
  *
  * @property-read object $errors
  */

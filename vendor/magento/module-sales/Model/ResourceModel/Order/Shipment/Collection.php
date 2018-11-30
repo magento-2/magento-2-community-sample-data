@@ -11,9 +11,7 @@ use Magento\Sales\Model\ResourceModel\Order\Collection\AbstractCollection;
 /**
  * Sales order shipment collection
  *
- * @api
  * @author      Magento Core Team <core@magentocommerce.com>
- * @since 100.0.2
  */
 class Collection extends AbstractCollection implements ShipmentSearchResultInterface
 {
@@ -50,10 +48,7 @@ class Collection extends AbstractCollection implements ShipmentSearchResultInter
      */
     protected function _construct()
     {
-        $this->_init(
-            \Magento\Sales\Model\Order\Shipment::class,
-            \Magento\Sales\Model\ResourceModel\Order\Shipment::class
-        );
+        $this->_init('Magento\Sales\Model\Order\Shipment', 'Magento\Sales\Model\ResourceModel\Order\Shipment');
     }
 
     /**

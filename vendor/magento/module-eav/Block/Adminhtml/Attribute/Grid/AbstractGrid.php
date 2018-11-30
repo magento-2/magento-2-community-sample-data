@@ -8,10 +8,7 @@ namespace Magento\Eav\Block\Adminhtml\Attribute\Grid;
 /**
  * Product attributes grid
  *
- * @api
- * @SuppressWarnings(PHPMD.DepthOfInheritance)
- * @deprecated 100.2.0
- * @since 100.0.2
+ * @author      Magento Core Team <core@magentocommerce.com>
  */
 abstract class AbstractGrid extends \Magento\Backend\Block\Widget\Grid\Extended
 {

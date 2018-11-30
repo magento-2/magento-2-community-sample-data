@@ -5,10 +5,6 @@
  */
 namespace Magento\Catalog\Model\ProductOptions;
 
-/**
- * Interface \Magento\Catalog\Model\ProductOptions\ConfigInterface
- *
- */
 interface ConfigInterface
 {
     /**

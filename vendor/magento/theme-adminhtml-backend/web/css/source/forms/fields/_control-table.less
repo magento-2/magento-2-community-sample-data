@@ -122,6 +122,12 @@
         }
     }
 
+    td {
+        .admin__field-control  {
+            position: relative;
+        }
+    }
+
     th {
         color: @color-very-dark-gray-black;
         font-size: @font-size__base;
@@ -131,8 +137,7 @@
         &._required {
             span {
                 &:after {
-                    .lib-css(margin, @form-field-label-asterisk__margin);
-                    color: @validation__color;
+                    color: @field-label__required__color;
                     content: '*';
                 }
             }

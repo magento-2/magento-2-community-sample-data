@@ -3,7 +3,6 @@
  * Copyright © Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
-declare(strict_types=1);
 
 use Magento\Customer\Api\CustomerRepositoryInterface;
 use Magento\Customer\Api\Data\CustomerInterface;
@@ -14,9 +13,9 @@ use Magento\Framework\Indexer\IndexerInterface;
 use Magento\Framework\Indexer\IndexerRegistry;
 use Magento\TestFramework\Helper\Bootstrap;
 
+/** @var CustomerRepositoryInterface $customerRepository */
 $objectManager = Bootstrap::getObjectManager();
 
-/** @var CustomerRepositoryInterface $customerRepository */
 $customerRepository = $objectManager->create(CustomerRepositoryInterface::class);
 /** @var CustomerInterfaceFactory $customerFactory */
 $customerFactory = $objectManager->get(CustomerInterfaceFactory::class);
@@ -28,7 +27,7 @@ for ($i = 1; $i <= 5; $i++) {
         ->setGroupId(1)
         ->setLastname('Smith')
         ->setWebsiteId(1)
-        ->setEmail('customer'.$i.'@example.com');
+        ->setEmail('customer' . $i . '@example.com');
     try {
         $customerRepository->save($customer, 'password');
     } catch (\Exception $e) {

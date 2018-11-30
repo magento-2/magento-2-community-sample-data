@@ -7,7 +7,7 @@ namespace Magento\Sales\Test\Unit\Model\Config\Source\Order;
 
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
 
-class StatusTest extends \PHPUnit\Framework\TestCase
+class StatusTest extends \PHPUnit_Framework_TestCase
 {
     /** @var \Magento\Sales\Model\Config\Source\Order\Status */
     protected $object;
@@ -20,13 +20,12 @@ class StatusTest extends \PHPUnit\Framework\TestCase
 
     protected function setUp()
     {
-        $this->config = $this->createMock(\Magento\Sales\Model\Order\Config::class);
+        $this->config = $this->getMock('Magento\Sales\Model\Order\Config', [], [], '', false);
 
         $this->objectManager = new ObjectManager($this);
-        $this->object = $this->objectManager->getObject(
-            \Magento\Sales\Model\Config\Source\Order\Status::class,
-            ['orderConfig' => $this->config]
-        );
+        $this->object = $this->objectManager->getObject('Magento\Sales\Model\Config\Source\Order\Status', [
+            'orderConfig' => $this->config
+        ]);
     }
 
     public function testToOptionArray()

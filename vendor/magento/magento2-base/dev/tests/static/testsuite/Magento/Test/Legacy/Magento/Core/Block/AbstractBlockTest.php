@@ -11,7 +11,7 @@ namespace Magento\Test\Legacy\Magento\Core\Block;
 
 use Magento\Framework\App\Utility\Files;
 
-class AbstractBlockTest extends \PHPUnit\Framework\TestCase
+class AbstractBlockTest extends \PHPUnit_Framework_TestCase
 {
     public function testGetChildHtml()
     {

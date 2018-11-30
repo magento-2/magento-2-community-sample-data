@@ -6,42 +6,48 @@
 namespace Magento\Framework\ObjectManager\Test\Unit\Code\Generator;
 
 use Magento\Framework\Api\Test\Unit\Code\Generator\EntityChildTestAbstract;
+use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
 
 /**
  * Class RepositoryTest
  */
 class RepositoryTest extends EntityChildTestAbstract
 {
+    const SOURCE_CLASS_NAME = '\Magento\Framework\ObjectManager\Code\Generator\Sample';
+    const RESULT_CLASS_NAME = '\Magento\Framework\ObjectManager\Code\Generator\Sample\Repository';
+    const GENERATOR_CLASS_NAME = 'Magento\Framework\ObjectManager\Code\Generator\Repository';
+    const OUTPUT_FILE_NAME = 'SampleConverter.php';
+
     /**
-     * @return mixed|string
+     * @return string
      */
     protected function getSourceClassName()
     {
-        return '\\' . \Magento\Framework\ObjectManager\Code\Generator\Sample::class;
+        return self::SOURCE_CLASS_NAME;
     }
 
     /**
-     * @return mixed|string
+     * @return string
      */
     protected function getResultClassName()
     {
-        return '\\' . \Magento\Framework\ObjectManager\Code\Generator\Sample\Repository::class;
+        return self::RESULT_CLASS_NAME;
     }
 
     /**
-     * @return mixed|string
+     * @return string
      */
     protected function getGeneratorClassName()
     {
-        return '\\' . \Magento\Framework\ObjectManager\Code\Generator\Repository::class;
+        return self::GENERATOR_CLASS_NAME;
     }
 
     /**
-     * @return mixed|string
+     * @return string
      */
     protected function getOutputFileName()
     {
-        return 'SampleConverter.php';
+        return self::OUTPUT_FILE_NAME;
     }
 
     protected function mockDefinedClassesCall()

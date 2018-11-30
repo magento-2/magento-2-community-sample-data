@@ -8,9 +8,8 @@ namespace Magento\Customer\Model;
 
 /**
  * Test for \Magento\Customer\Model\GroupRegistry
- * @magentoAppIsolation enabled
  */
-class GroupRegistryTest extends \PHPUnit\Framework\TestCase
+class GroupRegistryTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * The group code from the fixture data.
@@ -25,7 +24,7 @@ class GroupRegistryTest extends \PHPUnit\Framework\TestCase
     protected function setUp()
     {
         $this->_model = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()
-            ->create(\Magento\Customer\Model\GroupRegistry::class);
+            ->create('Magento\Customer\Model\GroupRegistry');
     }
 
     /**
@@ -38,9 +37,9 @@ class GroupRegistryTest extends \PHPUnit\Framework\TestCase
     {
         $objectManager = \Magento\TestFramework\Helper\Bootstrap::getObjectManager();
         /** @var \Magento\Customer\Api\GroupRepositoryInterface $groupRepository */
-        $groupRepository = $objectManager->create(\Magento\Customer\Api\GroupRepositoryInterface::class);
+        $groupRepository = $objectManager->create('Magento\Customer\Api\GroupRepositoryInterface');
         /** @var \Magento\Framework\Api\SearchCriteriaBuilder $searchBuilder */
-        $searchBuilder = $objectManager->create(\Magento\Framework\Api\SearchCriteriaBuilder::class);
+        $searchBuilder = $objectManager->create('Magento\Framework\Api\SearchCriteriaBuilder');
 
         foreach ($groupRepository->getList($searchBuilder->create())->getItems() as $group) {
             if ($group->getCode() === $code) {
@@ -58,7 +57,7 @@ class GroupRegistryTest extends \PHPUnit\Framework\TestCase
     {
         $groupId = $this->_findGroupIdWithCode(self::GROUP_CODE);
         $group = $this->_model->retrieve($groupId);
-        $this->assertInstanceOf(\Magento\Customer\Model\Group::class, $group);
+        $this->assertInstanceOf('\Magento\Customer\Model\Group', $group);
         $this->assertEquals($groupId, $group->getId());
     }
 
@@ -69,7 +68,7 @@ class GroupRegistryTest extends \PHPUnit\Framework\TestCase
     {
         $groupId = 0;
         $group = $this->_model->retrieve($groupId);
-        $this->assertInstanceOf(\Magento\Customer\Model\Group::class, $group);
+        $this->assertInstanceOf('\Magento\Customer\Model\Group', $group);
         $this->assertEquals($groupId, $group->getId());
     }
 
@@ -81,12 +80,12 @@ class GroupRegistryTest extends \PHPUnit\Framework\TestCase
         $groupId = $this->_findGroupIdWithCode(self::GROUP_CODE);
         $groupBeforeDeletion = $this->_model->retrieve($groupId);
         $group2 = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()
-            ->create(\Magento\Customer\Model\Group::class);
+            ->create('Magento\Customer\Model\Group');
         $group2->load($groupId)
             ->delete();
         $groupAfterDeletion = $this->_model->retrieve($groupId);
         $this->assertEquals($groupBeforeDeletion, $groupAfterDeletion);
-        $this->assertInstanceOf(\Magento\Customer\Model\Group::class, $groupAfterDeletion);
+        $this->assertInstanceOf('\Magento\Customer\Model\Group', $groupAfterDeletion);
         $this->assertEquals($groupId, $groupAfterDeletion->getId());
     }
 
@@ -107,7 +106,7 @@ class GroupRegistryTest extends \PHPUnit\Framework\TestCase
     {
         $groupId = $this->_findGroupIdWithCode(self::GROUP_CODE);
         $group = $this->_model->retrieve($groupId);
-        $this->assertInstanceOf(\Magento\Customer\Model\Group::class, $group);
+        $this->assertInstanceOf('\Magento\Customer\Model\Group', $group);
         $group->delete();
         $this->_model->remove($groupId);
         $this->_model->retrieve($groupId);

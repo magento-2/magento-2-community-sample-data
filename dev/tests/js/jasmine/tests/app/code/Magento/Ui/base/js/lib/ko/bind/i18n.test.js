@@ -15,13 +15,15 @@ define([
         var elWithStaticText = $('<span />'),
             elWithVariable = $('<span />'),
             staticText = 'staticText',
+            staticTextTranslated = 'staticTextTranslated',
+            staticTextTranslatedRaw = '{{{staticTextTranslated}}{{staticTextTranslated}}{{staticText}}{{theme}}}',
             variableText = 'variableText',
             variable = ko.observable(variableText),
+            variableTranslated = 'variableTextTranslated',
+            variableTranslatedRaw = '{{{variableTextTranslated}}{{variableTextTranslated}}{{variableText}}{{theme}}}',
             dataTranslateAttr = '[{"shown":"&","translated":"&","original":"$","location":"Span element"}]',
             dataTranslateAttrName = 'data-translate',
             context = require.s.contexts._,
-
-            /** Stub */
             manageInlineTranslation = function (state) {
                 context.config.config = {
                     'Magento_Ui/js/lib/knockout/bindings/i18n': {
@@ -29,26 +31,19 @@ define([
                     }
                 };
             },
-
-            /** Stub */
             turnOnInlineTranslation = function () {
                 manageInlineTranslation(true);
             },
-
-            /** Stub */
             turnOffInlineTranslation = function () {
                 manageInlineTranslation(false);
-            },
-            storedConfig;
+            };
 
         beforeEach(function () {
-            storedConfig = context.config.config;
             $(document.body).append(elWithStaticText);
             $(document.body).append(elWithVariable);
         });
 
         afterEach(function () {
-            context.config.config = storedConfig;
             elWithStaticText.remove();
             elWithVariable.remove();
         });

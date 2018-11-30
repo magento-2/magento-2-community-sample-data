@@ -24,11 +24,6 @@ class AppIsolation
     private $_application;
 
     /**
-     * @var array
-     */
-    private $serverGlobalBackup;
-
-    /**
      * Constructor
      *
      * @param \Magento\TestFramework\Application $application
@@ -57,25 +52,16 @@ class AppIsolation
      */
     public function startTestSuite()
     {
-        $this->serverGlobalBackup = $_SERVER;
         $this->_isolateApp();
-    }
-
-    /**
-     * Isolate application after running test case
-     */
-    public function endTestSuite()
-    {
-        $_SERVER = $this->serverGlobalBackup;
     }
 
     /**
      * Handler for 'endTest' event
      *
-     * @param \PHPUnit\Framework\TestCase $test
+     * @param \PHPUnit_Framework_TestCase $test
      * @throws \Magento\Framework\Exception\LocalizedException
      */
-    public function endTest(\PHPUnit\Framework\TestCase $test)
+    public function endTest(\PHPUnit_Framework_TestCase $test)
     {
         $this->_hasNonIsolatedTests = true;
 

@@ -11,9 +11,7 @@ use Magento\Quote\Model\Quote\Address;
 /**
  * Multishipping checkout overview information
  *
- * @api
  * @author     Magento Core Team <core@magentocommerce.com>
- * @since 100.0.2
  */
 class Overview extends \Magento\Sales\Block\Items\AbstractItems
 {
@@ -120,7 +118,11 @@ class Overview extends \Magento\Sales\Block\Items\AbstractItems
      */
     public function getPayment()
     {
-        return $this->getCheckout()->getQuote()->getPayment();
+        if (!$this->hasData('payment')) {
+            $payment = new \Magento\Framework\DataObject($this->getRequest()->getPost('payment'));
+            $this->setData('payment', $payment);
+        }
+        return $this->_getData('payment');
     }
 
     /**
@@ -196,9 +198,9 @@ class Overview extends \Magento\Sales\Block\Items\AbstractItems
 
     /**
      * @param Address $address
-     * @return array
+     * @return mixed
      */
-    public function getShippingAddressItems($address): array
+    public function getShippingAddressItems($address)
     {
         return $address->getAllVisibleItems();
     }
@@ -295,7 +297,7 @@ class Overview extends \Magento\Sales\Block\Items\AbstractItems
      */
     public function getVirtualProductEditUrl()
     {
-        return $this->getUrl('checkout/cart');
+        return $this->getUrl('*/cart');
     }
 
     /**
@@ -305,7 +307,16 @@ class Overview extends \Magento\Sales\Block\Items\AbstractItems
      */
     public function getVirtualItems()
     {
-        return $this->getBillingAddress()->getAllVisibleItems();
+        $items = [];
+        foreach ($this->getBillingAddress()->getItemsCollection() as $_item) {
+            if ($_item->isDeleted()) {
+                continue;
+            }
+            if ($_item->getProduct()->getIsVirtual() && !$_item->getParentItemId()) {
+                $items[] = $_item;
+            }
+        }
+        return $items;
     }
 
     /**
@@ -319,19 +330,9 @@ class Overview extends \Magento\Sales\Block\Items\AbstractItems
     }
 
     /**
-     * @deprecated
-     * typo in method name, see getBillingAddressTotals()
      * @return mixed
      */
     public function getBillinAddressTotals()
-    {
-        return $this->getBillingAddressTotals();
-    }
-
-    /**
-     * @return mixed
-     */
-    public function getBillingAddressTotals()
     {
         $address = $this->getQuote()->getBillingAddress();
         return $this->getShippingAddressTotals($address);

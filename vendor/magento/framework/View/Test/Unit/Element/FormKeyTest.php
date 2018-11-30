@@ -5,7 +5,7 @@
  */
 namespace Magento\Framework\View\Test\Unit\Element;
 
-class FormKeyTest extends \PHPUnit\Framework\TestCase
+class FormKeyTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\Framework\View\Element\FormKey
@@ -16,7 +16,7 @@ class FormKeyTest extends \PHPUnit\Framework\TestCase
     {
         $objectManagerHelper = new \Magento\Framework\TestFramework\Unit\Helper\ObjectManager($this);
 
-        $formKeyMock = $this->getMockBuilder(\Magento\Framework\Data\Form\FormKey::class)
+        $formKeyMock = $this->getMockBuilder('Magento\Framework\Data\Form\FormKey')
             ->setMethods(['getFormKey'])->disableOriginalConstructor()->getMock();
 
         $formKeyMock->expects($this->any())
@@ -24,7 +24,7 @@ class FormKeyTest extends \PHPUnit\Framework\TestCase
             ->will($this->returnValue('form_key'));
 
         $this->formKeyElement = $objectManagerHelper->getObject(
-            \Magento\Framework\View\Element\FormKey::class,
+            'Magento\Framework\View\Element\FormKey',
             ['formKey' => $formKeyMock]
         );
     }

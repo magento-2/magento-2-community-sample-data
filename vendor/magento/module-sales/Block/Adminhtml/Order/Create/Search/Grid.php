@@ -8,9 +8,7 @@ namespace Magento\Sales\Block\Adminhtml\Order\Create\Search;
 /**
  * Adminhtml sales order create search products block
  *
- * @api
  * @author      Magento Core Team <core@magentocommerce.com>
- * @since 100.0.2
  */
 class Grid extends \Magento\Backend\Block\Widget\Grid\Extended
 {
@@ -181,7 +179,7 @@ class Grid extends \Magento\Backend\Block\Widget\Grid\Extended
             'name',
             [
                 'header' => __('Product'),
-                'renderer' => \Magento\Sales\Block\Adminhtml\Order\Create\Search\Grid\Renderer\Product::class,
+                'renderer' => 'Magento\Sales\Block\Adminhtml\Order\Create\Search\Grid\Renderer\Product',
                 'index' => 'name'
             ]
         );
@@ -195,7 +193,7 @@ class Grid extends \Magento\Backend\Block\Widget\Grid\Extended
                 'currency_code' => $this->getStore()->getCurrentCurrencyCode(),
                 'rate' => $this->getStore()->getBaseCurrency()->getRate($this->getStore()->getCurrentCurrencyCode()),
                 'index' => 'price',
-                'renderer' => \Magento\Sales\Block\Adminhtml\Order\Create\Search\Grid\Renderer\Price::class
+                'renderer' => 'Magento\Sales\Block\Adminhtml\Order\Create\Search\Grid\Renderer\Price'
             ]
         );
 
@@ -219,7 +217,7 @@ class Grid extends \Magento\Backend\Block\Widget\Grid\Extended
                 'filter' => false,
                 'sortable' => false,
                 'header' => __('Quantity'),
-                'renderer' => \Magento\Sales\Block\Adminhtml\Order\Create\Search\Grid\Renderer\Qty::class,
+                'renderer' => 'Magento\Sales\Block\Adminhtml\Order\Create\Search\Grid\Renderer\Qty',
                 'name' => 'qty',
                 'inline_css' => 'qty',
                 'type' => 'input',

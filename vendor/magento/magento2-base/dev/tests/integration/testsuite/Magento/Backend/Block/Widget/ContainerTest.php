@@ -8,7 +8,7 @@ namespace Magento\Backend\Block\Widget;
 /**
  * @magentoAppArea adminhtml
  */
-class ContainerTest extends \PHPUnit\Framework\TestCase
+class ContainerTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @magentoAppIsolation enabled
@@ -17,9 +17,9 @@ class ContainerTest extends \PHPUnit\Framework\TestCase
     {
         /** @var $block \Magento\Backend\Block\Widget\Container */
         $block = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->get(
-            \Magento\Framework\View\LayoutInterface::class
+            'Magento\Framework\View\LayoutInterface'
         )->createBlock(
-            \Magento\Backend\Block\Widget\Container::class,
+            'Magento\Backend\Block\Widget\Container',
             '',
             [
                 'data' => [
@@ -76,10 +76,10 @@ class ContainerTest extends \PHPUnit\Framework\TestCase
     {
         /** @var $layout \Magento\Framework\View\LayoutInterface */
         $layout = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->get(
-            \Magento\Framework\View\LayoutInterface::class
+            'Magento\Framework\View\LayoutInterface'
         );
         /** @var $block \Magento\Backend\Block\Widget\Container */
-        $block = $layout->createBlock(\Magento\Backend\Block\Widget\Container::class, $blockName);
+        $block = $layout->createBlock('Magento\Backend\Block\Widget\Container', $blockName);
         foreach ($titles as $id => $title) {
             $block->addButton($id, ['title' => $title], 0, 0, 'header');
         }

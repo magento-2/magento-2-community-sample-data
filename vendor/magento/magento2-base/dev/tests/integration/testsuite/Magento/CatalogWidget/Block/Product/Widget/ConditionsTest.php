@@ -9,7 +9,7 @@ namespace Magento\CatalogWidget\Block\Product\Widget;
 /**
  * Class ConditionsTest
  */
-class ConditionsTest extends \PHPUnit\Framework\TestCase
+class ConditionsTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\CatalogWidget\Block\Product\Widget\Conditions
@@ -17,7 +17,7 @@ class ConditionsTest extends \PHPUnit\Framework\TestCase
     protected $block;
 
     /**
-     * @var \Magento\Framework\ObjectManagerInterface
+     * @var \Magento\Framework\ObjectManager
      */
     protected $objectManager;
 
@@ -25,16 +25,16 @@ class ConditionsTest extends \PHPUnit\Framework\TestCase
     {
         $this->objectManager = \Magento\TestFramework\Helper\Bootstrap::getObjectManager();
         $this->block = $this->objectManager->create(
-            \Magento\CatalogWidget\Block\Product\Widget\Conditions::class
+            'Magento\CatalogWidget\Block\Product\Widget\Conditions'
         )->setArea('adminhtml');
     }
 
     public function testRender()
     {
-        $form = $this->objectManager->create(\Magento\Framework\Data\Form::class);
+        $form = $this->objectManager->create('Magento\Framework\Data\Form');
 
         /** @var \Magento\Framework\Data\Form\Element\Fieldset $container */
-        $container = $this->objectManager->create(\Magento\Framework\Data\Form\Element\Fieldset::class);
+        $container = $this->objectManager->create('Magento\Framework\Data\Form\Element\Fieldset');
         $container->setForm($form);
         $container->setData([
             'html_id' => 'options_fieldset67a77e971a7c331b6eaefcaf2f596097',
@@ -42,7 +42,7 @@ class ConditionsTest extends \PHPUnit\Framework\TestCase
         ]);
 
         /** @var \Magento\Framework\Data\Form\Element\Text $element */
-        $element = $this->objectManager->create(\Magento\Framework\Data\Form\Element\Text::class);
+        $element = $this->objectManager->create('Magento\Framework\Data\Form\Element\Text');
         $data = [
             'name' => 'parameters[condition]',
             'label' => 'Conditions',

@@ -51,7 +51,9 @@ class Config
     const FALSE = 'false';
     /**#@-*/
 
-    /**#@-*/
+    /**
+     * @var \Magento\Framework\App\Config\ScopeConfigInterface
+     */
     protected $scopeConfig;
 
     /**
@@ -100,7 +102,7 @@ class Config
     {
         return (string)$this->scopeConfig->getValue('newrelicreporting/general/api_url');
     }
-
+    
     /**
      * Returns configured URL for Insights API
      *
@@ -162,16 +164,6 @@ class Config
     }
 
     /**
-     * Returns configured separate apps value
-     *
-     * @return bool
-     */
-    public function isSeparateApps()
-    {
-        return (bool)$this->scopeConfig->getValue('newrelicreporting/general/separate_apps');
-    }
-
-    /**
      * Returns config setting for overall cron to be enabled
      *
      * @return bool
@@ -183,7 +175,7 @@ class Config
 
     /**
      * Sets config value
-     *
+     * 
      * @param string $pathId
      * @param mixed $value
      * @param string $scope

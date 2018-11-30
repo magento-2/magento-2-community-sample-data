@@ -8,9 +8,10 @@
 
 namespace Magento\Weee\Test\Unit\Pricing;
 
-use Magento\Weee\Pricing\TaxAdjustment;
+use \Magento\Weee\Pricing\TaxAdjustment;
 
-class TaxAdjustmentTest extends \PHPUnit\Framework\TestCase
+
+class TaxAdjustmentTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var TaxAdjustment
@@ -39,9 +40,9 @@ class TaxAdjustmentTest extends \PHPUnit\Framework\TestCase
 
     protected function setUp()
     {
-        $this->weeeHelperMock = $this->createMock(\Magento\Weee\Helper\Data::class);
-        $this->taxHelperMock = $this->createMock(\Magento\Tax\Helper\Data::class);
-        $this->priceCurrencyMock = $this->createMock(\Magento\Framework\Pricing\PriceCurrencyInterface::class);
+        $this->weeeHelperMock = $this->getMock('Magento\Weee\Helper\Data', [], [], '', false);
+        $this->taxHelperMock = $this->getMock('Magento\Tax\Helper\Data', [], [], '', false);
+        $this->priceCurrencyMock = $this->getMock('\Magento\Framework\Pricing\PriceCurrencyInterface');
         $this->priceCurrencyMock->expects($this->any())
             ->method('convertAndRound')
             ->will($this->returnCallback(
@@ -89,7 +90,8 @@ class TaxAdjustmentTest extends \PHPUnit\Framework\TestCase
         $isWeeeTaxable,
         $weeeDisplayConfig,
         $expectedResult
-    ) {
+    )
+    {
         $this->weeeHelperMock->expects($this->any())
             ->method('isEnabled')
             ->willReturn(true);
@@ -152,7 +154,7 @@ class TaxAdjustmentTest extends \PHPUnit\Framework\TestCase
      */
     public function testApplyAdjustment($amount, $weeeAttributes, $expectedResult)
     {
-        $object = $this->getMockForAbstractClass(\Magento\Framework\Pricing\SaleableInterface::class);
+        $object = $this->getMockForAbstractClass('Magento\Framework\Pricing\SaleableInterface');
 
         $this->weeeHelperMock->expects($this->any())
             ->method('getProductWeeeAttributes')

@@ -6,7 +6,6 @@
 namespace Magento\Customer\Controller;
 
 use Magento\Customer\Api\AccountManagementInterface;
-use Magento\Customer\Model\CustomerRegistry;
 use Magento\Framework\Data\Form\FormKey;
 use Magento\TestFramework\Helper\Bootstrap;
 
@@ -21,9 +20,9 @@ class AddressTest extends \Magento\TestFramework\TestCase\AbstractController
     protected function setUp()
     {
         parent::setUp();
-        $logger = $this->createMock(\Psr\Log\LoggerInterface::class);
+        $logger = $this->getMock('Psr\Log\LoggerInterface', [], [], '', false);
         $session = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->create(
-            \Magento\Customer\Model\Session::class,
+            'Magento\Customer\Model\Session',
             [$logger]
         );
         $this->accountManagement = Bootstrap::getObjectManager()->create(AccountManagementInterface::class);
@@ -72,7 +71,7 @@ class AddressTest extends \Magento\TestFramework\TestCase\AbstractController
             'POST'
         )->setPostValue(
             [
-                'form_key' => $this->_objectManager->get(\Magento\Framework\Data\Form\FormKey::class)->getFormKey(),
+                'form_key' => $this->_objectManager->get('Magento\Framework\Data\Form\FormKey')->getFormKey(),
                 'firstname' => 'James',
                 'lastname' => 'Bond',
                 'company' => 'Magento Commerce Inc.',
@@ -91,7 +90,7 @@ class AddressTest extends \Magento\TestFramework\TestCase\AbstractController
         );
         // we are overwriting the address coming from the fixture
         $this->dispatch('customer/address/formPost');
-        $this->getCustomerRegistry()->remove(1);
+
         $this->assertRedirect($this->stringContains('customer/address/index'));
         $this->assertSessionMessages(
             $this->equalTo(['You saved the address.']),
@@ -107,14 +106,6 @@ class AddressTest extends \Magento\TestFramework\TestCase\AbstractController
     }
 
     /**
-     * @return CustomerRegistry
-     */
-    private function getCustomerRegistry()
-    {
-        return $this->_objectManager->get(CustomerRegistry::class);
-    }
-
-    /**
      * @magentoDataFixture Magento/Customer/_files/customer.php
      * @magentoDataFixture Magento/Customer/_files/customer_address.php
      */
@@ -127,7 +118,7 @@ class AddressTest extends \Magento\TestFramework\TestCase\AbstractController
             'POST'
         )->setPostValue(
             [
-                'form_key' => $this->_objectManager->get(\Magento\Framework\Data\Form\FormKey::class)->getFormKey(),
+                'form_key' => $this->_objectManager->get('Magento\Framework\Data\Form\FormKey')->getFormKey(),
                 'firstname' => 'James',
                 'lastname' => 'Bond',
                 'company' => 'Magento Commerce Inc.',
@@ -144,7 +135,7 @@ class AddressTest extends \Magento\TestFramework\TestCase\AbstractController
         );
         // we are overwriting the address coming from the fixture
         $this->dispatch('customer/address/formPost');
-        $this->getCustomerRegistry()->remove(1);
+
         $this->assertRedirect($this->stringContains('customer/address/edit'));
         $this->assertSessionMessages(
             $this->equalTo(

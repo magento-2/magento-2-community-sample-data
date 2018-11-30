@@ -12,14 +12,12 @@
 $testCases = include __DIR__ . '/_algorithm_base_data.php';
 
 /** @var $installer \Magento\Catalog\Setup\CategorySetup */
-$installer = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->create(
-    \Magento\Catalog\Setup\CategorySetup::class
-);
+$installer = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->create('Magento\Catalog\Setup\CategorySetup');
 /**
  * After installation system has two categories: root one with ID:1 and Default category with ID:2
  */
 /** @var $category \Magento\Catalog\Model\Category */
-$category = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->create(\Magento\Catalog\Model\Category::class);
+$category = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->create('Magento\Catalog\Model\Category');
 $category->isObjectNew(true);
 $category->setId(
     3
@@ -43,9 +41,7 @@ $category->setId(
 
 $lastProductId = 0;
 foreach ($testCases as $index => $testCase) {
-    $category = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->create(
-        \Magento\Catalog\Model\Category::class
-    );
+    $category = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->create('Magento\Catalog\Model\Category');
     $position = $index + 1;
     $categoryId = $index + 4;
     $category->isObjectNew(true);
@@ -75,7 +71,7 @@ foreach ($testCases as $index => $testCase) {
 
     foreach ($testCase[0] as $price) {
         $product = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->create(
-            \Magento\Catalog\Model\Product::class
+            'Magento\Catalog\Model\Product'
         );
         $productId = $lastProductId + 1;
         $product->setId(

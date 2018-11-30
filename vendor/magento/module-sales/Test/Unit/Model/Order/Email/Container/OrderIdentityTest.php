@@ -7,7 +7,7 @@ namespace Magento\Sales\Test\Unit\Model\Order\Email\Container;
 
 use \Magento\Sales\Model\Order\Email\Container\OrderIdentity;
 
-class OrderIdentityTest extends \PHPUnit\Framework\TestCase
+class OrderIdentityTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\Sales\Model\Order\Email\Container\OrderIdentity
@@ -33,12 +33,18 @@ class OrderIdentityTest extends \PHPUnit\Framework\TestCase
 
     protected function setUp()
     {
-        $this->scopeConfigInterfaceMock = $this->createMock(
-            \Magento\Framework\App\Config\ScopeConfigInterface::class
+        $this->scopeConfigInterfaceMock = $this->getMock(
+            '\Magento\Framework\App\Config\ScopeConfigInterface'
         );
-        $this->storeManagerMock = $this->createMock(\Magento\Store\Model\StoreManagerInterface::class);
+        $this->storeManagerMock = $this->getMock('Magento\Store\Model\StoreManagerInterface');
 
-        $this->storeMock = $this->createPartialMock(\Magento\Store\Model\Store::class, ['getStoreId', '__wakeup']);
+        $this->storeMock = $this->getMock(
+            '\Magento\Store\Model\Store',
+            ['getStoreId', '__wakeup'],
+            [],
+            '',
+            false
+        );
 
         $this->storeId = 999999999999;
         $this->storeMock->expects($this->any())

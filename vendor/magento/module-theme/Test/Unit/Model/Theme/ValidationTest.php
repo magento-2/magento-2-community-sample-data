@@ -9,7 +9,7 @@
  */
 namespace Magento\Theme\Test\Unit\Model\Theme;
 
-class ValidationTest extends \PHPUnit\Framework\TestCase
+class ValidationTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @param array $data

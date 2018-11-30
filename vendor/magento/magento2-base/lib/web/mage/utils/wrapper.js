@@ -45,7 +45,7 @@ define([
     return {
 
         /**
-         * Wraps target function with a specified wrapper, which will receive
+         * Wraps target function with a specified wrapper, which will recieve
          * reference to the original function as a first argument.
          *
          * @param {Function} target - Function to be wrapped.

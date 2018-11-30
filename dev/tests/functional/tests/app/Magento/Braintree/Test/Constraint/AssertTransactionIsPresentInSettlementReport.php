@@ -11,7 +11,7 @@ use Magento\Sales\Test\Page\Adminhtml\OrderIndex;
 use Magento\Sales\Test\Page\Adminhtml\SalesOrderView;
 
 /**
- * Assert that comment with transaction id exists in Comments History section on order page in Admin.
+ * Class AssertTransactionIsPresentInSettlementReport
  */
 class AssertTransactionIsPresentInSettlementReport extends AbstractConstraint
 {
@@ -26,8 +26,6 @@ class AssertTransactionIsPresentInSettlementReport extends AbstractConstraint
     private $settlementReportIndex;
 
     /**
-     * Assert that comment with transaction id exists in Comments History section on order page in Admin.
-     *
      * @param $orderId
      * @param OrderIndex $orderIndex
      * @param SalesOrderView $salesOrderView
@@ -60,9 +58,7 @@ class AssertTransactionIsPresentInSettlementReport extends AbstractConstraint
     }
 
     /**
-     * Returns a string representation of the object.
-     *
-     * @return string
+     * @inheritdoc
      */
     public function toString()
     {
@@ -70,18 +66,15 @@ class AssertTransactionIsPresentInSettlementReport extends AbstractConstraint
     }
 
     /**
-     * Get transaction id from order comments.
-     *
-     * @return null|string
+     * Get transaction id from order comments
+     * @return mixed
      */
     private function getTransactionId()
     {
-        /** @var \Magento\Sales\Test\Block\Adminhtml\Order\View\Tab\Info $infoTab */
-        $infoTab = $this->salesOrderView->getOrderForm()->openTab('info')->getTab('info');
-        $latestComment = $infoTab->getCommentsHistoryBlock()->getLatestComment();
+        $comments = $this->salesOrderView->getOrderHistoryBlock()->getCommentsHistory();
         $transactionId = null;
 
-        preg_match('/(\w+-*\w+)"/', $latestComment['comment'], $matches);
+        preg_match('/(\w+-*\w+)"/', $comments, $matches);
         if (!empty($matches[1])) {
             $transactionId = $matches[1];
         }

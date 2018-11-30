@@ -7,4 +7,4 @@
 // @codingStandardsIgnoreFile
 
 ?>
-<?= /* @noEscape */ $pageData->getPageContent() ?>
+<?php /* @escapeNotVerified */ echo $pageData->getPageContent(); ?>

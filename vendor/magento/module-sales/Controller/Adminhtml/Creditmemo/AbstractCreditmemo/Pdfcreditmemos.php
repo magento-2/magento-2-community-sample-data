@@ -74,12 +74,9 @@ class Pdfcreditmemos extends \Magento\Sales\Controller\Adminhtml\Order\AbstractM
      */
     public function massAction(AbstractCollection $collection)
     {
-        $pdf = $this->pdfCreditmemo->getPdf($collection);
-        $fileContent = ['type' => 'string', 'value' => $pdf->render(), 'rm' => true];
-
         return $this->fileFactory->create(
             sprintf('creditmemo%s.pdf', $this->dateTime->date('Y-m-d_H-i-s')),
-            $fileContent,
+            $this->pdfCreditmemo->getPdf($collection)->render(),
             DirectoryList::VAR_DIR,
             'application/pdf'
         );

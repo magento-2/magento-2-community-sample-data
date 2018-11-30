@@ -37,20 +37,6 @@ class Billing extends Form
     protected $sameAsShippingCheckbox = '[name="billing-address-same-as-shipping"]';
 
     /**
-     * New address select selector.
-     *
-     * @var string
-     */
-    private $newAddressSelect = '[name="billing_address_id"]';
-
-    /**
-     * New address option value.
-     *
-     * @var string
-     */
-    private $newAddressOption = 'New Address';
-
-    /**
      * Fill billing address.
      *
      * @param Address $billingAddress
@@ -58,10 +44,6 @@ class Billing extends Form
      */
     public function fillBilling(Address $billingAddress)
     {
-        $select = $this->_rootElement->find($this->newAddressSelect, Locator::SELECTOR_CSS, 'select');
-        if ($select && $select->isVisible()) {
-            $select->setValue($this->newAddressOption);
-        }
         $this->fill($billingAddress);
         $this->clickUpdate();
         $this->waitForElementNotVisible($this->waitElement);
@@ -85,15 +67,5 @@ class Billing extends Form
     public function getSameAsShippingCheckboxValue()
     {
         return $this->_rootElement->find($this->sameAsShippingCheckbox, Locator::SELECTOR_CSS, 'checkbox')->getValue();
-    }
-
-    /**
-     * Unset "Same as shipping" checkbox value.
-     *
-     * @return void
-     */
-    public function unsetSameAsShippingCheckboxValue()
-    {
-        $this->_rootElement->find($this->sameAsShippingCheckbox, Locator::SELECTOR_CSS, 'checkbox')->setValue('No');
     }
 }

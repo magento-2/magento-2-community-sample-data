@@ -16,7 +16,7 @@ class Checkout extends \Magento\Paypal\Model\Express\Checkout
      *
      * @var string
      */
-    protected $_apiType = \Magento\Paypal\Model\Api\PayflowNvp::class;
+    protected $_apiType = 'Magento\Paypal\Model\Api\PayflowNvp';
 
     /**
      * Payment method type

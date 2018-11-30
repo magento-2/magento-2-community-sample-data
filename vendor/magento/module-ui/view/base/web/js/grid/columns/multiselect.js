@@ -2,10 +2,6 @@
  * Copyright © Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
-
-/**
- * @api
- */
 define([
     'underscore',
     'mage/translate',
@@ -227,15 +223,6 @@ define([
             });
 
             return this;
-        },
-
-        /**
-        * Selects or deselects all records on the current page.
-        *
-        * @returns {Multiselect} Chainable.
-        */
-        togglePage: function () {
-            return this.isPageSelected() ? this.deselectPage() : this.selectPage();
         },
 
         /**

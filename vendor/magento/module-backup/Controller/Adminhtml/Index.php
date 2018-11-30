@@ -12,8 +12,6 @@ use Magento\Framework\App\ObjectManager;
  * Backup admin controller
  *
  * @author      Magento Core Team <core@magentocommerce.com>
- * @api
- * @since 100.0.2
  * @SuppressWarnings(PHPMD.AllPurposeAction)
  */
 abstract class Index extends \Magento\Backend\App\Action
@@ -80,7 +78,7 @@ abstract class Index extends \Magento\Backend\App\Action
         $this->_fileFactory = $fileFactory;
         $this->_backupModelFactory = $backupModelFactory;
         $this->maintenanceMode = $maintenanceMode;
-        $this->helper = $helper ?? ObjectManager::getInstance()->get(Helper::class);
+        $this->helper = $helper ?: ObjectManager::getInstance()->get(Helper::class);
         parent::__construct($context);
     }
 

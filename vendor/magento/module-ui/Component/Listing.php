@@ -8,8 +8,7 @@ namespace Magento\Ui\Component;
 use Magento\Ui\Component\Listing\Columns;
 
 /**
- * @api
- * @since 100.0.2
+ * Class Listing
  */
 class Listing extends AbstractComponent
 {

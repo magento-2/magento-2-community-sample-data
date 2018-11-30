@@ -417,7 +417,7 @@ class ImagesFixture extends Fixture
     {
         $config = $this->fixtureModel->getValue('product-images', []);
 
-        return $config['images-count'] ?? null;
+        return isset($config['images-count']) ? $config['images-count'] : null;
     }
 
     /**
@@ -429,7 +429,7 @@ class ImagesFixture extends Fixture
     {
         $config = $this->fixtureModel->getValue('product-images', []);
 
-        return $config['images-per-product'] ?? null;
+        return isset($config['images-per-product']) ? $config['images-per-product'] : null;
     }
 
     /**

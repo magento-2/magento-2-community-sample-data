@@ -1,8 +1,10 @@
 <?php
 /**
- * @see       https://github.com/zendframework/zend-server for the canonical source repository
- * @copyright Copyright (c) 2005-2018 Zend Technologies USA Inc. (https://www.zend.com)
- * @license   https://github.com/zendframework/zend-server/blob/master/LICENSE.md New BSD License
+ * Zend Framework (http://framework.zend.com/)
+ *
+ * @link      http://github.com/zendframework/zf2 for the canonical source repository
+ * @copyright Copyright (c) 2005-2015 Zend Technologies USA Inc. (http://www.zend.com)
+ * @license   http://framework.zend.com/license/new-bsd New BSD License
  */
 
 namespace Zend\Server;
@@ -18,7 +20,7 @@ class Definition implements Countable, Iterator
     /**
      * @var array Array of \Zend\Server\Method\Definition objects
      */
-    protected $methods = [];
+    protected $methods = array();
 
     /**
      * @var bool Whether or not overwriting existing methods is allowed
@@ -61,7 +63,7 @@ class Definition implements Countable, Iterator
     {
         if (is_array($method)) {
             $method = new Method\Definition($method);
-        } elseif (! $method instanceof Method\Definition) {
+        } elseif (!$method instanceof Method\Definition) {
             throw new Exception\InvalidArgumentException('Invalid method provided');
         }
 
@@ -77,7 +79,7 @@ class Definition implements Countable, Iterator
             throw new Exception\InvalidArgumentException('No method name provided');
         }
 
-        if (! $this->overwriteExistingMethods && array_key_exists($name, $this->methods)) {
+        if (!$this->overwriteExistingMethods && array_key_exists($name, $this->methods)) {
             throw new Exception\InvalidArgumentException(sprintf('Method by name of "%s" already exists', $name));
         }
         $this->methods[$name] = $method;
@@ -167,7 +169,7 @@ class Definition implements Countable, Iterator
      */
     public function clearMethods()
     {
-        $this->methods = [];
+        $this->methods = array();
         return $this;
     }
 
@@ -178,7 +180,7 @@ class Definition implements Countable, Iterator
      */
     public function toArray()
     {
-        $methods = [];
+        $methods = array();
         foreach ($this->getMethods() as $key => $method) {
             $methods[$key] = $method->toArray();
         }

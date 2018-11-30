@@ -23,7 +23,9 @@ use Magento\Sales\Model\ResourceModel\Order\Collection as OrderCollection;
 class Pdfinvoices extends \Magento\Sales\Controller\Adminhtml\Order\PdfDocumentsMassAction
 {
     /**
-     * Authorization level of a basic admin session
+     * Authorization level of a basic admin session.
+     *
+     * @see _isAllowed()
      */
     const ADMIN_RESOURCE = 'Magento_Sales::invoice';
 
@@ -75,7 +77,6 @@ class Pdfinvoices extends \Magento\Sales\Controller\Adminhtml\Order\PdfDocuments
      *
      * @param AbstractCollection $collection
      * @return ResponseInterface|ResultInterface
-     * @throws \Exception
      */
     protected function massAction(AbstractCollection $collection)
     {
@@ -84,12 +85,9 @@ class Pdfinvoices extends \Magento\Sales\Controller\Adminhtml\Order\PdfDocuments
             $this->messageManager->addError(__('There are no printable documents related to selected orders.'));
             return $this->resultRedirectFactory->create()->setPath($this->getComponentRefererUrl());
         }
-        $pdf = $this->pdfInvoice->getPdf($invoicesCollection->getItems());
-        $fileContent = ['type' => 'string', 'value' => $pdf->render(), 'rm' => true];
-
         return $this->fileFactory->create(
             sprintf('invoice%s.pdf', $this->dateTime->date('Y-m-d_H-i-s')),
-            $fileContent,
+            $this->pdfInvoice->getPdf($invoicesCollection->getItems())->render(),
             DirectoryList::VAR_DIR,
             'application/pdf'
         );

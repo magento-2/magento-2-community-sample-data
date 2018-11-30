@@ -8,7 +8,7 @@ namespace Magento\Test\Integrity\Magento\Widget;
 /**
  * @magentoAppArea frontend
  */
-class TemplateFilesTest extends \PHPUnit\Framework\TestCase
+class TemplateFilesTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * Check if all the declared widget templates actually exist
@@ -21,11 +21,11 @@ class TemplateFilesTest extends \PHPUnit\Framework\TestCase
     {
         /** @var $blockFactory \Magento\Framework\View\Element\BlockFactory */
         $blockFactory = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->get(
-            \Magento\Framework\View\Element\BlockFactory::class
+            'Magento\Framework\View\Element\BlockFactory'
         );
         /** @var \Magento\Framework\View\Element\Template $block */
         $block = $blockFactory->createBlock($class);
-        $this->assertInstanceOf(\Magento\Framework\View\Element\Template::class, $block);
+        $this->assertInstanceOf('Magento\Framework\View\Element\Template', $block);
         $block->setTemplate((string)$template);
         $this->assertFileExists($block->getTemplateFile());
     }
@@ -39,17 +39,15 @@ class TemplateFilesTest extends \PHPUnit\Framework\TestCase
     {
         $result = [];
         /** @var $model \Magento\Widget\Model\Widget */
-        $model = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->create(
-            \Magento\Widget\Model\Widget::class
-        );
+        $model = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->create('Magento\Widget\Model\Widget');
         foreach ($model->getWidgetsArray() as $row) {
             /** @var $instance \Magento\Widget\Model\Widget\Instance */
             $instance = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->create(
-                \Magento\Widget\Model\Widget\Instance::class
+                'Magento\Widget\Model\Widget\Instance'
             );
             $config = $instance->setType($row['type'])->getWidgetConfigAsArray();
             $class = $row['type'];
-            if (is_subclass_of($class, \Magento\Framework\View\Element\Template::class)) {
+            if (is_subclass_of($class, 'Magento\Framework\View\Element\Template')) {
                 if (isset(
                     $config['parameters']
                 ) && isset(

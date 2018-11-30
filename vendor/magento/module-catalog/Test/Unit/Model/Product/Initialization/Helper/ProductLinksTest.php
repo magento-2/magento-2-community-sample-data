@@ -8,7 +8,7 @@ namespace Magento\Catalog\Test\Unit\Model\Product\Initialization\Helper;
 use Magento\Catalog\Model\Product;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
 
-class ProductLinksTest extends \PHPUnit\Framework\TestCase
+class ProductLinksTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\Catalog\Model\Product\Initialization\Helper\ProductLinks
@@ -19,7 +19,7 @@ class ProductLinksTest extends \PHPUnit\Framework\TestCase
     {
         $links = ['related' => ['data'], 'upsell' => ['data'], 'crosssell' => ['data']];
         $this->assertInstanceOf(
-            \Magento\Catalog\Model\Product::class,
+            '\Magento\Catalog\Model\Product',
             $this->model->initializeLinks($this->getMockedProduct(), $links)
         );
     }
@@ -27,7 +27,7 @@ class ProductLinksTest extends \PHPUnit\Framework\TestCase
     protected function setUp()
     {
         $helper = new \Magento\Framework\TestFramework\Unit\Helper\ObjectManager($this);
-        $this->model = $helper->getObject(\Magento\Catalog\Model\Product\Initialization\Helper\ProductLinks::class);
+        $this->model = $helper->getObject('Magento\Catalog\Model\Product\Initialization\Helper\ProductLinks');
     }
 
     /**
@@ -35,7 +35,7 @@ class ProductLinksTest extends \PHPUnit\Framework\TestCase
      */
     private function getMockedProduct()
     {
-        $mockBuilder = $this->getMockBuilder(\Magento\Catalog\Model\Product::class)
+        $mockBuilder = $this->getMockBuilder('\Magento\Catalog\Model\Product')
             ->setMethods(
                 [
                     'getRelatedReadonly',

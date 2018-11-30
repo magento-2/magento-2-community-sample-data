@@ -163,7 +163,7 @@ class Collection extends Fieldset
      */
     public function setObject($object)
     {
-        if (! is_array($object) && ! $object instanceof Traversable) {
+        if (!is_array($object) && !$object instanceof Traversable) {
             throw new Exception\InvalidArgumentException(sprintf(
                 '%s expects an array or Traversable object argument; received "%s"',
                 __METHOD__,
@@ -172,7 +172,7 @@ class Collection extends Fieldset
         }
 
         $this->object = $object;
-        $this->count  = max(count($object), $this->count);
+        $this->count  = count($object) > $this->count ? count($object) : $this->count;
 
         return $this;
     }
@@ -187,7 +187,7 @@ class Collection extends Fieldset
      */
     public function populateValues($data)
     {
-        if (! is_array($data) && ! $data instanceof Traversable) {
+        if (!is_array($data) && !$data instanceof Traversable) {
             throw new Exception\InvalidArgumentException(sprintf(
                 '%s expects an array or Traversable set of data; received "%s"',
                 __METHOD__,
@@ -195,7 +195,12 @@ class Collection extends Fieldset
             ));
         }
 
-        if (! $this->allowRemove && count($data) < $this->count) {
+        // Can't do anything with empty data
+        if (empty($data)) {
+            return;
+        }
+
+        if (!$this->allowRemove && count($data) < $this->count) {
             throw new Exception\DomainException(sprintf(
                 'There are fewer elements than specified in the collection (%s). Either set the allow_remove option '
                 . 'to true, or re-submit the form.',
@@ -210,7 +215,7 @@ class Collection extends Fieldset
                 continue;
             }
 
-            if (! $this->allowRemove) {
+            if (!$this->allowRemove) {
                 throw new Exception\DomainException(sprintf(
                     'Elements have been removed from the collection (%s) but the allow_remove option is not true.',
                     get_class($this)
@@ -242,7 +247,7 @@ class Collection extends Fieldset
             }
         }
 
-        if (! $this->createNewObjects()) {
+        if (!$this->createNewObjects()) {
             $this->replaceTemplateObjects();
         }
     }
@@ -261,18 +266,16 @@ class Collection extends Fieldset
      * Bind values to the object
      *
      * @param array $values
-     * @param array $validationGroup
-     *
      * @return array|mixed|void
      */
-    public function bindValues(array $values = [], array $validationGroup = null)
+    public function bindValues(array $values = [])
     {
         $collection = [];
         foreach ($values as $name => $value) {
             $element = $this->get($name);
 
             if ($element instanceof FieldsetInterface) {
-                $collection[] = $element->bindValues($value, $validationGroup);
+                $collection[] = $element->bindValues($value);
             } else {
                 $collection[] = $value;
             }
@@ -313,13 +316,13 @@ class Collection extends Fieldset
     public function setTargetElement($elementOrFieldset)
     {
         if (is_array($elementOrFieldset)
-            || ($elementOrFieldset instanceof Traversable && ! $elementOrFieldset instanceof ElementInterface)
+            || ($elementOrFieldset instanceof Traversable && !$elementOrFieldset instanceof ElementInterface)
         ) {
             $factory = $this->getFormFactory();
             $elementOrFieldset = $factory->create($elementOrFieldset);
         }
 
-        if (! $elementOrFieldset instanceof ElementInterface) {
+        if (!$elementOrFieldset instanceof ElementInterface) {
             throw new Exception\InvalidArgumentException(sprintf(
                 '%s requires that $elementOrFieldset be an object implementing %s; received "%s"',
                 __METHOD__,
@@ -508,7 +511,7 @@ class Collection extends Fieldset
             $this->object = ArrayUtils::iteratorToArray($this->object, false);
         }
 
-        if (! is_array($this->object)) {
+        if (!is_array($this->object)) {
             return [];
         }
 
@@ -530,7 +533,7 @@ class Collection extends Fieldset
                 $targetElement = clone $this->targetElement;
                 $targetElement->setObject($value);
                 $values[$key] = $targetElement->extract();
-                if (! $this->createNewObjects() && $this->has($key)) {
+                if (!$this->createNewObjects() && $this->has($key)) {
                     $this->get($key)->setObject($value);
                 }
                 continue;
@@ -539,7 +542,7 @@ class Collection extends Fieldset
             // If the target element is a non-fieldset element, just use the value
             if ($this->targetElement instanceof ElementInterface) {
                 $values[$key] = $value;
-                if (! $this->createNewObjects() && $this->has($key)) {
+                if (!$this->createNewObjects() && $this->has($key)) {
                     $this->get($key)->setValue($value);
                 }
                 continue;
@@ -575,7 +578,7 @@ class Collection extends Fieldset
 
         $this->add($elementOrFieldset);
 
-        if (! $this->allowAdd && $this->count() > $this->count) {
+        if (!$this->allowAdd && $this->count() > $this->count) {
             throw new Exception\DomainException(sprintf(
                 'There are more elements than specified in the collection (%s). Either set the allow_add option ' .
                 'to true, or re-submit the form.',
@@ -593,7 +596,7 @@ class Collection extends Fieldset
      */
     protected function createTemplateElement()
     {
-        if (! $this->shouldCreateTemplate) {
+        if (!$this->shouldCreateTemplate) {
             return;
         }
 
@@ -617,7 +620,7 @@ class Collection extends Fieldset
     {
         $fieldsets = $this->getFieldsets();
 
-        if (! count($fieldsets) || ! $this->object) {
+        if (!count($fieldsets) || !$this->object) {
             return;
         }
 

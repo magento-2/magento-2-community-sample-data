@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2018 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 
@@ -9,7 +9,7 @@ namespace Magento\Setup\Test\Unit\Fixtures;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
 use Magento\Setup\Fixtures\CustomersFixture;
 
-class CustomersFixtureTest extends \PHPUnit\Framework\TestCase
+class CustomersFixtureTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \PHPUnit_Framework_MockObject_MockObject|\Magento\Setup\Fixtures\FixtureModel
@@ -43,21 +43,45 @@ class CustomersFixtureTest extends \PHPUnit\Framework\TestCase
 
     public function setUp()
     {
-        $this->fixtureModelMock = $this->createMock(\Magento\Setup\Fixtures\FixtureModel::class);
+        $this->fixtureModelMock = $this->getMock(
+            \Magento\Setup\Fixtures\FixtureModel::class,
+            [],
+            [],
+            '',
+            false
+        );
 
-        $this->customerGeneratorMock =
-            $this->createMock(\Magento\Setup\Model\FixtureGenerator\CustomerGenerator::class);
+        $this->customerGeneratorMock = $this->getMock(
+            \Magento\Setup\Model\FixtureGenerator\CustomerGenerator::class,
+            [],
+            [],
+            '',
+            false
+        );
 
-        $this->customerDataGeneratorFactoryMock =
-            $this->createMock(\Magento\Setup\Model\Customer\CustomerDataGeneratorFactory::class);
+        $this->customerDataGeneratorFactoryMock = $this->getMock(
+            \Magento\Setup\Model\Customer\CustomerDataGeneratorFactory::class,
+            [],
+            [],
+            '',
+            false
+        );
 
-        $this->collectionFactoryMock =
-            $this->createPartialMock(
-                \Magento\Customer\Model\ResourceModel\Customer\CollectionFactory::class,
-                ['create']
-            );
+        $this->collectionFactoryMock = $this->getMock(
+            \Magento\Customer\Model\ResourceModel\Customer\CollectionFactory::class,
+            ['create'],
+            [],
+            '',
+            false
+        );
 
-        $this->collectionMock = $this->createMock(\Magento\Customer\Model\ResourceModel\Customer\Collection::class);
+        $this->collectionMock = $this->getMock(
+            \Magento\Customer\Model\ResourceModel\Customer\Collection::class,
+            [],
+            [],
+            '',
+            false
+        );
 
         $this->model = (new ObjectManager($this))->getObject(CustomersFixture::class, [
             'fixtureModel' => $this->fixtureModelMock,
@@ -83,7 +107,13 @@ class CustomersFixtureTest extends \PHPUnit\Framework\TestCase
             ->method('getValue')
             ->will($this->onConsecutiveCalls($customersNumber, $customerConfig));
 
-        $customerDataGeneratorMock = $this->createMock(\Magento\Setup\Model\Customer\CustomerDataGenerator::class);
+        $customerDataGeneratorMock = $this->getMock(
+            \Magento\Setup\Model\Customer\CustomerDataGenerator::class,
+            [],
+            [],
+            '',
+            false
+        );
 
         $this->customerDataGeneratorFactoryMock
             ->expects($this->once())

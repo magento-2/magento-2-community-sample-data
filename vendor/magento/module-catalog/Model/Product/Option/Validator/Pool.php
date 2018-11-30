@@ -29,6 +29,6 @@ class Pool
      */
     public function get($type)
     {
-        return $this->validators[$type] ?? $this->validators['default'];
+        return isset($this->validators[$type]) ? $this->validators[$type] : $this->validators['default'];
     }
 }

@@ -4,14 +4,13 @@
  * See COPYING.txt for license details.
  */
 
-namespace Magento\Rule\Model\ResourceModel\Rule\Collection;
-
 /**
  * Abstract Rule entity resource collection model
  *
- * @api
- * @since 100.0.2
+ * @author Magento Core Team <core@magentocommerce.com>
  */
+namespace Magento\Rule\Model\ResourceModel\Rule\Collection;
+
 abstract class AbstractCollection extends \Magento\Framework\Model\ResourceModel\Db\Collection\AbstractCollection
 {
     /**

@@ -16,26 +16,26 @@ namespace Monolog\Processor;
  *
  * @author Rob Jensen
  */
-abstract class MemoryProcessor implements ProcessorInterface
+abstract class MemoryProcessor
 {
     /**
-     * @var bool If true, get the real size of memory allocated from system. Else, only the memory used by emalloc() is reported.
+     * @var boolean If true, get the real size of memory allocated from system. Else, only the memory used by emalloc() is reported.
      */
     protected $realUsage;
 
     /**
-     * @var bool If true, then format memory size to human readable string (MB, KB, B depending on size)
+     * @var boolean If true, then format memory size to human readable string (MB, KB, B depending on size)
      */
     protected $useFormatting;
 
     /**
-     * @param bool $realUsage     Set this to true to get the real size of memory allocated from system.
-     * @param bool $useFormatting If true, then format memory size to human readable string (MB, KB, B depending on size)
+     * @param boolean $realUsage     Set this to true to get the real size of memory allocated from system.
+     * @param boolean $useFormatting If true, then format memory size to human readable string (MB, KB, B depending on size)
      */
     public function __construct($realUsage = true, $useFormatting = true)
     {
-        $this->realUsage = (bool) $realUsage;
-        $this->useFormatting = (bool) $useFormatting;
+        $this->realUsage = (boolean) $realUsage;
+        $this->useFormatting = (boolean) $useFormatting;
     }
 
     /**

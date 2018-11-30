@@ -59,7 +59,7 @@ class Add extends \Magento\Catalog\Controller\Adminhtml\Category
             $category->addData($categoryData);
         }
 
-        $resultPageFactory = $this->_objectManager->get(\Magento\Framework\View\Result\PageFactory::class);
+        $resultPageFactory = $this->_objectManager->get('Magento\Framework\View\Result\PageFactory');
         /** @var \Magento\Backend\Model\View\Result\Page $resultPage */
         $resultPage = $resultPageFactory->create();
 

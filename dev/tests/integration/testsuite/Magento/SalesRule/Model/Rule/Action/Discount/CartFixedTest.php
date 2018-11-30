@@ -8,16 +8,13 @@ namespace Magento\SalesRule\Model\Rule\Action\Discount;
 use Magento\Catalog\Model\Product;
 use Magento\Catalog\Model\ProductRepository;
 use Magento\Quote\Api\Data\CartItemInterface;
-use Magento\Quote\Api\GuestCartItemRepositoryInterface;
-use Magento\Quote\Api\GuestCartManagementInterface;
 use Magento\Quote\Api\GuestCartTotalRepositoryInterface;
 use Magento\Quote\Api\GuestCouponManagementInterface;
+use Magento\Quote\Api\GuestCartItemRepositoryInterface;
+use Magento\Quote\Api\GuestCartManagementInterface;
 use Magento\TestFramework\Helper\Bootstrap;
 
-/**
- * Tests for Magento\SalesRule\Model\Rule\Action\Discount\CartFixed.
- */
-class CartFixedTest extends \PHPUnit\Framework\TestCase
+class CartFixedTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var GuestCartManagementInterface
@@ -34,9 +31,6 @@ class CartFixedTest extends \PHPUnit\Framework\TestCase
      */
     private $couponManagement;
 
-    /**
-     * @inheritdoc
-     */
     protected function setUp()
     {
         $this->cartManagement = Bootstrap::getObjectManager()->create(GuestCartManagementInterface::class);
@@ -48,7 +42,6 @@ class CartFixedTest extends \PHPUnit\Framework\TestCase
      * Applies fixed discount amount on whole cart.
      *
      * @param array $productPrices
-     * @return void
      * @magentoDbIsolation enabled
      * @magentoDataFixture Magento/SalesRule/_files/coupon_cart_fixed_discount.php
      * @dataProvider applyFixedDiscountDataProvider
@@ -88,36 +81,6 @@ class CartFixedTest extends \PHPUnit\Framework\TestCase
             'prices when discount had wrong value 15.01' => [[22, 14, 43, 7.50, 0.00]],
             'prices when discount had wrong value 14.99' => [[47, 33, 9.50, 42, 0.00]],
         ];
-    }
-
-    /**
-     * Tests that coupon with wildcard symbols in code can be successfully applied.
-     *
-     * @magentoDataFixture Magento/SalesRule/_files/coupon_code_with_wildcard.php
-     */
-    public function testCouponCodeWithWildcard()
-    {
-        $expectedDiscount = '-5.00';
-        $couponCode =  '2?ds5!2d';
-        $cartId = $this->cartManagement->createEmptyCart();
-        $productPrice = 10;
-
-        $product = $this->createProduct($productPrice);
-
-        /** @var CartItemInterface $quoteItem */
-        $quoteItem = Bootstrap::getObjectManager()->create(CartItemInterface::class);
-        $quoteItem->setQuoteId($cartId);
-        $quoteItem->setProduct($product);
-        $quoteItem->setQty(1);
-        $this->cartItemRepository->save($quoteItem);
-
-        $this->couponManagement->set($cartId, $couponCode);
-
-        /** @var GuestCartTotalRepositoryInterface $cartTotalRepository */
-        $cartTotalRepository = Bootstrap::getObjectManager()->get(GuestCartTotalRepositoryInterface::class);
-        $total = $cartTotalRepository->get($cartId);
-
-        $this->assertEquals($expectedDiscount, $total->getBaseDiscountAmount());
     }
 
     /**

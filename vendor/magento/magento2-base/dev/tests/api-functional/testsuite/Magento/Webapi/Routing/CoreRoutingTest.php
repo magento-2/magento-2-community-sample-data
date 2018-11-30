@@ -73,8 +73,7 @@ class CoreRoutingTest extends \Magento\Webapi\Routing\BaseService
                 'operation' => 'testModule3ErrorV1ServiceException',
             ],
         ];
-        $this->expectException('SoapFault');
-        $this->expectExceptionMessage('Generic service exception');
+        $this->setExpectedException('SoapFault', 'Generic service exception');
         $this->_webApiCall($serviceInfo);
     }
 
@@ -83,7 +82,7 @@ class CoreRoutingTest extends \Magento\Webapi\Routing\BaseService
         $this->_markTestAsRestOnly();
         /** @var $curlClient CurlClient */
         $curlClient = Bootstrap::getObjectManager()->get(
-            \Magento\TestFramework\TestCase\Webapi\Adapter\Rest\CurlClient::class
+            'Magento\TestFramework\TestCase\Webapi\Adapter\Rest\CurlClient'
         );
         $response = $curlClient->get('/V1/testmodule1/resource1/1', [], ['Accept:']);
         $this->assertEquals('testProduct1', $response['name'], "Empty Accept header failed to return response.");

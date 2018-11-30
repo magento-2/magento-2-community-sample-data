@@ -132,9 +132,7 @@ class Form extends \Magento\Backend\Block\Widget\Form\Generic
             'note',
             [
                 'label' => __('Summary Rating'),
-                'text' => $this->getLayout()->createBlock(
-                    \Magento\Review\Block\Adminhtml\Rating\Summary::class
-                )->toHtml()
+                'text' => $this->getLayout()->createBlock('Magento\Review\Block\Adminhtml\Rating\Summary')->toHtml()
             ]
         );
 
@@ -145,7 +143,7 @@ class Form extends \Magento\Backend\Block\Widget\Form\Generic
                 'label' => __('Detailed Rating'),
                 'required' => true,
                 'text' => '<div id="rating_detail">' . $this->getLayout()->createBlock(
-                    \Magento\Review\Block\Adminhtml\Rating\Detailed::class
+                    'Magento\Review\Block\Adminhtml\Rating\Detailed'
                 )->toHtml() . '</div>'
             ]
         );
@@ -176,7 +174,7 @@ class Form extends \Magento\Backend\Block\Widget\Form\Generic
                 ]
             );
             $renderer = $this->getLayout()->createBlock(
-                \Magento\Backend\Block\Store\Switcher\Form\Renderer\Fieldset\Element::class
+                'Magento\Backend\Block\Store\Switcher\Form\Renderer\Fieldset\Element'
             );
             $field->setRenderer($renderer);
             $review->setSelectStores($review->getStores());

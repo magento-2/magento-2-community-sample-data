@@ -10,9 +10,6 @@ namespace Magento\Framework\Filter;
  *
  * Truncate a string to a certain length if necessary, appending the $etc string.
  * $remainder will contain the string that has been replaced with $etc.
- *
- * @deprecated
- * @see \Magento\Framework\Filter\TruncateFilter
  */
 class Truncate implements \Zend_Filter_Interface
 {

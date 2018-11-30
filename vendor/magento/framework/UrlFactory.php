@@ -4,6 +4,8 @@
  * See COPYING.txt for license details.
  */
 
+// @codingStandardsIgnoreFile
+
 namespace Magento\Framework;
 
 class UrlFactory
@@ -22,10 +24,8 @@ class UrlFactory
      * @param ObjectManagerInterface $objectManager
      * @param string $instanceName
      */
-    public function __construct(
-        ObjectManagerInterface $objectManager,
-        $instanceName = UrlInterface::class
-    ) {
+    public function __construct(ObjectManagerInterface $objectManager, $instanceName = UrlInterface::class)
+    {
         $this->_objectManager = $objectManager;
         $this->_instanceName = $instanceName;
     }

@@ -10,7 +10,6 @@ use Magento\Framework\Search\Request\FilterInterface;
 
 /**
  * Term Filter
- * @api
  */
 class Term extends AbstractKeyValuePair implements FilterInterface
 {

@@ -6,17 +6,26 @@
 namespace Magento\Braintree\Model\Ui;
 
 use Magento\Braintree\Gateway\Config\Config;
+use Magento\Braintree\Gateway\Config\PayPal\Config as PayPalConfig;
 use Magento\Braintree\Gateway\Request\PaymentDataBuilder;
+use Magento\Braintree\Model\Adapter\BraintreeAdapter;
 use Magento\Braintree\Model\Adapter\BraintreeAdapterFactory;
 use Magento\Checkout\Model\ConfigProviderInterface;
+use Magento\Framework\App\ObjectManager;
+use Magento\Framework\Locale\ResolverInterface;
 use Magento\Framework\Session\SessionManagerInterface;
 
 /**
  * Class ConfigProvider
  */
-class ConfigProvider implements ConfigProviderInterface
+final class ConfigProvider implements ConfigProviderInterface
 {
     const CODE = 'braintree';
+
+    /**
+     * @deprecated
+     */
+    const PAYPAL_CODE = 'braintree_paypal';
 
     const CC_VAULT_CODE = 'braintree_cc_vault';
 
@@ -41,20 +50,25 @@ class ConfigProvider implements ConfigProviderInterface
     private $session;
 
     /**
-     * Constructor
-     *
      * @param Config $config
-     * @param BraintreeAdapterFactory $adapterFactory
-     * @param SessionManagerInterface $session
+     * @param PayPalConfig $payPalConfig No longer used by internal code and not recommended.
+     * @param BraintreeAdapter $adapter No longer used by internal code and not recommended.
+     * @param ResolverInterface $localeResolver No longer used by internal code and not recommended.
+     * @param SessionManagerInterface|null $session
+     * @param BraintreeAdapterFactory|null $adapterFactory
+     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      */
     public function __construct(
         Config $config,
-        BraintreeAdapterFactory $adapterFactory,
-        SessionManagerInterface $session
+        PayPalConfig $payPalConfig,
+        BraintreeAdapter $adapter,
+        ResolverInterface $localeResolver,
+        SessionManagerInterface $session = null,
+        BraintreeAdapterFactory $adapterFactory = null
     ) {
         $this->config = $config;
-        $this->adapterFactory = $adapterFactory;
-        $this->session = $session;
+        $this->adapterFactory = $adapterFactory ?: ObjectManager::getInstance()->get(BraintreeAdapterFactory::class);
+        $this->session = $session ?: ObjectManager::getInstance()->get(SessionManagerInterface::class);
     }
 
     /**

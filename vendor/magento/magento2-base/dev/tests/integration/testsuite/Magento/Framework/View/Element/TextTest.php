@@ -5,7 +5,7 @@
  */
 namespace Magento\Framework\View\Element;
 
-class TextTest extends \PHPUnit\Framework\TestCase
+class TextTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\Framework\View\Element\Text
@@ -15,9 +15,9 @@ class TextTest extends \PHPUnit\Framework\TestCase
     protected function setUp()
     {
         $this->_block = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->get(
-            \Magento\Framework\View\LayoutInterface::class
+            'Magento\Framework\View\LayoutInterface'
         )->createBlock(
-            \Magento\Framework\View\Element\Text::class
+            'Magento\Framework\View\Element\Text'
         );
     }
 

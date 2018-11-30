@@ -3,16 +3,13 @@
  * See COPYING.txt for license details.
  */
 
-/**
- * @api
- */
 define([
     'jquery',
     'underscore',
-    'mage/translate',
     'jquery/ui',
-    'Magento_Ui/js/modal/modal'
-], function ($, _, $t) {
+    'Magento_Ui/js/modal/modal',
+    'mage/translate'
+], function ($, _) {
     'use strict';
 
     $.widget('mage.confirm', $.mage.modal, {
@@ -38,7 +35,7 @@ define([
                 cancel: function () {}
             },
             buttons: [{
-                text: $t('Cancel'),
+                text: $.mage.__('Cancel'),
                 class: 'action-secondary action-dismiss',
 
                 /**
@@ -48,7 +45,7 @@ define([
                     this.closeModal(event);
                 }
             }, {
-                text: $t('OK'),
+                text: $.mage.__('OK'),
                 class: 'action-primary action-accept',
 
                 /**

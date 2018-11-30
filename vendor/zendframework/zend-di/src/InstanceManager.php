@@ -3,7 +3,7 @@
  * Zend Framework (http://framework.zend.com/)
  *
  * @link      http://github.com/zendframework/zf2 for the canonical source repository
- * @copyright Copyright (c) 2005-2016 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright Copyright (c) 2005-2015 Zend Technologies USA Inc. (http://www.zend.com)
  * @license   http://framework.zend.com/license/new-bsd New BSD License
  */
 
@@ -18,52 +18,52 @@ class InstanceManager /* implements InstanceManagerInterface */
      * Array of shared instances
      * @var array
      */
-    protected $sharedInstances = [];
+    protected $sharedInstances = array();
 
     /**
      * Array of shared instances with params
      * @var array
      */
-    protected $sharedInstancesWithParams = ['hashShort' => [], 'hashLong' => []];
+    protected $sharedInstancesWithParams = array('hashShort' => array(), 'hashLong' => array());
 
     /**
      * Array of class aliases
      * @var array key: alias, value: class
      */
-    protected $aliases = [];
+    protected $aliases = array();
 
     /**
      * The template to use for housing configuration information
      * @var array
      */
-    protected $configurationTemplate = [
+    protected $configurationTemplate = array(
         /**
          * alias|class => alias|class
          * interface|abstract => alias|class|object
          * name => value
          */
-        'parameters' => [],
+        'parameters' => array(),
         /**
          * injection type => array of ordered method params
          */
-        'injections' => [],
+        'injections' => array(),
         /**
          * alias|class => bool
          */
         'shared' => true
-    ];
+    );
 
     /**
      * An array of instance configuration data
      * @var array
      */
-    protected $configurations = [];
+    protected $configurations = array();
 
     /**
      * An array of globally preferred implementations for interfaces/abstracts
      * @var array
      */
-    protected $typePreferences = [];
+    protected $typePreferences = array();
 
     /**
      * Does this instance manager have this shared instance
@@ -137,7 +137,7 @@ class InstanceManager /* implements InstanceManagerInterface */
 
         if (!isset($this->sharedInstancesWithParams[$hashKey])
             || !is_array($this->sharedInstancesWithParams[$hashKey])) {
-            $this->sharedInstancesWithParams[$hashKey] = [];
+            $this->sharedInstancesWithParams[$hashKey] = array();
         }
 
         $this->sharedInstancesWithParams['hashShort'][$hashKey] = true;
@@ -252,7 +252,7 @@ class InstanceManager /* implements InstanceManagerInterface */
      * @param  array                              $parameters
      * @return void
      */
-    public function addAlias($alias, $class, array $parameters = [])
+    public function addAlias($alias, $class, array $parameters = array())
     {
         if (!preg_match('#^[a-zA-Z0-9-_]+$#', $alias)) {
             throw new Exception\InvalidArgumentException(
@@ -298,11 +298,11 @@ class InstanceManager /* implements InstanceManagerInterface */
             $this->configurations[$key] = $this->configurationTemplate;
         }
         // Ignore anything but 'parameters' and 'injections'
-        $configuration = [
-            'parameters' => isset($configuration['parameters']) ? $configuration['parameters'] : [],
-            'injections' => isset($configuration['injections']) ? $configuration['injections'] : [],
+        $configuration = array(
+            'parameters' => isset($configuration['parameters']) ? $configuration['parameters'] : array(),
+            'injections' => isset($configuration['injections']) ? $configuration['injections'] : array(),
             'shared'     => isset($configuration['shared'])     ? $configuration['shared']     : true
-        ];
+        );
         $this->configurations[$key] = array_replace_recursive($this->configurations[$key], $configuration);
     }
 
@@ -313,7 +313,7 @@ class InstanceManager /* implements InstanceManagerInterface */
      */
     public function getClasses()
     {
-        $classes = [];
+        $classes = array();
         foreach ($this->configurations as $name => $data) {
             if (strpos($name, 'alias') === 0) {
                 continue;
@@ -349,7 +349,7 @@ class InstanceManager /* implements InstanceManagerInterface */
      */
     public function setParameters($aliasOrClass, array $parameters)
     {
-        $this->setConfig($aliasOrClass, ['parameters' => $parameters], true);
+        $this->setConfig($aliasOrClass, array('parameters' => $parameters), true);
     }
 
     /**
@@ -362,7 +362,7 @@ class InstanceManager /* implements InstanceManagerInterface */
      */
     public function setInjections($aliasOrClass, array $injections)
     {
-        $this->setConfig($aliasOrClass, ['injections' => $injections], true);
+        $this->setConfig($aliasOrClass, array('injections' => $injections), true);
     }
 
     /**
@@ -374,7 +374,7 @@ class InstanceManager /* implements InstanceManagerInterface */
      */
     public function setShared($aliasOrClass, $isShared)
     {
-        $this->setConfig($aliasOrClass, ['shared' => (bool) $isShared], true);
+        $this->setConfig($aliasOrClass, array('shared' => (bool) $isShared), true);
     }
 
     /**
@@ -420,7 +420,7 @@ class InstanceManager /* implements InstanceManagerInterface */
             return $this->typePreferences[$key];
         }
 
-        return [];
+        return array();
     }
 
     /**
@@ -447,7 +447,7 @@ class InstanceManager /* implements InstanceManagerInterface */
     {
         $key = ($this->hasAlias($interfaceOrAbstract)) ? 'alias:' . $interfaceOrAbstract : $interfaceOrAbstract;
         if (!isset($this->typePreferences[$key])) {
-            $this->typePreferences[$key] = [];
+            $this->typePreferences[$key] = array();
         }
         $this->typePreferences[$key][] = $preferredImplementation;
 
@@ -503,7 +503,7 @@ class InstanceManager /* implements InstanceManagerInterface */
                     $hashValue .= $param . '|';
                     break;
                 case 'array':
-                    $hashValue .= $this->createHashForValues($classOrAlias, $param) . '|';
+                    $hashValue .= 'Array|';
                     break;
                 case 'resource':
                     $hashValue .= 'resource|';

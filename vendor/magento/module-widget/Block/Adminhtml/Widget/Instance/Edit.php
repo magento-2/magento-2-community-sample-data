@@ -11,10 +11,6 @@
  */
 namespace Magento\Widget\Block\Adminhtml\Widget\Instance;
 
-/**
- * @api
- * @since 100.0.2
- */
 class Edit extends \Magento\Backend\Block\Widget\Form\Container
 {
     /**

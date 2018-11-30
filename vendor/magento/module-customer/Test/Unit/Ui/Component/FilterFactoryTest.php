@@ -7,7 +7,7 @@ namespace Magento\Customer\Test\Unit\Ui\Component;
 
 use Magento\Customer\Ui\Component\FilterFactory;
 
-class FilterFactoryTest extends \PHPUnit\Framework\TestCase
+class FilterFactoryTest extends \PHPUnit_Framework_TestCase
 {
     /** @var \Magento\Customer\Api\Data\OptionInterface|\PHPUnit_Framework_MockObject_MockObject */
     protected $attributeOption;
@@ -30,29 +30,32 @@ class FilterFactoryTest extends \PHPUnit\Framework\TestCase
     protected function setUp()
     {
         $this->context = $this->getMockForAbstractClass(
-            \Magento\Framework\View\Element\UiComponent\ContextInterface::class,
+            'Magento\Framework\View\Element\UiComponent\ContextInterface',
             [],
             '',
             false
         );
-        $this->componentFactory = $this->createPartialMock(
-            \Magento\Framework\View\Element\UiComponentFactory::class,
-            ['create']
+        $this->componentFactory = $this->getMock(
+            'Magento\Framework\View\Element\UiComponentFactory',
+            ['create'],
+            [],
+            '',
+            false
         );
         $this->attributeMetadata = $this->getMockForAbstractClass(
-            \Magento\Customer\Api\Data\AttributeMetadataInterface::class,
+            'Magento\Customer\Api\Data\AttributeMetadataInterface',
             [],
             '',
             false
         );
         $this->filter = $this->getMockForAbstractClass(
-            \Magento\Ui\Component\Listing\Columns\ColumnInterface::class,
+            'Magento\Ui\Component\Listing\Columns\ColumnInterface',
             [],
             '',
             false
         );
         $this->attributeOption = $this->getMockForAbstractClass(
-            \Magento\Customer\Api\Data\OptionInterface::class,
+            'Magento\Customer\Api\Data\OptionInterface',
             [],
             '',
             false

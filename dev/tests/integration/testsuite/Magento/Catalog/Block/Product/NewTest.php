@@ -9,9 +9,8 @@ namespace Magento\Catalog\Block\Product;
  * Test class for \Magento\Catalog\Block\Product\New.
  *
  * @magentoDataFixture Magento/Catalog/_files/products_new.php
- * @magentoDbIsolation disabled
  */
-class NewTest extends \PHPUnit\Framework\TestCase
+class NewTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\Catalog\Block\Product\NewProduct
@@ -24,21 +23,21 @@ class NewTest extends \PHPUnit\Framework\TestCase
          * @var \Magento\Customer\Api\GroupManagementInterface $groupManagement
          */
         $groupManagement = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()
-            ->get(\Magento\Customer\Api\GroupManagementInterface::class);
+            ->get('Magento\Customer\Api\GroupManagementInterface');
         $notLoggedInId = $groupManagement->getNotLoggedInGroup()->getId();
 
         \Magento\TestFramework\Helper\Bootstrap::getInstance()->loadArea(\Magento\Framework\App\Area::AREA_FRONTEND);
         \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->get(
-            \Magento\Framework\App\Http\Context::class
+            'Magento\Framework\App\Http\Context'
         )->setValue(
             \Magento\Customer\Model\Context::CONTEXT_GROUP,
             $notLoggedInId,
             $notLoggedInId
         );
         $this->_block = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->get(
-            \Magento\Framework\View\LayoutInterface::class
+            'Magento\Framework\View\LayoutInterface'
         )->createBlock(
-            \Magento\Catalog\Block\Product\NewProduct::class
+            'Magento\Catalog\Block\Product\NewProduct'
         );
     }
 
@@ -55,7 +54,7 @@ class NewTest extends \PHPUnit\Framework\TestCase
         $this->assertSame(1, array_shift($keys));
         $this->assertEquals(
             \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->get(
-                \Magento\Store\Model\StoreManagerInterface::class
+                'Magento\Store\Model\StoreManagerInterface'
             )->getStore()->getId(),
             $info[1]
         );
@@ -63,7 +62,7 @@ class NewTest extends \PHPUnit\Framework\TestCase
         $this->assertSame(2, array_shift($keys));
 
         $themeModel = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->get(
-            \Magento\Framework\View\DesignInterface::class
+            'Magento\Framework\View\DesignInterface'
         )->getDesignTheme();
 
         $this->assertEquals($themeModel->getId() ?: null, $info[2]);
@@ -71,7 +70,7 @@ class NewTest extends \PHPUnit\Framework\TestCase
         $this->assertSame(3, array_shift($keys));
         $this->assertEquals(
             \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->get(
-                \Magento\Customer\Model\Session::class
+                'Magento\Customer\Model\Session'
             )->getCustomerGroupId(),
             $info[3]
         );
@@ -103,38 +102,15 @@ class NewTest extends \PHPUnit\Framework\TestCase
         $this->_block->setProductsCount(5);
         $this->_block->setTemplate('product/widget/new/content/new_list.phtml');
         $this->_block->setLayout(
-            \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->get(
-                \Magento\Framework\View\LayoutInterface::class
-            )
+            \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->get('Magento\Framework\View\LayoutInterface')
         );
 
         $html = $this->_block->toHtml();
         $this->assertNotEmpty($html);
         $this->assertContains('New Product', $html);
         $this->assertInstanceOf(
-            \Magento\Catalog\Model\ResourceModel\Product\Collection::class,
+            'Magento\Catalog\Model\ResourceModel\Product\Collection',
             $this->_block->getProductCollection()
         );
-    }
-
-    /**
-     * @covers \Magento\Catalog\Block\Product\Widget\NewWidget::getCacheKeyInfo
-     */
-    public function testNewWidgetGetCacheKeyInfo()
-    {
-        $block = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->get(
-            \Magento\Framework\View\LayoutInterface::class
-        )->createBlock(
-            \Magento\Catalog\Block\Product\Widget\NewWidget::class
-        );
-
-        $requestParams = ['test' => 'data'];
-
-        $block->getRequest()->setParams($requestParams);
-
-        $info = $block->getCacheKeyInfo();
-
-        $this->assertEquals('CATALOG_PRODUCT_NEW', $info[0]);
-        $this->assertEquals(json_encode($requestParams), $info[8]);
     }
 }

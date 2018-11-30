@@ -5,41 +5,16 @@
  */
 namespace Magento\Multishipping\Controller;
 
-use Magento\Customer\Api\AccountManagementInterface;
-use Magento\Customer\Api\CustomerRepositoryInterface;
 use Magento\Framework\App\RequestInterface;
 use Magento\Framework\Exception\StateException;
 
 /**
  * Multishipping checkout controller
  * @SuppressWarnings(PHPMD.NumberOfChildren)
- * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  */
 abstract class Checkout extends \Magento\Checkout\Controller\Action implements
     \Magento\Checkout\Controller\Express\RedirectLoginInterface
 {
-    /**
-     * Constructor
-     *
-     * @param \Magento\Framework\App\Action\Context $context
-     * @param \Magento\Customer\Model\Session $customerSession
-     * @param CustomerRepositoryInterface $customerRepository
-     * @param AccountManagementInterface $accountManagement
-     */
-    public function __construct(
-        \Magento\Framework\App\Action\Context $context,
-        \Magento\Customer\Model\Session $customerSession,
-        CustomerRepositoryInterface $customerRepository,
-        AccountManagementInterface $accountManagement
-    ) {
-        parent::__construct(
-            $context,
-            $customerSession,
-            $customerRepository,
-            $accountManagement
-        );
-    }
-
     /**
      * Retrieve checkout model
      *
@@ -47,7 +22,7 @@ abstract class Checkout extends \Magento\Checkout\Controller\Action implements
      */
     protected function _getCheckout()
     {
-        return $this->_objectManager->get(\Magento\Multishipping\Model\Checkout\Type\Multishipping::class);
+        return $this->_objectManager->get('Magento\Multishipping\Model\Checkout\Type\Multishipping');
     }
 
     /**
@@ -57,7 +32,7 @@ abstract class Checkout extends \Magento\Checkout\Controller\Action implements
      */
     protected function _getState()
     {
-        return $this->_objectManager->get(\Magento\Multishipping\Model\Checkout\Type\Multishipping\State::class);
+        return $this->_objectManager->get('Magento\Multishipping\Model\Checkout\Type\Multishipping\State');
     }
 
     /**
@@ -67,7 +42,7 @@ abstract class Checkout extends \Magento\Checkout\Controller\Action implements
      */
     protected function _getHelper()
     {
-        return $this->_objectManager->get(\Magento\Multishipping\Helper\Url::class);
+        return $this->_objectManager->get('Magento\Multishipping\Helper\Url');
     }
 
     /**
@@ -77,7 +52,7 @@ abstract class Checkout extends \Magento\Checkout\Controller\Action implements
      */
     protected function _getCheckoutSession()
     {
-        return $this->_objectManager->get(\Magento\Checkout\Model\Session::class);
+        return $this->_objectManager->get('Magento\Checkout\Model\Session');
     }
 
     /**
@@ -116,14 +91,12 @@ abstract class Checkout extends \Magento\Checkout\Controller\Action implements
         }
 
         if (!in_array($action, ['login', 'register'])) {
-            $customerSession = $this->_objectManager->get(\Magento\Customer\Model\Session::class);
+            $customerSession = $this->_objectManager->get('Magento\Customer\Model\Session');
             if (!$customerSession->authenticate($this->_getHelper()->getMSLoginUrl())) {
                 $this->_actionFlag->set('', self::FLAG_NO_DISPATCH, true);
             }
 
-            if (!$this->_objectManager->get(
-                \Magento\Multishipping\Helper\Data::class
-            )->isMultishippingCheckoutAvailable()) {
+            if (!$this->_objectManager->get('Magento\Multishipping\Helper\Data')->isMultishippingCheckoutAvailable()) {
                 $error = $this->_getCheckout()->getMinimumAmountError();
                 $this->messageManager->addError($error);
                 $this->getResponse()->setRedirect($this->_getHelper()->getCartUrl());
@@ -161,7 +134,6 @@ abstract class Checkout extends \Magento\Checkout\Controller\Action implements
             $this->_actionFlag->set('', self::FLAG_NO_DISPATCH, true);
             return parent::dispatch($request);
         }
-
         $quote = $checkout->getQuote();
         if (!$quote->hasItems() || $quote->getHasError() || $quote->isVirtual()) {
             $this->getResponse()->setRedirect($this->_getHelper()->getCartUrl());
@@ -194,9 +166,7 @@ abstract class Checkout extends \Magento\Checkout\Controller\Action implements
      */
     public function getCustomerBeforeAuthUrl()
     {
-        return $this->_objectManager->create(
-            \Magento\Framework\UrlInterface::class
-        )->getUrl('*/*', ['_secure' => true]);
+        return $this->_objectManager->create('Magento\Framework\UrlInterface')->getUrl('*/*', ['_secure' => true]);
     }
 
     /**

@@ -35,7 +35,7 @@ class AccountsTest extends \Magento\Reports\Test\Unit\Controller\Adminhtml\Repor
      */
     public function testExecute()
     {
-        $titleMock = $this->getMockBuilder(\Magento\Framework\View\Page\Title::class)
+        $titleMock = $this->getMockBuilder('Magento\Framework\View\Page\Title')
             ->disableOriginalConstructor()
             ->getMock();
         $titleMock

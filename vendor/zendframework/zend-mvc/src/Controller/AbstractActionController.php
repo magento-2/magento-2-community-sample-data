@@ -12,7 +12,6 @@ namespace Zend\Mvc\Controller;
 use Zend\Http\Response as HttpResponse;
 use Zend\Mvc\Exception;
 use Zend\Mvc\MvcEvent;
-use Zend\View\Model\ConsoleModel;
 use Zend\View\Model\ViewModel;
 
 /**
@@ -28,7 +27,7 @@ abstract class AbstractActionController extends AbstractController
     /**
      * Default action if none provided
      *
-     * @return ViewModel
+     * @return array
      */
     public function indexAction()
     {
@@ -40,7 +39,7 @@ abstract class AbstractActionController extends AbstractController
     /**
      * Action called if matched action does not exist
      *
-     * @return ViewModel|ConsoleModel
+     * @return array
      */
     public function notFoundAction()
     {
@@ -60,8 +59,7 @@ abstract class AbstractActionController extends AbstractController
      *
      * @param  MvcEvent $e
      * @return mixed
-     *
-     * @throws Exception\DomainException If no RouteMatch was found within MvcEvent.
+     * @throws Exception\DomainException
      */
     public function onDispatch(MvcEvent $e)
     {

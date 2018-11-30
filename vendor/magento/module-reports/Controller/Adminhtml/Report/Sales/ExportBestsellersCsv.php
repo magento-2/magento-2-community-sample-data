@@ -19,7 +19,7 @@ class ExportBestsellersCsv extends \Magento\Reports\Controller\Adminhtml\Report\
     public function execute()
     {
         $fileName = 'bestsellers.csv';
-        $grid = $this->_view->getLayout()->createBlock(\Magento\Reports\Block\Adminhtml\Sales\Bestsellers\Grid::class);
+        $grid = $this->_view->getLayout()->createBlock('Magento\Reports\Block\Adminhtml\Sales\Bestsellers\Grid');
         $this->_initReportAction($grid);
         return $this->_fileFactory->create($fileName, $grid->getCsvFile(), DirectoryList::VAR_DIR);
     }

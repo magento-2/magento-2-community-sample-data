@@ -5,7 +5,7 @@
  */
 namespace Magento\Setup\Module\Dependency\Parser\Composer;
 
-class JsonTest extends \PHPUnit\Framework\TestCase
+class JsonTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var string

@@ -5,7 +5,7 @@
  */
 namespace Magento\Usps\Test\Unit\Model\Source;
 
-class GenericTest extends \PHPUnit\Framework\TestCase
+class GenericTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\Usps\Model\Source\Generic
@@ -21,13 +21,13 @@ class GenericTest extends \PHPUnit\Framework\TestCase
     {
         $helper = new \Magento\Framework\TestFramework\Unit\Helper\ObjectManager($this);
         $this->_uspsModel = $this->getMockBuilder(
-            \Magento\Usps\Model\Carrier::class
+            'Magento\Usps\Model\Carrier'
         )->setMethods(
             ['getCode']
         )->disableOriginalConstructor()->getMock();
 
         $this->_generic = $helper->getObject(
-            \Magento\Usps\Model\Source\Generic::class,
+            '\Magento\Usps\Model\Source\Generic',
             ['shippingUsps' => $this->_uspsModel]
         );
     }

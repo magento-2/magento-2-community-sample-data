@@ -17,8 +17,6 @@ use Magento\Framework\Pricing\Price\AbstractPrice;
 /**
  * Bundle option price
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
- * @api
- * @since 100.0.2
  */
 class BundleSelectionPrice extends AbstractPrice
 {
@@ -102,14 +100,6 @@ class BundleSelectionPrice extends AbstractPrice
         if (null !== $this->value) {
             return $this->value;
         }
-        $product = $this->selection;
-        $bundleSelectionKey = 'bundle-selection-'
-            . ($this->useRegularPrice ? 'regular-' : '')
-            . 'value-'
-            . $product->getSelectionId();
-        if ($product->hasData($bundleSelectionKey)) {
-            return $product->getData($bundleSelectionKey);
-        }
 
         $priceCode = $this->useRegularPrice ? BundleRegularPrice::PRICE_CODE : FinalPrice::PRICE_CODE;
         if ($this->bundleProduct->getPriceType() == Price::PRICE_TYPE_DYNAMIC) {
@@ -131,8 +121,7 @@ class BundleSelectionPrice extends AbstractPrice
                     'catalog_product_get_final_price',
                     ['product' => $product, 'qty' => $this->bundleProduct->getQty()]
                 );
-                $price = $this->useRegularPrice ? $product->getData('price') : $product->getData('final_price');
-                $value = $price * ($selectionPriceValue / 100);
+                $value = $product->getData('final_price') * ($selectionPriceValue / 100);
             } else {
                 // calculate price for selection type fixed
                 $value = $this->priceCurrency->convert($selectionPriceValue);
@@ -142,7 +131,7 @@ class BundleSelectionPrice extends AbstractPrice
             $value = $this->discountCalculator->calculateDiscount($this->bundleProduct, $value);
         }
         $this->value = $this->priceCurrency->round($value);
-        $product->setData($bundleSelectionKey, $this->value);
+
         return $this->value;
     }
 
@@ -153,28 +142,18 @@ class BundleSelectionPrice extends AbstractPrice
      */
     public function getAmount()
     {
-        $product = $this->selection;
-        $bundleSelectionKey = 'bundle-selection'
-            . ($this->useRegularPrice ? 'regular-' : '')
-            . '-amount-'
-            . $product->getSelectionId();
-        if ($product->hasData($bundleSelectionKey)) {
-            return $product->getData($bundleSelectionKey);
-        }
-        $value = $this->getValue();
-        if (!isset($this->amount[$value])) {
+        if (!isset($this->amount[$this->getValue()])) {
             $exclude = null;
             if ($this->getProduct()->getTypeId() == \Magento\Catalog\Model\Product\Type::TYPE_BUNDLE) {
                 $exclude = $this->excludeAdjustment;
             }
-            $this->amount[$value] = $this->calculator->getAmount(
-                $value,
+            $this->amount[$this->getValue()] = $this->calculator->getAmount(
+                $this->getValue(),
                 $this->getProduct(),
                 $exclude
             );
-            $product->setData($bundleSelectionKey, $this->amount[$value]);
         }
-        return $this->amount[$value];
+        return $this->amount[$this->getValue()];
     }
 
     /**

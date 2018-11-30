@@ -7,9 +7,6 @@ namespace Magento\Catalog\Model\Product\Link;
 
 /**
  * Class Converter
- *
- * @api
- * @since 101.0.0
  */
 class Converter
 {
@@ -18,7 +15,6 @@ class Converter
      *
      * @param \Magento\Catalog\Model\Product[] $products
      * @return array
-     * @since 101.0.0
      */
     protected function indexBySku(array $products)
     {
@@ -32,7 +28,6 @@ class Converter
     /**
      * @param \Magento\Catalog\Model\Product $entity
      * @return array
-     * @since 101.0.0
      */
     public function convertLinksToGroupedArray($entity)
     {

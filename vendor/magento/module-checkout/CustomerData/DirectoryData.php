@@ -46,6 +46,7 @@ class DirectoryData implements SectionSourceInterface
                     $output[$code]['regions'][$key]['name'] = $region['name'];
                 }
             }
+
         }
         return $output;
     }

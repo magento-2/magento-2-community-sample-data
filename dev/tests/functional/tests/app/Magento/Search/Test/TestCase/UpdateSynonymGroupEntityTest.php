@@ -23,13 +23,14 @@ use Magento\Search\Test\Fixture\SynonymGroup;
  * 4. Fill data according to dataset.
  * 5. Perform all assertions.
  *
- * @group Search
+ * @group Search_(MX)
  * @ZephyrId MAGETWO-49412
  */
 class UpdateSynonymGroupEntityTest extends Injectable
 {
     /* tags */
     const MVP = 'yes';
+    const DOMAIN = 'MX';
     const TEST_TYPE = 'extended_acceptance_test';
     /* end tags */
 

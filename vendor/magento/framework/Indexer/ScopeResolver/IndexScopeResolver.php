@@ -42,19 +42,16 @@ class IndexScopeResolver implements IndexScopeResolverInterface
      */
     public function resolve($index, array $dimensions)
     {
-        $tableNameParts = [];
+        $tableNameParts = [$index];
         foreach ($dimensions as $dimension) {
             switch ($dimension->getName()) {
                 case 'scope':
-                    $tableNameParts[$dimension->getName()] = $dimension->getName() . $this->getScopeId($dimension);
+                    $tableNameParts[] = $dimension->getName() . $this->getScopeId($dimension);
                     break;
                 default:
-                    $tableNameParts[$dimension->getName()] = $dimension->getName() . $dimension->getValue();
+                    $tableNameParts[] = $dimension->getName() . $dimension->getValue();
             }
         }
-        ksort($tableNameParts);
-        array_unshift($tableNameParts, $index);
-
         return $this->resource->getTableName(implode('_', $tableNameParts));
     }
 
@@ -66,12 +63,10 @@ class IndexScopeResolver implements IndexScopeResolverInterface
      */
     private function getScopeId($dimension)
     {
-        $scopeId = $dimension->getValue();
-
-        if (!is_numeric($scopeId)) {
-            $scopeId = $this->scopeResolver->getScope($scopeId)->getId();
+        if (is_numeric($dimension->getValue())) {
+            return $dimension->getValue();
+        } else {
+            return $this->scopeResolver->getScope($dimension->getValue())->getId();
         }
-
-        return $scopeId;
     }
 }

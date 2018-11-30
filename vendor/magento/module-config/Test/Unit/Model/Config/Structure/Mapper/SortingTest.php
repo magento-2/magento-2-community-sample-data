@@ -5,7 +5,7 @@
  */
 namespace Magento\Config\Test\Unit\Model\Config\Structure\Mapper;
 
-class SortingTest extends \PHPUnit\Framework\TestCase
+class SortingTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\Config\Model\Config\Structure\Mapper\Sorting

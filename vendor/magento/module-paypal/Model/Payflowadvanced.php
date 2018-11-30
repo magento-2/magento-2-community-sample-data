@@ -23,14 +23,14 @@ class Payflowadvanced extends \Magento\Paypal\Model\Payflowlink
      *
      * @var string
      */
-    protected $_formBlockType = \Magento\Paypal\Block\Payflow\Advanced\Form::class;
+    protected $_formBlockType = 'Magento\Paypal\Block\Payflow\Advanced\Form';
 
     /**
      * Type of block that displays method information
      *
      * @var string
      */
-    protected $_infoBlockType = \Magento\Paypal\Block\Payment\Info::class;
+    protected $_infoBlockType = 'Magento\Paypal\Block\Payflow\Advanced\Info';
 
     /**
      * Controller for callback urls

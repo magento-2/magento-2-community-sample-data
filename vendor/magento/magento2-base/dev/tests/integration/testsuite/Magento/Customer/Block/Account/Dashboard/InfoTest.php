@@ -5,7 +5,7 @@
  */
 namespace Magento\Customer\Block\Account\Dashboard;
 
-class InfoTest extends \PHPUnit\Framework\TestCase
+class InfoTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\Customer\Block\Account\Dashboard\Info
@@ -15,16 +15,16 @@ class InfoTest extends \PHPUnit\Framework\TestCase
     protected function setUp()
     {
         $this->_block = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->get(
-            \Magento\Framework\View\LayoutInterface::class
+            'Magento\Framework\View\LayoutInterface'
         )->createBlock(
-            \Magento\Customer\Block\Account\Dashboard\Info::class
+            'Magento\Customer\Block\Account\Dashboard\Info'
         );
     }
 
     public function testGetSubscriptionObject()
     {
         $object = $this->_block->getSubscriptionObject();
-        $this->assertInstanceOf(\Magento\Newsletter\Model\Subscriber::class, $object);
+        $this->assertInstanceOf('Magento\Newsletter\Model\Subscriber', $object);
 
         $object2 = $this->_block->getSubscriptionObject();
         $this->assertSame($object, $object2);

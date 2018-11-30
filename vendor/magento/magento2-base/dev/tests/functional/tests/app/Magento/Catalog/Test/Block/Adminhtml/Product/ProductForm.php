@@ -6,20 +6,17 @@
 
 namespace Magento\Catalog\Test\Block\Adminhtml\Product;
 
+use Magento\Ui\Test\Block\Adminhtml\FormSections;
 use Magento\Catalog\Test\Block\Adminhtml\Product\Attribute\AttributeForm;
 use Magento\Catalog\Test\Block\Adminhtml\Product\Attribute\CustomAttribute;
-use Magento\Catalog\Test\Block\Adminhtml\Product\Edit\Section\ProductDetails\NewCategoryIds;
 use Magento\Catalog\Test\Fixture\CatalogProductAttribute;
 use Magento\Mtf\Client\Element\SimpleElement;
 use Magento\Mtf\Client\Locator;
 use Magento\Mtf\Fixture\FixtureInterface;
 use Magento\Ui\Test\Block\Adminhtml\DataGrid;
-use Magento\Ui\Test\Block\Adminhtml\FormSections;
 
 /**
  * Product form on backend product page.
- *
- * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  */
 class ProductForm extends FormSections
 {
@@ -29,13 +26,6 @@ class ProductForm extends FormSections
      * @var string
      */
     protected $attribute = './/*[contains(@class,"label")]/span[text()="%s"]';
-
-    /**
-     * Product new from date field on the product form
-     *
-     * @var string
-     */
-    protected $news_from_date ='[name="product[news_from_date]"]';
 
     /**
      * Attributes Search modal locator.
@@ -59,13 +49,6 @@ class ProductForm extends FormSections
     protected $attributeBlock = '[data-index="%s"]';
 
     /**
-     * NewCategoryIds block selector.
-     *
-     * @var string
-     */
-    protected $newCategoryModalForm = '.product_form_product_form_create_category_modal';
-
-    /**
      * Magento form loader.
      *
      * @var string
@@ -80,13 +63,6 @@ class ProductForm extends FormSections
     protected $newAttributeModal = '.product_form_product_form_add_attribute_modal_create_new_attribute_modal';
 
     /**
-     * Website checkbox xpath selector.
-     *
-     * @var string
-     */
-    protected $websiteCheckbox = '//label[text()="%s"]/../input';
-
-    /**
      * Fill the product form.
      *
      * @param FixtureInterface $product
@@ -94,6 +70,8 @@ class ProductForm extends FormSections
      * @param FixtureInterface|null $category
      * @return $this
      * @throws \Exception
+     *
+     * @SuppressWarnings(PHPMD.NPathComplexity)
      */
     public function fill(FixtureInterface $product, SimpleElement $element = null, FixtureInterface $category = null)
     {
@@ -110,23 +88,9 @@ class ProductForm extends FormSections
             $this->callRender($typeId, 'fill', $renderArguments);
         } else {
             $sections = $this->getFixtureFieldsByContainers($product);
-            if ($product->hasData('category_ids') || $category) {
-                $sections['product-details']['category_ids']['value'] = [];
-                $categories = $product->hasData('category_ids')
-                    ? $product->getDataFieldConfig('category_ids')['source']->getCategories()
-                    : [$category];
-                foreach ($categories as $category) {
-                    if ((int)$category->getId()) {
-                        $sections['product-details']['category_ids']['value'][] = $category->getName();
-                    } else {
-                        $this->getNewCategoryModalForm()->addNewCategory($category);
-                    }
-                }
-                if (empty($sections['product-details']['category_ids']['value'])) {
-                    // We need to clear 'category_ids' key in case of category(es) absence in Product Fixture
-                    // to avoid force clear related form input on edit product page
-                    unset($sections['product-details']['category_ids']);
-                }
+
+            if ($category) {
+                $sections['product-details']['category_ids']['value'] = $category->getName();
             }
             $this->fillContainers($sections, $element);
         }
@@ -145,22 +109,12 @@ class ProductForm extends FormSections
         $sectionElement = $this->getContainerElement($sectionName);
         if ($sectionElement->getAttribute('type') == 'button') {
             $sectionElement->click();
-            sleep(2); // according to animation timeout in JS
+            // Wait until section animation finished.
+            $this->waitForElementVisible($this->closeButton);
         } else {
             parent::openSection($sectionName);
         }
         return $this;
-    }
-
-    /**
-     * Unassign product from website by website name.
-     *
-     * @param string $name
-     */
-    public function unassignFromWebsite($name)
-    {
-        $this->openSection('websites');
-        $this->_rootElement->find(sprintf($this->websiteCheckbox, $name), Locator::SELECTOR_XPATH)->click();
     }
 
     /**
@@ -242,19 +196,6 @@ class ProductForm extends FormSections
     }
 
     /**
-     * Get New Category Modal Form.
-     *
-     * @return NewCategoryIds
-     */
-    public function getNewCategoryModalForm()
-    {
-        return $this->blockFactory->create(
-            \Magento\Catalog\Test\Block\Adminhtml\Product\Edit\Section\ProductDetails\NewCategoryIds::class,
-            ['element' => $this->browser->find($this->newCategoryModalForm)]
-        );
-    }
-
-    /**
      * Get attribute element.
      *
      * @param CatalogProductAttribute $attribute
@@ -267,15 +208,5 @@ class ProductForm extends FormSections
             Locator::SELECTOR_CSS,
             \Magento\Catalog\Test\Block\Adminhtml\Product\Attribute\CustomAttribute::class
         );
-    }
-
-    /**
-     * @param $sectionName
-     * @return bool
-     */
-    public function isProductNewFromDateVisible($sectionName)
-    {
-        $this->openSection($sectionName);
-        return $this->_rootElement->find($this->news_from_date, Locator::SELECTOR_CSS)->isVisible();
     }
 }

@@ -8,7 +8,7 @@ namespace Magento\Config\Test\Unit\Model\Config\Structure;
 /**
  * Class ReaderTest
  */
-class ReaderTest extends \PHPUnit\Framework\TestCase
+class ReaderTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\Config\Model\Config\Structure\Reader
@@ -47,19 +47,18 @@ class ReaderTest extends \PHPUnit\Framework\TestCase
      */
     protected function setUp()
     {
-        $this->fileResolverMock = $this->getMockBuilder(\Magento\Framework\Config\FileResolverInterface::class)
+        $this->fileResolverMock = $this->getMockBuilder('Magento\Framework\Config\FileResolverInterface')
             ->getMockForAbstractClass();
-        $this->converterMock = $this->getMockBuilder(\Magento\Config\Model\Config\Structure\Converter::class)
+        $this->converterMock = $this->getMockBuilder('Magento\Config\Model\Config\Structure\Converter')
             ->disableOriginalConstructor()
             ->getMock();
-        $this->schemaLocatorMock = $this->getMockBuilder(\Magento\Config\Model\Config\SchemaLocator::class)
+        $this->schemaLocatorMock = $this->getMockBuilder('Magento\Config\Model\Config\SchemaLocator')
             ->disableOriginalConstructor()
             ->getMock();
-        $this->validationStateMock = $this->getMockBuilder(\Magento\Framework\Config\ValidationStateInterface::class)
+        $this->validationStateMock = $this->getMockBuilder('Magento\Framework\Config\ValidationStateInterface')
             ->getMockForAbstractClass();
-        $this->compilerMock = $this->getMockBuilder(
-            \Magento\Framework\View\TemplateEngine\Xhtml\CompilerInterface::class
-        )->getMockForAbstractClass();
+        $this->compilerMock = $this->getMockBuilder('Magento\Framework\View\TemplateEngine\Xhtml\CompilerInterface')
+            ->getMockForAbstractClass();
 
         $this->reader = new \Magento\Config\Model\Config\Structure\Reader(
             $this->fileResolverMock,
@@ -90,8 +89,8 @@ class ReaderTest extends \PHPUnit\Framework\TestCase
             ->method('compile')
             ->with(
                 $this->isInstanceOf('\DOMElement'),
-                $this->isInstanceOf(\Magento\Framework\DataObject::class),
-                $this->isInstanceOf(\Magento\Framework\DataObject::class)
+                $this->isInstanceOf('Magento\Framework\DataObject'),
+                $this->isInstanceOf('Magento\Framework\DataObject')
             );
         $this->converterMock->expects($this->once())
             ->method('convert')

@@ -7,8 +7,6 @@ namespace Magento\Framework\View\Asset;
 
 /**
  * An abstraction for static view file (or resource) that may be embedded to a web page
- *
- * @api
  */
 interface AssetInterface
 {
@@ -25,12 +23,4 @@ interface AssetInterface
      * @return string
      */
     public function getContentType();
-
-    /**
-     * Retrieve source content type
-     *
-     * @return string
-     * @since 100.2.0
-     */
-    public function getSourceContentType();
 }

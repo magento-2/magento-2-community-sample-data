@@ -71,7 +71,7 @@ class PriceBoxTags
             '-',
             [
                 $result,
-                $this->priceCurrency->getCurrency()->getCode(),
+                $this->priceCurrency->getCurrencySymbol(),
                 $this->dateTime->scopeDate($this->scopeResolver->getScope()->getId())->format('Ymd'),
                 $this->scopeResolver->getScope()->getId(),
                 $this->customerSession->getCustomerGroupId(),
@@ -102,8 +102,8 @@ class PriceBoxTags
 
         if (!empty($billingAddress) || !empty($shippingAddress)) {
             $rateRequest = $this->getTaxCalculation()->getRateRequest(
-                $shippingAddress,
                 $billingAddress,
+                $shippingAddress,
                 $customerTaxClassId,
                 $this->scopeResolver->getScope()->getId(),
                 $this->customerSession->getCustomerId()
@@ -121,7 +121,7 @@ class PriceBoxTags
      *
      * @return \Magento\Tax\Model\Calculation
      *
-     * @deprecated 101.0.0
+     * @deprecated
      */
     private function getTaxCalculation()
     {

@@ -5,7 +5,7 @@
  */
 namespace Magento\Framework\Model\ResourceModel\Type\Db;
 
-class ConnectionFactoryTest extends \PHPUnit\Framework\TestCase
+class ConnectionFactoryTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var ConnectionFactory
@@ -33,6 +33,6 @@ class ConnectionFactoryTest extends \PHPUnit\Framework\TestCase
             'active' => true,
         ];
         $connection = $this->model->create($dbConfig);
-        $this->assertInstanceOf(\Magento\Framework\DB\Adapter\AdapterInterface::class, $connection);
+        $this->assertInstanceOf('\Magento\Framework\DB\Adapter\AdapterInterface', $connection);
     }
 }

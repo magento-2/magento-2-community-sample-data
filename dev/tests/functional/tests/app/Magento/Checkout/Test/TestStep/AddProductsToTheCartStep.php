@@ -19,39 +19,39 @@ use Magento\Mtf\TestStep\TestStepInterface;
 class AddProductsToTheCartStep implements TestStepInterface
 {
     /**
-     * Array with products.
+     * Array with products
      *
      * @var array
      */
-    private $products;
+    protected $products;
 
     /**
-     * Storefront product view page.
+     * Frontend product view page
      *
      * @var CatalogProductView
      */
-    private $catalogProductView;
+    protected $catalogProductView;
 
     /**
-     * Page of checkout page.
+     * Page of checkout page
      *
      * @var CheckoutCart
      */
-    private $checkoutCart;
+    protected $checkoutCart;
 
     /**
-     * Cms index page.
+     * Cms index page
      *
      * @var CmsIndex
      */
-    private $cmsIndex;
+    protected $cmsIndex;
 
     /**
-     * Client Browser instance.
+     * Interface Browser
      *
      * @var BrowserInterface
      */
-    private $browser;
+    protected $browser;
 
     /**
      * Fixture factory.
@@ -61,27 +61,20 @@ class AddProductsToTheCartStep implements TestStepInterface
     private $fixtureFactory;
 
     /**
-     * Selector for element wait
+     * Selector for element wait.
      *
      * @var string
      */
     private $loadingSelector = '.loading-mask';
 
     /**
-     * Flag for validation result after add product to cart.
-     *
-     * @var bool
-     */
-    private $isValidationFailed;
-
-    /**
+     * @constructor
      * @param CatalogProductView $catalogProductView
      * @param CheckoutCart $checkoutCart
      * @param CmsIndex $cmsIndex
      * @param BrowserInterface $browser
      * @param FixtureFactory $fixtureFactory
      * @param array $products
-     * @param bool $isValidationFailed
      */
     public function __construct(
         CatalogProductView $catalogProductView,
@@ -89,16 +82,15 @@ class AddProductsToTheCartStep implements TestStepInterface
         CmsIndex $cmsIndex,
         BrowserInterface $browser,
         FixtureFactory $fixtureFactory,
-        array $products,
-        $isValidationFailed = false
+        array $products
     ) {
+        $this->products = $products;
         $this->catalogProductView = $catalogProductView;
         $this->checkoutCart = $checkoutCart;
         $this->cmsIndex = $cmsIndex;
         $this->browser = $browser;
         $this->fixtureFactory = $fixtureFactory;
         $this->products = $products;
-        $this->isValidationFailed = $isValidationFailed;
     }
 
     /**
@@ -115,15 +107,9 @@ class AddProductsToTheCartStep implements TestStepInterface
             $this->browser->open($_ENV['app_frontend_url'] . $product->getUrlKey() . '.html');
             $this->catalogProductView->getViewBlock()->waitForElementNotVisible($this->loadingSelector);
             $this->catalogProductView->getViewBlock()->addToCart($product);
-
-            if ($this->isValidationFailed) {
-                $this->catalogProductView->getCustomOptionsBlock()->waitValidationErrorMessage();
-            } else {
-                $this->catalogProductView->getMessagesBlock()->waitSuccessMessage();
-            }
         }
         $cart['data']['items'] = ['products' => $this->products];
-        sleep(10);
+
         return ['cart' => $this->fixtureFactory->createByCode('cart', $cart)];
     }
 }

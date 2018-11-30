@@ -5,7 +5,7 @@
  */
 namespace Magento\Backend\Test\Unit\Block\Widget\Grid\Column\Renderer;
 
-class AbstractRendererTest extends \PHPUnit\Framework\TestCase
+class AbstractRendererTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\Backend\Block\Widget\Grid\Column|\PHPUnit_Framework_MockObject_MockObject
@@ -27,13 +27,12 @@ class AbstractRendererTest extends \PHPUnit\Framework\TestCase
      */
     protected function setUp()
     {
-        $this->dataObjectMock = $this->createPartialMock(\Magento\Framework\DataObject::class, ['getData']);
-        $this->columnMock = $this->getMockBuilder(\Magento\Backend\Block\Widget\Grid\Column::class)
+        $this->dataObjectMock = $this->getMock('Magento\Framework\DataObject', ['getData'], [], '', false);
+        $this->columnMock = $this->getMockBuilder('Magento\Backend\Block\Widget\Grid\Column')
             ->disableOriginalConstructor()
             ->setMethods(['getEditable', 'getIndex', 'getEditOnly', 'getId'])
             ->getMock();
-        $this->renderer =
-            $this->getMockBuilder(\Magento\Backend\Block\Widget\Grid\Column\Renderer\AbstractRenderer::class)
+        $this->renderer = $this->getMockBuilder('Magento\Backend\Block\Widget\Grid\Column\Renderer\AbstractRenderer')
             ->disableOriginalConstructor()
             ->setMethods(null)
             ->getMock();

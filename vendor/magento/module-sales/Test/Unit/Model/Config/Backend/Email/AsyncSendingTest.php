@@ -11,7 +11,7 @@ use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
  * Unit test of backend model for global configuration value
  * 'sales_email/general/async_sending'.
  */
-class AsyncSendingTest extends \PHPUnit\Framework\TestCase
+class AsyncSendingTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\Sales\Model\Config\Backend\Email\AsyncSending
@@ -37,15 +37,15 @@ class AsyncSendingTest extends \PHPUnit\Framework\TestCase
     {
         $objectManager = new ObjectManager($this);
 
-        $this->config = $this->createMock(\Magento\Framework\App\Config::class);
+        $this->config = $this->getMock('Magento\Framework\App\Config', [], [], '', false);
 
-        $this->eventManager = $this->createMock(\Magento\Framework\Event\Manager::class);
+        $this->eventManager = $this->getMock('Magento\Framework\Event\Manager', [], [], '', false);
 
-        $this->context = $this->createPartialMock(\Magento\Framework\Model\Context::class, ['getEventDispatcher']);
+        $this->context = $this->getMock('Magento\Framework\Model\Context', ['getEventDispatcher'], [], '', false);
         $this->context->expects($this->any())->method('getEventDispatcher')->willReturn($this->eventManager);
 
         $this->object = $objectManager->getObject(
-            \Magento\Sales\Model\Config\Backend\Email\AsyncSending::class,
+            '\Magento\Sales\Model\Config\Backend\Email\AsyncSending',
             [
                 'config' => $this->config,
                 'context' => $this->context

@@ -6,53 +6,27 @@
  */
 namespace Magento\CheckoutAgreements\Controller\Adminhtml\Agreement;
 
-use Magento\CheckoutAgreements\Api\CheckoutAgreementsRepositoryInterface;
-use Magento\CheckoutAgreements\Controller\Adminhtml\Agreement;
-use Magento\Backend\App\Action\Context;
-use Magento\Framework\Registry;
-use Magento\Framework\App\ObjectManager;
-use Magento\Framework\Exception\LocalizedException;
-
-class Delete extends Agreement
+class Delete extends \Magento\CheckoutAgreements\Controller\Adminhtml\Agreement
 {
-    /**
-     * @var CheckoutAgreementsRepositoryInterface
-     */
-    private $agreementRepository;
-
-    /**
-     * @param Context $context
-     * @param Registry $coreRegistry
-     * @param CheckoutAgreementsRepositoryInterface $agreementRepository
-     */
-    public function __construct(
-        Context $context,
-        Registry $coreRegistry,
-        CheckoutAgreementsRepositoryInterface $agreementRepository = null
-    ) {
-        $this->agreementRepository = $agreementRepository ?:
-                ObjectManager::getInstance()->get(CheckoutAgreementsRepositoryInterface::class);
-        parent::__construct($context, $coreRegistry);
-    }
     /**
      * @return void
      */
     public function execute()
     {
         $id = (int)$this->getRequest()->getParam('id');
-        $agreement = $this->agreementRepository->get($id);
-        if (!$agreement->getAgreementId()) {
+        $model = $this->_objectManager->get('Magento\CheckoutAgreements\Model\Agreement')->load($id);
+        if (!$model->getId()) {
             $this->messageManager->addError(__('This condition no longer exists.'));
             $this->_redirect('checkout/*/');
             return;
         }
 
         try {
-            $this->agreementRepository->delete($agreement);
+            $model->delete();
             $this->messageManager->addSuccess(__('You deleted the condition.'));
             $this->_redirect('checkout/*/');
             return;
-        } catch (LocalizedException $e) {
+        } catch (\Magento\Framework\Exception\LocalizedException $e) {
             $this->messageManager->addError($e->getMessage());
         } catch (\Exception $e) {
             $this->messageManager->addError(__('Something went wrong  while deleting this condition.'));

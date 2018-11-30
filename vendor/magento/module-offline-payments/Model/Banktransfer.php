@@ -9,9 +9,6 @@ namespace Magento\OfflinePayments\Model;
  * Bank Transfer payment method model
  *
  * @method \Magento\Quote\Api\Data\PaymentMethodExtensionInterface getExtensionAttributes()
- *
- * @api
- * @since 100.0.2
  */
 class Banktransfer extends \Magento\Payment\Model\Method\AbstractMethod
 {
@@ -29,14 +26,14 @@ class Banktransfer extends \Magento\Payment\Model\Method\AbstractMethod
      *
      * @var string
      */
-    protected $_formBlockType = \Magento\OfflinePayments\Block\Form\Banktransfer::class;
+    protected $_formBlockType = 'Magento\OfflinePayments\Block\Form\Banktransfer';
 
     /**
      * Instructions block path
      *
      * @var string
      */
-    protected $_infoBlockType = \Magento\Payment\Block\Info\Instructions::class;
+    protected $_infoBlockType = 'Magento\Payment\Block\Info\Instructions';
 
     /**
      * Availability option

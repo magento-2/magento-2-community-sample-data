@@ -23,12 +23,12 @@ class VoidAction extends \Magento\Sales\Controller\Adminhtml\Invoice\AbstractInv
         }
         try {
             /** @var \Magento\Sales\Api\InvoiceManagementInterface $invoiceManagement */
-            $invoiceManagement = $this->_objectManager->get(\Magento\Sales\Api\InvoiceManagementInterface::class);
+            $invoiceManagement = $this->_objectManager->get('Magento\Sales\Api\InvoiceManagementInterface');
             $invoiceManagement->setVoid($invoice->getEntityId());
 
             $invoice->getOrder()->setIsInProcess(true);
             $this->_objectManager->create(
-                \Magento\Framework\DB\Transaction::class
+                'Magento\Framework\DB\Transaction'
             )->addObject(
                 $invoice
             )->addObject(

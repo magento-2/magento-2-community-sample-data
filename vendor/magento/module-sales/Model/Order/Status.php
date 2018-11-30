@@ -52,12 +52,13 @@ class Status extends \Magento\Sales\Model\AbstractModel
         $this->_storeManager = $storeManager;
     }
 
+
     /**
      * @return void
      */
     protected function _construct()
     {
-        $this->_init(\Magento\Sales\Model\ResourceModel\Order\Status::class);
+        $this->_init('Magento\Sales\Model\ResourceModel\Order\Status');
     }
 
     /**

@@ -52,10 +52,6 @@ class Curl extends AbstractCurl implements CatalogProductAttributeInterface
             'Yes' => 1,
             'No' => 0,
         ],
-        'is_searchable' => [
-            'Yes' => 1,
-            'No' => 0,
-        ],
         'is_filterable' => [
             'No' => 0,
             'Filterable (with results)' => 1,
@@ -91,18 +87,15 @@ class Curl extends AbstractCurl implements CatalogProductAttributeInterface
         $data['frontend_label'] = [0 => $data['frontend_label']];
 
         if (isset($data['options'])) {
-            $optionsData = [];
             foreach ($data['options'] as $key => $values) {
-                $optionRowData = [];
                 $index = 'option_' . $key;
                 if ($values['is_default'] == 'Yes') {
-                    $optionRowData['default'][] = $index;
+                    $data['default'][] = $index;
                 }
-                $optionRowData['option']['value'][$index] = [$values['admin'], $values['view']];
-                $optionRowData['option']['order'][$index] = $key;
-                $optionsData[] = $optionRowData;
+                $data['option']['value'][$index] = [$values['admin'], $values['view']];
+                $data['option']['order'][$index] = $key;
             }
-            $data['options'] = $optionsData;
+            unset($data['options']);
         }
 
         $data = $this->changeStructureOfTheData($data);
@@ -137,39 +130,11 @@ class Curl extends AbstractCurl implements CatalogProductAttributeInterface
     }
 
     /**
-     * Additional data handling.
-     *
      * @param array $data
      * @return array
      */
-    protected function changeStructureOfTheData(array $data): array
+    protected function changeStructureOfTheData(array $data)
     {
-        if (!isset($data['options'])) {
-            return $data;
-        }
-
-        $serializedOptions = $this->getSerializeOptions($data['options']);
-        if ($serializedOptions) {
-            $data['serialized_options'] = $serializedOptions;
-            unset($data['options']);
-        }
-
         return $data;
-    }
-
-    /**
-     * Provides serialized product attribute options.
-     *
-     * @param array $data
-     * @return string
-     */
-    protected function getSerializeOptions(array $data): string
-    {
-        $options = [];
-        foreach ($data as $optionRowData) {
-            $options[] = http_build_query($optionRowData);
-        }
-
-        return json_encode($options);
     }
 }

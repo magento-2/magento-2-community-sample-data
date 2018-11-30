@@ -27,18 +27,17 @@ use Magento\Config\Test\TestStep\SetupConfigurationStep;
  * 3. Open created store view
  * 4. Click "Delete Store View"
  * 5. Set "Create DB Backup" according to dataset
- * 6. Click "Delete Store View" - Warning message "This operation can take a long time" appears.
- * 7. Click "OK".
- * 8. Perform all assertions
+ * 6. Click "Delete Store View"
+ * 7. Perform all assertions
  *
- * @group Store_Management
+ * @group Store_Management_(PS)
  * @ZephyrId MAGETWO-27942
  */
 class DeleteStoreEntityTest extends Injectable
 {
     /* tags */
     const MVP = 'yes';
-    const SEVERITY = 'S2';
+    const DOMAIN = 'PS';
     /* end tags */
 
     /**
@@ -117,7 +116,6 @@ class DeleteStoreEntityTest extends Injectable
         $this->editStore->getFormPageActions()->delete();
         $this->storeDelete->getStoreForm()->fillForm(['create_backup' => $createBackup]);
         $this->storeDelete->getFormPageActions()->delete();
-        $this->storeDelete->getModalBlock()->acceptAlert();
     }
 
     /**

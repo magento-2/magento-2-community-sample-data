@@ -9,7 +9,7 @@
  */
 namespace Magento\Theme\Test\Unit\Model;
 
-class ConfigTest extends \PHPUnit\Framework\TestCase
+class ConfigTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \PHPUnit_Framework_MockObject_MockObject
@@ -49,9 +49,9 @@ class ConfigTest extends \PHPUnit\Framework\TestCase
     protected function setUp()
     {
         /** @var $this->_themeMock \Magento\Theme\Model\Theme */
-        $this->_themeMock = $this->createMock(\Magento\Theme\Model\Theme::class);
+        $this->_themeMock = $this->getMock('Magento\Theme\Model\Theme', [], [], '', false);
         $this->_storeManagerMock = $this->getMockForAbstractClass(
-            \Magento\Store\Model\StoreManagerInterface::class,
+            'Magento\Store\Model\StoreManagerInterface',
             [],
             '',
             true,
@@ -59,15 +59,18 @@ class ConfigTest extends \PHPUnit\Framework\TestCase
             true,
             ['getStores', 'isSingleStoreMode']
         );
-        $this->_configData = $this->createPartialMock(
-            \Magento\Framework\App\Config\Value::class,
-            ['getCollection', 'addFieldToFilter', '__wakeup']
+        $this->_configData = $this->getMock(
+            'Magento\Framework\App\Config\Value',
+            ['getCollection', 'addFieldToFilter', '__wakeup'],
+            [],
+            '',
+            false
         );
-        $this->_configCacheMock = $this->getMockForAbstractClass(\Magento\Framework\Cache\FrontendInterface::class);
-        $this->_layoutCacheMock = $this->getMockForAbstractClass(\Magento\Framework\Cache\FrontendInterface::class);
+        $this->_configCacheMock = $this->getMockForAbstractClass('Magento\Framework\Cache\FrontendInterface');
+        $this->_layoutCacheMock = $this->getMockForAbstractClass('Magento\Framework\Cache\FrontendInterface');
 
-        $this->_scopeConfigWriter = $this->createPartialMock(
-            \Magento\Framework\App\Config\Storage\WriterInterface::class,
+        $this->_scopeConfigWriter = $this->getMock(
+            'Magento\Framework\App\Config\Storage\WriterInterface',
             ['save', 'delete']
         );
 
@@ -75,7 +78,7 @@ class ConfigTest extends \PHPUnit\Framework\TestCase
             $this->_configData,
             $this->_scopeConfigWriter,
             $this->_storeManagerMock,
-            $this->createMock(\Magento\Framework\Event\ManagerInterface::class),
+            $this->getMock('Magento\Framework\Event\ManagerInterface', [], [], '', false),
             $this->_configCacheMock,
             $this->_layoutCacheMock
         );

@@ -5,12 +5,6 @@
  */
 namespace Magento\CatalogImportExport\Model\Import\Product;
 
-/**
- * Interface RowValidatorInterface
- *
- * @api
- * @since 100.0.2
- */
 interface RowValidatorInterface extends \Magento\Framework\Validator\ValidatorInterface
 {
     const ERROR_INVALID_SCOPE = 'invalidScope';
@@ -50,8 +44,6 @@ interface RowValidatorInterface extends \Magento\Framework\Validator\ValidatorIn
     const ERROR_INVALID_TIER_PRICE_SITE = 'tierPriceWebsiteInvalid';
 
     const ERROR_INVALID_TIER_PRICE_GROUP = 'tierPriceGroupInvalid';
-
-    const ERROR_INVALID_TIER_PRICE_TYPE = 'tierPriceTypeInvalid';
 
     const ERROR_TIER_DATA_INCOMPLETE = 'tierPriceDataIsIncomplete';
 

@@ -11,8 +11,6 @@ use \Magento\Framework\Api\AttributeValueFactory;
  * Base Class for extensible data Objects
  * @SuppressWarnings(PHPMD.NumberOfChildren)
  * TODO: This class can be split into Custom attribute and Extension attribute implementation classes
- *
- * @api
  */
 abstract class AbstractExtensibleObject extends AbstractSimpleObject implements CustomAttributesDataInterface
 {
@@ -74,7 +72,7 @@ abstract class AbstractExtensibleObject extends AbstractSimpleObject implements 
      */
     public function getCustomAttributes()
     {
-        return $this->_data[self::CUSTOM_ATTRIBUTES] ?? [];
+        return isset($this->_data[self::CUSTOM_ATTRIBUTES]) ? $this->_data[self::CUSTOM_ATTRIBUTES] : [];
     }
 
     /**
@@ -129,7 +127,7 @@ abstract class AbstractExtensibleObject extends AbstractSimpleObject implements 
      */
     protected function getCustomAttributesCodes()
     {
-        return $this->customAttributesCodes ?? [];
+        return isset($this->customAttributesCodes) ? $this->customAttributesCodes : [];
     }
 
     /**

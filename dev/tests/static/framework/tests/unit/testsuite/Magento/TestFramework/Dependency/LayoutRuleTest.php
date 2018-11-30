@@ -5,7 +5,7 @@
  */
 namespace Magento\TestFramework\Dependency;
 
-class LayoutRuleTest extends \PHPUnit\Framework\TestCase
+class LayoutRuleTest extends \PHPUnit_Framework_TestCase
 {
     public function testNonLayoutGetDependencyInfo()
     {

@@ -1,8 +1,10 @@
 <?php
 /**
- * @see       https://github.com/zendframework/zend-server for the canonical source repository
- * @copyright Copyright (c) 2005-2018 Zend Technologies USA Inc. (https://www.zend.com)
- * @license   https://github.com/zendframework/zend-server/blob/master/LICENSE.md New BSD License
+ * Zend Framework (http://framework.zend.com/)
+ *
+ * @link      http://github.com/zendframework/zf2 for the canonical source repository
+ * @copyright Copyright (c) 2005-2015 Zend Technologies USA Inc. (http://www.zend.com)
+ * @license   http://framework.zend.com/license/new-bsd New BSD License
  */
 
 namespace Zend\Server\Reflection;
@@ -22,7 +24,7 @@ class Node
      * Array of child nodes (if any)
      * @var array
      */
-    protected $children = [];
+    protected $children = array();
 
     /**
      * Parent node (if any)
@@ -156,8 +158,8 @@ class Node
      */
     public function getEndPoints()
     {
-        $endPoints = [];
-        if (! $this->hasChildren()) {
+        $endPoints = array();
+        if (!$this->hasChildren()) {
             return $endPoints;
         }
 
@@ -168,10 +170,10 @@ class Node
                 $endPoints[] = $this;
             } elseif ((null !== $value) && $child->hasChildren()) {
                 $childEndPoints = $child->getEndPoints();
-                if (! empty($childEndPoints)) {
+                if (!empty($childEndPoints)) {
                     $endPoints = array_merge($endPoints, $childEndPoints);
                 }
-            } elseif ((null !== $value) && ! $child->hasChildren()) {
+            } elseif ((null !== $value) && !$child->hasChildren()) {
                 $endPoints[] = $child;
             }
         }

@@ -9,7 +9,7 @@ namespace Magento\Integration\Test\Unit\Model\Oauth;
 /**
  * Unit test for \Magento\Integration\Model\Oauth\Nonce
  */
-class NonceTest extends \PHPUnit\Framework\TestCase
+class NonceTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\Integration\Model\Oauth\Nonce
@@ -43,9 +43,15 @@ class NonceTest extends \PHPUnit\Framework\TestCase
 
     protected function setUp()
     {
-        $this->contextMock = $this->createPartialMock(\Magento\Framework\Model\Context::class, ['getEventDispatcher']);
+        $this->contextMock = $this->getMock(
+            'Magento\Framework\Model\Context',
+            ['getEventDispatcher'],
+            [],
+            '',
+            false
+        );
         $eventManagerMock = $this->getMockForAbstractClass(
-            \Magento\Framework\Event\ManagerInterface::class,
+            'Magento\Framework\Event\ManagerInterface',
             [],
             '',
             false,
@@ -56,10 +62,22 @@ class NonceTest extends \PHPUnit\Framework\TestCase
         $this->contextMock->expects($this->once())
             ->method('getEventDispatcher')
             ->will($this->returnValue($eventManagerMock));
-        $this->registryMock = $this->createMock(\Magento\Framework\Registry::class);
-        $this->oauthDataMock = $this->createMock(\Magento\Integration\Helper\Oauth\Data::class);
+        $this->registryMock = $this->getMock(
+            'Magento\Framework\Registry',
+            [],
+            [],
+            '',
+            false
+        );
+        $this->oauthDataMock = $this->getMock(
+            'Magento\Integration\Helper\Oauth\Data',
+            [],
+            [],
+            '',
+            false
+        );
         $this->resourceMock = $this->getMockForAbstractClass(
-            \Magento\Framework\Model\ResourceModel\AbstractResource::class,
+            'Magento\Framework\Model\ResourceModel\AbstractResource',
             [],
             '',
             false,
@@ -67,7 +85,13 @@ class NonceTest extends \PHPUnit\Framework\TestCase
             true,
             ['getIdFieldName', 'selectByCompositeKey', 'deleteOldEntries']
         );
-        $this->resourceCollectionMock = $this->createMock(\Magento\Framework\Data\Collection\AbstractDb::class);
+        $this->resourceCollectionMock = $this->getMock(
+            'Magento\Framework\Data\Collection\AbstractDb',
+            [],
+            [],
+            '',
+            false
+        );
         $this->nonceModel = new \Magento\Integration\Model\Oauth\Nonce(
             $this->contextMock,
             $this->registryMock,

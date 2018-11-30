@@ -4,12 +4,14 @@
  * See COPYING.txt for license details.
  */
 
+// @codingStandardsIgnoreFile
+
 /**
  * \Magento\Framework\Cache\Core test case
  */
 namespace Magento\Framework\Cache\Test\Unit;
 
-class CoreTest extends \PHPUnit\Framework\TestCase
+class CoreTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\Framework\Cache\Core
@@ -31,7 +33,7 @@ class CoreTest extends \PHPUnit\Framework\TestCase
 
     protected function setUp()
     {
-        $this->_mockBackend = $this->createMock(\Zend_Cache_Backend_File::class);
+        $this->_mockBackend = $this->getMock('Zend_Cache_Backend_File');
     }
 
     protected function tearDown()
@@ -44,10 +46,7 @@ class CoreTest extends \PHPUnit\Framework\TestCase
         $core = new \Magento\Framework\Cache\Core();
         $core->setBackend($this->_mockBackend);
 
-        $this->assertNotInstanceOf(
-            \Magento\Framework\Cache\Backend\Decorator\AbstractDecorator::class,
-            $core->getBackend()
-        );
+        $this->assertNotInstanceOf('Magento\Framework\Cache\Backend\Decorator\AbstractDecorator', $core->getBackend());
         $this->assertEquals($this->_mockBackend, $core->getBackend());
     }
 
@@ -77,7 +76,7 @@ class CoreTest extends \PHPUnit\Framework\TestCase
 
     public function testSaveDisabled()
     {
-        $backendMock = $this->createMock(\Zend_Cache_Backend_BlackHole::class);
+        $backendMock = $this->getMock('Zend_Cache_Backend_BlackHole');
         $backendMock->expects($this->never())->method('save');
         $frontend = new \Magento\Framework\Cache\Core(['disable_save' => true]);
         $frontend->setBackend($backendMock);
@@ -87,7 +86,7 @@ class CoreTest extends \PHPUnit\Framework\TestCase
 
     public function testSaveNoCaching()
     {
-        $backendMock = $this->createMock(\Zend_Cache_Backend_BlackHole::class);
+        $backendMock = $this->getMock('Zend_Cache_Backend_BlackHole');
         $backendMock->expects($this->never())->method('save');
         $frontend = new \Magento\Framework\Cache\Core(['disable_save' => false, 'caching' => false]);
         $frontend->setBackend($backendMock);
@@ -102,7 +101,7 @@ class CoreTest extends \PHPUnit\Framework\TestCase
         $prefix = 'prefix_';
         $prefixedTags = ['prefix_abc', 'prefix__def', 'prefix__ghi'];
 
-        $backendMock = $this->createMock(\Zend_Cache_Backend_BlackHole::class);
+        $backendMock = $this->getMock('Zend_Cache_Backend_BlackHole');
         $backendMock->expects($this->once())
             ->method('save')
             ->with($data, $this->anything(), $prefixedTags)
@@ -127,7 +126,7 @@ class CoreTest extends \PHPUnit\Framework\TestCase
         $prefixedTags = ['prefix_abc', 'prefix__def', 'prefix__ghi'];
         $expectedResult = true;
 
-        $backendMock = $this->createMock(\Zend_Cache_Backend_BlackHole::class);
+        $backendMock = $this->getMock('Zend_Cache_Backend_BlackHole');
         $backendMock->expects($this->once())
             ->method('clean')
             ->with($mode, $prefixedTags)
@@ -149,7 +148,7 @@ class CoreTest extends \PHPUnit\Framework\TestCase
         $prefixedTags = ['prefix_abc', 'prefix__def', 'prefix__ghi'];
         $ids = ['id', 'id2', 'id3'];
 
-        $backendMock = $this->createMock(\Magento\Framework\Cache\Test\Unit\CoreTestMock::class);
+        $backendMock = $this->getMock('Magento\Framework\Cache\Test\Unit\CoreMock');
         $backendMock->expects($this->once())
             ->method('getIdsMatchingTags')
             ->with($prefixedTags)
@@ -174,7 +173,7 @@ class CoreTest extends \PHPUnit\Framework\TestCase
         $prefixedTags = ['prefix_abc', 'prefix__def', 'prefix__ghi'];
         $ids = ['id', 'id2', 'id3'];
 
-        $backendMock = $this->createMock(\Magento\Framework\Cache\Test\Unit\CoreTestMock::class);
+        $backendMock = $this->getMock('Magento\Framework\Cache\Test\Unit\CoreMock');
         $backendMock->expects($this->once())
             ->method('getIdsNotMatchingTags')
             ->with($prefixedTags)
@@ -191,4 +190,8 @@ class CoreTest extends \PHPUnit\Framework\TestCase
         $result = $frontend->getIdsNotMatchingTags($tags);
         $this->assertEquals($ids, $result);
     }
+}
+
+abstract class CoreMock extends \Zend_Cache_Backend implements \Zend_Cache_Backend_ExtendedInterface
+{
 }

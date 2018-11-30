@@ -9,7 +9,6 @@ use Magento\Eav\Model\Config as EavConfig;
 
 /**
  * Class Increment
- * @deprecated 100.2.0
  */
 class Increment
 {

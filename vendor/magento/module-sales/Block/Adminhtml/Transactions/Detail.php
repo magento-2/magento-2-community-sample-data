@@ -11,9 +11,7 @@ use Magento\Sales\Api\OrderPaymentRepositoryInterface;
 /**
  * Adminhtml transaction detail
  *
- * @api
  * @author     Magento Core Team <core@magentocommerce.com>
- * @since 100.0.2
  */
 class Detail extends \Magento\Backend\Block\Widget\Container
 {
@@ -133,7 +131,7 @@ class Detail extends \Magento\Backend\Block\Widget\Container
 
         $this->setOrderIncrementIdHtml($this->escapeHtml($this->_txn->getOrder()->getIncrementId()));
 
-        $this->setTxnTypeHtml($this->escapeHtml(__($this->_txn->getTxnType())));
+        $this->setTxnTypeHtml($this->escapeHtml($this->_txn->getTxnType()));
 
         $this->setOrderIdUrlHtml(
             $this->escapeHtml($this->getUrl('sales/order/view', ['order_id' => $this->_txn->getOrderId()]))

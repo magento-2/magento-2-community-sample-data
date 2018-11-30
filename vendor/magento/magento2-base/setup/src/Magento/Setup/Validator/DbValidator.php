@@ -146,6 +146,7 @@ class DbValidator
             'DELETE',
             'CREATE',
             'DROP',
+            'REFERENCES',
             'INDEX',
             'ALTER',
             'CREATE TEMPORARY TABLES',
@@ -155,6 +156,7 @@ class DbValidator
             'SHOW VIEW',
             'CREATE ROUTINE',
             'ALTER ROUTINE',
+            'EVENT',
             'TRIGGER'
         ];
 

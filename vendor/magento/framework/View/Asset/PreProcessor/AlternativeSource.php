@@ -5,6 +5,7 @@
  */
 namespace Magento\Framework\View\Asset\PreProcessor;
 
+use Magento\Framework\Filesystem;
 use Magento\Framework\ObjectManagerInterface;
 use Magento\Framework\View\Asset\File\FallbackContext;
 use Magento\Framework\View\Asset\LockerProcessInterface;

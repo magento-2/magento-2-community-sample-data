@@ -6,9 +6,12 @@
 
 // @codingStandardsIgnoreFile
 
-/** @var \Magento\UrlRewrite\Block\Edit $block */
+/**
+ * @var $block \Magento\UrlRewrite\Block\Edit
+ */
 ?>
-<?= $block->getChildHtml() ?>
+<?php echo $block->getChildHtml() ?>
+
 <?php if ($block->getChildBlock('form')): ?>
 <script type="text/x-magento-init">
     {

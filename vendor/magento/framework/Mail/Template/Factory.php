@@ -25,7 +25,7 @@ class Factory implements \Magento\Framework\Mail\Template\FactoryInterface
      */
     public function __construct(
         \Magento\Framework\ObjectManagerInterface $objectManager,
-        $instanceName = \Magento\Framework\Mail\TemplateInterface::class
+        $instanceName = 'Magento\Framework\Mail\TemplateInterface'
     ) {
         $this->objectManager = $objectManager;
         $this->instanceName = $instanceName;

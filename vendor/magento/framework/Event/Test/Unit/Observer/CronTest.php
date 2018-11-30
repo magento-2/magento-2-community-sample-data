@@ -10,7 +10,7 @@ use \Magento\Framework\Event\Observer\Cron;
 /**
  * Class CronTest
  */
-class CronTest extends \PHPUnit\Framework\TestCase
+class CronTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var Cron
@@ -105,7 +105,7 @@ class CronTest extends \PHPUnit\Framework\TestCase
      */
     public function testIsValidFor($time, $expression, $expectedResult)
     {
-        $eventMock = $this->createMock(\Magento\Framework\Event::class);
+        $eventMock = $this->getMock('Magento\Framework\Event', [], [], '', false);
 
         $this->cron->setCronExpr($expression);
         $this->cron->setNow($time);

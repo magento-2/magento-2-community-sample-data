@@ -8,9 +8,6 @@ namespace Magento\Framework\Exception;
 
 use Magento\Framework\Phrase;
 
-/**
- * @api
- */
 abstract class AbstractAggregateException extends LocalizedException
 {
     /**
@@ -39,12 +36,11 @@ abstract class AbstractAggregateException extends LocalizedException
      *
      * @param \Magento\Framework\Phrase $phrase
      * @param \Exception $cause
-     * @param int $code
      */
-    public function __construct(Phrase $phrase, \Exception $cause = null, $code = 0)
+    public function __construct(Phrase $phrase, \Exception $cause = null)
     {
         $this->originalPhrase = $phrase;
-        parent::__construct($phrase, $cause, $code);
+        parent::__construct($phrase, $cause);
     }
 
     /**
@@ -75,17 +71,6 @@ abstract class AbstractAggregateException extends LocalizedException
             // All subsequent calls after the second should reach here
             $this->errors[] = new LocalizedException($phrase);
         }
-        return $this;
-    }
-
-    /**
-     * @param LocalizedException $exception
-     * @return $this
-     */
-    public function addException(LocalizedException $exception)
-    {
-        $this->addErrorCalls++;
-        $this->errors[] = $exception;
         return $this;
     }
 

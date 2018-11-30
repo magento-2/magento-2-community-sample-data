@@ -13,12 +13,12 @@ use Magento\Sales\Api\Data\OrderInterface;
 use Magento\Sales\Api\OrderRepositoryInterface;
 use Magento\Sales\Model\Order;
 use Magento\TestFramework\Helper\Bootstrap;
-use PHPUnit\Framework\MockObject_MockObject as MockObject;
+use PHPUnit_Framework_MockObject_MockObject as MockObject;
 
 /**
- * Class contains tests for Authorize.net Direct Post request handler
+ * Class contains tests for Authorize.net Direct Post request handler.
  */
-class RequestTest extends \PHPUnit\Framework\TestCase
+class RequestTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var Order
@@ -46,6 +46,7 @@ class RequestTest extends \PHPUnit\Framework\TestCase
     /**
      * @covers \Magento\Authorizenet\Model\Directpost\Request::setDataFromOrder
      * @magentoDataFixture Magento/Authorizenet/_files/order.php
+     * @return void
      */
     public function testSetDataFromOrder()
     {
@@ -62,7 +63,7 @@ class RequestTest extends \PHPUnit\Framework\TestCase
             ->method('getConfigData')
             ->willReturnMap([
                 ['email_customer', null, $customerEmail],
-                ['merchant_email', null, $merchantEmail]
+                ['merchant_email', null, $merchantEmail],
             ]);
 
         $result = $this->request->setDataFromOrder($this->order, $payment);
@@ -74,7 +75,8 @@ class RequestTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * Get stored order
+     * Get stored order.
+     *
      * @return Order
      */
     private function getOrder()
@@ -97,6 +99,8 @@ class RequestTest extends \PHPUnit\Framework\TestCase
             ->getItems();
 
         /** @var OrderInterface $order */
-        return array_pop($orders);
+        $order = array_pop($orders);
+
+        return $order;
     }
 }

@@ -9,7 +9,6 @@
 
 namespace Zend\Crypt;
 
-use Interop\Container\ContainerInterface;
 use Zend\Crypt\Key\Derivation\Pbkdf2;
 use Zend\Crypt\Symmetric\SymmetricInterface;
 use Zend\Math\Rand;
@@ -86,7 +85,7 @@ class BlockCipher
     }
 
     /**
-     * Factory
+     * Factory.
      *
      * @param  string      $adapter
      * @param  array       $options
@@ -95,8 +94,7 @@ class BlockCipher
     public static function factory($adapter, $options = [])
     {
         $plugins = static::getSymmetricPluginManager();
-        $adapter = $plugins->get($adapter);
-        $adapter->setOptions($options);
+        $adapter = $plugins->get($adapter, (array) $options);
 
         return new static($adapter);
     }
@@ -104,7 +102,7 @@ class BlockCipher
     /**
      * Returns the symmetric cipher plugin manager.  If it doesn't exist it's created.
      *
-     * @return ContainerInterface
+     * @return SymmetricPluginManager
      */
     public static function getSymmetricPluginManager()
     {
@@ -124,17 +122,18 @@ class BlockCipher
     public static function setSymmetricPluginManager($plugins)
     {
         if (is_string($plugins)) {
-            if (!class_exists($plugins) || ! is_subclass_of($plugins, ContainerInterface::class)) {
+            if (!class_exists($plugins)) {
                 throw new Exception\InvalidArgumentException(sprintf(
-                    'Unable to locate symmetric cipher plugins using class "%s"; class does not exist or does not implement ContainerInterface',
+                    'Unable to locate symmetric cipher plugins using class "%s"; class does not exist',
                     $plugins
                 ));
             }
             $plugins = new $plugins();
         }
-        if (!$plugins instanceof ContainerInterface) {
+        if (!$plugins instanceof SymmetricPluginManager) {
             throw new Exception\InvalidArgumentException(sprintf(
-                'Symmetric plugin must implements Interop\Container\ContainerInterface;; received "%s"',
+                'Expected an instance or extension of %s\SymmetricPluginManager; received "%s"',
+                __NAMESPACE__,
                 (is_object($plugins) ? get_class($plugins) : gettype($plugins))
             ));
         }

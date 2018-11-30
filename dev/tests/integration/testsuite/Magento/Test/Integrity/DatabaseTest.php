@@ -8,7 +8,7 @@ namespace Magento\Test\Integrity;
 
 use Magento\TestFramework\Helper\Bootstrap;
 
-class DatabaseTest extends \PHPUnit\Framework\TestCase
+class DatabaseTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * Assure that there are no redundant indexes declared in database

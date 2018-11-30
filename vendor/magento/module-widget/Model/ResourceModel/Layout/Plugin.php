@@ -7,6 +7,8 @@ namespace Magento\Widget\Model\ResourceModel\Layout;
 
 /**
  * Class Plugin
+ *
+ * @package Magento\Widget\Model\ResourceModel\Layout
  */
 class Plugin
 {

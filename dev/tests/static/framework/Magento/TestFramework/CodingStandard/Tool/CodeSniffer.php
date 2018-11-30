@@ -3,14 +3,15 @@
  * Copyright © Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
+
+/**
+ * PHP Code Sniffer tool wrapper
+ */
 namespace Magento\TestFramework\CodingStandard\Tool;
 
 use Magento\TestFramework\CodingStandard\Tool\CodeSniffer\Wrapper;
 use Magento\TestFramework\CodingStandard\ToolInterface;
 
-/**
- * PHP Code Sniffer tool wrapper
- */
 class CodeSniffer implements ToolInterface, ExtensionInterface
 {
     /**
@@ -39,10 +40,7 @@ class CodeSniffer implements ToolInterface, ExtensionInterface
      *
      * @var array
      */
-    private $extensions = [
-        'php' => 'PHP',
-        'phtml' => 'PHP',
-    ];
+    private $extensions = ['php'];
 
     /**
      * Constructor
@@ -53,11 +51,8 @@ class CodeSniffer implements ToolInterface, ExtensionInterface
      */
     public function __construct($rulesetDir, $reportFile, Wrapper $wrapper)
     {
-        $this->rulesetDir = $rulesetDir;
-        if (!file_exists($rulesetDir) && file_exists($fullPath = realpath(__DIR__ . '/../../../../' . $rulesetDir))) {
-            $this->rulesetDir = $fullPath;
-        }
         $this->reportFile = $reportFile;
+        $this->rulesetDir = $rulesetDir;
         $this->wrapper = $wrapper;
     }
 
@@ -76,7 +71,7 @@ class CodeSniffer implements ToolInterface, ExtensionInterface
      */
     public function canRun()
     {
-        return class_exists('\PHP_CodeSniffer\Runner');
+        return class_exists('PHP_CodeSniffer_CLI');
     }
 
     /**
@@ -88,21 +83,18 @@ class CodeSniffer implements ToolInterface, ExtensionInterface
             return 0;
         }
 
-        if (!defined('PHP_CODESNIFFER_IN_TESTS')) {
-            define('PHP_CODESNIFFER_IN_TESTS', true);
-        }
-
         $this->wrapper->checkRequirements();
-        $settings = [];
+        $settings = $this->wrapper->getDefaults();
         $settings['files'] = $whiteList;
-        $settings['standards'] = [$this->rulesetDir];
+        $settings['standard'] = [$this->rulesetDir];
         $settings['extensions'] = $this->extensions;
         $settings['warningSeverity'] = 0;
         $settings['reports']['full'] = $this->reportFile;
-        $this->wrapper->setSettings($settings);
+
+        $this->wrapper->setValues($settings);
 
         ob_start();
-        $result = $this->wrapper->runPHPCS();
+        $result = $this->wrapper->process();
         ob_end_clean();
 
         return $result;

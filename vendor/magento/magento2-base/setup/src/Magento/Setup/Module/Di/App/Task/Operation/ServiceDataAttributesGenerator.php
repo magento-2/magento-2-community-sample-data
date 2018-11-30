@@ -54,8 +54,8 @@ class ServiceDataAttributesGenerator implements OperationInterface
     public function doOperation()
     {
         $files = $this->configurationScanner->scan('extension_attributes.xml');
-        $entities = $this->serviceDataAttributesScanner->collectEntities($files);
-        foreach ($entities as $entityName) {
+        $repositories = $this->serviceDataAttributesScanner->collectEntities($files);
+        foreach ($repositories as $entityName) {
             class_exists($entityName);
         }
     }

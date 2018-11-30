@@ -8,7 +8,7 @@
     <!-- ko foreach: getRegion('before-fields') -->
     <!-- ko template: getTemplate() --><!-- /ko -->
     <!--/ko-->
-    <form data-bind="attr: {'data-hasrequired': $t('* Required Fields')}">
+    <form data-hasrequired="* Required Fields">
         <fieldset class="fieldset address" data-form="billing-new-address">
             <!-- ko foreach: getRegion('additional-fieldsets') -->
             <!-- ko template: getTemplate() --><!-- /ko -->

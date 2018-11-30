@@ -6,12 +6,8 @@
 
 namespace Magento\Translation\Model\Js;
 
-use Magento\Framework\Exception\LocalizedException;
-
 /**
  * DataProvider for js translation
- *
- * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  */
 class DataProvider implements DataProviderInterface
 {
@@ -107,16 +103,9 @@ class DataProvider implements DataProviderInterface
             $read = $this->fileReadFactory->create($filePath[0], \Magento\Framework\Filesystem\DriverPool::FILE);
             $content = $read->readAll();
             foreach ($this->getPhrases($content) as $phrase) {
-                try {
-                    $translatedPhrase = $this->translate->render([$phrase], []);
-                    if ($phrase != $translatedPhrase) {
-                        $dictionary[$phrase] = $translatedPhrase;
-                    }
-                } catch (\Exception $e) {
-                    throw new LocalizedException(
-                        __('Error while translating phrase "%s" in file %s.', $phrase, $filePath[0]),
-                        $e
-                    );
+                $translatedPhrase = $this->translate->render([$phrase], []);
+                if ($phrase != $translatedPhrase) {
+                    $dictionary[$phrase] = $translatedPhrase;
                 }
             }
         }
@@ -129,7 +118,7 @@ class DataProvider implements DataProviderInterface
      *
      * @param string $content
      * @return string[]
-     * @throws \Magento\Framework\Exception\LocalizedException
+     * @throws \Exception
      */
     protected function getPhrases($content)
     {
@@ -146,8 +135,8 @@ class DataProvider implements DataProviderInterface
                 }
             }
             if (false === $result) {
-                throw new LocalizedException(
-                    __('Error while generating js translation dictionary: "%s"', error_get_last())
+                throw new \Exception(
+                    sprintf('Error while generating js translation dictionary: "%s"', error_get_last())
                 );
             }
         }

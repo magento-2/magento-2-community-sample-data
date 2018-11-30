@@ -4,16 +4,12 @@
  * See COPYING.txt for license details.
  */
 
+namespace Magento\Framework\Backup;
+
 /**
  * Interface for work with archives
  *
  * @author      Magento Core Team <core@magentocommerce.com>
- */
-namespace Magento\Framework\Backup;
-
-/**
- * @api
- *
  * @deprecated Backups should be done using other means.
  */
 interface BackupInterface

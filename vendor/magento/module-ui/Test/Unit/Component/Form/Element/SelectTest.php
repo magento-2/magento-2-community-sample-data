@@ -22,9 +22,6 @@ class SelectTest extends AbstractElementTest
         return Select::class;
     }
 
-    /**
-     * @return mixed|void
-     */
     public function testGetComponentName()
     {
         $this->assertSame(Select::NAME, $this->getModel()->getComponentName());

@@ -11,9 +11,7 @@ namespace Zend\Mvc\Router\Console;
 
 use Traversable;
 use Zend\Mvc\Router\Exception;
-use Zend\Mvc\Router\RouteInvokableFactory;
 use Zend\Mvc\Router\SimpleRouteStack as BaseSimpleRouteStack;
-use Zend\ServiceManager\Config;
 use Zend\Stdlib\ArrayUtils;
 
 /**
@@ -28,24 +26,14 @@ class SimpleRouteStack extends BaseSimpleRouteStack
      */
     protected function init()
     {
-        (new Config([
-            'aliases' => [
-                'catchall' => Catchall::class,
-                'catchAll' => Catchall::class,
-                'Catchall' => Catchall::class,
-                'CatchAll' => Catchall::class,
-                'simple'   => Simple::class,
-                'Simple'   => Simple::class,
-            ],
-            'factories' => [
-                Catchall::class => RouteInvokableFactory::class,
-                Simple::class   => RouteInvokableFactory::class,
-
-                // v2 normalized names
-                'zendmvcrouterconsolecatchall' => RouteInvokableFactory::class,
-                'zendmvcrouterconsolesimple'   => RouteInvokableFactory::class,
-            ],
-        ]))->configureServiceManager($this->routePluginManager);
+        $routes = $this->routePluginManager;
+        foreach ([
+                'catchall' => __NAMESPACE__ . '\Catchall',
+                'simple'   => __NAMESPACE__ . '\Simple',
+            ] as $name => $class
+        ) {
+            $routes->setInvokableClass($name, $class);
+        };
     }
 
     /**
@@ -79,21 +67,19 @@ class SimpleRouteStack extends BaseSimpleRouteStack
     {
         if ($specs instanceof Traversable) {
             $specs = ArrayUtils::iteratorToArray($specs);
-        }
-
-        if (! is_array($specs)) {
+        } elseif (!is_array($specs)) {
             throw new Exception\InvalidArgumentException('Route definition must be an array or Traversable object');
         }
 
         // default to 'simple' console route
-        if (! isset($specs['type'])) {
-            $specs['type'] = Simple::class;
+        if (!isset($specs['type'])) {
+            $specs['type'] = 'simple';
         }
 
         // build route object
         $route = parent::routeFromArray($specs);
 
-        if (! $route instanceof RouteInterface) {
+        if (!$route instanceof RouteInterface) {
             throw new Exception\RuntimeException('Given route does not implement Console route interface');
         }
 

@@ -7,10 +7,6 @@
  */
 namespace Magento\Backend\App\Request;
 
-/**
- * @api
- * @since 100.0.2
- */
 class PathInfoProcessor implements \Magento\Framework\App\Request\PathInfoProcessorInterface
 {
     /**

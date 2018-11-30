@@ -10,8 +10,6 @@ use Magento\Framework\Data\Collection\AbstractDb as DbCollection;
 
 /**
  * Join processor allows to join extension attributes during collections loading.
- *
- * @api
  */
 interface JoinProcessorInterface
 {

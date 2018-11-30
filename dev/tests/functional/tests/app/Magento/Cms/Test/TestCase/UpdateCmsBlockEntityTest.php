@@ -20,14 +20,14 @@ use Magento\Cms\Test\Fixture\CmsBlock;
  * 4. Fill data according to dataset.
  * 5. Perform all assertions.
  *
- * @group CMS_Content
+ * @group CMS_Content_(PS)
  * @ZephyrId MAGETWO-25941
  */
 class UpdateCmsBlockEntityTest extends AbstractCmsBlockEntityTest
 {
     /* tags */
     const MVP = 'yes';
-    const SEVERITY = 'S1';
+    const DOMAIN = 'PS';
     /* end tags */
 
     /**

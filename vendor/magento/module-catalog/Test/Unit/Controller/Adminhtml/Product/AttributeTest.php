@@ -9,19 +9,18 @@ use Magento\Backend\App\Action\Context;
 use Magento\Catalog\Controller\Adminhtml\Product\Attribute;
 use Magento\Framework\App\RequestInterface;
 use Magento\Framework\Cache\FrontendInterface;
-use Magento\Framework\Message\ManagerInterface;
 use Magento\Framework\Registry;
-use Magento\Framework\TestFramework\Unit\Helper\ObjectManager as ObjectManagerHelper;
+use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
 use Magento\Framework\View\Result\PageFactory;
 use Magento\Framework\Controller\ResultFactory;
 
 /**
  * Class AttributeTest
  */
-class AttributeTest extends \PHPUnit\Framework\TestCase
+class AttributeTest extends \PHPUnit_Framework_TestCase
 {
     /**
-     * @var ObjectManagerHelper
+     * @var ObjectManager
      */
     protected $objectManager;
 
@@ -55,14 +54,9 @@ class AttributeTest extends \PHPUnit\Framework\TestCase
      */
     protected $resultFactoryMock;
 
-    /**
-     * @var ManagerInterface|\PHPUnit_Framework_MockObject_MockObject
-     */
-    private $messageManager;
-
     protected function setUp()
     {
-        $this->objectManager = new ObjectManagerHelper($this);
+        $this->objectManager = new ObjectManager($this);
         $this->contextMock = $this->getMockBuilder(Context::class)
             ->disableOriginalConstructor()
             ->getMock();
@@ -80,9 +74,6 @@ class AttributeTest extends \PHPUnit\Framework\TestCase
         $this->resultFactoryMock = $this->getMockBuilder(ResultFactory::class)
             ->disableOriginalConstructor()
             ->getMock();
-        $this->messageManager = $this->getMockBuilder(ManagerInterface::class)
-            ->disableOriginalConstructor()
-            ->getMock();
 
         $this->contextMock->expects($this->any())
             ->method('getRequest')
@@ -90,9 +81,6 @@ class AttributeTest extends \PHPUnit\Framework\TestCase
         $this->contextMock->expects($this->any())
             ->method('getResultFactory')
             ->willReturn($this->resultFactoryMock);
-        $this->contextMock->expects($this->once())
-            ->method('getMessageManager')
-            ->willReturn($this->messageManager);
     }
 
     /**

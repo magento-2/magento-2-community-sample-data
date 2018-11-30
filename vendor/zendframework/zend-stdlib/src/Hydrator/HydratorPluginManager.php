@@ -9,17 +9,23 @@
 
 namespace Zend\Stdlib\Hydrator;
 
-use Zend\Hydrator\HydratorPluginManager as BaseHydratorPluginManager;
+use Zend\ServiceManager\AbstractPluginManager;
+use Zend\Stdlib\Exception;
 
 /**
  * Plugin manager implementation for hydrators.
  *
  * Enforces that adapters retrieved are instances of HydratorInterface
- *
- * @deprecated Use Zend\Hydrator\HydratorPluginManager from zendframework/zend-hydrator instead.
  */
-class HydratorPluginManager extends BaseHydratorPluginManager
+class HydratorPluginManager extends AbstractPluginManager
 {
+    /**
+     * Whether or not to share by default
+     *
+     * @var bool
+     */
+    protected $shareByDefault = false;
+
     /**
      * Default aliases
      *
@@ -48,6 +54,21 @@ class HydratorPluginManager extends BaseHydratorPluginManager
      */
     protected $factories = [
         'Zend\Stdlib\Hydrator\DelegatingHydrator' => 'Zend\Stdlib\Hydrator\DelegatingHydratorFactory',
-        'zendstdlibhydratordelegatinghydrator'    => 'Zend\Stdlib\Hydrator\DelegatingHydratorFactory',
     ];
+
+    /**
+     * {@inheritDoc}
+     */
+    public function validatePlugin($plugin)
+    {
+        if ($plugin instanceof HydratorInterface) {
+            // we're okay
+            return;
+        }
+
+        throw new Exception\RuntimeException(sprintf(
+            'Plugin of type %s is invalid; must implement Zend\Stdlib\Hydrator\HydratorInterface',
+            (is_object($plugin) ? get_class($plugin) : gettype($plugin))
+        ));
+    }
 }

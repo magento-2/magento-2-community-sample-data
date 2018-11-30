@@ -13,9 +13,7 @@ use Magento\Framework\App\Config\Spi\PostProcessorInterface;
  */
 class PostProcessorComposite implements PostProcessorInterface
 {
-    /**
-     * @var \Magento\Framework\App\Config\Spi\PostProcessorInterface[]
-     */
+    /** @var  PostProcessorInterface[] */
     private $processors;
 
     /**

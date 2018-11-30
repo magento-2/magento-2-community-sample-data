@@ -87,13 +87,6 @@ class WordsFinder
     protected $componentRegistrar;
 
     /**
-     * Map of phrase to exclude from the file content
-     *
-     * @var  array
-     */
-    private $exclude = [];
-
-    /**
      * @param string|array $configFiles
      * @param string $baseDir
      * @param \Magento\Framework\Component\ComponentRegistrar $componentRegistrar
@@ -179,14 +172,11 @@ class WordsFinder
      * @param \SimpleXMLElement $configXml
      * @return \Magento\TestFramework\Inspection\WordsFinder
      * @throws \Magento\TestFramework\Inspection\Exception
-     * @SuppressWarnings(PHPMD.CyclomaticComplexity)
-     * @SuppressWarnings(PHPMD.NPathComplexity)
      */
     protected function _extractWhitelist(\SimpleXMLElement $configXml)
     {
         // Load whitelist entries
         $whitelist = [];
-        $exclude = [];
         $nodes = $configXml->xpath('//config/whitelist/item');
         foreach ($nodes as $node) {
             $path = $node->xpath('path');
@@ -213,21 +203,8 @@ class WordsFinder
                     $words[] = (string)$wordNode;
                 }
             }
+
             $whitelist[$path] = $words;
-
-            $excludeNodes = $node->xpath('exclude');
-            $excludes = [];
-            if ($excludeNodes) {
-                foreach ($excludeNodes as $extractNode) {
-                    $excludes[] = (string)$extractNode;
-                }
-            }
-
-            if (isset($exclude[$path])) {
-                $exclude[$path] = array_merge($excludes, $exclude[$path]);
-            } else {
-                $exclude[$path] = $excludes;
-            }
         }
 
         // Merge with already present whitelist
@@ -238,12 +215,6 @@ class WordsFinder
             $this->_whitelist[$newPath] = array_unique($newWords);
         }
 
-        foreach ($exclude as $newPath => $newWords) {
-            if (isset($this->exclude[$newPath])) {
-                $newWords = array_merge($this->exclude[$newPath], $newWords);
-            }
-            $this->exclude[$newPath] = array_unique($newWords);
-        }
         return $this;
     }
 
@@ -283,18 +254,12 @@ class WordsFinder
      * @param  string $file
      * @return array
      * @SuppressWarnings(PHPMD.CyclomaticComplexity)
-     * @SuppressWarnings(PHPMD.NPathComplexity)
      */
     protected function _findWords($file)
     {
         $checkContents = !$this->_isBinaryFile($file);
         $path = $this->getSearchablePath($file);
         $contents = $checkContents ? file_get_contents($file) : '';
-        if (isset($this->exclude[$file]) && !empty($this->exclude[$file])) {
-            foreach ($this->exclude[$file] as $stringToEliminate) {
-                $contents = str_replace($stringToEliminate, "", $contents);
-            }
-        }
 
         $foundWords = [];
         foreach ($this->_words as $word) {

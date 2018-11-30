@@ -12,8 +12,7 @@ use Magento\Framework\View\Element\UiComponentInterface;
 use Magento\Framework\View\Element\UiComponent\ContextInterface;
 
 /**
- * @api
- * @since 100.0.2
+ * Class Fieldset
  */
 class Fieldset extends AbstractComponent
 {

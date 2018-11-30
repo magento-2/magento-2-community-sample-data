@@ -2,10 +2,6 @@
  * Copyright © Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
-
-/**
- * @api
- */
 define([
     'jquery',
     'Magento_Ui/js/modal/alert',
@@ -16,8 +12,7 @@ define([
     'use strict';
 
     return function (optionConfig) {
-        var activePanelClass = 'selected-type-options',
-            swatchProductAttributes = {
+        var swatchProductAttributes = {
                 frontendInput: $('#frontend_input'),
                 isFilterable: $('#is_filterable'),
                 isFilterableInSearch: $('#is_filterable_in_search'),
@@ -183,7 +178,6 @@ define([
                         useProductImageForSwatch = false,
                         defaultValueUpdateImage = false,
                         optionDefaultInputType = '',
-                        isFrontTabHidden = false,
                         thing = this;
 
                     if (!this.frontendInput.length) {
@@ -248,7 +242,6 @@ define([
                             switch (option) {
                                 case '_front_fieldset':
                                     thing.tabsFront.hide();
-                                    isFrontTabHidden = true;
                                     break;
 
                                 case '_default_value':
@@ -265,11 +258,6 @@ define([
                                     thing.setRowVisibility($('#' + option), false);
                             }
                         });
-
-                        if (!isFrontTabHidden) {
-                            thing.tabsFront.show();
-                        }
-
                     } else {
                         this.tabsFront.show();
                         this.showDefaultRows();
@@ -338,7 +326,6 @@ define([
                  */
                 _showPanel: function (el) {
                     el.closest('.fieldset').show();
-                    el.addClass(activePanelClass);
                     this._render(el.attr('id'));
                 },
 
@@ -348,7 +335,6 @@ define([
                  */
                 _hidePanel: function (el) {
                     el.closest('.fieldset').hide();
-                    el.removeClass(activePanelClass);
                 },
 
                 /**
@@ -416,12 +402,6 @@ define([
             };
 
         $(function () {
-            var editForm = $('#edit_form'),
-                swatchVisualPanel = $('#swatch-visual-options-panel'),
-                swatchTextPanel = $('#swatch-text-options-panel'),
-                tableBody = $(),
-                activePanel = $();
-
             $('#frontend_input').bind('change', function () {
                 swatchProductAttributes.bindAttributeInputType();
             });
@@ -435,37 +415,6 @@ define([
             $('.attribute-popup .collapse, [data-role="advanced_fieldset-content"]')
                 .collapsable()
                 .collapse('hide');
-
-            editForm.on('beforeSubmit', function () {
-                var optionContainer, optionsValues;
-
-                activePanel = swatchTextPanel.hasClass(activePanelClass) ? swatchTextPanel : swatchVisualPanel;
-                optionContainer = activePanel.find('table tbody');
-
-                if (activePanel.hasClass(activePanelClass)) {
-                    optionsValues = $.map(
-                        optionContainer.find('tr'),
-                        function (row) {
-                            return $(row).find('input, select, textarea').serialize();
-                        }
-                    );
-                    $('<input>')
-                        .attr({
-                            type: 'hidden',
-                            name: 'serialized_options'
-                        })
-                        .val(JSON.stringify(optionsValues))
-                        .prependTo(editForm);
-                }
-
-                tableBody = optionContainer.detach();
-            });
-            editForm.on('afterValidate.error highlight.validate', function () {
-                if (activePanel.hasClass(activePanelClass)) {
-                    activePanel.find('table').append(tableBody);
-                    $('input[name="serialized_options"]').remove();
-                }
-            });
         });
 
         window.saveAttributeInNewSet = swatchProductAttributes.saveAttributeInNewSet;

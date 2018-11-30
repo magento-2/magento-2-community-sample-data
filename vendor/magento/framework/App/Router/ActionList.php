@@ -6,8 +6,6 @@
  */
 namespace Magento\Framework\App\Router;
 
-use Magento\Framework\Serialize\SerializerInterface;
-use Magento\Framework\Serialize\Serializer\Serialize;
 use Magento\Framework\Module\Dir\Reader as ModuleReader;
 
 class ActionList
@@ -38,42 +36,27 @@ class ActionList
     ];
 
     /**
-     * @var SerializerInterface
-     */
-    private $serializer;
-
-    /**
-     * @var string
-     */
-    private $actionInterface;
-
-    /**
-     * ActionList constructor
-     *
      * @param \Magento\Framework\Config\CacheInterface $cache
      * @param ModuleReader $moduleReader
      * @param string $actionInterface
      * @param string $cacheKey
      * @param array $reservedWords
-     * @param SerializerInterface|null $serializer
      */
     public function __construct(
         \Magento\Framework\Config\CacheInterface $cache,
         ModuleReader $moduleReader,
-        $actionInterface = \Magento\Framework\App\ActionInterface::class,
+        $actionInterface = '\Magento\Framework\App\ActionInterface',
         $cacheKey = 'app_action_list',
-        $reservedWords = [],
-        SerializerInterface $serializer = null
+        $reservedWords = []
     ) {
         $this->reservedWords = array_merge($reservedWords, $this->reservedWords);
         $this->actionInterface = $actionInterface;
-        $this->serializer = $serializer ?: \Magento\Framework\App\ObjectManager::getInstance()->get(Serialize::class);
         $data = $cache->load($cacheKey);
         if (!$data) {
             $this->actions = $moduleReader->getActionFiles();
-            $cache->save($this->serializer->serialize($this->actions), $cacheKey);
+            $cache->save(serialize($this->actions), $cacheKey);
         } else {
-            $this->actions = $this->serializer->unserialize($data);
+            $this->actions = unserialize($data);
         }
     }
 

@@ -92,7 +92,7 @@ class ProductOptionProcessor implements ProductOptionProcessorInterface
             $this->dataObjectHelper->populateWithArray(
                 $downloadableOption,
                 ['downloadable_links' => $links],
-                \Magento\Downloadable\Api\Data\DownloadableOptionInterface::class
+                'Magento\Downloadable\Api\Data\DownloadableOptionInterface'
             );
 
             return ['downloadable_option' => $downloadableOption];

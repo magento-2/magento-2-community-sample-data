@@ -78,7 +78,7 @@ class StockIndex implements StockIndexInterface
      *
      * @param int $productId
      * @param int $scopeId
-     * @deprecated 100.1.0
+     * @deprecated
      * @return true
      * @SuppressWarnings(PHPMD.UnusedLocalVariable)
      */
@@ -109,7 +109,7 @@ class StockIndex implements StockIndexInterface
      *
      * @param int $productId
      * @param int $websiteId
-     * @deprecated 100.1.0
+     * @deprecated
      * @return void
      */
     public function updateProductStockStatus($productId, $websiteId)
@@ -269,7 +269,7 @@ class StockIndex implements StockIndexInterface
     {
         if (empty($this->stockStatusResource)) {
             $this->stockStatusResource = \Magento\Framework\App\ObjectManager::getInstance()->get(
-                \Magento\CatalogInventory\Model\ResourceModel\Stock\Status::class
+                'Magento\CatalogInventory\Model\ResourceModel\Stock\Status'
             );
         }
         return $this->stockStatusResource;

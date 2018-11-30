@@ -20,13 +20,13 @@ class ConfigureProductToAdd extends \Magento\Sales\Controller\Adminhtml\Order\Cr
         $configureResult = new \Magento\Framework\DataObject();
         $configureResult->setOk(true);
         $configureResult->setProductId($productId);
-        $sessionQuote = $this->_objectManager->get(\Magento\Backend\Model\Session\Quote::class);
+        $sessionQuote = $this->_objectManager->get('Magento\Backend\Model\Session\Quote');
         $configureResult->setCurrentStoreId($sessionQuote->getStore()->getId());
         $configureResult->setCurrentCustomerId($sessionQuote->getCustomerId());
 
         // Render page
         /** @var \Magento\Catalog\Helper\Product\Composite $helper */
-        $helper = $this->_objectManager->get(\Magento\Catalog\Helper\Product\Composite::class);
+        $helper = $this->_objectManager->get('Magento\Catalog\Helper\Product\Composite');
         return $helper->renderConfigureResult($configureResult);
     }
 }

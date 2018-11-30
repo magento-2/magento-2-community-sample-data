@@ -33,7 +33,7 @@ class InvoicePayPalBraintreeTest extends Scenario
     /* end tags */
 
     /**
-     * Create invoice for order placed within Braintree PayPal.
+     * Runs one page checkout test.
      *
      * @return void
      */

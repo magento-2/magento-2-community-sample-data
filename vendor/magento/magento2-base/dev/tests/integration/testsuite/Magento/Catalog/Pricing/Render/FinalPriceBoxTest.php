@@ -21,7 +21,7 @@ use Magento\Catalog\Api\Data\ProductInterface;
 /**
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  */
-class FinalPriceBoxTest extends \PHPUnit\Framework\TestCase
+class FinalPriceBoxTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var ProductInterface
@@ -88,9 +88,7 @@ class FinalPriceBoxTest extends \PHPUnit\Framework\TestCase
         $enginesReflection->setAccessible(true);
         $enginesReflection->setValue($this->templateEnginePool, ['phtml' => $this->phtml]);
 
-        $this->rendererPool = $this->objectManager->create(
-            RendererPool::class
-        );
+        $this->rendererPool = $this->objectManager->create(RendererPool::class);
 
         $this->rendererPool->setData(
             [
@@ -125,7 +123,7 @@ class FinalPriceBoxTest extends \PHPUnit\Framework\TestCase
 
     /**
      * @magentoDataFixture Magento/Catalog/_files/product_has_tier_price_show_as_low_as.php
-     * @magentoDbIsolation disabled
+     * @magentoDbIsolation enabled
      * @magentoAppIsolation enabled
      */
     public function testRenderAmountMinimalProductWithTierPricesShouldShowMinTierPrice()
@@ -136,7 +134,7 @@ class FinalPriceBoxTest extends \PHPUnit\Framework\TestCase
 
     /**
      * @magentoDataFixture Magento/Catalog/_files/product_different_store_prices.php
-     * @magentoDbIsolation disabled
+     * @magentoDbIsolation enabled
      * @magentoAppIsolation enabled
      * @magentoConfigFixture current_store catalog/frontend/flat_catalog_product 1
      */

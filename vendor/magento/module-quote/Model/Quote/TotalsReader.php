@@ -14,7 +14,6 @@ class TotalsReader
      * @var \Magento\Quote\Model\Quote\Address\TotalFactory
      */
     protected $totalFactory;
-
     /**
      * @var \Magento\Quote\Model\Quote\TotalsCollectorList
      */
@@ -35,12 +34,12 @@ class TotalsReader
     /**
      * @param \Magento\Quote\Model\Quote $quote
      * @param array $total
-     * @return Total[]
+     * @return array
      */
     public function fetch(\Magento\Quote\Model\Quote $quote, array $total)
     {
         $output = [];
-        $total = $this->totalFactory->create()->setData($total);
+        $total = $this->totalFactory->create('Magento\Quote\Model\Quote\Address\Total')->setData($total);
         /** @var ReaderInterface $reader */
         foreach ($this->collectorList->getCollectors($quote->getStoreId()) as $reader) {
             $data = $reader->fetch($quote, $total);
@@ -62,7 +61,7 @@ class TotalsReader
 
     /**
      * @param array $total
-     * @return Total|Total[]
+     * @return Total|array
      */
     protected function convert($total)
     {
@@ -73,20 +72,20 @@ class TotalsReader
         if (count(array_column($total, 'code')) > 0) {
             $totals = [];
             foreach ($total as $item) {
-                $totals[] = $this->totalFactory->create()->setData($item);
+                $totals[] = $this->totalFactory->create('Magento\Quote\Model\Quote\Address\Total')->setData($item);
             }
             return $totals;
         }
 
-        return $this->totalFactory->create()->setData($total);
+        return $this->totalFactory->create('Magento\Quote\Model\Quote\Address\Total')->setData($total);
     }
 
     /**
      * @param Total $totalInstance
-     * @param Total[] $output
-     * @return Total[]
+     * @param array $output
+     * @return array
      */
-    protected function merge(Total $totalInstance, $output)
+    protected function merge($totalInstance, $output)
     {
         if (array_key_exists($totalInstance->getCode(), $output)) {
             $output[$totalInstance->getCode()] = $output[$totalInstance->getCode()]->addData(

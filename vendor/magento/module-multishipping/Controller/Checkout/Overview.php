@@ -6,10 +6,7 @@
  */
 namespace Magento\Multishipping\Controller\Checkout;
 
-use Magento\Framework\Exception\LocalizedException;
 use Magento\Multishipping\Model\Checkout\Type\Multishipping\State;
-use Magento\Payment\Model\Method\AbstractMethod;
-use Psr\Log\LoggerInterface;
 
 class Overview extends \Magento\Multishipping\Controller\Checkout
 {
@@ -28,24 +25,23 @@ class Overview extends \Magento\Multishipping\Controller\Checkout
 
         try {
             $payment = $this->getRequest()->getPost('payment', []);
-            if (!empty($payment)) {
-                $payment['checks'] = [
-                    AbstractMethod::CHECK_USE_FOR_COUNTRY,
-                    AbstractMethod::CHECK_USE_FOR_CURRENCY,
-                    AbstractMethod::CHECK_ORDER_TOTAL_MIN_MAX,
-                    AbstractMethod::CHECK_ZERO_TOTAL,
-                ];
-                $this->_getCheckout()->setPaymentMethod($payment);
-            }
+            $payment['checks'] = [
+                \Magento\Payment\Model\Method\AbstractMethod::CHECK_USE_FOR_COUNTRY,
+                \Magento\Payment\Model\Method\AbstractMethod::CHECK_USE_FOR_CURRENCY,
+                \Magento\Payment\Model\Method\AbstractMethod::CHECK_ORDER_TOTAL_MIN_MAX,
+                \Magento\Payment\Model\Method\AbstractMethod::CHECK_ZERO_TOTAL,
+            ];
+            $this->_getCheckout()->setPaymentMethod($payment);
+
             $this->_getState()->setCompleteStep(State::STEP_BILLING);
 
             $this->_view->loadLayout();
             $this->_view->renderLayout();
-        } catch (LocalizedException $e) {
+        } catch (\Magento\Framework\Exception\LocalizedException $e) {
             $this->messageManager->addError($e->getMessage());
             $this->_redirect('*/*/billing');
         } catch (\Exception $e) {
-            $this->_objectManager->get(LoggerInterface::class)->critical($e);
+            $this->_objectManager->get('Psr\Log\LoggerInterface')->critical($e);
             $this->messageManager->addException($e, __('We cannot open the overview page.'));
             $this->_redirect('*/*/billing');
         }

@@ -3,40 +3,26 @@
  * Copyright © Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
-declare(strict_types=1);
-
 namespace Magento\Quote\Model;
 
-use Magento\Catalog\Api\ProductRepositoryInterface;
-use Magento\Catalog\Model\ProductRepository;
 use Magento\Customer\Api\Data\CustomerInterfaceFactory;
-use Magento\Framework\Exception\LocalizedException;
 use Magento\TestFramework\Helper\Bootstrap;
-use Magento\TestFramework\ObjectManager;
-use Magento\Framework\Api\SearchCriteriaBuilder;
-use Magento\Quote\Api\CartRepositoryInterface;
+use Magento\Framework\Exception\LocalizedException;
+use Magento\Catalog\Model\ProductRepository;
 
 /**
+ * Test quote
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  */
-class QuoteTest extends \PHPUnit\Framework\TestCase
+class QuoteTest extends \PHPUnit_Framework_TestCase
 {
     /**
-     * @var ObjectManager
+     * @param $entity
+     * @return mixed
      */
-    private $objectManager;
-
-    /**
-     * @inheritdoc
-     */
-    protected function setUp()
-    {
-        $this->objectManager = Bootstrap::getObjectManager();
-    }
-
     private function convertToArray($entity)
     {
-        return $this->objectManager
+        return Bootstrap::getObjectManager()
             ->create(\Magento\Framework\Api\ExtensibleDataObjectConverter::class)
             ->toFlatArray($entity);
     }
@@ -47,11 +33,11 @@ class QuoteTest extends \PHPUnit\Framework\TestCase
      */
     public function testCollectTotalsWithVirtual()
     {
-        $quote = $this->objectManager->create(Quote::class);
+        $quote = Bootstrap::getObjectManager()->create(\Magento\Quote\Model\Quote::class);
         $quote->load('test01', 'reserved_order_id');
 
-        $productRepository = $this->objectManager->create(
-            ProductRepositoryInterface::class
+        $productRepository = Bootstrap::getObjectManager()->create(
+            \Magento\Catalog\Api\ProductRepositoryInterface::class
         );
         $product = $productRepository->get('virtual-product', false, null, true);
         $quote->addProduct($product);
@@ -65,14 +51,16 @@ class QuoteTest extends \PHPUnit\Framework\TestCase
 
     public function testSetCustomerData()
     {
-        /** @var Quote $quote */
-        $quote = $this->objectManager->create(Quote::class);
+        /** @var \Magento\Quote\Model\Quote $quote */
+        $quote = Bootstrap::getObjectManager()->create(\Magento\Quote\Model\Quote::class);
         /** @var CustomerInterfaceFactory $customerFactory */
-        $customerFactory = $this->objectManager->create(
+        $customerFactory = Bootstrap::getObjectManager()->create(
             CustomerInterfaceFactory::class
         );
         /** @var \Magento\Framework\Api\DataObjectHelper $dataObjectHelper */
-        $dataObjectHelper = $this->objectManager->create(\Magento\Framework\Api\DataObjectHelper::class);
+        $dataObjectHelper = Bootstrap::getObjectManager()->create(
+            \Magento\Framework\Api\DataObjectHelper::class
+        );
         $expected = $this->_getCustomerDataArray();
         $customer = $customerFactory->create();
         $dataObjectHelper->populateWithArray(
@@ -91,13 +79,15 @@ class QuoteTest extends \PHPUnit\Framework\TestCase
 
     public function testUpdateCustomerData()
     {
-        /** @var Quote $quote */
-        $quote = $this->objectManager->create(Quote::class);
-        $customerFactory = $this->objectManager->create(
+        /** @var \Magento\Quote\Model\Quote $quote */
+        $quote = Bootstrap::getObjectManager()->create(\Magento\Quote\Model\Quote::class);
+        $customerFactory = Bootstrap::getObjectManager()->create(
             CustomerInterfaceFactory::class
         );
         /** @var \Magento\Framework\Api\DataObjectHelper $dataObjectHelper */
-        $dataObjectHelper = $this->objectManager->create(\Magento\Framework\Api\DataObjectHelper::class);
+        $dataObjectHelper = Bootstrap::getObjectManager()->create(
+            \Magento\Framework\Api\DataObjectHelper::class
+        );
         $expected = $this->_getCustomerDataArray();
         //For save in repository
         $expected = $this->removeIdFromCustomerData($expected);
@@ -111,7 +101,7 @@ class QuoteTest extends \PHPUnit\Framework\TestCase
         /**
          * @var \Magento\Customer\Api\CustomerRepositoryInterface $customerRepository
          */
-        $customerRepository = $this->objectManager
+        $customerRepository = Bootstrap::getObjectManager()
             ->create(\Magento\Customer\Api\CustomerRepositoryInterface::class);
         $customerRepository->save($customerDataSet);
         $quote->setCustomer($customerDataSet);
@@ -140,18 +130,22 @@ class QuoteTest extends \PHPUnit\Framework\TestCase
     {
         /** Preconditions */
         /** @var CustomerInterfaceFactory $customerFactory */
-        $customerFactory = $this->objectManager->create(
+        $customerFactory = Bootstrap::getObjectManager()->create(
             CustomerInterfaceFactory::class
         );
         $customerGroupId = 3;
         $customerData = $customerFactory->create()->setId(1)->setGroupId($customerGroupId);
-        /** @var Quote $quote */
-        $quote = $this->objectManager->create(Quote::class);
+        /** @var \Magento\Quote\Model\Quote $quote */
+        $quote = Bootstrap::getObjectManager()->create(\Magento\Quote\Model\Quote::class);
         $quote->setCustomer($customerData);
         $quote->unsetData('customer_group_id');
 
         /** Execute SUT */
-        $this->assertEquals($customerGroupId, $quote->getCustomerGroupId(), "Customer group ID is invalid");
+        $this->assertEquals(
+            $customerGroupId,
+            $quote->getCustomerGroupId(),
+            "Customer group ID is invalid"
+        );
     }
 
     /**
@@ -165,14 +159,18 @@ class QuoteTest extends \PHPUnit\Framework\TestCase
         $fixtureGroupCode = 'custom_group';
         $fixtureTaxClassId = 3;
         /** @var \Magento\Customer\Model\Group $group */
-        $group = $this->objectManager->create(\Magento\Customer\Model\Group::class);
+        $group = Bootstrap::getObjectManager()->create(\Magento\Customer\Model\Group::class);
         $fixtureGroupId = $group->load($fixtureGroupCode, 'customer_group_code')->getId();
-        /** @var Quote $quote */
-        $quote = $this->objectManager->create(Quote::class);
+        /** @var \Magento\Quote\Model\Quote $quote */
+        $quote = Bootstrap::getObjectManager()->create(\Magento\Quote\Model\Quote::class);
         $quote->setCustomerGroupId($fixtureGroupId);
 
         /** Execute SUT */
-        $this->assertEquals($fixtureTaxClassId, $quote->getCustomerTaxClassId(), 'Customer tax class ID is invalid.');
+        $this->assertEquals(
+            $fixtureTaxClassId,
+            $quote->getCustomerTaxClassId(),
+            'Customer tax class ID is invalid.'
+        );
     }
 
     /**
@@ -188,8 +186,8 @@ class QuoteTest extends \PHPUnit\Framework\TestCase
          * Customer with two addresses created
          * First address is default billing, second is default shipping.
          */
-        /** @var Quote $quote */
-        $quote = $this->objectManager->create(Quote::class);
+        /** @var \Magento\Quote\Model\Quote $quote */
+        $quote = Bootstrap::getObjectManager()->create(\Magento\Quote\Model\Quote::class);
         $customerData = $this->_prepareQuoteForTestAssignCustomerWithAddressChange($quote);
 
         /** Execute SUT */
@@ -253,8 +251,9 @@ class QuoteTest extends \PHPUnit\Framework\TestCase
          * Customer with two addresses created
          * First address is default billing, second is default shipping.
          */
-        /** @var Quote $quote */
-        $quote = $this->objectManager->create(Quote::class);
+        /** @var \Magento\Quote\Model\Quote $quote */
+        $objectManager = Bootstrap::getObjectManager();
+        $quote = $objectManager->create(\Magento\Quote\Model\Quote::class);
         $customerData = $this->_prepareQuoteForTestAssignCustomerWithAddressChange($quote);
         /** @var \Magento\Quote\Model\Quote\Address $quoteBillingAddress */
         $expectedBillingAddressData = [
@@ -267,7 +266,7 @@ class QuoteTest extends \PHPUnit\Framework\TestCase
             'firstname' => 'FirstBilling',
             'region_id' => 1
         ];
-        $quoteBillingAddress = $this->objectManager->create(\Magento\Quote\Model\Quote\Address::class);
+        $quoteBillingAddress = $objectManager->create(\Magento\Quote\Model\Quote\Address::class);
         $quoteBillingAddress->setData($expectedBillingAddressData);
 
         $expectedShippingAddressData = [
@@ -280,7 +279,7 @@ class QuoteTest extends \PHPUnit\Framework\TestCase
             'firstname' => 'FirstShipping',
             'region_id' => 1
         ];
-        $quoteShippingAddress = $this->objectManager->create(\Magento\Quote\Model\Quote\Address::class);
+        $quoteShippingAddress = $objectManager->create(\Magento\Quote\Model\Quote\Address::class);
         $quoteShippingAddress->setData($expectedShippingAddressData);
 
         /** Execute SUT */
@@ -288,7 +287,11 @@ class QuoteTest extends \PHPUnit\Framework\TestCase
 
         /** Check if SUT caused expected effects */
         $fixtureCustomerId = 1;
-        $this->assertEquals($fixtureCustomerId, $quote->getCustomerId(), 'Customer ID in quote is invalid.');
+        $this->assertEquals(
+            $fixtureCustomerId,
+            $quote->getCustomerId(),
+            'Customer ID in quote is invalid.'
+        );
 
         $billingAddress = $quote->getBillingAddress();
         foreach ($expectedBillingAddressData as $field => $value) {
@@ -313,14 +316,14 @@ class QuoteTest extends \PHPUnit\Framework\TestCase
      */
     public function testAddProductUpdateItem()
     {
-        /** @var Quote $quote */
-        $quote = $this->objectManager->create(Quote::class);
+        /** @var \Magento\Quote\Model\Quote $quote */
+        $quote = Bootstrap::getObjectManager()->create(\Magento\Quote\Model\Quote::class);
         $quote->load('test01', 'reserved_order_id');
 
         $productStockQty = 100;
 
-        $productRepository = $this->objectManager->create(
-            ProductRepositoryInterface::class
+        $productRepository = Bootstrap::getObjectManager()->create(
+            \Magento\Catalog\Api\ProductRepositoryInterface::class
         );
         $product = $productRepository->get('simple-1', false, null, true);
 
@@ -341,7 +344,7 @@ class QuoteTest extends \PHPUnit\Framework\TestCase
         $quote->setTotalsCollectedFlag(false)->collectTotals();
         $this->assertEquals(1, $quote->getItemsQty());
 
-        $this->expectException(
+        $this->setExpectedException(
             \Magento\Framework\Exception\LocalizedException::class,
             'We don\'t have as many "Simple Product" as you requested.'
         );
@@ -354,16 +357,19 @@ class QuoteTest extends \PHPUnit\Framework\TestCase
      *
      * Customer with two addresses created. First address is default billing, second is default shipping.
      *
-     * @param Quote $quote
+     * @param \Magento\Quote\Model\Quote $quote
      * @return \Magento\Customer\Api\Data\CustomerInterface
      */
     protected function _prepareQuoteForTestAssignCustomerWithAddressChange($quote)
     {
+        $objectManager = Bootstrap::getObjectManager();
         /** @var \Magento\Customer\Api\CustomerRepositoryInterface $customerRepository */
-        $customerRepository = $this->objectManager->create(\Magento\Customer\Api\CustomerRepositoryInterface::class);
+        $customerRepository = $objectManager->create(
+            \Magento\Customer\Api\CustomerRepositoryInterface::class
+        );
         $fixtureCustomerId = 1;
         /** @var \Magento\Customer\Model\Customer $customer */
-        $customer = $this->objectManager->create(\Magento\Customer\Model\Customer::class);
+        $customer = $objectManager->create(\Magento\Customer\Model\Customer::class);
         $fixtureSecondAddressId = 2;
         $customer->load($fixtureCustomerId)->setDefaultShipping($fixtureSecondAddressId)->save();
         $customerData = $customerRepository->getById($fixtureCustomerId);
@@ -399,6 +405,9 @@ class QuoteTest extends \PHPUnit\Framework\TestCase
         return $customerData;
     }
 
+    /**
+     * @return array
+     */
     protected function _getCustomerDataArray()
     {
         return [
@@ -410,9 +419,9 @@ class QuoteTest extends \PHPUnit\Framework\TestCase
             \Magento\Customer\Model\Data\Customer::DOB => '2014-02-03 00:00:00',
             \Magento\Customer\Model\Data\Customer::EMAIL => 'qa@example.com',
             \Magento\Customer\Model\Data\Customer::FIRSTNAME => 'Joe',
-            \Magento\Customer\Model\Data\Customer::GENDER => 0,
+            \Magento\Customer\Model\Data\Customer::GENDER => 'Male',
             \Magento\Customer\Model\Data\Customer::GROUP_ID =>
-                \Magento\Customer\Model\GroupManagement::NOT_LOGGED_IN_ID,
+            \Magento\Customer\Model\GroupManagement::NOT_LOGGED_IN_ID,
             \Magento\Customer\Model\Data\Customer::ID => 1,
             \Magento\Customer\Model\Data\Customer::LASTNAME => 'Dou',
             \Magento\Customer\Model\Data\Customer::MIDDLENAME => 'Ivan',
@@ -425,6 +434,31 @@ class QuoteTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
+     * Test to verify that disabled product cannot be added to cart.
+     *
+     * @magentoDataFixture Magento/Quote/_files/is_not_salable_product.php
+     */
+    public function testAddedProductToQuoteIsSalable()
+    {
+        $productId = 99;
+        $objectManager = Bootstrap::getObjectManager();
+
+        /** @var ProductRepository $productRepository */
+        $productRepository = $objectManager->get(ProductRepository::class);
+
+        /** @var \Magento\Quote\Model\Quote  $quote */
+        $product = $productRepository->getById($productId, false, null, true);
+
+        $this->setExpectedException(
+            LocalizedException::class,
+            'Product that you are trying to add is not available.'
+        );
+
+        $quote = $objectManager->create(\Magento\Quote\Model\Quote::class);
+        $quote->addProduct($product);
+    }
+
+    /**
      * Test to verify that reserved_order_id will be changed if it already in used
      *
      * @magentoDataFixture Magento/Sales/_files/order.php
@@ -432,154 +466,14 @@ class QuoteTest extends \PHPUnit\Framework\TestCase
      */
     public function testReserveOrderId()
     {
-        /** @var Quote  $quote */
-        $quote = $this->objectManager->create(Quote::class);
+        $objectManager = Bootstrap::getObjectManager();
+        /** @var \Magento\Quote\Model\Quote $quote */
+        $quote = $objectManager->create(Quote::class);
         $quote->load('reserved_order_id', 'reserved_order_id');
         $quote->reserveOrderId();
         $this->assertEquals('reserved_order_id', $quote->getReservedOrderId());
         $quote->setReservedOrderId('100000001');
         $quote->reserveOrderId();
         $this->assertNotEquals('100000001', $quote->getReservedOrderId());
-    }
-
-    /**
-     * Test to verify that disabled product cannot be added to cart
-     * @magentoDataFixture Magento/Quote/_files/is_not_salable_product.php
-     */
-    public function testAddedProductToQuoteIsSalable()
-    {
-        $productId = 99;
-
-        /** @var ProductRepository $productRepository */
-        $productRepository = $this->objectManager->get(ProductRepository::class);
-
-        /** @var Quote  $quote */
-        $product = $productRepository->getById($productId, false, null, true);
-
-        $this->expectException(
-            LocalizedException::class,
-            'Product that you are trying to add is not available.'
-        );
-
-        $quote = $this->objectManager->create(Quote::class);
-        $quote->addProduct($product);
-    }
-
-    /**
-     * @magentoDataFixture Magento/Sales/_files/quote.php
-     * @magentoDataFixture Magento/Catalog/_files/product_simple.php
-     */
-    public function testGetItemById()
-    {
-        $quote = $this->objectManager->create(Quote::class);
-        $quote->load('test01', 'reserved_order_id');
-
-        $quoteItem = $this->objectManager->create(\Magento\Quote\Model\Quote\Item::class);
-
-        $productRepository = $this->objectManager->create(ProductRepositoryInterface::class);
-        $product = $productRepository->get('simple');
-
-        $quoteItem->setProduct($product);
-        $quote->addItem($quoteItem);
-        $quote->save();
-
-        $this->assertInstanceOf(\Magento\Quote\Model\Quote\Item::class, $quote->getItemById($quoteItem->getId()));
-        $this->assertEquals($quoteItem->getId(), $quote->getItemById($quoteItem->getId())->getId());
-    }
-
-    /**
-     * Tests of quotes merging.
-     *
-     * @param int|null $guestItemGiftMessageId
-     * @param int|null $customerItemGiftMessageId
-     * @param int|null $guestOrderGiftMessageId
-     * @param int|null $customerOrderGiftMessageId
-     * @param int|null $expectedItemGiftMessageId
-     * @param int|null $expectedOrderGiftMessageId
-     *
-     * @magentoDataFixture Magento/Sales/_files/quote.php
-     * @dataProvider giftMessageDataProvider
-     * @throws LocalizedException
-     */
-    public function testMerge(
-        $guestItemGiftMessageId,
-        $customerItemGiftMessageId,
-        $guestOrderGiftMessageId,
-        $customerOrderGiftMessageId,
-        $expectedItemGiftMessageId,
-        $expectedOrderGiftMessageId
-    ) {
-        $productRepository = $this->objectManager->create(ProductRepositoryInterface::class);
-        $product = $productRepository->get('simple', false, null, true);
-
-        /** @var Quote  $quote */
-        $guestQuote = $this->getQuote('test01');
-        $guestQuote->setGiftMessageId($guestOrderGiftMessageId);
-
-        /** @var Quote  $customerQuote */
-        $customerQuote = $this->objectManager->create(Quote::class);
-        $customerQuote->setReservedOrderId('test02')
-            ->setStoreId($guestQuote->getStoreId())
-            ->addProduct($product);
-        $customerQuote->setGiftMessageId($customerOrderGiftMessageId);
-
-        $guestItem = $guestQuote->getItemByProduct($product);
-        $guestItem->setGiftMessageId($guestItemGiftMessageId);
-
-        $customerItem = $customerQuote->getItemByProduct($product);
-        $customerItem->setGiftMessageId($customerItemGiftMessageId);
-
-        $customerQuote->merge($guestQuote);
-        $mergedItemItem = $customerQuote->getItemByProduct($product);
-
-        self::assertEquals($expectedOrderGiftMessageId, $customerQuote->getGiftMessageId());
-        self::assertEquals($expectedItemGiftMessageId, $mergedItemItem->getGiftMessageId());
-    }
-
-    /**
-     * Provides order- and item-level gift message Id.
-     *
-     * @return array
-     */
-    public function giftMessageDataProvider(): array
-    {
-        return [
-            [
-                'guestItemId' => null,
-                'customerItemId' => 1,
-                'guestOrderId' => null,
-                'customerOrderId' => 11,
-                'expectedItemId' => 1,
-                'expectedOrderId' => 11
-            ],
-            [
-                'guestItemId' => 1,
-                'customerItemId' => 2,
-                'guestOrderId' => 11,
-                'customerOrderId' => 22,
-                'expectedItemId' => 1,
-                'expectedOrderId' => 11
-            ]
-        ];
-    }
-
-    /**
-     * Gets quote by reserved order id.
-     *
-     * @param string $reservedOrderId
-     * @return Quote
-     */
-    private function getQuote($reservedOrderId)
-    {
-        /** @var SearchCriteriaBuilder $searchCriteriaBuilder */
-        $searchCriteriaBuilder = $this->objectManager->get(SearchCriteriaBuilder::class);
-        $searchCriteria = $searchCriteriaBuilder->addFilter('reserved_order_id', $reservedOrderId)
-            ->create();
-
-        /** @var CartRepositoryInterface $quoteRepository */
-        $quoteRepository = $this->objectManager->get(CartRepositoryInterface::class);
-        $items = $quoteRepository->getList($searchCriteria)->getItems();
-
-        return array_pop($items);
     }
 }

@@ -7,7 +7,7 @@ namespace Magento\Newsletter\Model;
 
 use Magento\Store\Model\ScopeInterface;
 
-class QueueTest extends \PHPUnit\Framework\TestCase
+class QueueTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @magentoDataFixture Magento/Newsletter/_files/queue.php
@@ -19,27 +19,26 @@ class QueueTest extends \PHPUnit\Framework\TestCase
         $objectManager = \Magento\TestFramework\Helper\Bootstrap::getObjectManager();
 
         /** @var \Magento\Framework\App\Config\MutableScopeConfigInterface $mutableConfig */
-        $mutableConfig = $objectManager->get(\Magento\Framework\App\Config\MutableScopeConfigInterface::class);
+        $mutableConfig = $objectManager->get('Magento\Framework\App\Config\MutableScopeConfigInterface');
         $mutableConfig->setValue('general/locale/code', 'de_DE', ScopeInterface::SCOPE_STORE, 'fixturestore');
 
-        $objectManager->get(
-            \Magento\Framework\App\State::class
-        )->setAreaCode(\Magento\Framework\App\Area::AREA_FRONTEND);
-        $area = $objectManager->get(\Magento\Framework\App\AreaList::class)
+        $objectManager->get('Magento\Framework\App\State')->setAreaCode(\Magento\Framework\App\Area::AREA_FRONTEND);
+        $area = $objectManager->get('Magento\Framework\App\AreaList')
             ->getArea(\Magento\Framework\App\Area::AREA_FRONTEND);
         $area->load();
 
         /** @var $filter \Magento\Newsletter\Model\Template\Filter */
-        $filter = $objectManager->get(\Magento\Newsletter\Model\Template\Filter::class);
+        $filter = $objectManager->get('Magento\Newsletter\Model\Template\Filter');
 
-        $transport = $this->getMockBuilder(\Magento\Framework\Mail\TransportInterface::class)
-            ->setMethods(['sendMessage'])
-            ->getMockForAbstractClass();
+        $transport = $this->getMock('\Magento\Framework\Mail\TransportInterface');
         $transport->expects($this->exactly(2))->method('sendMessage')->will($this->returnSelf());
 
-        $builder = $this->createPartialMock(
-            \Magento\Newsletter\Model\Queue\TransportBuilder::class,
-            ['getTransport', 'setFrom', 'addTo']
+        $builder = $this->getMock(
+            '\Magento\Newsletter\Model\Queue\TransportBuilder',
+            ['getTransport', 'setFrom', 'addTo'],
+            [],
+            '',
+            false
         );
         $builder->expects($this->exactly(2))->method('getTransport')->will($this->returnValue($transport));
         $builder->expects($this->exactly(2))->method('setFrom')->will($this->returnSelf());
@@ -47,7 +46,7 @@ class QueueTest extends \PHPUnit\Framework\TestCase
 
         /** @var $queue \Magento\Newsletter\Model\Queue */
         $queue = $objectManager->create(
-            \Magento\Newsletter\Model\Queue::class,
+            'Magento\Newsletter\Model\Queue',
             ['filter' => $filter, 'transportBuilder' => $builder]
         );
         $queue->load('Subject', 'newsletter_subject');
@@ -68,16 +67,17 @@ class QueueTest extends \PHPUnit\Framework\TestCase
 
         $objectManager = \Magento\TestFramework\Helper\Bootstrap::getObjectManager();
 
-        $transport = $this->getMockBuilder(\Magento\Framework\Mail\TransportInterface::class)
-            ->setMethods(['sendMessage'])
-            ->getMockForAbstractClass();
+        $transport = $this->getMock('\Magento\Framework\Mail\TransportInterface');
         $transport->expects($this->any())
             ->method('sendMessage')
             ->willThrowException(new \Magento\Framework\Exception\MailException(__($errorMsg)));
 
-        $builder = $this->createPartialMock(
-            \Magento\Newsletter\Model\Queue\TransportBuilder::class,
-            ['getTransport', 'setFrom', 'addTo', 'setTemplateOptions', 'setTemplateVars']
+        $builder = $this->getMock(
+            '\Magento\Newsletter\Model\Queue\TransportBuilder',
+            ['getTransport', 'setFrom', 'addTo', 'setTemplateOptions', 'setTemplateVars'],
+            [],
+            '',
+            false
         );
         $builder->expects($this->any())->method('getTransport')->will($this->returnValue($transport));
         $builder->expects($this->any())->method('setTemplateOptions')->will($this->returnSelf());
@@ -86,11 +86,11 @@ class QueueTest extends \PHPUnit\Framework\TestCase
         $builder->expects($this->any())->method('addTo')->will($this->returnSelf());
 
         /** @var $queue \Magento\Newsletter\Model\Queue */
-        $queue = $objectManager->create(\Magento\Newsletter\Model\Queue::class, ['transportBuilder' => $builder]);
+        $queue = $objectManager->create('Magento\Newsletter\Model\Queue', ['transportBuilder' => $builder]);
         $queue->load('Subject', 'newsletter_subject');
         // fixture
 
-        $problem = $objectManager->create(\Magento\Newsletter\Model\Problem::class);
+        $problem = $objectManager->create('Magento\Newsletter\Model\Problem');
         $problem->load($queue->getId(), 'queue_id');
         $this->assertEmpty($problem->getId());
 

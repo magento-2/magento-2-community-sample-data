@@ -5,7 +5,7 @@
  */
 namespace Magento\CatalogRule\Model;
 
-class RuleTest extends \PHPUnit\Framework\TestCase
+class RuleTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\CatalogRule\Model\Rule
@@ -18,9 +18,12 @@ class RuleTest extends \PHPUnit\Framework\TestCase
      */
     protected function setUp()
     {
-        $resourceMock = $this->createPartialMock(
-            \Magento\CatalogRule\Model\ResourceModel\Rule::class,
-            ['getIdFieldName', 'getRulesFromProduct']
+        $resourceMock = $this->getMock(
+            'Magento\CatalogRule\Model\ResourceModel\Rule',
+            ['getIdFieldName', 'getRulesFromProduct'],
+            [],
+            '',
+            false
         );
         $resourceMock->expects($this->any())->method('getIdFieldName')->will($this->returnValue('id'));
         $resourceMock->expects(
@@ -32,8 +35,8 @@ class RuleTest extends \PHPUnit\Framework\TestCase
         );
 
         $this->_object = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->create(
-            \Magento\CatalogRule\Model\Rule::class,
-            ['ruleResourceModel' => $resourceMock]
+            'Magento\CatalogRule\Model\Rule',
+            ['resource' => $resourceMock]
         );
     }
 
@@ -44,7 +47,7 @@ class RuleTest extends \PHPUnit\Framework\TestCase
     public function testCalcProductPriceRule()
     {
         $product = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->create(
-            \Magento\Catalog\Model\Product::class
+            'Magento\Catalog\Model\Product'
         );
         $this->assertEquals($this->_object->calcProductPriceRule($product, 100), 45);
         $product->setParentId(true);

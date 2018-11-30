@@ -12,7 +12,7 @@ use Magento\Framework\TestFramework\Unit\Helper\ObjectManager as ObjectManagerHe
  *
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  */
-class ItemTest extends \PHPUnit\Framework\TestCase
+class ItemTest extends \PHPUnit_Framework_TestCase
 {
     /** @var ObjectManagerHelper */
     protected $objectManagerHelper;
@@ -72,49 +72,63 @@ class ItemTest extends \PHPUnit\Framework\TestCase
      */
     protected $storeId = 111;
 
-    /**
-     * @var PHPUnit_Framework_MockObject_MockObject
-     */
-    private $eventDispatcher;
-
     protected function setUp()
     {
-        $this->eventDispatcher = $this->getMockBuilder(\Magento\Framework\Event\ManagerInterface::class)
-            ->disableOriginalConstructor()
-            ->setMethods(['dispatch'])
-            ->getMock();
-
-        $this->context = $this->createPartialMock(\Magento\Framework\Model\Context::class, ['getEventDispatcher']);
-        $this->context->expects($this->any())->method('getEventDispatcher')->willReturn($this->eventDispatcher);
-
-        $this->registry = $this->createMock(\Magento\Framework\Registry::class);
-
-        $this->customerSession = $this->createMock(\Magento\Customer\Model\Session::class);
-
-        $store = $this->createPartialMock(\Magento\Store\Model\Store::class, ['getId', '__wakeup']);
-        $store->expects($this->any())->method('getId')->willReturn($this->storeId);
-        $this->storeManager = $this->getMockForAbstractClass(
-            \Magento\Store\Model\StoreManagerInterface::class,
-            ['getStore']
+        $this->context = $this->getMock(
+            '\Magento\Framework\Model\Context',
+            ['getEventDispatcher'],
+            [],
+            '',
+            false
         );
+
+        $this->registry = $this->getMock(
+            '\Magento\Framework\Registry',
+            [],
+            [],
+            '',
+            false
+        );
+
+        $this->customerSession = $this->getMock('Magento\Customer\Model\Session', [], [], '', false);
+
+        $store = $this->getMock('Magento\Store\Model\Store', ['getId', '__wakeup'], [], '', false);
+        $store->expects($this->any())->method('getId')->willReturn($this->storeId);
+        $this->storeManager = $this->getMockForAbstractClass('Magento\Store\Model\StoreManagerInterface', ['getStore']);
         $this->storeManager->expects($this->any())->method('getStore')->willReturn($store);
 
-        $this->stockConfiguration = $this->createMock(\Magento\CatalogInventory\Api\StockConfigurationInterface::class);
-
-        $this->stockItemRepository = $this->getMockForAbstractClass(
-            \Magento\CatalogInventory\Api\StockItemRepositoryInterface::class
+        $this->stockConfiguration = $this->getMock(
+            '\Magento\CatalogInventory\Api\StockConfigurationInterface',
+            [],
+            [],
+            '',
+            false
         );
 
-        $this->resource = $this->createMock(\Magento\CatalogInventory\Model\ResourceModel\Stock\Item::class);
+        $this->stockItemRepository = $this->getMockForAbstractClass(
+            '\Magento\CatalogInventory\Api\StockItemRepositoryInterface'
+        );
 
-        $this->resourceCollection = $this->createMock(
-            \Magento\CatalogInventory\Model\ResourceModel\Stock\Item\Collection::class
+        $this->resource = $this->getMock(
+            'Magento\CatalogInventory\Model\ResourceModel\Stock\Item',
+            [],
+            [],
+            '',
+            false
+        );
+
+        $this->resourceCollection = $this->getMock(
+            'Magento\CatalogInventory\Model\ResourceModel\Stock\Item\Collection',
+            [],
+            [],
+            '',
+            false
         );
 
         $this->objectManagerHelper = new ObjectManagerHelper($this);
 
         $this->item = $this->objectManagerHelper->getObject(
-            \Magento\CatalogInventory\Model\Stock\Item::class,
+            'Magento\CatalogInventory\Model\Stock\Item',
             [
                 'context' => $this->context,
                 'registry' => $this->registry,
@@ -156,14 +170,20 @@ class ItemTest extends \PHPUnit\Framework\TestCase
 
     public function testSetProduct()
     {
-        $product = $this->createPartialMock(\Magento\Catalog\Model\Product::class, [
+        $product = $this->getMock(
+            'Magento\Catalog\Model\Product',
+            [
                 'getId',
                 'getName',
                 'getStoreId',
                 'getTypeId',
                 'dataHasChangedFor',
                 'getIsChangedWebsites',
-                '__wakeup']);
+                '__wakeup'],
+            [],
+            '',
+            false
+        );
         $productId = 2;
         $productName = 'Some Name';
         $storeId = 3;
@@ -394,7 +414,6 @@ class ItemTest extends \PHPUnit\Framework\TestCase
         $this->setDataArrayValue('qty_increments', $config['qty_increments']);
         $this->setDataArrayValue('enable_qty_increments', $config['enable_qty_increments']);
         $this->setDataArrayValue('use_config_qty_increments', $config['use_config_qty_increments']);
-        $this->setDataArrayValue('is_qty_decimal', $config['is_qty_decimal']);
         if ($config['use_config_qty_increments']) {
             $this->stockConfiguration->expects($this->once())
                 ->method('getQtyIncrements')
@@ -416,8 +435,7 @@ class ItemTest extends \PHPUnit\Framework\TestCase
                 [
                     'qty_increments' => 1,
                     'enable_qty_increments' => true,
-                    'use_config_qty_increments' => true,
-                    'is_qty_decimal' => false
+                    'use_config_qty_increments' => true
                 ],
                 1
             ],
@@ -425,8 +443,7 @@ class ItemTest extends \PHPUnit\Framework\TestCase
                 [
                     'qty_increments' => -2,
                     'enable_qty_increments' => true,
-                    'use_config_qty_increments' => true,
-                    'is_qty_decimal' => false
+                    'use_config_qty_increments' => true
                 ],
                 false
             ],
@@ -434,62 +451,10 @@ class ItemTest extends \PHPUnit\Framework\TestCase
                 [
                     'qty_increments' => 3,
                     'enable_qty_increments' => true,
-                    'use_config_qty_increments' => false,
-                    'is_qty_decimal' => false
+                    'use_config_qty_increments' => false
                 ],
                 3
             ],
-            [
-                [
-                    'qty_increments' => 0.5,
-                    'enable_qty_increments' => true,
-                    'use_config_qty_increments' => false,
-                    'is_qty_decimal' => true
-                ],
-                0.5
-            ],
-        ];
-    }
-
-    /**
-     * We want to ensure that property $_eventPrefix used during event dispatching
-     *
-     * @param $eventName
-     * @param $methodName
-     * @param $objectName
-     *
-     * @dataProvider eventsDataProvider
-     */
-    public function testDispatchEvents($eventName, $methodName, $objectName)
-    {
-        $isCalledWithRightPrefix = 0;
-        $isObjectNameRight = 0;
-        $this->eventDispatcher->expects($this->any())->method('dispatch')->with(
-            $this->callback(function ($arg) use (&$isCalledWithRightPrefix, $eventName) {
-                $isCalledWithRightPrefix |= ($arg === $eventName);
-                return true;
-            }),
-            $this->callback(function ($data) use (&$isObjectNameRight, $objectName) {
-                $isObjectNameRight |= isset($data[$objectName]);
-                return true;
-            })
-        );
-
-        $this->item->$methodName();
-        $this->assertTrue(
-            ($isCalledWithRightPrefix && $isObjectNameRight),
-            sprintf('Event "%s" with object name "%s" doesn\'t dispatched properly', $eventName, $objectName)
-        );
-    }
-
-    /**
-     * @return array
-     */
-    public function eventsDataProvider()
-    {
-        return [
-            ['cataloginventory_stock_item_save_before', 'beforeSave', 'item'],
-            ['cataloginventory_stock_item_save_after', 'afterSave', 'item'],
         ];
     }
 }

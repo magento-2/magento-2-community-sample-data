@@ -9,7 +9,7 @@ namespace Magento\Security\Test\Unit\Model\ResourceModel\AdminSessionInfo;
 /**
  * Test class for \Magento\Security\Model\ResourceModel\AdminSessionInfo\Collection testing
  */
-class CollectionTest extends \PHPUnit\Framework\TestCase
+class CollectionTest extends \PHPUnit_Framework_TestCase
 {
     /** @var \Magento\Security\Model\ResourceModel\AdminSessionInfo\Collection */
     protected $collectionMock;
@@ -26,23 +26,53 @@ class CollectionTest extends \PHPUnit\Framework\TestCase
      */
     protected function setUp()
     {
-        $this->dateTimeMock = $this->createMock(\Magento\Framework\Stdlib\DateTime\DateTime::class);
+        $this->dateTimeMock = $this->getMock(
+            \Magento\Framework\Stdlib\DateTime\DateTime::class,
+            [],
+            [],
+            '',
+            false
+        );
 
-        $entityFactory = $this->createMock(\Magento\Framework\Data\Collection\EntityFactoryInterface::class);
-        $logger = $this->createMock(\Psr\Log\LoggerInterface::class);
-        $fetchStrategy = $this->createMock(\Magento\Framework\Data\Collection\Db\FetchStrategyInterface::class);
-        $eventManager = $this->createMock(\Magento\Framework\Event\ManagerInterface::class);
+        $entityFactory = $this->getMock(
+            '\Magento\Framework\Data\Collection\EntityFactoryInterface',
+            [],
+            [],
+            '',
+            false
+        );
+        $logger = $this->getMock(
+            '\Psr\Log\LoggerInterface',
+            [],
+            [],
+            '',
+            false
+        );
+        $fetchStrategy = $this->getMock(
+            '\Magento\Framework\Data\Collection\Db\FetchStrategyInterface',
+            [],
+            [],
+            '',
+            false
+        );
+        $eventManager = $this->getMock(
+            '\Magento\Framework\Event\ManagerInterface',
+            [],
+            [],
+            '',
+            false
+        );
 
-        $select = $this->getMockBuilder(\Magento\Framework\DB\Select::class)
+        $select = $this->getMockBuilder('Magento\Framework\DB\Select')
             ->disableOriginalConstructor()
             ->getMock();
 
-        $connection = $this->getMockBuilder(\Magento\Framework\DB\Adapter\Pdo\Mysql::class)
+        $connection = $this->getMockBuilder('Magento\Framework\DB\Adapter\Pdo\Mysql')
             ->disableOriginalConstructor()
             ->getMock();
         $connection->expects($this->any())->method('select')->willReturn($select);
 
-        $this->resourceMock = $this->getMockBuilder(\Magento\Framework\Model\ResourceModel\Db\AbstractDb::class)
+        $this->resourceMock = $this->getMockBuilder('Magento\Framework\Model\ResourceModel\Db\AbstractDb')
             ->disableOriginalConstructor()
             ->setMethods(
                 ['getConnection', 'getMainTable', 'getTable', 'deleteSessionsOlderThen', 'updateStatusByUserId']
@@ -56,32 +86,15 @@ class CollectionTest extends \PHPUnit\Framework\TestCase
         $this->resourceMock->expects($this->any())->method('getMainTable')->willReturn('table_test');
         $this->resourceMock->expects($this->any())->method('getTable')->willReturn('test');
 
-        $this->collectionMock = $this->getMockBuilder(
-            \Magento\Security\Model\ResourceModel\AdminSessionInfo\Collection::class
-        )
-            ->setMethods(['addFieldToFilter', 'getResource', 'getConnection'])
-            ->setConstructorArgs(
-                [
-                    $entityFactory,
-                    $logger,
-                    $fetchStrategy,
-                    $eventManager,
-                    'dateTime' => $this->dateTimeMock,
-                    $connection,
-                    $this->resourceMock
-                ]
-            )
-            ->disableOriginalConstructor()
-            ->getMock();
-
-        $this->collectionMock->expects($this->any())
-            ->method('getConnection')
-            ->will($this->returnValue($connection));
-
-        $reflection = new \ReflectionClass(get_class($this->collectionMock));
-        $reflectionProperty = $reflection->getProperty('dateTime');
-        $reflectionProperty->setAccessible(true);
-        $reflectionProperty->setValue($this->collectionMock, $this->dateTimeMock);
+        $this->collectionMock = $this->getMock(
+            '\Magento\Security\Model\ResourceModel\AdminSessionInfo\Collection',
+            ['addFieldToFilter'],
+            [$entityFactory, $logger, $fetchStrategy, $eventManager,
+                $this->dateTimeMock,
+                $connection, $this->resourceMock],
+            '',
+            true
+        );
 
         $this->collectionMock->expects($this->any())
             ->method('getResource')
@@ -126,6 +139,10 @@ class CollectionTest extends \PHPUnit\Framework\TestCase
 
         $this->collectionMock->expects($this->once())
             ->method('addFieldToFilter')
+            ->with(
+                'updated_at',
+                ['gt' => $this->collectionMock->getConnection()->formatDate($timestamp - $sessionLifeTime)]
+            )
             ->willReturnSelf();
 
         $this->assertEquals($this->collectionMock, $this->collectionMock->filterExpiredSessions($sessionLifeTime));
@@ -142,8 +159,7 @@ class CollectionTest extends \PHPUnit\Framework\TestCase
             ->method('deleteSessionsOlderThen')
             ->with($timestamp);
 
-        $result = $this->collectionMock->deleteSessionsOlderThen($timestamp);
-        $this->assertEquals($this->collectionMock, $result);
+        $this->collectionMock->deleteSessionsOlderThen($timestamp);
     }
 
     /**

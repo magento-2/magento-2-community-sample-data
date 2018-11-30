@@ -9,7 +9,7 @@
  */
 namespace Magento\Test\Event\Param;
 
-class TransactionTest extends \PHPUnit\Framework\TestCase
+class TransactionTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\TestFramework\Event\Param\Transaction

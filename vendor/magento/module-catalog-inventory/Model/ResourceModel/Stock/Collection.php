@@ -20,6 +20,6 @@ class Collection extends AbstractSearchResult implements StockCollectionInterfac
      */
     protected function init()
     {
-        $this->setDataInterfaceName(\Magento\CatalogInventory\Api\Data\StockInterface::class);
+        $this->setDataInterfaceName('Magento\CatalogInventory\Api\Data\StockInterface');
     }
 }

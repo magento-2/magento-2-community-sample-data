@@ -32,7 +32,7 @@ class InvoiceAddCommentTest extends WebapiAbstract
     {
         $objectManager = \Magento\TestFramework\Helper\Bootstrap::getObjectManager();
         /** @var \Magento\Sales\Model\Order\Invoice $invoice */
-        $invoiceCollection = $objectManager->get(\Magento\Sales\Model\ResourceModel\Order\Invoice\Collection::class);
+        $invoiceCollection = $objectManager->get('Magento\Sales\Model\ResourceModel\Order\Invoice\Collection');
         $invoice = $invoiceCollection->getFirstItem();
 
         $commentData = [

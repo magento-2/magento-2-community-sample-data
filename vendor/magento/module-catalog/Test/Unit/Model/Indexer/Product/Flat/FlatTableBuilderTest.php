@@ -11,7 +11,7 @@ use Magento\Catalog\Api\Data\ProductInterface;
  * Class FlatTableBuilderTest
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  */
-class FlatTableBuilderTest extends \PHPUnit\Framework\TestCase
+class FlatTableBuilderTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\Catalog\Helper\Product\Flat\Indexer|\PHPUnit_Framework_MockObject_MockObject
@@ -107,42 +107,44 @@ class FlatTableBuilderTest extends \PHPUnit\Framework\TestCase
 
     public function testBuild()
     {
-        $storeId = 1;
-        $changedIds = [];
-        $valueFieldSuffix = '_value';
-        $tableDropSuffix = '';
-        $fillTmpTables = true;
+        list($storeId, $changedIds, $valueFieldSuffix, $tableDropSuffix, $fillTmpTables) = [1, [], '', '', true];
         $tableName = 'catalog_product_entity';
         $attributeTable = 'catalog_product_entity_int';
         $temporaryTableName = 'catalog_product_entity_int_tmp_indexer';
-        $temporaryValueTableName = 'catalog_product_entity_int_tmp_indexer_value';
+        $temporaryValueTableName = 'catalog_product_entity_int_tmp_indexer';
         $linkField = 'entity_id';
         $statusId = 22;
-        $eavCustomField = 'space_weight';
-        $eavCustomValueField = $eavCustomField . $valueFieldSuffix;
         $this->flatIndexerMock->expects($this->once())->method('getAttributes')->willReturn([]);
         $this->flatIndexerMock->expects($this->exactly(3))->method('getFlatColumns')
-            ->willReturnOnConsecutiveCalls([], [$eavCustomValueField => []], [$eavCustomValueField => []]);
+            ->willReturnOnConsecutiveCalls(
+                [],
+                [$linkField => []],
+                [$linkField => []]
+            );
         $this->flatIndexerMock->expects($this->once())->method('getFlatIndexes')->willReturn([]);
         $statusAttributeMock = $this->getMockBuilder(\Magento\Eav\Model\Entity\Attribute::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $eavCustomAttributeMock = $this->getMockBuilder(\Magento\Eav\Model\Entity\Attribute::class)
             ->disableOriginalConstructor()
             ->getMock();
         $this->flatIndexerMock->expects($this->once())->method('getTablesStructure')
             ->willReturn(
                 [
-                    'catalog_product_entity' => [$linkField => $statusAttributeMock],
+                    'catalog_product_entity' => [
+                        $linkField => $statusAttributeMock
+                    ],
                     'catalog_product_entity_int' => [
-                        $linkField => $statusAttributeMock,
-                        $eavCustomField => $eavCustomAttributeMock
+                        $linkField => $statusAttributeMock
                     ]
                 ]
             );
         $this->flatIndexerMock->expects($this->atLeastOnce())->method('getTable')
-            ->withConsecutive([$tableName], ['catalog_product_website'])
-            ->willReturnOnConsecutiveCalls($tableName, 'catalog_product_website');
+            ->withConsecutive(
+                [$tableName],
+                ['catalog_product_website']
+            )
+            ->willReturn(
+                $tableName,
+                'catalog_product_website'
+            );
         $this->flatIndexerMock->expects($this->once())->method('getAttribute')
             ->with('status')
             ->willReturn($statusAttributeMock);
@@ -151,9 +153,6 @@ class FlatTableBuilderTest extends \PHPUnit\Framework\TestCase
             ->getMock();
         $backendMock->expects($this->atLeastOnce())->method('getTable')->willReturn($attributeTable);
         $statusAttributeMock->expects($this->atLeastOnce())->method('getBackend')->willReturn(
-            $backendMock
-        );
-        $eavCustomAttributeMock->expects($this->atLeastOnce())->method('getBackend')->willReturn(
             $backendMock
         );
         $statusAttributeMock->expects($this->atLeastOnce())->method('getId')->willReturn($statusId);
@@ -185,13 +184,13 @@ class FlatTableBuilderTest extends \PHPUnit\Framework\TestCase
                 ],
                 [
                     $temporaryTableName,
-                    "e.{$linkField} = {$temporaryTableName}.{$linkField}",
-                    [$linkField, $eavCustomField]
+                    "e.{$linkField} = ${temporaryTableName}.{$linkField}",
+                    [$linkField]
                 ],
                 [
                     $temporaryValueTableName,
-                    "e.{$linkField} = {$temporaryValueTableName}.{$linkField}",
-                    [$eavCustomValueField]
+                    "e.${linkField} = " . $temporaryValueTableName . ".${linkField}",
+                    [$linkField]
                 ]
             )->willReturnSelf();
         $this->metadataPoolMock->expects($this->atLeastOnce())->method('getMetadata')->with(ProductInterface::class)

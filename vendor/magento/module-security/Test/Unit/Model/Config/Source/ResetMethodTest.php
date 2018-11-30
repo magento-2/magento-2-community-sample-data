@@ -11,7 +11,7 @@ use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
 /**
  * Test class for \Magento\Security\Model\Config\Source\ResetMethod testing
  */
-class ResetMethodTest extends \PHPUnit\Framework\TestCase
+class ResetMethodTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\Security\Model\Config\Source\ResetMethod
@@ -30,7 +30,7 @@ class ResetMethodTest extends \PHPUnit\Framework\TestCase
     protected function setUp()
     {
         $this->objectManager = new ObjectManager($this);
-        $this->model = $this->objectManager->getObject(\Magento\Security\Model\Config\Source\ResetMethod::class);
+        $this->model = $this->objectManager->getObject('\Magento\Security\Model\Config\Source\ResetMethod');
     }
 
     public function testToOptionArray()

@@ -12,7 +12,6 @@ use Magento\Framework\Exception\InputException;
 /**
  * Interface for managing customers accounts.
  * @api
- * @since 100.0.2
  */
 interface AccountManagementInterface
 {

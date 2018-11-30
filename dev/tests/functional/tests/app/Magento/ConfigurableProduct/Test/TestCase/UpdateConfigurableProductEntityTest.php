@@ -25,14 +25,14 @@ use Magento\Mtf\TestCase\Scenario;
  * 5. Save product.
  * 6. Perform all assertions.
  *
- * @group Configurable_Product
+ * @group Configurable_Product_(MX)
  * @ZephyrId MAGETWO-29916
  */
 class UpdateConfigurableProductEntityTest extends Scenario
 {
     /* tags */
     const MVP = 'yes';
-    const TO_MAINTAIN = 'yes';
+    const DOMAIN = 'MX';
     /* end tags */
 
     /**

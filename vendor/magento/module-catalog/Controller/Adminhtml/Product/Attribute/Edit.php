@@ -17,7 +17,7 @@ class Edit extends \Magento\Catalog\Controller\Adminhtml\Product\Attribute
         $id = $this->getRequest()->getParam('attribute_id');
         /** @var $model \Magento\Catalog\Model\ResourceModel\Eav\Attribute */
         $model = $this->_objectManager->create(
-            \Magento\Catalog\Model\ResourceModel\Eav\Attribute::class
+            'Magento\Catalog\Model\ResourceModel\Eav\Attribute'
         )->setEntityTypeId(
             $this->_entityTypeId
         );
@@ -25,21 +25,21 @@ class Edit extends \Magento\Catalog\Controller\Adminhtml\Product\Attribute
             $model->load($id);
 
             if (!$model->getId()) {
-                $this->messageManager->addErrorMessage(__('This attribute no longer exists.'));
+                $this->messageManager->addError(__('This attribute no longer exists.'));
                 $resultRedirect = $this->resultRedirectFactory->create();
                 return $resultRedirect->setPath('catalog/*/');
             }
 
             // entity type check
             if ($model->getEntityTypeId() != $this->_entityTypeId) {
-                $this->messageManager->addErrorMessage(__('This attribute cannot be edited.'));
+                $this->messageManager->addError(__('This attribute cannot be edited.'));
                 $resultRedirect = $this->resultRedirectFactory->create();
                 return $resultRedirect->setPath('catalog/*/');
             }
         }
 
         // set entered data if was error when we do save
-        $data = $this->_objectManager->get(\Magento\Backend\Model\Session::class)->getAttributeData(true);
+        $data = $this->_objectManager->get('Magento\Backend\Model\Session')->getAttributeData(true);
         if (!empty($data)) {
             $model->addData($data);
         }

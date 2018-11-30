@@ -10,10 +10,11 @@ use InvalidArgumentException;
  *
  * <b>== More information ==</b>
  *
- * For more detailed information on Transactions, see {@link https://developers.braintreepayments.com/reference/response/transaction/php https://developers.braintreepayments.com/reference/response/transaction/php}
+ * For more detailed information on Transactions, see {@link http://www.braintreepayments.com/gateway/transaction-api http://www.braintreepaymentsolutions.com/gateway/transaction-api}
  *
  * @package    Braintree
  * @category   Resources
+ * @copyright  2015 Braintree, a division of PayPal, Inc.
  */
 
 class TransactionGateway
@@ -40,7 +41,7 @@ class TransactionGateway
      * @ignore
      * @access private
      * @param array $attribs
-     * @return Result\Successful|Result\Error
+     * @return object
      */
     private function create($attribs)
     {
@@ -119,7 +120,6 @@ class TransactionGateway
             'recurring',
             'serviceFeeAmount',
             'sharedPaymentMethodToken',
-            'sharedPaymentMethodNonce',
             'sharedCustomerId',
             'sharedShippingAddressId',
             'sharedBillingAddressId',
@@ -130,9 +130,6 @@ class TransactionGateway
             'transactionSource',
             'type',
             'venmoSdkPaymentMethodCode',
-            'shippingAmount',
-            'discountAmount',
-            'shipsFromPostalCode',
             ['riskData' =>
                 ['customerBrowser', 'customerIp', 'customer_browser', 'customer_ip']
             ],
@@ -175,8 +172,6 @@ class TransactionGateway
                     'storeShippingAddressInVault',
                     'payeeEmail',
                     'skipAdvancedFraudChecking',
-                    'skipAvs',
-                    'skipCvv',
                     ['threeDSecure' =>
                         ['required']
                     ],
@@ -205,8 +200,8 @@ class TransactionGateway
             ['customFields' => ['_anyKey_']],
             ['descriptor' => ['name', 'phone', 'url']],
             ['paypalAccount' => ['payeeEmail']],
-            ['apple_pay_card' => ['number', 'cardholder_name', 'cryptogram', 'expiration_month', 'expiration_year', 'eci_indicator']], #backwards compatibility
-            ['applePayCard' => ['number', 'cardholderName', 'cryptogram', 'expirationMonth', 'expirationYear', 'eciIndicator']],
+            ['apple_pay_card' => ['number', 'cardholder_name', 'cryptogram', 'expiration_month', 'expiration_year']], #backwards compatibility
+            ['applePayCard' => ['number', 'cardholderName', 'cryptogram', 'expirationMonth', 'expirationYear']],
             ['industry' =>
                 ['industryType',
                     ['data' =>
@@ -223,8 +218,7 @@ class TransactionGateway
                         ]
                     ]
                 ]
-            ],
-            ['lineItems' => ['quantity', 'name', 'description', 'kind', 'unitAmount', 'unitTaxAmount', 'totalAmount', 'discountAmount', 'taxAmount', 'unitOfMeasure', 'productCode', 'commodityCode', 'url']],
+            ]
         ];
     }
 
@@ -288,7 +282,7 @@ class TransactionGateway
     /**
      * new sale
      * @param array $attribs
-     * @return Result\Successful|Result\Error
+     * @return array
      */
     public function sale($attribs)
     {
@@ -313,7 +307,7 @@ class TransactionGateway
      *
      * If <b>query</b> is a string, the search will be a basic search.
      * If <b>query</b> is a hash, the search will be an advanced search.
-     * For more detailed information and examples, see {@link https://developers.braintreepayments.com/reference/request/transaction/search/php https://developers.braintreepayments.com/reference/request/transaction/search/php}
+     * For more detailed information and examples, see {@link http://www.braintreepayments.com/gateway/transaction-api#searching http://www.braintreepaymentsolutions.com/gateway/transaction-api}
      *
      * @param mixed $query search query
      * @param array $options options such as page number
@@ -475,7 +469,7 @@ class TransactionGateway
      * @ignore
      * @param var $subPath
      * @param array $params
-     * @return Result\Successful|Result\Error
+     * @return mixed
      */
     public function _doCreate($subPath, $params)
     {

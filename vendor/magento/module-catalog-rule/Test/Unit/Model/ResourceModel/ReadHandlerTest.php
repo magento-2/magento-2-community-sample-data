@@ -5,7 +5,7 @@
  */
 namespace Magento\CatalogRule\Test\Unit\Model\ResourceModel;
 
-class ReadHandlerTest extends \PHPUnit\Framework\TestCase
+class ReadHandlerTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\CatalogRule\Model\ResourceModel\ReadHandler
@@ -24,8 +24,8 @@ class ReadHandlerTest extends \PHPUnit\Framework\TestCase
 
     protected function setUp()
     {
-        $this->resourceMock = $this->createMock(\Magento\CatalogRule\Model\ResourceModel\Rule::class);
-        $this->metadataMock = $this->createMock(\Magento\Framework\EntityManager\MetadataPool::class);
+        $this->resourceMock = $this->getMock('\Magento\CatalogRule\Model\ResourceModel\Rule', [], [], '', false);
+        $this->metadataMock = $this->getMock('\Magento\Framework\EntityManager\MetadataPool', [], [], '', false);
         $this->subject = new \Magento\CatalogRule\Model\ResourceModel\ReadHandler(
             $this->resourceMock,
             $this->metadataMock
@@ -36,7 +36,7 @@ class ReadHandlerTest extends \PHPUnit\Framework\TestCase
     {
         $linkedField = 'entity_id';
         $entityId = 100;
-        $entityType = \Magento\CatalogRule\Api\Data\RuleInterface::class;
+        $entityType = '\Magento\CatalogRule\Entity\Type';
         $entityData = [
             $linkedField => $entityId
         ];
@@ -44,9 +44,12 @@ class ReadHandlerTest extends \PHPUnit\Framework\TestCase
         $customerGroupIds = [1, 2, 3];
         $websiteIds = [4, 5, 6];
 
-        $metadataMock = $this->createPartialMock(
-            \Magento\Framework\EntityManager\EntityMetadata::class,
-            ['getLinkField']
+        $metadataMock = $this->getMock(
+            '\Magento\Framework\EntityManager\EntityMetadata',
+            ['getLinkField'],
+            [],
+            '',
+            false
         );
         $this->metadataMock->expects($this->once())
             ->method('getMetadata')

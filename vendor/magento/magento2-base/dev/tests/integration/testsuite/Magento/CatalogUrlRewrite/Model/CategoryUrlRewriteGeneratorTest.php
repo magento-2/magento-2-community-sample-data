@@ -8,14 +8,14 @@
 
 namespace Magento\CatalogUrlRewrite\Model;
 
-use Magento\UrlRewrite\Model\OptionProvider;
 use Magento\UrlRewrite\Service\V1\Data\UrlRewrite;
+use Magento\UrlRewrite\Model\OptionProvider;
 use Magento\CatalogUrlRewrite\Model\ProductUrlRewriteGenerator;
 
 /**
  * @magentoAppArea adminhtml
  */
-class CategoryUrlRewriteGeneratorTest extends \PHPUnit\Framework\TestCase
+class CategoryUrlRewriteGeneratorTest extends \PHPUnit_Framework_TestCase
 {
     /** @var \Magento\Framework\ObjectManagerInterface */
     protected $objectManager;
@@ -23,6 +23,13 @@ class CategoryUrlRewriteGeneratorTest extends \PHPUnit\Framework\TestCase
     protected function setUp()
     {
         $this->objectManager = \Magento\TestFramework\Helper\Bootstrap::getObjectManager();
+    }
+
+    public function tearDown()
+    {
+        $category = $this->objectManager->create(\Magento\Catalog\Model\Category::class);
+        $category->load(3);
+        $category->delete();
     }
 
     /**
@@ -41,7 +48,7 @@ class CategoryUrlRewriteGeneratorTest extends \PHPUnit\Framework\TestCase
 
         $categoryFilter = [
             UrlRewrite::ENTITY_TYPE => CategoryUrlRewriteGenerator::ENTITY_TYPE,
-            UrlRewrite::ENTITY_ID => [3, 4, 5]
+            UrlRewrite::ENTITY_ID => [3, 4, 5],
         ];
         $actualResults = $this->getActualResults($categoryFilter);
         $categoryExpectedResult = [
@@ -59,7 +66,7 @@ class CategoryUrlRewriteGeneratorTest extends \PHPUnit\Framework\TestCase
 
         $productFilter = [
             UrlRewrite::ENTITY_TYPE => ProductUrlRewriteGenerator::ENTITY_TYPE,
-            UrlRewrite::ENTITY_ID => [$productForTest]
+            UrlRewrite::ENTITY_ID => [$productForTest],
         ];
         $actualResults = $this->getActualResults($productFilter);
         $productExpectedResult = [
@@ -67,32 +74,32 @@ class CategoryUrlRewriteGeneratorTest extends \PHPUnit\Framework\TestCase
                 'simple-product-two.html',
                 'catalog/product/view/id/' . $productForTest,
                 1,
-                0
+                0,
             ],
             [
                 'new-url/category-1-1/category-1-1-1/simple-product-two.html',
                 'catalog/product/view/id/' . $productForTest . '/category/5',
                 1,
-                0
+                0,
             ],
             [
                 'new-url/simple-product-two.html',
                 'catalog/product/view/id/' . $productForTest . '/category/3',
                 1,
-                0
+                0,
             ],
             [
                 'new-url/category-1-1/simple-product-two.html',
                 'catalog/product/view/id/' . $productForTest . '/category/4',
                 1,
-                0
+                0,
             ],
             [
                 '/simple-product-two.html',
                 'catalog/product/view/id/' . $productForTest . '/category/2',
                 1,
-                0
-            ]
+                0,
+            ],
         ];
 
         $this->assertResults($productExpectedResult, $actualResults);
@@ -114,7 +121,7 @@ class CategoryUrlRewriteGeneratorTest extends \PHPUnit\Framework\TestCase
 
         $categoryFilter = [
             UrlRewrite::ENTITY_TYPE => CategoryUrlRewriteGenerator::ENTITY_TYPE,
-            UrlRewrite::ENTITY_ID => [3, 4, 5]
+            UrlRewrite::ENTITY_ID => [3, 4, 5],
         ];
         $actualResults = $this->getActualResults($categoryFilter);
         $categoryExpectedResult = [
@@ -127,7 +134,7 @@ class CategoryUrlRewriteGeneratorTest extends \PHPUnit\Framework\TestCase
                 'category-1/category-1-1/category-1-1-1.html',
                 'new-url/category-1-1/category-1-1-1.html',
                 0,
-                OptionProvider::PERMANENT
+                OptionProvider::PERMANENT,
             ],
         ];
 
@@ -140,7 +147,7 @@ class CategoryUrlRewriteGeneratorTest extends \PHPUnit\Framework\TestCase
 
         $productFilter = [
             UrlRewrite::ENTITY_TYPE => ProductUrlRewriteGenerator::ENTITY_TYPE,
-            UrlRewrite::ENTITY_ID => [$productForTest]
+            UrlRewrite::ENTITY_ID => [$productForTest],
         ];
         $actualResults = $this->getActualResults($productFilter);
         $productExpectedResult = [
@@ -148,84 +155,53 @@ class CategoryUrlRewriteGeneratorTest extends \PHPUnit\Framework\TestCase
                 'simple-product-two.html',
                 'catalog/product/view/id/' . $productForTest,
                 1,
-                0
+                0,
             ],
             [
                 'new-url/category-1-1/category-1-1-1/simple-product-two.html',
                 'catalog/product/view/id/' . $productForTest . '/category/5',
                 1,
-                0
+                0,
             ],
             [
                 'category-1/category-1-1/category-1-1-1/simple-product-two.html',
                 'new-url/category-1-1/category-1-1-1/simple-product-two.html',
                 0,
-                OptionProvider::PERMANENT
+                OptionProvider::PERMANENT,
             ],
             [
                 'new-url/simple-product-two.html',
                 'catalog/product/view/id/' . $productForTest . '/category/3',
                 1,
-                0
+                0,
             ],
             [
                 'new-url/category-1-1/simple-product-two.html',
                 'catalog/product/view/id/' . $productForTest . '/category/4',
                 1,
-                0
+                0,
             ],
             [
                 '/simple-product-two.html',
                 'catalog/product/view/id/' . $productForTest . '/category/2',
                 1,
-                0
+                0,
             ],
             [
                 'category-1/simple-product-two.html',
                 'new-url/simple-product-two.html',
                 0,
-                OptionProvider::PERMANENT
+                OptionProvider::PERMANENT,
             ],
             [
                 'category-1/category-1-1/simple-product-two.html',
                 'new-url/category-1-1/simple-product-two.html',
                 0,
-                OptionProvider::PERMANENT
+                OptionProvider::PERMANENT,
             ],
         ];
 
         $this->assertResults($productExpectedResult, $actualResults);
-    }
-
-    /**
-     * @magentoDataFixture Magento/CatalogUrlRewrite/_files/categories.php
-     * @magentoDbIsolation enabled
-     * @magentoAppIsolation enabled
-     * @param string $urlKey
-     * @dataProvider incorrectUrlRewritesDataProvider
-     */
-    public function testGenerateUrlRewritesWithIncorrectUrlKey($urlKey)
-    {
-        $this->expectException(
-            \Magento\Framework\Exception\LocalizedException::class,
-            'Invalid URL key'
-        );
-        /** @var \Magento\Catalog\Api\CategoryRepositoryInterface $repository */
-        $repository = $this->objectManager->get(\Magento\Catalog\Api\CategoryRepositoryInterface::class);
-        $category = $repository->get(3);
-        $category->setUrlKey($urlKey);
-        $repository->save($category);
-    }
-
-    /**
-     * @return array
-     */
-    public function incorrectUrlRewritesDataProvider()
-    {
-        return [
-            ['#'],
-            ['//']
-        ];
     }
 
     /**
@@ -262,5 +238,6 @@ class CategoryUrlRewriteGeneratorTest extends \PHPUnit\Framework\TestCase
                 'Expected: ' . var_export($row, true) . "\nIn Actual: " . var_export($actual, true)
             );
         }
+
     }
 }

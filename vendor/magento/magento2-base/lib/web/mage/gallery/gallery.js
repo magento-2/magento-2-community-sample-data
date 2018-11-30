@@ -2,7 +2,6 @@
  * Copyright © Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
-
 define([
     'jquery',
     'fotorama/fotorama',
@@ -21,7 +20,6 @@ define([
      */
     var getMainImageIndex = function (data) {
             var mainIndex;
-
             if (_.every(data, function (item) {
                     return _.isObject(item);
                 })
@@ -30,7 +28,6 @@ define([
                     return item.isMain;
                 });
             }
-
             return mainIndex > 0 ? mainIndex : 0;
         },
 
@@ -56,19 +53,15 @@ define([
             return slideTransform.filter(Boolean);
         },
 
-        /**
-         * @param {*} str
-         * @return {*}
-         * @private
-         */
         _toNumber = function (str) {
-            var type = typeof str;
+
+            var type = typeof(str);
 
             if (type === 'string') {
-                return parseInt(str); //eslint-disable-line radix
+                return parseInt(str);
+            } else {
+                return str;
             }
-
-            return str;
         };
 
     return Class.extend({
@@ -299,12 +292,8 @@ define([
             $.extend(true, config, this.startConfig);
 
             mainImageIndex = getMainImageIndex(config.data);
-
             if (mainImageIndex) {
-                this.settings.fotoramaApi.show({
-                    index: mainImageIndex,
-                    time: 0
-                });
+                this.settings.fotoramaApi.show(mainImageIndex);
             }
         },
 
@@ -316,6 +305,7 @@ define([
                 settings = this.settings,
                 config = this.config,
                 startConfig = this.startConfig,
+                triggeredBreakpoints = 0,
                 isTouchEnabled = this.isTouchEnabled;
 
             if (_.isObject(settings.breakpoints)) {
@@ -338,7 +328,6 @@ define([
 
                             if (isTouchEnabled) {
                                 settings.breakpoints[pair[0]].options.arrows = false;
-
                                 if (settings.breakpoints[pair[0]].options.fullscreen) {
                                     settings.breakpoints[pair[0]].options.fullscreen.arrows = false;
                                 }
@@ -428,9 +417,10 @@ define([
                      */
                     updateOptions: function (configuration, isInternal) {
 
-                        var $selectable = $('a[href], area[href], input, select, ' +
-                                'textarea, button, iframe, object, embed, *[tabindex], *[contenteditable]')
+                        var $selectable = 
+                                $('a[href], area[href], input, select, textarea, button, iframe, object, embed, *[tabindex], *[contenteditable]')
                                 .not('[tabindex=-1], [disabled], :hidden'),
+                            fotorama = settings.fotoramaApi,
                             $focus = $(':focus'),
                             index;
 
@@ -438,6 +428,7 @@ define([
 
                             //Saves index of focus
                             $selectable.each(function (number) {
+            
                                 if ($(this).is($focus)) {
                                     index = number;
                                 }
@@ -506,7 +497,7 @@ define([
                      * @param {Object} item - Standart gallery image object.
                      *
                      */
-                    updateDataByIndex: function (index, item) {
+                    updateDataByIndex: function(index, item){
                         settings.fotoramaApi.spliceByIndex(index, item);
                     }
                 };

@@ -21,13 +21,4 @@ class Stdo extends Csv
     {
         $this->_fileHandler = STDOUT;
     }
-
-    /**
-     * Overriding parent as we can not close globally used resource
-     *
-     * @return void
-     */
-    public function __destruct()
-    {
-    }
 }

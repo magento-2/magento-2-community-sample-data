@@ -5,7 +5,7 @@
  */
 namespace Magento\OfflineShipping\Test\Unit\Model\Config\Backend;
 
-class TablerateTest extends \PHPUnit\Framework\TestCase
+class TablerateTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\OfflineShipping\Model\Config\Backend\Tablerate
@@ -20,21 +20,20 @@ class TablerateTest extends \PHPUnit\Framework\TestCase
     protected function setUp()
     {
         $this->tableateFactoryMock =
-            $this->getMockBuilder(\Magento\OfflineShipping\Model\ResourceModel\Carrier\TablerateFactory::class)
+            $this->getMockBuilder('Magento\OfflineShipping\Model\ResourceModel\Carrier\TablerateFactory')
             ->disableOriginalConstructor()
             ->setMethods(['create'])
             ->getMock();
 
         $helper = new \Magento\Framework\TestFramework\Unit\Helper\ObjectManager($this);
-        $this->model = $helper->getObject(
-            \Magento\OfflineShipping\Model\Config\Backend\Tablerate::class,
-            ['tablerateFactory' => $this->tableateFactoryMock]
-        );
+        $this->model = $helper->getObject('\Magento\OfflineShipping\Model\Config\Backend\Tablerate', [
+            'tablerateFactory' => $this->tableateFactoryMock
+        ]);
     }
 
     public function testAfterSave()
     {
-        $tablerateMock = $this->getMockBuilder(\Magento\OfflineShipping\Model\ResourceModel\Carrier\Tablerate::class)
+        $tablerateMock = $this->getMockBuilder('Magento\OfflineShipping\Model\ResourceModel\Carrier\Tablerate')
             ->disableOriginalConstructor()
             ->setMethods(['uploadAndImport'])
             ->getMock();

@@ -1,8 +1,8 @@
+// jscs:disable
 /**
  * Copyright © Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
-
 define([
     "jquery",
     'Magento_Ui/js/modal/confirm',
@@ -21,7 +21,6 @@ define([
             this.loadBaseUrl    = false;
             this.customerId     = data.customer_id ? data.customer_id : false;
             this.storeId        = data.store_id ? data.store_id : false;
-            this.quoteId        = data['quote_id'] ? data['quote_id'] : false;
             this.currencyId     = false;
             this.currencySymbol = data.currency_symbol ? data.currency_symbol : '';
             this.addresses      = data.addresses ? data.addresses : $H({});
@@ -39,7 +38,6 @@ define([
             this.isOnlyVirtualProduct = false;
             this.excludedPaymentMethods = [];
             this.summarizePrice = true;
-            this.timerId = null;
             jQuery.async('#order-items', (function(){
                 this.dataArea = new OrderFormArea('data', $(this.getAreaId('data')), this);
                 this.itemsArea = Object.extend(new OrderFormArea('items', $(this.getAreaId('items')), this), {
@@ -49,7 +47,7 @@ define([
                             var buttons = controlButtonArea.childElements();
                             for (var i = 0; i < buttons.length; i++) {
                                 if (buttons[i].innerHTML.include(button.label)) {
-                                    return;
+                                    return ;
                                 }
                             }
                             button.insertIn(controlButtonArea, 'top');
@@ -57,8 +55,7 @@ define([
                     }
                 });
 
-                var searchButtonId = 'add_products',
-                    searchButton = new ControlButton(jQuery.mage.__('Add Products'), searchButtonId),
+                var searchButton = new ControlButton(jQuery.mage.__('Add Products')),
                     searchAreaId = this.getAreaId('search');
                 searchButton.onClick = function() {
                     $(searchAreaId).show();
@@ -77,7 +74,7 @@ define([
 
                     this.itemsArea.onLoad = this.itemsArea.onLoad.wrap(function(proceed) {
                         proceed();
-                        if ($(searchAreaId) && !$(searchAreaId).visible() && !$(searchButtonId)) {
+                        if ($(searchAreaId) && !$(searchAreaId).visible()) {
                             this.addControlButton(searchButton);
                         }
                     });
@@ -160,7 +157,6 @@ define([
             }
             if(this.addresses[id]){
                 this.fillAddressFields(container, this.addresses[id]);
-
             }
             else{
                 this.fillAddressFields(container, {});
@@ -190,70 +186,47 @@ define([
         bindAddressFields : function(container) {
             var fields = $(container).select('input', 'select', 'textarea');
             for(var i=0;i<fields.length;i++){
-                Event.observe(fields[i], 'change', this.triggerChangeEvent.bind(this));
+                Event.observe(fields[i], 'change', this.changeAddressField.bind(this));
             }
         },
 
-        /**
-         * Calls changing address field handler after timeout to prevent multiple simultaneous calls.
-         *
-         * @param {Event} event
-         */
-        triggerChangeEvent: function (event) {
-            if (this.timerId) {
-                window.clearTimeout(this.timerId);
-            }
-
-            this.timerId = window.setTimeout(this.changeAddressField.bind(this), 500, event);
-        },
-
-        /**
-         * Triggers on each form's element changes.
-         *
-         * @param {Event} event
-         */
-        changeAddressField: function (event) {
-            var field = Event.element(event),
-                re = /[^\[]*\[([^\]]*)_address\]\[([^\]]*)\](\[(\d)\])?/,
-                matchRes = field.name.match(re),
-                type,
-                name,
-                data;
+        changeAddressField : function(event){
+            var field = Event.element(event);
+            var re = /[^\[]*\[([^\]]*)_address\]\[([^\]]*)\](\[(\d)\])?/;
+            var matchRes = field.name.match(re);
 
             if (!matchRes) {
                 return;
             }
 
-            type = matchRes[1];
-            name = matchRes[2];
+            var type = matchRes[1];
+            var name = matchRes[2];
+            var data;
 
-            if (this.isBillingField(field.id)) {
-                data = this.serializeData(this.billingAddressContainer);
-            } else {
-                data = this.serializeData(this.shippingAddressContainer);
+            if(this.isBillingField(field.id)){
+                data = this.serializeData(this.billingAddressContainer)
+            }
+            else{
+                data = this.serializeData(this.shippingAddressContainer)
             }
             data = data.toObject();
 
-            if (type === 'billing' && this.shippingAsBilling || type === 'shipping' && !this.shippingAsBilling) {
+            if( (type == 'billing' && this.shippingAsBilling)
+                || (type == 'shipping' && !this.shippingAsBilling) ) {
                 data['reset_shipping'] = true;
             }
 
-            data['order[' + type + '_address][customer_address_id]'] = null;
-            data['shipping_as_billing'] = jQuery('[name="shipping_same_as_billing"]').is(':checked') ? 1 : 0;
-
-            if (name === 'customer_address_id') {
-                data['order[' + type + '_address][customer_address_id]'] =
-                    $('order-' + type + '_address_customer_address_id').value;
-            }
+            data['order['+type+'_address][customer_address_id]'] = $('order-'+type+'_address_customer_address_id').value;
 
             if (data['reset_shipping']) {
                 this.resetShippingMethod(data);
             } else {
                 this.saveData(data);
-
-                if (name === 'country_id' || name === 'customer_address_id') {
+                if (name == 'country_id' || name == 'customer_address_id') {
                     this.loadArea(['shipping_method', 'billing_method', 'totals', 'items'], true, data);
                 }
+                // added for reloading of default sender and default recipient for giftmessages
+                //this.loadArea(['giftmessage'], true, data);
             }
         },
 
@@ -340,12 +313,12 @@ define([
                 data = this.serializeData(this.billingAddressContainer);
             } else {
                 data = this.serializeData(this.shippingAddressContainer);
+                areasToLoad.push('shipping_method');
             }
-            areasToLoad.push('shipping_method');
             data = data.toObject();
             data['shipping_as_billing'] = flag ? 1 : 0;
             data['reset_shipping'] = 1;
-            this.loadArea(areasToLoad, true, data);
+            this.loadArea( areasToLoad, true, data);
         },
 
         resetShippingMethod : function(data){
@@ -633,7 +606,7 @@ define([
                     }
                     else if (((elms[i].type == 'checkbox' || elms[i].type == 'radio') && elms[i].checked)
                         || ((elms[i].type == 'file' || elms[i].type == 'text' || elms[i].type == 'textarea' || elms[i].type == 'hidden')
-                            && Form.Element.getValue(elms[i]))
+                        && Form.Element.getValue(elms[i]))
                     ) {
                         if (this._isSummarizePrice(elms[i])) {
                             productPrice += getPrice(elms[i]);
@@ -1145,7 +1118,7 @@ define([
          */
         isPaymentValidationAvailable : function(){
             return ((typeof this.paymentMethod) == 'undefined'
-                || this.excludedPaymentMethods.indexOf(this.paymentMethod) == -1);
+            || this.excludedPaymentMethods.indexOf(this.paymentMethod) == -1);
         },
 
         serializeData : function(container){
@@ -1275,8 +1248,7 @@ define([
                 params.store_id = this.storeId;
             }
 
-            var currentCustomerGroupId = $(parameters.groupIdHtmlId)
-                ? $(parameters.groupIdHtmlId).value : '';
+            var currentCustomerGroupId = $(parameters.groupIdHtmlId).value;
 
             new Ajax.Request(parameters.validateUrl, {
                 parameters: params,
@@ -1410,15 +1382,12 @@ define([
         _label: '',
         _node: null,
 
-        initialize: function(label, id){
+        initialize: function(label){
             this._label = label;
             this._node = new Element('button', {
                 'class': 'action-secondary action-add',
                 'type':  'button'
             });
-            if (typeof id !== 'undefined') {
-                this._node.setAttribute('id', id)
-            }
         },
 
         onClick: function(){
@@ -1435,4 +1404,4 @@ define([
     };
 
 });
-
+/* jshint ignore:end */

@@ -12,9 +12,7 @@ use Magento\Framework\Event\ObserverInterface;
 
 class ProductUrlKeyAutogeneratorObserver implements ObserverInterface
 {
-    /**
-     * @var \Magento\CatalogUrlRewrite\Model\ProductUrlPathGenerator
-     */
+    /** @var ProductUrlPathGenerator */
     protected $productUrlPathGenerator;
 
     /**
@@ -33,9 +31,6 @@ class ProductUrlKeyAutogeneratorObserver implements ObserverInterface
     {
         /** @var Product $product */
         $product = $observer->getEvent()->getProduct();
-        $urlKey = $this->productUrlPathGenerator->getUrlKey($product);
-        if (null !== $urlKey) {
-            $product->setUrlKey($urlKey);
-        }
+        $product->setUrlKey($this->productUrlPathGenerator->getUrlKey($product));
     }
 }

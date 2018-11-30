@@ -5,7 +5,7 @@
  */
 namespace Magento\Test;
 
-class MemoryLimitTest extends \PHPUnit\Framework\TestCase
+class MemoryLimitTest extends \PHPUnit_Framework_TestCase
 {
     public function testPrintHeader()
     {
@@ -53,7 +53,13 @@ class MemoryLimitTest extends \PHPUnit\Framework\TestCase
      */
     protected function _createObject($memCap, $leakCap)
     {
-        $helper = $this->createPartialMock(\Magento\TestFramework\Helper\Memory::class, ['getRealMemoryUsage']);
+        $helper = $this->getMock(
+            'Magento\TestFramework\Helper\Memory',
+            ['getRealMemoryUsage'],
+            [],
+            '',
+            false
+        );
         $helper->expects($this->any())->method('getRealMemoryUsage')->will($this->returnValue(1024 * 1024));
         return new \Magento\TestFramework\MemoryLimit($memCap, $leakCap, $helper);
     }

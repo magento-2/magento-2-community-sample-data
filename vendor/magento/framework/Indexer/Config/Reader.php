@@ -18,7 +18,6 @@ class Reader extends \Magento\Framework\Config\Reader\Filesystem
         '/config/indexer/source'         => 'name',
         '/config/indexer/fieldset'       => 'name',
         '/config/indexer/fieldset/field' => 'name',
-        '/config/indexer/dependencies/indexer' => 'id',
     ];
 
     /**
@@ -40,7 +39,7 @@ class Reader extends \Magento\Framework\Config\Reader\Filesystem
         \Magento\Framework\Config\ValidationStateInterface $validationState,
         $fileName = 'indexer.xml',
         $idAttributes = [],
-        $domDocumentClass = \Magento\Framework\Config\Dom::class,
+        $domDocumentClass = 'Magento\Framework\Config\Dom',
         $defaultScope = 'global'
     ) {
         parent::__construct(

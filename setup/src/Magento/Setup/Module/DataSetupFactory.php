@@ -9,7 +9,6 @@ use Magento\Setup\Model\ObjectManagerProvider;
 
 /**
  * Factory class to create DataSetup
- * @api
  */
 class DataSetupFactory
 {
@@ -36,6 +35,6 @@ class DataSetupFactory
     public function create()
     {
         $objectManager = $this->objectManagerProvider->get();
-        return new DataSetup($objectManager->get(\Magento\Framework\Module\Setup\Context::class));
+        return new DataSetup($objectManager->get('Magento\Framework\Module\Setup\Context'));
     }
 }

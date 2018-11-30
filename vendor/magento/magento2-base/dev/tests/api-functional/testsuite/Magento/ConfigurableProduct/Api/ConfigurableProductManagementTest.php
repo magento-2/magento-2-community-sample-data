@@ -32,7 +32,7 @@ class ConfigurableProductManagementTest extends \Magento\TestFramework\TestCase\
         ];
         /** @var \Magento\Catalog\Api\ProductAttributeRepositoryInterface $attributeRepository */
         $attributeRepository = Bootstrap::getObjectManager()->get(
-            \Magento\Catalog\Api\ProductAttributeRepositoryInterface::class
+            'Magento\Catalog\Api\ProductAttributeRepositoryInterface'
         );
         $attribute = $attributeRepository->get('test_configurable');
         $attributeOptionValue = $attribute->getOptions()[1]->getValue();
@@ -69,7 +69,8 @@ class ConfigurableProductManagementTest extends \Magento\TestFramework\TestCase\
                         'value' => $attributeOptionValue
                     ]
                 ],
-                'tier_prices' => []
+                'tier_prices' => [],
+                'extension_attributes' => []
             ]
         ];
         ksort($expectedItems);

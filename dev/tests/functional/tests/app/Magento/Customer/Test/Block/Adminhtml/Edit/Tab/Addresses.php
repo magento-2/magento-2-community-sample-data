@@ -7,20 +7,19 @@
 namespace Magento\Customer\Test\Block\Adminhtml\Edit\Tab;
 
 use Magento\Backend\Test\Block\Widget\Tab;
-use Magento\Customer\Test\Fixture\Address;
 use Magento\Mtf\Block\BlockFactory;
-use Magento\Mtf\Block\Mapper;
-use Magento\Mtf\Client\BrowserInterface;
-use Magento\Mtf\Client\Element;
 use Magento\Mtf\Client\Element\SimpleElement;
+use Magento\Mtf\Client\Element;
 use Magento\Mtf\Client\Locator;
 use Magento\Mtf\Fixture\FixtureInterface;
 use Magento\Mtf\ObjectManager;
 use Magento\Mtf\Util\ModuleResolver\SequenceSorterInterface;
+use Magento\Mtf\Client\BrowserInterface;
+use Magento\Mtf\Block\Mapper;
+use Magento\Customer\Test\Fixture\Address;
 
 /**
  * Customer addresses edit block.
- * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  */
 class Addresses extends Tab
 {
@@ -37,8 +36,6 @@ class Addresses extends Tab
      * @var string
      */
     protected $addressSelector = "//li[address[contains(.,'%s')]]";
-
-    protected $countriesSelector = "//*/select[@name='address[new_%d][country_id]']/option";
 
     /**
      * Delete Address button.
@@ -167,14 +164,14 @@ class Addresses extends Tab
         $addresses = is_array($address) ? $address : [1 => $address];
 
         foreach ($addresses as $addressNumber => $address) {
-            $hasData = (null !== $address) && $address->hasData();
+            $isHasData = (null === $address) || $address->hasData();
             $isVisibleCustomerAddress = $this->isVisibleCustomerAddress($addressNumber);
 
-            if ($hasData && !$isVisibleCustomerAddress) {
+            if ($isHasData && !$isVisibleCustomerAddress) {
                 throw new \Exception("Invalid argument: can't get data from customer address #{$addressNumber}");
             }
 
-            if (!$hasData && !$isVisibleCustomerAddress) {
+            if (!$isHasData && !$isVisibleCustomerAddress) {
                 $data[$addressNumber] = [];
             } else {
                 $this->openCustomerAddress($addressNumber);
@@ -241,34 +238,6 @@ class Addresses extends Tab
         );
 
         return $addressTab->isVisible();
-    }
-
-    /**
-     * Retrieve list of all countries
-     * @param int $addressNumber
-     * @return array
-     */
-    public function getCountriesList($addressNumber)
-    {
-        $this->openCustomerAddress($addressNumber);
-        /** @var SimpleElement $element */
-        $options = $this->_rootElement->getElements(
-            sprintf($this->countriesSelector, $addressNumber - 1),
-            Locator::SELECTOR_XPATH
-        );
-        $data = [];
-        /** @var SimpleElement $option */
-        foreach ($options as $option) {
-            if ($option->isVisible()) {
-                $value = $option->getValue();
-
-                if ($value != "") {
-                    $data[] = $value;
-                }
-            }
-        }
-
-        return $data;
     }
 
     /**

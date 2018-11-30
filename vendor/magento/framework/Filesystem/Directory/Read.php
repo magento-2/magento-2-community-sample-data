@@ -9,9 +9,6 @@ use Magento\Framework\Exception\FileSystemException;
 use Magento\Framework\Exception\ValidatorException;
 use Magento\Framework\Filesystem\File\ReadFactoryInterface;
 
-/**
- * @api
- */
 class Read implements ReadInterface
 {
     /**

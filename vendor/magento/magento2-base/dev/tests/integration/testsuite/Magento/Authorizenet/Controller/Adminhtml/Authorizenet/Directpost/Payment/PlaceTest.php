@@ -7,8 +7,6 @@ namespace Magento\Authorizenet\Controller\Adminhtml\Authorizenet\Directpost\Paym
 
 /**
  * Class PlaceTest
- *
- * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  */
 class PlaceTest extends \Magento\TestFramework\TestCase\AbstractBackendController
 {
@@ -22,44 +20,44 @@ class PlaceTest extends \Magento\TestFramework\TestCase\AbstractBackendControlle
         $this->getRequest()->setParam('payment', ['method' => 'authorizenet_directpost']);
         $this->getRequest()->setParam('controller', 'order_create');
         $orderCreateMock = $this->getOrderCreateMock($requestToAuthorizenetData);
-        $directpostMock =  $this->getMockBuilder(\Magento\Authorizenet\Model\Directpost::class)
+        $directpostMock =  $this->getMockBuilder('Magento\Authorizenet\Model\Directpost')
             ->setMethods(['getCode'])
             ->disableOriginalConstructor()
             ->getMock();
         $directpostMock->expects($this->once())
             ->method('getCode')
             ->willReturn('authorizenet_directpost');
-        $jsonHelper = $this->_objectManager->get(\Magento\Framework\Json\Helper\Data::class);
-        $objectManagerMock =  $this->getMockBuilder(\Magento\Framework\ObjectManagerInterface::class)
+        $jsonHelper = $this->_objectManager->get('Magento\Framework\Json\Helper\Data');
+        $objectManagerMock =  $this->getMockBuilder('Magento\Framework\ObjectManagerInterface')
             ->setMethods(['create', 'get'])
             ->getMockForAbstractClass();
         $objectManagerMock->expects($this->atLeastOnce())
             ->method('create')
-            ->with(\Magento\Authorizenet\Model\Directpost::class)
+            ->with('Magento\Authorizenet\Model\Directpost')
             ->willReturn($directpostMock);
-        $authorizenetSessionMock = $this->getMockBuilder(\Magento\Authorizenet\Model\Directpost::class)
+        $authorizenetSessionMock = $this->getMockBuilder('Magento\Authorizenet\Model\Directpost')
             ->disableOriginalConstructor()
             ->getMock();
-        $urlMock = $this->getMockBuilder(\Magento\Backend\Model\UrlInterface::class)
+        $urlMock = $this->getMockBuilder('Magento\Backend\Model\UrlInterface')
             ->getMockForAbstractClass();
         $objectManagerMock->expects($this->atLeastOnce())
             ->method('get')
             ->willReturnMap([
-                [\Magento\Sales\Model\AdminOrder\Create::class, $orderCreateMock],
-                [\Magento\Framework\Json\Helper\Data::class, $jsonHelper],
-                [\Magento\Authorizenet\Model\Directpost\Session::class, $authorizenetSessionMock],
-                [\Magento\Backend\Model\UrlInterface::class, $urlMock],
+                ['Magento\Sales\Model\AdminOrder\Create', $orderCreateMock],
+                ['Magento\Framework\Json\Helper\Data', $jsonHelper],
+                ['Magento\Authorizenet\Model\Directpost\Session', $authorizenetSessionMock],
+                ['Magento\Backend\Model\UrlInterface', $urlMock],
             ]);
 
         $context = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->create(
-            \Magento\Backend\App\Action\Context::class,
+            'Magento\Backend\App\Action\Context',
             [
                 'objectManager' => $objectManagerMock
             ]
         );
 
         $controller = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->create(
-            \Magento\Authorizenet\Controller\Adminhtml\Authorizenet\Directpost\Payment\PlaceTesting::class,
+            'Magento\Authorizenet\Controller\Adminhtml\Authorizenet\Directpost\Payment\PlaceTesting',
             ['context' => $context]
         );
         $controller->execute();
@@ -72,10 +70,10 @@ class PlaceTest extends \Magento\TestFramework\TestCase\AbstractBackendControlle
      */
     private function getOrderCreateMock($requestToAuthorizenetData)
     {
-        $methodInstanceMock =  $this->getMockBuilder(\Magento\Authorizenet\Model\Directpost::class)
+        $methodInstanceMock =  $this->getMockBuilder('Magento\Authorizenet\Model\Directpost')
             ->disableOriginalConstructor()
             ->getMock();
-        $directpostRequestMock = $this->getMockBuilder(\Magento\Authorizenet\Model\Directpost\Request::class)
+        $directpostRequestMock = $this->getMockBuilder('Magento\Authorizenet\Model\Directpost\Request')
             ->setMethods(['getData'])
             ->disableOriginalConstructor()
             ->getMock();
@@ -85,7 +83,7 @@ class PlaceTest extends \Magento\TestFramework\TestCase\AbstractBackendControlle
         $methodInstanceMock->expects($this->once())
             ->method('generateRequestFromOrder')
             ->willReturn($directpostRequestMock);
-        $paymentMock = $this->getMockBuilder(\Magento\Quote\Model\Quote\Payment::class)
+        $paymentMock = $this->getMockBuilder('Magento\Quote\Model\Quote\Payment')
             ->setMethods(['getMethod', 'getMethodInstance'])
             ->disableOriginalConstructor()
             ->getMock();
@@ -95,28 +93,28 @@ class PlaceTest extends \Magento\TestFramework\TestCase\AbstractBackendControlle
         $paymentMock->expects($this->once())
             ->method('getMethodInstance')
             ->willReturn($methodInstanceMock);
-        $quoteMock = $this->getMockBuilder(\Magento\Quote\Model\Quote::class)
+        $quoteMock = $this->getMockBuilder('Magento\Quote\Model\Quote')
             ->setMethods(['getPayment', 'getStoreId'])
             ->disableOriginalConstructor()
             ->getMock();
         $quoteMock->expects($this->any())
             ->method('getPayment')
             ->willReturn($paymentMock);
-        $orderMock = $this->getMockBuilder(\Magento\Sales\Model\Order::class)
+        $orderMock = $this->getMockBuilder('Magento\Sales\Model\Order')
             ->setMethods(['getPayment'])
             ->disableOriginalConstructor()
             ->getMock();
         $orderMock->expects($this->any())
             ->method('getPayment')
             ->willReturn($paymentMock);
-        $sessionQuoteMock = $this->getMockBuilder(\Magento\Backend\Model\Session\Quote::class)
+        $sessionQuoteMock = $this->getMockBuilder('Magento\Backend\Model\Session\Quote')
             ->setMethods(['getOrder'])
             ->disableOriginalConstructor()
             ->getMock();
         $sessionQuoteMock->expects($this->once())
             ->method('getOrder')
             ->willReturn($orderMock);
-        $orderCreateMock = $this->getMockBuilder(\Magento\Sales\Model\AdminOrder\Create::class)
+        $orderCreateMock = $this->getMockBuilder('Magento\Sales\Model\AdminOrder\Create')
             ->setMethods(['getQuote', 'getSession', 'setIsValidate', 'importPostData', 'createOrder', 'setPaymentData'])
             ->disableOriginalConstructor()
             ->getMock();

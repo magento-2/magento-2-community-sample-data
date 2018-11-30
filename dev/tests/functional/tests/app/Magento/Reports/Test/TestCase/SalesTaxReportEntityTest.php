@@ -6,8 +6,6 @@
 
 namespace Magento\Reports\Test\TestCase;
 
-use Magento\Mtf\Fixture\FixtureFactory;
-use Magento\Mtf\TestCase\Injectable;
 use Magento\Reports\Test\Page\Adminhtml\SalesTaxReport;
 use Magento\Reports\Test\Page\Adminhtml\Statistics;
 use Magento\Sales\Test\Fixture\OrderInjectable;
@@ -17,6 +15,7 @@ use Magento\Sales\Test\Page\Adminhtml\SalesOrderView;
 use Magento\Tax\Test\Fixture\TaxRule;
 use Magento\Tax\Test\Page\Adminhtml\TaxRuleIndex;
 use Magento\Tax\Test\Page\Adminhtml\TaxRuleNew;
+use Magento\Mtf\TestCase\Injectable;
 
 /**
  * Preconditions:
@@ -33,7 +32,7 @@ use Magento\Tax\Test\Page\Adminhtml\TaxRuleNew;
  * 4. Click "Show report".
  * 5. Perform all assertions.
  *
- * @group Reports
+ * @group Reports_(MX)
  * @ZephyrId MAGETWO-28515
  *
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
@@ -42,6 +41,7 @@ class SalesTaxReportEntityTest extends Injectable
 {
     /* tags */
     const MVP = 'no';
+    const DOMAIN = 'MX';
     /* end tags */
 
     /**
@@ -101,20 +101,13 @@ class SalesTaxReportEntityTest extends Injectable
     protected $taxRule;
 
     /**
-     * Fixture factory.
-     *
-     * @var FixtureFactory
-     */
-    private $fixtureFactory;
-
-    /**
      * Delete all tax rules.
      *
      * @return void
      */
     public function __prepare()
     {
-        $deleteTaxRule = $this->objectManager->create(\Magento\Tax\Test\TestStep\DeleteAllTaxRulesStep::class);
+        $deleteTaxRule = $this->objectManager->create('Magento\Tax\Test\TestStep\DeleteAllTaxRulesStep');
         $deleteTaxRule->run();
     }
 
@@ -128,7 +121,6 @@ class SalesTaxReportEntityTest extends Injectable
      * @param SalesTaxReport $salesTaxReport
      * @param TaxRuleIndex $taxRuleIndexPage
      * @param TaxRuleNew $taxRuleNewPage
-     * @param FixtureFactory $fixtureFactory
      * @return void
      */
     public function __inject(
@@ -138,8 +130,7 @@ class SalesTaxReportEntityTest extends Injectable
         Statistics $reportStatistic,
         SalesTaxReport $salesTaxReport,
         TaxRuleIndex $taxRuleIndexPage,
-        TaxRuleNew $taxRuleNewPage,
-        FixtureFactory $fixtureFactory
+        TaxRuleNew $taxRuleNewPage
     ) {
         $this->orderIndex = $orderIndex;
         $this->orderInvoiceNew = $orderInvoiceNew;
@@ -148,7 +139,6 @@ class SalesTaxReportEntityTest extends Injectable
         $this->salesTaxReport = $salesTaxReport;
         $this->taxRuleIndexPage = $taxRuleIndexPage;
         $this->taxRuleNewPage = $taxRuleNewPage;
-        $this->fixtureFactory = $fixtureFactory;
     }
 
     /**
@@ -198,14 +188,11 @@ class SalesTaxReportEntityTest extends Injectable
         if ($orderSteps === '-') {
             return;
         }
-        $products = $order->getEntityId()['products'];
-        $cart['data']['items'] = ['products' => $products];
-        $cart = $this->fixtureFactory->createByCode('cart', $cart);
         $orderStatus = explode(',', $orderSteps);
         foreach ($orderStatus as $orderStep) {
             $this->objectManager->create(
                 'Magento\Sales\Test\TestStep\\Create' . ucfirst(trim($orderStep)) . 'Step',
-                ['order' => $order, 'cart' => $cart]
+                ['order' => $order]
             )->run();
         }
     }
@@ -217,7 +204,7 @@ class SalesTaxReportEntityTest extends Injectable
      */
     public function tearDown()
     {
-        $deleteTaxRule = $this->objectManager->create(\Magento\Tax\Test\TestStep\DeleteAllTaxRulesStep::class);
+        $deleteTaxRule = $this->objectManager->create('Magento\Tax\Test\TestStep\DeleteAllTaxRulesStep');
         $deleteTaxRule->run();
     }
 }

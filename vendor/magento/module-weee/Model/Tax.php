@@ -10,12 +10,9 @@ use Magento\Framework\Pricing\PriceCurrencyInterface;
 use Magento\Store\Model\Website;
 use Magento\Tax\Model\Calculation;
 use Magento\Customer\Api\AccountManagementInterface;
-use Magento\Catalog\Model\Product\Type;
 
 /**
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
- * @api
- * @since 100.0.2
  */
 class Tax extends \Magento\Framework\Model\AbstractModel
 {
@@ -137,7 +134,7 @@ class Tax extends \Magento\Framework\Model\AbstractModel
      */
     protected function _construct()
     {
-        $this->_init(\Magento\Weee\Model\ResourceModel\Tax::class);
+        $this->_init('Magento\Weee\Model\ResourceModel\Tax');
     }
 
     /**
@@ -191,10 +188,8 @@ class Tax extends \Magento\Framework\Model\AbstractModel
             true,
             false
         );
-        if (Type::TYPE_BUNDLE !== $product->getTypeId() || $product->getPriceType()) {
-            foreach ($attributes as $attribute) {
-                $amountExclTax += $attribute->getAmountExclTax();
-            }
+        foreach ($attributes as $attribute) {
+            $amountExclTax += $attribute->getAmountExclTax();
         }
         return $amountExclTax;
     }
@@ -248,20 +243,10 @@ class Tax extends \Magento\Framework\Model\AbstractModel
         $round = true
     ) {
         $result = [];
-        $websiteId = null;
+
+        $websiteId = $this->_storeManager->getWebsite($website)->getId();
         /** @var \Magento\Store\Model\Store $store */
-        $store = null;
-        if (!$website) {
-            $store = $product->getStore();
-            if ($store) {
-                $websiteId = $store->getWebsiteId();
-            }
-        }
-        if (!$websiteId) {
-            $websiteObject = $this->_storeManager->getWebsite($website);
-            $websiteId = $websiteObject->getId();
-            $store = $websiteObject->getDefaultGroup()->getDefaultStore();
-        }
+        $store = $this->_storeManager->getWebsite($website)->getDefaultGroup()->getDefaultStore();
 
         $allWeee = $this->getWeeeTaxAttributeCodes($store);
         if (!$allWeee) {

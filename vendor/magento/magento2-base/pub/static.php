@@ -9,5 +9,5 @@
 require realpath(__DIR__) . '/../app/bootstrap.php';
 $bootstrap = \Magento\Framework\App\Bootstrap::create(BP, $_SERVER);
 /** @var \Magento\Framework\App\StaticResource $app */
-$app = $bootstrap->createApplication(\Magento\Framework\App\StaticResource::class);
+$app = $bootstrap->createApplication('Magento\Framework\App\StaticResource');
 $bootstrap->run($app);

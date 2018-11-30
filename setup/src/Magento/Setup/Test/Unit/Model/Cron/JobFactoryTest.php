@@ -5,16 +5,16 @@
  */
 namespace Magento\Setup\Test\Unit\Model\Cron;
 
+use Magento\Setup\Model\Cron\JobFactory;
 use Magento\Backend\Console\Command\CacheDisableCommand;
 use Magento\Backend\Console\Command\CacheEnableCommand;
 use Magento\Setup\Console\Command\MaintenanceDisableCommand;
 use Magento\Setup\Console\Command\MaintenanceEnableCommand;
-use Magento\Setup\Model\Cron\JobFactory;
 
 /**
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  */
-class JobFactoryTest extends \PHPUnit\Framework\TestCase
+class JobFactoryTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \PHPUnit_Framework_MockObject_MockObject|\Magento\Framework\ObjectManagerInterface
@@ -30,10 +30,10 @@ class JobFactoryTest extends \PHPUnit\Framework\TestCase
     {
         $serviceManager =
             $this->getMockForAbstractClass(\Zend\ServiceManager\ServiceLocatorInterface::class, [], '', false);
-        $status = $this->createMock(\Magento\Setup\Model\Cron\Status::class);
+        $status = $this->getMock(\Magento\Setup\Model\Cron\Status::class, [], [], '', false);
         $status->expects($this->once())->method('getStatusFilePath')->willReturn('path_a');
         $status->expects($this->once())->method('getLogFilePath')->willReturn('path_b');
-        $objectManagerProvider = $this->createMock(\Magento\Setup\Model\ObjectManagerProvider::class);
+        $objectManagerProvider = $this->getMock(\Magento\Setup\Model\ObjectManagerProvider::class, [], [], '', false);
         $this->objectManager = $this->getMockForAbstractClass(
             \Magento\Framework\ObjectManagerInterface::class,
             [],
@@ -42,17 +42,17 @@ class JobFactoryTest extends \PHPUnit\Framework\TestCase
         );
         $objectManagerProvider->expects($this->atLeastOnce())->method('get')->willReturn($this->objectManager);
 
-        $upgradeCommand = $this->createMock(\Magento\Setup\Console\Command\UpgradeCommand::class);
-        $moduleUninstaller = $this->createMock(\Magento\Setup\Model\ModuleUninstaller::class);
+        $upgradeCommand = $this->getMock(\Magento\Setup\Console\Command\UpgradeCommand::class, [], [], '', false);
+        $moduleUninstaller = $this->getMock(\Magento\Setup\Model\ModuleUninstaller::class, [], [], '', false);
         $moduleRegistryUninstaller =
-            $this->createMock(\Magento\Setup\Model\ModuleRegistryUninstaller::class);
-        $moduleEnabler = $this->createMock(\Magento\Setup\Console\Command\ModuleEnableCommand::class);
-        $moduleDisabler = $this->createMock(\Magento\Setup\Console\Command\ModuleDisableCommand::class);
-        $maintenanceDisabler = $this->createMock(MaintenanceDisableCommand::class);
-        $maintenanceEnabler = $this->createMock(MaintenanceEnableCommand::class);
+            $this->getMock(\Magento\Setup\Model\ModuleRegistryUninstaller::class, [], [], '', false);
+        $moduleEnabler = $this->getMock(\Magento\Setup\Console\Command\ModuleEnableCommand::class, [], [], '', false);
+        $moduleDisabler = $this->getMock(\Magento\Setup\Console\Command\ModuleDisableCommand::class, [], [], '', false);
+        $maintenanceDisabler = $this->getMock(MaintenanceDisableCommand::class, [], [], '', false);
+        $maintenanceEnabler = $this->getMock(MaintenanceEnableCommand::class, [], [], '', false);
 
-        $updater = $this->createMock(\Magento\Setup\Model\Updater::class);
-        $queue = $this->createMock(\Magento\Setup\Model\Cron\Queue::class);
+        $updater = $this->getMock(\Magento\Setup\Model\Updater::class, [], [], '', false);
+        $queue = $this->getMock(\Magento\Setup\Model\Cron\Queue::class, [], [], '', false);
 
         $returnValueMap = [
             [\Magento\Setup\Model\Updater::class, $updater],
@@ -88,15 +88,15 @@ class JobFactoryTest extends \PHPUnit\Framework\TestCase
         $valueMap = [
             [
                 \Magento\Framework\App\State\CleanupFiles::class,
-                $this->createMock(\Magento\Framework\App\State\CleanupFiles::class)
+                $this->getMock(\Magento\Framework\App\State\CleanupFiles::class, [], [], '', false)
             ],
             [
                 \Magento\Framework\App\Cache::class,
-                $this->createMock(\Magento\Framework\App\Cache::class)
+                $this->getMock(\Magento\Framework\App\Cache::class, [], [], '', false)
             ],
             [
                 \Magento\Framework\Setup\BackupRollbackFactory::class,
-                $this->createMock(\Magento\Framework\Setup\BackupRollbackFactory::class)
+                $this->getMock(\Magento\Framework\Setup\BackupRollbackFactory::class, [], [], '', false)
             ],
         ];
         $this->objectManager->expects($this->any())
@@ -114,19 +114,19 @@ class JobFactoryTest extends \PHPUnit\Framework\TestCase
         $valueMap = [
             [
                 \Magento\Framework\Module\PackageInfoFactory::class,
-                $this->createMock(\Magento\Framework\Module\PackageInfoFactory::class)
+                $this->getMock(\Magento\Framework\Module\PackageInfoFactory::class, [], [], '', false)
             ],
             [
                 \Magento\Framework\Composer\ComposerInformation::class,
-                $this->createMock(\Magento\Framework\Composer\ComposerInformation::class)
+                $this->getMock(\Magento\Framework\Composer\ComposerInformation::class, [], [], '', false)
             ],
             [
                 \Magento\Theme\Model\Theme\ThemeUninstaller::class,
-                $this->createMock(\Magento\Theme\Model\Theme\ThemeUninstaller::class)
+                $this->getMock(\Magento\Theme\Model\Theme\ThemeUninstaller::class, [], [], '', false)
             ],
             [
                 \Magento\Theme\Model\Theme\ThemePackageInfo::class,
-                $this->createMock(\Magento\Theme\Model\Theme\ThemePackageInfo::class)
+                $this->getMock(\Magento\Theme\Model\Theme\ThemePackageInfo::class, [], [], '', false)
             ],
         ];
         $this->objectManager->expects($this->any())

@@ -2,18 +2,12 @@
  * Copyright © Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
-
-/**
- * @api
- */
 define([
     'underscore',
     'mageUtils',
     'uiLayout',
-    'uiCollection',
-    'mage/translate',
-    'jquery'
-], function (_, utils, layout, Collection, $t, $) {
+    'uiCollection'
+], function (_, utils, layout, Collection) {
     'use strict';
 
     /**
@@ -37,11 +31,7 @@ define([
      * @returns {Object}
      */
     function removeEmpty(data) {
-        var result = utils.mapRecursive(data, utils.removeEmptyValues.bind(utils));
-
-        return utils.mapRecursive(result, function (value) {
-            return _.isString(value) ? value.trim() : value;
-        });
+        return utils.mapRecursive(data, utils.removeEmptyValues.bind(utils));
     }
 
     return Collection.extend({
@@ -50,7 +40,6 @@ define([
             stickyTmpl: 'ui/grid/sticky/filters',
             _processed: [],
             columnsProvider: 'ns = ${ $.ns }, componentType = columns',
-            bookmarksProvider: 'ns = ${ $.ns }, componentType = bookmark',
             applied: {
                 placeholder: true
             },
@@ -105,9 +94,7 @@ define([
                 applied: '${ $.provider }:params.filters'
             },
             imports: {
-                onColumnsUpdate: '${ $.columnsProvider }:elems',
-                onBackendError: '${ $.provider }:lastError',
-                bookmarksActiveIndex: '${ $.bookmarksProvider }:activeIndex'
+                'onColumnsUpdate': '${ $.columnsProvider }:elems'
             },
             modules: {
                 columns: '${ $.columnsProvider }',
@@ -376,37 +363,6 @@ define([
          */
         onColumnsUpdate: function (columns) {
             columns.forEach(this.addFilter, this);
-        },
-
-        /**
-         * Provider ajax error listener.
-         *
-         * @param {bool} isError - Selected index of the filter.
-         */
-        onBackendError: function (isError) {
-            var defaultMessage = 'Something went wrong with processing the default view and we have restored the ' +
-                    'filter to its original state.',
-                customMessage  = 'Something went wrong with processing current custom view and filters have been ' +
-                    'reset to its original state. Please edit filters then click apply.';
-
-            if (isError) {
-                this.clear();
-
-                $('body').notification('clear')
-                    .notification('add', {
-                        error: true,
-                        message: $.mage.__(this.bookmarksActiveIndex !== 'default' ? customMessage : defaultMessage),
-
-                        /**
-                         * @param {String} message
-                         */
-                        insertMethod: function (message) {
-                            var $wrapper = $('<div/>').html(message);
-
-                            $('.page-main-actions').after($wrapper);
-                        }
-                    });
-            }
         }
     });
 });

@@ -4,6 +4,7 @@
  * See COPYING.txt for license details.
  */
 
+
 /**
  * Tax Calculation Resource Model
  */

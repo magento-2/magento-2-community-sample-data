@@ -100,7 +100,7 @@ class SelectTest extends AbstractFormTestCase
      */
     public function testOutputValue($value, $expected)
     {
-        $option1 = $this->getMockBuilder(\Magento\Customer\Api\Data\OptionInterface::class)
+        $option1 = $this->getMockBuilder('Magento\Customer\Api\Data\OptionInterface')
             ->disableOriginalConstructor()
             ->setMethods(['getLabel', 'getValue'])
             ->getMockForAbstractClass();
@@ -111,7 +111,7 @@ class SelectTest extends AbstractFormTestCase
             ->method('getValue')
             ->will($this->returnValue('14'));
 
-        $option2 = $this->getMockBuilder(\Magento\Customer\Api\Data\OptionInterface::class)
+        $option2 = $this->getMockBuilder('Magento\Customer\Api\Data\OptionInterface')
             ->disableOriginalConstructor()
             ->setMethods(['getLabel', 'getValue'])
             ->getMockForAbstractClass();
@@ -122,7 +122,7 @@ class SelectTest extends AbstractFormTestCase
             ->method('getValue')
             ->will($this->returnValue('some key'));
 
-        $option3 = $this->getMockBuilder(\Magento\Customer\Api\Data\OptionInterface::class)
+        $option3 = $this->getMockBuilder('Magento\Customer\Api\Data\OptionInterface')
             ->disableOriginalConstructor()
             ->setMethods(['getLabel', 'getValue'])
             ->getMockForAbstractClass();

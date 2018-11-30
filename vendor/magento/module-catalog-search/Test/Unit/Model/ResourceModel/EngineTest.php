@@ -6,9 +6,10 @@
 
 namespace Magento\CatalogSearch\Test\Unit\Model\ResourceModel;
 
+
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
 
-class EngineTest extends \PHPUnit\Framework\TestCase
+class EngineTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\CatalogSearch\Model\ResourceModel\Engine
@@ -22,11 +23,11 @@ class EngineTest extends \PHPUnit\Framework\TestCase
 
     protected function setUp()
     {
-        $this->connection = $this->getMockBuilder(\Magento\Framework\DB\Adapter\AdapterInterface::class)
+        $this->connection = $this->getMockBuilder('\Magento\Framework\DB\Adapter\AdapterInterface')
             ->disableOriginalConstructor()
             ->setMethods(['getIfNullSql'])
             ->getMockForAbstractClass();
-        $resource = $this->getMockBuilder(\Magento\Framework\App\ResourceConnection::class)
+        $resource = $this->getMockBuilder('\Magento\Framework\App\ResourceConnection')
             ->disableOriginalConstructor()
             ->setMethods(['getConnection', 'getTableName'])
             ->getMock();
@@ -40,7 +41,7 @@ class EngineTest extends \PHPUnit\Framework\TestCase
 
         $objectManager = new ObjectManager($this);
         $this->target = $objectManager->getObject(
-            \Magento\CatalogSearch\Model\ResourceModel\Engine::class,
+            '\Magento\CatalogSearch\Model\ResourceModel\Engine',
             [
                 'resource' => $resource,
             ]

@@ -9,7 +9,7 @@
  */
 namespace Magento\Test\Bootstrap;
 
-class ProfilerTest extends \PHPUnit\Framework\TestCase
+class ProfilerTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\TestFramework\Bootstrap\Profiler
@@ -17,15 +17,14 @@ class ProfilerTest extends \PHPUnit\Framework\TestCase
     protected $_object;
 
     /**
-     * @var \Magento\Framework\Profiler\Driver\Standard|PHPUnit\Framework\MockObject_MockObject
+     * @var \Magento\Framework\Profiler\Driver\Standard|PHPUnit_Framework_MockObject_MockObject
      */
     protected $_driver;
 
     protected function setUp()
     {
         $this->expectOutputString('');
-        $this->_driver =
-            $this->createPartialMock(\Magento\Framework\Profiler\Driver\Standard::class, ['registerOutput']);
+        $this->_driver = $this->getMock('Magento\Framework\Profiler\Driver\Standard', ['registerOutput']);
         $this->_object = new \Magento\TestFramework\Bootstrap\Profiler($this->_driver);
     }
 
@@ -42,7 +41,7 @@ class ProfilerTest extends \PHPUnit\Framework\TestCase
         )->method(
             'registerOutput'
         )->with(
-            $this->isInstanceOf(\Magento\Framework\Profiler\Driver\Standard\Output\Csvfile::class)
+            $this->isInstanceOf('Magento\Framework\Profiler\Driver\Standard\Output\Csvfile')
         );
         $this->_object->registerFileProfiler('php://output');
     }
@@ -54,7 +53,7 @@ class ProfilerTest extends \PHPUnit\Framework\TestCase
         )->method(
             'registerOutput'
         )->with(
-            $this->isInstanceOf(\Magento\TestFramework\Profiler\OutputBamboo::class)
+            $this->isInstanceOf('Magento\TestFramework\Profiler\OutputBamboo')
         );
         $this->_object->registerBambooProfiler('php://output', __DIR__ . '/_files/metrics.php');
     }

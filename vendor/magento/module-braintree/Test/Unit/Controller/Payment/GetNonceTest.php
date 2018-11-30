@@ -23,7 +23,7 @@ use PHPUnit_Framework_MockObject_MockObject as MockObject;
  *
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  */
-class GetNonceTest extends \PHPUnit\Framework\TestCase
+class GetNonceTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var GetNonce
@@ -88,7 +88,7 @@ class GetNonceTest extends \PHPUnit\Framework\TestCase
             ->setMethods(['getCustomerId', 'getStoreId'])
             ->getMock();
 
-        $this->logger = $this->createMock(LoggerInterface::class);
+        $this->logger = $this->getMock(LoggerInterface::class);
 
         $context = $this->getMockBuilder(Context::class)
             ->disableOriginalConstructor()

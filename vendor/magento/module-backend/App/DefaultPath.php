@@ -7,10 +7,6 @@
  */
 namespace Magento\Backend\App;
 
-/**
- * @api
- * @since 100.0.2
- */
 class DefaultPath implements \Magento\Framework\App\DefaultPathInterface
 {
     /**
@@ -42,6 +38,6 @@ class DefaultPath implements \Magento\Framework\App\DefaultPathInterface
      */
     public function getPart($code)
     {
-        return $this->_parts[$code] ?? null;
+        return isset($this->_parts[$code]) ? $this->_parts[$code] : null;
     }
 }

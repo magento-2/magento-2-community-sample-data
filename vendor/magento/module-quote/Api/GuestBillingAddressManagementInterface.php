@@ -8,7 +8,6 @@ namespace Magento\Quote\Api;
 /**
  * Billing address management interface for guest carts.
  * @api
- * @since 100.0.2
  */
 interface GuestBillingAddressManagementInterface
 {
@@ -17,12 +16,11 @@ interface GuestBillingAddressManagementInterface
      *
      * @param string $cartId The cart ID.
      * @param \Magento\Quote\Api\Data\AddressInterface $address Billing address data.
-     * @param bool $useForShipping
      * @return int Address ID.
      * @throws \Magento\Framework\Exception\NoSuchEntityException The specified cart does not exist.
      * @throws \Magento\Framework\Exception\InputException The specified cart ID or address data is not valid.
      */
-    public function assign($cartId, \Magento\Quote\Api\Data\AddressInterface $address, $useForShipping = false);
+    public function assign($cartId, \Magento\Quote\Api\Data\AddressInterface $address);
 
     /**
      * Return the billing address for a specified quote.

@@ -11,7 +11,7 @@ use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
 /**
  * Class LinkTest
  */
-class LinkTest extends \PHPUnit\Framework\TestCase
+class LinkTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var Link
@@ -28,18 +28,15 @@ class LinkTest extends \PHPUnit\Framework\TestCase
      */
     protected function setUp()
     {
-        $context = $this->getMockBuilder(\Magento\Framework\View\Element\UiComponent\ContextInterface::class)
+        $context = $this->getMockBuilder('Magento\Framework\View\Element\UiComponent\ContextInterface')
             ->getMockForAbstractClass();
-        $processor = $this->getMockBuilder(\Magento\Framework\View\Element\UiComponent\Processor::class)
+        $processor = $this->getMockBuilder('Magento\Framework\View\Element\UiComponent\Processor')
             ->disableOriginalConstructor()
             ->getMock();
-        $context->expects($this->never())->method('getProcessor')->willReturn($processor);
+        $context->expects($this->any())->method('getProcessor')->willReturn($processor);
 
         $this->objectManager = new ObjectManager($this);
-        $this->link = $this->objectManager->getObject(
-            \Magento\Ui\Component\Control\Link::class,
-            ['context' => $context]
-        );
+        $this->link = $this->objectManager->getObject('Magento\Ui\Component\Control\Link', ['context' => $context]);
     }
 
     /**

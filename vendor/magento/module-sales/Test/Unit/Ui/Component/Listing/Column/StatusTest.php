@@ -6,11 +6,12 @@
 namespace Magento\Sales\Test\Unit\Ui\Component\Listing\Column;
 
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
+use Magento\Sales\Ui\Component\Listing\Column\Status;
 
 /**
  * Class StatusTest
  */
-class StatusTest extends \PHPUnit\Framework\TestCase
+class StatusTest extends \PHPUnit_Framework_TestCase
 {
     public function testPrepareDataSource()
     {
@@ -25,28 +26,31 @@ class StatusTest extends \PHPUnit\Framework\TestCase
                 ]
             ]
         ];
-        $collection = $this->createMock(\Magento\Sales\Model\ResourceModel\Order\Status\Collection::class);
+        $collection = $this->getMock('Magento\Sales\Model\ResourceModel\Order\Status\Collection', [], [], '', false);
         $collection->expects($this->once())
             ->method('toOptionHash')
             ->willReturn($itemMapping);
 
-        $collectionFactoryMock = $this->createPartialMock(
-            \Magento\Sales\Model\ResourceModel\Order\Status\CollectionFactory::class,
-            ['create']
+        $collectionFactoryMock = $this->getMock(
+            'Magento\Sales\Model\ResourceModel\Order\Status\CollectionFactory',
+            ['create'],
+            [],
+            '',
+            false
         );
         $collectionFactoryMock->expects($this->once())
             ->method('create')
             ->willReturn($collection);
 
         $objectManager = new ObjectManager($this);
-        $contextMock = $this->getMockBuilder(\Magento\Framework\View\Element\UiComponent\ContextInterface::class)
+        $contextMock = $this->getMockBuilder('Magento\Framework\View\Element\UiComponent\ContextInterface')
             ->getMockForAbstractClass();
-        $processor = $this->getMockBuilder(\Magento\Framework\View\Element\UiComponent\Processor::class)
+        $processor = $this->getMockBuilder('Magento\Framework\View\Element\UiComponent\Processor')
             ->disableOriginalConstructor()
             ->getMock();
-        $contextMock->expects($this->never())->method('getProcessor')->willReturn($processor);
+        $contextMock->expects($this->any())->method('getProcessor')->willReturn($processor);
         $model = $objectManager->getObject(
-            \Magento\Sales\Ui\Component\Listing\Column\Status::class,
+            'Magento\Sales\Ui\Component\Listing\Column\Status',
             ['collectionFactory' => $collectionFactoryMock, 'context' => $contextMock]
         );
         $model->setData('name', $itemName);

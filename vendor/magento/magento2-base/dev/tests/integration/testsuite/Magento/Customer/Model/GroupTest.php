@@ -6,7 +6,7 @@
 
 namespace Magento\Customer\Model;
 
-class GroupTest extends \PHPUnit\Framework\TestCase
+class GroupTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\Customer\Model\Group
@@ -21,10 +21,10 @@ class GroupTest extends \PHPUnit\Framework\TestCase
     protected function setUp()
     {
         $this->groupModel = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->create(
-            \Magento\Customer\Model\Group::class
+            'Magento\Customer\Model\Group'
         );
         $this->groupFactory = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->create(
-            \Magento\Customer\Api\Data\GroupInterfaceFactory::class
+            'Magento\Customer\Api\Data\GroupInterfaceFactory'
         );
     }
 

@@ -5,16 +5,16 @@
  */
 namespace Magento\Braintree\Test\Unit\Gateway\Response;
 
-use Magento\Braintree\Gateway\SubjectReader;
+use Magento\Braintree\Gateway\Helper\SubjectReader;
 use Magento\Braintree\Gateway\Response\TransactionIdHandler;
 use Magento\Payment\Gateway\Data\PaymentDataObjectInterface;
 use Magento\Sales\Model\Order\Payment;
 
-class TransactionIdHandlerTest extends \PHPUnit\Framework\TestCase
+class TransactionIdHandlerTest extends \PHPUnit_Framework_TestCase
 {
     public function testHandle()
     {
-        $paymentDO = $this->createMock(PaymentDataObjectInterface::class);
+        $paymentDO = $this->getMock(PaymentDataObjectInterface::class);
         $paymentInfo = $this->getMockBuilder(Payment::class)
             ->disableOriginalConstructor()
             ->getMock();

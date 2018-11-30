@@ -11,10 +11,6 @@
  */
 namespace Magento\Wishlist\Block\Customer\Wishlist;
 
-/**
- * @api
- * @since 100.0.2
- */
 class Button extends \Magento\Framework\View\Element\Template
 {
     /**

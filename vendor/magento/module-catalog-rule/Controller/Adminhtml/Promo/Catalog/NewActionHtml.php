@@ -22,7 +22,7 @@ class NewActionHtml extends \Magento\CatalogRule\Controller\Adminhtml\Promo\Cata
         $model = $this->_objectManager->create($type)
             ->setId($id)
             ->setType($type)
-            ->setRule($this->_objectManager->create(\Magento\CatalogRule\Model\Rule::class))
+            ->setRule($this->_objectManager->create('Magento\CatalogRule\Model\Rule'))
             ->setPrefix('actions');
 
         if (!empty($typeArr[1])) {

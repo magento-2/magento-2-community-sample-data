@@ -7,7 +7,7 @@ namespace Magento\SendFriend\Block;
 
 use Magento\TestFramework\Helper\Bootstrap;
 
-class SendTest extends \PHPUnit\Framework\TestCase
+class SendTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\SendFriend\Block\Send
@@ -16,7 +16,7 @@ class SendTest extends \PHPUnit\Framework\TestCase
 
     protected function setUp()
     {
-        $this->_block = Bootstrap::getObjectManager()->create(\Magento\SendFriend\Block\Send::class);
+        $this->_block = Bootstrap::getObjectManager()->create('Magento\SendFriend\Block\Send');
     }
 
     /**
@@ -54,11 +54,11 @@ class SendTest extends \PHPUnit\Framework\TestCase
      */
     public function testGetCustomerFieldFromSession($field, $value)
     {
-        $logger = $this->createMock(\Psr\Log\LoggerInterface::class);
+        $logger = $this->getMock('Psr\Log\LoggerInterface', [], [], '', false);
         /** @var $session \Magento\Customer\Model\Session */
-        $session = Bootstrap::getObjectManager()->create(\Magento\Customer\Model\Session::class, [$logger]);
+        $session = Bootstrap::getObjectManager()->create('Magento\Customer\Model\Session', [$logger]);
         /** @var \Magento\Customer\Api\AccountManagementInterface $service */
-        $service = Bootstrap::getObjectManager()->create(\Magento\Customer\Api\AccountManagementInterface::class);
+        $service = Bootstrap::getObjectManager()->create('Magento\Customer\Api\AccountManagementInterface');
         $customer = $service->authenticate('customer@example.com', 'password');
         $session->setCustomerDataAsLoggedIn($customer);
         $this->assertEquals($value, $this->_callBlockMethod($field));

@@ -20,7 +20,7 @@ class Save extends \Magento\Backend\App\Action
      */
     public function execute()
     {
-        $model = $this->_objectManager->create(\Magento\Eav\Model\Entity\Attribute\Group::class);
+        $model = $this->_objectManager->create('Magento\Eav\Model\Entity\Attribute\Group');
 
         $model->setAttributeGroupName(
             $this->getRequest()->getParam('attribute_group_name')
@@ -29,12 +29,12 @@ class Save extends \Magento\Backend\App\Action
         );
 
         if ($model->itemExists()) {
-            $this->messageManager->addErrorMessage(__('A group with the same name already exists.'));
+            $this->messageManager->addError(__('A group with the same name already exists.'));
         } else {
             try {
                 $model->save();
             } catch (\Exception $e) {
-                $this->messageManager->addErrorMessage(__('Something went wrong while saving this group.'));
+                $this->messageManager->addError(__('Something went wrong while saving this group.'));
             }
         }
     }

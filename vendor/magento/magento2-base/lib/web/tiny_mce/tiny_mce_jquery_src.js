@@ -1120,7 +1120,7 @@ tinymce.create('tinymce.util.Dispatcher', {
 
 		set : function(n, v, e, p, d, s) {
 			document.cookie = n + "=" + escape(v) +
-				((e) ? "; expires=" + e.toUTCString() : "") +
+				((e) ? "; expires=" + e.toGMTString() : "") +
 				((p) ? "; path=" + escape(p) : "") +
 				((d) ? "; domain=" + d : "") +
 				((s) ? "; secure" : "");
@@ -1731,7 +1731,7 @@ tinymce.html.Styles = function(settings, schema) {
 			function compress(prefix, suffix) {
 				var top, right, bottom, left;
 
-				// Get values and check it needs compressing
+				// Get values and check it it needs compressing
 				top = styles[prefix + '-top' + suffix];
 				if (!top)
 					return;

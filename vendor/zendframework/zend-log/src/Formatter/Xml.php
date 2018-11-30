@@ -2,8 +2,8 @@
 /**
  * Zend Framework (http://framework.zend.com/)
  *
- * @link      http://github.com/zendframework/zend-log for the canonical source repository
- * @copyright Copyright (c) 2005-2016 Zend Technologies USA Inc. (http://www.zend.com)
+ * @link      http://github.com/zendframework/zf2 for the canonical source repository
+ * @copyright Copyright (c) 2005-2015 Zend Technologies USA Inc. (http://www.zend.com)
  * @license   http://framework.zend.com/license/new-bsd New BSD License
  */
 
@@ -59,7 +59,7 @@ class Xml implements FormatterInterface
             $options = ArrayUtils::iteratorToArray($options);
         }
 
-        if (! is_array($options)) {
+        if (!is_array($options)) {
             $args = func_get_args();
 
             $options = [
@@ -79,11 +79,11 @@ class Xml implements FormatterInterface
             }
         }
 
-        if (! array_key_exists('rootElement', $options)) {
+        if (!array_key_exists('rootElement', $options)) {
             $options['rootElement'] = 'logEntry';
         }
 
-        if (! array_key_exists('encoding', $options)) {
+        if (!array_key_exists('encoding', $options)) {
             $options['encoding'] = 'UTF-8';
         }
 
@@ -233,8 +233,6 @@ class Xml implements FormatterInterface
                 $value = $this->getEscaper()->escapeHtml(
                     '"Object" of type ' . get_class($value) . " does not support __toString() method"
                 );
-            } else {
-                $value = $this->getEscaper()->escapeHtml($value);
             }
 
             if (is_numeric($key)) {

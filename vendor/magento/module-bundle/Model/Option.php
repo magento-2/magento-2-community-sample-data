@@ -8,11 +8,9 @@ namespace Magento\Bundle\Model;
 /**
  * Bundle Option Model
  *
- * @api
  * @method int getParentId()
  * @method null|\Magento\Catalog\Model\Product[] getSelections()
  * @method Option setParentId(int $value)
- * @since 100.0.2
  */
 class Option extends \Magento\Framework\Model\AbstractExtensibleModel implements
     \Magento\Bundle\Api\Data\OptionInterface
@@ -29,7 +27,11 @@ class Option extends \Magento\Framework\Model\AbstractExtensibleModel implements
     const KEY_PRODUCT_LINKS = 'product_links';
     /**#@-*/
 
-    /**#@-*/
+    /**
+     * Default selection object
+     *
+     * @var \Magento\Catalog\Model\Product|null
+     */
     protected $defaultSelection = null;
 
     /**
@@ -39,7 +41,7 @@ class Option extends \Magento\Framework\Model\AbstractExtensibleModel implements
      */
     protected function _construct()
     {
-        $this->_init(\Magento\Bundle\Model\ResourceModel\Option::class);
+        $this->_init('Magento\Bundle\Model\ResourceModel\Option');
         parent::_construct();
     }
 
@@ -138,7 +140,6 @@ class Option extends \Magento\Framework\Model\AbstractExtensibleModel implements
     }
 
     //@codeCoverageIgnoreStart
-
     /**
      * {@inheritdoc}
      */
@@ -292,6 +293,5 @@ class Option extends \Magento\Framework\Model\AbstractExtensibleModel implements
     {
         return $this->_setExtensionAttributes($extensionAttributes);
     }
-
     //@codeCoverageIgnoreEnd
 }

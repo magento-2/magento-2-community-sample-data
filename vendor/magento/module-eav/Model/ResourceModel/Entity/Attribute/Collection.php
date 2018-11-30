@@ -10,9 +10,7 @@ use Magento\Eav\Model\Entity\Type;
 /**
  * EAV attribute resource collection
  *
- * @api
  * @author      Magento Core Team <core@magentocommerce.com>
- * @since 100.0.2
  */
 class Collection extends \Magento\Framework\Model\ResourceModel\Db\Collection\AbstractCollection
 {
@@ -59,10 +57,7 @@ class Collection extends \Magento\Framework\Model\ResourceModel\Db\Collection\Ab
      */
     protected function _construct()
     {
-        $this->_init(
-            \Magento\Eav\Model\Entity\Attribute::class,
-            \Magento\Eav\Model\ResourceModel\Entity\Attribute::class
-        );
+        $this->_init('Magento\Eav\Model\Entity\Attribute', 'Magento\Eav\Model\ResourceModel\Entity\Attribute');
     }
 
     /**
@@ -222,7 +217,7 @@ class Collection extends \Magento\Framework\Model\ResourceModel\Db\Collection\Ab
                     $setIds
                 )
                 ->group('entity_attribute.attribute_id')
-                ->having(new \Zend_Db_Expr('COUNT(*)') . ' = ' . count($setIds));
+                ->having('count = ' . count($setIds));
         }
 
         //$this->getSelect()->distinct(true);
@@ -492,7 +487,6 @@ class Collection extends \Magento\Framework\Model\ResourceModel\Db\Collection\Ab
      * @param string $cond
      * @param string $cols
      * @return $this
-     * @since 100.1.0
      */
     public function joinLeft($table, $cond, $cols = '*')
     {

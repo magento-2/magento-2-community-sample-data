@@ -7,10 +7,9 @@
 namespace Magento\Customer\Test\Block\Adminhtml\Edit;
 
 use Magento\Backend\Test\Block\Widget\FormTabs;
-use Magento\Customer\Test\Fixture\Address;
-use Magento\Mtf\Client\Locator;
 use Magento\Mtf\Fixture\FixtureInterface;
 use Magento\Mtf\Fixture\InjectableFixture;
+use Magento\Customer\Test\Fixture\Address;
 
 /**
  * Form for creation of the customer.
@@ -22,7 +21,7 @@ class CustomerForm extends FormTabs
      *
      * @var string
      */
-    protected $spinner = '#container [data-role="spinner"]';
+    protected $spinner = '[data-role="spinner"]';
 
     /**
      * Customer form to load.
@@ -46,18 +45,11 @@ class CustomerForm extends FormTabs
     protected $fieldWrapperControl = './/*[contains(@class, "admin__field")]/*[contains(@class,"control")]';
 
     /**
-     * Selector for waiting tab content to load.
+     * Selector for wainting tab content to load.
      *
      * @var string
      */
     protected $tabReadiness = '.admin__page-nav-item._active._loading';
-
-    /**
-     * Personal information xpath selector.
-     *
-     * @var string
-     */
-    protected $information = './/th[contains(text(), "%s")]/following-sibling::td[1]';
 
     /**
      * Fill Customer forms on tabs by customer, addresses data.
@@ -169,18 +161,5 @@ class CustomerForm extends FormTabs
             $jsErrors = array_merge($jsErrors, $tab->getJsErrors());
         }
         return $jsErrors;
-    }
-
-    /**
-     * Get personal information.
-     *
-     * @param string $title
-     * @return string
-     */
-    public function getPersonalInformation($title)
-    {
-        return $this->_rootElement
-            ->find(sprintf($this->information, $title), Locator::SELECTOR_XPATH)
-            ->getText();
     }
 }

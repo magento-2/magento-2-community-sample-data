@@ -5,7 +5,6 @@
  */
 namespace Magento\Catalog\Model;
 
-use Magento\Catalog\Api\ProductRepositoryInterface;
 use Magento\Framework\App\Filesystem\DirectoryList;
 
 /**
@@ -19,25 +18,17 @@ use Magento\Framework\App\Filesystem\DirectoryList;
  * @magentoAppIsolation enabled
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  */
-class ProductGettersTest extends \PHPUnit\Framework\TestCase
+class ProductGettersTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\Catalog\Model\Product
      */
     protected $_model;
 
-    /**
-     * @var ProductRepositoryInterface
-     */
-    private $productRepository;
-
     protected function setUp()
     {
         $this->_model = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->create(
             \Magento\Catalog\Model\Product::class
-        );
-        $this->productRepository = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->create(
-            ProductRepositoryInterface::class
         );
     }
 
@@ -205,24 +196,6 @@ class ProductGettersTest extends \PHPUnit\Framework\TestCase
         $this->assertNull($this->_model->getAttributeText('status'));
         $this->_model->setStatus(\Magento\Catalog\Model\Product\Attribute\Source\Status::STATUS_ENABLED);
         $this->assertEquals('Enabled', $this->_model->getAttributeText('status'));
-    }
-
-    /**
-     * @magentoDataFixture Magento/Catalog/_files/products_with_multiselect_attribute.php
-     */
-    public function testGetAttributeTextArray()
-    {
-        $product = $this->productRepository->get('simple_ms_2');
-        $product->getAttributeText('multiselect_attribute');
-        $expected = [
-            'Option 2',
-            'Option 3',
-            'Option 4 "!@#$%^&*'
-        ];
-        self::assertEquals(
-            $expected,
-            $product->getAttributeText('multiselect_attribute')
-        );
     }
 
     public function testGetCustomDesignDate()

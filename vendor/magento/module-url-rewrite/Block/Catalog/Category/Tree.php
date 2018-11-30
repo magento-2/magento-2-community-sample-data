@@ -3,26 +3,18 @@
  * Copyright © Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
-
 namespace Magento\UrlRewrite\Block\Catalog\Category;
 
-use Magento\Backend\Block\Widget\Context;
-use Magento\Backend\Helper\Data;
 use Magento\Catalog\Api\CategoryRepositoryInterface;
-use Magento\Catalog\Block\Adminhtml\Category\AbstractCategory;
 use Magento\Catalog\Model\Category;
-use Magento\Catalog\Model\CategoryFactory;
-use Magento\Catalog\Model\ProductFactory;
 use Magento\Framework\Exception\NoSuchEntityException;
-use Magento\Framework\Json\EncoderInterface;
-use Magento\Framework\Registry;
 
 /**
  * Categories tree block for URL rewrites editing process
  *
  * @author     Magento Core Team <core@magentocommerce.com>
  */
-class Tree extends AbstractCategory
+class Tree extends \Magento\Catalog\Block\Adminhtml\Category\AbstractCategory
 {
     /**
      * List of allowed category ids
@@ -39,22 +31,22 @@ class Tree extends AbstractCategory
     /**
      * Adminhtml data
      *
-     * @var Data
+     * @var \Magento\Backend\Helper\Data
      */
     protected $_adminhtmlData = null;
 
     /**
-     * @var CategoryFactory
+     * @var \Magento\Catalog\Model\CategoryFactory
      */
     protected $_categoryFactory;
 
     /**
-     * @var ProductFactory
+     * @var \Magento\Catalog\Model\ProductFactory
      */
     protected $_productFactory;
 
     /**
-     * @var EncoderInterface
+     * @var \Magento\Framework\Json\EncoderInterface
      */
     protected $_jsonEncoder;
 
@@ -64,24 +56,24 @@ class Tree extends AbstractCategory
     protected $categoryRepository;
 
     /**
-     * @param Context $context
+     * @param \Magento\Backend\Block\Widget\Context $context
      * @param \Magento\Catalog\Model\ResourceModel\Category\Tree $categoryTree
-     * @param Registry $registry
-     * @param EncoderInterface $jsonEncoder
-     * @param ProductFactory $productFactory
-     * @param CategoryFactory $categoryFactory
-     * @param Data $adminhtmlData
+     * @param \Magento\Framework\Registry $registry
+     * @param \Magento\Framework\Json\EncoderInterface $jsonEncoder
+     * @param \Magento\Catalog\Model\ProductFactory $productFactory
+     * @param \Magento\Catalog\Model\CategoryFactory $categoryFactory
+     * @param \Magento\Backend\Helper\Data $adminhtmlData
      * @param CategoryRepositoryInterface $categoryRepository
      * @param array $data
      */
     public function __construct(
-        Context $context,
+        \Magento\Backend\Block\Widget\Context $context,
         \Magento\Catalog\Model\ResourceModel\Category\Tree $categoryTree,
-        Registry $registry,
-        CategoryFactory $categoryFactory,
-        EncoderInterface $jsonEncoder,
-        ProductFactory $productFactory,
-        Data $adminhtmlData,
+        \Magento\Framework\Registry $registry,
+        \Magento\Catalog\Model\CategoryFactory $categoryFactory,
+        \Magento\Framework\Json\EncoderInterface $jsonEncoder,
+        \Magento\Catalog\Model\ProductFactory $productFactory,
+        \Magento\Backend\Helper\Data $adminhtmlData,
         CategoryRepositoryInterface $categoryRepository,
         array $data = []
     ) {
@@ -169,8 +161,7 @@ class Tree extends AbstractCategory
             'parent_id' => (int)$node->getParentId(),
             'children_count' => (int)$node->getChildrenCount(),
             'is_active' => (bool)$node->getIsActive(),
-            // Scrub names for raw js output
-            'name' => $this->escapeHtml($node->getName()),
+            'name' => $node->getName(),
             'level' => (int)$node->getLevel(),
             'product_count' => (int)$node->getProductCount(),
         ];

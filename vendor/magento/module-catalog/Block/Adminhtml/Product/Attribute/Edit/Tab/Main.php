@@ -14,9 +14,7 @@ namespace Magento\Catalog\Block\Adminhtml\Product\Attribute\Edit\Tab;
 use Magento\Eav\Block\Adminhtml\Attribute\Edit\Main\AbstractMain;
 
 /**
- * @api
  * @SuppressWarnings(PHPMD.DepthOfInheritance)
- * @since 100.0.2
  */
 class Main extends AbstractMain
 {
@@ -87,6 +85,6 @@ class Main extends AbstractMain
      */
     protected function _getAdditionalElementTypes()
     {
-        return ['apply' => \Magento\Catalog\Block\Adminhtml\Product\Helper\Form\Apply::class];
+        return ['apply' => 'Magento\Catalog\Block\Adminhtml\Product\Helper\Form\Apply'];
     }
 }

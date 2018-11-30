@@ -138,7 +138,7 @@ class ProductLinkManagementInterfaceTest extends WebapiAbstract
     protected function getLinkedProducts($sku, $linkType)
     {
         /** @var \Magento\Catalog\Model\ProductLink\Management $linkManagement */
-        $linkManagement = $this->objectManager->get(\Magento\Catalog\Api\ProductLinkManagementInterface::class);
+        $linkManagement = $this->objectManager->get('Magento\Catalog\Api\ProductLinkManagementInterface');
         $linkedProducts = $linkManagement->getLinkedItemsByType($sku, $linkType);
 
         return $linkedProducts;

@@ -5,8 +5,6 @@
  */
 namespace Magento\Framework\Reflection\Test\Unit;
 
-use Magento\Framework\Reflection\Test\Unit\Fixture\TSampleInterface;
-
 /**
  * Dummy data object to be used by TypeProcessorTest
  */
@@ -15,22 +13,17 @@ class DataObject
     /**
      * @var string
      */
-    private $attrName;
+    protected $attrName;
 
     /**
      * @var bool
      */
-    private $isActive;
+    protected $isActive;
 
     /**
      * @var string
      */
     private $name;
-
-    /**
-     * @var array
-     */
-    private $data = [];
 
     /**
      * @return string
@@ -76,33 +69,5 @@ class DataObject
     {
         $this->name = $name;
         return $this;
-    }
-
-    /**
-     * @param string $key Key is used as index
-     * @param string $value
-     * @return void
-     */
-    public function setData(string $key, string $value)
-    {
-        $this->data[$key] = $value;
-    }
-
-    /**
-     * @param array $data
-     * @return void
-     */
-    public function addData(array $data)
-    {
-        $this->data = $data;
-    }
-
-    /**
-     * @param TSampleInterface[] $list
-     * @return void
-     */
-    public function addObjectList(array $list)
-    {
-        $this->data['objects'] = $list;
     }
 }

@@ -7,41 +7,43 @@ namespace Magento\Paypal\Test\Unit\Model;
 
 use Magento\Paypal\Model\ExpressConfigProvider;
 
-class ExpressConfigProviderTest extends \PHPUnit\Framework\TestCase
+class ExpressConfigProviderTest extends \PHPUnit_Framework_TestCase
 {
     public function testGetConfig()
     {
-        $localeResolver = $this->createMock(\Magento\Framework\Locale\ResolverInterface::class);
+        $localeResolver = $this->getMock('Magento\Framework\Locale\ResolverInterface', [], [], '', false);
         $localeResolver->expects($this->once())->method('getLocale');
 
-        $configFactory = $this->createPartialMock(\Magento\Paypal\Model\ConfigFactory::class, ['create']);
+        $configFactory = $this->getMock('Magento\Paypal\Model\ConfigFactory', ['create'], [], '', false);
 
-        $currentCustomer = $this->createMock(\Magento\Customer\Helper\Session\CurrentCustomer::class);
+        $currentCustomer = $this->getMock('Magento\Customer\Helper\Session\CurrentCustomer', [], [], '', false);
         $currentCustomer->expects($this->atLeastOnce())->method('getCustomerId')->willReturn(12);
 
-        $paymentHelper= $this->createMock(\Magento\Payment\Helper\Data::class);
+        $paymentHelper= $this->getMock('Magento\Payment\Helper\Data', [], [], '', false);
 
-        $paypalHelper = $this->createMock(\Magento\Paypal\Helper\Data::class);
+        $paypalHelper = $this->getMock('Magento\Paypal\Helper\Data', [], [], '', false);
         $paypalHelper->expects($this->atLeastOnce())->method('shouldAskToCreateBillingAgreement')->willReturn(false);
 
-        $config = $this->createMock(\Magento\Paypal\Model\Config::class);
+        $config = $this->getMock('Magento\Paypal\Model\Config', [], [], '', false);
         $config->expects($this->once())->method('getPaymentMarkWhatIsPaypalUrl');
         $config->expects($this->once())->method('getPaymentMarkImageUrl');
         $config->expects($this->atLeastOnce())->method('setMethod');
 
         $configFactory->expects($this->once())->method('create')->willReturn($config);
 
-        $payment = $this->getMockBuilder(\Magento\Paypal\Model\Payflowpro::class)
-            ->setMethods(['isAvailable', 'getCheckoutRedirectUrl'])
-            ->setMockClassName('paymentInstance')
-            ->disableOriginalConstructor()
-            ->getMock();
+        $payment = $this->getMock(
+            'Magento\Paypal\Model\Payflowpro',
+            ['isAvailable', 'getCheckoutRedirectUrl'],
+            [],
+            'paymentInstance',
+            false
+        );
         $payment->expects($this->atLeastOnce())->method('isAvailable')->willReturn(true);
         $payment->expects($this->atLeastOnce())->method('getCheckoutRedirectUrl')->willReturn('http://redirect.url');
         $paymentHelper->expects($this->atLeastOnce())->method('getMethodInstance')->willReturn($payment);
 
         /** @var \Magento\Framework\UrlInterface|\PHPUnit_Framework_MockObject_MockObject $urlBuilderMock */
-        $urlBuilderMock = $this->createMock(\Magento\Framework\UrlInterface::class);
+        $urlBuilderMock = $this->getMock('Magento\Framework\UrlInterface', [], [], '', false);
 
         $configProvider = new ExpressConfigProvider(
             $configFactory,

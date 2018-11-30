@@ -22,7 +22,6 @@ class Test extends \Magento\SomeModule\Model\Two\Test
 
     /**
      * Test constructor.
-     *
      * @param \Magento\SomeModule\Model\Proxy $proxy
      * @param \Magento\SomeModule\Model\ElementFactory $factory
      */

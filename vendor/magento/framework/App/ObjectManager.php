@@ -8,12 +8,8 @@ namespace Magento\Framework\App;
 use Magento\Framework\ObjectManager\FactoryInterface;
 
 /**
- * Direct usage of this class is strictly discouraged.
+ * A wrapper around object manager with workarounds to access it in client code
  *
- * Wrapper around object manager with workarounds to access it in client code.
- * Provides static access to objectManager, that is required for unserialization of objects.
- *
- * @api
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  */
 class ObjectManager extends \Magento\Framework\ObjectManager\ObjectManager

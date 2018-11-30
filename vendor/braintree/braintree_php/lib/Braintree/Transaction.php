@@ -135,10 +135,11 @@ namespace Braintree;
  *
  * <b>== More information ==</b>
  *
- * For more detailed information on Transactions, see {@link https://developers.braintreepayments.com/reference/response/transaction/php https://developers.braintreepayments.com/reference/response/transaction/php}
+ * For more detailed information on Transactions, see {@link http://www.braintreepayments.com/gateway/transaction-api http://www.braintreepaymentsolutions.com/gateway/transaction-api}
  *
  * @package    Braintree
  * @category   Resources
+ * @copyright  2015 Braintree, a division of PayPal, Inc.
  *
  *
  * @property-read string $avsErrorResponseCode
@@ -154,12 +155,9 @@ namespace Braintree;
  * @property-read Braintree\AmexExpressCheckoutCardDetails $amexExpressCheckoutCardDetails transaction Amex Express Checkout card info
  * @property-read Braintree\CreditCardDetails $creditCardDetails transaction credit card info
  * @property-read Braintree\CoinbaseDetails $coinbaseDetails transaction Coinbase account info
- * @property-read Braintree\MasterpassCardDetails $masterpassCardDetails transaction Masterpass card info
  * @property-read Braintree\PayPalDetails $paypalDetails transaction paypal account info
  * @property-read Braintree\Transaction\CustomerDetails $customerDetails transaction customer info
  * @property-read Braintree\VenmoAccount $venmoAccountDetails transaction Venmo Account info
- * @property-read Braintree\IdealPayment $idealPaymentDetails transaction Ideal Payment info
- * @property-read Braintree\VisaCheckoutCardDetails $visaCheckoutCardDetails transaction Visa Checkout card info
  * @property-read array  $customFields custom fields passed with the request
  * @property-read string $processorResponseCode gateway response code
  * @property-read string $additionalProcessorResponse raw response from processor
@@ -170,7 +168,6 @@ namespace Braintree;
  * @property-read \DateTime $updatedAt transaction updated DateTime
  * @property-read Braintree\Disbursement $disbursementDetails populated when transaction is disbursed
  * @property-read Braintree\Dispute $disputes populated when transaction is disputed
- * @property-read Braintree\AuthorizationAdjustment $authorizationAdjustments populated when a transaction has authorization adjustments created when submitted for settlement
  *
  */
 
@@ -253,22 +250,6 @@ class Transaction extends Base
             );
         }
 
-        if (isset($transactionAttribs['masterpassCard'])) {
-            $this->_set('masterpassCardDetails',
-                new Transaction\MasterpassCardDetails(
-                    $transactionAttribs['masterpassCard']
-                )
-            );
-        }
-
-        if (isset($transactionAttribs['visaCheckoutCard'])) {
-            $this->_set('visaCheckoutCardDetails',
-                new Transaction\VisaCheckoutCardDetails(
-                    $transactionAttribs['visaCheckoutCard']
-                )
-            );
-        }
-
         if (isset($transactionAttribs['amexExpressCheckoutCard'])) {
             $this->_set('amexExpressCheckoutCardDetails',
                 new Transaction\AmexExpressCheckoutCardDetails(
@@ -313,14 +294,6 @@ class Transaction extends Base
             $this->_set('usBankAccount',
                 new Transaction\UsBankAccountDetails(
                     $transactionAttribs['usBankAccount']
-                )
-            );
-        }
-
-        if (isset($transactionAttribs['idealPayment'])) {
-            $this->_set('idealPayment',
-                new Transaction\IdealPaymentDetails(
-                    $transactionAttribs['idealPayment']
                 )
             );
         }
@@ -413,23 +386,11 @@ class Transaction extends Base
         }
         $this->_set('discounts', $discountArray);
 
-        $authorizationAdjustments = [];
-        if (isset($transactionAttribs['authorizationAdjustments'])) {
-            foreach ($transactionAttribs['authorizationAdjustments'] AS $authorizationAdjustment) {
-                $authorizationAdjustments[] = AuthorizationAdjustment::factory($authorizationAdjustment);
-            }
-        }
-
-        $this->_set('authorizationAdjustments', $authorizationAdjustments);
-
         if(isset($transactionAttribs['riskData'])) {
             $this->_set('riskData', RiskData::factory($transactionAttribs['riskData']));
         }
         if(isset($transactionAttribs['threeDSecureInfo'])) {
             $this->_set('threeDSecureInfo', ThreeDSecureInfo::factory($transactionAttribs['threeDSecureInfo']));
-        }
-        if(isset($transactionAttribs['facilitatedDetails'])) {
-            $this->_set('facilitatedDetails', FacilitatedDetails::factory($transactionAttribs['facilitatedDetails']));
         }
         if(isset($transactionAttribs['facilitatorDetails'])) {
             $this->_set('facilitatorDetails', FacilitatorDetails::factory($transactionAttribs['facilitatorDetails']));
@@ -487,11 +448,6 @@ class Transaction extends Base
     /** @return bool */
     public function isDisbursed() {
         return $this->disbursementDetails->isValid();
-    }
-
-    /** @return line items */
-    public function lineItems() {
-        return Configuration::gateway()->transactionLineItem()->findAll($this->id);
     }
 
     /**

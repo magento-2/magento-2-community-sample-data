@@ -100,7 +100,6 @@ class SystemBackup
      * Create Backup
      *
      * @return $this
-     * @throws \Exception
      */
     public function execute()
     {
@@ -146,7 +145,8 @@ class SystemBackup
         } catch (\Exception $e) {
             $this->_errors[] = $e->getMessage();
             $this->_errors[] = $e->getTrace();
-            throw $e;
+            $this->_logger->info($e->getMessage());
+            $this->_logger->critical($e);
         }
 
         if ($this->_scopeConfig->isSetFlag(self::XML_PATH_BACKUP_MAINTENANCE_MODE, ScopeInterface::SCOPE_STORE)) {

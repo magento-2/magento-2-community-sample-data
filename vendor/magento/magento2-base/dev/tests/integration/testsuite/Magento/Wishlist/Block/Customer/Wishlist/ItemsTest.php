@@ -5,20 +5,22 @@
  */
 namespace Magento\Wishlist\Block\Customer\Wishlist;
 
-class ItemsTest extends \PHPUnit\Framework\TestCase
+class ItemsTest extends \PHPUnit_Framework_TestCase
 {
     public function testGetColumns()
     {
         $objectManager = \Magento\TestFramework\Helper\Bootstrap::getObjectManager();
         $layout = $objectManager->get(
-            \Magento\Framework\View\LayoutInterface::class
+            'Magento\Framework\View\LayoutInterface'
         );
-        $block = $layout->addBlock(\Magento\Wishlist\Block\Customer\Wishlist\Items::class, 'test');
-        $child = $this->getMockBuilder(\Magento\Wishlist\Block\Customer\Wishlist\Item\Column::class)
-            ->setMethods(['isEnabled'])
-            ->disableOriginalConstructor()
-            ->getMock();
-
+        $block = $layout->addBlock('Magento\Wishlist\Block\Customer\Wishlist\Items', 'test');
+        $child = $this->getMock(
+            'Magento\Wishlist\Block\Customer\Wishlist\Item\Column',
+            ['isEnabled'],
+            [$objectManager->get('Magento\Framework\View\Element\Context')],
+            '',
+            false
+        );
         $child->expects($this->any())->method('isEnabled')->will($this->returnValue(true));
         $layout->addBlock($child, 'child', 'test');
         $expected = $child->getType();

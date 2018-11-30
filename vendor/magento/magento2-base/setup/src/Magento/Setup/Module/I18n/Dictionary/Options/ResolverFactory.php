@@ -15,7 +15,7 @@ class ResolverFactory
     /**
      * Default option resolver class
      */
-    const DEFAULT_RESOLVER = \Magento\Setup\Module\I18n\Dictionary\Options\Resolver::class;
+    const DEFAULT_RESOLVER = 'Magento\Setup\Module\I18n\Dictionary\Options\Resolver';
 
     /**
      * @var string

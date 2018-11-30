@@ -11,7 +11,7 @@ use \Magento\Framework\View\Design\Fallback\Rule\Composite;
  * Composite Test
  *
  */
-class CompositeTest extends \PHPUnit\Framework\TestCase
+class CompositeTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @expectedException \InvalidArgumentException
@@ -26,7 +26,7 @@ class CompositeTest extends \PHPUnit\Framework\TestCase
     {
         $inputParams = ['param_one' => 'value_one', 'param_two' => 'value_two'];
 
-        $ruleOne = $this->getMockForAbstractClass(\Magento\Framework\View\Design\Fallback\Rule\RuleInterface::class);
+        $ruleOne = $this->getMockForAbstractClass('\Magento\Framework\View\Design\Fallback\Rule\RuleInterface');
         $ruleOne->expects(
             $this->once()
         )->method(
@@ -37,7 +37,7 @@ class CompositeTest extends \PHPUnit\Framework\TestCase
             $this->returnValue(['rule_one/path/one', 'rule_one/path/two'])
         );
 
-        $ruleTwo = $this->getMockForAbstractClass(\Magento\Framework\View\Design\Fallback\Rule\RuleInterface::class);
+        $ruleTwo = $this->getMockForAbstractClass('\Magento\Framework\View\Design\Fallback\Rule\RuleInterface');
         $ruleTwo->expects(
             $this->once()
         )->method(

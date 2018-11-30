@@ -5,27 +5,23 @@
  */
 namespace Magento\Framework\Communication\Config;
 
-use Magento\Framework\Serialize\SerializerInterface;
-
 /**
- * Provides communication configuration
+ * Communication config data.
  */
 class Data extends \Magento\Framework\Config\Data
 {
     /**
-     * Constructor
+     * Initialize dependencies.
      *
      * @param \Magento\Framework\Communication\Config\CompositeReader $reader
      * @param \Magento\Framework\Config\CacheInterface $cache
-     * @param string|null $cacheId
-     * @param SerializerInterface|null $serializer
+     * @param string $cacheId
      */
     public function __construct(
         \Magento\Framework\Communication\Config\CompositeReader $reader,
         \Magento\Framework\Config\CacheInterface $cache,
-        $cacheId = 'communication_config_cache',
-        SerializerInterface $serializer = null
+        $cacheId = 'communication_config_cache'
     ) {
-        parent::__construct($reader, $cache, $cacheId, $serializer);
+        parent::__construct($reader, $cache, $cacheId);
     }
 }

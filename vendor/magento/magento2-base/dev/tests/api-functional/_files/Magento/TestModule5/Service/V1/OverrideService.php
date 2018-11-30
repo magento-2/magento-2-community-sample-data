@@ -22,7 +22,6 @@ class OverrideService implements OverrideServiceInterface
     {
         $this->factory = $factory;
     }
-
     /**
      * {@inheritdoc}
      */

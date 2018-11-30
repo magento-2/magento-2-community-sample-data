@@ -19,7 +19,7 @@ class CartItem extends AbstractCartItem
      *
      * @var string
      */
-    protected $edit = '.action-edit';
+    protected $edit = '.action.edit';
 
     /**
      * Selector for "Remove item" button
@@ -40,7 +40,7 @@ class CartItem extends AbstractCartItem
      *
      * @var string
      */
-    protected $wishlistButton = '.towishlist';
+    protected $wishlistButton = '.action-towishlist';
 
     /**
      * Quantity input selector
@@ -285,17 +285,5 @@ class CartItem extends AbstractCartItem
     public function isEditButtonVisible()
     {
         return $this->_rootElement->find($this->edit)->isVisible();
-    }
-
-    /**
-     * Remove all items from Shopping Cart.
-     *
-     * @return void
-     */
-    public function clearShoppingCart()
-    {
-        while ($this->_rootElement->find($this->removeItem)->isVisible()) {
-            $this->removeItem();
-        }
     }
 }

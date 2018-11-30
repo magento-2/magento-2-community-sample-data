@@ -80,10 +80,7 @@ class Select extends DefaultValidator
         if ($storeId > \Magento\Store\Model\Store::DEFAULT_STORE_ID && $priceType === null && $price === null) {
             return true;
         }
-        if (!$priceType && !$price) {
-            return true;
-        }
-        if (!$this->isInRange($priceType, $this->priceTypes)) {
+        if (!$this->isInRange($priceType, $this->priceTypes) || $this->isNegative($price)) {
             return false;
         }
 

@@ -47,9 +47,9 @@ class ApiDataFixture
     /**
      * Handler for 'startTest' event
      *
-     * @param \PHPUnit\Framework\TestCase $test
+     * @param \PHPUnit_Framework_TestCase $test
      */
-    public function startTest(\PHPUnit\Framework\TestCase $test)
+    public function startTest(\PHPUnit_Framework_TestCase $test)
     {
         \Magento\TestFramework\Helper\Bootstrap::getInstance()->reinitialize();
         /** Apply method level fixtures if thy are available, apply class level fixtures otherwise */
@@ -64,18 +64,18 @@ class ApiDataFixture
         $this->_revertFixtures();
         /** @var $objectManager \Magento\TestFramework\ObjectManager */
         $objectManager = \Magento\TestFramework\Helper\Bootstrap::getObjectManager();
-        $objectManager->get(\Magento\Customer\Model\Metadata\AttributeMetadataCache::class)->clean();
+        $objectManager->get(\Magento\Eav\Model\Entity\AttributeCache::class)->clear();
     }
 
     /**
      * Retrieve fixtures from annotation
      *
      * @param string $scope 'class' or 'method'
-     * @param \PHPUnit\Framework\TestCase $test
+     * @param \PHPUnit_Framework_TestCase $test
      * @return array
      * @throws \Magento\Framework\Exception\LocalizedException
      */
-    protected function _getFixtures($scope, \PHPUnit\Framework\TestCase $test)
+    protected function _getFixtures($scope, \PHPUnit_Framework_TestCase $test)
     {
         $annotations = $test->getAnnotations();
         $result = [];
@@ -102,7 +102,6 @@ class ApiDataFixture
      * Execute single fixture script
      *
      * @param string|array $fixture
-     * @throws \Exception
      */
     protected function _applyOneFixture($fixture)
     {
@@ -113,13 +112,9 @@ class ApiDataFixture
                 require $fixture;
             }
         } catch (\Exception $e) {
-            throw new \Exception(
-                sprintf(
-                    "Exception occurred when running the %s fixture: \n%s",
-                    (\is_array($fixture) || is_scalar($fixture) ? json_encode($fixture) : 'callback'),
-                    $e->getMessage()
-                )
-            );
+            echo 'Exception occurred when running the '
+            . (is_array($fixture) || is_scalar($fixture) ? json_encode($fixture) : 'callback')
+            . ' fixture: ', PHP_EOL, $e;
         }
         $this->_appliedFixtures[] = $fixture;
     }

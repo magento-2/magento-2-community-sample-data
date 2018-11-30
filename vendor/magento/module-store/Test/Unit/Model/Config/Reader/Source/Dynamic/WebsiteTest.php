@@ -19,7 +19,7 @@ use Magento\Store\Model\Config\Reader\Source\Dynamic\DefaultScope;
  *
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  */
-class WebsiteTest extends \PHPUnit\Framework\TestCase
+class WebsiteTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var ScopedFactory|\PHPUnit_Framework_MockObject_MockObject

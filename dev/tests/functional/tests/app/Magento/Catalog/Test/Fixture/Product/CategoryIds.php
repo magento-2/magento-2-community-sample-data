@@ -51,7 +51,11 @@ class CategoryIds extends DataSource
         } elseif (isset($data['dataset'])) {
             $datasets = explode(',', $data['dataset']);
             foreach ($datasets as $dataset) {
-                $category = $fixtureFactory->createByCode('category', ['dataset' => trim($dataset)]);
+                if (trim($dataset) == '-') {
+                    $this->data[] = '';
+                    continue;
+                }
+                $category = $fixtureFactory->createByCode('category', ['dataset' => $dataset]);
                 if (!isset($data['new_category']) || $data['new_category'] !== 'yes') {
                     $category->persist();
                 }
@@ -59,16 +63,6 @@ class CategoryIds extends DataSource
                 /** @var Category $category */
                 $this->data[] = $category->getName();
                 $this->categories[] = $category;
-            }
-        } else {
-            foreach ($data as $category) {
-                if ($category instanceof Category) {
-                    if (!$category->hasData('id')) {
-                        $category->persist();
-                    }
-                    $this->data[] = $category->getName();
-                    $this->categories[] = $category;
-                }
             }
         }
     }

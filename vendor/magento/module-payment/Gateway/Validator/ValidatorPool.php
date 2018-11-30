@@ -13,7 +13,6 @@ use Magento\Framework\ObjectManager\TMapFactory;
  * Class ValidatorPool
  * @package Magento\Payment\Gateway\Validator
  * @api
- * @since 100.0.2
  */
 class ValidatorPool implements \Magento\Payment\Gateway\Validator\ValidatorPoolInterface
 {

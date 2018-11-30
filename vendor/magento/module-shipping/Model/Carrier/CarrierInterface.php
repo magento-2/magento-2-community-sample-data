@@ -5,10 +5,6 @@
  */
 namespace Magento\Shipping\Model\Carrier;
 
-/**
- * Interface \Magento\Shipping\Model\Carrier\CarrierInterface
- *
- */
 interface CarrierInterface
 {
     /**

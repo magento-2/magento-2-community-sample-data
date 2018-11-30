@@ -6,9 +6,9 @@
 
 namespace Magento\Catalog\Test\Fixture\Category;
 
-use Magento\Catalog\Test\Fixture\Category;
 use Magento\Mtf\Fixture\DataSource;
 use Magento\Mtf\Fixture\FixtureFactory;
+use Magento\Catalog\Test\Fixture\Category;
 
 /**
  * Prepare parent category.
@@ -37,7 +37,7 @@ class ParentId extends DataSource
                 $this->parentCategory->persist();
             }
             $this->data = $this->parentCategory->getId();
-        } elseif (isset($data['source']) && $data['source'] instanceof Category) {
+        } else if (isset($data['source']) && $data['source'] instanceof Category) {
             $this->parentCategory = $data['source'];
             $this->data = $data['source']->getId();
         } else {

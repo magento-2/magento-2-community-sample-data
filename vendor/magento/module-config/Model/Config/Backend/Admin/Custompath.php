@@ -11,10 +11,6 @@
  */
 namespace Magento\Config\Model\Config\Backend\Admin;
 
-/**
- * @api
- * @since 100.0.2
- */
 class Custompath extends \Magento\Framework\App\Config\Value
 {
     /**

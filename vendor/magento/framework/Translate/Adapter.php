@@ -4,6 +4,8 @@
  * See COPYING.txt for license details.
  */
 
+// @codingStandardsIgnoreFile
+
 /**
  * Magento translate adapter
  */
@@ -29,7 +31,6 @@ class Adapter extends AbstractAdapter
         }
     }
 
-    // @codingStandardsIgnoreStart
     /**
      * Translate message string.
      *
@@ -46,5 +47,4 @@ class Adapter extends AbstractAdapter
         }
         return $string;
     }
-    // @codingStandardsIgnoreEnd
 }

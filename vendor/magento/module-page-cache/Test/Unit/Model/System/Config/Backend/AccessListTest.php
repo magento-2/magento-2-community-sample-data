@@ -7,11 +7,10 @@
 namespace Magento\PageCache\Test\Unit\Model\System\Config\Backend;
 
 use Magento\PageCache\Model\System\Config\Backend\AccessList;
-use PHPUnit\Framework\TestCase;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
 use Magento\Framework\App\Config\ScopeConfigInterface;
 
-class AccessListTest extends TestCase
+class AccessListTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var AccessList
@@ -43,7 +42,7 @@ class AccessListTest extends TestCase
     /**
      * @return array
      */
-    public function getValidValues(): array
+    public function getValidValues()
     {
         return [
             ['localhost', 'localhost'],
@@ -68,7 +67,7 @@ class AccessListTest extends TestCase
     /**
      * @return array
      */
-    public function getInvalidValues(): array
+    public function getInvalidValues()
     {
         return [
             ['\\bull val\\'],

@@ -107,6 +107,7 @@ class Totals extends Block
     {
         $this->waitForUpdatedTotals();
         $grandTotal = $this->_rootElement->find($this->grandTotal, Locator::SELECTOR_CSS)->getText();
+
         return $this->escapeCurrency($grandTotal);
     }
 
@@ -118,6 +119,7 @@ class Totals extends Block
     public function getGrandTotalIncludingTax()
     {
         $priceElement = $this->_rootElement->find($this->grandTotalInclTax, Locator::SELECTOR_CSS);
+        
         return $priceElement->isVisible() ? $this->escapeCurrency($priceElement->getText()) : null;
     }
 
@@ -129,6 +131,7 @@ class Totals extends Block
     public function getGrandTotalExcludingTax()
     {
         $priceElement = $this->_rootElement->find($this->grandTotalExclTax, Locator::SELECTOR_CSS);
+        
         return $priceElement->isVisible() ? $this->escapeCurrency($priceElement->getText()) : null;
     }
 
@@ -140,6 +143,7 @@ class Totals extends Block
     public function getTax()
     {
         $priceElement = $this->_rootElement->find($this->tax, Locator::SELECTOR_CSS);
+        
         return $priceElement->isVisible() ? $this->escapeCurrency($priceElement->getText()) : null;
     }
 
@@ -161,6 +165,7 @@ class Totals extends Block
     public function getSubtotal()
     {
         $subTotal = $this->_rootElement->find($this->subtotal, Locator::SELECTOR_CSS)->getText();
+        
         return $this->escapeCurrency($subTotal);
     }
 
@@ -172,6 +177,7 @@ class Totals extends Block
     public function getSubtotalIncludingTax()
     {
         $priceElement = $this->_rootElement->find($this->subtotalInclTax, Locator::SELECTOR_CSS);
+        
         return $priceElement->isVisible() ? $this->escapeCurrency($priceElement->getText()) : null;
     }
 
@@ -183,6 +189,7 @@ class Totals extends Block
     public function getSubtotalExcludingTax()
     {
         $priceElement = $this->_rootElement->find($this->subtotalExclTax, Locator::SELECTOR_CSS);
+        
         return $priceElement->isVisible() ? $this->escapeCurrency($priceElement->getText()) : null;
     }
 
@@ -195,6 +202,7 @@ class Totals extends Block
     protected function escapeCurrency($price)
     {
         preg_match("/^\\D*\\s*([\\d,\\.]+)\\s*\\D*$/", $price, $matches);
+        
         return (isset($matches[1])) ? $matches[1] : null;
     }
 
@@ -205,9 +213,8 @@ class Totals extends Block
      */
     public function getDiscount()
     {
-        $this->waitForElementNotVisible($this->blockWaitElement);
-        $this->waitForElementVisible($this->discount, Locator::SELECTOR_CSS);
         $priceElement = $this->_rootElement->find($this->discount, Locator::SELECTOR_CSS);
+        
         return $priceElement->isVisible() ? $this->escapeCurrency($priceElement->getText()) : null;
     }
 
@@ -219,6 +226,7 @@ class Totals extends Block
     public function getShippingPrice()
     {
         $priceElement = $this->_rootElement->find($this->shippingPriceSelector, Locator::SELECTOR_CSS);
+        
         return $priceElement->isVisible() ? $this->escapeCurrency($priceElement->getText()) : null;
     }
 
@@ -230,6 +238,7 @@ class Totals extends Block
     public function getShippingPriceInclTax()
     {
         $priceElement = $this->_rootElement->find($this->shippingPriceInclTaxSelector, Locator::SELECTOR_CSS);
+        
         return $priceElement->isVisible() ? $this->escapeCurrency($priceElement->getText()) : null;
     }
 
@@ -240,7 +249,7 @@ class Totals extends Block
      */
     public function isVisibleShippingPriceBlock()
     {
-        return $this->_rootElement->find($this->shippingPriceBlockSelector, Locator::SELECTOR_CSS)->isVisible();
+        return  $this->_rootElement->find($this->shippingPriceBlockSelector, Locator::SELECTOR_CSS)->isVisible();
     }
 
     /**
@@ -263,16 +272,5 @@ class Totals extends Block
     public function waitForShippingPriceBlock()
     {
         $this->waitForElementVisible($this->shippingPriceBlockSelector, Locator::SELECTOR_CSS);
-    }
-
-    /**
-     * Wait for "Grand Total" row to appear.
-     *
-     * @return void
-     */
-    public function waitForGrandTotal()
-    {
-        $this->waitForUpdatedTotals();
-        $this->waitForElementVisible($this->grandTotal);
     }
 }

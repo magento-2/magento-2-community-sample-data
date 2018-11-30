@@ -18,8 +18,9 @@ class Notice extends \Magento\Backend\Block\Widget\Grid\Column\Renderer\Abstract
     public function render(\Magento\Framework\DataObject $row)
     {
         return '<span class="grid-row-title">' .
-            $this->escapeHtml($row->getTitle()) .
+            $row->getTitle() .
             '</span>' .
-            ($row->getDescription() ? '<br />' . $this->escapeHtml($row->getDescription()) : '');
+            ($row->getDescription() ? '<br />' .
+            $row->getDescription() : '');
     }
 }

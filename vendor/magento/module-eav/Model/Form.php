@@ -10,10 +10,9 @@ use Magento\Framework\App\RequestInterface;
 /**
  * EAV Entity Form Model
  *
- * @api
+ * @author      Magento Core Team <core@magentocommerce.com>
  * @SuppressWarnings(PHPMD.TooManyFields)
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
- * @since 100.0.2
  */
 abstract class Form
 {

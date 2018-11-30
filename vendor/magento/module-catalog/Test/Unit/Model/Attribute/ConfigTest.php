@@ -5,7 +5,7 @@
  */
 namespace Magento\Catalog\Test\Unit\Model\Attribute;
 
-class ConfigTest extends \PHPUnit\Framework\TestCase
+class ConfigTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\Catalog\Model\Attribute\Config
@@ -19,7 +19,13 @@ class ConfigTest extends \PHPUnit\Framework\TestCase
 
     protected function setUp()
     {
-        $this->_dataStorage = $this->createPartialMock(\Magento\Catalog\Model\Attribute\Config\Data::class, ['get']);
+        $this->_dataStorage = $this->getMock(
+            'Magento\Catalog\Model\Attribute\Config\Data',
+            ['get'],
+            [],
+            '',
+            false
+        );
         $this->_model = new \Magento\Catalog\Model\Attribute\Config($this->_dataStorage);
     }
 

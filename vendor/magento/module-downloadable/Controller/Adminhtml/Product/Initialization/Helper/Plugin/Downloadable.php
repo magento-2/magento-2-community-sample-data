@@ -5,12 +5,16 @@
  */
 namespace Magento\Downloadable\Controller\Adminhtml\Product\Initialization\Helper\Plugin;
 
-use Magento\Framework\App\RequestInterface;
+use Magento\Downloadable\Api\Data\LinkInterfaceFactory as LinkFactory;
+use Magento\Downloadable\Api\Data\SampleInterfaceFactory as SampleFactory;
 use Magento\Downloadable\Model\Link\Builder as LinkBuilder;
 use Magento\Downloadable\Model\Sample\Builder as SampleBuilder;
-use Magento\Downloadable\Api\Data\SampleInterfaceFactory;
-use Magento\Downloadable\Api\Data\LinkInterfaceFactory;
+use Magento\Framework\App\ObjectManager;
+use Magento\Framework\App\RequestInterface;
 
+/**
+ * Class Downloadable
+ */
 class Downloadable
 {
     /**
@@ -19,12 +23,12 @@ class Downloadable
     protected $request;
 
     /**
-     * @var SampleInterfaceFactory
+     * @var SampleFactory
      */
     private $sampleFactory;
 
     /**
-     * @var LinkInterfaceFactory
+     * @var LinkFactory
      */
     private $linkFactory;
 
@@ -39,26 +43,25 @@ class Downloadable
     private $linkBuilder;
 
     /**
-     * Constructor
-     *
      * @param RequestInterface $request
-     * @param LinkBuilder $linkBuilder
-     * @param SampleBuilder $sampleBuilder
-     * @param SampleInterfaceFactory $sampleFactory
-     * @param LinkInterfaceFactory $linkFactory
+     * @param SampleFactory|null $sampleFactory
+     * @param SampleBuilder|null $sampleBuilder
+     * @param LinkFactory|null $linkFactory
+     * @param LinkBuilder|null $linkBuilder
+     * @throws \RuntimeException
      */
     public function __construct(
         RequestInterface $request,
-        LinkBuilder $linkBuilder,
-        SampleBuilder $sampleBuilder,
-        SampleInterfaceFactory $sampleFactory,
-        LinkInterfaceFactory $linkFactory
+        SampleFactory $sampleFactory = null,
+        SampleBuilder $sampleBuilder = null,
+        LinkFactory $linkFactory = null,
+        LinkBuilder $linkBuilder = null
     ) {
         $this->request = $request;
-        $this->linkBuilder = $linkBuilder;
-        $this->sampleBuilder = $sampleBuilder;
-        $this->sampleFactory = $sampleFactory;
-        $this->linkFactory = $linkFactory;
+        $this->sampleFactory = $sampleFactory ?: ObjectManager::getInstance()->get(SampleFactory::class);
+        $this->sampleBuilder = $sampleBuilder ?: ObjectManager::getInstance()->get(SampleBuilder::class);
+        $this->linkFactory = $linkFactory ?: ObjectManager::getInstance()->get(LinkFactory::class);
+        $this->linkBuilder = $linkBuilder ?: ObjectManager::getInstance()->get(LinkBuilder::class);
     }
 
     /**
@@ -66,7 +69,9 @@ class Downloadable
      *
      * @param \Magento\Catalog\Controller\Adminhtml\Product\Initialization\Helper $subject
      * @param \Magento\Catalog\Model\Product $product
+     *
      * @return \Magento\Catalog\Model\Product
+     * @throws \Magento\Framework\Exception\LocalizedException
      * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      * @SuppressWarnings(PHPMD.CyclomaticComplexity)
      * @SuppressWarnings(PHPMD.NPathComplexity)
@@ -84,11 +89,9 @@ class Downloadable
                     if (!$linkData || (isset($linkData['is_delete']) && $linkData['is_delete'])) {
                         continue;
                     } else {
-                        $links[] = $this->linkBuilder->setData(
-                            $linkData
-                        )->build(
-                            $this->linkFactory->create()
-                        );
+                        $links[] = $this->linkBuilder
+                            ->setData($linkData)
+                            ->build($this->linkFactory->create());
                     }
                 }
                 $extension->setDownloadableProductLinks($links);
@@ -99,11 +102,9 @@ class Downloadable
                     if (!$sampleData || (isset($sampleData['is_delete']) && (bool)$sampleData['is_delete'])) {
                         continue;
                     } else {
-                        $samples[] = $this->sampleBuilder->setData(
-                            $sampleData
-                        )->build(
-                            $this->sampleFactory->create()
-                        );
+                        $samples[] = $this->sampleBuilder
+                            ->setData($sampleData)
+                            ->build($this->sampleFactory->create());
                     }
                 }
                 $extension->setDownloadableProductSamples($samples);

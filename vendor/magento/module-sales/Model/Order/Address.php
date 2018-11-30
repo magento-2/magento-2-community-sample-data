@@ -5,19 +5,20 @@
  */
 namespace Magento\Sales\Model\Order;
 
-use Magento\Customer\Model\Address\AddressModelInterface;
+use Magento\Customer\Api\Data\RegionInterfaceFactory;
 use Magento\Sales\Api\Data\OrderAddressInterface;
 use Magento\Sales\Model\AbstractModel;
+use Magento\Customer\Model\Address\AddressModelInterface;
 
 /**
  * Sales order address model
  *
- * @api
+ * @method \Magento\Sales\Model\ResourceModel\Order\Address _getResource()
+ * @method \Magento\Sales\Model\ResourceModel\Order\Address getResource()
  * @method \Magento\Customer\Api\Data\AddressInterface getCustomerAddressData()
  * @method Address setCustomerAddressData(\Magento\Customer\Api\Data\AddressInterface $value)
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  * @SuppressWarnings(PHPMD.ExcessivePublicCount)
- * @since 100.0.2
  */
 class Address extends AbstractModel implements OrderAddressInterface, AddressModelInterface
 {
@@ -87,6 +88,7 @@ class Address extends AbstractModel implements OrderAddressInterface, AddressMod
             $resourceCollection,
             $data
         );
+
     }
 
     /**
@@ -96,7 +98,7 @@ class Address extends AbstractModel implements OrderAddressInterface, AddressMod
      */
     protected function _construct()
     {
-        $this->_init(\Magento\Sales\Model\ResourceModel\Order\Address::class);
+        $this->_init('Magento\Sales\Model\ResourceModel\Order\Address');
     }
 
     /**
@@ -727,6 +729,5 @@ class Address extends AbstractModel implements OrderAddressInterface, AddressMod
     {
         return $this->_setExtensionAttributes($extensionAttributes);
     }
-
     //@codeCoverageIgnoreEnd
 }

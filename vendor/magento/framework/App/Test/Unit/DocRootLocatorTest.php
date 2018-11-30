@@ -8,7 +8,7 @@ namespace Magento\Framework\App\Test\Unit;
 
 use Magento\Framework\App\DocRootLocator;
 
-class DocRootLocatorTest extends \PHPUnit\Framework\TestCase
+class DocRootLocatorTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @dataProvider isPubDataProvider
@@ -19,11 +19,11 @@ class DocRootLocatorTest extends \PHPUnit\Framework\TestCase
      */
     public function testIsPub($path, $isExist, $result)
     {
-        $request = $this->createMock(\Magento\Framework\App\Request\Http::class);
+        $request = $this->getMock('\Magento\Framework\App\Request\Http', [], [], '', false);
         $request->expects($this->once())->method('getServer')->willReturn($path);
-        $reader = $this->createMock(\Magento\Framework\Filesystem\Directory\Read::class);
+        $reader = $this->getMock('\Magento\Framework\Filesystem\Directory\Read', [], [], '', false);
         $reader->expects($this->any())->method('isExist')->willReturn($isExist);
-        $readFactory = $this->createMock(\Magento\Framework\Filesystem\Directory\ReadFactory::class);
+        $readFactory = $this->getMock('\Magento\Framework\Filesystem\Directory\ReadFactory', [], [], '', false);
         $readFactory->expects($this->once())->method('create')->willReturn($reader);
         $model = new DocRootLocator($request, $readFactory);
         $this->assertSame($result, $model->isPub());

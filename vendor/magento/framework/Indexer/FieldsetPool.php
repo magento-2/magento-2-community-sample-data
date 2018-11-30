@@ -7,9 +7,6 @@ namespace Magento\Framework\Indexer;
 
 use Magento\Framework\ObjectManagerInterface;
 
-/**
- * @api Retrieve Fieldset when implementing custom Indexer\Action
- */
 class FieldsetPool
 {
     /**

@@ -5,7 +5,7 @@
  */
 namespace Magento\Setup\Test\Unit\Module\I18n\Dictionary\Loader\File;
 
-class AbstractFileTest extends \PHPUnit\Framework\TestCase
+class AbstractFileTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\Setup\Module\I18n\Dictionary|\PHPUnit_Framework_MockObject_MockObject
@@ -24,8 +24,8 @@ class AbstractFileTest extends \PHPUnit\Framework\TestCase
 
     protected function setUp()
     {
-        $this->_dictionaryMock = $this->createMock(\Magento\Setup\Module\I18n\Dictionary::class);
-        $this->_factoryMock = $this->createMock(\Magento\Setup\Module\I18n\Factory::class);
+        $this->_dictionaryMock = $this->getMock('Magento\Setup\Module\I18n\Dictionary', [], [], '', false);
+        $this->_factoryMock = $this->getMock('Magento\Setup\Module\I18n\Factory', [], [], '', false);
     }
 
     /**
@@ -35,7 +35,7 @@ class AbstractFileTest extends \PHPUnit\Framework\TestCase
     public function testLoadWrongFile()
     {
         $abstractLoaderMock = $this->getMockForAbstractClass(
-            \Magento\Setup\Module\I18n\Dictionary\Loader\File\AbstractFile::class,
+            'Magento\Setup\Module\I18n\Dictionary\Loader\File\AbstractFile',
             [],
             '',
             false
@@ -48,7 +48,7 @@ class AbstractFileTest extends \PHPUnit\Framework\TestCase
     public function testLoad()
     {
         $abstractLoaderMock = $this->getMockForAbstractClass(
-            \Magento\Setup\Module\I18n\Dictionary\Loader\File\AbstractFile::class,
+            'Magento\Setup\Module\I18n\Dictionary\Loader\File\AbstractFile',
             [$this->_factoryMock],
             '',
             true,
@@ -71,8 +71,8 @@ class AbstractFileTest extends \PHPUnit\Framework\TestCase
             $this->returnValue(['phrase2', 'translation2', 'context_type2', 'context_value2'])
         );
 
-        $phraseFirstMock = $this->createMock(\Magento\Setup\Module\I18n\Dictionary\Phrase::class);
-        $phraseSecondMock = $this->createMock(\Magento\Setup\Module\I18n\Dictionary\Phrase::class);
+        $phraseFirstMock = $this->getMock('Magento\Setup\Module\I18n\Dictionary\Phrase', [], [], '', false);
+        $phraseSecondMock = $this->getMock('Magento\Setup\Module\I18n\Dictionary\Phrase', [], [], '', false);
 
         $this->_factoryMock->expects(
             $this->once()
@@ -119,7 +119,7 @@ class AbstractFileTest extends \PHPUnit\Framework\TestCase
     public function testErrorsInPhraseCreating()
     {
         $abstractLoaderMock = $this->getMockForAbstractClass(
-            \Magento\Setup\Module\I18n\Dictionary\Loader\File\AbstractFile::class,
+            'Magento\Setup\Module\I18n\Dictionary\Loader\File\AbstractFile',
             [$this->_factoryMock],
             '',
             true,

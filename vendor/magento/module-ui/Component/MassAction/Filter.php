@@ -5,6 +5,7 @@
  */
 namespace Magento\Ui\Component\MassAction;
 
+use Magento\Framework\Data\Collection;
 use Magento\Framework\Api\FilterBuilder;
 use Magento\Framework\Exception\LocalizedException;
 use Magento\Framework\View\Element\UiComponentFactory;
@@ -14,8 +15,9 @@ use Magento\Framework\Data\Collection\AbstractDb;
 use Magento\Framework\View\Element\UiComponent\DataProvider\DataProviderInterface;
 
 /**
- * @api
- * @since 100.0.2
+ * Class Filter
+ *
+ * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  */
 class Filter
 {
@@ -75,6 +77,7 @@ class Filter
         if (!isset($this->components[$namespace])) {
             $this->components[$namespace] = $this->factory->create($namespace);
         }
+
         return $this->components[$namespace];
     }
 
@@ -117,9 +120,11 @@ class Filter
     {
         $selected = $this->request->getParam(static::SELECTED_PARAM);
         $excluded = $this->request->getParam(static::EXCLUDED_PARAM);
+
         if ('false' === $excluded) {
             return;
         }
+
         $dataProvider = $this->getDataProvider();
         try {
             if (is_array($excluded) && !empty($excluded)) {
@@ -165,6 +170,7 @@ class Filter
         } catch (\Exception $e) {
             throw new LocalizedException(__($e->getMessage()));
         }
+
         return $collection;
     }
 
@@ -183,13 +189,14 @@ class Filter
     }
 
     /**
-     * Returns Referrer Url
+     * Returns RefererUrl
      *
      * @return string|null
      */
     public function getComponentRefererUrl()
     {
         $data = $this->getComponent()->getContext()->getDataProvider()->getConfigData();
+
         return (isset($data['referer_url'])) ? $data['referer_url'] : null;
     }
 
@@ -204,7 +211,9 @@ class Filter
             $component = $this->getComponent();
             $this->prepareComponent($component);
             $this->dataProvider = $component->getContext()->getDataProvider();
+            $this->dataProvider->setLimit(0, false);
         }
+
         return $this->dataProvider;
     }
 
@@ -215,21 +224,23 @@ class Filter
      */
     private function getFilterIds()
     {
-        $idsArray = [];
+        $ids = [];
         $this->applySelectionOnTargetProvider();
-        if ($this->getDataProvider() instanceof \Magento\Ui\DataProvider\AbstractDataProvider) {
-            // Use collection's getAllIds for optimization purposes.
-            $idsArray = $this->getDataProvider()->getAllIds();
-        } else {
-            $dataProvider = $this->getDataProvider();
-            $dataProvider->setLimit(0, false);
-            $searchResult = $dataProvider->getSearchResult();
-            // Use compatible search api getItems when searchResult is not a collection.
-            foreach ($searchResult->getItems() as $item) {
-                /** @var $item \Magento\Framework\Api\Search\DocumentInterface */
-                $idsArray[] = $item->getId();
+
+        /** @var \Magento\Framework\Api\Search\SearchResultInterface $searchResult */
+        $searchResult = $this->getDataProvider()->getSearchResult();
+
+        if ($searchResult) {
+            if ($searchResult instanceof Collection
+                || method_exists($searchResult, 'getAllIds')) {
+                $ids = $searchResult->getAllIds();
+            } else {
+                foreach ($searchResult->getItems() as $document) {
+                    $ids[] = $document->getId();
+                }
             }
         }
-        return  $idsArray;
+
+        return $ids;
     }
 }

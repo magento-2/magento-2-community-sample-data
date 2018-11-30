@@ -8,6 +8,7 @@ use InvalidArgumentException;
  *
  * @package    Braintree
  * @category   Resources
+ * @copyright  2015 Braintree, a division of PayPal, Inc.
  */
 
 /**
@@ -18,6 +19,8 @@ use InvalidArgumentException;
  *
  * @package    Braintree
  * @category   Resources
+ * @copyright  2015 Braintree, a division of PayPal, Inc.
+ *
  */
 class PaymentMethodGateway
 {
@@ -71,10 +74,6 @@ class PaymentMethodGateway
                 return UsBankAccount::factory($response['usBankAccount']);
             } else if (isset($response['venmoAccount'])) {
                 return VenmoAccount::factory($response['venmoAccount']);
-            } else if (isset($response['visaCheckoutCard'])) {
-                return VisaCheckoutCard::factory($response['visaCheckoutCard']);
-            } else if (isset($response['masterpassCard'])) {
-                return MasterpassCard::factory($response['masterpassCard']);
             } else if (is_array($response)) {
                 return UnknownPaymentMethod::factory($response);
             }
@@ -137,24 +136,7 @@ class PaymentMethodGateway
             'makeDefault',
             'verificationMerchantAccountId',
             'verifyCard',
-            'verificationAmount',
-            ['paypal' => [
-                'payee_email',
-                'payeeEmail',
-                'order_id',
-                'orderId',
-                'custom_field',
-                'customField',
-                'description',
-                'amount',
-                ['shipping' =>
-                    [
-                        'firstName', 'lastName', 'company', 'countryName',
-                        'countryCodeAlpha2', 'countryCodeAlpha3', 'countryCodeNumeric',
-                        'extendedAddress', 'locality', 'postalCode', 'region',
-                        'streetAddress'],
-                ],
-            ]],
+            'verificationAmount'
         ];
         return [
             'billingAddressId',
@@ -174,7 +156,7 @@ class PaymentMethodGateway
 
     public static function createSignature()
     {
-        $signature = array_merge(self::baseSignature(), ['customerId', 'paypalRefreshToken', 'paypalVaultWithoutUpgrade']);
+        $signature = array_merge(self::baseSignature(), ['customerId']);
         return $signature;
     }
 
@@ -305,16 +287,6 @@ class PaymentMethodGateway
         } else if (isset($response['venmoAccount'])) {
             return new Result\Successful(
                 VenmoAccount::factory($response['venmoAccount']),
-                "paymentMethod"
-            );
-        } else if (isset($response['visaCheckoutCard'])) {
-            return new Result\Successful(
-                VisaCheckoutCard::factory($response['visaCheckoutCard']),
-                "paymentMethod"
-            );
-        } else if (isset($response['masterpassCard'])) {
-            return new Result\Successful(
-                MasterpassCard::factory($response['masterpassCard']),
                 "paymentMethod"
             );
         } else if (isset($response['paymentMethodNonce'])) {

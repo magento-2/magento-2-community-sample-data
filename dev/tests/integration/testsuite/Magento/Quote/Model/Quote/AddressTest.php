@@ -5,14 +5,13 @@
  */
 namespace Magento\Quote\Model\Quote;
 
-use Magento\Store\Api\StoreRepositoryInterface;
 use Magento\TestFramework\Helper\Bootstrap;
 
 /**
  * @magentoDataFixture Magento/Sales/_files/quote_with_customer.php
  * @magentoDataFixture Magento/Customer/_files/customer_two_addresses.php
  */
-class AddressTest extends \Magento\TestFramework\Indexer\TestCase
+class AddressTest extends \PHPUnit_Framework_TestCase
 {
     /** @var \Magento\Quote\Model\Quote $quote */
     protected $_quote;
@@ -26,54 +25,36 @@ class AddressTest extends \Magento\TestFramework\Indexer\TestCase
     /**@var \Magento\Customer\Api\CustomerRepositoryInterface $customerRepository */
     protected $customerRepository;
 
-    /** @var  StoreRepositoryInterface */
-    private $storeRepository;
-
-    public static function setUpBeforeClass()
-    {
-        $db = \Magento\TestFramework\Helper\Bootstrap::getInstance()->getBootstrap()
-            ->getApplication()
-            ->getDbInstance();
-        if (!$db->isDbDumpExists()) {
-            throw new \LogicException('DB dump does not exist.');
-        }
-        $db->restoreFromDbDump();
-
-        parent::setUpBeforeClass();
-    }
-
     /**
      * Initialize quote and customer fixtures
      */
     public function setUp()
     {
         $this->_quote = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->create(
-            \Magento\Quote\Model\Quote::class
+            'Magento\Quote\Model\Quote'
         );
         $this->_quote->load('test01', 'reserved_order_id');
         $this->_quote->setIsMultiShipping('0');
 
         $this->customerRepository = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->create(
-            \Magento\Customer\Api\CustomerRepositoryInterface::class
+            'Magento\Customer\Api\CustomerRepositoryInterface'
         );
         $this->_customer = $this->customerRepository->getById(1);
 
         /** @var \Magento\Sales\Model\Order\Address $address */
         $this->_address = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->create(
-            \Magento\Quote\Model\Quote\Address::class
+            'Magento\Quote\Model\Quote\Address'
         );
         $this->_address->setId(1);
         $this->_address->load($this->_address->getId());
         $this->_address->setQuote($this->_quote);
-        $this->storeRepository = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()
-            ->create(StoreRepositoryInterface::class);
     }
 
     protected function tearDown()
     {
         /** @var \Magento\Customer\Model\CustomerRegistry $customerRegistry */
         $customerRegistry = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()
-            ->get(\Magento\Customer\Model\CustomerRegistry::class);
+            ->get('Magento\Customer\Model\CustomerRegistry');
         //Cleanup customer from registry
         $customerRegistry->remove(1);
     }
@@ -93,7 +74,7 @@ class AddressTest extends \Magento\TestFramework\Indexer\TestCase
         }
         /** @var \Magento\Customer\Api\AddressRepositoryInterface $addressRepository */
         $addressRepository = Bootstrap::getObjectManager()
-            ->create(\Magento\Customer\Api\AddressRepositoryInterface::class);
+            ->create('Magento\Customer\Api\AddressRepositoryInterface');
         $customerAddressData = $addressRepository->getById($this->_customer->getDefaultBilling());
         $address->setSameAsBilling(0)->setCustomerAddressData($customerAddressData)->save();
         $this->assertEquals(0, $this->_quote->getBillingAddress()->getSameAsBilling());
@@ -146,7 +127,7 @@ class AddressTest extends \Magento\TestFramework\Indexer\TestCase
     {
         /** @var \Magento\Customer\Api\AddressRepositoryInterface $addressRepository */
         $addressRepository = Bootstrap::getObjectManager()
-            ->create(\Magento\Customer\Api\AddressRepositoryInterface::class);
+            ->create('Magento\Customer\Api\AddressRepositoryInterface');
         $this->_customer->setDefaultShipping(-1)
             ->setAddresses(
                 [
@@ -185,7 +166,7 @@ class AddressTest extends \Magento\TestFramework\Indexer\TestCase
     {
         /** @var \Magento\Customer\Api\AddressRepositoryInterface $addressRepository */
         $addressRepository = Bootstrap::getObjectManager()
-            ->create(\Magento\Customer\Api\AddressRepositoryInterface::class);
+            ->create('Magento\Customer\Api\AddressRepositoryInterface');
         $this->_customer->setDefaultShipping(2)
             ->setAddresses([$addressRepository->getById($this->_address->getId())]);
         $this->_customer = $this->customerRepository->save($this->_customer);
@@ -209,7 +190,7 @@ class AddressTest extends \Magento\TestFramework\Indexer\TestCase
         }
         /** @var \Magento\Customer\Api\AddressRepositoryInterface $addressRepository */
         $addressRepository = Bootstrap::getObjectManager()
-            ->create(\Magento\Customer\Api\AddressRepositoryInterface::class);
+            ->create('Magento\Customer\Api\AddressRepositoryInterface');
         $shippingAddress->setSameAsBilling(0)
             ->setCustomerAddressData($addressRepository->getById($this->_customer->getDefaultBilling()))
             ->save();
@@ -231,13 +212,9 @@ class AddressTest extends \Magento\TestFramework\Indexer\TestCase
         $street = 'Street1';
 
         /** @var \Magento\Customer\Api\Data\AddressInterfaceFactory $addressFactory */
-        $addressFactory = Bootstrap::getObjectManager()->create(
-            \Magento\Customer\Api\Data\AddressInterfaceFactory::class
-        );
+        $addressFactory = Bootstrap::getObjectManager()->create('Magento\Customer\Api\Data\AddressInterfaceFactory');
         /** @var \Magento\Customer\Api\AddressRepositoryInterface $addressRepository */
-        $addressRepository = Bootstrap::getObjectManager()->create(
-            \Magento\Customer\Api\AddressRepositoryInterface::class
-        );
+        $addressRepository = Bootstrap::getObjectManager()->create('Magento\Customer\Api\AddressRepositoryInterface');
         $addressData = $addressFactory->create()
             ->setCustomerId($customerIdFromFixture)
             ->setFirstname('John')
@@ -293,9 +270,7 @@ class AddressTest extends \Magento\TestFramework\Indexer\TestCase
         );
 
         /** @var \Magento\Customer\Api\Data\AddressInterfaceFactory $addressFactory */
-        $addressFactory = Bootstrap::getObjectManager()->create(
-            \Magento\Customer\Api\Data\AddressInterfaceFactory::class
-        );
+        $addressFactory = Bootstrap::getObjectManager()->create('Magento\Customer\Api\Data\AddressInterfaceFactory');
         $customerAddressData = $addressFactory->create()->setId($customerAddressId);
         $this->_address->setCustomerAddressData($customerAddressData);
         $this->_address->save();
@@ -303,75 +278,5 @@ class AddressTest extends \Magento\TestFramework\Indexer\TestCase
         $this->assertEquals($customerId, $this->_address->getCustomerId());
         $this->assertEquals($this->_quote->getId(), $this->_address->getQuoteId());
         $this->assertEquals($customerAddressId, $this->_address->getCustomerAddressId());
-    }
-
-    /**
-     * Tests
-     *
-     * @covers \Magento\Quote\Model\Quote\Address::setAppliedTaxes()
-     * @covers \Magento\Quote\Model\Quote\Address::getAppliedTaxes()
-     * @dataProvider dataProvider
-     * @param $taxes
-     * @param $expected
-     */
-    public function testAppliedTaxes($taxes, $expected)
-    {
-        $this->_address->setAppliedTaxes($taxes);
-
-        $this->assertSame($expected, $this->_address->getAppliedTaxes());
-    }
-
-    public function dataProvider()
-    {
-        return [
-            ['test', 'test'],
-            [[123, true], [123, true]]
-        ];
-    }
-
-    /**
-     * Tests different shipping rates for different stores.
-     *
-     * @magentoDataFixture Magento/Store/_files/second_website_with_two_stores.php
-     * @magentoDataFixture Magento/Sales/_files/quote_with_customer.php
-     * @magentoDataFixture Magento/Customer/_files/customer_two_addresses.php
-     * @magentoDataFixture Magento/Sales/_files/quote.php
-     * @magentoConfigFixture default_store carriers/flatrate/price 5
-     * @magentoConfigFixture fixture_second_store_store carriers/flatrate/price 10
-     * @magentoAppIsolation enabled
-     * @magentoDbIsolation disabled
-     * @dataProvider requestShippingRatesDataProvider
-     */
-    public function testRequestShippingRates($storeCode, $expectedRate)
-    {
-        $store = $this->storeRepository->get($storeCode);
-        $this->_quote->setStoreId($store->getId());
-        $this->_address->setItemQty(1);
-        $this->_address->requestShippingRates();
-        /**
-         * @var \Magento\Quote\Model\ResourceModel\Quote\Address\Rate\Collection $shippingRatesCollection
-         */
-        $shippingRatesCollection = $this->_address->getShippingRatesCollection();
-        /**
-         * @var \Magento\Quote\Model\Quote\Address\Rate[] $shippingRates
-         */
-        $shippingRates = $shippingRatesCollection->getItems();
-        self::assertEquals(
-            $expectedRate,
-            $shippingRates[0]->getPrice()
-        );
-    }
-
-    /**
-     * Data provider for testRequestShippingRates.
-     *
-     * @return array
-     */
-    public function requestShippingRatesDataProvider()
-    {
-        return [
-            ['default', 5],
-            ['fixture_second_store', 10],
-        ];
     }
 }

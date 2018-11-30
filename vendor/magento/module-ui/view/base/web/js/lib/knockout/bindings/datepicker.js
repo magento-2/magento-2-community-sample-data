@@ -8,10 +8,8 @@ define([
     'underscore',
     'jquery',
     'mage/translate',
-    'mage/calendar',
-    'moment',
-    'mageUtils'
-], function (ko, _, $, $t, calendar, moment, utils) {
+    'mage/calendar'
+], function (ko, _, $, $t) {
     'use strict';
 
     var defaults = {
@@ -48,17 +46,7 @@ define([
             }
 
             $(el).calendar(options);
-
-            observable() && $(el).datepicker(
-                'setDate',
-                moment(
-                    observable(),
-                    utils.convertToMomentFormat(
-                        options.dateFormat + (options.showsTime ? ' ' + options.timeFormat : '')
-                    )
-                ).toDate()
-            );
-
+            observable() && $(el).datepicker('setDate', observable());
             $(el).blur();
 
             ko.utils.registerEventHandler(el, 'change', function () {

@@ -10,7 +10,7 @@ use Magento\Framework\Locale\Resolver;
 /**
  * @magentoAppArea adminhtml
  */
-class ResolverTest extends \PHPUnit\Framework\TestCase
+class ResolverTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\Framework\Locale\ResolverInterface
@@ -21,7 +21,7 @@ class ResolverTest extends \PHPUnit\Framework\TestCase
     {
         parent::setUp();
         $this->_model = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->create(
-            \Magento\Backend\Model\Locale\Resolver::class
+            'Magento\Backend\Model\Locale\Resolver'
         );
     }
 
@@ -40,11 +40,11 @@ class ResolverTest extends \PHPUnit\Framework\TestCase
     {
         $user = new \Magento\Framework\DataObject();
         $session = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->get(
-            \Magento\Backend\Model\Auth\Session::class
+            'Magento\Backend\Model\Auth\Session'
         );
         $session->setUser($user);
         \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->get(
-            \Magento\Backend\Model\Auth\Session::class
+            'Magento\Backend\Model\Auth\Session'
         )->getUser()->setInterfaceLocale(
             'fr_FR'
         );
@@ -57,7 +57,7 @@ class ResolverTest extends \PHPUnit\Framework\TestCase
     public function testSetLocaleWithSessionLocale()
     {
         \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->get(
-            \Magento\Backend\Model\Session::class
+            'Magento\Backend\Model\Session'
         )->setSessionLocale(
             'es_ES'
         );
@@ -70,7 +70,7 @@ class ResolverTest extends \PHPUnit\Framework\TestCase
     public function testSetLocaleWithRequestLocale()
     {
         $request = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()
-            ->get(\Magento\Framework\App\RequestInterface::class);
+            ->get('Magento\Framework\App\RequestInterface');
         $request->setPostValue(['locale' => 'de_DE']);
         $this->_checkSetLocale('de_DE');
     }

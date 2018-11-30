@@ -79,7 +79,7 @@ class FormCollection extends AbstractHelper
      */
     public function __invoke(ElementInterface $element = null, $wrap = true)
     {
-        if (! $element) {
+        if (!$element) {
             return $this;
         }
 
@@ -97,7 +97,7 @@ class FormCollection extends AbstractHelper
     public function render(ElementInterface $element)
     {
         $renderer = $this->getView();
-        if (! method_exists($renderer, 'plugin')) {
+        if (!method_exists($renderer, 'plugin')) {
             // Bail early if renderer is not pluggable
             return '';
         }
@@ -123,12 +123,12 @@ class FormCollection extends AbstractHelper
         if ($this->shouldWrap) {
             $attributes = $element->getAttributes();
             unset($attributes['name']);
-            $attributesString = $attributes ? ' ' . $this->createAttributesString($attributes) : '';
+            $attributesString = count($attributes) ? ' ' . $this->createAttributesString($attributes) : '';
 
             $label = $element->getLabel();
             $legend = '';
 
-            if (! empty($label)) {
+            if (!empty($label)) {
                 if (null !== ($translator = $this->getTranslator())) {
                     $label = $translator->translate(
                         $label,
@@ -261,9 +261,8 @@ class FormCollection extends AbstractHelper
             $this->elementHelper = $this->view->plugin($this->getDefaultElementHelper());
         }
 
-        if (! $this->elementHelper instanceof HelperInterface) {
-            throw new RuntimeException('Invalid element helper set in FormCollection. The helper must be an '
-                . 'instance of Zend\View\Helper\HelperInterface.');
+        if (!$this->elementHelper instanceof HelperInterface) {
+            throw new RuntimeException('Invalid element helper set in FormCollection. The helper must be an instance of Zend\View\Helper\HelperInterface.');
         }
 
         return $this->elementHelper;

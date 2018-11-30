@@ -3,11 +3,14 @@
  * Copyright © Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
+
+// @codingStandardsIgnoreFile
+
 namespace Magento\Theme\Test\Unit\Model\Url\Plugin;
 
 use \Magento\Theme\Model\Url\Plugin\Signature;
 
-class SignatureTest extends \PHPUnit\Framework\TestCase
+class SignatureTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var Signature
@@ -24,19 +27,29 @@ class SignatureTest extends \PHPUnit\Framework\TestCase
      */
     private $deploymentVersion;
 
+    /**
+     * @var callable
+     */
+    private $closureMock;
+
     protected function setUp()
     {
-        $this->config = $this->createMock(\Magento\Framework\View\Url\ConfigInterface::class);
-        $this->deploymentVersion = $this->createMock(\Magento\Framework\App\View\Deployment\Version::class);
+        $this->config = $this->getMock('Magento\Framework\View\Url\ConfigInterface');
+        $this->deploymentVersion = $this->getMock(
+            'Magento\Framework\App\View\Deployment\Version', [], [], '', false
+        );
+        $this->closureMock = function () {
+            return 'http://127.0.0.1/magento/pub/static/';
+        };
         $this->object = new Signature($this->config, $this->deploymentVersion);
     }
 
     /**
      * @param bool|int $fixtureConfigFlag
      * @param string $inputUrlType
-     * @dataProvider afterGetBaseUrlInactiveDataProvider
+     * @dataProvider aroundGetBaseUrlInactiveDataProvider
      */
-    public function testAfterGetBaseUrlInactive($fixtureConfigFlag, $inputUrlType)
+    public function testAroundGetBaseUrlInactive($fixtureConfigFlag, $inputUrlType)
     {
         $this->config
             ->expects($this->any())
@@ -45,15 +58,15 @@ class SignatureTest extends \PHPUnit\Framework\TestCase
             ->will($this->returnValue($fixtureConfigFlag));
         $this->deploymentVersion->expects($this->never())->method($this->anything());
 
-        $url = $this->getMockForAbstractClass(\Magento\Framework\Url\ScopeInterface::class);
-        $actualResult = $this->object->afterGetBaseUrl($url, 'http://127.0.0.1/magento/pub/static/', $inputUrlType);
+        $url = $this->getMockForAbstractClass('\Magento\Framework\Url\ScopeInterface');
+        $actualResult = $this->object->aroundGetBaseUrl($url, $this->closureMock, $inputUrlType);
         $this->assertEquals('http://127.0.0.1/magento/pub/static/', $actualResult);
     }
 
     /**
      * @return array
      */
-    public function afterGetBaseUrlInactiveDataProvider()
+    public function aroundGetBaseUrlInactiveDataProvider()
     {
         return [
             'disabled in config, relevant URL type'  => [0, \Magento\Framework\UrlInterface::URL_TYPE_STATIC],
@@ -70,11 +83,9 @@ class SignatureTest extends \PHPUnit\Framework\TestCase
             ->will($this->returnValue(1));
         $this->deploymentVersion->expects($this->once())->method('getValue')->will($this->returnValue('123'));
 
-        $url = $this->getMockForAbstractClass(\Magento\Framework\Url\ScopeInterface::class);
-        $actualResult = $this->object->afterGetBaseUrl(
-            $url,
-            'http://127.0.0.1/magento/pub/static/',
-            \Magento\Framework\UrlInterface::URL_TYPE_STATIC
+        $url = $this->getMockForAbstractClass('\Magento\Framework\Url\ScopeInterface');
+        $actualResult = $this->object->aroundGetBaseUrl(
+            $url, $this->closureMock, \Magento\Framework\UrlInterface::URL_TYPE_STATIC
         );
         $this->assertEquals('http://127.0.0.1/magento/pub/static/version123/', $actualResult);
     }

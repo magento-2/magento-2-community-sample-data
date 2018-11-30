@@ -7,10 +7,7 @@ namespace Magento\Customer\Model;
 
 use Magento\TestFramework\Helper\Bootstrap;
 
-/**
- * @magentoAppIsolation enabled
- */
-class VisitorTest extends \PHPUnit\Framework\TestCase
+class VisitorTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @magentoAppArea frontend
@@ -19,7 +16,7 @@ class VisitorTest extends \PHPUnit\Framework\TestCase
     public function testBindCustomerLogin()
     {
         /** @var \Magento\Customer\Model\Visitor $visitor */
-        $visitor = Bootstrap::getObjectManager()->get(\Magento\Customer\Model\Visitor::class);
+        $visitor = Bootstrap::getObjectManager()->get('Magento\Customer\Model\Visitor');
         $visitor->unsCustomerId();
         $visitor->unsDoCustomerLogin();
 
@@ -42,7 +39,7 @@ class VisitorTest extends \PHPUnit\Framework\TestCase
     public function testBindCustomerLogout()
     {
         /** @var \Magento\Customer\Model\Visitor $visitor */
-        $visitor = Bootstrap::getObjectManager()->get(\Magento\Customer\Model\Visitor::class);
+        $visitor = Bootstrap::getObjectManager()->get('Magento\Customer\Model\Visitor');
 
         $this->_loginCustomer('customer@example.com', 'password');
         $visitor->setCustomerId(1);
@@ -74,7 +71,7 @@ class VisitorTest extends \PHPUnit\Framework\TestCase
         $sessionIdPast = 'kui0aa57nqddl8vk7k6ohgi352';
 
         /** @var \Magento\Customer\Model\Visitor $visitor */
-        $visitor = Bootstrap::getObjectManager()->get(\Magento\Customer\Model\Visitor::class);
+        $visitor = Bootstrap::getObjectManager()->get('Magento\Customer\Model\Visitor');
         $visitor->setCustomerId($customerIdPast);
         $visitor->setSessionId($sessionIdPast);
         $visitor->setLastVisitAt($lastVisitPast);
@@ -113,9 +110,7 @@ class VisitorTest extends \PHPUnit\Framework\TestCase
     protected function _loginCustomer($username, $password)
     {
         /** @var \Magento\Customer\Api\AccountManagementInterface $accountManagement */
-        $accountManagement = Bootstrap::getObjectManager()->create(
-            \Magento\Customer\Api\AccountManagementInterface::class
-        );
+        $accountManagement = Bootstrap::getObjectManager()->create('Magento\Customer\Api\AccountManagementInterface');
         return $accountManagement->authenticate($username, $password);
     }
 
@@ -126,7 +121,7 @@ class VisitorTest extends \PHPUnit\Framework\TestCase
     public function _logoutCustomer($customerId)
     {
         /** @var \Magento\Customer\Model\Session $customerSession */
-        $customerSession = Bootstrap::getObjectManager()->get(\Magento\Customer\Model\Session::class);
+        $customerSession = Bootstrap::getObjectManager()->get('Magento\Customer\Model\Session');
         $customerSession->setCustomerId($customerId);
         $customerSession->logout();
     }

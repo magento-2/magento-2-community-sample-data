@@ -11,40 +11,20 @@ use Magento\Framework\App\Utility\Classes;
 use Magento\Framework\Component\ComponentRegistrar;
 use Magento\Framework\App\Utility\Files;
 
-/**
- * @SuppressWarnings(PHPMD.ExcessiveClassComplexity)
- */
-class ClassesTest extends \PHPUnit\Framework\TestCase
+class ClassesTest extends \PHPUnit_Framework_TestCase
 {
-    /**
-     * @var ComponentRegistrar
-     */
-    private $componentRegistrar;
-
     /**
      * List of already found classes to avoid checking them over and over again
      *
      * @var array
      */
-    private $existingClasses = [];
+    protected static $_existingClasses = [];
 
-    /**
-     * @var array
-     */
-    private static $keywordsBlacklist = ["String", "Array", "Boolean", "Element"];
+    protected static $_keywordsBlacklist = ["String", "Array", "Boolean", "Element"];
 
-    /**
-     * @var array|null
-     */
-    private $referenceBlackList = null;
+    protected static $_namespaceBlacklist = null;
 
-    /**
-     * Set Up
-     */
-    protected function setUp()
-    {
-        $this->componentRegistrar = new ComponentRegistrar();
-    }
+    protected static $_referenceBlackList = null;
 
     public function testPhpFiles()
     {
@@ -89,9 +69,9 @@ class ClassesTest extends \PHPUnit\Framework\TestCase
                     $classes
                 );
 
-                $this->collectResourceHelpersPhp($contents, $classes);
+                $this->_collectResourceHelpersPhp($contents, $classes);
 
-                $this->assertClassesExist($classes, $file);
+                $this->_assertClassesExist($classes, $file);
             },
             Files::init()->getPhpFiles(
                 Files::INCLUDE_APP_CODE
@@ -110,7 +90,7 @@ class ClassesTest extends \PHPUnit\Framework\TestCase
      * @param string $contents
      * @param array &$classes
      */
-    private function collectResourceHelpersPhp($contents, &$classes)
+    protected function _collectResourceHelpersPhp($contents, &$classes)
     {
         $regex = '/(?:\:\:|\->)getResourceHelper\(\s*\'([a-z\d\\\\]+)\'\s*\)/ix';
         $matches = Classes::getAllMatches($contents, $regex);
@@ -128,7 +108,7 @@ class ClassesTest extends \PHPUnit\Framework\TestCase
              */
             function ($path) {
                 $classes = Classes::collectClassesInConfig(simplexml_load_file($path));
-                $this->assertClassesExist($classes, $path);
+                $this->_assertClassesExist($classes, $path);
             },
             Files::init()->getMainConfigFiles()
         );
@@ -165,7 +145,7 @@ class ClassesTest extends \PHPUnit\Framework\TestCase
                 }
                 $classes = array_merge($classes, Classes::collectLayoutClasses($xml));
 
-                $this->assertClassesExist(array_unique($classes), $path);
+                $this->_assertClassesExist(array_unique($classes), $path);
             },
             Files::init()->getLayoutFiles()
         );
@@ -181,7 +161,7 @@ class ClassesTest extends \PHPUnit\Framework\TestCase
      * @SuppressWarnings(PHPMD.CyclomaticComplexity)
      * @SuppressWarnings(PHPMD.UnusedLocalVariable)
      */
-    private function assertClassesExist($classes, $path)
+    protected function _assertClassesExist($classes, $path)
     {
         if (!$classes) {
             return;
@@ -197,7 +177,7 @@ class ClassesTest extends \PHPUnit\Framework\TestCase
                 } else {
                     $this->assertTrue(
                         isset(
-                            $this->existingClasses[$class]
+                            self::$_existingClasses[$class]
                         ) || Files::init()->classFileExists(
                             $class
                         ) || Classes::isVirtual(
@@ -207,8 +187,8 @@ class ClassesTest extends \PHPUnit\Framework\TestCase
                         )
                     );
                 }
-                $this->existingClasses[$class] = 1;
-            } catch (\PHPUnit\Framework\AssertionFailedError $e) {
+                self::$_existingClasses[$class] = 1;
+            } catch (\PHPUnit_Framework_AssertionFailedError $e) {
                 $badClasses[] = '\\' . $class;
             }
         }
@@ -250,7 +230,7 @@ class ClassesTest extends \PHPUnit\Framework\TestCase
 
                 $classParts = explode(' ', $classNameMatch[0]);
                 $className = array_pop($classParts);
-                $this->assertClassNamespace($file, $relativePath, $contents, $className);
+                $this->_assertClassNamespace($file, $relativePath, $contents, $className);
             },
             Files::init()->getPhpFiles()
         );
@@ -265,7 +245,7 @@ class ClassesTest extends \PHPUnit\Framework\TestCase
      * @param string $contents
      * @param string $className
      */
-    private function assertClassNamespace($file, $relativePath, $contents, $className)
+    protected function _assertClassNamespace($file, $relativePath, $contents, $className)
     {
         $namespacePattern = '/(Magento|Zend)\/[a-zA-Z]+[^\.]+/';
         $formalPattern = '/^namespace\s[a-zA-Z]+(\\\\[a-zA-Z0-9]+)*/m';
@@ -310,10 +290,7 @@ class ClassesTest extends \PHPUnit\Framework\TestCase
             function ($file) {
                 $relativePath = str_replace(BP, "", $file);
                 // Due to the examples given with the regex patterns, we skip this test file itself
-                if (preg_match(
-                    '/\/dev\/tests\/static\/testsuite\/Magento\/Test\/Integrity\/ClassesTest.php$/',
-                    $relativePath
-                )) {
+                if ($relativePath == "/dev/tests/static/testsuite/Magento/Test/Integrity/ClassesTest.php") {
                     return;
                 }
                 $contents = file_get_contents($file);
@@ -369,7 +346,7 @@ class ClassesTest extends \PHPUnit\Framework\TestCase
                 $vendorClasses = array_filter($vendorClasses, 'strlen');
                 $vendorClasses = $this->referenceBlacklistFilter($vendorClasses);
                 if (!empty($vendorClasses)) {
-                    $this->assertClassesExist($vendorClasses, $file);
+                    $this->_assertClassesExist($vendorClasses, $file);
                 }
 
                 if (!empty($result3['exception']) && $result3['exception'][0] != "") {
@@ -388,7 +365,7 @@ class ClassesTest extends \PHPUnit\Framework\TestCase
 
                 $badClasses = $this->referenceBlacklistFilter($badClasses);
                 $badClasses = $this->removeSpecialCases($badClasses, $file, $contents, $namespacePath);
-                $this->assertClassReferences($badClasses, $file);
+                $this->_assertClassReferences($badClasses, $file);
             },
             Files::init()->getPhpFiles()
         );
@@ -400,7 +377,7 @@ class ClassesTest extends \PHPUnit\Framework\TestCase
      * @param $aliasClasses
      * @param $badClasses
      */
-    private function handleAliasClasses($aliasClasses, $badClasses)
+    protected function handleAliasClasses($aliasClasses, $badClasses)
     {
         foreach ($aliasClasses as $aliasClass) {
             foreach ($badClasses as $badClass) {
@@ -417,33 +394,24 @@ class ClassesTest extends \PHPUnit\Framework\TestCase
      * @param $classes
      * @return array
      */
-    private function referenceBlacklistFilter($classes)
+    protected function referenceBlacklistFilter($classes)
     {
         // exceptions made for the files from the blacklist
-        $classes = $this->getReferenceBlacklist();
+        self::_setReferenceBlacklist();
         foreach ($classes as $class) {
-            if (in_array($class, $this->referenceBlackList)) {
+            if (in_array($class, self::$_referenceBlackList)) {
                 unset($classes[array_search($class, $classes)]);
             }
         }
         return $classes;
     }
 
-    /**
-     * Returns array of class names from black list.
-     *
-     * @return array
-     */
-    private function getReferenceBlacklist()
+    protected function _setReferenceBlacklist()
     {
-        if (!isset($this->referenceBlackList)) {
-            $this->referenceBlackList = file(
-                __DIR__ . '/_files/blacklist/reference.txt',
-                FILE_IGNORE_NEW_LINES
-            );
+        if (!isset(self::$_referenceBlackList)) {
+            $blackList = file(__DIR__ . '/_files/blacklist/reference.txt', FILE_IGNORE_NEW_LINES);
+            self::$_referenceBlackList = $blackList;
         }
-
-        return $this->referenceBlackList;
     }
 
     /**
@@ -455,21 +423,18 @@ class ClassesTest extends \PHPUnit\Framework\TestCase
      * @param string $namespacePath
      * @return array
      */
-    private function removeSpecialCases($badClasses, $file, $contents, $namespacePath)
+    protected function removeSpecialCases($badClasses, $file, $contents, $namespacePath)
     {
         foreach ($badClasses as $badClass) {
             // Remove valid usages of Magento modules from the list
             // for example: 'Magento_Sales::actions_edit'
-            if (preg_match('/^[A-Z][a-z]+_[A-Z0-9][a-z0-9]+$/', $badClass)) {
-                $moduleDir = $this->componentRegistrar->getPath(ComponentRegistrar::MODULE, $badClass);
-                if ($moduleDir !== null) {
-                    unset($badClasses[array_search($badClass, $badClasses)]);
-                    continue;
-                }
+            if (preg_match('/Magento_[A-Z0-9][a-z0-9]*/', $badClass)) {
+                unset($badClasses[array_search($badClass, $badClasses)]);
+                continue;
             }
 
             // Remove usage of key words such as "Array", "String", and "Boolean"
-            if (in_array($badClass, self::$keywordsBlacklist)) {
+            if (in_array($badClass, self::$_keywordsBlacklist)) {
                 unset($badClasses[array_search($badClass, $badClasses)]);
                 continue;
             }
@@ -514,11 +479,12 @@ class ClassesTest extends \PHPUnit\Framework\TestCase
      */
     private function removeSpecialCasesNonFullyQualifiedClassNames($namespacePath, &$badClasses, $badClass)
     {
+        $componentRegistrar = new ComponentRegistrar();
         $namespaceParts = explode('/', $namespacePath);
         $moduleDir = null;
         if (isset($namespaceParts[1])) {
             $moduleName = array_shift($namespaceParts) . '_' . array_shift($namespaceParts);
-            $moduleDir = $this->componentRegistrar->getPath(ComponentRegistrar::MODULE, $moduleName);
+            $moduleDir = $componentRegistrar->getPath(ComponentRegistrar::MODULE, $moduleName);
         }
         if ($moduleDir) {
             $fullPath = $moduleDir . '/' . implode('/', $namespaceParts) . '/' .
@@ -536,7 +502,7 @@ class ClassesTest extends \PHPUnit\Framework\TestCase
             unset($badClasses[array_search($badClass, $badClasses)]);
             return true;
         } else {
-            return $this->removeSpecialCasesForAllOthers($namespacePath, $badClass, $badClasses);
+            return $this->removeSpecialCasesForAllOthers($componentRegistrar, $namespacePath, $badClass, $badClasses);
         }
     }
 
@@ -547,10 +513,11 @@ class ClassesTest extends \PHPUnit\Framework\TestCase
      * @param string $badClass
      * @return null|string
      */
-    private function getLibraryDirByPath($namespacePath, $badClass)
+    protected function getLibraryDirByPath($namespacePath, $badClass)
     {
         $libraryDir = null;
         $fullPath = null;
+        $componentRegistrar = new ComponentRegistrar();
         $namespaceParts = explode('/', $namespacePath);
         if (isset($namespaceParts[1]) && $namespaceParts[1]) {
             $vendor = array_shift($namespaceParts);
@@ -559,26 +526,17 @@ class ClassesTest extends \PHPUnit\Framework\TestCase
                 $subLib = $namespaceParts[0];
                 $subLib = strtolower(preg_replace('/(.)([A-Z])/', "$1-$2", $subLib));
                 $libraryName = $vendor . '/' . $lib . '-' . $subLib;
-                $libraryDir = $this->componentRegistrar->getPath(
-                    ComponentRegistrar::LIBRARY,
-                    strtolower($libraryName)
-                );
+                $libraryDir = $componentRegistrar->getPath(ComponentRegistrar::LIBRARY, strtolower($libraryName));
                 if ($libraryDir) {
                     array_shift($namespaceParts);
                 } else {
                     $libraryName = $vendor . '/' . $lib;
-                    $libraryDir = $this->componentRegistrar->getPath(
-                        ComponentRegistrar::LIBRARY,
-                        strtolower($libraryName)
-                    );
+                    $libraryDir = $componentRegistrar->getPath(ComponentRegistrar::LIBRARY, strtolower($libraryName));
                 }
             } else {
                 $lib = strtolower(preg_replace('/(.)([A-Z])/', "$1-$2", $lib));
                 $libraryName = $vendor . '/' . $lib;
-                $libraryDir = $this->componentRegistrar->getPath(
-                    ComponentRegistrar::LIBRARY,
-                    strtolower($libraryName)
-                );
+                $libraryDir = $componentRegistrar->getPath(ComponentRegistrar::LIBRARY, strtolower($libraryName));
             }
         }
         if ($libraryDir) {
@@ -589,12 +547,13 @@ class ClassesTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
+     * @param ComponentRegistrar $componentRegistrar
      * @param string $namespacePath
      * @param string $badClass
      * @param array $badClasses
      * @return bool
      */
-    private function removeSpecialCasesForAllOthers($namespacePath, $badClass, &$badClasses)
+    private function removeSpecialCasesForAllOthers($componentRegistrar, $namespacePath, $badClass, &$badClasses)
     {
         // Remove usage of classes that do NOT using fully-qualified class names (possibly under same namespace)
         $directories = [
@@ -609,7 +568,7 @@ class ClassesTest extends \PHPUnit\Framework\TestCase
             BP . '/dev/tests/static/testsuite/',
             BP . '/setup/src/',
         ];
-        $libraryPaths = $this->componentRegistrar->getPaths(ComponentRegistrar::LIBRARY);
+        $libraryPaths = $componentRegistrar->getPaths(ComponentRegistrar::LIBRARY);
         $directories = array_merge($directories, $libraryPaths);
         // Full list of directories where there may be namespace classes
         foreach ($directories as $directory) {
@@ -628,7 +587,7 @@ class ClassesTest extends \PHPUnit\Framework\TestCase
      * @param array $badClasses
      * @param string $file
      */
-    private function assertClassReferences($badClasses, $file)
+    protected function _assertClassReferences($badClasses, $file)
     {
         if (empty($badClasses)) {
             return;
@@ -640,13 +599,8 @@ class ClassesTest extends \PHPUnit\Framework\TestCase
     {
         $files = Files::init();
         $errors = [];
-        $filesToTest = $files->getPhpFiles(Files::INCLUDE_TESTS);
 
-        if (($key = array_search(str_replace('\\', '/', __FILE__), $filesToTest)) !== false) {
-            unset($filesToTest[$key]);
-        }
-
-        foreach ($filesToTest as $file) {
+        foreach ($files->getFiles([BP . '/dev/tests/{integration,unit}'], '*') as $file) {
             $code = file_get_contents($file);
             if (preg_match('/@covers(DefaultClass)?\s+([\w\\\\]+)(::([\w\\\\]+))?/', $code, $matches)) {
                 if ($this->isNonexistentEntityCovered($matches)) {

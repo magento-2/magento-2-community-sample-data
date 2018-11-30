@@ -173,10 +173,10 @@ class DataObjectHelper
             return $this;
         }
 
-        if (is_subclass_of($returnType, \Magento\Framework\Api\ExtensibleDataInterface::class)) {
+        if (is_subclass_of($returnType, '\Magento\Framework\Api\ExtensibleDataInterface')) {
             $object = $this->objectFactory->create($returnType, []);
             $this->populateWithArray($object, $value, $returnType);
-        } elseif (is_subclass_of($returnType, \Magento\Framework\Api\ExtensionAttributesInterface::class)) {
+        } else if (is_subclass_of($returnType, '\Magento\Framework\Api\ExtensionAttributesInterface')) {
             foreach ($value as $extensionAttributeKey => $extensionAttributeValue) {
                 $extensionAttributeGetterMethodName
                     = 'get' . \Magento\Framework\Api\SimpleDataObjectConverter::snakeCaseToUpperCamelCase(

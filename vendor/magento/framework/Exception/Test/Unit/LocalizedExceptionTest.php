@@ -11,7 +11,7 @@ use Magento\Framework\Phrase;
 /**
  * Class LocalizedExceptionTest
  */
-class LocalizedExceptionTest extends \PHPUnit\Framework\TestCase
+class LocalizedExceptionTest extends \PHPUnit_Framework_TestCase
 {
     /** @var \Magento\Framework\Phrase\RendererInterface */
     private $defaultRenderer;
@@ -25,7 +25,7 @@ class LocalizedExceptionTest extends \PHPUnit\Framework\TestCase
     protected function setUp()
     {
         $this->defaultRenderer = \Magento\Framework\Phrase::getRenderer();
-        $rendererMock = $this->getMockBuilder(\Magento\Framework\Phrase\Renderer\Placeholder::class)
+        $rendererMock = $this->getMockBuilder('Magento\Framework\Phrase\Renderer\Placeholder')
             ->disableOriginalConstructor()
             ->getMock();
         $this->renderedMessage = 'rendered message';
@@ -149,17 +149,5 @@ class LocalizedExceptionTest extends \PHPUnit\Framework\TestCase
         );
         $expectedLogMessage = 'message parameter1 parameter2';
         $this->assertEquals($expectedLogMessage, $localizeException->getLogMessage());
-    }
-
-    public function testGetCode()
-    {
-        $expectedCode = 42;
-        $localizedException = new LocalizedException(
-            new Phrase("message %1", ['test']),
-            new \Exception(),
-            $expectedCode
-        );
-
-        $this->assertEquals($expectedCode, $localizedException->getCode());
     }
 }

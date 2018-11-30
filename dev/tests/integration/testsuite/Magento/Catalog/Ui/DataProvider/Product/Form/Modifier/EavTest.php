@@ -10,7 +10,7 @@ namespace Magento\Catalog\Ui\DataProvider\Product\Form\Modifier;
  * @magentoAppIsolation enabled
  * @magentoAppArea adminhtml
  */
-class EavTest extends \PHPUnit\Framework\TestCase
+class EavTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\Framework\ObjectManagerInterface
@@ -39,7 +39,7 @@ class EavTest extends \PHPUnit\Framework\TestCase
             "gallery" => "image"
         ];
         $this->objectManager = \Magento\TestFramework\Helper\Bootstrap::getObjectManager();
-        $this->locatorMock = $this->createMock(\Magento\Catalog\Model\Locator\LocatorInterface::class);
+        $this->locatorMock = $this->getMock(\Magento\Catalog\Model\Locator\LocatorInterface::class, [], [], "", false);
         $store = $this->objectManager->get(\Magento\Store\Api\Data\StoreInterface::class);
         $this->locatorMock->expects($this->any())->method('getStore')->willReturn($store);
         $this->eavModifier = $this->objectManager->create(
@@ -60,6 +60,7 @@ class EavTest extends \PHPUnit\Framework\TestCase
      */
     public function testModifyMeta()
     {
+        $this->objectManager->get(\Magento\Eav\Model\Entity\AttributeCache::class)->clear();
         /** @var \Magento\Catalog\Model\Product $product */
         $product = $this->objectManager->create(\Magento\Catalog\Model\Product::class);
         $product->load(1);
@@ -70,8 +71,12 @@ class EavTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals($expectedMeta, $actualMeta);
     }
 
+    /**
+     * Test modifying meta on new product.
+     */
     public function testModifyMetaNewProduct()
     {
+        $this->objectManager->get(\Magento\Eav\Model\Entity\AttributeCache::class)->clear();
         /** @var \Magento\Catalog\Model\Product $product */
         $product = $this->objectManager->create(\Magento\Catalog\Model\Product::class);
         $product->setAttributeSetId(4);
@@ -116,9 +121,9 @@ class EavTest extends \PHPUnit\Framework\TestCase
             }
             if ($item instanceof \Magento\Framework\Phrase) {
                 $item = (string)$item;
-            } elseif (is_array($item)) {
+            } else if (is_array($item)) {
                 $this->prepareDataForComparison($item, $expectedData[$key]);
-            } elseif ($key === 'price_id' || $key === 'sortOrder') {
+            } else if ($key === 'price_id' || $key === 'sortOrder') {
                 $data[$key] = '__placeholder__';
             }
         }

@@ -10,7 +10,12 @@ use Magento\Indexer\Console\Command\IndexerStatusCommand;
 use Symfony\Component\Console\Tester\CommandTester;
 use Symfony\Component\Console\Helper\HelperSet;
 use Symfony\Component\Console\Helper\TableHelper;
+use Magento\Framework\Indexer\IndexerInterface;
+use Magento\Indexer\Model\Indexer\Collection;
 
+/**
+ * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
+ */
 class IndexerStatusCommandTest extends AbstractIndexerCommandCommonSetup
 {
     /**
@@ -21,13 +26,31 @@ class IndexerStatusCommandTest extends AbstractIndexerCommandCommonSetup
     private $command;
 
     /**
+     * @var Collection|\PHPUnit_Framework_MockObject_MockObject
+     */
+    protected $indexerCollection;
+
+    public function setUp()
+    {
+        parent::setUp();
+
+        $this->indexerCollection = $this->getMockBuilder(Collection::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+
+        $this->collectionFactory
+            ->method('create')
+            ->willReturn($this->indexerCollection);
+    }
+
+    /**
      * @param \PHPUnit_Framework_MockObject_MockObject $indexerMock
      * @param array $data
      * @return mixed
      */
     private function attachViewToIndexerMock($indexerMock, array $data)
     {
-         /** @var \Magento\Framework\Mview\View\Changelog|\PHPUnit_Framework_MockObject_MockObject $changelog */
+        /** @var \Magento\Framework\Mview\View\Changelog|\PHPUnit_Framework_MockObject_MockObject $changelog */
         $changelog = $this->getMockBuilder(\Magento\Framework\Mview\View\Changelog::class)
             ->disableOriginalConstructor()
             ->getMock();
@@ -101,7 +124,7 @@ class IndexerStatusCommandTest extends AbstractIndexerCommandCommonSetup
                 ['helpers' => [$objectManager->getObject(TableHelper::class)]]
             )
         );
-        
+
         $commandTester = new CommandTester($this->command);
         $commandTester->execute([]);
 
@@ -221,5 +244,37 @@ class IndexerStatusCommandTest extends AbstractIndexerCommandCommonSetup
                 ],
             ],
         ];
+    }
+
+    /**
+     * @param array $methods
+     * @param array $data
+     * @return \PHPUnit_Framework_MockObject_MockObject|IndexerInterface
+     */
+    protected function getIndexerMock(array $methods = [], array $data = [])
+    {
+        /** @var \PHPUnit_Framework_MockObject_MockObject|IndexerInterface $indexer */
+        $indexer = $this->getMockBuilder(IndexerInterface::class)
+            ->setMethods(array_merge($methods, ['getId', 'getTitle']))
+            ->getMockForAbstractClass();
+        $indexer->method('getId')
+            ->willReturn(isset($data['indexer_id']) ? $data['indexer_id'] : '');
+        $indexer->method('getTitle')
+            ->willReturn(isset($data['title']) ? $data['title'] : '');
+        return $indexer;
+    }
+
+    /**
+     * Init Indexer Collection Mock by items.
+     *
+     * @param IndexerInterface[] $items
+     * @throws \Exception
+     */
+    protected function initIndexerCollectionByItems(array $items)
+    {
+        $this->indexerCollection
+            ->method('getItems')
+            ->with()
+            ->willReturn($items);
     }
 }

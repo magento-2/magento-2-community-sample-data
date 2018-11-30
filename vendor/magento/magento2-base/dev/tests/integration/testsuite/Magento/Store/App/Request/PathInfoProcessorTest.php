@@ -9,7 +9,7 @@ use \Magento\TestFramework\Helper\Bootstrap;
 use \Magento\Store\Model\ScopeInterface;
 use \Magento\Store\Model\Store;
 
-class PathInfoProcessorTest extends \PHPUnit\Framework\TestCase
+class PathInfoProcessorTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\Store\App\Request\PathInfoProcessor
@@ -18,9 +18,7 @@ class PathInfoProcessorTest extends \PHPUnit\Framework\TestCase
 
     protected function setUp()
     {
-        $this->pathProcessor = Bootstrap::getObjectManager()->create(
-            \Magento\Store\App\Request\PathInfoProcessor::class
-        );
+        $this->pathProcessor = Bootstrap::getObjectManager()->create('Magento\Store\App\Request\PathInfoProcessor');
     }
 
     /**
@@ -30,7 +28,7 @@ class PathInfoProcessorTest extends \PHPUnit\Framework\TestCase
     public function testProcessNotValidStoreCode($pathInfo)
     {
         /** @var \Magento\Framework\App\RequestInterface $request */
-        $request = Bootstrap::getObjectManager()->create(\Magento\Framework\App\RequestInterface::class);
+        $request = Bootstrap::getObjectManager()->create('Magento\Framework\App\RequestInterface');
         $this->assertEquals($pathInfo, $this->pathProcessor->process($request, $pathInfo));
     }
 
@@ -49,14 +47,14 @@ class PathInfoProcessorTest extends \PHPUnit\Framework\TestCase
     public function testProcessValidStoreCodeCase1()
     {
         /** @var \Magento\Store\Model\Store $store */
-        $store = Bootstrap::getObjectManager()->get(\Magento\Store\Model\Store::class);
+        $store = Bootstrap::getObjectManager()->get('Magento\Store\Model\Store');
         $store->load('fixturestore', 'code');
 
         /** @var \Magento\Framework\App\RequestInterface $request */
-        $request = Bootstrap::getObjectManager()->create(\Magento\Framework\App\RequestInterface::class);
+        $request = Bootstrap::getObjectManager()->create('Magento\Framework\App\RequestInterface');
 
         /** @var \Magento\Framework\App\Config\ReinitableConfigInterface $config */
-        $config = Bootstrap::getObjectManager()->get(\Magento\Framework\App\Config\ReinitableConfigInterface::class);
+        $config = Bootstrap::getObjectManager()->get('\Magento\Framework\App\Config\ReinitableConfigInterface');
         $config->setValue(Store::XML_PATH_STORE_IN_URL, false, ScopeInterface::SCOPE_STORE, $store->getCode());
         $pathInfo = sprintf('/%s/m/c/a', $store->getCode());
         $this->assertEquals($pathInfo, $this->pathProcessor->process($request, $pathInfo));
@@ -69,14 +67,14 @@ class PathInfoProcessorTest extends \PHPUnit\Framework\TestCase
     public function testProcessValidStoreCodeCase2()
     {
         /** @var \Magento\Store\Model\Store $store */
-        $store = Bootstrap::getObjectManager()->get(\Magento\Store\Model\Store::class);
+        $store = Bootstrap::getObjectManager()->get('Magento\Store\Model\Store');
         $store->load('fixturestore', 'code');
 
         /** @var \Magento\Framework\App\RequestInterface $request */
-        $request = Bootstrap::getObjectManager()->create(\Magento\Framework\App\RequestInterface::class);
+        $request = Bootstrap::getObjectManager()->create('Magento\Framework\App\RequestInterface');
 
         /** @var \Magento\Framework\App\Config\ReinitableConfigInterface $config */
-        $config = Bootstrap::getObjectManager()->get(\Magento\Framework\App\Config\ReinitableConfigInterface::class);
+        $config = Bootstrap::getObjectManager()->get('\Magento\Framework\App\Config\ReinitableConfigInterface');
         $config->setValue(Store::XML_PATH_STORE_IN_URL, true, ScopeInterface::SCOPE_STORE, $store->getCode());
         $pathInfo = sprintf('/%s/m/c/a', $store->getCode());
         $this->assertEquals('/m/c/a', $this->pathProcessor->process($request, $pathInfo));
@@ -89,17 +87,17 @@ class PathInfoProcessorTest extends \PHPUnit\Framework\TestCase
     public function testProcessValidStoreCodeCase3()
     {
         /** @var \Magento\Store\Model\Store $store */
-        $store = Bootstrap::getObjectManager()->get(\Magento\Store\Model\Store::class);
+        $store = Bootstrap::getObjectManager()->get('Magento\Store\Model\Store');
         $store->load('fixturestore', 'code');
 
         /** @var \Magento\Framework\App\RequestInterface $request */
         $request = Bootstrap::getObjectManager()->create(
-            \Magento\Framework\App\RequestInterface::class,
+            'Magento\Framework\App\RequestInterface',
             ['directFrontNames' => [$store->getCode() => true]]
         );
 
         /** @var \Magento\Framework\App\Config\ReinitableConfigInterface $config */
-        $config = Bootstrap::getObjectManager()->get(\Magento\Framework\App\Config\ReinitableConfigInterface::class);
+        $config = Bootstrap::getObjectManager()->get('\Magento\Framework\App\Config\ReinitableConfigInterface');
         $config->setValue(Store::XML_PATH_STORE_IN_URL, true, ScopeInterface::SCOPE_STORE, $store->getCode());
         $pathInfo = sprintf('/%s/m/c/a', $store->getCode());
         $this->assertEquals($pathInfo, $this->pathProcessor->process($request, $pathInfo));

@@ -10,9 +10,6 @@ use \Magento\Sales\Model\ResourceModel\Order\CollectionFactoryInterface;
 
 /**
  * Sales order history block
- *
- * @api
- * @since 100.0.2
  */
 class History extends \Magento\Framework\View\Element\Template
 {
@@ -36,9 +33,7 @@ class History extends \Magento\Framework\View\Element\Template
      */
     protected $_orderConfig;
 
-    /**
-     * @var \Magento\Sales\Model\ResourceModel\Order\Collection
-     */
+    /** @var \Magento\Sales\Model\ResourceModel\Order\Collection */
     protected $orders;
 
     /**
@@ -78,7 +73,7 @@ class History extends \Magento\Framework\View\Element\Template
     /**
      * @return CollectionFactoryInterface
      *
-     * @deprecated 100.1.1
+     * @deprecated
      */
     private function getOrderCollectionFactory()
     {
@@ -118,7 +113,7 @@ class History extends \Magento\Framework\View\Element\Template
         parent::_prepareLayout();
         if ($this->getOrders()) {
             $pager = $this->getLayout()->createBlock(
-                \Magento\Theme\Block\Html\Pager::class,
+                'Magento\Theme\Block\Html\Pager',
                 'sales.order.history.pager'
             )->setCollection(
                 $this->getOrders()

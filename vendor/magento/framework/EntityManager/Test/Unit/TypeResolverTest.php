@@ -5,7 +5,7 @@
  */
 namespace Magento\Framework\EntityManager\Test\Unit;
 
-class TypeResolverTest extends \PHPUnit\Framework\TestCase
+class TypeResolverTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\Framework\TestFramework\Unit\Helper\ObjectManager
@@ -25,8 +25,7 @@ class TypeResolverTest extends \PHPUnit\Framework\TestCase
     public function setUp()
     {
         $this->objectManager = new \Magento\Framework\TestFramework\Unit\Helper\ObjectManager($this);
-        $this->metadataPoolMock =
-            $this->createMock(\Magento\Framework\EntityManager\MetadataPool::class);
+        $this->metadataPoolMock = $this->getMock('\Magento\Framework\EntityManager\MetadataPool', [], [], '', false);
         $this->resolver = new \Magento\Framework\EntityManager\TypeResolver($this->metadataPoolMock);
     }
 

@@ -42,14 +42,11 @@
             </argument>
         </arguments>
     </type>
-    <type name="Magento\Config\Model\Config\TypePool">
+    <type name="Magento\Config\Model\Config\Export\ExcludeList">
         <arguments>
-            <argument name="sensitive" xsi:type="array">
+            <argument name="configs" xsi:type="array">
                 <item name="checkout/payment_failed/copy_to" xsi:type="string">1</item>
             </argument>
         </arguments>
-    </type>
-    <type name="Magento\Quote\Model\Quote">
-        <plugin name="clear_addresses_after_product_delete" type="Magento\Checkout\Plugin\Model\Quote\ResetQuoteAddresses"/>
     </type>
 </config>

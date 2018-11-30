@@ -27,7 +27,7 @@ use PHPUnit_Framework_MockObject_MockObject as MockObject;
  * Class VaultTest
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  */
-class VaultTest extends \PHPUnit\Framework\TestCase
+class VaultTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var ObjectManager
@@ -42,7 +42,7 @@ class VaultTest extends \PHPUnit\Framework\TestCase
     public function setUp()
     {
         $this->objectManager = new ObjectManager($this);
-        $this->vaultProvider = $this->createMock(MethodInterface::class);
+        $this->vaultProvider = $this->getMock(MethodInterface::class);
     }
 
     /**
@@ -51,7 +51,7 @@ class VaultTest extends \PHPUnit\Framework\TestCase
      */
     public function testAuthorizeNotOrderPayment()
     {
-        $paymentModel = $this->createMock(InfoInterface::class);
+        $paymentModel = $this->getMock(InfoInterface::class);
 
         /** @var Vault $model */
         $model = $this->objectManager->getObject(Vault::class);
@@ -104,7 +104,7 @@ class VaultTest extends \PHPUnit\Framework\TestCase
         $paymentModel = $this->getMockBuilder(Payment::class)
             ->disableOriginalConstructor()
             ->getMock();
-        $tokenManagement = $this->createMock(PaymentTokenManagementInterface::class);
+        $tokenManagement = $this->getMock(PaymentTokenManagementInterface::class);
 
         $paymentModel->expects(static::once())
             ->method('getAdditionalInformation')
@@ -141,13 +141,13 @@ class VaultTest extends \PHPUnit\Framework\TestCase
             ->getMock();
         $extensionAttributes = $this->getMockBuilder(OrderPaymentExtensionInterface::class)
             ->setMethods(['setVaultPaymentToken'])
-            ->getMockForAbstractClass();
+            ->getMock();
 
-        $commandManagerPool = $this->createMock(CommandManagerPoolInterface::class);
-        $commandManager = $this->createMock(CommandManagerInterface::class);
+        $commandManagerPool = $this->getMock(CommandManagerPoolInterface::class);
+        $commandManager = $this->getMock(CommandManagerInterface::class);
 
-        $tokenManagement = $this->createMock(PaymentTokenManagementInterface::class);
-        $token = $this->createMock(PaymentTokenInterface::class);
+        $tokenManagement = $this->getMock(PaymentTokenManagementInterface::class);
+        $token = $this->getMock(PaymentTokenInterface::class);
 
         $paymentModel->expects(static::once())
             ->method('getAdditionalInformation')
@@ -207,7 +207,7 @@ class VaultTest extends \PHPUnit\Framework\TestCase
      */
     public function testCaptureNotOrderPayment()
     {
-        $paymentModel = $this->createMock(InfoInterface::class);
+        $paymentModel = $this->getMock(InfoInterface::class);
 
         /** @var Vault $model */
         $model = $this->objectManager->getObject(Vault::class);
@@ -224,7 +224,7 @@ class VaultTest extends \PHPUnit\Framework\TestCase
             ->disableOriginalConstructor()
             ->getMock();
 
-        $authorizationTransaction = $this->createMock(TransactionInterface::class);
+        $authorizationTransaction = $this->getMock(TransactionInterface::class);
         $paymentModel->expects(static::once())
             ->method('getAuthorizationTransaction')
             ->willReturn($authorizationTransaction);
@@ -316,8 +316,8 @@ class VaultTest extends \PHPUnit\Framework\TestCase
      */
     public function testCanUseInternal($configValue, $paymentValue, $expected)
     {
-        $handlerPool = $this->createMock(ValueHandlerPoolInterface::class);
-        $handler = $this->createMock(ValueHandlerInterface::class);
+        $handlerPool = $this->getMock(ValueHandlerPoolInterface::class);
+        $handler = $this->getMock(ValueHandlerInterface::class);
 
         $handlerPool->expects(static::once())
             ->method('get')

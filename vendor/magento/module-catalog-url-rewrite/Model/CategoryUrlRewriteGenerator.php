@@ -20,41 +20,35 @@ class CategoryUrlRewriteGenerator
     /** Entity type code */
     const ENTITY_TYPE = 'category';
 
-    /**
-     * @var \Magento\CatalogUrlRewrite\Service\V1\StoreViewService
-     */
+    /** @var StoreViewService */
     protected $storeViewService;
 
     /**
      * @var \Magento\Catalog\Model\Category
-     * @deprecated 100.1.4
+     * @deprecated
      */
     protected $category;
 
-    /**
-     * @var \Magento\CatalogUrlRewrite\Model\Category\CanonicalUrlRewriteGenerator
-     */
+    /** @var \Magento\CatalogUrlRewrite\Model\Category\CanonicalUrlRewriteGenerator */
     protected $canonicalUrlRewriteGenerator;
 
-    /**
-     * @var \Magento\CatalogUrlRewrite\Model\Category\CurrentUrlRewritesRegenerator
-     */
+    /** @var \Magento\CatalogUrlRewrite\Model\Category\CurrentUrlRewritesRegenerator */
     protected $currentUrlRewritesRegenerator;
 
-    /**
-     * @var \Magento\CatalogUrlRewrite\Model\Category\ChildrenUrlRewriteGenerator
-     */
+    /** @var \Magento\CatalogUrlRewrite\Model\Category\ChildrenUrlRewriteGenerator */
     protected $childrenUrlRewriteGenerator;
-
-    /**
-     * @var \Magento\UrlRewrite\Model\MergeDataProvider
-     */
-    private $mergeDataProviderPrototype;
 
     /**
      * @var bool
      */
     protected $overrideStoreUrls;
+
+    /**
+     * Container for new generated url rewrites.
+     *
+     * @var \Magento\UrlRewrite\Model\MergeDataProvider
+     */
+    private $mergeDataProviderPrototype;
 
     /**
      * @param \Magento\CatalogUrlRewrite\Model\Category\CanonicalUrlRewriteGenerator $canonicalUrlRewriteGenerator
@@ -104,7 +98,7 @@ class CategoryUrlRewriteGenerator
     }
 
     /**
-     * Generate list of urls for global scope
+     * Generate list of urls for global scope.
      *
      * @param \Magento\Catalog\Model\Category|null $category
      * @param bool $overrideStoreUrls
@@ -127,6 +121,7 @@ class CategoryUrlRewriteGenerator
             }
         }
         $result = $mergeDataProvider->getData();
+
         return $result;
     }
 
@@ -155,12 +150,12 @@ class CategoryUrlRewriteGenerator
     protected function updateCategoryUrlForStore($storeId, Category $category = null)
     {
         $categoryFromRepository = $this->categoryRepository->get($category->getId(), $storeId);
-            $category->addData(
-                [
-                    'url_key' => $categoryFromRepository->getUrlKey(),
-                    'url_path' => $categoryFromRepository->getUrlPath()
-                ]
-            );
+        $category->addData(
+            [
+                'url_key' => $categoryFromRepository->getUrlKey(),
+                'url_path' => $categoryFromRepository->getUrlPath()
+            ]
+        );
     }
 
     /**
@@ -194,6 +189,7 @@ class CategoryUrlRewriteGenerator
         $mergeDataProvider->merge(
             $this->currentUrlRewritesRegenerator->generate($storeId, $category, $rootCategoryId)
         );
+
         return $mergeDataProvider->getData();
     }
 }

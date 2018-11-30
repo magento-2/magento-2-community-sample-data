@@ -3,8 +3,6 @@
  * Copyright © Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
-declare(strict_types=1);
-
 namespace Magento\ConfigurableProduct\Test\Unit\Model\Plugin;
 
 use Magento\ConfigurableProduct\Model\Plugin\ProductIdentitiesExtender;
@@ -15,7 +13,7 @@ use Magento\Catalog\Model\Product;
 /**
  * Class ProductIdentitiesExtenderTest
  */
-class ProductIdentitiesExtenderTest extends \PHPUnit\Framework\TestCase
+class ProductIdentitiesExtenderTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \PHPUnit_Framework_MockObject_MockObject|Configurable

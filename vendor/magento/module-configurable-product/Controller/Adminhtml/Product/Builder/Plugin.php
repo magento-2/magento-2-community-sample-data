@@ -8,9 +8,6 @@ namespace Magento\ConfigurableProduct\Controller\Adminhtml\Product\Builder;
 
 use Magento\Catalog\Model\ProductFactory;
 use Magento\ConfigurableProduct\Model\Product\Type;
-use Magento\Catalog\Model\Product;
-use Magento\Catalog\Controller\Adminhtml\Product\Builder as CatalogProductBuilder;
-use Magento\Framework\App\RequestInterface;
 
 class Plugin
 {
@@ -35,17 +32,21 @@ class Plugin
     }
 
     /**
-     * Set type and data to configurable product
+     * @param \Magento\Catalog\Controller\Adminhtml\Product\Builder $subject
+     * @param callable $proceed
+     * @param \Magento\Framework\App\RequestInterface $request
      *
-     * @param CatalogProductBuilder $subject
-     * @param Product $product
-     * @param RequestInterface $request
-     * @return Product
+     * @return \Magento\Catalog\Model\Product
      * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      * @SuppressWarnings(PHPMD.CyclomaticComplexity)
      */
-    public function afterBuild(CatalogProductBuilder $subject, Product $product, RequestInterface $request)
-    {
+    public function aroundBuild(
+        \Magento\Catalog\Controller\Adminhtml\Product\Builder $subject,
+        \Closure $proceed,
+        \Magento\Framework\App\RequestInterface $request
+    ) {
+        $product = $proceed($request);
+
         if ($request->has('attributes')) {
             $attributes = $request->getParam('attributes');
             if (!empty($attributes)) {

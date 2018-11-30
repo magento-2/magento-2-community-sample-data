@@ -9,7 +9,7 @@
  */
 namespace Magento\Framework\View\Design\Theme;
 
-class ValidatorTest extends \PHPUnit\Framework\TestCase
+class ValidatorTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * Test validator with valid data
@@ -18,7 +18,7 @@ class ValidatorTest extends \PHPUnit\Framework\TestCase
     {
         /** @var $validator \Magento\Framework\View\Design\Theme\Validator */
         $validator = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->create(
-            \Magento\Framework\View\Design\Theme\Validator::class
+            'Magento\Framework\View\Design\Theme\Validator'
         );
 
         $themeModel = $this->_getThemeModel();
@@ -34,7 +34,7 @@ class ValidatorTest extends \PHPUnit\Framework\TestCase
     {
         /** @var $validator \Magento\Framework\View\Design\Theme\Validator */
         $validator = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->create(
-            \Magento\Framework\View\Design\Theme\Validator::class
+            'Magento\Framework\View\Design\Theme\Validator'
         );
 
         $themeModel = $this->_getThemeModel();
@@ -51,7 +51,7 @@ class ValidatorTest extends \PHPUnit\Framework\TestCase
     protected function _getThemeModel()
     {
         return \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->create(
-            \Magento\Framework\View\Design\ThemeInterface::class
+            'Magento\Framework\View\Design\ThemeInterface'
         );
     }
 

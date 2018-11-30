@@ -9,7 +9,6 @@ namespace Magento\Eav\Api\Data;
 /**
  * Interface AttributeSetSearchResultsInterface
  * @api
- * @since 100.0.2
  */
 interface AttributeSetSearchResultsInterface extends \Magento\Framework\Api\SearchResultsInterface
 {

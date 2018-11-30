@@ -153,7 +153,8 @@ class Send extends \Magento\Wishlist\Controller\AbstractIndex
                 } else {
                     foreach ($emails as $index => $email) {
                         $email = trim($email);
-                        if (!\Zend_Validate::is($email, \Magento\Framework\Validator\EmailAddress::class)) {
+                        $validator = new \Zend\Validator\EmailAddress();
+                        if (!$validator->isValid($email)) {
                             $error = __('Please enter a valid email address.');
                             break;
                         }
@@ -185,6 +186,8 @@ class Send extends \Magento\Wishlist\Controller\AbstractIndex
             $sharingCode = $wishlist->getSharingCode();
 
             try {
+                $storeId = $this->storeManager->getStore()->getStoreId();
+
                 foreach ($emails as $email) {
                     $transport = $this->_transportBuilder->setTemplateIdentifier(
                         $this->scopeConfig->getValue(
@@ -194,7 +197,7 @@ class Send extends \Magento\Wishlist\Controller\AbstractIndex
                     )->setTemplateOptions(
                         [
                             'area' => \Magento\Framework\App\Area::AREA_FRONTEND,
-                            'store' => $this->storeManager->getStore()->getStoreId(),
+                            'store' => $storeId,
                         ]
                     )->setTemplateVars(
                         [
@@ -206,6 +209,8 @@ class Send extends \Magento\Wishlist\Controller\AbstractIndex
                             'message' => $message,
                             'store' => $this->storeManager->getStore(),
                         ]
+                    )->setScopeId(
+                        $storeId
                     )->setFrom(
                         $this->scopeConfig->getValue(
                             'wishlist/email/email_identity',

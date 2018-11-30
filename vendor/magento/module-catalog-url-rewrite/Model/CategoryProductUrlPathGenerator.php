@@ -9,12 +9,13 @@ use Magento\Catalog\Model\Product;
 use Magento\Catalog\Model\Product\Visibility;
 
 /**
- * Class ProductUrlRewriteGenerator
- * @package Magento\CatalogUrlRewrite\Model
+ * Generates product url rewrites based on all categories.
  */
 class CategoryProductUrlPathGenerator
 {
     /**
+     * Generates url rewrites for different scopes.
+     *
      * @var ProductScopeRewriteGenerator
      */
     private $productScopeRewriteGenerator;
@@ -29,9 +30,9 @@ class CategoryProductUrlPathGenerator
     }
 
     /**
-     * Generate product url rewrites based on all product categories
+     * Generate product url rewrites based on all product categories.
      *
-     * @param \Magento\Catalog\Model\Product $product
+     * @param Product $product
      * @param int|null $rootCategoryId
      * @return \Magento\UrlRewrite\Service\V1\Data\UrlRewrite[]
      */

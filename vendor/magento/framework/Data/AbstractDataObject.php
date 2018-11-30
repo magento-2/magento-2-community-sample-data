@@ -50,6 +50,6 @@ abstract class AbstractDataObject
      */
     protected function get($key)
     {
-        return $this->data[$key] ?? null;
+        return isset($this->data[$key]) ? $this->data[$key] : null;
     }
 }

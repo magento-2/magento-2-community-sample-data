@@ -23,14 +23,14 @@ use Magento\Mtf\TestCase\Injectable;
  * 4. Delete second address - click 'Delete Address' button.
  * 5. Perform all assertions.
  *
- * @group Customers
+ * @group Customers_(CS)
  * @ZephyrId MAGETWO-28066
  */
 class DeleteCustomerAddressTest extends Injectable
 {
     /* tags */
     const MVP = 'yes';
-    const STABLE = 'no';
+    const DOMAIN = 'CS';
     /* end tags */
 
     /**
@@ -66,7 +66,7 @@ class DeleteCustomerAddressTest extends Injectable
 
         // Steps:
         $this->objectManager->create(
-            \Magento\Customer\Test\TestStep\LoginCustomerOnFrontendStep::class,
+            'Magento\Customer\Test\TestStep\LoginCustomerOnFrontendStep',
             ['customer' => $customer]
         )->run();
         $this->customerAccountIndex->getAccountMenuBlock()->openMenuItem('Address Book');

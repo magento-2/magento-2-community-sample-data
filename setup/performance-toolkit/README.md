@@ -44,8 +44,6 @@ For run Admin Pool in multithreading mode, please be sure, that:
 
 **Note:** Before generating medium or large profiles, it may be necessary to increase the value of `tmp_table_size` and `max_heap_table_size` parameters for MySQL to 512Mb or more. The value of `memory_limit` for PHP should be 1Gb or more.
 
-There are two JMeter scenarios located in `setup/performance-toolkit` folder: `benchmark.jmx` and `benchmark_2015.jmx` (legacy version).
-
 **Note:** To be sure that all quotes are empty, run the following MySQL query before each run of a scenario:
 
     UPDATE quote SET is_active = 0 WHERE is_active = 1;
@@ -62,7 +60,7 @@ The following parameters can be passed to the `benchmark.jmx` scenario:
 | admin_user                                    | admin               | Admin backend user.                                                                      |
 | admin_password                                | 123123q             | Admin backend password.                                                                  |
 | customer_password                             | 123123q             | Storefront customer password.                                                            |
-| customers_page_size                           | 50                  | Page size for customers grid in Magento Admin.                                           |
+| customers_page_size                           | 20                  | Page size for customers grid in Magento Admin.                                           |
 | files_folder                                  | ./files/            | Path to various files that are used in scenario (`setup/performance-toolkit/files`).     |
 | loops                                         | 1                   | Number of loops to run.                                                                  |
 | frontendPoolUsers                             | 1                   | Total number of Frontend threads.                                                        |
@@ -120,28 +118,6 @@ For example, you can run the B2C scenario via console with 90 threads for the Fr
 
 As a result, you will get `jmeter.log` and `jmeter-results.jtl`. The`jmeter.log` contains information about the test run and can be helpful in determining the cause of an error.  The JTL file is a text file containing the results of a test run. It can be opened in the GUI mode to perform analysis of the results (see the *Output* section below).
 
-
-The following parameters can be passed to the `benchmark_2015.jmx` scenario:
-
-| Parameter Name                   | Default Value       | Description                                                                                                                               |
-| -------------------------------- | ------------------- | ----------------------------------------------------------------------------------------------------------------------------------------- |
-| host                             | localhost           | URL component 'host' of application being tested (URL or IP).                                                                             |
-| base_path                        | /                   | Base path for tested site.                                                                                                                |
-| report_save_path                 | ./                  | Path where reports will be saved. Reports will be saved in current working directory by default.                                          |
-| ramp_period                      | 300                 | Ramp period (seconds). Period the request will be distributed within.                                                                     |
-| orders                           | 0                   | Number of orders in the period specified in the current allocation. If `orders` is specified, the `users` parameter will be recalculated. |
-| users                            | 100                 | Number of concurrent users. Recommended amount is 100. Minimal amount is 10.                                                              |
-| view_product_add_to_cart_percent | 62                  | Percentage of users that will only reach the add to cart stage.                                                                           |
-| view_catalog_percent             | 30                  | Percentage of users that will only reach the view catalog stage.                                                                          |
-| guest_checkout_percent           | 4                   | Percentage of users that will reach the guest checkout stage.                                                                             |
-| customer_checkout_percent        | 4                   | Percentage of users that will reach the (logged-in) customer checkout stage.                                                              |
-| loops                            | 1                   | Number of loops to run.                                                                                                                   |
-| admin_path                       | admin               | Admin backend path.                                                                                                                       |
-| admin_user                       | admin               | Admin backend user.                                                                                                                       |
-| admin_password                   | 123123q             | Admin backend password.                                                                                                                   |
-| think_time_deviation             | 1000                | Deviation (ms) for "think time" emulation.                                                                                                |
-| think_time_delay_offset          | 2000                | Constant delay offset (ms) for "think time" emulation.                                                                                    |
-
 ### Run JMeter scenario via GUI
 
 **Note:** Use the GUI mode only for scenario debugging and viewing reports. Use console mode for real-life load testing, because it requires significantly fewer resources.
@@ -157,8 +133,6 @@ To run a script, click the *Start* button (green arrow in the top menu).
 The results of running a JMeter scenario are available in the *View Results Tree* and *Aggregate Report* nodes in the left panel of the JMeter GUI.
 
 When the script is run via GUI, the results are available in the left panel. Choose the corresponding report. When the script is run via console, a JTL report is generated. You can run JMeter GUI later and open it in the corresponding report node.
-
-The legacy scenario (Benchmark_2015) contains *View Results Tree*, *Detailed URLs Report* and *Summary Report* nodes.
 
 ### View Results Tree
 
@@ -226,39 +200,3 @@ Site Search thread group contains 3 variations:
 | Browse Customer Grid       | 10        |
 | Admin Create Order         | 70        |
 | Admin Returns Management   | 20        |
-
-**Legacy Threads**
-
-The `benchmark_2015.jmx` script consists of five thread groups: the setup thread and four user threads.
-By default, the percentage ratio between the thread groups is as follows:
-- Browsing, adding items to the cart and abandon cart (BrowsAddToCart suffix in reports) - 62%
-- Just browsing (CatProdBrows suffix in reports) - 30%
-- Browsing, adding items to cart and checkout as guest (GuestChkt suffix in reports) -  4%
-- Browsing, adding items to cart and checkout as registered customer (CustomerChkt suffix in reports) - 4%
-
-**Legacy Scenario**
-
-It is convenient to use *Summary Report* for the results analysis. To evaluate the number of each request per hour, use the value in the *Throughput* column.
-
-To get the summary value of throughput for some action:
-1. Find all rows that relate to the desired action
-2. Convert values from *Throughput* column to a common denominator
-3. Sum up the obtained values
-
-For example, to get summary throughput for the *Simple Product View* action when the following rows are present in the *Summary Report*:
-
-| Label                                 | # Samples       | ... | Throughput |
-| ------------------------------------- | --------------- | --- | ---------- |
-| ...                                   | ...             | ... | ...        |
-| Open Home Page(CatProdBrows)          | 64              | ... | 2.2/sec    |
-| Simple Product 1 View(GuestChkt)      | 4               | ... | 1.1/sec    |
-| Simple Product 2 View(BrowsAddToCart) | 30              | ... | 55.6/min   |
-| ...                                   | ...             | ... | ...        |
-
-Find all rows with the label *Simple Product # View* and calculate the summary throughput:
-
-    1.1/sec + 55.6/min = 66/min + 55.6/min = 121.6/min = 2.02/sec
-
-If you need information about the summary throughput of the *Checkout* actions, find the rows with labels *Checkout success* and make the same calculation.
-
-For the total number of page views, you will want to sum up all actions minus the setup thread.

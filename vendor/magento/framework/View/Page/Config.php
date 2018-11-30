@@ -7,7 +7,6 @@
 namespace Magento\Framework\View\Page;
 
 use Magento\Framework\App;
-use Magento\Framework\App\Area;
 use Magento\Framework\View;
 
 /**
@@ -34,15 +33,6 @@ class Config
     const ELEMENT_TYPE_HTML = 'html';
     const ELEMENT_TYPE_HEAD = 'head';
     /**#@-*/
-
-    const META_DESCRIPTION = 'description';
-    const META_CONTENT_TYPE = 'content_type';
-    const META_MEDIA_TYPE = 'media_type';
-    const META_CHARSET = 'charset';
-    const META_TITLE = 'title';
-    const META_KEYWORDS = 'keywords';
-    const META_ROBOTS = 'robots';
-    const META_X_UI_COMPATIBLE = 'x_ua_compatible';
 
     /**
      * Constant body attribute class
@@ -145,13 +135,13 @@ class Config
      *
      * @return \Magento\Framework\App\State
      *
-     * @deprecated 100.0.7
+     * @deprecated
      */
     private function getAreaResolver()
     {
         if ($this->areaResolver === null) {
             $this->areaResolver = \Magento\Framework\App\ObjectManager::getInstance()
-                ->get(\Magento\Framework\App\State::class);
+                ->get('Magento\Framework\App\State');
         }
         return $this->areaResolver;
     }
@@ -255,7 +245,7 @@ class Config
      */
     public function setContentType($contentType)
     {
-        $this->setMetadata(self::META_CONTENT_TYPE, $contentType);
+        $this->setMetadata('content_type', $contentType);
     }
 
     /**
@@ -266,10 +256,10 @@ class Config
     public function getContentType()
     {
         $this->build();
-        if (strtolower($this->metadata[self::META_CONTENT_TYPE]) === 'auto') {
-            $this->metadata[self::META_CONTENT_TYPE] = $this->getMediaType() . '; charset=' . $this->getCharset();
+        if (strtolower($this->metadata['content_type']) === 'auto') {
+            $this->metadata['content_type'] = $this->getMediaType() . '; charset=' . $this->getCharset();
         }
-        return $this->metadata[self::META_CONTENT_TYPE];
+        return $this->metadata['content_type'];
     }
 
     /**
@@ -278,7 +268,7 @@ class Config
      */
     public function setMediaType($mediaType)
     {
-        $this->setMetadata(self::META_MEDIA_TYPE, $mediaType);
+        $this->setMetadata('media_type', $mediaType);
     }
 
     /**
@@ -289,13 +279,13 @@ class Config
     public function getMediaType()
     {
         $this->build();
-        if (empty($this->metadata[self::META_MEDIA_TYPE])) {
-            $this->metadata[self::META_MEDIA_TYPE] = $this->scopeConfig->getValue(
+        if (empty($this->metadata['media_type'])) {
+            $this->metadata['media_type'] = $this->scopeConfig->getValue(
                 'design/head/default_media_type',
                 \Magento\Store\Model\ScopeInterface::SCOPE_STORE
             );
         }
-        return $this->metadata[self::META_MEDIA_TYPE];
+        return $this->metadata['media_type'];
     }
 
     /**
@@ -304,7 +294,7 @@ class Config
      */
     public function setCharset($charset)
     {
-        $this->setMetadata(self::META_CHARSET, $charset);
+        $this->setMetadata('charset', $charset);
     }
 
     /**
@@ -315,13 +305,13 @@ class Config
     public function getCharset()
     {
         $this->build();
-        if (empty($this->metadata[self::META_CHARSET])) {
-            $this->metadata[self::META_CHARSET] = $this->scopeConfig->getValue(
+        if (empty($this->metadata['charset'])) {
+            $this->metadata['charset'] = $this->scopeConfig->getValue(
                 'design/head/default_charset',
                 \Magento\Store\Model\ScopeInterface::SCOPE_STORE
             );
         }
-        return $this->metadata[self::META_CHARSET];
+        return $this->metadata['charset'];
     }
 
     /**
@@ -330,7 +320,7 @@ class Config
      */
     public function setDescription($description)
     {
-        $this->setMetadata(self::META_DESCRIPTION, $description);
+        $this->setMetadata('description', $description);
     }
 
     /**
@@ -341,36 +331,13 @@ class Config
     public function getDescription()
     {
         $this->build();
-        if (empty($this->metadata[self::META_DESCRIPTION])) {
-            $this->metadata[self::META_DESCRIPTION] = $this->scopeConfig->getValue(
+        if (empty($this->metadata['description'])) {
+            $this->metadata['description'] = $this->scopeConfig->getValue(
                 'design/head/default_description',
                 \Magento\Store\Model\ScopeInterface::SCOPE_STORE
             );
         }
-        return $this->metadata[self::META_DESCRIPTION];
-    }
-
-    /**
-     * @param string $title
-     */
-    public function setMetaTitle($title)
-    {
-        $this->setMetadata(self::META_TITLE, $title);
-    }
-
-    /**
-     * Retrieve meta title
-     *
-     * @return string
-     */
-    public function getMetaTitle()
-    {
-        $this->build();
-        if (empty($this->metadata[self::META_TITLE])) {
-            return '';
-        }
-
-        return $this->metadata[self::META_TITLE];
+        return $this->metadata['description'];
     }
 
     /**
@@ -379,7 +346,7 @@ class Config
      */
     public function setKeywords($keywords)
     {
-        $this->setMetadata(self::META_KEYWORDS, $keywords);
+        $this->setMetadata('keywords', $keywords);
     }
 
     /**
@@ -390,13 +357,13 @@ class Config
     public function getKeywords()
     {
         $this->build();
-        if (empty($this->metadata[self::META_KEYWORDS])) {
-            $this->metadata[self::META_KEYWORDS] = $this->scopeConfig->getValue(
+        if (empty($this->metadata['keywords'])) {
+            $this->metadata['keywords'] = $this->scopeConfig->getValue(
                 'design/head/default_keywords',
                 \Magento\Store\Model\ScopeInterface::SCOPE_STORE
             );
         }
-        return $this->metadata[self::META_KEYWORDS];
+        return $this->metadata['keywords'];
     }
 
     /**
@@ -405,28 +372,27 @@ class Config
      */
     public function setRobots($robots)
     {
-        $this->setMetadata(self::META_ROBOTS, $robots);
+        $this->setMetadata('robots', $robots);
     }
 
     /**
      * Retrieve URL to robots file
      *
      * @return string
-     * @throws \Magento\Framework\Exception\LocalizedException
      */
     public function getRobots()
     {
-        if ($this->getAreaResolver()->getAreaCode() !== Area::AREA_FRONTEND) {
+        if ($this->getAreaResolver()->getAreaCode() !== 'frontend') {
             return 'NOINDEX,NOFOLLOW';
         }
         $this->build();
-        if (empty($this->metadata[self::META_ROBOTS])) {
-            $this->metadata[self::META_ROBOTS] = $this->scopeConfig->getValue(
+        if (empty($this->metadata['robots'])) {
+            $this->metadata['robots'] = $this->scopeConfig->getValue(
                 'design/search_engine_robots/default_robots',
                 \Magento\Store\Model\ScopeInterface::SCOPE_STORE
             );
         }
-        return $this->metadata[self::META_ROBOTS];
+        return $this->metadata['robots'];
     }
 
     /**
@@ -542,7 +508,7 @@ class Config
     public function getElementAttribute($elementType, $attribute)
     {
         $this->build();
-        return $this->elements[$elementType][$attribute] ?? null;
+        return isset($this->elements[$elementType][$attribute]) ? $this->elements[$elementType][$attribute] : null;
     }
 
     /**
@@ -552,7 +518,7 @@ class Config
     public function getElementAttributes($elementType)
     {
         $this->build();
-        return $this->elements[$elementType] ?? [];
+        return isset($this->elements[$elementType]) ? $this->elements[$elementType] : [];
     }
 
     /**

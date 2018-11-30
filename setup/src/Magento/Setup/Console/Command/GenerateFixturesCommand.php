@@ -8,12 +8,12 @@ namespace Magento\Setup\Console\Command;
 
 use Magento\Framework\App\ResourceConnection;
 use Magento\Framework\Mview\View\CollectionInterface;
-use Magento\Setup\Fixtures\FixtureModel;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
-use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
+use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
+use Magento\Setup\Fixtures\FixtureModel;
 
 /**
  * Command generates fixtures for performance tests
@@ -95,7 +95,6 @@ class GenerateFixturesCommand extends Command
             /** @var $indexerRegistry \Magento\Framework\Indexer\IndexerRegistry */
             $indexerRegistry = $fixtureModel->getObjectManager()
                 ->create(\Magento\Framework\Indexer\IndexerRegistry::class);
-
             $indexersState = [];
             foreach ($indexerListIds as $indexerId) {
                 $indexer = $indexerRegistry->get($indexerId['indexer_id']);
@@ -109,16 +108,16 @@ class GenerateFixturesCommand extends Command
 
             $this->clearChangelog();
 
+            /** @var \Magento\Setup\Fixtures\IndexersStatesApplyFixture $indexerFixture */
+            $indexerFixture = $fixtureModel
+                ->getFixtureByName(\Magento\Setup\Fixtures\IndexersStatesApplyFixture::class);
+            $indexerFixture && $this->executeFixture($indexerFixture, $output);
+
             foreach ($indexerListIds as $indexerId) {
                 /** @var $indexer \Magento\Indexer\Model\Indexer */
                 $indexer = $indexerRegistry->get($indexerId['indexer_id']);
                 $indexer->setScheduled($indexersState[$indexerId['indexer_id']]);
             }
-
-            /** @var \Magento\Setup\Fixtures\IndexersStatesApplyFixture $indexerFixture */
-            $indexerFixture = $fixtureModel
-                ->getFixtureByName(\Magento\Setup\Fixtures\IndexersStatesApplyFixture::class);
-            $indexerFixture && $this->executeFixture($indexerFixture, $output);
 
             if (!$input->getOption(self::SKIP_REINDEX_OPTION)) {
                 $fixtureModel->reindex($output);
@@ -160,6 +159,7 @@ class GenerateFixturesCommand extends Command
     /**
      * @param \Magento\Setup\Fixtures\Fixture $fixture
      * @param OutputInterface $output
+     * @return void
      */
     private function executeFixture(\Magento\Setup\Fixtures\Fixture $fixture, OutputInterface $output)
     {

@@ -8,7 +8,6 @@ namespace Magento\Catalog\Api\Data;
 /**
  * Interface CustomOptionInterface
  * @api
- * @since 100.0.2
  */
 interface CustomOptionInterface extends \Magento\Framework\Api\ExtensibleDataInterface
 {

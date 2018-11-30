@@ -5,10 +5,6 @@
  */
 namespace Magento\Sales\Model\Status;
 
-/**
- * Class ListFactory
- * @internal
- */
 class ListFactory
 {
     /**
@@ -32,6 +28,6 @@ class ListFactory
      */
     public function create(array $arguments = [])
     {
-        return $this->_objectManager->create(\Magento\Sales\Model\Status\ListStatus::class, $arguments);
+        return $this->_objectManager->create('Magento\Sales\Model\Status\ListStatus', $arguments);
     }
 }

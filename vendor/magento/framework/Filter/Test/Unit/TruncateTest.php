@@ -5,7 +5,7 @@
  */
 namespace Magento\Framework\Filter\Test\Unit;
 
-class TruncateTest extends \PHPUnit\Framework\TestCase
+class TruncateTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @param string $string

@@ -9,10 +9,6 @@
  */
 namespace Magento\Config\Model\Config\Structure\Mapper;
 
-/**
- * @api
- * @since 100.0.2
- */
 class Dependencies extends \Magento\Config\Model\Config\Structure\AbstractMapper
 {
     /**

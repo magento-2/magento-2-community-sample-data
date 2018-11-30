@@ -5,7 +5,7 @@
  */
 namespace Magento\Cms\Test\Unit\Ui\Component\Listing\Column\Cms;
 
-class OptionsTest extends \PHPUnit\Framework\TestCase
+class OptionsTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\Cms\Ui\Component\Listing\Column\Cms\Options
@@ -41,20 +41,26 @@ class OptionsTest extends \PHPUnit\Framework\TestCase
     {
         $objectManager = new \Magento\Framework\TestFramework\Unit\Helper\ObjectManager($this);
 
-        $this->systemStoreMock = $this->getMockBuilder(\Magento\Store\Model\System\Store::class)
+        $this->systemStoreMock = $this->getMockBuilder('Magento\Store\Model\System\Store')
             ->disableOriginalConstructor()
             ->getMock();
 
-        $this->websiteMock = $this->createPartialMock(\Magento\Store\Model\Website::class, ['getId', 'getName']);
+        $this->websiteMock = $this->getMock(
+            'Magento\Store\Model\Website',
+            ['getId', 'getName'],
+            [],
+            '',
+            false
+        );
 
-        $this->groupMock = $this->createMock(\Magento\Store\Model\Group::class);
+        $this->groupMock = $this->getMock('Magento\Store\Model\Group', [], [], '', false);
 
-        $this->storeMock = $this->createMock(\Magento\Store\Model\Store::class);
+        $this->storeMock = $this->getMock('Magento\Store\Model\Store', [], [], '', false);
 
-        $this->escaperMock = $this->createMock(\Magento\Framework\Escaper::class);
+        $this->escaperMock = $this->getMock('Magento\Framework\Escaper', [], [], '', false);
 
         $this->options = $objectManager->getObject(
-            \Magento\Cms\Ui\Component\Listing\Column\Cms\Options::class,
+            'Magento\Cms\Ui\Component\Listing\Column\Cms\Options',
             [
                 'systemStore' => $this->systemStoreMock,
                 'escaper' => $this->escaperMock

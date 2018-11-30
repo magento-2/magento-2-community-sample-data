@@ -4,47 +4,21 @@
  */
 
 /*eslint max-nested-callbacks: 0*/
+
 define([
-    'squire'
-], function (Squire) {
+    'uiRegistry',
+    'Magento_Ui/js/form/element/region'
+], function (registry, RegionElement) {
     'use strict';
 
     describe('Magento_Ui/js/form/element/region', function () {
-        var injector = new Squire(),
-            mocks = {
-                'Magento_Ui/js/lib/registry/registry': {
-                    /** Method stub. */
-                    get: function () {
-                        return {
-                            get: jasmine.createSpy(),
-                            set: jasmine.createSpy()
-                        };
-                    },
-                    create: jasmine.createSpy(),
-                    set: jasmine.createSpy(),
-                    async: jasmine.createSpy()
-                },
-                '/mage/utils/wrapper': jasmine.createSpy()
-            },
-            model,
-            dataScope = 'dataScope';
+        var params, model;
 
-        beforeEach(function (done) {
-            injector.mock(mocks);
-            injector.require([
-                'Magento_Ui/js/form/element/region',
-                'knockoutjs/knockout-es5',
-                'Magento_Ui/js/lib/knockout/extender/observable_array'
-            ], function (Constr) {
-                model = new Constr({
-                    provider: 'provName',
-                    name: '',
-                    index: '',
-                    dataScope: dataScope
-                });
-
-                done();
-            });
+        beforeEach(function () {
+            params = {
+                dataScope: 'region'
+            };
+            model = new RegionElement(params);
         });
 
         describe('update method', function () {
@@ -58,9 +32,9 @@ define([
                         }
                     };
 
-                spyOn(mocks['Magento_Ui/js/lib/registry/registry'], 'get').and.returnValue(country);
+                spyOn(registry, 'get').and.returnValue(country);
                 model.update(value);
-                expect(mocks['Magento_Ui/js/lib/registry/registry'].get).toHaveBeenCalled();
+                expect(registry.get).toHaveBeenCalled();
                 expect(model.error()).toEqual(false);
                 expect(model.required()).toEqual(false);
             });

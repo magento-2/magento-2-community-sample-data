@@ -5,7 +5,7 @@
  */
 namespace Magento\Framework\App\Test\Unit\Route\Config;
 
-class ConverterTest extends \PHPUnit\Framework\TestCase
+class ConverterTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\Framework\App\Route\Config\Converter

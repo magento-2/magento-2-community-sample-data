@@ -18,24 +18,16 @@ class ProductUrlPathGenerator
      */
     protected $productUrlSuffix = [];
 
-    /**
-     * @var \Magento\Store\Model\StoreManagerInterface
-     */
+    /** @var \Magento\Store\Model\StoreManagerInterface */
     protected $storeManager;
 
-    /**
-     * @var \Magento\Framework\App\Config\ScopeConfigInterface
-     */
+    /** @var \Magento\Framework\App\Config\ScopeConfigInterface */
     protected $scopeConfig;
 
-    /**
-     * @var \Magento\CatalogUrlRewrite\Model\CategoryUrlPathGenerator
-     */
+    /** @var \Magento\CatalogUrlRewrite\Model\CategoryUrlPathGenerator */
     protected $categoryUrlPathGenerator;
 
-    /**
-     * @var \Magento\Catalog\Api\ProductRepositoryInterface
-     */
+    /** @var \Magento\Catalog\Api\ProductRepositoryInterface */
     protected $productRepository;
 
     /**
@@ -120,12 +112,11 @@ class ProductUrlPathGenerator
      * Generate product url key based on url_key entered by merchant or product name
      *
      * @param \Magento\Catalog\Model\Product $product
-     * @return string|null
+     * @return string
      */
     public function getUrlKey($product)
     {
-        $generatedProductUrlKey = $this->prepareProductUrlKey($product);
-        return ($product->getUrlKey() === false || empty($generatedProductUrlKey)) ? null : $generatedProductUrlKey;
+        return $product->getUrlKey() === false ? false : $this->prepareProductUrlKey($product);
     }
 
     /**

@@ -13,7 +13,7 @@ $registry->register('isSecureArea', true);
 // Delete quote
 /** @var $quote \Magento\Quote\Model\Quote */
 $quote = $objectManager->create(\Magento\Quote\Model\Quote::class);
-$quote->load('test01', 'reserved_order_id');
+$quote->load('test_order_item_with_bundle_items', 'reserved_order_id');
 if ($quote->getId()) {
     $quote->delete();
 }

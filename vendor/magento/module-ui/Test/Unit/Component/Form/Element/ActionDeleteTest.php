@@ -20,9 +20,6 @@ class ActionDeleteTest extends AbstractElementTest
         return ActionDelete::class;
     }
 
-    /**
-     * @return mixed|void
-     */
     public function testGetComponentName()
     {
         $this->assertSame(ActionDelete::NAME, $this->getModel()->getComponentName());

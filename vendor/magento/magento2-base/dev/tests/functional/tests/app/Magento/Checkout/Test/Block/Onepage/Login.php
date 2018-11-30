@@ -6,9 +6,7 @@
 namespace Magento\Checkout\Test\Block\Onepage;
 
 use Magento\Checkout\Test\Fixture\Checkout;
-use Magento\Customer\Test\Fixture\Customer;
 use Magento\Mtf\Block\Form;
-use Magento\Mtf\Client\Element\SimpleElement;
 use Magento\Mtf\Fixture\FixtureInterface;
 
 /**
@@ -52,6 +50,13 @@ class Login extends Form
     protected $loadingMask = '.loading-mask';
 
     /**
+     * Selector for checkout email input.
+     *
+     * @var string
+     */
+    private $emailSelector = '[name="username"]';
+
+    /**
      * Select how to perform checkout whether guest or registered customer.
      *
      * @param FixtureInterface $fixture
@@ -87,7 +92,6 @@ class Login extends Form
      */
     public function loginCustomer(FixtureInterface $customer)
     {
-        $this->waitForElementNotVisible($this->loadingMask);
         $this->fill($customer);
         $this->_rootElement->find($this->login)->click();
         $this->waitForElementNotVisible($this->loadingMask);
@@ -96,15 +100,13 @@ class Login extends Form
     /**
      * Fill required fields for guest checkout.
      *
-     * @param Customer $customer
+     * @param FixtureInterface $customer
      * @return void
      */
-    public function fillGuestFields(Customer $customer)
+    public function fillGuestFields(FixtureInterface $customer)
     {
-        $mapping = $this->dataMapping();
-        $this->_rootElement->find($mapping['email']['selector'], $mapping['email']['strategy'])
+        $this->_rootElement->find($this->emailSelector)
             ->setValue($customer->getEmail());
-        $this->waitForElementNotVisible($this->loadingMask);
     }
 
     /**
@@ -123,33 +125,5 @@ class Login extends Form
                 return $element->isVisible() == false ? true : null;
             }
         );
-    }
-
-    /**
-     * @inheritdoc
-     */
-    protected function _fill(array $fields, SimpleElement $element = null)
-    {
-        $context = ($element === null) ? $this->_rootElement : $element;
-        foreach ($fields as $name => $field) {
-            if (!isset($field['value'])) {
-                $this->_fill($field, $context);
-            } else {
-                $selector = $field['selector'];
-                $strategy = $field['strategy'];
-                $this->browser->waitUntil(function () use ($context, $selector, $strategy) {
-                    $element = $context->find($selector, $strategy);
-
-                    return $element->isVisible() && !$element->isDisabled() ? true : null;
-                });
-
-                $element = $this->getElement($context, $field);
-                if (!$element->isDisabled()) {
-                    $element->setValue($field['value']);
-                } else {
-                    throw new \Exception("Unable to set value to field '$name' as it's disabled.");
-                }
-            }
-        }
     }
 }

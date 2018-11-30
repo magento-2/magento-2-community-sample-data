@@ -6,15 +6,15 @@
 namespace Magento\Sales\Model\Order;
 
 use Magento\Catalog\Api\Data\ProductOptionExtensionFactory;
-use Magento\Framework\Api\SearchCriteria\CollectionProcessorInterface;
 use Magento\Catalog\Model\ProductOptionFactory;
 use Magento\Catalog\Model\ProductOptionProcessorInterface;
-use Magento\Framework\Api\SearchCriteriaInterface;
+use Magento\Framework\Api\SearchCriteria;
 use Magento\Framework\DataObject;
 use Magento\Framework\DataObject\Factory as DataObjectFactory;
 use Magento\Framework\Exception\InputException;
 use Magento\Framework\Exception\NoSuchEntityException;
 use Magento\Sales\Api\Data\OrderItemInterface;
+use Magento\Sales\Api\Data\OrderItemSearchResultInterface;
 use Magento\Sales\Api\Data\OrderItemSearchResultInterfaceFactory;
 use Magento\Sales\Api\OrderItemRepositoryInterface;
 use Magento\Sales\Model\ResourceModel\Metadata;
@@ -61,19 +61,12 @@ class ItemRepository implements OrderItemRepositoryInterface
     protected $registry = [];
 
     /**
-     * @var \Magento\Framework\Api\SearchCriteria\CollectionProcessorInterface
-     */
-    private $collectionProcessor;
-
-    /**
-     * ItemRepository constructor.
      * @param DataObjectFactory $objectFactory
      * @param Metadata $metadata
      * @param OrderItemSearchResultInterfaceFactory $searchResultFactory
      * @param ProductOptionFactory $productOptionFactory
      * @param ProductOptionExtensionFactory $extensionFactory
      * @param array $processorPool
-     * @param CollectionProcessorInterface|null $collectionProcessor
      */
     public function __construct(
         DataObjectFactory $objectFactory,
@@ -81,8 +74,7 @@ class ItemRepository implements OrderItemRepositoryInterface
         OrderItemSearchResultInterfaceFactory $searchResultFactory,
         ProductOptionFactory $productOptionFactory,
         ProductOptionExtensionFactory $extensionFactory,
-        array $processorPool = [],
-        CollectionProcessorInterface $collectionProcessor = null
+        array $processorPool = []
     ) {
         $this->objectFactory = $objectFactory;
         $this->metadata = $metadata;
@@ -90,7 +82,6 @@ class ItemRepository implements OrderItemRepositoryInterface
         $this->productOptionFactory = $productOptionFactory;
         $this->extensionFactory = $extensionFactory;
         $this->processorPool = $processorPool;
-        $this->collectionProcessor = $collectionProcessor ?: $this->getCollectionProcessor();
     }
 
     /**
@@ -114,7 +105,6 @@ class ItemRepository implements OrderItemRepositoryInterface
             }
 
             $this->addProductOption($orderItem);
-            $this->addParentItem($orderItem);
             $this->registry[$id] = $orderItem;
         }
         return $this->registry[$id];
@@ -123,15 +113,22 @@ class ItemRepository implements OrderItemRepositoryInterface
     /**
      * Find entities by criteria
      *
-     * @param SearchCriteriaInterface $searchCriteria
+     * @param SearchCriteria $searchCriteria
      * @return OrderItemInterface[]
      */
-    public function getList(SearchCriteriaInterface $searchCriteria)
+    public function getList(SearchCriteria $searchCriteria)
     {
-        /** @var \Magento\Sales\Model\ResourceModel\Order\Item\Collection $searchResult */
+        /** @var OrderItemSearchResultInterface $searchResult */
         $searchResult = $this->searchResultFactory->create();
         $searchResult->setSearchCriteria($searchCriteria);
-        $this->collectionProcessor->process($searchCriteria, $searchResult);
+
+        foreach ($searchCriteria->getFilterGroups() as $filterGroup) {
+            foreach ($filterGroup->getFilters() as $filter) {
+                $condition = $filter->getConditionType() ? $filter->getConditionType() : 'eq';
+                $searchResult->addFieldToFilter($filter->getField(), [$condition => $filter->getValue()]);
+            }
+        }
+
         /** @var OrderItemInterface $orderItem */
         foreach ($searchResult->getItems() as $orderItem) {
             $this->addProductOption($orderItem);
@@ -215,20 +212,6 @@ class ItemRepository implements OrderItemRepositoryInterface
     }
 
     /**
-     * Set parent item.
-     *
-     * @param OrderItemInterface $orderItem
-     * @throws InputException
-     * @throws NoSuchEntityException
-     */
-    private function addParentItem(OrderItemInterface $orderItem)
-    {
-        if ($parentId = $orderItem->getParentItemId()) {
-            $orderItem->setParentItem($this->get($parentId));
-        }
-    }
-
-    /**
      * Set product options data
      *
      * @param OrderItemInterface $orderItem
@@ -284,21 +267,5 @@ class ItemRepository implements OrderItemRepositoryInterface
         }
 
         return $request;
-    }
-
-    /**
-     * Retrieve collection processor
-     *
-     * @deprecated 100.2.0
-     * @return CollectionProcessorInterface
-     */
-    private function getCollectionProcessor()
-    {
-        if (!$this->collectionProcessor) {
-            $this->collectionProcessor = \Magento\Framework\App\ObjectManager::getInstance()->get(
-                \Magento\Framework\Api\SearchCriteria\CollectionProcessorInterface::class
-            );
-        }
-        return $this->collectionProcessor;
     }
 }

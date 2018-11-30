@@ -7,14 +7,12 @@
 namespace Magento\Directory\Model;
 
 use Magento\Framework\App\Config\ScopeConfigInterface;
+use Magento\Framework\Data\Collection\AbstractDb;
 use Magento\Store\Model\ScopeInterface;
 use Magento\Store\Model\StoreManagerInterface;
 
 /**
- * Provider of allowed countries based on configuration settings
- *
- * @api
- * @since 100.1.2
+ * Class CountryHandler
  */
 class AllowedCountries
 {
@@ -49,13 +47,12 @@ class AllowedCountries
      * @param string | null $scopeCode
      * @param string $scope
      * @return array
-     * @since 100.1.2
      */
     public function getAllowedCountries(
         $scope = ScopeInterface::SCOPE_WEBSITE,
         $scopeCode = null
     ) {
-        if ($scopeCode === null) {
+        if (empty($scopeCode)) {
             $scopeCode = $this->getDefaultScopeCode($scope);
         }
 
@@ -107,7 +104,6 @@ class AllowedCountries
      *
      * @param array $allowedCountries
      * @return array
-     * @since 100.1.2
      */
     public function makeCountriesUnique(array $allowedCountries)
     {
@@ -120,7 +116,6 @@ class AllowedCountries
      * @param string $scope
      * @param int $scopeCode
      * @return array
-     * @since 100.1.2
      */
     public function getCountriesFromConfig($scope, $scopeCode)
     {

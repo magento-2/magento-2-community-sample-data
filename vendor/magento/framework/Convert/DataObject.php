@@ -7,7 +7,7 @@
 /**
  * Default converter for \Magento\Framework\DataObjects to arrays
  *
- * @api
+ * @author     Magento Extensibility Team <DL-X-Extensibility-Team@corp.ebay.com>
  */
 namespace Magento\Framework\Convert;
 

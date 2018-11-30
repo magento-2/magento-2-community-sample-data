@@ -11,7 +11,7 @@ use Magento\Authorization\Model\UserContextInterface;
 /**
  * Tests Magento\User\Model\Authorization\AdminSessionUserContext
  */
-class AdminSessionUserContextTest extends \PHPUnit\Framework\TestCase
+class AdminSessionUserContextTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\Framework\TestFramework\Unit\Helper\ObjectManager
@@ -32,13 +32,13 @@ class AdminSessionUserContextTest extends \PHPUnit\Framework\TestCase
     {
         $this->objectManager = new \Magento\Framework\TestFramework\Unit\Helper\ObjectManager($this);
 
-        $this->adminSession = $this->getMockBuilder(\Magento\Backend\Model\Auth\Session::class)
+        $this->adminSession = $this->getMockBuilder('Magento\Backend\Model\Auth\Session')
             ->disableOriginalConstructor()
             ->setMethods(['hasUser', 'getUser', 'getId'])
             ->getMock();
 
         $this->adminSessionUserContext = $this->objectManager->getObject(
-            \Magento\User\Model\Authorization\AdminSessionUserContext::class,
+            'Magento\User\Model\Authorization\AdminSessionUserContext',
             ['adminSession' => $this->adminSession]
         );
     }

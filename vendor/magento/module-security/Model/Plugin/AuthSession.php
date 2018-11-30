@@ -81,8 +81,8 @@ class AuthSession
             $this->securityCookie->setLogoutReasonCookie(
                 $this->sessionsManager->getCurrentSession()->getStatus()
             );
-        } elseif ($message = $this->sessionsManager->getLogoutReasonMessage()) {
-            $this->messageManager->addErrorMessage($message);
+        } else if ($message = $this->sessionsManager->getLogoutReasonMessage()) {
+            $this->messageManager->addError($message);
         }
 
         return $this;
@@ -95,6 +95,6 @@ class AuthSession
      */
     private function isAjaxRequest()
     {
-        return (bool)$this->request->getParam('isAjax');
+        return (bool) $this->request->getParam('isAjax');
     }
 }

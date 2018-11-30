@@ -6,8 +6,11 @@
 
 namespace Magento\Framework\Reflection;
 
+use Magento\Framework\Phrase;
 use Magento\Framework\Api\AttributeInterface;
 use Magento\Framework\Api\AttributeValue;
+use Magento\Framework\Api\SimpleDataObjectConverter;
+use Zend\Code\Reflection\MethodReflection;
 use Magento\Framework\Api\CustomAttributesDataInterface;
 use Magento\Framework\Api\AttributeTypeResolverInterface;
 

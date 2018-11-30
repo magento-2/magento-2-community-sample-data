@@ -11,8 +11,6 @@ use Magento\Framework\App\Config\ScopeConfigInterface;
  * Core Resource Resource Model
  *
  * @author      Magento Core Team <core@magentocommerce.com>
- * @api
- * @since 100.0.2
  */
 class Config extends \Magento\Framework\Model\ResourceModel\Db\AbstractDb implements
     \Magento\Framework\App\Config\ConfigResource\ConfigInterface

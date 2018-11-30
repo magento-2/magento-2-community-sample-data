@@ -9,7 +9,7 @@ namespace Magento\Sales\Block\Adminhtml\Report\Filter\Form;
 /**
  * @magentoAppArea adminhtml
  */
-class CouponTest extends \PHPUnit\Framework\TestCase
+class CouponTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * Layout
@@ -22,7 +22,7 @@ class CouponTest extends \PHPUnit\Framework\TestCase
     {
         parent::setUp();
         $this->_layout = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()
-            ->get(\Magento\Framework\View\LayoutInterface::class);
+            ->get('Magento\Framework\View\LayoutInterface');
     }
 
     /**
@@ -31,7 +31,7 @@ class CouponTest extends \PHPUnit\Framework\TestCase
     public function testAfterToHtml()
     {
         /** @var $block \Magento\Sales\Block\Adminhtml\Report\Filter\Form\Coupon */
-        $block = $this->_layout->createBlock(\Magento\Sales\Block\Adminhtml\Report\Filter\Form\Coupon::class);
+        $block = $this->_layout->createBlock('Magento\Sales\Block\Adminhtml\Report\Filter\Form\Coupon');
         $block->setFilterData(new \Magento\Framework\DataObject());
         $html = $block->toHtml();
 

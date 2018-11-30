@@ -8,7 +8,7 @@ namespace Magento\Widget\Model\Widget;
 /**
  * @magentoAppArea adminhtml
  */
-class ConfigTest extends \PHPUnit\Framework\TestCase
+class ConfigTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\Widget\Model\Widget\Config
@@ -18,7 +18,7 @@ class ConfigTest extends \PHPUnit\Framework\TestCase
     protected function setUp()
     {
         $this->_model = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->create(
-            \Magento\Widget\Model\Widget\Config::class
+            'Magento\Widget\Model\Widget\Config'
         );
     }
 
@@ -30,7 +30,7 @@ class ConfigTest extends \PHPUnit\Framework\TestCase
     public function testGetPluginSettings()
     {
         \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->get(
-            \Magento\Framework\View\DesignInterface::class
+            'Magento\Framework\View\DesignInterface'
         )->setDesignTheme(
             'Magento/backend'
         );

@@ -5,7 +5,7 @@
  */
 namespace Magento\Config\Test\Unit\Model\Config\Structure\Element\Iterator;
 
-class FieldTest extends \PHPUnit\Framework\TestCase
+class FieldTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\Config\Model\Config\Structure\Element\Iterator\Field
@@ -24,8 +24,20 @@ class FieldTest extends \PHPUnit\Framework\TestCase
 
     protected function setUp()
     {
-        $this->_fieldMock = $this->createMock(\Magento\Config\Model\Config\Structure\Element\Field::class);
-        $this->_groupMock = $this->createMock(\Magento\Config\Model\Config\Structure\Element\Group::class);
+        $this->_fieldMock = $this->getMock(
+            'Magento\Config\Model\Config\Structure\Element\Field',
+            [],
+            [],
+            '',
+            false
+        );
+        $this->_groupMock = $this->getMock(
+            'Magento\Config\Model\Config\Structure\Element\Group',
+            [],
+            [],
+            '',
+            false
+        );
         $this->_model = new \Magento\Config\Model\Config\Structure\Element\Iterator\Field(
             $this->_groupMock,
             $this->_fieldMock

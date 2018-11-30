@@ -6,32 +6,8 @@
  */
 namespace Magento\User\Controller\Adminhtml\Auth;
 
-use Magento\User\Controller\Adminhtml\Auth;
-use Magento\Backend\App\Action\Context;
-use Magento\Framework\App\ObjectManager;
-use Magento\Backend\Helper\Data;
-use Magento\User\Model\UserFactory;
-
-class ResetPasswordPost extends Auth
+class ResetPasswordPost extends \Magento\User\Controller\Adminhtml\Auth
 {
-    /**
-     * @var Data
-     */
-    private $backendDataHelper;
-
-    /**
-     * @param Context $context
-     * @param UserFactory $userFactory
-     * @param Data $backendDataHelper
-     */
-    public function __construct(
-        Context $context,
-        UserFactory $userFactory,
-        Data $backendDataHelper = null
-    ) {
-        parent::__construct($context, $userFactory);
-        $this->backendDataHelper = $backendDataHelper ?: ObjectManager::getInstance()->get(Data::class);
-    }
     /**
      * Reset forgotten password
      *
@@ -51,7 +27,7 @@ class ResetPasswordPost extends Auth
         } catch (\Exception $exception) {
             $this->messageManager->addError(__('Your password reset link has expired.'));
             $this->getResponse()->setRedirect(
-                $this->backendDataHelper->getHomePageUrl()
+                $this->_objectManager->get('Magento\Backend\Helper\Data')->getHomePageUrl()
             );
             return;
         }
@@ -77,7 +53,7 @@ class ResetPasswordPost extends Auth
                 $user->save();
                 $this->messageManager->addSuccess(__('You updated your password.'));
                 $this->getResponse()->setRedirect(
-                    $this->backendDataHelper->getHomePageUrl()
+                    $this->_objectManager->get('Magento\Backend\Helper\Data')->getHomePageUrl()
                 );
             }
         } catch (\Magento\Framework\Validator\Exception $exception) {

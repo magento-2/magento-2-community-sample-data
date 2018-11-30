@@ -20,13 +20,14 @@ use Magento\Mtf\TestCase\Injectable;
  * 5. Save order status.
  * 6. Verify created order status.
  *
- * @group Order_Management
+ * @group Order_Management_(CS)
  * @ZephyrId MAGETWO-23412
  */
 class CreateCustomOrderStatusEntityTest extends Injectable
 {
     /* tags */
     const MVP = 'yes';
+    const DOMAIN = 'CS';
     /* end tags */
 
     /**

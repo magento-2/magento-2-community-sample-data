@@ -7,7 +7,7 @@ namespace Magento\Setup\Test\Unit\Module\Dependency\Parser;
 
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
 
-class CodeTest extends \PHPUnit\Framework\TestCase
+class CodeTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\Setup\Module\Dependency\Parser\Code
@@ -17,7 +17,7 @@ class CodeTest extends \PHPUnit\Framework\TestCase
     protected function setUp()
     {
         $objectManagerHelper = new ObjectManager($this);
-        $this->parser = $objectManagerHelper->getObject(\Magento\Setup\Module\Dependency\Parser\Code::class);
+        $this->parser = $objectManagerHelper->getObject('Magento\Setup\Module\Dependency\Parser\Code');
     }
 
     /**

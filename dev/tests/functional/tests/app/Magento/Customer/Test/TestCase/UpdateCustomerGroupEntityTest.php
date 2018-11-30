@@ -25,14 +25,14 @@ use Magento\Mtf\TestCase\Injectable;
  * 5. Click "Save Customer Group" button
  * 6. Perform all assertions
  *
- * @group Customer_Groups
+ * @group Customer_Groups_(CS)
  * @ZephyrId MAGETWO-25536
  */
 class UpdateCustomerGroupEntityTest extends Injectable
 {
     /* tags */
     const MVP = 'yes';
-    const TO_MAINTAIN = 'yes';
+    const DOMAIN = 'CS';
     /* end tags */
 
     /**

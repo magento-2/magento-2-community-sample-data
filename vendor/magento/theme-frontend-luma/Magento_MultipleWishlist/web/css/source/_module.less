@@ -40,17 +40,6 @@
             .items {
                 padding: 6px 0;
                 text-align: left;
-                > .item {
-                    span {
-                        display: block;
-                    }
-
-                    &:last-child {
-                        span {
-                            display: inline;
-                        }
-                    }
-                }
             }
 
             > .action {
@@ -224,7 +213,7 @@
                 &-select {
                     margin-right: @indent__base;
                 }
-
+                
                 .copy {
                     .dropdown {
                         right: 0;
@@ -387,16 +376,6 @@
 
                             &:hover {
                                 .lib-css(background, @collapsible-nav-item-hover);
-                            }
-                        }
-
-                        span {
-                            display: block;
-                        }
-
-                        &:last-child {
-                            span {
-                                display: inline;
                             }
                         }
                     }

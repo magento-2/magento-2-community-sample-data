@@ -7,10 +7,6 @@
  */
 namespace Magento\Catalog\Model\Attribute;
 
-/**
- * Interface \Magento\Catalog\Model\Attribute\LockValidatorInterface
- *
- */
 interface LockValidatorInterface
 {
     /**

@@ -8,9 +8,6 @@ namespace Magento\Theme\Block\Html\Header;
 
 /**
  * Logo page header block
- *
- * @api
- * @since 100.0.2
  */
 class Logo extends \Magento\Framework\View\Element\Template
 {

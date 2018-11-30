@@ -7,6 +7,8 @@ namespace Magento\Developer\Model\Config\Backend;
 
 /**
  * Backend model for validating ip addresses entered in Developer Client Restrictions
+ *
+ * Class AllowedIps
  */
 class AllowedIps extends \Magento\Framework\App\Config\Value
 {

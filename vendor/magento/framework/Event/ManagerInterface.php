@@ -5,10 +5,6 @@
  */
 namespace Magento\Framework\Event;
 
-/**
- * Interface \Magento\Framework\Event\ManagerInterface
- *
- */
 interface ManagerInterface
 {
     /**

@@ -7,8 +7,6 @@ namespace Magento\Downloadable\Model\Sales\Order\Pdf\Items;
 
 /**
  * Order Creditmemo Downloadable Pdf Items renderer
- * @api
- * @since 100.0.2
  */
 class Creditmemo extends \Magento\Downloadable\Model\Sales\Order\Pdf\Items\AbstractItems
 {

@@ -11,7 +11,7 @@ use Magento\Framework\UrlInterface;
 use Magento\Framework\View\Element\UiComponent\ContextInterface;
 use Magento\Framework\View\Element\UiComponent\Processor as UiElementProcessor;
 
-class NameTest extends \PHPUnit\Framework\TestCase
+class NameTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var NameColumn
@@ -48,7 +48,7 @@ class NameTest extends \PHPUnit\Framework\TestCase
             ->disableOriginalConstructor()
             ->getMock();
 
-        $this->contextMock->expects(static::never())
+        $this->contextMock->expects(static::any())
             ->method('getProcessor')
             ->willReturn($this->uiElementProcessorMock);
 

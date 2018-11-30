@@ -25,8 +25,7 @@ class Alerts extends \Magento\Backend\Block\Widget\Tab
      */
     protected function _prepareLayout()
     {
-        $accordion = $this->getLayout()->createBlock(
-            \Magento\Backend\Block\Widget\Accordion::class)->setId('productAlerts');
+        $accordion = $this->getLayout()->createBlock('Magento\Backend\Block\Widget\Accordion')->setId('productAlerts');
         /* @var $accordion \Magento\Backend\Block\Widget\Accordion */
 
         $alertPriceAllow = $this->_scopeConfig->getValue('catalog/productalert/allow_price', \Magento\Store\Model\ScopeInterface::SCOPE_STORE);
@@ -38,7 +37,7 @@ class Alerts extends \Magento\Backend\Block\Widget\Tab
                 [
                     'title' => __('Price Alert Subscriptions'),
                     'content' => $this->getLayout()->createBlock(
-                        \Magento\Catalog\Block\Adminhtml\Product\Edit\Tab\Alerts\Price::class
+                        'Magento\Catalog\Block\Adminhtml\Product\Edit\Tab\Alerts\Price'
                     )->toHtml() . '<br />',
                     'open' => true
                 ]
@@ -50,7 +49,7 @@ class Alerts extends \Magento\Backend\Block\Widget\Tab
                 [
                     'title' => __('Stock Alert Subscriptions'),
                     'content' => $this->getLayout()->createBlock(
-                        \Magento\Catalog\Block\Adminhtml\Product\Edit\Tab\Alerts\Stock::class
+                        'Magento\Catalog\Block\Adminhtml\Product\Edit\Tab\Alerts\Stock'
                     ),
                     'open' => true
                 ]

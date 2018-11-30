@@ -9,10 +9,7 @@
  */
 namespace Magento\Eav\Model\Validator\Attribute;
 
-/**
- * @magentoAppIsolation enabled
- */
-class BackendTest extends \PHPUnit\Framework\TestCase
+class BackendTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\Eav\Model\Validator\Attribute\Backend
@@ -33,7 +30,7 @@ class BackendTest extends \PHPUnit\Framework\TestCase
     {
         /** @var $entity \Magento\Customer\Model\Customer */
         $entity = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->create(
-            \Magento\Customer\Model\Customer::class
+            'Magento\Customer\Model\Customer'
         )->load(
             1
         );

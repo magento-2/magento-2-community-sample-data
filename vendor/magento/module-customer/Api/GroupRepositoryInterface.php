@@ -8,7 +8,6 @@ namespace Magento\Customer\Api;
 /**
  * Customer group CRUD interface
  * @api
- * @since 100.0.2
  */
 interface GroupRepositoryInterface
 {

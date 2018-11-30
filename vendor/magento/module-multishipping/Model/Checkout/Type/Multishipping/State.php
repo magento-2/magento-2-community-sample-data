@@ -25,8 +25,6 @@ class State extends \Magento\Framework\DataObject
 
     const STEP_SUCCESS = 'multishipping_success';
 
-    const STEP_RESULTS = 'multishipping_results';
-
     /**
      * Allow steps array
      *
@@ -63,7 +61,6 @@ class State extends \Magento\Framework\DataObject
             self::STEP_BILLING => new \Magento\Framework\DataObject(['label' => __('Billing Information')]),
             self::STEP_OVERVIEW => new \Magento\Framework\DataObject(['label' => __('Place Order')]),
             self::STEP_SUCCESS => new \Magento\Framework\DataObject(['label' => __('Order Success')]),
-            self::STEP_RESULTS => new \Magento\Framework\DataObject(['label' => __('Order Results')]),
         ];
 
         foreach ($this->_steps as $step) {

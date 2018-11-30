@@ -78,7 +78,7 @@ class CommentsHistory extends \Magento\Sales\Controller\Adminhtml\Order
     {
         $this->_initOrder();
         $layout = $this->layoutFactory->create();
-        $html = $layout->createBlock(\Magento\Sales\Block\Adminhtml\Order\View\Tab\History::class)
+        $html = $layout->createBlock('Magento\Sales\Block\Adminhtml\Order\View\Tab\History')
             ->toHtml();
         $this->_translateInline->processResponseBody($html);
         /** @var \Magento\Framework\Controller\Result\Raw $resultRaw */

@@ -11,7 +11,7 @@ use Magento\Framework\TestFramework\Unit\Helper\ObjectManager as ObjectManagerHe
  * Class DiscountsTest
  * @package Magento\SalesRule\Block\Rss
  */
-class DiscountsTest extends \PHPUnit\Framework\TestCase
+class DiscountsTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\SalesRule\Block\Rss\Discounts
@@ -70,24 +70,36 @@ class DiscountsTest extends \PHPUnit\Framework\TestCase
 
     protected function setUp()
     {
-        $this->storeManagerInterface = $this->createMock(\Magento\Store\Model\StoreManagerInterface::class);
-        $this->requestInterface = $this->createMock(\Magento\Framework\App\RequestInterface::class);
-        $this->rssBuilderInterface = $this->createMock(\Magento\Framework\App\Rss\UrlBuilderInterface::class);
-        $this->urlBuilderInterface = $this->createMock(\Magento\Framework\UrlInterface::class);
-        $this->scopeConfigInterface = $this->createMock(\Magento\Framework\App\Config\ScopeConfigInterface::class);
-        $this->timezoneInterface = $this->createMock(\Magento\Framework\Stdlib\DateTime\TimezoneInterface::class);
-        $this->discounts = $this->createMock(\Magento\SalesRule\Model\Rss\Discounts::class);
-        $this->rssModel = $this->createPartialMock(\Magento\SalesRule\Model\Rss\Discounts::class, [
+        $this->storeManagerInterface = $this->getMock('Magento\Store\Model\StoreManagerInterface');
+        $this->requestInterface = $this->getMock('Magento\Framework\App\RequestInterface');
+        $this->rssBuilderInterface = $this->getMock('Magento\Framework\App\Rss\UrlBuilderInterface');
+        $this->urlBuilderInterface = $this->getMock('Magento\Framework\UrlInterface');
+        $this->scopeConfigInterface = $this->getMock('Magento\Framework\App\Config\ScopeConfigInterface');
+        $this->timezoneInterface = $this->getMock('Magento\Framework\Stdlib\DateTime\TimezoneInterface');
+        $this->discounts = $this->getMock('Magento\SalesRule\Model\Rss\Discounts', [], [], '', false);
+        $this->rssModel = $this->getMock(
+            'Magento\SalesRule\Model\Rss\Discounts',
+            [
                 '__wakeup',
                 'getDiscountCollection'
-            ]);
-        $this->storeModel = $this->createPartialMock(\Magento\Store\Model\Store::class, [
+            ],
+            [],
+            '',
+            false
+        );
+        $this->storeModel = $this->getMock(
+            'Magento\Store\Model\Store',
+            [
                 '__wakeUp',
                 'getId',
                 'getWebsiteId',
                 'getName',
                 'getFrontendName'
-            ]);
+            ],
+            [],
+            '',
+            false
+        );
 
         $this->storeManagerInterface->expects($this->any())->method('getStore')
             ->will($this->returnValue($this->storeModel));
@@ -95,7 +107,7 @@ class DiscountsTest extends \PHPUnit\Framework\TestCase
 
         $this->objectManagerHelper = new ObjectManagerHelper($this);
         $this->block = $this->objectManagerHelper->getObject(
-            \Magento\SalesRule\Block\Rss\Discounts::class,
+            'Magento\SalesRule\Block\Rss\Discounts',
             [
                 'storeManager' => $this->storeManagerInterface,
                 'rssModel' => $this->discounts,
@@ -138,14 +150,20 @@ class DiscountsTest extends \PHPUnit\Framework\TestCase
         $rssUrl = 'http://rss.magento.com/discount';
         $url = 'http://rss.magento.com';
 
-        $ruleModel =  $this->createPartialMock(\Magento\SalesRule\Model\Rule::class, [
+        $ruleModel =  $this->getMock(
+            'Magento\SalesRule\Model\Rule',
+            [
                 '__wakeup',
                 'getCouponCode',
                 'getToDate',
                 'getFromDate',
                 'getDescription',
                 'getName'
-            ]);
+            ],
+            [],
+            '',
+            false
+        );
 
         $this->storeModel->expects($this->once())->method('getWebsiteId')->will($this->returnValue(1));
         $this->storeModel->expects($this->never())->method('getName');

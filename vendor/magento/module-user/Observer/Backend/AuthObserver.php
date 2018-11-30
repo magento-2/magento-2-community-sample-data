@@ -149,7 +149,7 @@ class AuthObserver implements ObserverInterface
     /**
      * Update locking information for the user
      *
-     * @param User $user
+     * @param \Magento\User\Model\User $user
      * @return void
      */
     private function _updateLockingInformation($user)
@@ -195,16 +195,10 @@ class AuthObserver implements ObserverInterface
                 $myAccountUrl = $this->url->getUrl('adminhtml/system_account/');
                 $message = __('It\'s time to <a href="%1">change your password</a>.', $myAccountUrl);
             }
-
-            $messages = $this->messageManager->getMessages();
-
-            // Remove existing messages with same ID to avoid duplication
-            $messages->deleteMessageByIdentifier(User::MESSAGE_ID_PASSWORD_EXPIRED);
-
             $this->messageManager->addNoticeMessage($message);
-            $message = $messages->getLastAddedMessage();
+            $message = $this->messageManager->getMessages()->getLastAddedMessage();
             if ($message) {
-                $message->setIdentifier(User::MESSAGE_ID_PASSWORD_EXPIRED)->setIsSticky(true);
+                $message->setIdentifier('magento_user_password_expired')->setIsSticky(true);
                 $this->authSession->setPciAdminUserIsPasswordExpired(true);
             }
         }

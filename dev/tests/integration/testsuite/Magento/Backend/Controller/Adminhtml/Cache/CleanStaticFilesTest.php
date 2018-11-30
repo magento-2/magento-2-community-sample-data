@@ -22,7 +22,7 @@ class CleanStaticFilesTest extends \Magento\TestFramework\TestCase\AbstractBacke
     {
         // setup
         /** @var \Magento\Framework\Filesystem $filesystem */
-        $filesystem = Bootstrap::getObjectManager()->get(\Magento\Framework\Filesystem::class);
+        $filesystem = Bootstrap::getObjectManager()->get('Magento\Framework\Filesystem');
         $dirStatic = $filesystem->getDirectoryWrite(DirectoryList::STATIC_VIEW);
         $subStaticDir = 'subdir';
         $dirStatic->create($subStaticDir);
@@ -38,7 +38,7 @@ class CleanStaticFilesTest extends \Magento\TestFramework\TestCase\AbstractBacke
         $this->assertSessionMessages(
             $this->contains("The static files cache has been cleaned."),
             \Magento\Framework\Message\MessageInterface::TYPE_SUCCESS,
-            \Magento\Framework\Message\ManagerInterface::class
+            'Magento\Framework\Message\ManagerInterface'
         );
         $this->assertFalse($dirStatic->isExist($subStaticDir));
         $this->assertTrue($dirVar->isExist(DirectoryList::TMP_MATERIALIZATION_DIR));

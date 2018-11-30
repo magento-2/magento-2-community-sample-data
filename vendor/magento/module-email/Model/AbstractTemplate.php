@@ -7,11 +7,11 @@ namespace Magento\Email\Model;
 
 use Magento\Framework\App\Filesystem\DirectoryList;
 use Magento\Framework\App\TemplateTypesInterface;
-use Magento\Framework\DataObject;
 use Magento\Framework\Exception\LocalizedException;
 use Magento\Framework\Model\AbstractModel;
-use Magento\Store\Model\Information as StoreInformation;
+use Magento\Framework\DataObject;
 use Magento\Store\Model\ScopeInterface;
+use Magento\Store\Model\Information as StoreInformation;
 use Magento\Store\Model\Store;
 
 /**
@@ -20,8 +20,6 @@ use Magento\Store\Model\Store;
  * @author      Magento Core Team <core@magentocommerce.com>
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  * @SuppressWarnings(PHPMD.TooManyFields)
- * @api
- * @since 100.0.2
  */
 abstract class AbstractTemplate extends AbstractModel implements TemplateTypesInterface
 {
@@ -354,7 +352,7 @@ abstract class AbstractTemplate extends AbstractModel implements TemplateTypesIn
             $result = $processor->filter($this->getTemplateText());
         } catch (\Exception $e) {
             $this->cancelDesignConfig();
-            throw new \LogicException(__($e->getMessage()), $e->getCode(), $e);
+            throw new \LogicException(__($e->getMessage()), $e);
         }
         if ($isDesignApplied) {
             $this->cancelDesignConfig();
@@ -534,9 +532,10 @@ abstract class AbstractTemplate extends AbstractModel implements TemplateTypesIn
      */
     public function setForcedArea($templateId)
     {
-        if (!isset($this->area)) {
-            $this->area = $this->emailConfig->getTemplateArea($templateId);
+        if ($this->area) {
+            throw new \LogicException(__('Area is already set'));
         }
+        $this->area = $this->emailConfig->getTemplateArea($templateId);
         return $this;
     }
 
@@ -664,16 +663,17 @@ abstract class AbstractTemplate extends AbstractModel implements TemplateTypesIn
      * Save current design config and replace with design config from specified store
      * Event is not dispatched.
      *
-     * @param null|bool|int|string $storeId
+     * @param int|string $storeId
      * @param string $area
      * @return void
      */
     public function emulateDesign($storeId, $area = self::DEFAULT_DESIGN_AREA)
     {
-        if ($storeId !== null && $storeId !== false) {
+        if ($storeId) {
             // save current design settings
             $this->emulatedDesignConfig = clone $this->getDesignConfig();
-            if ($this->getDesignConfig()->getStore() != $storeId
+            if (
+                $this->getDesignConfig()->getStore() != $storeId
                 || $this->getDesignConfig()->getArea() != $area
             ) {
                 $this->setDesignConfig(['area' => $area, 'store' => $storeId]);

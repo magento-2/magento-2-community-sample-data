@@ -75,6 +75,7 @@ class Subscription implements SubscriptionInterface
      * @param string $tableName
      * @param string $columnName
      * @param array $ignoredUpdateColumns
+     * @throws \DomainException
      */
     public function __construct(
         ResourceConnection $resource,
@@ -99,6 +100,7 @@ class Subscription implements SubscriptionInterface
      * Create subscription
      *
      * @return SubscriptionInterface
+     * @throws \InvalidArgumentException
      */
     public function create()
     {
@@ -130,6 +132,7 @@ class Subscription implements SubscriptionInterface
      * Remove subscription
      *
      * @return SubscriptionInterface
+     * @throws \InvalidArgumentException
      */
     public function remove()
     {
@@ -198,14 +201,14 @@ class Subscription implements SubscriptionInterface
     {
         switch ($event) {
             case Trigger::EVENT_INSERT:
-                $trigger = "INSERT IGNORE INTO %s (%s) VALUES (NEW.%s);";
+                $trigger = 'INSERT IGNORE INTO %s (%s) VALUES (NEW.%s);';
                 break;
 
             case Trigger::EVENT_UPDATE:
-                $tableName = $this->resource->getTableName($this->getTableName());
-                $trigger = "INSERT IGNORE INTO %s (%s) VALUES (NEW.%s);";
-                if ($this->connection->isTableExists($tableName) &&
-                    $describe = $this->connection->describeTable($tableName)
+                $trigger = 'INSERT IGNORE INTO %s (%s) VALUES (NEW.%s);';
+
+                if ($this->connection->isTableExists($this->getTableName())
+                    && $describe = $this->connection->describeTable($this->getTableName())
                 ) {
                     $columnNames = array_column($describe, 'COLUMN_NAME');
                     $columnNames = array_diff($columnNames, $this->ignoredUpdateColumns);
@@ -213,7 +216,7 @@ class Subscription implements SubscriptionInterface
                         $columns = [];
                         foreach ($columnNames as $columnName) {
                             $columns[] = sprintf(
-                                'NEW.%1$s <=> OLD.%1$s',
+                                'NEW.%1$s != OLD.%1$s',
                                 $this->connection->quoteIdentifier($columnName)
                             );
                         }
@@ -227,7 +230,7 @@ class Subscription implements SubscriptionInterface
                 break;
 
             case Trigger::EVENT_DELETE:
-                $trigger = "INSERT IGNORE INTO %s (%s) VALUES (OLD.%s);";
+                $trigger = 'INSERT IGNORE INTO %s (%s) VALUES (OLD.%s);';
                 break;
 
             default:

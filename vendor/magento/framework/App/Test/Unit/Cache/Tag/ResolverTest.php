@@ -8,7 +8,7 @@ namespace Magento\Framework\App\Test\Unit\Cache\Tag;
 
 use \Magento\Framework\App\Cache\Tag\Resolver;
 
-class ResolverTest extends \PHPUnit\Framework\TestCase
+class ResolverTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \PHPUnit_Framework_MockObject_MockObject|\Magento\Framework\App\Cache\Tag\Strategy\Factory
@@ -27,7 +27,13 @@ class ResolverTest extends \PHPUnit\Framework\TestCase
 
     protected function setUp()
     {
-        $this->strategyFactory = $this->createMock(\Magento\Framework\App\Cache\Tag\Strategy\Factory::class);
+        $this->strategyFactory = $this->getMock(
+            \Magento\Framework\App\Cache\Tag\Strategy\Factory::class,
+            [],
+            [],
+            '',
+            false
+        );
 
         $this->strategy = $this->getMockForAbstractClass(\Magento\Framework\App\Cache\Tag\StrategyInterface::class);
 
@@ -40,15 +46,14 @@ class ResolverTest extends \PHPUnit\Framework\TestCase
 
     public function testGetTagsForNotObject()
     {
-        $this->expectException(\InvalidArgumentException::class);
-        $this->expectExceptionMessage('Provided argument is not an object');
+        $this->setExpectedException(\InvalidArgumentException::class, 'Provided argument is not an object');
         $this->model->getTags('some scalar');
     }
 
     public function testGetTagsForObject()
     {
         $strategyReturnValue = ['test tag'];
-        $object = new \stdClass;
+        $object = new \StdClass;
         $this->strategy->expects($this->once())
             ->method('getTags')
             ->with($object)

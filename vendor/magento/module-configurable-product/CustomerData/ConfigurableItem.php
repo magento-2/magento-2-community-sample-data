@@ -11,9 +11,6 @@ use Magento\Checkout\CustomerData\DefaultItem;
 
 /**
  * Configurable item
- *
- * @deprecated moved to model because of class refactoring
- * @see \Magento\ConfigurableProduct\Model\Product\Configuration\Item\ItemProductResolver
  */
 class ConfigurableItem extends DefaultItem
 {

@@ -8,7 +8,7 @@ namespace Magento\Reports\Block\Adminhtml\Sales\Coupons;
 /**
  * @magentoAppArea adminhtml
  */
-class GridTest extends \PHPUnit\Framework\TestCase
+class GridTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * Creates and inits block
@@ -19,9 +19,9 @@ class GridTest extends \PHPUnit\Framework\TestCase
     protected function _createBlock($reportType = null)
     {
         $block = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->get(
-            \Magento\Framework\View\LayoutInterface::class
+            'Magento\Framework\View\LayoutInterface'
         )->createBlock(
-            \Magento\Reports\Block\Adminhtml\Sales\Coupons\Grid::class
+            'Magento\Reports\Block\Adminhtml\Sales\Coupons\Grid'
         );
 
         $filterData = new \Magento\Framework\DataObject();

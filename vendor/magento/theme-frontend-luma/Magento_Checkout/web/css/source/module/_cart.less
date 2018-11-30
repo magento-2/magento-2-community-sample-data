@@ -149,12 +149,6 @@
         }
 
         &:extend(.abs-adjustment-incl-excl-tax all);
-
-        .action {
-            &.multicheckout {
-                color: @color-blue2;
-            }
-        }
     }
 
     //  Totals block
@@ -165,10 +159,6 @@
             .mark {
                 text-align: left;
             }
-        }
-
-        .discount.coupon {
-            display: none;
         }
     }
 
@@ -349,7 +339,7 @@
         }
     }
 
-    //  Products pager
+    // Products pager
     .cart-products-toolbar {
         .toolbar-amount {
             left: inherit;
@@ -464,7 +454,7 @@
                     white-space: nowrap;
                     width: 33%;
 
-                    &[data-th]:before {
+                    &:before {
                         content: attr(data-th);
                         display: block;
                         font-weight: @font-weight__semibold;
@@ -644,7 +634,7 @@
         }
     }
 
-    //  Products pager
+    // Products pager
     .cart-products-toolbar {
         margin: 2px 0 0;
 

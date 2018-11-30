@@ -5,7 +5,7 @@
  */
 namespace Magento\Framework\HTTP\Test\Unit\PhpEnvironment;
 
-class ServerAddressTest extends \PHPUnit\Framework\TestCase
+class ServerAddressTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\Framework\HTTP\PhpEnvironment\ServerAddress
@@ -20,14 +20,14 @@ class ServerAddressTest extends \PHPUnit\Framework\TestCase
     protected function setUp()
     {
         $this->_request = $this->getMockBuilder(
-            \Magento\Framework\App\Request\Http::class
+            'Magento\Framework\App\Request\Http'
         )->disableOriginalConstructor()->setMethods(
             ['getServer']
         )->getMock();
 
         $objectManager = new \Magento\Framework\TestFramework\Unit\Helper\ObjectManager($this);
         $this->_serverAddress = $objectManager->getObject(
-            \Magento\Framework\HTTP\PhpEnvironment\ServerAddress::class,
+            'Magento\Framework\HTTP\PhpEnvironment\ServerAddress',
             ['httpRequest' => $this->_request]
         );
     }

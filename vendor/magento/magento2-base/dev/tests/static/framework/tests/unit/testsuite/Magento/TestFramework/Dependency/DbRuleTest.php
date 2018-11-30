@@ -5,7 +5,7 @@
  */
 namespace Magento\TestFramework\Dependency;
 
-class DbRuleTest extends \PHPUnit\Framework\TestCase
+class DbRuleTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var DbRule

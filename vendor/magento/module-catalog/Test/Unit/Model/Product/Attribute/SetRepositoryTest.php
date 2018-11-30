@@ -6,10 +6,7 @@
  */
 namespace Magento\Catalog\Test\Unit\Model\Product\Attribute;
 
-/**
- * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
- */
-class SetRepositoryTest extends \PHPUnit\Framework\TestCase
+class SetRepositoryTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\Catalog\Model\Product\Attribute\SetRepository
@@ -38,10 +35,22 @@ class SetRepositoryTest extends \PHPUnit\Framework\TestCase
 
     protected function setUp()
     {
-        $this->attrSetRepositoryMock = $this->createMock(\Magento\Eav\Api\AttributeSetRepositoryInterface::class);
-        $this->searchCriteriaBuilderMock = $this->createMock(\Magento\Framework\Api\SearchCriteriaBuilder::class);
-        $this->filterBuilderMock = $this->createMock(\Magento\Framework\Api\FilterBuilder::class);
-        $this->eavConfig = $this->createMock(\Magento\Eav\Model\Config::class);
+        $this->attrSetRepositoryMock = $this->getMock('\Magento\Eav\Api\AttributeSetRepositoryInterface');
+        $this->searchCriteriaBuilderMock = $this->getMock(
+            '\Magento\Framework\Api\SearchCriteriaBuilder',
+            [],
+            [],
+            '',
+            false
+        );
+        $this->filterBuilderMock = $this->getMock(
+            '\Magento\Framework\Api\FilterBuilder',
+            [],
+            [],
+            '',
+            false
+        );
+        $this->eavConfig = $this->getMock('\Magento\Eav\Model\Config', [], [], '', false);
 
         $this->model = new \Magento\Catalog\Model\Product\Attribute\SetRepository(
             $this->attrSetRepositoryMock,
@@ -53,7 +62,7 @@ class SetRepositoryTest extends \PHPUnit\Framework\TestCase
 
     public function testSave()
     {
-        $attributeSetMock = $this->createMock(\Magento\Eav\Api\Data\AttributeSetInterface::class);
+        $attributeSetMock = $this->getMock('\Magento\Eav\Api\Data\AttributeSetInterface');
         $this->setMockForValidation($attributeSetMock, 4);
 
         $this->attrSetRepositoryMock->expects($this->once())
@@ -69,7 +78,7 @@ class SetRepositoryTest extends \PHPUnit\Framework\TestCase
      */
     public function testSaveNonProductAttributeSet()
     {
-        $attributeSetMock = $this->createMock(\Magento\Eav\Api\Data\AttributeSetInterface::class);
+        $attributeSetMock = $this->getMock('\Magento\Eav\Api\Data\AttributeSetInterface');
         $this->setMockForValidation($attributeSetMock, 3);
         $this->attrSetRepositoryMock->expects($this->never())->method('save');
         $this->model->save($attributeSetMock);
@@ -78,7 +87,7 @@ class SetRepositoryTest extends \PHPUnit\Framework\TestCase
     public function testGet()
     {
         $attributeSetId = 1;
-        $attributeSetMock = $this->createMock(\Magento\Eav\Api\Data\AttributeSetInterface::class);
+        $attributeSetMock = $this->getMock('\Magento\Eav\Api\Data\AttributeSetInterface');
         $this->setMockForValidation($attributeSetMock, 4);
 
         $this->attrSetRepositoryMock->expects($this->once())
@@ -95,7 +104,7 @@ class SetRepositoryTest extends \PHPUnit\Framework\TestCase
     public function testGetNonProductAttributeSet()
     {
         $attributeSetId = 1;
-        $attributeSetMock = $this->createMock(\Magento\Eav\Api\Data\AttributeSetInterface::class);
+        $attributeSetMock = $this->getMock('\Magento\Eav\Api\Data\AttributeSetInterface');
         $this->setMockForValidation($attributeSetMock, 3);
 
         $this->attrSetRepositoryMock->expects($this->once())
@@ -107,7 +116,7 @@ class SetRepositoryTest extends \PHPUnit\Framework\TestCase
 
     public function testDelete()
     {
-        $attributeSetMock = $this->createMock(\Magento\Eav\Api\Data\AttributeSetInterface::class);
+        $attributeSetMock = $this->getMock('\Magento\Eav\Api\Data\AttributeSetInterface');
         $this->setMockForValidation($attributeSetMock, 4);
         $this->attrSetRepositoryMock->expects($this->once())
             ->method('delete')
@@ -122,7 +131,7 @@ class SetRepositoryTest extends \PHPUnit\Framework\TestCase
      */
     public function testDeleteNonProductAttributeSet()
     {
-        $attributeSetMock = $this->createMock(\Magento\Eav\Api\Data\AttributeSetInterface::class);
+        $attributeSetMock = $this->getMock('\Magento\Eav\Api\Data\AttributeSetInterface');
         $this->setMockForValidation($attributeSetMock, 3);
         $this->attrSetRepositoryMock->expects($this->never())
             ->method('delete');
@@ -132,7 +141,7 @@ class SetRepositoryTest extends \PHPUnit\Framework\TestCase
     public function testDeleteById()
     {
         $attributeSetId = 1;
-        $attributeSetMock = $this->createMock(\Magento\Eav\Api\Data\AttributeSetInterface::class);
+        $attributeSetMock = $this->getMock('\Magento\Eav\Api\Data\AttributeSetInterface');
         $this->setMockForValidation($attributeSetMock, 4);
 
         $this->attrSetRepositoryMock->expects($this->once())
@@ -149,13 +158,13 @@ class SetRepositoryTest extends \PHPUnit\Framework\TestCase
 
     public function testGetList()
     {
-        $searchResultMock = $this->createMock(\Magento\Eav\Api\Data\AttributeSetSearchResultsInterface::class);
+        $searchResultMock = $this->getMock('\Magento\Eav\Api\Data\AttributeSetSearchResultsInterface');
 
-        $searchCriteriaMock = $this->createMock(\Magento\Framework\Api\SearchCriteriaInterface::class);
+        $searchCriteriaMock = $this->getMock('\Magento\Framework\Api\SearchCriteriaInterface');
         $searchCriteriaMock->expects($this->once())->method('getCurrentPage')->willReturn(1);
         $searchCriteriaMock->expects($this->once())->method('getPageSize')->willReturn(2);
 
-        $filterMock = $this->createMock(\Magento\Framework\Api\Filter::class);
+        $filterMock = $this->getMock('\Magento\Framework\Api\Filter', [], [], '', false);
 
         $this->filterBuilderMock->expects($this->once())
             ->method('setField')
@@ -185,7 +194,7 @@ class SetRepositoryTest extends \PHPUnit\Framework\TestCase
             ->willReturnSelf();
         $this->searchCriteriaBuilderMock->expects($this->once())
             ->method('create')
-            ->willReturn($this->createMock(\Magento\Framework\Api\SearchCriteriaInterface::class));
+            ->willReturn($this->getMock('\Magento\Framework\Api\SearchCriteriaInterface'));
 
         $this->attrSetRepositoryMock->expects($this->once())
             ->method('getList')
@@ -204,7 +213,7 @@ class SetRepositoryTest extends \PHPUnit\Framework\TestCase
         \PHPUnit_Framework_MockObject_MockObject $attributeSetMock,
         $setEntityTypeId
     ) {
-        $typeMock = $this->createMock(\Magento\Eav\Model\Entity\Type::class);
+        $typeMock = $this->getMock('\Magento\Eav\Model\Entity\Type', [], [], '', false);
         $typeMock->expects($this->once())->method('getId')->willReturn(4);
         $this->eavConfig->expects($this->once())
             ->method('getEntityType')

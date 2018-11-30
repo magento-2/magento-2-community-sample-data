@@ -101,7 +101,7 @@ class Vat extends \Magento\Backend\Block\Widget\Form\Renderer\Fieldset\Element
                 $vatValidateOptions .
                 ';</script>';
             $this->_validateButton = $this->getLayout()->createBlock(
-                \Magento\Backend\Block\Widget\Button::class
+                'Magento\Backend\Block\Widget\Button'
             )->setData(
                 [
                     'label' => __('Validate VAT Number'),

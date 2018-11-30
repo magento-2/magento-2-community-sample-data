@@ -6,35 +6,8 @@
  */
 namespace Magento\CheckoutAgreements\Controller\Adminhtml\Agreement;
 
-use Magento\CheckoutAgreements\Controller\Adminhtml\Agreement;
-use Magento\CheckoutAgreements\Model\AgreementFactory;
-use Magento\Backend\App\Action\Context;
-use Magento\Framework\Registry;
-use Magento\Framework\App\ObjectManager;
-use Magento\Framework\DataObject;
-use Magento\Framework\Exception\LocalizedException;
-
-class Save extends Agreement
+class Save extends \Magento\CheckoutAgreements\Controller\Adminhtml\Agreement
 {
-    /**
-     * @var AgreementFactory
-     */
-    private $agreementFactory;
-
-    /**
-     * @param Context $context
-     * @param Registry $coreRegistry
-     * @param AgreementFactory $agreementFactory
-     */
-    public function __construct(
-        Context $context,
-        Registry $coreRegistry,
-        AgreementFactory $agreementFactory = null
-    ) {
-        $this->agreementFactory = $agreementFactory ?:
-                ObjectManager::getInstance()->get(AgreementFactory::class);
-        parent::__construct($context, $coreRegistry);
-    }
     /**
      * @return void
      */
@@ -42,11 +15,11 @@ class Save extends Agreement
     {
         $postData = $this->getRequest()->getPostValue();
         if ($postData) {
-            $model = $this->agreementFactory->create();
+            $model = $this->_objectManager->get('Magento\CheckoutAgreements\Model\Agreement');
             $model->setData($postData);
 
             try {
-                $validationResult = $model->validateData(new DataObject($postData));
+                $validationResult = $model->validateData(new \Magento\Framework\DataObject($postData));
                 if ($validationResult !== true) {
                     foreach ($validationResult as $message) {
                         $this->messageManager->addError($message);
@@ -57,13 +30,13 @@ class Save extends Agreement
                     $this->_redirect('checkout/*/');
                     return;
                 }
-            } catch (LocalizedException $e) {
+            } catch (\Magento\Framework\Exception\LocalizedException $e) {
                 $this->messageManager->addError($e->getMessage());
             } catch (\Exception $e) {
                 $this->messageManager->addError(__('Something went wrong while saving this condition.'));
             }
 
-            $this->_session->setAgreementData($postData);
+            $this->_objectManager->get('Magento\Backend\Model\Session')->setAgreementData($postData);
             $this->getResponse()->setRedirect($this->_redirect->getRedirectUrl($this->getUrl('*')));
         }
     }

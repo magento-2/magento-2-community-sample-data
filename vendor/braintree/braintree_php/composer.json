@@ -6,7 +6,7 @@
     "authors": [
         {
             "name": "Braintree",
-            "homepage": "https://www.braintreepayments.com"
+            "homepage": "http://www.braintreepayments.com"
         }
     ],
     "require": {

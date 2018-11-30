@@ -8,7 +8,6 @@ namespace Magento\Tax\Api\Data;
 /**
  * Interface GrandTotalRatesInterface
  * @api
- * @since 100.0.2
  */
 interface GrandTotalRatesInterface
 {

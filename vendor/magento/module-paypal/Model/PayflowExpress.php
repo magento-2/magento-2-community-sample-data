@@ -21,7 +21,7 @@ class PayflowExpress extends \Magento\Paypal\Model\Express
     /**
      * @var string
      */
-    protected $_formBlockType = \Magento\Paypal\Block\PayflowExpress\Form::class;
+    protected $_formBlockType = 'Magento\Paypal\Block\PayflowExpress\Form';
 
     /**
      * Express Checkout payment method instance

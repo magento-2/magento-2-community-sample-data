@@ -9,8 +9,6 @@ namespace Magento\Sitemap\Model\ResourceModel\Sitemap;
  * Sitemap resource model collection
  *
  * @author      Magento Core Team <core@magentocommerce.com>
- * @api
- * @since 100.0.2
  */
 class Collection extends \Magento\Framework\Model\ResourceModel\Db\Collection\AbstractCollection
 {
@@ -21,7 +19,7 @@ class Collection extends \Magento\Framework\Model\ResourceModel\Db\Collection\Ab
      */
     public function _construct()
     {
-        $this->_init(\Magento\Sitemap\Model\Sitemap::class, \Magento\Sitemap\Model\ResourceModel\Sitemap::class);
+        $this->_init('Magento\Sitemap\Model\Sitemap', 'Magento\Sitemap\Model\ResourceModel\Sitemap');
     }
 
     /**

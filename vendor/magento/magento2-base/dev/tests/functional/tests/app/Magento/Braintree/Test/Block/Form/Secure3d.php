@@ -31,26 +31,14 @@ class Secure3d extends Form
     protected $submitButton = 'input[name="UsernamePasswordEntry"]';
 
     /**
-     * 3D Secure Authorization iFrame locator.
-     *
-     * @var string
-     */
-    private $braintree3dSecureAuthForm = '#authWindow';
-
-    /**
      * Switch to 3D Secure iFrame.
      *
-     * @param string $locator
-     * @return void
+     * @param array $locator
      */
-    public function switchToFrame(string $locator)
+    public function switchToFrame($locator)
     {
-        $this->waitForElementVisible($locator, Locator::SELECTOR_XPATH);
-        $this->browser->switchToFrame(new Locator($locator, Locator::SELECTOR_XPATH));
-        $this->waitForElementVisible($locator, Locator::SELECTOR_XPATH);
-        $this->browser->switchToFrame(new Locator($locator, Locator::SELECTOR_XPATH));
-        $this->waitForElementVisible($this->braintree3dSecureAuthForm);
-        $this->browser->switchToFrame(new Locator($this->braintree3dSecureAuthForm));
+         $this->browser->switchToFrame(new Locator($locator, Locator::SELECTOR_XPATH));
+         $this->browser->switchToFrame(new Locator($locator, Locator::SELECTOR_XPATH));
     }
 
     /**
@@ -75,10 +63,6 @@ class Secure3d extends Form
         $mapping = $this->dataMapping($fixture->getData());
         $this->switchToFrame($this->braintree3dSecure);
         $element = $this->browser->find('body');
-        $this->waitForElementVisible(
-            $mapping['secure3d_password']['selector'],
-            $mapping['secure3d_password']['strategy']
-        );
         $this->_fill([$mapping['secure3d_password']], $element);
         $this->submit();
         $this->browser->switchToFrame();

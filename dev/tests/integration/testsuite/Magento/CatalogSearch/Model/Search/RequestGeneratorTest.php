@@ -11,7 +11,7 @@ namespace Magento\CatalogSearch\Model\Search;
  * @magentoAppIsolation enabled
  * @magentoDataFixture Magento/CatalogSearch/_files/search_attributes.php
  */
-class RequestGeneratorTest extends \PHPUnit\Framework\TestCase
+class RequestGeneratorTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\CatalogSearch\Model\Search\RequestGenerator
@@ -21,7 +21,7 @@ class RequestGeneratorTest extends \PHPUnit\Framework\TestCase
     protected function setUp()
     {
         $this->model = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()
-            ->create(\Magento\CatalogSearch\Model\Search\RequestGenerator::class);
+            ->create('\Magento\CatalogSearch\Model\Search\RequestGenerator');
     }
 
     public function testGenerate()

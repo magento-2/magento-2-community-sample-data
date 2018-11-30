@@ -6,8 +6,10 @@
 
 namespace Magento\CatalogUrlRewrite\Test\Unit\Observer;
 
-use Magento\CatalogUrlRewrite\Model\ProductUrlRewriteGenerator;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
+use Magento\CatalogImportExport\Model\Import\Product as ImportProduct;
+use Magento\Store\Model\Store;
+use Magento\CatalogUrlRewrite\Model\ProductUrlRewriteGenerator;
 use Magento\UrlRewrite\Service\V1\Data\UrlRewrite;
 
 /**
@@ -16,7 +18,7 @@ use Magento\UrlRewrite\Service\V1\Data\UrlRewrite;
  * @SuppressWarnings(PHPMD.TooManyFields)
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  */
-class ProductProcessUrlRewriteSavingObserverTest extends \PHPUnit\Framework\TestCase
+class ProductProcessUrlRewriteSavingObserverTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\UrlRewrite\Model\UrlPersistInterface|\PHPUnit_Framework_MockObject_MockObject
@@ -58,23 +60,32 @@ class ProductProcessUrlRewriteSavingObserverTest extends \PHPUnit\Framework\Test
      */
     protected function setUp()
     {
-        $this->urlPersist = $this->createMock(\Magento\UrlRewrite\Model\UrlPersistInterface::class);
-        $this->product = $this->createPartialMock(\Magento\Catalog\Model\Product::class, [
+        $this->urlPersist = $this->getMock(\Magento\UrlRewrite\Model\UrlPersistInterface::class, [], [], '', false);
+        $this->product = $this->getMock(
+            \Magento\Catalog\Model\Product::class,
+            [
                 'getId',
                 'dataHasChangedFor',
                 'isVisibleInSiteVisibility',
                 'getIsChangedWebsites',
                 'getIsChangedCategories',
                 'getStoreId'
-            ]);
+            ],
+            [],
+            '',
+            false
+        );
         $this->product->expects($this->any())->method('getId')->will($this->returnValue(3));
-        $this->event = $this->createPartialMock(\Magento\Framework\Event::class, ['getProduct']);
+        $this->event = $this->getMock(\Magento\Framework\Event::class, ['getProduct'], [], '', false);
         $this->event->expects($this->any())->method('getProduct')->willReturn($this->product);
-        $this->observer = $this->createPartialMock(\Magento\Framework\Event\Observer::class, ['getEvent']);
+        $this->observer = $this->getMock(\Magento\Framework\Event\Observer::class, ['getEvent'], [], '', false);
         $this->observer->expects($this->any())->method('getEvent')->willReturn($this->event);
-        $this->productUrlRewriteGenerator = $this->createPartialMock(
+        $this->productUrlRewriteGenerator = $this->getMock(
             \Magento\CatalogUrlRewrite\Model\ProductUrlRewriteGenerator::class,
-            ['generate']
+            ['generate'],
+            [],
+            '',
+            false
         );
         $this->productUrlRewriteGenerator->expects($this->any())
             ->method('generate')
@@ -94,7 +105,7 @@ class ProductProcessUrlRewriteSavingObserverTest extends \PHPUnit\Framework\Test
      *
      * @return array
      */
-    public function urlKeyDataProvider()
+    public function testUrlKeyDataProvider()
     {
         return [
             'url changed' => [
@@ -103,6 +114,7 @@ class ProductProcessUrlRewriteSavingObserverTest extends \PHPUnit\Framework\Test
                 'isChangedWebsites'     => false,
                 'isChangedCategories'   => false,
                 'visibilityResult'      => true,
+                'expectedDeleteCount'   => 1,
                 'expectedReplaceCount'  => 1,
 
             ],
@@ -112,6 +124,7 @@ class ProductProcessUrlRewriteSavingObserverTest extends \PHPUnit\Framework\Test
                 'isChangedWebsites'     => false,
                 'isChangedCategories'   => false,
                 'visibilityResult'      => true,
+                'expectedDeleteCount'   => 0,
                 'expectedReplaceCount'  => 0
             ],
             'visibility changed' => [
@@ -120,6 +133,7 @@ class ProductProcessUrlRewriteSavingObserverTest extends \PHPUnit\Framework\Test
                 'isChangedWebsites'     => false,
                 'isChangedCategories'   => false,
                 'visibilityResult'      => true,
+                'expectedDeleteCount'   => 1,
                 'expectedReplaceCount'  => 1
             ],
             'websites changed' => [
@@ -128,6 +142,7 @@ class ProductProcessUrlRewriteSavingObserverTest extends \PHPUnit\Framework\Test
                 'isChangedWebsites'     => true,
                 'isChangedCategories'   => false,
                 'visibilityResult'      => true,
+                'expectedDeleteCount'   => 1,
                 'expectedReplaceCount'  => 1
             ],
             'categories changed' => [
@@ -136,6 +151,7 @@ class ProductProcessUrlRewriteSavingObserverTest extends \PHPUnit\Framework\Test
                 'isChangedWebsites'     => false,
                 'isChangedCategories'   => true,
                 'visibilityResult'      => true,
+                'expectedDeleteCount'   => 1,
                 'expectedReplaceCount'  => 1
             ],
             'url changed invisible' => [
@@ -144,6 +160,7 @@ class ProductProcessUrlRewriteSavingObserverTest extends \PHPUnit\Framework\Test
                 'isChangedWebsites'     => false,
                 'isChangedCategories'   => false,
                 'visibilityResult'      => false,
+                'expectedDeleteCount'   => 1,
                 'expectedReplaceCount'  => 0
             ],
         ];
@@ -155,9 +172,10 @@ class ProductProcessUrlRewriteSavingObserverTest extends \PHPUnit\Framework\Test
      * @param bool $isChangedWebsites
      * @param bool $isChangedCategories
      * @param bool $visibilityResult
+     * @param int $expectedDeleteCount
      * @param int $expectedReplaceCount
      *
-     * @dataProvider urlKeyDataProvider
+     * @dataProvider testUrlKeyDataProvider
      */
     public function testExecuteUrlKey(
         $isChangedUrlKey,
@@ -165,6 +183,7 @@ class ProductProcessUrlRewriteSavingObserverTest extends \PHPUnit\Framework\Test
         $isChangedWebsites,
         $isChangedCategories,
         $visibilityResult,
+        $expectedDeleteCount,
         $expectedReplaceCount
     ) {
         $this->product->expects($this->any())->method('getStoreId')->will($this->returnValue(12));
@@ -185,6 +204,13 @@ class ProductProcessUrlRewriteSavingObserverTest extends \PHPUnit\Framework\Test
         $this->product->expects($this->any())
             ->method('getIsChangedCategories')
             ->will($this->returnValue($isChangedCategories));
+
+        $this->urlPersist->expects($this->exactly($expectedDeleteCount))->method('deleteByData')->with([
+            UrlRewrite::ENTITY_ID => $this->product->getId(),
+            UrlRewrite::ENTITY_TYPE => ProductUrlRewriteGenerator::ENTITY_TYPE,
+            UrlRewrite::REDIRECT_TYPE => 0,
+            UrlRewrite::STORE_ID => $this->product->getStoreId()
+        ]);
 
         $this->product->expects($this->any())
             ->method('isVisibleInSiteVisibility')

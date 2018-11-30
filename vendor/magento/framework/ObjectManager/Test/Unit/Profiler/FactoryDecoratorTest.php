@@ -6,22 +6,22 @@
 
 namespace Magento\Framework\ObjectManager\Test\Unit\Profiler;
 
-class FactoryDecoratorTest extends \PHPUnit\Framework\TestCase
+class FactoryDecoratorTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * Name of the base class to wrap in logger
      */
-    const CLASS_NAME = \Magento\Test\Di\WrappedClass::class;
+    const CLASS_NAME = 'Magento\Test\Di\WrappedClass';
 
     /**
      * Name of the wrapper class that does logging
      */
-    const LOGGER_NAME = \Magento\Test\Di\WrappedClass\Logger::class;
+    const LOGGER_NAME = 'Magento\Test\Di\WrappedClass\Logger';
 
     /**
      * Name of the class that generates wrappers - should not be wrapped by logger
      */
-    const GENERATOR_NAME = \Magento\Framework\ObjectManager\Profiler\Code\Generator\Logger::class;
+    const GENERATOR_NAME = 'Magento\Framework\ObjectManager\Profiler\Code\Generator\Logger';
 
     /** @var  \PHPUnit_Framework_MockObject_MockObject | \Magento\Framework\ObjectManager\FactoryInterface*/
     private $objectManagerMock;
@@ -34,13 +34,13 @@ class FactoryDecoratorTest extends \PHPUnit\Framework\TestCase
         require_once __DIR__ . '/../_files/logger_classes.php';
         $objectManager = new \Magento\Framework\TestFramework\Unit\Helper\ObjectManager($this);
 
-        $this->objectManagerMock = $this->getMockBuilder(\Magento\Framework\ObjectManager\FactoryInterface::class)
+        $this->objectManagerMock = $this->getMockBuilder('Magento\Framework\ObjectManager\FactoryInterface')
             ->disableOriginalConstructor()
             ->getMock();
 
         // Instantiate SUT
         $this->model = $objectManager->getObject(
-            \Magento\Framework\ObjectManager\Profiler\FactoryDecorator::class,
+            'Magento\Framework\ObjectManager\Profiler\FactoryDecorator',
             ['subject' => $this->objectManagerMock]
         );
     }

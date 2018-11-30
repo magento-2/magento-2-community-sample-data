@@ -167,12 +167,7 @@ abstract class Conditions extends Curl
         $condition = $this->parseCondition($condition);
         extract($condition);
 
-        if (isset($param)) {
-            $typeParam = $this->getTypeParam($param);
-            $typeParam['attribute'] = $type;
-        } else {
-            $typeParam = $this->getTypeParam($type);
-        }
+        $typeParam = $this->getTypeParam($type);
         if (empty($typeParam)) {
             throw new \Exception("Can't find type param \"{$type}\".");
         }
@@ -263,18 +258,10 @@ abstract class Conditions extends Curl
         foreach ($match[1] as $key => $value) {
             $match[1][$key] = rtrim($value, '|');
         }
-        $param = $match[1][0];
-        $type = array_shift($match[1]);
-        if (count($match[1]) == 3) {
-            $type = array_shift($match[1]);
-        } else {
-            $param = null;
-        }
 
         return [
-            'type' => $type,
+            'type' => array_shift($match[1]),
             'rules' => array_values($match[1]),
-            'param' => $param
         ];
     }
 }

@@ -8,7 +8,7 @@ namespace Magento\Framework\Api\ExtensionAttribute\Config;
 /**
  * Tests for \Magento\Framework\Api\ExtensionAttribute\Config\Reader
  */
-class ReaderTest extends \PHPUnit\Framework\TestCase
+class ReaderTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\Framework\Api\ExtensionAttribute\Config\Reader
@@ -48,7 +48,7 @@ class ReaderTest extends \PHPUnit\Framework\TestCase
             file_get_contents($fixturePath . 'config_two.xml'),
         ];
 
-        $this->_fileResolverMock = $this->getMockBuilder(\Magento\Framework\App\Arguments\FileResolver\Primary::class)
+        $this->_fileResolverMock = $this->getMockBuilder('Magento\Framework\App\Arguments\FileResolver\Primary')
             ->disableOriginalConstructor()
             ->setMethods(['get'])
             ->getMock();
@@ -76,15 +76,15 @@ class ReaderTest extends \PHPUnit\Framework\TestCase
         );
 
         $expectedArray = [
-            \Magento\Tax\Api\Data\TaxRateInterface::class => [],
-            \Magento\Catalog\Api\Data\Product::class => [
+            'Magento\Tax\Api\Data\TaxRateInterface' => [],
+            'Magento\Catalog\Api\Data\Product' => [
                 'stock_item' => [
                     "type" => "Magento\CatalogInventory\Api\Data\StockItem",
                     "resourceRefs" => [],
                     "join" => null,
                 ],
             ],
-            \Magento\Customer\Api\Data\CustomerInterface::class => [
+            'Magento\Customer\Api\Data\CustomerInterface' => [
                 'custom_1' => [
                     "type" => "Magento\Customer\Api\Data\CustomerCustom",
                     "resourceRefs" => [],

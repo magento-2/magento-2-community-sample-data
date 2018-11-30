@@ -33,7 +33,7 @@ class Source
     /**
      * @var \Magento\Framework\Filesystem\Directory\WriteInterface
      */
-    protected $tmpDir;
+    protected $varDir;
 
     /**
      * @var \Magento\Framework\View\Asset\PreProcessor\Pool
@@ -47,7 +47,7 @@ class Source
 
     /**
      * @var \Magento\Framework\View\Design\Theme\ListInterface
-     * @deprecated 100.1.1
+     * @deprecated
      */
     private $themeList;
 
@@ -87,7 +87,7 @@ class Source
         $this->filesystem = $filesystem;
         $this->readFactory = $readFactory;
         $this->rootDir = $filesystem->getDirectoryRead(DirectoryList::ROOT);
-        $this->tmpDir = $filesystem->getDirectoryWrite(DirectoryList::TMP_MATERIALIZATION_DIR);
+        $this->varDir = $filesystem->getDirectoryWrite(DirectoryList::VAR_DIR);
         $this->preProcessorPool = $preProcessorPool;
         $this->fallback = $fallback;
         $this->themeList = $themeList;
@@ -152,26 +152,16 @@ class Source
         $this->preProcessorPool->process($chain);
         $chain->assertValid();
         if ($chain->isChanged()) {
-            $dir = $this->tmpDir->getAbsolutePath();
-            $path = $chain->getTargetAssetPath();
-            $this->tmpDir->writeFile($path, $chain->getContent());
+            $dir = $this->varDir->getAbsolutePath();
+            $path = DirectoryList::TMP_MATERIALIZATION_DIR . '/source/' . $chain->getTargetAssetPath();
+            $this->varDir->writeFile($path, $chain->getContent());
         }
         if (empty($path)) {
             $result = false;
         } else {
-            $result = [$dir, $path, $chain->getContentType()];
+            $result = [$dir, $path];
         }
         return $result;
-    }
-
-    /**
-     * @param LocalInterface $asset
-     * @return string
-     */
-    public function getSourceContentType(LocalInterface $asset)
-    {
-        list(,,$type) = $this->preProcess($asset);
-        return $type;
     }
 
     /**
@@ -241,6 +231,7 @@ class Source
 
     /**
      * @return ThemeProviderInterface
+     * @deprecated
      */
     private function getThemeProvider()
     {
@@ -269,8 +260,7 @@ class Source
      * @param \Magento\Framework\View\Asset\LocalInterface $asset
      *
      * @return bool|string
-     * @deprecated 100.1.0 If custom vendor directory is outside Magento root,
-     * then this method will return unexpected result.
+     * @deprecated If custom vendor directory is outside Magento root, then this method will return unexpected result
      */
     public function findRelativeSourceFilePath(LocalInterface $asset)
     {

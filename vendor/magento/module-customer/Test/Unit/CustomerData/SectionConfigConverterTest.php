@@ -8,7 +8,7 @@ namespace Magento\Customer\Test\Unit\CustomerData;
 
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager as ObjectManagerHelper;
 
-class SectionConfigConverterTest extends \PHPUnit\Framework\TestCase
+class SectionConfigConverterTest extends \PHPUnit_Framework_TestCase
 {
     /** @var \Magento\Customer\CustomerData\SectionConfigConverter */
     protected $converter;
@@ -24,7 +24,7 @@ class SectionConfigConverterTest extends \PHPUnit\Framework\TestCase
         $this->source = new \DOMDocument();
         $this->objectManagerHelper = new ObjectManagerHelper($this);
         $this->converter = $this->objectManagerHelper->getObject(
-            \Magento\Customer\CustomerData\SectionConfigConverter::class
+            'Magento\Customer\CustomerData\SectionConfigConverter'
         );
     }
 

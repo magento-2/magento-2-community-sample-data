@@ -38,7 +38,8 @@ class AdminUser
         \Magento\Framework\DataObject $object
     ) {
         $isActive = $object->getIsActive();
-        if (isset($isActive) && $isActive == 0) {
+        $isNew = $object->isObjectNew();
+        if (isset($isActive) && $isActive == 0 && !$isNew) {
             $this->adminTokenService->revokeAdminAccessToken($object->getId());
         }
         return $subject;

@@ -5,10 +5,6 @@
  */
 namespace Magento\Framework\Search\Adapter\Preprocessor;
 
-/**
- * Interface \Magento\Framework\Search\Adapter\Preprocessor\PreprocessorInterface
- *
- */
 interface PreprocessorInterface
 {
     /**

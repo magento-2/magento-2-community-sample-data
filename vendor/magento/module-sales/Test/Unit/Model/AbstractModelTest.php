@@ -8,7 +8,7 @@ namespace Magento\Sales\Test\Unit\Model;
 /**
  * Class AbstractModelTest
  */
-class AbstractModelTest extends \PHPUnit\Framework\TestCase
+class AbstractModelTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\Sales\Model\Order
@@ -18,7 +18,7 @@ class AbstractModelTest extends \PHPUnit\Framework\TestCase
     protected function setUp()
     {
         $objectManager = new \Magento\Framework\TestFramework\Unit\Helper\ObjectManager($this);
-        $this->model = $objectManager->getObject(\Magento\Sales\Model\Order::class);
+        $this->model = $objectManager->getObject('Magento\Sales\Model\Order');
     }
 
     public function testGetEventPrefix()

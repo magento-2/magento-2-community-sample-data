@@ -7,6 +7,7 @@
 namespace Magento\Framework\EntityManager\Operation;
 
 use Magento\Framework\ObjectManagerInterface;
+use Magento\Framework\EntityManager\Operation\ExtensionInterface;
 
 /**
  * Class ExtensionPool

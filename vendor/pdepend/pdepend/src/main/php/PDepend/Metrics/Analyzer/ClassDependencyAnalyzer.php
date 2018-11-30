@@ -45,6 +45,7 @@ namespace PDepend\Metrics\Analyzer;
 use PDepend\Metrics\AbstractAnalyzer;
 use PDepend\Source\AST\AbstractASTArtifact;
 use PDepend\Source\AST\AbstractASTClassOrInterface;
+use PDepend\Source\AST\ASTArtifactList;
 use PDepend\Source\AST\ASTClass;
 use PDepend\Source\AST\ASTInterface;
 use PDepend\Source\AST\ASTMethod;
@@ -91,6 +92,26 @@ class ClassDependencyAnalyzer extends AbstractAnalyzer
     private $efferentNodes = array();
 
     private $afferentNodes = array();
+
+    /**
+     * All collected cycles for the input code.
+     *
+     * <code>
+     * array(
+     *     <type-id> => array(
+     *         \PDepend\Source\AST\AbstractASTClassOrInterface {},
+     *         \PDepend\Source\AST\AbstractASTClassOrInterface {},
+     *     ),
+     *     <type-id> => array(
+     *         \PDepend\Source\AST\AbstractASTClassOrInterface {},
+     *         \PDepend\Source\AST\AbstractASTClassOrInterface {},
+     *     ),
+     * )
+     * </code>
+     *
+     * @var array(string=>array)
+     */
+    private $collectedCycles = array();
 
     /**
      * Processes all {@link \PDepend\Source\AST\ASTNamespace} code nodes.
@@ -306,7 +327,7 @@ class ClassDependencyAnalyzer extends AbstractAnalyzer
      * that are part of the cylce are stored in the given <b>$list</b> array.
      *
      * @param  \PDepend\Source\AST\AbstractASTArtifact[] &$list
-     * @param  \PDepend\Source\AST\AbstractASTArtifact $node
+     * @param  \PDepend\Source\AST\AbstractASTArtifact   $namespace
      * @return boolean If this method detects a cycle the return value is <b>true</b>
      *                 otherwise this method will return <b>false</b>.
      */

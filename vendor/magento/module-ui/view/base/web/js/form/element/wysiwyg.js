@@ -3,9 +3,6 @@
  * See COPYING.txt for license details.
  */
 
-/**
- * @api
- */
 define([
     'Magento_Ui/js/lib/view/utils/async',
     'underscore',
@@ -19,7 +16,6 @@ define([
         defaults: {
             elementSelector: 'textarea',
             value: '',
-            $wysiwygEditorButton: '',
             links: {
                 value: '${ $.provider }:${ $.dataScope }'
             },
@@ -27,10 +23,7 @@ define([
             elementTmpl: 'ui/form/element/wysiwyg',
             content:        '',
             showSpinner:    false,
-            loading:        false,
-            listens: {
-                disabled: 'setDisabled'
-            }
+            loading:        false
         },
 
         /**
@@ -40,14 +33,6 @@ define([
         initialize: function () {
             this._super()
                 .initNodeListener();
-
-            $.async({
-                component: this,
-                selector: 'button'
-            }, function (element) {
-                this.$wysiwygEditorButton = this.$wysiwygEditorButton ?
-                    this.$wysiwygEditorButton.add($(element)) : $(element);
-            }.bind(this));
 
             return this;
         },
@@ -84,26 +69,6 @@ define([
             $(node).bindings({
                 value: this.value
             });
-        },
-
-        /**
-         * Set disabled property to wysiwyg component
-         *
-         * @param {Boolean} status
-         */
-        setDisabled: function (status) {
-            this.$wysiwygEditorButton.attr('disabled', status);
-
-            /* eslint-disable no-undef */
-            if (tinyMCE && tinyMCE.activeEditor) {
-                _.each(tinyMCE.activeEditor.controlManager.controls, function (property, index, controls) {
-                    controls[property.id].setDisabled(status);
-                });
-
-                tinyMCE.activeEditor.getBody().setAttribute('contenteditable', !status);
-            }
-
-            /* eslint-enable  no-undef*/
         }
     });
 });

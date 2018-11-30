@@ -17,7 +17,7 @@ class ExistingValidate extends \Zend_Validate
      * @param string $value File's full path.
      * @param string|null $originalName Original file's name (when uploaded).
      */
-    public function isValid($value, string $originalName = null)
+    public function isValid($value, $originalName = null)
     {
         $this->_messages = [];
         $this->_errors = [];

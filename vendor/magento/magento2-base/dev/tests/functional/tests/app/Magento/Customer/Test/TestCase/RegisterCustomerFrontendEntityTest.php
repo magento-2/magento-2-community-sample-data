@@ -20,13 +20,14 @@ use Magento\Mtf\TestCase\Injectable;
  * 4. Click 'Create account' button.
  * 5. Perform assertions.
  *
- * @group Customer_Account
+ * @group Customer_Account_(CS)
  * @ZephyrId MAGETWO-23546
  */
 class RegisterCustomerFrontendEntityTest extends Injectable
 {
     /* tags */
     const MVP = 'yes';
+    const DOMAIN = 'CS';
     const TEST_TYPE = 'acceptance_test, extended_acceptance_test';
     /* end tags */
 
@@ -57,6 +58,7 @@ class RegisterCustomerFrontendEntityTest extends Injectable
      * @param CustomerAccountCreate $customerAccountCreate
      * @param CmsIndex $cmsIndex
      * @param LogoutCustomerOnFrontendStep $logoutCustomerOnFrontendStep
+     * @return void
      */
     public function __inject(
         CustomerAccountCreate $customerAccountCreate,
@@ -76,10 +78,9 @@ class RegisterCustomerFrontendEntityTest extends Injectable
      */
     public function test(Customer $customer)
     {
-        $this->logoutCustomerOnFrontendStep->run();
         // Steps
         $this->cmsIndex->open();
-        $this->cmsIndex->getLinksBlock()->openCustomerCreateLink();
+        $this->cmsIndex->getLinksBlock()->openLink('Create an Account');
         $this->customerAccountCreate->getRegisterForm()->registerCustomer($customer);
     }
 

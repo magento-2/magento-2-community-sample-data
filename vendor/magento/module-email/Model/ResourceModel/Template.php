@@ -10,8 +10,7 @@ use Magento\Framework\Model\AbstractModel;
 /**
  * Template db resource
  *
- * @api
- * @since 100.0.2
+ * @author      Magento Core Team <core@magentocommerce.com>
  */
 class Template extends \Magento\Framework\Model\ResourceModel\Db\AbstractDb
 {

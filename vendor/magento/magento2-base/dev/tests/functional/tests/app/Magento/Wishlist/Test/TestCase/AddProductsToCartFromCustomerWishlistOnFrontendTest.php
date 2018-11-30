@@ -21,14 +21,14 @@ use Magento\Customer\Test\Fixture\Customer;
  * 3. Click "Add to Cart"
  * 4. Perform asserts
  *
- * @group Wishlist
+ * @group Wishlist_(CS)
  * @ZephyrId MAGETWO-25268
  */
 class AddProductsToCartFromCustomerWishlistOnFrontendTest extends AbstractWishlistTest
 {
     /* tags */
     const MVP = 'no';
-    const STABLE = 'no';
+    const DOMAIN = 'CS';
     /* end tags */
 
     /**
@@ -37,19 +37,18 @@ class AddProductsToCartFromCustomerWishlistOnFrontendTest extends AbstractWishli
      * @param Customer $customer
      * @param string $products
      * @param int $qty
-     * @param bool $toUpdate
      * @return array
      */
-    public function test(Customer $customer, $products, $qty, $toUpdate = true, $toConfigure = false)
+    public function test(Customer $customer, $products, $qty)
     {
         // Preconditions
         $customer->persist();
         $this->loginCustomer($customer);
         $products = $this->createProducts($products);
-        $this->addToWishlist($products, $toConfigure);
+        $this->addToWishlist($products);
 
         // Steps
-        $this->addToCart($products, $qty, $toUpdate);
+        $this->addToCart($products, $qty);
 
         // Prepare data for asserts
         $cart = $this->createCart($products);
@@ -62,10 +61,9 @@ class AddProductsToCartFromCustomerWishlistOnFrontendTest extends AbstractWishli
      *
      * @param array $products
      * @param int $qty
-     * @param bool $toUpdate
      * @return void
      */
-    protected function addToCart(array $products, $qty, $toUpdate)
+    protected function addToCart(array $products, $qty)
     {
         $productBlock = $this->wishlistIndex->getWishlistBlock()->getProductItemsBlock();
         foreach ($products as $product) {
@@ -73,9 +71,7 @@ class AddProductsToCartFromCustomerWishlistOnFrontendTest extends AbstractWishli
             $this->cmsIndex->getCmsPageBlock()->waitPageInit();
             if ($qty != '-') {
                 $productBlock->getItemProduct($product)->fillProduct(['qty' => $qty]);
-                if ($toUpdate) {
-                    $this->wishlistIndex->getWishlistBlock()->clickUpdateWishlist();
-                }
+                $this->wishlistIndex->getWishlistBlock()->clickUpdateWishlist();
             }
             $productBlock->getItemProduct($product)->clickAddToCart();
             $this->cmsIndex->getCmsPageBlock()->waitPageInit();

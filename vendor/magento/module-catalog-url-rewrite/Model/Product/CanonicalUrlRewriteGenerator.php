@@ -13,14 +13,10 @@ use Magento\UrlRewrite\Service\V1\Data\UrlRewriteFactory;
 
 class CanonicalUrlRewriteGenerator
 {
-    /**
-     * @var \Magento\CatalogUrlRewrite\Model\ProductUrlPathGenerator
-     */
+    /** @var ProductUrlPathGenerator */
     protected $productUrlPathGenerator;
 
-    /**
-     * @var \Magento\UrlRewrite\Service\V1\Data\UrlRewriteFactory
-     */
+    /** @var UrlRewriteFactory */
     protected $urlRewriteFactory;
 
     /**
@@ -34,7 +30,7 @@ class CanonicalUrlRewriteGenerator
     }
 
     /**
-     * Generate product rewrites without categories
+     * Generate product rewrites without categories.
      *
      * @param int $storeId
      * @param Product $product

@@ -13,7 +13,7 @@ use Magento\Framework\View\Element\UiComponent\DataProvider\DataProviderInterfac
 /**
  * Class PagingTest
  */
-class PagingTest extends \PHPUnit\Framework\TestCase
+class PagingTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var ContextInterface|\PHPUnit_Framework_MockObject_MockObject
@@ -33,7 +33,7 @@ class PagingTest extends \PHPUnit\Framework\TestCase
         $this->objectManager = new ObjectManager($this);
 
         $this->contextMock = $this->getMockForAbstractClass(
-            \Magento\Framework\View\Element\UiComponent\ContextInterface::class,
+            'Magento\Framework\View\Element\UiComponent\ContextInterface',
             [],
             '',
             false,
@@ -41,6 +41,10 @@ class PagingTest extends \PHPUnit\Framework\TestCase
             true,
             []
         );
+        $processor = $this->getMockBuilder('Magento\Framework\View\Element\UiComponent\Processor')
+            ->disableOriginalConstructor()
+            ->getMock();
+        $this->contextMock->expects($this->any())->method('getProcessor')->willReturn($processor);
     }
 
     /**
@@ -50,10 +54,9 @@ class PagingTest extends \PHPUnit\Framework\TestCase
      */
     public function testGetComponentName()
     {
-        $this->contextMock->expects($this->never())->method('getProcessor');
         /** @var Paging $listing */
         $paging = $this->objectManager->getObject(
-            \Magento\Ui\Component\Paging::class,
+            'Magento\Ui\Component\Paging',
             [
                 'context' => $this->contextMock,
                 'data' => []
@@ -70,10 +73,6 @@ class PagingTest extends \PHPUnit\Framework\TestCase
      */
     public function testPrepare()
     {
-        $processor = $this->getMockBuilder(\Magento\Framework\View\Element\UiComponent\Processor::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $this->contextMock->expects($this->atLeastOnce())->method('getProcessor')->willReturn($processor);
         $resultData = [
             'js_config' => [
                 'extends' => 'test_config_extends',
@@ -117,7 +116,7 @@ class PagingTest extends \PHPUnit\Framework\TestCase
 
         /** @var Paging $paging */
         $paging = $this->objectManager->getObject(
-            \Magento\Ui\Component\Paging::class,
+            'Magento\Ui\Component\Paging',
             [
                 'context' => $this->contextMock,
                 'data' => [
@@ -143,7 +142,12 @@ class PagingTest extends \PHPUnit\Framework\TestCase
             ]
         );
         /** @var DataProviderInterface|\PHPUnit_Framework_MockObject_MockObject $dataProviderMock */
-        $dataProviderMock = $this->getMockBuilder(DataProviderInterface::class)->getMockForAbstractClass();
+        $dataProviderMock = $this->getMockForAbstractClass(
+            'Magento\Framework\View\Element\UiComponent\DataProvider\DataProviderInterface',
+            [],
+            '',
+            false
+        );
 
         $this->contextMock->expects($this->once())
             ->method('getRequestParam')

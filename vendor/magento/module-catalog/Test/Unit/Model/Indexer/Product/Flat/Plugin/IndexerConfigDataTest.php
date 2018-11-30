@@ -5,47 +5,35 @@
  */
 namespace Magento\Catalog\Test\Unit\Model\Indexer\Product\Flat\Plugin;
 
-use Magento\Catalog\Model\Indexer\Product\Flat\Plugin\IndexerConfigData as IndexerConfigDataPlugin;
-use Magento\Framework\TestFramework\Unit\Helper\ObjectManager as ObjectManagerHelper;
-use Magento\Catalog\Model\Indexer\Product\Flat\State as ProductFlatIndexerState;
-use Magento\Indexer\Model\Config\Data as ConfigData;
-
-class IndexerConfigDataTest extends \PHPUnit\Framework\TestCase
+class IndexerConfigDataTest extends \PHPUnit_Framework_TestCase
 {
     /**
-     * @var IndexerConfigDataPlugin
+     * @var \Magento\Catalog\Model\Indexer\Product\Flat\Plugin\IndexerConfigData
      */
-    private $plugin;
+    protected $model;
 
     /**
-     * @var ObjectManagerHelper
+     * @var \Magento\Catalog\Model\Indexer\Product\Flat\State|\PHPUnit_Framework_MockObject_MockObject
      */
-    private $objectManagerHelper;
+    protected $_stateMock;
 
     /**
-     * @var ProductFlatIndexerState|\PHPUnit_Framework_MockObject_MockObject
+     * @var \PHPUnit_Framework_MockObject_MockObject
      */
-    private $indexerStateMock;
-
-    /**
-     * @var ConfigData|\PHPUnit_Framework_MockObject_MockObject
-     */
-    private $subjectMock;
+    protected $subjectMock;
 
     protected function setUp()
     {
-        $this->indexerStateMock = $this->getMockBuilder(ProductFlatIndexerState::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $this->subjectMock = $this->getMockBuilder(ConfigData::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-
-        $this->objectManagerHelper = new ObjectManagerHelper($this);
-        $this->plugin = $this->objectManagerHelper->getObject(
-            IndexerConfigDataPlugin::class,
-            ['state' => $this->indexerStateMock]
+        $this->_stateMock = $this->getMock(
+            'Magento\Catalog\Model\Indexer\Product\Flat\State',
+            ['isFlatEnabled'],
+            [],
+            '',
+            false
         );
+        $this->subjectMock = $this->getMock('Magento\Indexer\Model\Config\Data', [], [], '', false);
+
+        $this->model = new \Magento\Catalog\Model\Indexer\Product\Flat\Plugin\IndexerConfigData($this->_stateMock);
     }
 
     /**
@@ -54,36 +42,35 @@ class IndexerConfigDataTest extends \PHPUnit\Framework\TestCase
      * @param mixed $default
      * @param array $inputData
      * @param array $outputData
-     *
-     * @dataProvider afterGetDataProvider
+     * @dataProvider aroundGetDataProvider
      */
-    public function testAfterGet($isFlat, $path, $default, $inputData, $outputData)
+    public function testAroundGet($isFlat, $path, $default, $inputData, $outputData)
     {
-        $this->indexerStateMock->expects(static::once())
-            ->method('isFlatEnabled')
-            ->willReturn($isFlat);
+        $closureMock = function () use ($inputData) {
+            return $inputData;
+        };
+        $this->_stateMock->expects($this->once())->method('isFlatEnabled')->will($this->returnValue($isFlat));
 
-        $this->assertEquals($outputData, $this->plugin->afterGet($this->subjectMock, $inputData, $path, $default));
+        $this->assertEquals($outputData, $this->model->aroundGet($this->subjectMock, $closureMock, $path, $default));
     }
 
     /**
      * @return array
      */
-    public function afterGetDataProvider()
+    public function aroundGetDataProvider()
     {
         $flatIndexerData = [
             'indexer_id' => 'catalog_product_flat',
             'action' => '\Action\Class',
             'title' => 'Title',
-            'description' => 'Description'
+            'description' => 'Description',
         ];
         $otherIndexerData = [
             'indexer_id' => 'other_indexer',
             'action' => '\Action\Class',
             'title' => 'Title',
-            'description' => 'Description'
+            'description' => 'Description',
         ];
-
         return [
             // flat is enabled, nothing is being changed
             [

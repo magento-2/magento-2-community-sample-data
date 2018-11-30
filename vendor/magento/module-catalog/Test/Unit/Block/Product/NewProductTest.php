@@ -5,7 +5,7 @@
  */
 namespace Magento\Catalog\Test\Unit\Block\Product;
 
-class NewProductTest extends \PHPUnit\Framework\TestCase
+class NewProductTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\Catalog\Block\Product\ListProduct
@@ -15,7 +15,7 @@ class NewProductTest extends \PHPUnit\Framework\TestCase
     protected function setUp()
     {
         $objectManager = new \Magento\Framework\TestFramework\Unit\Helper\ObjectManager($this);
-        $this->block = $objectManager->getObject(\Magento\Catalog\Block\Product\NewProduct::class);
+        $this->block = $objectManager->getObject('Magento\Catalog\Block\Product\NewProduct');
     }
 
     protected function tearDown()

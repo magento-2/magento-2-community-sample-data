@@ -5,7 +5,7 @@
  */
 namespace Magento\Config\Test\Unit\Model\Config;
 
-class SchemaLocatorTest extends \PHPUnit\Framework\TestCase
+class SchemaLocatorTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \PHPUnit_Framework_MockObject_MockObject
@@ -19,7 +19,7 @@ class SchemaLocatorTest extends \PHPUnit\Framework\TestCase
 
     protected function setUp()
     {
-        $this->_moduleReaderMock = $this->createMock(\Magento\Framework\Module\Dir\Reader::class);
+        $this->_moduleReaderMock = $this->getMock('Magento\Framework\Module\Dir\Reader', [], [], '', false);
 
         $this->_moduleReaderMock->expects(
             $this->any()

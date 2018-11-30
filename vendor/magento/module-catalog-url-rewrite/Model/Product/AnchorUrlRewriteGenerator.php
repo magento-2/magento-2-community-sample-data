@@ -16,19 +16,13 @@ use Magento\UrlRewrite\Service\V1\Data\UrlRewriteFactory;
 
 class AnchorUrlRewriteGenerator
 {
-    /**
-     * @var \Magento\CatalogUrlRewrite\Model\ProductUrlPathGenerator
-     */
+    /** @var ProductUrlPathGenerator */
     protected $urlPathGenerator;
 
-    /**
-     * @var \Magento\UrlRewrite\Service\V1\Data\UrlRewriteFactory
-     */
+    /** @var UrlRewriteFactory */
     protected $urlRewriteFactory;
 
-    /**
-     * @var \Magento\Catalog\Api\CategoryRepositoryInterface
-     */
+    /** @var CategoryRepositoryInterface */
     private $categoryRepository;
 
     /**
@@ -47,7 +41,7 @@ class AnchorUrlRewriteGenerator
     }
 
     /**
-     * Generate product rewrites for anchor categories
+     * Generate product rewrites for anchor categories.
      *
      * @param int $storeId
      * @param Product $product

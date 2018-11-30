@@ -9,7 +9,6 @@ namespace Magento\Bundle\Api;
 /**
  * Interface ProductOptionRepositoryInterface
  * @api
- * @since 100.0.2
  */
 interface ProductOptionRepositoryInterface
 {

@@ -10,10 +10,7 @@ use Magento\Catalog\Api\Data\ProductInterface;
 /**
  * Catalog Product Indexer Abstract Resource Model
  *
- * @api
- *
  * @author      Magento Core Team <core@magentocommerce.com>
- * @since 100.0.2
  */
 abstract class AbstractIndexer extends \Magento\Indexer\Model\ResourceModel\AbstractResource
 {
@@ -26,7 +23,6 @@ abstract class AbstractIndexer extends \Magento\Indexer\Model\ResourceModel\Abst
 
     /**
      * @var \Magento\Framework\EntityManager\MetadataPool
-     * @since 101.0.0
      */
     protected $metadataPool;
 
@@ -198,7 +194,7 @@ abstract class AbstractIndexer extends \Magento\Indexer\Model\ResourceModel\Abst
             $childIds
         );
 
-        return array_map('intval', (array) $connection->fetchCol($select));
+        return $connection->fetchCol($select);
     }
 
     /**
@@ -230,18 +226,17 @@ abstract class AbstractIndexer extends \Magento\Indexer\Model\ResourceModel\Abst
             $result = $connection->fetchCol($select);
         }
 
-        return array_map('intval', $result);
+        return $result;
     }
 
     /**
      * @return \Magento\Framework\EntityManager\MetadataPool
-     * @since 101.0.0
      */
     protected function getMetadataPool()
     {
         if (null === $this->metadataPool) {
             $this->metadataPool = \Magento\Framework\App\ObjectManager::getInstance()
-                ->get(\Magento\Framework\EntityManager\MetadataPool::class);
+                ->get('Magento\Framework\EntityManager\MetadataPool');
         }
         return $this->metadataPool;
     }

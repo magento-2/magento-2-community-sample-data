@@ -12,6 +12,7 @@
 namespace Magento\Framework\Data\Form\Element;
 
 use Magento\Framework\Escaper;
+use Magento\Framework\Stdlib\DateTime;
 use Magento\Framework\Stdlib\DateTime\TimezoneInterface;
 
 class Date extends AbstractElement

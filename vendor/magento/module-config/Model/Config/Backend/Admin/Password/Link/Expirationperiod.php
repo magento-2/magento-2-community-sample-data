@@ -11,10 +11,6 @@
  */
 namespace Magento\Config\Model\Config\Backend\Admin\Password\Link;
 
-/**
- * @api
- * @since 100.0.2
- */
 class Expirationperiod extends \Magento\Framework\App\Config\Value
 {
     /**

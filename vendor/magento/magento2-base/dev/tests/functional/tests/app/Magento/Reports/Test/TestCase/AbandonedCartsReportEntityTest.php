@@ -27,14 +27,14 @@ use Magento\Catalog\Test\Page\Product\CatalogProductView;
  * 3. Click "Reset Filter".
  * 4. Perform all assertions.
  *
- * @group Reports
+ * @group Reports_(MX)
  * @ZephyrId MAGETWO-28558
  */
 class AbandonedCartsReportEntityTest extends Injectable
 {
     /* tags */
     const MVP = 'no';
-    const STABLE = 'yes';
+    const DOMAIN = 'MX';
     /* end tags */
 
     /**
@@ -89,12 +89,12 @@ class AbandonedCartsReportEntityTest extends Injectable
         $products = $this->createProducts($products);
         $customer->persist();
         $this->objectManager->create(
-            \Magento\Customer\Test\TestStep\LoginCustomerOnFrontendStep::class,
+            'Magento\Customer\Test\TestStep\LoginCustomerOnFrontendStep',
             ['customer' => $customer]
         )->run();
         $this->addProductsToCart($products);
         $this->objectManager->create(
-            \Magento\Customer\Test\TestStep\LogoutCustomerOnFrontendStep::class,
+            'Magento\Customer\Test\TestStep\LogoutCustomerOnFrontendStep',
             ['customer' => $customer]
         )->run();
 
@@ -110,7 +110,7 @@ class AbandonedCartsReportEntityTest extends Injectable
     protected function createProducts($products)
     {
         $createProductsStep = $this->objectManager->create(
-            \Magento\Catalog\Test\TestStep\CreateProductsStep::class,
+            'Magento\Catalog\Test\TestStep\CreateProductsStep',
             ['products' => $products]
         );
 
@@ -126,7 +126,7 @@ class AbandonedCartsReportEntityTest extends Injectable
     protected function addProductsToCart(array $products)
     {
         $addProductsToCart = $this->objectManager->create(
-            \Magento\Checkout\Test\TestStep\AddProductsToTheCartStep::class,
+            'Magento\Checkout\Test\TestStep\AddProductsToTheCartStep',
             ['products' => $products]
         );
         $addProductsToCart->run();

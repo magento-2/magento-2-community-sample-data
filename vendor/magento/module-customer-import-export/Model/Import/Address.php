@@ -6,15 +6,15 @@
 namespace Magento\CustomerImportExport\Model\Import;
 
 use Magento\Customer\Model\ResourceModel\Address\Attribute\Source as Sources;
-use Magento\Eav\Model\Entity\Attribute\AbstractAttribute;
-use Magento\Framework\App\ObjectManager;
+use Magento\Framework\Stdlib\DateTime;
 use Magento\ImportExport\Model\Import\ErrorProcessing\ProcessingErrorAggregatorInterface;
+use Magento\Framework\App\ObjectManager;
+use Magento\Eav\Model\Entity\Attribute\AbstractAttribute;
 use Magento\Store\Model\Store;
+use Magento\ImportExport\Model\Import;
 use Magento\CustomerImportExport\Model\ResourceModel\Import\Address\Storage as AddressStorage;
 
 /**
- * Customer address import
- *
  * @SuppressWarnings(PHPMD.TooManyFields)
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  * @SuppressWarnings(PHPMD.ExcessiveClassComplexity)
@@ -73,7 +73,11 @@ class Address extends AbstractCustomer
 
     /**#@-*/
 
-    /**#@-*/
+    /**
+     * Default addresses column names to appropriate customer attribute code
+     *
+     * @var array
+     */
     protected static $_defaultAddressAttributeMapping = [
         self::COLUMN_DEFAULT_BILLING => 'default_billing',
         self::COLUMN_DEFAULT_SHIPPING => 'default_shipping',
@@ -85,6 +89,22 @@ class Address extends AbstractCustomer
      * @var string[]
      */
     protected $_permanentAttributes = [self::COLUMN_WEBSITE, self::COLUMN_EMAIL, self::COLUMN_ADDRESS_ID];
+
+    /**
+     * Existing addresses
+     *
+     * Example Array: [customer ID] => array(
+     *     address ID 1,
+     *     address ID 2,
+     *     ...
+     *     address ID N
+     * )
+     *
+     * @var array
+     * @deprected
+     * @see $addressStorage
+     */
+    protected $_addresses = [];
 
     /**
      * Attributes with index (not label) value
@@ -168,7 +188,9 @@ class Address extends AbstractCustomer
     protected $_attributeCollection;
 
     /**
-     * @deprecated
+     * Collection of existent addresses
+     *
+     * @var \Magento\Customer\Model\ResourceModel\Address\Collection
      */
     protected $_addressCollection;
 
@@ -200,7 +222,7 @@ class Address extends AbstractCustomer
     protected $_addressFactory;
 
     /**
-     * @var \Magento\Framework\Stdlib\DateTime
+     * @var DateTime
      */
     protected $dateTime;
 
@@ -224,11 +246,6 @@ class Address extends AbstractCustomer
      * @var \Magento\Customer\Model\Address\Validator\Postcode
      */
     protected $postcodeValidator;
-
-    /**
-     * @deprecated
-     */
-    protected $_addresses = [];
 
     /**
      * @var Sources\CountryWithWebsites
@@ -263,7 +280,7 @@ class Address extends AbstractCustomer
      * @param \Magento\Customer\Model\CustomerFactory $customerFactory
      * @param \Magento\Customer\Model\ResourceModel\Address\CollectionFactory $addressColFactory
      * @param \Magento\Customer\Model\ResourceModel\Address\Attribute\CollectionFactory $attributesFactory
-     * @param \Magento\Framework\Stdlib\DateTime $dateTime
+     * @param DateTime $dateTime
      * @param \Magento\Customer\Model\Address\Validator\Postcode $postcodeValidator
      * @param array $data
      * @param Sources\CountryWithWebsites|null $countryWithWebsites
@@ -288,7 +305,7 @@ class Address extends AbstractCustomer
         \Magento\Customer\Model\CustomerFactory $customerFactory,
         \Magento\Customer\Model\ResourceModel\Address\CollectionFactory $addressColFactory,
         \Magento\Customer\Model\ResourceModel\Address\Attribute\CollectionFactory $attributesFactory,
-        \Magento\Framework\Stdlib\DateTime $dateTime,
+        DateTime $dateTime,
         \Magento\Customer\Model\Address\Validator\Postcode $postcodeValidator,
         array $data = [],
         Sources\CountryWithWebsites $countryWithWebsites = null,
@@ -302,7 +319,8 @@ class Address extends AbstractCustomer
         $this->postcodeValidator = $postcodeValidator;
         $this->countryWithWebsites = $countryWithWebsites ?
             $countryWithWebsites
-            : ObjectManager::getInstance()->get(Sources\CountryWithWebsites::class);
+            : ObjectManager::getInstance()
+                ->get(Sources\CountryWithWebsites::class);
 
         if (!isset($data['attribute_collection'])) {
             /** @var $attributeCollection \Magento\Customer\Model\ResourceModel\Address\Attribute\Collection */
@@ -354,13 +372,19 @@ class Address extends AbstractCustomer
     /**
      * @inheritDoc
      */
-    public function getAttributeOptions(AbstractAttribute $attribute, array $indexAttributes = [])
-    {
-        $standardOptions = parent::getAttributeOptions($attribute, $indexAttributes);
+    public function getAttributeOptions(
+        AbstractAttribute $attribute,
+        array $indexAttributes = []
+    ) {
+        $standardOptions = parent::getAttributeOptions(
+            $attribute,
+            $indexAttributes
+        );
 
         if ($attribute->getAttributeCode() === 'country_id') {
-            //If we want to get available options for country field then we have to use alternative source
-            // to get actual data for each website.
+            //If we want to get available options for country field then we
+            //have to use alternative source to get actual data
+            //for each website.
             $options = $this->countryWithWebsites->getAllOptions();
             //Available country options now will be sorted by websites.
             $code = $attribute->getAttributeCode();
@@ -373,7 +397,8 @@ class Address extends AbstractCustomer
                             $websiteOptions[$websiteId] = [];
                         }
                         $optionId = mb_strtolower($option['value']);
-                        $websiteOptions[$websiteId][$optionId] = $option['value'];
+                        $websiteOptions[$websiteId][$optionId]
+                            = $option['value'];
                     }
                 }
             }
@@ -393,9 +418,12 @@ class Address extends AbstractCustomer
      * @param int $websiteId
      *
      * @return array Adjusted data in the same format.
+     *
      */
-    private function adjustAttributeDataForWebsite(array $attributeData, $websiteId)
-    {
+    private function adjustAttributeDataForWebsite(
+        array $attributeData,
+        $websiteId
+    ) {
         if ($attributeData['code'] === 'country_id') {
             $attributeOptions = $this->optionsByWebsite[$attributeData['code']];
             if (array_key_exists($websiteId, $attributeOptions)) {
@@ -404,27 +432,6 @@ class Address extends AbstractCustomer
         }
 
         return $attributeData;
-    }
-
-    /**
-     * @return $this
-     *
-     * @deprecated
-     */
-    protected function _initAddresses()
-    {
-        /** @var $address \Magento\Customer\Model\Address */
-        foreach ($this->_addressCollection as $address) {
-            $customerId = $address->getParentId();
-            if (!isset($this->_addresses[$customerId])) {
-                $this->_addresses[$customerId] = [];
-            }
-            $addressId = $address->getId();
-            if (!in_array($addressId, $this->_addresses[$customerId])) {
-                $this->_addresses[$customerId][] = $addressId;
-            }
-        }
-        return $this;
     }
 
     /**
@@ -457,20 +464,24 @@ class Address extends AbstractCustomer
     }
 
     /**
-     * Initialize country regions hash for clever recognition
+     * Initialize existent addresses data
      *
      * @return $this
+     * @deprecated
+     * @see prepareCustomerData
      */
-    protected function _initCountryRegions()
+    protected function _initAddresses()
     {
-        /** @var $region \Magento\Directory\Model\Region */
-        foreach ($this->_regionCollection as $region) {
-            $countryNormalized = strtolower($region->getCountryId());
-            $regionCode = strtolower($region->getCode());
-            $regionName = strtolower($region->getDefaultName());
-            $this->_countryRegions[$countryNormalized][$regionCode] = $region->getId();
-            $this->_countryRegions[$countryNormalized][$regionName] = $region->getId();
-            $this->_regions[$region->getId()] = $region->getDefaultName();
+        /** @var $address \Magento\Customer\Model\Address */
+        foreach ($this->_addressCollection as $address) {
+            $customerId = $address->getParentId();
+            if (!isset($this->_addresses[$customerId])) {
+                $this->_addresses[$customerId] = [];
+            }
+            $addressId = $address->getId();
+            if (!in_array($addressId, $this->_addresses[$customerId])) {
+                $this->_addresses[$customerId][] = $addressId;
+            }
         }
         return $this;
     }
@@ -480,12 +491,12 @@ class Address extends AbstractCustomer
      * to perform mass validation/import efficiently.
      * Also loading existing addresses for requested customers.
      *
-     * @param array $rows Each row must contain data from columns email
+     * @param \Traversable $rows Each row must contain data from columns email
      * and website code.
      *
      * @return void
      */
-    public function prepareCustomerData($rows)
+    public function prepareCustomerData(\Traversable $rows)
     {
         $customersPresent = [];
         foreach ($rows as $rowData) {
@@ -527,6 +538,25 @@ class Address extends AbstractCustomer
     }
 
     /**
+     * Initialize country regions hash for clever recognition
+     *
+     * @return $this
+     */
+    protected function _initCountryRegions()
+    {
+        /** @var $region \Magento\Directory\Model\Region */
+        foreach ($this->_regionCollection as $region) {
+            $countryNormalized = strtolower($region->getCountryId());
+            $regionCode = strtolower($region->getCode());
+            $regionName = strtolower($region->getDefaultName());
+            $this->_countryRegions[$countryNormalized][$regionCode] = $region->getId();
+            $this->_countryRegions[$countryNormalized][$regionName] = $region->getId();
+            $this->_regions[$region->getId()] = $region->getDefaultName();
+        }
+        return $this;
+    }
+
+    /**
      * Import data rows
      *
      * @abstract
@@ -540,7 +570,7 @@ class Address extends AbstractCustomer
         while ($bunch = $this->_dataSourceModel->getNextBunch()) {
             $rows = array_merge($rows, $bunch);
         }
-        $this->prepareCustomerData($rows);
+        $this->prepareCustomerData(new \ArrayObject($rows));
         unset($bunch, $rows);
         $this->_dataSourceModel->getIterator()->rewind();
 
@@ -579,9 +609,14 @@ class Address extends AbstractCustomer
             }
             $this->updateItemsCounterStats($newRows, $updateRows, $deleteRowIds);
 
-            $this->_saveAddressEntities($newRows, $updateRows)
-                ->_saveAddressAttributes($attributes)
-                ->_saveCustomerDefaults($defaults);
+            $this->_saveAddressEntities(
+                $newRows,
+                $updateRows
+            )->_saveAddressAttributes(
+                $attributes
+            )->_saveCustomerDefaults(
+                $defaults
+            );
 
             $this->_deleteAddressEntities($deleteRowIds);
         }
@@ -617,7 +652,6 @@ class Address extends AbstractCustomer
      */
     protected function _prepareDataForUpdate(array $rowData)
     {
-        $multiSeparator = $this->getMultipleValueSeparator();
         $email = strtolower($rowData[self::COLUMN_EMAIL]);
         $customerId = $this->_getCustomerId($email, $rowData[self::COLUMN_WEBSITE]);
         // entity table data
@@ -629,12 +663,10 @@ class Address extends AbstractCustomer
         $defaults = [];
         $newAddress = true;
         // get address id
-        if ($rowData[self::COLUMN_ADDRESS_ID]
-            && $this->addressStorage->doesExist(
-                $rowData[self::COLUMN_ADDRESS_ID],
-                (string)$customerId
-            )
-        ) {
+        if ($this->addressStorage->doesExist(
+            $rowData[self::COLUMN_ADDRESS_ID],
+            $customerId
+        )) {
             $newAddress = false;
             $addressId = $rowData[self::COLUMN_ADDRESS_ID];
         } else {
@@ -643,13 +675,16 @@ class Address extends AbstractCustomer
         $entityRow = [
             'entity_id' => $addressId,
             'parent_id' => $customerId,
-            'updated_at' => (new \DateTime())->format(\Magento\Framework\Stdlib\DateTime::DATETIME_PHP_FORMAT),
+            'updated_at' => (new \DateTime())->format(DateTime::DATETIME_PHP_FORMAT),
         ];
         $websiteId = $this->_websiteCodeToId[$rowData[self::COLUMN_WEBSITE]];
 
         foreach ($this->_attributes as $attributeAlias => $attributeParams) {
             if (array_key_exists($attributeAlias, $rowData)) {
-                $attributeParams = $this->adjustAttributeDataForWebsite($attributeParams, $websiteId);
+                $attributeParams = $this->adjustAttributeDataForWebsite(
+                    $attributeParams,
+                    $websiteId
+                );
 
                 if (!strlen($rowData[$attributeAlias])) {
                     if ($newAddress) {
@@ -658,17 +693,21 @@ class Address extends AbstractCustomer
                         continue;
                     }
                 } elseif ($newAddress && !strlen($rowData[$attributeAlias])) {
-                } elseif (in_array($attributeParams['type'], ['select', 'boolean'])) {
-                    $value = $this->getSelectAttrIdByValue($attributeParams, mb_strtolower($rowData[$attributeAlias]));
+
+                } elseif ('select' == $attributeParams['type']) {
+                    $value = $attributeParams['options'][strtolower($rowData[$attributeAlias])];
                 } elseif ('datetime' == $attributeParams['type']) {
                     $value = (new \DateTime())->setTimestamp(strtotime($rowData[$attributeAlias]));
-                    $value = $value->format(\Magento\Framework\Stdlib\DateTime::DATETIME_PHP_FORMAT);
+                    $value = $value->format(DateTime::DATETIME_PHP_FORMAT);
                 } elseif ('multiselect' == $attributeParams['type']) {
-                    $ids = [];
-                    foreach (explode($multiSeparator, mb_strtolower($rowData[$attributeAlias])) as $subValue) {
-                        $ids[] = $this->getSelectAttrIdByValue($attributeParams, $subValue);
-                    }
-                    $value = implode(',', $ids);
+                    $separator = isset($this->_parameters[Import::FIELD_FIELD_MULTIPLE_VALUE_SEPARATOR]) ?
+                        $this->_parameters[Import::FIELD_FIELD_MULTIPLE_VALUE_SEPARATOR] :
+                        Import::DEFAULT_GLOBAL_MULTI_VALUE_SEPARATOR;
+                    $value = str_replace(
+                        $separator,
+                        Import::DEFAULT_GLOBAL_MULTI_VALUE_SEPARATOR,
+                        $rowData[$attributeAlias]
+                    );
                 } else {
                     $value = $rowData[$attributeAlias];
                 }
@@ -679,6 +718,7 @@ class Address extends AbstractCustomer
                 }
             }
         }
+
         foreach (self::getDefaultAddressAttributeMapping() as $columnName => $attributeCode) {
             if (!empty($rowData[$columnName])) {
                 /** @var $attribute \Magento\Eav\Model\Entity\Attribute\AbstractAttribute */
@@ -686,22 +726,13 @@ class Address extends AbstractCustomer
                 $defaults[$table][$customerId][$attributeCode] = $addressId;
             }
         }
-        // let's try to find region ID
-        $entityRow['region_id'] = null;
-        if (!empty($rowData[self::COLUMN_REGION])) {
-            $countryNormalized = strtolower($rowData[self::COLUMN_COUNTRY_ID]);
-            $regionNormalized = strtolower($rowData[self::COLUMN_REGION]);
 
-            if (isset($this->_countryRegions[$countryNormalized][$regionNormalized])) {
-                $regionId = $this->_countryRegions[$countryNormalized][$regionNormalized];
-                $entityRow[self::COLUMN_REGION] = $this->_regions[$regionId];
-                $entityRow['region_id'] = $regionId;
-            }
-        }
+        // let's try to find region ID
+        $entityRow = $this->fillRegionData($rowData, $entityRow);
+
         if ($newAddress) {
             $entityRowNew = $entityRow;
-            $entityRowNew['created_at'] =
-                (new \DateTime())->format(\Magento\Framework\Stdlib\DateTime::DATETIME_PHP_FORMAT);
+            $entityRowNew['created_at'] = (new \DateTime())->format(DateTime::DATETIME_PHP_FORMAT);
         } else {
             $entityRowUpdate = $entityRow;
         }
@@ -732,6 +763,7 @@ class Address extends AbstractCustomer
                 $fields = array_diff(array_keys($row), ['entity_id', 'parent_id', 'created_at']);
                 $this->_connection->insertOnDuplicate($this->_entityTable, $row, $fields);
             }
+
         }
         return $this;
     }
@@ -777,6 +809,7 @@ class Address extends AbstractCustomer
                 );
                 $this->_connection->insertOnDuplicate($tableName, $data, array_keys($defaultsData));
             }
+
         }
         return $this;
     }
@@ -854,7 +887,6 @@ class Address extends AbstractCustomer
      */
     protected function _validateRowForUpdate(array $rowData, $rowNumber)
     {
-        $multiSeparator = $this->getMultipleValueSeparator();
         if ($this->_checkUniqueKey($rowData, $rowNumber)) {
             $email = strtolower($rowData[self::COLUMN_EMAIL]);
             $website = $rowData[self::COLUMN_WEBSITE];
@@ -870,12 +902,18 @@ class Address extends AbstractCustomer
                     // check simple attributes
                     foreach ($this->_attributes as $attributeCode => $attributeParams) {
                         $websiteId = $this->_websiteCodeToId[$website];
-                        $attributeParams = $this->adjustAttributeDataForWebsite($attributeParams, $websiteId);
+                        $attributeParams = $this->adjustAttributeDataForWebsite(
+                            $attributeParams,
+                            $websiteId
+                        );
 
                         if (in_array($attributeCode, $this->_ignoredAttributes)) {
                             continue;
                         }
                         if (isset($rowData[$attributeCode]) && strlen($rowData[$attributeCode])) {
+                            $multiSeparator = isset($this->_parameters[Import::FIELD_FIELD_MULTIPLE_VALUE_SEPARATOR]) ?
+                                $this->_parameters[Import::FIELD_FIELD_MULTIPLE_VALUE_SEPARATOR] :
+                                Import::DEFAULT_GLOBAL_MULTI_VALUE_SEPARATOR;
                             $this->isAttributeValid(
                                 $attributeCode,
                                 $attributeParams,
@@ -885,15 +923,16 @@ class Address extends AbstractCustomer
                             );
                         } elseif ($attributeParams['is_required']
                             && !$this->addressStorage->doesExist(
-                                (string)$addressId,
-                                (string)$customerId
+                                $addressId,
+                                $customerId
                             )
                         ) {
                             $this->addRowError(self::ERROR_VALUE_IS_REQUIRED, $rowNumber, $attributeCode);
                         }
                     }
 
-                    if (isset($rowData[self::COLUMN_POSTCODE])
+                    if (
+                        isset($rowData[self::COLUMN_POSTCODE])
                         && isset($rowData[self::COLUMN_COUNTRY_ID])
                         && !$this->postcodeValidator->isValid(
                             $rowData[self::COLUMN_COUNTRY_ID],
@@ -944,7 +983,7 @@ class Address extends AbstractCustomer
                     $this->addRowError(self::ERROR_ADDRESS_ID_IS_EMPTY, $rowNumber);
                 } elseif (!$this->addressStorage->doesExist(
                     $addressId,
-                    (string)$customerId
+                    $customerId
                 )) {
                     $this->addRowError(self::ERROR_ADDRESS_NOT_FOUND, $rowNumber);
                 }
@@ -961,10 +1000,7 @@ class Address extends AbstractCustomer
      */
     protected function _checkRowDuplicate($customerId, $addressId)
     {
-        if ($this->addressStorage->doesExist(
-            (string)$addressId,
-            (string)$customerId
-        )) {
+        if ($this->addressStorage->doesExist($addressId, $customerId)) {
             if (!isset($this->_importedRowPks[$customerId][$addressId])) {
                 $this->_importedRowPks[$customerId][$addressId] = true;
                 return false;
@@ -986,5 +1022,29 @@ class Address extends AbstractCustomer
     {
         $this->_customerAttributes = $customerAttributes;
         return $this;
+    }
+
+    /**
+     * Try to get region_id and set it to $entityRow.
+     *
+     * @param array $rowData
+     * @param array $entityRow
+     * @return array
+     */
+    private function fillRegionData(array $rowData, array $entityRow)
+    {
+        $entityRow['region_id'] = null;
+        if (!empty($rowData[self::COLUMN_REGION])) {
+            $countryNormalized = strtolower($rowData[self::COLUMN_COUNTRY_ID]);
+            $regionNormalized = strtolower($rowData[self::COLUMN_REGION]);
+
+            if (isset($this->_countryRegions[$countryNormalized][$regionNormalized])) {
+                $regionId = $this->_countryRegions[$countryNormalized][$regionNormalized];
+                $entityRow[self::COLUMN_REGION] = $this->_regions[$regionId];
+                $entityRow['region_id'] = $regionId;
+            }
+        }
+
+        return $entityRow;
     }
 }

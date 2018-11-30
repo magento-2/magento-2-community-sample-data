@@ -8,7 +8,7 @@ namespace Magento\Reports\Model\ResourceModel\Review\Product;
 /**
  * @magentoAppArea adminhtml
  */
-class CollectionTest extends \PHPUnit\Framework\TestCase
+class CollectionTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\Reports\Model\ResourceModel\Review\Product\Collection
@@ -18,7 +18,7 @@ class CollectionTest extends \PHPUnit\Framework\TestCase
     protected function setUp()
     {
         $this->_collection = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->create(
-            \Magento\Reports\Model\ResourceModel\Review\Product\Collection::class
+            'Magento\Reports\Model\ResourceModel\Review\Product\Collection'
         );
     }
 

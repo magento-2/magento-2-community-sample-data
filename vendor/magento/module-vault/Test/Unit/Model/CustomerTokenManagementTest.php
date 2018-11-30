@@ -11,7 +11,7 @@ use Magento\Vault\Model\CustomerTokenManagement;
 use Magento\Vault\Model\PaymentTokenManagement;
 use PHPUnit_Framework_MockObject_MockObject as MockObject;
 
-class CustomerTokenManagementTest extends \PHPUnit\Framework\TestCase
+class CustomerTokenManagementTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var PaymentTokenManagement|MockObject
@@ -43,55 +43,39 @@ class CustomerTokenManagementTest extends \PHPUnit\Framework\TestCase
         );
     }
 
-    /**
-     * @param int|null $customerId
-     * @param bool $isLoggedCustomer
-     * @return void
-     * @dataProvider getCustomerSessionTokensNegativeDataProvider
-     */
-    public function testGetCustomerSessionTokensNegative($customerId, bool $isLoggedCustomer)
+    public function testGetCustomerSessionTokensNonRegisteredCustomer()
     {
-        $this->customerSession->method('getCustomerId')
-            ->willReturn($customerId);
-
-        $this->customerSession->method('isLoggedIn')
-            ->willReturn($isLoggedCustomer);
+        $this->customerSession->expects(self::once())
+            ->method('getCustomerId')
+            ->willReturn(null);
 
         $this->paymentTokenManagement->expects(static::never())
             ->method('getVisibleAvailableTokens');
 
         $this->tokenManagement->getCustomerSessionTokens();
-
-        static::assertEquals(
-            [],
-            $this->tokenManagement->getCustomerSessionTokens()
-        );
     }
 
-    /**
-     * @return array
-     */
-    public function getCustomerSessionTokensNegativeDataProvider()
+    public function testGetCustomerSessionTokensForNotExistsCustomer()
     {
-        return [
-            'not registered customer' => [null, false],
-            'not logged in customer' => [1, false],
-        ];
+        $this->customerSession->expects(static::once())
+            ->method('getCustomerId')
+            ->willReturn(null);
+
+        $this->paymentTokenManagement->expects(static::never())
+            ->method('getVisibleAvailableTokens');
+
+        $this->tokenManagement->getCustomerSessionTokens();
     }
 
     public function testGetCustomerSessionTokens()
     {
         $customerId = 1;
-        $token = $this->createMock(PaymentTokenInterface::class);
+        $token = $this->getMock(PaymentTokenInterface::class);
         $expectation = [$token];
 
         $this->customerSession->expects(static::once())
             ->method('getCustomerId')
             ->willReturn($customerId);
-
-        $this->customerSession->expects(static::once())
-            ->method('isLoggedIn')
-            ->willReturn(true);
 
         $this->paymentTokenManagement->expects(static::once())
             ->method('getVisibleAvailableTokens')

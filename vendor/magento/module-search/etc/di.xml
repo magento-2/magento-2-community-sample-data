@@ -49,7 +49,6 @@
             </argument>
         </arguments>
     </type>
-    <!-- @api -->
     <virtualType name="Magento\Search\Model\ResourceModel\Synonyms\Grid\Collection" type="Magento\Framework\View\Element\UiComponent\DataProvider\SearchResult">
         <arguments>
             <argument name="name" xsi:type="string">search_synonyms_grid_data_source</argument>
@@ -81,5 +80,8 @@
         <arguments>
             <argument name="dataStorage" xsi:type="object">Magento\Search\Model\SearchEngine\Config\Data</argument>
         </arguments>
+    </type>
+    <type name="Magento\Backend\Model\Menu\Builder">
+        <plugin name="SearchTermMenuBuilder" type="Magento\Search\Model\SearchEngine\MenuBuilder" />
     </type>
 </config>

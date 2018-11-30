@@ -1,8 +1,10 @@
 <?php
 /**
- * @see       https://github.com/zendframework/zend-http for the canonical source repository
- * @copyright Copyright (c) 2005-2017 Zend Technologies USA Inc. (http://www.zend.com)
- * @license   https://github.com/zendframework/zend-http/blob/master/LICENSE.md New BSD License
+ * Zend Framework (http://framework.zend.com/)
+ *
+ * @link      http://github.com/zendframework/zf2 for the canonical source repository
+ * @copyright Copyright (c) 2005-2015 Zend Technologies USA Inc. (http://www.zend.com)
+ * @license   http://framework.zend.com/license/new-bsd New BSD License
  */
 
 namespace Zend\Http\PhpEnvironment;
@@ -45,14 +47,14 @@ class Request extends HttpRequest
      *
      * @var ParametersInterface
      */
-    protected $serverParams;
+    protected $serverParams = null;
 
     /**
      * PHP environment params ($_ENV)
      *
      * @var ParametersInterface
      */
-    protected $envParams;
+    protected $envParams = null;
 
     /**
      * Construct
@@ -434,6 +436,18 @@ class Request extends HttpRequest
         $requestUri = null;
         $server     = $this->getServer();
 
+        // Check this first so IIS will catch.
+        $httpXRewriteUrl = $server->get('HTTP_X_REWRITE_URL');
+        if ($httpXRewriteUrl !== null) {
+            $requestUri = $httpXRewriteUrl;
+        }
+
+        // Check for IIS 7.0 or later with ISAPI_Rewrite
+        $httpXOriginalUrl = $server->get('HTTP_X_ORIGINAL_URL');
+        if ($httpXOriginalUrl !== null) {
+            $requestUri = $httpXOriginalUrl;
+        }
+
         // IIS7 with URL Rewrite: make sure we get the unencoded url
         // (double slash problem).
         $iisUrlRewritten = $server->get('IIS_WasUrlRewritten');
@@ -442,10 +456,12 @@ class Request extends HttpRequest
             return $unencodedUrl;
         }
 
-        $requestUri = $server->get('REQUEST_URI');
-
         // HTTP proxy requests setup request URI with scheme and host [and port]
         // + the URL path, only use URL path.
+        if (! $httpXRewriteUrl) {
+            $requestUri = $server->get('REQUEST_URI');
+        }
+
         if ($requestUri !== null) {
             return preg_replace('#^[^/:]+://[^/]+#', '', $requestUri);
         }
@@ -468,6 +484,7 @@ class Request extends HttpRequest
      *
      * Uses a variety of criteria in order to detect the base URL of the request
      * (i.e., anything additional to the document root).
+     *
      *
      * @return string
      */

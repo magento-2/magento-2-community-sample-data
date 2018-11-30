@@ -197,7 +197,7 @@ class Billing extends \Magento\Framework\View\Element\Template
     protected function _getTaxvat()
     {
         if (!$this->taxvat) {
-            $this->taxvat = $this->getLayout()->createBlock(\Magento\Customer\Block\Widget\Taxvat::class);
+            $this->taxvat = $this->getLayout()->createBlock('Magento\Customer\Block\Widget\Taxvat');
         }
 
         return $this->taxvat;

@@ -8,7 +8,7 @@ namespace Magento\Sales\Test\Unit\Model\Order\Admin;
 /**
  * Class ValidatorTest
  */
-class ItemTest extends \PHPUnit\Framework\TestCase
+class ItemTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \PHPUnit_Framework_MockObject_MockObject
@@ -20,7 +20,7 @@ class ItemTest extends \PHPUnit\Framework\TestCase
 
     protected function setUp()
     {
-        $this->orderItemMock = $this->getMockBuilder(\Magento\Sales\Model\Order\Item::class)
+        $this->orderItemMock = $this->getMockBuilder('Magento\Sales\Model\Order\Item')
             ->disableOriginalConstructor()
             ->getMock();
         $this->item = new \Magento\Sales\Model\Order\Admin\Item();

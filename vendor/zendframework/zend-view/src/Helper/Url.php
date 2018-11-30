@@ -11,10 +11,8 @@ namespace Zend\View\Helper;
 
 use Traversable;
 use Zend\Mvc\ModuleRouteListener;
-use Zend\Mvc\Router\RouteMatch as LegacyRouteMatch;
-use Zend\Mvc\Router\RouteStackInterface as LegacyRouteStackInterface;
-use Zend\Router\RouteMatch;
-use Zend\Router\RouteStackInterface;
+use Zend\Mvc\Router\RouteMatch;
+use Zend\Mvc\Router\RouteStackInterface;
 use Zend\View\Exception;
 
 /**
@@ -23,36 +21,32 @@ use Zend\View\Exception;
 class Url extends AbstractHelper
 {
     /**
-     * Router instance.
+     * RouteStackInterface instance.
      *
-     * @var LegacyRouteStackInterface|RouteStackInterface
+     * @var RouteStackInterface
      */
     protected $router;
 
     /**
-     * Route matches returned by the router.
+     * RouteInterface match returned by the router.
      *
-     * @var LegacyRouteMatch|RouteMatch.
+     * @var RouteMatch.
      */
     protected $routeMatch;
 
     /**
      * Generates a url given the name of a route.
      *
-     * @see Zend\Mvc\Router\RouteInterface::assemble()
-     * @see Zend\Router\RouteInterface::assemble()
-     * @param  string $name Name of the route
-     * @param  array $params Parameters for the link
-     * @param  array|Traversable $options Options for the route
-     * @param  bool $reuseMatchedParams Whether to reuse matched parameters
-     * @return string Url For the link href attribute
-     * @throws Exception\RuntimeException If no RouteStackInterface was
-     *     provided
-     * @throws Exception\RuntimeException If no RouteMatch was provided
-     * @throws Exception\RuntimeException If RouteMatch didn't contain a
-     *     matched route name
-     * @throws Exception\InvalidArgumentException If the params object was not
-     *     an array or Traversable object.
+     * @see    Zend\Mvc\Router\RouteInterface::assemble()
+     * @param  string               $name               Name of the route
+     * @param  array                $params             Parameters for the link
+     * @param  array|Traversable    $options            Options for the route
+     * @param  bool                 $reuseMatchedParams Whether to reuse matched parameters
+     * @return string Url                         For the link href attribute
+     * @throws Exception\RuntimeException         If no RouteStackInterface was provided
+     * @throws Exception\RuntimeException         If no RouteMatch was provided
+     * @throws Exception\RuntimeException         If RouteMatch didn't contain a matched route name
+     * @throws Exception\InvalidArgumentException If the params object was not an array or \Traversable object
      */
     public function __invoke($name = null, $params = [], $options = [], $reuseMatchedParams = false)
     {
@@ -77,8 +71,8 @@ class Url extends AbstractHelper
             }
         }
 
-        if (! is_array($params)) {
-            if (! $params instanceof Traversable) {
+        if (!is_array($params)) {
+            if (!$params instanceof Traversable) {
                 throw new Exception\InvalidArgumentException(
                     'Params is expected to be an array or a Traversable object'
                 );
@@ -109,24 +103,11 @@ class Url extends AbstractHelper
     /**
      * Set the router to use for assembling.
      *
-     * @param LegacyRouteStackInterface|RouteStackInterface $router
+     * @param RouteStackInterface $router
      * @return Url
-     * @throws Exception\InvalidArgumentException for invalid router types.
      */
-    public function setRouter($router)
+    public function setRouter(RouteStackInterface $router)
     {
-        if (! $router instanceof RouteStackInterface
-            && ! $router instanceof LegacyRouteStackInterface
-        ) {
-            throw new Exception\InvalidArgumentException(sprintf(
-                '%s expects a %s or %s instance; received %s',
-                __METHOD__,
-                RouteStackInterface::class,
-                LegacyRouteStackInterface::class,
-                (is_object($router) ? get_class($router) : gettype($router))
-            ));
-        }
-
         $this->router = $router;
         return $this;
     }
@@ -134,23 +115,11 @@ class Url extends AbstractHelper
     /**
      * Set route match returned by the router.
      *
-     * @param  LegacyRouteMatch|RouteMatch $routeMatch
+     * @param  RouteMatch $routeMatch
      * @return Url
      */
-    public function setRouteMatch($routeMatch)
+    public function setRouteMatch(RouteMatch $routeMatch)
     {
-        if (! $routeMatch instanceof RouteMatch
-            && ! $routeMatch instanceof LegacyRouteMatch
-        ) {
-            throw new Exception\InvalidArgumentException(sprintf(
-                '%s expects a %s or %s instance; received %s',
-                __METHOD__,
-                RouteMatch::class,
-                LegacyRouteMatch::class,
-                (is_object($routeMatch) ? get_class($routeMatch) : gettype($routeMatch))
-            ));
-        }
-
         $this->routeMatch = $routeMatch;
         return $this;
     }

@@ -7,13 +7,12 @@ namespace Magento\Setup\Test\Unit\Module\Di\Code\Generator;
 
 use Magento\Framework\App\Interception\Cache\CompiledConfig;
 
-class InterceptionConfigurationBuilderTest extends \PHPUnit\Framework\TestCase
+class InterceptionConfigurationBuilderTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\Setup\Module\Di\Code\Generator\InterceptionConfigurationBuilder
      */
     protected $model;
-
     /**
      * @var \PHPUnit_Framework_MockObject_MockObject
      */
@@ -41,17 +40,36 @@ class InterceptionConfigurationBuilderTest extends \PHPUnit\Framework\TestCase
 
     protected function setUp()
     {
-        $this->interceptionConfig =
-            $this->createPartialMock(\Magento\Framework\Interception\Config\Config::class, ['hasPlugins']);
-        $this->pluginList = $this->createPartialMock(
-            \Magento\Setup\Module\Di\Code\Generator\PluginList::class,
-            ['setInterceptedClasses', 'setScopePriorityScheme', 'getPluginsConfig']
+        $this->interceptionConfig = $this->getMock(
+            'Magento\Framework\Interception\Config\Config',
+            ['hasPlugins'],
+            [],
+            '',
+            false
         );
-        $this->cacheManager = $this->createMock(\Magento\Framework\App\Cache\Manager::class);
-        $this->interceptableValidator =
-            $this->createMock(\Magento\Framework\ObjectManager\InterceptableValidator::class);
+        $this->pluginList = $this->getMock(
+            'Magento\Setup\Module\Di\Code\Generator\PluginList',
+            ['setInterceptedClasses', 'setScopePriorityScheme', 'getPluginsConfig'],
+            [],
+            '',
+            false
+        );
+        $this->cacheManager = $this->getMock(
+            'Magento\Framework\App\Cache\Manager',
+            [],
+            [],
+            '',
+            false
+        );
+        $this->interceptableValidator = $this->getMock(
+            'Magento\Framework\ObjectManager\InterceptableValidator',
+            [],
+            [],
+            '',
+            false
+        );
 
-        $this->typeReader = $this->createPartialMock(\Magento\Setup\Module\Di\Code\Reader\Type::class, ['isConcrete']);
+        $this->typeReader = $this->getMock('Magento\Setup\Module\Di\Code\Reader\Type', ['isConcrete'], [], '', false);
         $this->model = new \Magento\Setup\Module\Di\Code\Generator\InterceptionConfigurationBuilder(
             $this->interceptionConfig,
             $this->pluginList,

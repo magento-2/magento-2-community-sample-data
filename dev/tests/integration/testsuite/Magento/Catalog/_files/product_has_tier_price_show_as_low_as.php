@@ -42,19 +42,6 @@ $tierPrices[] = $tierPriceFactory->create(
     ]
 );
 
-/** @var  $tpExtensionAttributes */
-$tpExtensionAttributesFactory = $objectManager->create(ProductTierPriceExtensionFactory::class);
-$tpExtensionAttributes = $tpExtensionAttributesFactory->create()->setPercentageValue(50);
-
-$tierPrices[] = $tierPriceFactory->create(
-    [
-        'data' => [
-            'customer_group_id' => \Magento\Customer\Model\Group::NOT_LOGGED_IN_ID,
-            'qty' => 10
-        ]
-    ]
-)->setExtensionAttributes($tpExtensionAttributes);
-
 /** @var $product \Magento\Catalog\Model\Product */
 $product = $objectManager->create(\Magento\Catalog\Model\Product::class);
 $product->isObjectNew(true);

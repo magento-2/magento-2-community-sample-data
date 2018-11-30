@@ -10,7 +10,7 @@ use Magento\NewRelicReporting\Model\Observer\ReportConcurrentAdminsToNewRelic;
 /**
  * Class ReportConcurrentAdminsToNewRelicTest
  */
-class ReportConcurrentAdminsToNewRelicTest extends \PHPUnit\Framework\TestCase
+class ReportConcurrentAdminsToNewRelicTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var ReportConcurrentAdminsToNewRelic
@@ -39,15 +39,15 @@ class ReportConcurrentAdminsToNewRelicTest extends \PHPUnit\Framework\TestCase
      */
     protected function setUp()
     {
-        $this->config = $this->getMockBuilder(\Magento\NewRelicReporting\Model\Config::class)
+        $this->config = $this->getMockBuilder('Magento\NewRelicReporting\Model\Config')
             ->disableOriginalConstructor()
             ->setMethods(['isNewRelicEnabled'])
             ->getMock();
-        $this->backendAuthSession = $this->getMockBuilder(\Magento\Backend\Model\Auth\Session::class)
+        $this->backendAuthSession = $this->getMockBuilder('Magento\Backend\Model\Auth\Session')
             ->disableOriginalConstructor()
             ->setMethods(['isLoggedIn', 'getUser'])
             ->getMock();
-        $this->newRelicWrapper = $this->getMockBuilder(\Magento\NewRelicReporting\Model\NewRelicWrapper::class)
+        $this->newRelicWrapper = $this->getMockBuilder('Magento\NewRelicReporting\Model\NewRelicWrapper')
             ->disableOriginalConstructor()
             ->setMethods(['addCustomParameter'])
             ->getMock();
@@ -67,7 +67,7 @@ class ReportConcurrentAdminsToNewRelicTest extends \PHPUnit\Framework\TestCase
     public function testReportConcurrentAdminsToNewRelicModuleDisabledFromConfig()
     {
         /** @var \Magento\Framework\Event\Observer|\PHPUnit_Framework_MockObject_MockObject $eventObserver */
-        $eventObserver = $this->getMockBuilder(\Magento\Framework\Event\Observer::class)
+        $eventObserver = $this->getMockBuilder('Magento\Framework\Event\Observer')
             ->disableOriginalConstructor()
             ->getMock();
 
@@ -86,7 +86,7 @@ class ReportConcurrentAdminsToNewRelicTest extends \PHPUnit\Framework\TestCase
     public function testReportConcurrentAdminsToNewRelicUserIsNotLoggedIn()
     {
         /** @var \Magento\Framework\Event\Observer|\PHPUnit_Framework_MockObject_MockObject $eventObserver */
-        $eventObserver = $this->getMockBuilder(\Magento\Framework\Event\Observer::class)
+        $eventObserver = $this->getMockBuilder('Magento\Framework\Event\Observer')
             ->disableOriginalConstructor()
             ->getMock();
 
@@ -108,7 +108,7 @@ class ReportConcurrentAdminsToNewRelicTest extends \PHPUnit\Framework\TestCase
     public function testReportConcurrentAdminsToNewRelic()
     {
         /** @var \Magento\Framework\Event\Observer|\PHPUnit_Framework_MockObject_MockObject $eventObserver */
-        $eventObserver = $this->getMockBuilder(\Magento\Framework\Event\Observer::class)
+        $eventObserver = $this->getMockBuilder('Magento\Framework\Event\Observer')
             ->disableOriginalConstructor()
             ->getMock();
 
@@ -118,7 +118,7 @@ class ReportConcurrentAdminsToNewRelicTest extends \PHPUnit\Framework\TestCase
         $this->backendAuthSession->expects($this->once())
             ->method('isLoggedIn')
             ->willReturn(true);
-        $userMock = $this->getMockBuilder(\Magento\User\Model\User::class)->disableOriginalConstructor()->getMock();
+        $userMock = $this->getMockBuilder('Magento\User\Model\User')->disableOriginalConstructor()->getMock();
         $this->backendAuthSession->expects($this->once())
             ->method('getUser')
             ->willReturn($userMock);

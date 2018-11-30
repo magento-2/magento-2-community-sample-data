@@ -28,7 +28,6 @@ class Validator extends AbstractValidator implements RowValidatorInterface
      *
      * @param array $value
      * @return bool
-     * @throws \Zend_Validate_Exception
      */
     public function isValid($value)
     {

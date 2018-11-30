@@ -9,6 +9,7 @@ use Magento\Backend\Model\Session\Quote;
 use Magento\Braintree\Gateway\Config\Config as GatewayConfig;
 use Magento\Braintree\Model\Adminhtml\Source\CcType;
 use Magento\Braintree\Model\Ui\ConfigProvider;
+use Magento\Framework\App\ObjectManager;
 use Magento\Framework\View\Element\Template\Context;
 use Magento\Payment\Block\Form\Cc;
 use Magento\Payment\Helper\Data;
@@ -46,7 +47,6 @@ class Form extends Cc
      * @param Quote $sessionQuote
      * @param GatewayConfig $gatewayConfig
      * @param CcType $ccType
-     * @param Data $paymentDataHelper
      * @param array $data
      */
     public function __construct(
@@ -55,14 +55,12 @@ class Form extends Cc
         Quote $sessionQuote,
         GatewayConfig $gatewayConfig,
         CcType $ccType,
-        Data $paymentDataHelper,
         array $data = []
     ) {
         parent::__construct($context, $paymentConfig, $data);
         $this->sessionQuote = $sessionQuote;
         $this->gatewayConfig = $gatewayConfig;
         $this->ccType = $ccType;
-        $this->paymentDataHelper = $paymentDataHelper;
     }
 
     /**
@@ -138,6 +136,19 @@ class Form extends Cc
      */
     private function getVaultPayment()
     {
-        return $this->paymentDataHelper->getMethodInstance(ConfigProvider::CC_VAULT_CODE);
+        return $this->getPaymentDataHelper()->getMethodInstance(ConfigProvider::CC_VAULT_CODE);
+    }
+
+    /**
+     * Get payment data helper instance
+     * @return Data
+     * @deprecated
+     */
+    private function getPaymentDataHelper()
+    {
+        if ($this->paymentDataHelper === null) {
+            $this->paymentDataHelper = ObjectManager::getInstance()->get(Data::class);
+        }
+        return $this->paymentDataHelper;
     }
 }

@@ -10,7 +10,7 @@ use Magento\Framework\Module\ModuleList;
 use Magento\Setup\Console\Command\DbDataUpgradeCommand;
 use Symfony\Component\Console\Tester\CommandTester;
 
-class DbDataUpgradeCommandTest extends \PHPUnit\Framework\TestCase
+class DbDataUpgradeCommandTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\Setup\Model\InstallerFactory|\PHPUnit_Framework_MockObject_MockObject
@@ -24,14 +24,14 @@ class DbDataUpgradeCommandTest extends \PHPUnit\Framework\TestCase
 
     protected function setup()
     {
-        $this->installerFactory = $this->createMock(\Magento\Setup\Model\InstallerFactory::class);
-        $this->deploymentConfig = $this->createMock(\Magento\Framework\App\DeploymentConfig::class);
+        $this->installerFactory = $this->getMock('Magento\Setup\Model\InstallerFactory', [], [], '', false);
+        $this->deploymentConfig = $this->getMock('Magento\Framework\App\DeploymentConfig', [], [], '', false);
     }
 
     public function testExecute()
     {
         $this->deploymentConfig->expects($this->once())->method('isAvailable')->will($this->returnValue(true));
-        $installer = $this->createMock(\Magento\Setup\Model\Installer::class);
+        $installer = $this->getMock('Magento\Setup\Model\Installer', [], [], '', false);
         $this->installerFactory->expects($this->once())->method('create')->will($this->returnValue($installer));
         $installer->expects($this->once())->method('installDataFixtures');
 

@@ -4,9 +4,11 @@
  * See COPYING.txt for license details.
  */
 
+// @codingStandardsIgnoreFile
+
 namespace Magento\Framework\Code\Test\Unit\Validator;
 
-class ConstructorArgumentTypesTest extends \PHPUnit\Framework\TestCase
+class ConstructorArgumentTypesTest extends \PHPUnit_Framework_TestCase
 {
 
     /**
@@ -26,9 +28,20 @@ class ConstructorArgumentTypesTest extends \PHPUnit\Framework\TestCase
 
     protected function setUp()
     {
-        $this->argumentsReaderMock = $this->createMock(\Magento\Framework\Code\Reader\ArgumentsReader::class);
-        $this->sourceArgumentsReaderMock =
-            $this->createMock(\Magento\Framework\Code\Reader\SourceArgumentsReader::class);
+        $this->argumentsReaderMock = $this->getMock(
+            '\Magento\Framework\Code\Reader\ArgumentsReader',
+            [],
+            [],
+            '',
+            false
+        );
+        $this->sourceArgumentsReaderMock = $this->getMock(
+            '\Magento\Framework\Code\Reader\SourceArgumentsReader',
+            [],
+            [],
+            '',
+            false
+        );
         $this->model = new \Magento\Framework\Code\Validator\ConstructorArgumentTypes(
             $this->argumentsReaderMock,
             $this->sourceArgumentsReaderMock
@@ -61,3 +74,5 @@ class ConstructorArgumentTypesTest extends \PHPUnit\Framework\TestCase
         $this->assertTrue($this->model->validate($className));
     }
 }
+
+

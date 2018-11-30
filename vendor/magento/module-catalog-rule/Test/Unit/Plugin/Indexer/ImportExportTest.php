@@ -8,7 +8,7 @@ namespace Magento\CatalogRule\Test\Unit\Plugin\Indexer;
 
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
 
-class ImportExportTest extends \PHPUnit\Framework\TestCase
+class ImportExportTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * Indexer processor mock
@@ -33,15 +33,18 @@ class ImportExportTest extends \PHPUnit\Framework\TestCase
 
     protected function setUp()
     {
-        $this->ruleProductProcessor = $this->createPartialMock(
-            \Magento\CatalogRule\Model\Indexer\Rule\RuleProductProcessor::class,
-            ['isIndexerScheduled', 'markIndexerAsInvalid']
+        $this->ruleProductProcessor = $this->getMock(
+            'Magento\CatalogRule\Model\Indexer\Rule\RuleProductProcessor',
+            ['isIndexerScheduled', 'markIndexerAsInvalid'],
+            [],
+            '',
+            false
         );
         $this->ruleProductProcessor->expects($this->once())->method('isIndexerScheduled')->willReturn(false);
-        $this->subject = $this->createMock(\Magento\ImportExport\Model\Import::class);
+        $this->subject = $this->getMock('Magento\ImportExport\Model\Import', [], [], '', false);
 
         $this->plugin = (new ObjectManager($this))->getObject(
-            \Magento\CatalogRule\Plugin\Indexer\ImportExport::class,
+            'Magento\CatalogRule\Plugin\Indexer\ImportExport',
             [
                 'ruleProductProcessor' => $this->ruleProductProcessor,
             ]

@@ -24,15 +24,15 @@ class MarkAsRead extends \Magento\AdminNotification\Controller\Adminhtml\Notific
         if ($notificationId) {
             try {
                 $this->_objectManager->create(
-                    \Magento\AdminNotification\Model\NotificationService::class
+                    'Magento\AdminNotification\Model\NotificationService'
                 )->markAsRead(
                     $notificationId
                 );
-                $this->messageManager->addSuccessMessage(__('The message has been marked as Read.'));
+                $this->messageManager->addSuccess(__('The message has been marked as Read.'));
             } catch (\Magento\Framework\Exception\LocalizedException $e) {
-                $this->messageManager->addErrorMessage($e->getMessage());
+                $this->messageManager->addError($e->getMessage());
             } catch (\Exception $e) {
-                $this->messageManager->addExceptionMessage(
+                $this->messageManager->addException(
                     $e,
                     __("We couldn't mark the notification as Read because of an error.")
                 );

@@ -5,17 +5,17 @@
  */
 namespace Magento\Framework\View\Element\UiComponent;
 
-use Magento\Framework\App\RequestInterface;
 use Magento\Framework\UrlInterface;
-use Magento\Framework\View\Element\UiComponent\ContentType\ContentTypeFactory;
+use Magento\Framework\App\RequestInterface;
+use Magento\Framework\View\Element\UiComponentInterface;
 use Magento\Framework\View\Element\UiComponent\Control\ActionPoolFactory;
 use Magento\Framework\View\Element\UiComponent\Control\ActionPoolInterface;
 use Magento\Framework\View\Element\UiComponent\Control\ButtonProviderFactory;
+use Magento\Framework\View\Element\UiComponent\ContentType\ContentTypeFactory;
 use Magento\Framework\View\Element\UiComponent\Control\ButtonProviderInterface;
 use Magento\Framework\View\Element\UiComponent\DataProvider\DataProviderInterface;
-use Magento\Framework\View\Element\UiComponentFactory;
-use Magento\Framework\View\Element\UiComponentInterface;
 use Magento\Framework\View\LayoutInterface as PageLayoutInterface;
+use Magento\Framework\View\Element\UiComponentFactory;
 
 /**
  * Class Context
@@ -208,7 +208,7 @@ class Context implements ContextInterface
     public function getFilterParam($key, $defaultValue = null)
     {
         $filter = $this->getFiltersParams();
-        return $filter[$key] ?? $defaultValue;
+        return isset($filter[$key]) ? $filter[$key] : $defaultValue;
     }
 
     /**
@@ -323,9 +323,9 @@ class Context implements ContextInterface
         $rawAcceptType = $this->request->getHeader('Accept');
         if (strpos($rawAcceptType, 'json') !== false) {
             $this->acceptType = 'json';
-        } elseif (strpos($rawAcceptType, 'html') !== false) {
+        } else if (strpos($rawAcceptType, 'html') !== false) {
             $this->acceptType = 'html';
-        } elseif (strpos($rawAcceptType, 'xml') !== false) {
+        } else if (strpos($rawAcceptType, 'xml') !== false) {
             $this->acceptType = 'xml';
         }
     }

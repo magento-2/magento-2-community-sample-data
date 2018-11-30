@@ -5,17 +5,18 @@
  */
 namespace Magento\Framework\Css\PreProcessor\Adapter\Less;
 
-use Magento\Framework\App\State;
-use Magento\Framework\Css\PreProcessor\File\Temporary;
 use Magento\Framework\Phrase;
-use Magento\Framework\View\Asset\ContentProcessorException;
-use Magento\Framework\View\Asset\ContentProcessorInterface;
+use Psr\Log\LoggerInterface;
+use Magento\Framework\App\State;
 use Magento\Framework\View\Asset\File;
 use Magento\Framework\View\Asset\Source;
-use Psr\Log\LoggerInterface;
+use Magento\Framework\Css\PreProcessor\File\Temporary;
+use Magento\Framework\View\Asset\ContentProcessorException;
+use Magento\Framework\View\Asset\ContentProcessorInterface;
 
 /**
  * Class Processor
+ * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  */
 class Processor implements ContentProcessorInterface
 {
@@ -88,13 +89,18 @@ class Processor implements ContentProcessorInterface
             gc_enable();
 
             if (trim($content) === '') {
-                $this->logger->warning('Parsed less file is empty: ' . $path);
-                return '';
-            } else {
-                return $content;
+                $errorMessage = PHP_EOL . self::ERROR_MESSAGE_PREFIX . PHP_EOL . $path;
+                $this->logger->critical($errorMessage);
+
+                throw new ContentProcessorException(new Phrase($errorMessage));
             }
+
+            return $content;
         } catch (\Exception $e) {
-            throw new ContentProcessorException(new Phrase($e->getMessage()));
+            $errorMessage = PHP_EOL . self::ERROR_MESSAGE_PREFIX . PHP_EOL . $path . PHP_EOL . $e->getMessage();
+            $this->logger->critical($errorMessage);
+
+            throw new ContentProcessorException(new Phrase($errorMessage));
         }
     }
 }

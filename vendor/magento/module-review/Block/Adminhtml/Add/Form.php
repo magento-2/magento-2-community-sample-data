@@ -69,7 +69,7 @@ class Form extends \Magento\Backend\Block\Widget\Form\Generic
                 'label' => __('Product Rating'),
                 'required' => true,
                 'text' => '<div id="rating_detail">' . $this->getLayout()->createBlock(
-                    \Magento\Review\Block\Adminhtml\Rating\Detailed::class
+                    'Magento\Review\Block\Adminhtml\Rating\Detailed'
                 )->toHtml() . '</div>'
             ]
         );
@@ -100,7 +100,7 @@ class Form extends \Magento\Backend\Block\Widget\Form\Generic
                 ]
             );
             $renderer = $this->getLayout()->createBlock(
-                \Magento\Backend\Block\Store\Switcher\Form\Renderer\Fieldset\Element::class
+                'Magento\Backend\Block\Store\Switcher\Form\Renderer\Fieldset\Element'
             );
             $field->setRenderer($renderer);
         }
@@ -141,6 +141,11 @@ class Form extends \Magento\Backend\Block\Widget\Form\Generic
         );
 
         $fieldset->addField('product_id', 'hidden', ['name' => 'product_id']);
+
+        /*$gridFieldset = $form->addFieldset('add_review_grid', array('legend' => __('Please select a product')));
+          $gridFieldset->addField('products_grid', 'note', array(
+          'text' => $this->getLayout()->createBlock('Magento\Review\Block\Adminhtml\Product\Grid')->toHtml(),
+          ));*/
 
         $form->setMethod('post');
         $form->setUseContainer(true);

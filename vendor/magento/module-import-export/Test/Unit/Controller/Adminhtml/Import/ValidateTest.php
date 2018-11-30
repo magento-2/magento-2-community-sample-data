@@ -5,7 +5,7 @@
  */
 namespace Magento\ImportExport\Test\Unit\Controller\Adminhtml\Import;
 
-class ValidateTest extends \PHPUnit\Framework\TestCase
+class ValidateTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\Backend\App\Action\Context|\PHPUnit_Framework_MockObject_MockObject
@@ -187,7 +187,7 @@ class ValidateTest extends \PHPUnit\Framework\TestCase
             ->method('getLayout')
             ->willReturn($layoutMock);
 
-        $this->resultFactoryMock->expects($this->any())
+        $this->resultFactoryMock->expects($this->once())
             ->method('create')
             ->with(\Magento\Framework\Controller\ResultFactory::TYPE_LAYOUT)
             ->willReturn($resultLayoutMock);

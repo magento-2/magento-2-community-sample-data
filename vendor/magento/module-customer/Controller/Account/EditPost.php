@@ -58,9 +58,7 @@ class EditPost extends \Magento\Customer\Controller\AbstractAccount
      */
     protected $session;
 
-    /**
-     * @var \Magento\Customer\Model\EmailNotificationInterface
-     */
+    /** @var EmailNotificationInterface */
     private $emailNotification;
 
     /**
@@ -124,7 +122,7 @@ class EditPost extends \Magento\Customer\Controller\AbstractAccount
      * Get email notification
      *
      * @return EmailNotificationInterface
-     * @deprecated 100.1.0
+     * @deprecated
      */
     private function getEmailNotification()
     {
@@ -175,7 +173,7 @@ class EditPost extends \Magento\Customer\Controller\AbstractAccount
                 $this->messageManager->addError($e->getMessage());
             } catch (UserLockedException $e) {
                 $message = __(
-                    'You did not sign in correctly or your account is temporarily disabled.'
+                    'Invalid login or password.'
                 );
                 $this->session->logout();
                 $this->session->start();
@@ -304,7 +302,7 @@ class EditPost extends \Magento\Customer\Controller\AbstractAccount
      *
      * @return Mapper
      *
-     * @deprecated 100.1.3
+     * @deprecated
      */
     private function getCustomerMapper()
     {

@@ -10,7 +10,7 @@ namespace Magento\Search\Model\SearchEngine;
  *
  * @magentoAppIsolation enabled
  */
-class ConfigTest extends \PHPUnit\Framework\TestCase
+class ConfigTest extends \PHPUnit_Framework_TestCase
 {
     protected function setUp()
     {
@@ -18,12 +18,12 @@ class ConfigTest extends \PHPUnit\Framework\TestCase
         $objectManager = \Magento\TestFramework\Helper\Bootstrap::getObjectManager();
 
         // Clear out the cache
-        $cacheManager = $objectManager->create(\Magento\Framework\App\Cache\Manager::class);
+        $cacheManager = $objectManager->create('Magento\Framework\App\Cache\Manager');
         /** @var \Magento\Framework\App\Cache\Manager $cacheManager */
         $cacheManager->clean($cacheManager->getAvailableTypes());
 
         $fileResolver = $this->getMockForAbstractClass(
-            \Magento\Framework\Config\FileResolverInterface::class,
+            'Magento\Framework\Config\FileResolverInterface',
             [],
             '',
             false
@@ -31,15 +31,15 @@ class ConfigTest extends \PHPUnit\Framework\TestCase
         $fileResolver->expects($this->any())->method('get')->willReturn([file_get_contents($xmlPath)]);
 
         $configReader = $objectManager->create(
-            \Magento\Framework\Search\SearchEngine\Config\Reader::class,
+            'Magento\Framework\Search\SearchEngine\Config\Reader',
             ['fileResolver' => $fileResolver]
         );
         $dataStorage = $objectManager->create(
-            \Magento\Search\Model\SearchEngine\Config\Data::class,
+            'Magento\Search\Model\SearchEngine\Config\Data',
             ['reader' => $configReader]
         );
         $this->config = $objectManager->create(
-            \Magento\Search\Model\SearchEngine\Config::class,
+            'Magento\Search\Model\SearchEngine\Config',
             ['dataStorage' => $dataStorage]
         );
     }

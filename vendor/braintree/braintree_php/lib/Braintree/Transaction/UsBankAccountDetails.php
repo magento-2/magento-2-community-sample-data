@@ -5,11 +5,12 @@ use Braintree\Instance;
 use Braintree\AchMandate;
 
 /**
- * US Bank Account details from a transaction
+ * CreditCard details from a transaction
  * creates an instance of UsbankAccountDetails
  *
  * @package    Braintree
  * @subpackage Transaction
+ * @copyright  2015 Braintree, a division of PayPal, Inc.
  *
  * @property-read string $token
  * @property-read string $imageUrl

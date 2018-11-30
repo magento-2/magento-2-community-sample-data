@@ -10,7 +10,8 @@ use Magento\Sales\Model\Order\Payment;
 /**
  * Billing Agreement abstract model
  *
- * @api
+ * @method \Magento\Paypal\Model\ResourceModel\Billing\Agreement _getResource()
+ * @method \Magento\Paypal\Model\ResourceModel\Billing\Agreement getResource()
  * @method int getCustomerId()
  * @method \Magento\Paypal\Model\Billing\Agreement setCustomerId(int $value)
  * @method string getMethodCode()
@@ -27,9 +28,6 @@ use Magento\Sales\Model\Order\Payment;
  * @method \Magento\Paypal\Model\Billing\Agreement setStoreId(int $value)
  * @method string getAgreementLabel()
  * @method \Magento\Paypal\Model\Billing\Agreement setAgreementLabel(string $value)
- *
- * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
- * @since 100.0.2
  */
 class Agreement extends \Magento\Paypal\Model\Billing\AbstractAgreement
 {
@@ -86,7 +84,7 @@ class Agreement extends \Magento\Paypal\Model\Billing\AbstractAgreement
      */
     protected function _construct()
     {
-        $this->_init(\Magento\Paypal\Model\ResourceModel\Billing\Agreement::class);
+        $this->_init('Magento\Paypal\Model\ResourceModel\Billing\Agreement');
     }
 
     /**

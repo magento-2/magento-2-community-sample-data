@@ -7,186 +7,164 @@ namespace Magento\Config\Test\Unit\App\Config\Source;
 
 use Magento\Config\App\Config\Source\DumpConfigSourceAggregated;
 use Magento\Config\Model\Config\Export\ExcludeList;
-use Magento\Config\Model\Config\TypePool;
 use Magento\Framework\App\Config\ConfigSourceInterface;
-use Magento\Framework\TestFramework\Unit\Helper\ObjectManager as ObjectManagerHelper;
-use PHPUnit_Framework_MockObject_MockObject as MockObject;
 
-class DumpConfigSourceAggregatedTest extends \PHPUnit\Framework\TestCase
+class DumpConfigSourceAggregatedTest extends \PHPUnit_Framework_TestCase
 {
     /**
-     * @var ConfigSourceInterface|MockObject
+     * @var ConfigSourceInterface|\PHPUnit_Framework_MockObject_MockObject
      */
     private $sourceMock;
 
     /**
-     * @var ConfigSourceInterface|MockObject
+     * @var ConfigSourceInterface|\PHPUnit_Framework_MockObject_MockObject
      */
-    private $sourceTwoMock;
-
-    /**
-     * @var ExcludeList|MockObject
-     */
-    private $excludeListMock;
-
-    /**
-     * @var TypePool|MockObject
-     */
-    private $typePoolMock;
-
-    /**
-     * @var ObjectManagerHelper
-     */
-    private $objectManagerHelper;
+    private $sourceMockTwo;
 
     /**
      * @var DumpConfigSourceAggregated
      */
     private $model;
 
+    /**
+     * @var ExcludeList|\PHPUnit_Framework_MockObject_MockObject
+     */
+    private $excludeListMock;
+
     public function setUp()
     {
-        $this->objectManagerHelper = new ObjectManagerHelper($this);
         $this->sourceMock = $this->getMockBuilder(ConfigSourceInterface::class)
             ->getMockForAbstractClass();
-        $this->sourceTwoMock = $this->getMockBuilder(ConfigSourceInterface::class)
+        $this->sourceMockTwo = $this->getMockBuilder(ConfigSourceInterface::class)
             ->getMockForAbstractClass();
         $this->excludeListMock = $this->getMockBuilder(ExcludeList::class)
             ->disableOriginalConstructor()
             ->getMock();
-        $this->typePoolMock = $this->getMockBuilder(TypePool::class)
-            ->disableOriginalConstructor()
-            ->getMock();
 
-        $this->sourceMock->expects($this->once())
-            ->method('get')
-            ->with('')
-            ->willReturn([
-                'default' => [
-                    'web' => [
-                        'unsecure' => ['without_type' => 'some_value'],
-                        'secure' => ['environment_type' => 'some_environment_value'],
-                        'some_key' => [
-                            'without_type' => 'some_value',
-                            'sensitive_type' => 'some_sensitive_value'
-                        ],
-                    ]
-                ],
-                'test' => [
-                    'test' => [
-                        'test1' => [
-                            'test2' => ['without_type' => 5]
-                        ]
-                    ]
-                ]
-            ]);
-
-        $this->sourceTwoMock->expects($this->once())
-            ->method('get')
-            ->with('')
-            ->willReturn([
-                'default' => [
-                    'web' => [
-                        'another_key' => ['sensitive_type' => 'some_sensitive_value']
-                    ]
-                ]
-            ]);
-
-        $this->typePoolMock->expects($this->any())
-            ->method('isPresent')
-            ->willReturnMap([
-                ['web/unsecure/without_type', TypePool::TYPE_SENSITIVE, false],
-                ['web/secure/environment_type', TypePool::TYPE_ENVIRONMENT, true],
-                ['test1/test2/test/without_type', TypePool::TYPE_SENSITIVE, false],
-                ['web/some_key/without_type', TypePool::TYPE_ENVIRONMENT, false],
-                ['web/some_key/sensitive_type', TypePool::TYPE_SENSITIVE, true],
-                ['web/another_key/sensitive_type', TypePool::TYPE_SENSITIVE, true],
-            ]);
-
-        $this->model = new DumpConfigSourceAggregated(
-            $this->excludeListMock,
+        $sources = [
             [
-                [
-                    'source' => $this->sourceTwoMock,
-                    'sortOrder' => 100
-                ],
-                [
-                    'source' => $this->sourceMock,
-                    'sortOrder' => 10
-                ],
-
+                'source' => $this->sourceMockTwo,
+                'sortOrder' => 100
             ],
-            $this->typePoolMock,
             [
-                'default' => 'include',
-                'sensitive' => 'exclude',
-                'environment' => 'exclude',
-            ]
-        );
+                'source' => $this->sourceMock,
+                'sortOrder' => 10
+            ],
+
+        ];
+
+        $this->model = new DumpConfigSourceAggregated($this->excludeListMock, $sources);
     }
 
     public function testGet()
     {
+        $path = '';
+        $data = [
+            'default' => [
+                'web' => [
+                    'unsecure' => [
+                        'base_url' => 'http://test.local',
+                    ],
+                    'secure' => [
+                        'base_url' => 'https://test.local',
+                    ]
+                ]
+            ],
+            'test' => [
+                'test' => [
+                    'test1' => [
+                        'test2' => [
+                            'test3' => 5,
+                        ]
+                    ]
+                ]
+            ]
+        ];
+
+        $this->sourceMock->expects($this->once())
+            ->method('get')
+            ->with($path)
+            ->willReturn($data);
+        $this->sourceMockTwo->expects($this->once())
+            ->method('get')
+            ->with($path)
+            ->willReturn(['key' => 'value2']);
+        $this->excludeListMock->expects($this->any())
+            ->method('isPresent')
+            ->willReturnMap([
+                ['web/unsecure/base_url', false],
+                ['web/secure/base_url', true],
+                ['test1/test2/test/3', false]
+            ]);
+
         $this->assertEquals(
             [
                 'test' => [
                     'test' => [
                         'test1' => [
-                            'test2' => ['without_type' => 5]
+                            'test2' => [
+                                'test3' => 5,
+                            ]
                         ]
                     ],
                 ],
+                'key' => 'value2',
                 'default' => [
                     'web' => [
                         'unsecure' => [
-                            'without_type' => 'some_value',
+                            'base_url' => 'http://test.local',
                         ],
-                        'some_key' => [
-                            'without_type' => 'some_value',
-                        ],
+                        'secure' => []
                     ]
                 ],
             ],
-            $this->model->get('')
-        );
-    }
-
-    public function testGetWithExcludeDefault()
-    {
-        $this->objectManagerHelper->setBackwardCompatibleProperty(
-            $this->model,
-            'rules',
-            [
-                'default' => 'exclude',
-                'sensitive' => 'include',
-                'environment' => 'include',
-            ]
-        );
-
-        $this->assertEquals(
-            [
-                'default' => [
-                    'web' => [
-                        'secure' => ['environment_type' => 'some_environment_value'],
-                        'some_key' => [
-                            'sensitive_type' => 'some_sensitive_value'
-                        ],
-                        'another_key' => ['sensitive_type' => 'some_sensitive_value']
-                    ]
-                ],
-            ],
-            $this->model->get('')
+            $this->model->get($path)
         );
     }
 
     public function testGetExcludedFields()
     {
-        $this->assertEquals(
-            [
-                'web/secure/environment_type',
-                'web/some_key/sensitive_type',
-                'web/another_key/sensitive_type'
+        $path = '';
+        $data = [
+            'default' => [
+                'web' => [
+                    'unsecure' => [
+                        'base_url' => 'http://test.local',
+                    ],
+                    'secure' => [
+                        'base_url' => 'https://test.local',
+                    ]
+                ]
             ],
+            'test' => [
+                'test' => [
+                    'test1' => [
+                        'test2' => [
+                            'test3' => 5,
+                        ]
+                    ]
+                ]
+            ]
+        ];
+
+        $this->sourceMock->expects($this->once())
+            ->method('get')
+            ->with($path)
+            ->willReturn($data);
+        $this->sourceMockTwo->expects($this->once())
+            ->method('get')
+            ->with($path)
+            ->willReturn(['key' => 'value2']);
+        $this->excludeListMock->expects($this->any())
+            ->method('isPresent')
+            ->willReturnMap([
+                ['web/unsecure/base_url', false],
+                ['web/secure/base_url', true],
+                ['test1/test2/test/3', false]
+            ]);
+
+        $this->assertEquals(
+            ['web/secure/base_url'],
             $this->model->getExcludedFields()
         );
     }

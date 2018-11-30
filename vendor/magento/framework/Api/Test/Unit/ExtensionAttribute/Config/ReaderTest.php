@@ -5,7 +5,7 @@
  */
 namespace Magento\Framework\Api\Test\Unit\ExtensionAttribute\Config;
 
-class ReaderTest extends \PHPUnit\Framework\TestCase
+class ReaderTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\Framework\Api\ExtensionAttribute\Config\Reader
@@ -17,16 +17,16 @@ class ReaderTest extends \PHPUnit\Framework\TestCase
      */
     protected function setUp()
     {
-        $fileResolver = $this->getMockBuilder(\Magento\Framework\App\Config\FileResolver::class)
+        $fileResolver = $this->getMockBuilder('Magento\Framework\App\Config\FileResolver')
             ->disableOriginalConstructor()
             ->getMock();
-        $converter = $this->getMockBuilder(\Magento\Framework\Api\ExtensionAttribute\Config\Converter::class)
+        $converter = $this->getMockBuilder('Magento\Framework\Api\ExtensionAttribute\Config\Converter')
             ->disableOriginalConstructor()
             ->getMock();
-        $schema = $this->getMockBuilder(\Magento\Framework\Api\ExtensionAttribute\Config\SchemaLocator::class)
+        $schema = $this->getMockBuilder('Magento\Framework\Api\ExtensionAttribute\Config\SchemaLocator')
             ->disableOriginalConstructor()
             ->getMock();
-        $validator = $this->getMockBuilder(\Magento\Framework\Config\ValidationStateInterface::class)
+        $validator = $this->getMockBuilder('\Magento\Framework\Config\ValidationStateInterface')
             ->disableOriginalConstructor()
             ->getMock();
         $this->_reader = new \Magento\Framework\Api\ExtensionAttribute\Config\Reader(
@@ -42,6 +42,6 @@ class ReaderTest extends \PHPUnit\Framework\TestCase
      */
     public function testInstanceof()
     {
-        $this->assertInstanceOf(\Magento\Framework\Api\ExtensionAttribute\Config\Reader::class, $this->_reader);
+        $this->assertInstanceOf('Magento\Framework\Api\ExtensionAttribute\Config\Reader', $this->_reader);
     }
 }

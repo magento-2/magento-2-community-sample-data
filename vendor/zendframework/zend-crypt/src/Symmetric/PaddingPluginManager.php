@@ -9,7 +9,7 @@
 
 namespace Zend\Crypt\Symmetric;
 
-use Interop\Container\ContainerInterface;
+use Zend\ServiceManager\AbstractPluginManager;
 
 /**
  * Plugin manager implementation for the padding adapter instances.
@@ -18,34 +18,44 @@ use Interop\Container\ContainerInterface;
  * Padding\PaddingInterface. Additionally, it registers a number of default
  * padding adapters available.
  */
-class PaddingPluginManager implements ContainerInterface
+class PaddingPluginManager extends AbstractPluginManager
 {
-    private $paddings = [
-        'pkcs7'     => Padding\Pkcs7::class,
-        'nopadding' => Padding\NoPadding::class,
-        'null'      => Padding\NoPadding::class,
+    /**
+     * Default set of padding adapters
+     *
+     * @var array
+     */
+    protected $invokableClasses = [
+        'pkcs7' => 'Zend\Crypt\Symmetric\Padding\Pkcs7'
     ];
 
     /**
-     * Do we have the padding plugin?
+     * Do not share by default
      *
-     * @param  string $id
-     * @return bool
+     * @var bool
      */
-    public function has($id)
-    {
-        return array_key_exists($id, $this->paddings);
-    }
+    protected $shareByDefault = false;
 
     /**
-     * Retrieve the padding plugin
+     * Validate the plugin
      *
-     * @param  string $id
-     * @return Padding\PaddingInterface
+     * Checks that the padding adapter loaded is an instance of Padding\PaddingInterface.
+     *
+     * @param  mixed $plugin
+     * @return void
+     * @throws Exception\InvalidArgumentException if invalid
      */
-    public function get($id)
+    public function validatePlugin($plugin)
     {
-        $class = $this->paddings[$id];
-        return new $class();
+        if ($plugin instanceof Padding\PaddingInterface) {
+            // we're okay
+            return;
+        }
+
+        throw new Exception\InvalidArgumentException(sprintf(
+            'Plugin of type %s is invalid; must implement %s\Padding\PaddingInterface',
+            (is_object($plugin) ? get_class($plugin) : gettype($plugin)),
+            __NAMESPACE__
+        ));
     }
 }

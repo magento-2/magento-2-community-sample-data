@@ -7,7 +7,7 @@ namespace Magento\Webapi\Test\Unit\Model\Plugin;
 
 use Magento\Integration\Model\Integration;
 
-class ManagerTest extends \PHPUnit\Framework\TestCase
+class ManagerTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * Integration service mock
@@ -43,7 +43,7 @@ class ManagerTest extends \PHPUnit\Framework\TestCase
     protected function setUp()
     {
         $this->integrationServiceMock = $this->getMockBuilder(
-            \Magento\Integration\Api\IntegrationServiceInterface::class
+            '\Magento\Integration\Api\IntegrationServiceInterface'
         )->disableOriginalConstructor()->setMethods(
             [
                 'findByName',
@@ -58,7 +58,7 @@ class ManagerTest extends \PHPUnit\Framework\TestCase
         )->getMock();
 
         $this->integrationAuthorizationServiceMock = $this->getMockBuilder(
-            \Magento\Integration\Api\AuthorizationServiceInterface::class
+            '\Magento\Integration\Api\AuthorizationServiceInterface'
         )->disableOriginalConstructor()->setMethods(
             [
                 'grantPermissions',
@@ -67,9 +67,15 @@ class ManagerTest extends \PHPUnit\Framework\TestCase
             ]
         )->getMock();
 
-        $this->subjectMock = $this->createMock(\Magento\Integration\Model\ConfigBasedIntegrationManager::class);
+        $this->subjectMock = $this->getMock(
+            'Magento\Integration\Model\ConfigBasedIntegrationManager',
+            [],
+            [],
+            '',
+            false
+        );
 
-        $this->integrationConfigMock = $this->getMockBuilder(\Magento\Integration\Model\IntegrationConfig::class)
+        $this->integrationConfigMock = $this->getMockBuilder('Magento\Integration\Model\IntegrationConfig')
             ->disableOriginalConstructor()
             ->setMethods([])
             ->getMock();

@@ -17,11 +17,6 @@ use Magento\Mtf\Constraint\AbstractAssertForm;
 abstract class AbstractAssertWishlistProductDetails extends AbstractAssertForm
 {
     /**
-     * @inheritdoc
-     */
-    protected $skippedFields = ['sku'];
-
-    /**
      * Assert product details.
      *
      * @param WishlistIndex $wishlistIndex

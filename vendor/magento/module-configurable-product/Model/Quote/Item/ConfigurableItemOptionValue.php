@@ -14,7 +14,6 @@ use Magento\Framework\Model\AbstractExtensibleModel;
 class ConfigurableItemOptionValue extends AbstractExtensibleModel implements ConfigurableItemOptionValueInterface
 {
     //@codeCoverageIgnoreStart
-
     /**
      * {@inheritdoc}
      */

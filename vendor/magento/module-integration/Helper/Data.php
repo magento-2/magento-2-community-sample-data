@@ -21,7 +21,7 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper
         foreach ($resources as $resource) {
             $item = [];
             $item['attr']['data-id'] = $resource['id'];
-            $item['data'] = __($resource['title']);
+            $item['data'] = $resource['title'];
             $item['children'] = [];
             if (isset($resource['children'])) {
                 $item['state'] = 'open';

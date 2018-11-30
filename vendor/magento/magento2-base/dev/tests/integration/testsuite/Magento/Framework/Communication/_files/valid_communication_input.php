@@ -10,12 +10,12 @@ return [
             'customerCreated' => [
                 'name' => 'customerCreated',
                 'is_synchronous' => true,
-                'request' => \Magento\Customer\Api\Data\CustomerInterface::class,
+                'request' => 'Magento\Customer\Api\Data\CustomerInterface',
                 'request_type' => 'object_interface',
-                'response' => \Magento\Customer\Api\Data\CustomerInterface::class,
+                'response' => 'Magento\Customer\Api\Data\CustomerInterface',
                 'handlers' => [
                     'default' => [
-                        'type' => \Magento\Customer\Api\CustomerRepositoryInterface::class,
+                        'type' => 'Magento\Customer\Api\CustomerRepositoryInterface',
                         'method' => 'save',
                     ],
                 ],
@@ -28,19 +28,19 @@ return [
                 'response' => null,
                 'handlers' => [
                     'customerCreatedFirst' => [
-                        'type' => \Magento\Customer\Api\CustomerRepositoryInterface::class,
+                        'type' => 'Magento\Customer\Api\CustomerRepositoryInterface',
                         'method' => 'save',
                     ],
                     'customerCreatedSecond' => [
-                        'type' => \Magento\Customer\Api\CustomerRepositoryInterface::class,
+                        'type' => 'Magento\Customer\Api\CustomerRepositoryInterface',
                         'method' => 'delete',
                     ],
                     'saveNameNotDisabled' => [
-                        'type' => \Magento\Customer\Api\CustomerRepositoryInterface::class,
+                        'type' => 'Magento\Customer\Api\CustomerRepositoryInterface',
                         'method' => 'save',
                     ],
                     'saveNameNotDisabledDigit' => [
-                        'type' => \Magento\Customer\Api\CustomerRepositoryInterface::class,
+                        'type' => 'Magento\Customer\Api\CustomerRepositoryInterface',
                         'method' => 'save',
                     ],
                 ],
@@ -48,12 +48,12 @@ return [
             'customerUpdated' => [
                 'name' => 'customerUpdated',
                 'is_synchronous' => true,
-                'request' => \Magento\Customer\Api\Data\CustomerInterface::class,
+                'request' => 'Magento\Customer\Api\Data\CustomerInterface',
                 'request_type' => 'object_interface',
                 'response' => 'Magento\Customer\Api\Data\CustomerInterface[]',
                 'handlers' => [
                     'updateName' => [
-                        'type' => \Magento\Customer\Api\CustomerRepositoryInterface::class,
+                        'type' => 'Magento\Customer\Api\CustomerRepositoryInterface',
                         'method' => 'save',
                     ],
                 ],
@@ -61,12 +61,12 @@ return [
             'customerModified' => [
                 'name' => 'customerModified',
                 'is_synchronous' => false,
-                'request' => \Magento\Customer\Api\Data\CustomerInterface::class,
+                'request' => 'Magento\Customer\Api\Data\CustomerInterface',
                 'request_type' => 'object_interface',
                 'response' => null,
                 'handlers' => [
                     'updateName' => [
-                        'type' => \Magento\Customer\Api\CustomerRepositoryInterface::class,
+                        'type' => 'Magento\Customer\Api\CustomerRepositoryInterface',
                         'method' => 'save',
                     ],
                 ],
@@ -89,10 +89,10 @@ return [
                     ],
                 ],
                 'request_type' => 'service_method_interface',
-                'response' => \Magento\Customer\Api\Data\CustomerInterface::class,
+                'response' => '\Magento\Customer\Api\Data\CustomerInterface',
                 'handlers' => [
                     'defaultHandler' => [
-                        'type' => \Magento\Customer\Api\CustomerRepositoryInterface::class,
+                        'type' => 'Magento\Customer\Api\CustomerRepositoryInterface',
                         'method' => 'get',
                     ],
                 ],
@@ -105,14 +105,14 @@ return [
                         'param_name' => 'customer',
                         'param_position' => 0,
                         'is_required' => true,
-                        'param_type' => \Magento\Customer\Api\Data\CustomerInterface::class,
+                        'param_type' => 'Magento\Customer\Api\Data\CustomerInterface',
                     ],
                 ],
                 'request_type' => 'service_method_interface',
                 'response' => 'bool',
                 'handlers' => [
                     'customHandler' => [
-                        'type' => \Magento\Customer\Api\CustomerRepositoryInterface::class,
+                        'type' => 'Magento\Customer\Api\CustomerRepositoryInterface',
                         'method' => 'deleteById',
                     ],
                 ],

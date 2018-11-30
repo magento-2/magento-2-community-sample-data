@@ -3,7 +3,6 @@
  * Copyright © Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
-declare(strict_types=1);
 
 namespace Magento\Cms\Test\Unit\Model;
 
@@ -17,7 +16,7 @@ use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
 /**
  * @covers \Magento\Cms\Model\Block
  */
-class BlockTest extends \PHPUnit\Framework\TestCase
+class BlockTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * Testable Object
@@ -55,9 +54,12 @@ class BlockTest extends \PHPUnit\Framework\TestCase
      */
     protected function setUp()
     {
-        $this->resourceMock = $this->createMock(BlockResource::class);
-        $this->eventManagerMock = $this->createMock(ManagerInterface::class);
-        $this->contextMock = $this->createMock(Context::class);
+        $this->resourceMock = $this->getMockBuilder(BlockResource::class)->disableOriginalConstructor()
+            ->getMock();
+        $this->eventManagerMock = $this->getMockBuilder(ManagerInterface::class)->disableOriginalConstructor()
+            ->getMock();
+        $this->contextMock = $this->getMockBuilder(Context::class)->disableOriginalConstructor()
+            ->getMock();
         $this->contextMock->expects($this->any())->method('getEventDispatcher')->willReturn($this->eventManagerMock);
         $this->objectManager = new ObjectManager($this);
         $this->blockModel = $this->objectManager->getObject(
@@ -103,7 +105,7 @@ class BlockTest extends \PHPUnit\Framework\TestCase
         $this->blockModel->setData(Block::CONTENT, 'Test block_id="' . $blockId . '".');
         $this->objectManager->setBackwardCompatibleProperty($this->blockModel, '_hasDataChanges', false);
         $this->eventManagerMock->expects($this->never())->method('dispatch');
-        $this->expectException(LocalizedException::class);
+        $this->setExpectedException(LocalizedException::class);
         $this->blockModel->beforeSave();
     }
 

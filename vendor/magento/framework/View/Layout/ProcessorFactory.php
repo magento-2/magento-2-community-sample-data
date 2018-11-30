@@ -32,7 +32,7 @@ class ProcessorFactory
      */
     public function __construct(
         \Magento\Framework\ObjectManagerInterface $objectManager,
-        $instanceName = \Magento\Framework\View\Layout\ProcessorInterface::class
+        $instanceName = 'Magento\Framework\View\Layout\ProcessorInterface'
     ) {
         $this->objectManager = $objectManager;
         $this->instanceName = $instanceName;

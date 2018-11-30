@@ -5,7 +5,7 @@
  */
 namespace Magento\GoogleAdwords\Test\Unit\Model\Config\Source;
 
-class ValueTypeTest extends \PHPUnit\Framework\TestCase
+class ValueTypeTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\GoogleAdwords\Model\Config\Source\ValueType
@@ -15,7 +15,7 @@ class ValueTypeTest extends \PHPUnit\Framework\TestCase
     protected function setUp()
     {
         $objectManager = new \Magento\Framework\TestFramework\Unit\Helper\ObjectManager($this);
-        $this->_model = $objectManager->getObject(\Magento\GoogleAdwords\Model\Config\Source\ValueType::class, []);
+        $this->_model = $objectManager->getObject('Magento\GoogleAdwords\Model\Config\Source\ValueType', []);
     }
 
     public function testToOptionArray()

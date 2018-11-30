@@ -84,16 +84,14 @@ class Config extends Section
             ? $fields['configurable_attributes_data']['value']
             : [];
 
-        $attributeSource = isset($fields['configurable_attributes_data']['source'])
-            ? $fields['configurable_attributes_data']['source']
-            : null;
-        $attributesValue = $attributeSource !== null ? $attributeSource->getAttributesData() : [];
-
+        $attributesValue = isset($fields['configurable_attributes_data']['source'])
+            ? $fields['configurable_attributes_data']['source']->getAttributesData()
+            : [];
         foreach ($attributesValue as $key => $value) {
             $attributesValue[$key] = array_merge($value, $attributes['attributes_data'][$key]);
         }
         $this->createConfigurations();
-        $this->getAttributeBlock()->fillAttributes($attributesValue, $attributeSource);
+        $this->getAttributeBlock()->fillAttributes($attributesValue);
         if (!empty($attributes['matrix'])) {
             $this->generateVariations();
             $this->getVariationsBlock()->fillVariations($attributes['matrix']);
@@ -132,7 +130,7 @@ class Config extends Section
     public function getAttributeBlock()
     {
         return $this->blockFactory->create(
-            \Magento\ConfigurableProduct\Test\Block\Adminhtml\Product\Edit\Section\Variations\Config\Attribute::class,
+            'Magento\ConfigurableProduct\Test\Block\Adminhtml\Product\Edit\Section\Variations\Config\Attribute',
             ['element' => $this->_rootElement]
         );
     }
@@ -145,7 +143,7 @@ class Config extends Section
     public function getVariationsBlock()
     {
         return $this->blockFactory->create(
-            \Magento\ConfigurableProduct\Test\Block\Adminhtml\Product\Edit\Section\Variations\Config\Matrix::class,
+            'Magento\ConfigurableProduct\Test\Block\Adminhtml\Product\Edit\Section\Variations\Config\Matrix',
             ['element' => $this->_rootElement->find($this->variationsMatrix)]
         );
     }
@@ -158,7 +156,7 @@ class Config extends Section
     public function getTemplateBlock()
     {
         return $this->blockFactory->create(
-            \Magento\Backend\Test\Block\Template::class,
+            'Magento\Backend\Test\Block\Template',
             ['element' => $this->_rootElement->find($this->template, Locator::SELECTOR_XPATH)]
         );
     }

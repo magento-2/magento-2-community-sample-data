@@ -8,7 +8,7 @@ namespace Magento\CatalogInventory\Test\Unit\Model;
 /**
  * Class StockRegistryTest
  */
-class StockRegistryTest extends \PHPUnit\Framework\TestCase
+class StockRegistryTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\CatalogInventory\Model\StockRegistry
@@ -22,11 +22,11 @@ class StockRegistryTest extends \PHPUnit\Framework\TestCase
 
     protected function setUp()
     {
-        $this->criteria = $this->getMockBuilder(\Magento\CatalogInventory\Api\StockItemCriteriaInterface::class)
+        $this->criteria = $this->getMockBuilder('Magento\CatalogInventory\Api\StockItemCriteriaInterface')
             ->disableOriginalConstructor()
             ->getMock();
 
-        $criteriaFactory = $this->getMockBuilder(\Magento\CatalogInventory\Api\StockItemCriteriaInterfaceFactory::class)
+        $criteriaFactory = $this->getMockBuilder('Magento\CatalogInventory\Api\StockItemCriteriaInterfaceFactory')
             ->setMethods(['create'])
             ->disableOriginalConstructor()
             ->getMock();
@@ -34,7 +34,7 @@ class StockRegistryTest extends \PHPUnit\Framework\TestCase
 
         $objectManager = new \Magento\Framework\TestFramework\Unit\Helper\ObjectManager($this);
         $this->model = $objectManager->getObject(
-            \Magento\CatalogInventory\Model\StockRegistry::class,
+            'Magento\CatalogInventory\Model\StockRegistry',
             [
                 'criteriaFactory' => $criteriaFactory
             ]

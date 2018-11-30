@@ -11,7 +11,7 @@ use Magento\Framework\App\Filesystem\DirectoryList;
  * Test class for \Magento\Catalog\Model\Product\Gallery\Processor.
  * @magentoDataFixture Magento/Catalog/_files/product_simple.php
  */
-class ProcessorTest extends \PHPUnit\Framework\TestCase
+class ProcessorTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\Catalog\Model\Product\Gallery\Processor
@@ -32,9 +32,9 @@ class ProcessorTest extends \PHPUnit\Framework\TestCase
     {
         $objectManager = \Magento\TestFramework\Helper\Bootstrap::getObjectManager();
         /** @var \Magento\Framework\Filesystem\Directory\WriteInterface $mediaDirectory */
-        $config = $objectManager->get(\Magento\Catalog\Model\Product\Media\Config::class);
+        $config = $objectManager->get('Magento\Catalog\Model\Product\Media\Config');
         $mediaDirectory = $objectManager->get(
-            \Magento\Framework\Filesystem::class
+            'Magento\Framework\Filesystem'
         )->getDirectoryWrite(
             DirectoryList::MEDIA
         );
@@ -55,11 +55,11 @@ class ProcessorTest extends \PHPUnit\Framework\TestCase
     {
         $objectManager = \Magento\TestFramework\Helper\Bootstrap::getObjectManager();
         /** @var \Magento\Catalog\Model\Product\Media\Config $config */
-        $config = $objectManager->get(\Magento\Catalog\Model\Product\Media\Config::class);
+        $config = $objectManager->get('Magento\Catalog\Model\Product\Media\Config');
 
         /** @var \Magento\Framework\Filesystem\Directory\WriteInterface $mediaDirectory */
         $mediaDirectory = $objectManager->get(
-            \Magento\Framework\Filesystem::class
+            'Magento\Framework\Filesystem'
         )->getDirectoryWrite(
             DirectoryList::MEDIA
         );
@@ -75,14 +75,14 @@ class ProcessorTest extends \PHPUnit\Framework\TestCase
     protected function setUp()
     {
         $this->_model = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->create(
-            \Magento\Catalog\Model\Product\Gallery\Processor::class
+            'Magento\Catalog\Model\Product\Gallery\Processor'
         );
     }
 
     public function testValidate()
     {
         $product = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->create(
-            \Magento\Catalog\Model\Product::class
+            'Magento\Catalog\Model\Product'
         );
         $this->assertTrue($this->_model->validate($product));
         $this->_model->getAttribute()->setIsRequired(true);
@@ -98,7 +98,7 @@ class ProcessorTest extends \PHPUnit\Framework\TestCase
     public function testAddImage()
     {
         $product = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->create(
-            \Magento\Catalog\Model\Product::class
+            'Magento\Catalog\Model\Product'
         );
         $product->setId(1);
         $file = $this->_model->addImage($product, self::$_mediaTmpDir . '/magento_small_image.jpg');
@@ -108,7 +108,7 @@ class ProcessorTest extends \PHPUnit\Framework\TestCase
     public function testUpdateImage()
     {
         $product = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->create(
-            \Magento\Catalog\Model\Product::class
+            'Magento\Catalog\Model\Product'
         );
         $product->setData('media_gallery', ['images' => ['image' => ['file' => 'magento_image.jpg']]]);
         $this->_model->updateImage($product, 'magento_image.jpg', ['label' => 'test label']);
@@ -118,7 +118,7 @@ class ProcessorTest extends \PHPUnit\Framework\TestCase
     public function testRemoveImage()
     {
         $product = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->create(
-            \Magento\Catalog\Model\Product::class
+            'Magento\Catalog\Model\Product'
         );
         $product->setData('media_gallery', ['images' => ['image' => ['file' => 'magento_image.jpg']]]);
         $this->_model->removeImage($product, 'magento_image.jpg');
@@ -128,7 +128,7 @@ class ProcessorTest extends \PHPUnit\Framework\TestCase
     public function testGetImage()
     {
         $product = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->create(
-            \Magento\Catalog\Model\Product::class
+            'Magento\Catalog\Model\Product'
         );
         $product->setData('media_gallery', ['images' => ['image' => ['file' => 'magento_image.jpg']]]);
 
@@ -142,26 +142,26 @@ class ProcessorTest extends \PHPUnit\Framework\TestCase
     {
         /** @var $product \Magento\Catalog\Model\Product */
         $product = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->create(
-            \Magento\Catalog\Model\Product::class
+            'Magento\Catalog\Model\Product'
         );
         $product->setData(['image' => 'test1', 'small_image' => 'test2', 'thumbnail' => 'test3']);
 
-        $this->assertNotEquals('no_selection', $product->getData('image'));
+        $this->assertNotEmpty($product->getData('image'));
         $this->_model->clearMediaAttribute($product, 'image');
-        $this->assertEquals('no_selection', $product->getData('image'));
+        $this->assertNull($product->getData('image'));
 
-        $this->assertNotEquals('no_selection', $product->getData('small_image'));
-        $this->assertNotEquals('no_selection', $product->getData('thumbnail'));
+        $this->assertNotEmpty($product->getData('small_image'));
+        $this->assertNotEmpty($product->getData('thumbnail'));
         $this->_model->clearMediaAttribute($product, ['small_image', 'thumbnail']);
-        $this->assertEquals('no_selection', $product->getData('small_image'));
-        $this->assertEquals('no_selection', $product->getData('thumbnail'));
+        $this->assertNull($product->getData('small_image'));
+        $this->assertNull($product->getData('thumbnail'));
     }
 
     public function testSetMediaAttribute()
     {
         /** @var $product \Magento\Catalog\Model\Product */
         $product = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->create(
-            \Magento\Catalog\Model\Product::class
+            'Magento\Catalog\Model\Product'
         );
         $this->_model->setMediaAttribute($product, 'image', 'test1');
         $this->assertEquals('test1', $product->getData('image'));

@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2018 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 
@@ -12,7 +12,7 @@ use Magento\Setup\Fixtures\AttributeSetsFixture;
 /**
  * @SuppressWarnings(PHPMD)
  */
-class AttributeSetsFixtureTest extends \PHPUnit\Framework\TestCase
+class AttributeSetsFixtureTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \PHPUnit_Framework_MockObject_MockObject|\Magento\Setup\Fixtures\FixtureModel

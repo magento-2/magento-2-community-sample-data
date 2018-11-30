@@ -11,12 +11,12 @@ class Factory
     /**
      * Default validator
      */
-    const DEFAULT_VALIDATOR = \Magento\Paypal\Helper\Shortcut\Validator::class;
+    const DEFAULT_VALIDATOR = 'Magento\Paypal\Helper\Shortcut\Validator';
 
     /**
      * Checkout validator
      */
-    const CHECKOUT_VALIDATOR = \Magento\Paypal\Helper\Shortcut\CheckoutValidator::class;
+    const CHECKOUT_VALIDATOR = 'Magento\Paypal\Helper\Shortcut\CheckoutValidator';
 
     /**
      * @var \Magento\Framework\ObjectManagerInterface

@@ -13,8 +13,6 @@ use Magento\Framework\App\RequestInterface;
  *
  * The class has only methods extended from CookieMetadata
  * as path and domain are only data to be exposed by SensitiveCookieMetadata
- *
- * @api
  */
 class SensitiveCookieMetadata extends CookieMetadata
 {

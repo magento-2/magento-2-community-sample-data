@@ -12,7 +12,7 @@ use Magento\TestFramework\Helper\Bootstrap;
 /**
  * Test class for the \Magento\Framework\App\Filesystem\DirectoryResolver verification.
  */
-class DirectoryResolverTest extends \PHPUnit\Framework\TestCase
+class DirectoryResolverTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\Framework\ObjectManagerInterface
@@ -58,7 +58,6 @@ class DirectoryResolverTest extends \PHPUnit\Framework\TestCase
     /**
      * @expectedException \Magento\Framework\Exception\FileSystemException
      * @magentoAppIsolation enabled
-     * @return void
      */
     public function testValidatePathWithException()
     {

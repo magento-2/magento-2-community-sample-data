@@ -27,10 +27,7 @@ class Collection extends \Magento\Framework\Model\ResourceModel\Db\Collection\Ab
      */
     protected function _construct()
     {
-        $this->_init(
-            \Magento\Review\Model\Review\Status::class,
-            \Magento\Review\Model\ResourceModel\Review\Status::class
-        );
+        $this->_init('Magento\Review\Model\Review\Status', 'Magento\Review\Model\ResourceModel\Review\Status');
     }
 
     /**

@@ -28,15 +28,24 @@ class MassEnableTest extends AbstractMassActionTest
     {
         parent::setUp();
 
-        $this->collectionFactoryMock = $this->createPartialMock(
-            \Magento\Cms\Model\ResourceModel\Page\CollectionFactory::class,
-            ['create']
+        $this->collectionFactoryMock = $this->getMock(
+            'Magento\Cms\Model\ResourceModel\Page\CollectionFactory',
+            ['create'],
+            [],
+            '',
+            false
         );
 
-        $this->pageCollectionMock = $this->createMock(\Magento\Cms\Model\ResourceModel\Page\Collection::class);
+        $this->pageCollectionMock = $this->getMock(
+            'Magento\Cms\Model\ResourceModel\Page\Collection',
+            [],
+            [],
+            '',
+            false
+        );
 
         $this->massEnableController = $this->objectManager->getObject(
-            \Magento\Cms\Controller\Adminhtml\Page\MassEnable::class,
+            'Magento\Cms\Controller\Adminhtml\Page\MassEnable',
             [
                 'context' => $this->contextMock,
                 'filter' => $this->filterMock,
@@ -67,9 +76,9 @@ class MassEnableTest extends AbstractMassActionTest
             ->willReturn(new \ArrayIterator($collection));
 
         $this->messageManagerMock->expects($this->once())
-            ->method('addSuccessMessage')
+            ->method('addSuccess')
             ->with(__('A total of %1 record(s) have been enabled.', $enabledPagesCount));
-        $this->messageManagerMock->expects($this->never())->method('addErrorMessage');
+        $this->messageManagerMock->expects($this->never())->method('addError');
 
         $this->resultRedirectMock->expects($this->once())
             ->method('setPath')
@@ -86,9 +95,12 @@ class MassEnableTest extends AbstractMassActionTest
      */
     protected function getPageMock()
     {
-        $pageMock = $this->createPartialMock(
-            \Magento\Cms\Model\ResourceModel\Page\Collection::class,
-            ['setIsActive', 'save']
+        $pageMock = $this->getMock(
+            'Magento\Cms\Model\ResourceModel\Page\Collection',
+            ['setIsActive', 'save'],
+            [],
+            '',
+            false
         );
         $pageMock->expects($this->once())->method('setIsActive')->with(true)->willReturn(true);
         $pageMock->expects($this->once())->method('save')->willReturn(true);

@@ -8,10 +8,7 @@ namespace Magento\SalesRule\Test\Unit\Model;
 use Magento\Framework\Pricing\PriceCurrencyInterface;
 use Magento\SalesRule\Model\DeltaPriceRound;
 
-/**
- * Tests for Magento\SalesRule\Model\DeltaPriceRound.
- */
-class DeltaPriceRoundTest extends \PHPUnit\Framework\TestCase
+class DeltaPriceRoundTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var PriceCurrencyInterface|\PHPUnit_Framework_MockObject_MockObject
@@ -23,9 +20,6 @@ class DeltaPriceRoundTest extends \PHPUnit\Framework\TestCase
      */
     private $model;
 
-    /**
-     * @inheritdoc
-     */
     protected function setUp()
     {
         $this->priceCurrency = $this->getMockForAbstractClass(PriceCurrencyInterface::class);
@@ -44,7 +38,6 @@ class DeltaPriceRoundTest extends \PHPUnit\Framework\TestCase
      *
      * @param array $prices
      * @param array $roundedPrices
-     * @return void
      * @dataProvider roundDataProvider
      */
     public function testRound(array $prices, array $roundedPrices)
@@ -70,13 +63,10 @@ class DeltaPriceRoundTest extends \PHPUnit\Framework\TestCase
             [
                 'prices' => [1.005, 1.005],
                 'rounded prices' => [1.01, 1.0],
-            ],
+            ]
         ];
     }
 
-    /**
-     * @return void
-     */
     public function testReset()
     {
         $this->assertEquals(1.44, $this->model->round(1.444, 'test'));
@@ -84,9 +74,6 @@ class DeltaPriceRoundTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals(1.44, $this->model->round(1.444, 'test'));
     }
 
-    /**
-     * @return void
-     */
     public function testResetAll()
     {
         $this->assertEquals(1.44, $this->model->round(1.444, 'test1'));

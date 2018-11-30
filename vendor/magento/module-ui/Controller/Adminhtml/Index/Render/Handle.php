@@ -10,8 +10,8 @@ use Magento\Ui\Component\Control\ActionPool;
 use Magento\Ui\Component\Wrapper\UiComponent;
 use Magento\Ui\Controller\Adminhtml\AbstractAction;
 use Magento\Backend\App\Action\Context;
+use Magento\Framework\View\Element\UiComponent\Config\ManagerInterface;
 use Magento\Framework\View\Element\UiComponentFactory;
-use Magento\Framework\View\Element\UiComponent\ContextFactory;
 use Magento\Framework\App\ObjectManager;
 
 /**
@@ -20,23 +20,22 @@ use Magento\Framework\App\ObjectManager;
 class Handle extends AbstractAction
 {
     /**
-     * @var ContextFactory
+     * @var ManagerInterface
      */
-    private $contextFactory;
+    private $componentManager;
 
     /**
      * @param Context $context
      * @param UiComponentFactory $factory
-     * @param ContextFactory|null $contextFactory
+     * @param ManagerInterface|null $componentManager
      */
     public function __construct(
         Context $context,
         UiComponentFactory $factory,
-        ContextFactory $contextFactory = null
+        ManagerInterface $componentManager = null
     ) {
         parent::__construct($context, $factory);
-        $this->contextFactory = $contextFactory
-            ?: ObjectManager::getInstance()->get(ContextFactory::class);
+        $this->componentManager = $componentManager ?: ObjectManager::getInstance()->get(ManagerInterface::class);
     }
 
     /**
@@ -52,15 +51,9 @@ class Handle extends AbstractAction
         $buttons = $this->_request->getParam('buttons', false);
         $this->_view->loadLayout(['default', $handle], true, true, false);
         $layout = $this->_view->getLayout();
-        $context = $this->contextFactory->create(
-            [
-                'namespace' => $namespace,
-                'pageLayout' => $layout,
-            ]
-        );
+        $config = $this->componentManager->getData($namespace);
 
-        $component = $this->factory->create($namespace, null, ['context' => $context]);
-        if ($this->validateAclResource($component->getContext()->getDataProvider()->getConfigData())) {
+        if ($this->validateAclResource($config[$namespace])) {
             $uiComponent = $layout->getBlock($namespace);
             $response = $uiComponent instanceof UiComponent ? $uiComponent->toHtml() : '';
         }
@@ -74,16 +67,17 @@ class Handle extends AbstractAction
     }
 
     /**
-     * Optionally validate ACL resource of components with a DataSource/DataProvider
+     * Optionally validate ACL resource of components.
      *
      * @param mixed $dataProviderConfigData
      * @return bool
      */
-    private function validateAclResource($dataProviderConfigData): bool
+    private function validateAclResource($dataProviderConfigData)
     {
-        if (isset($dataProviderConfigData['aclResource'])
-            && !$this->_authorization->isAllowed($dataProviderConfigData['aclResource'])
-        ) {
+        $aclResource = isset($dataProviderConfigData['arguments']['data']['acl'])
+            ? $dataProviderConfigData['arguments']['data']['acl']
+            : false;
+        if ($aclResource !== false && !$this->_authorization->isAllowed($aclResource)) {
             if (!$this->_request->isAjax()) {
                 $this->_redirect('admin/denied');
             }

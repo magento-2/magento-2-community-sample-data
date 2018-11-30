@@ -21,9 +21,6 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper
 {
     const XML_PATH_GUEST_CHECKOUT = 'checkout/options/guest_checkout';
 
-    /**
-     * @deprecated
-     */
     const XML_PATH_CUSTOMER_MUST_BE_LOGGED = 'checkout/options/customer_must_be_logged';
 
     /**
@@ -167,7 +164,7 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper
         }
         $qty = $item->getQty() ? $item->getQty() : ($item->getQtyOrdered() ? $item->getQtyOrdered() : 1);
         $taxAmount = $item->getTaxAmount() + $item->getDiscountTaxCompensation();
-        $price = (float)$qty ? ($item->getRowTotal() + $taxAmount) / $qty : 0;
+        $price = floatval($qty) ? ($item->getRowTotal() + $taxAmount) / $qty : 0;
         return $this->priceCurrency->round($price);
     }
 
@@ -194,7 +191,7 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper
     {
         $qty = $item->getQty() ? $item->getQty() : ($item->getQtyOrdered() ? $item->getQtyOrdered() : 1);
         $taxAmount = $item->getBaseTaxAmount() + $item->getBaseDiscountTaxCompensation();
-        $price = (float)$qty ? ($item->getBaseRowTotal() + $taxAmount) / $qty : 0;
+        $price = floatval($qty) ? ($item->getBaseRowTotal() + $taxAmount) / $qty : 0;
         return $this->priceCurrency->round($price);
     }
 
@@ -216,12 +213,9 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper
      * @param string $checkoutType
      * @return $this
      */
-    public function sendPaymentFailedEmail(
-        \Magento\Quote\Model\Quote $checkout,
-        string $message,
-        string $checkoutType = 'onepage'
-    ): \Magento\Checkout\Helper\Data {
-        $this->paymentFailures->handle((int)$checkout->getId(), $message, $checkoutType);
+    public function sendPaymentFailedEmail($checkout, $message, $checkoutType = 'onepage')
+    {
+        $this->paymentFailures->handle($checkout->getId(), $message, $checkoutType);
 
         return $this;
     }
@@ -293,7 +287,6 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper
      *
      * @return boolean
      * @codeCoverageIgnore
-     * @deprecated
      */
     public function isCustomerMustBeLogged()
     {

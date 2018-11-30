@@ -8,7 +8,7 @@ namespace Magento\Rule\Test\Unit\Model\Renderer;
 
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager as ObjectManagerHelper;
 
-class ConditionsTest extends \PHPUnit\Framework\TestCase
+class ConditionsTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\Rule\Model\Renderer\Conditions
@@ -28,20 +28,23 @@ class ConditionsTest extends \PHPUnit\Framework\TestCase
     protected function setUp()
     {
         $this->objectManagerHelper = new ObjectManagerHelper($this);
-        $this->conditions = $this->objectManagerHelper->getObject(\Magento\Rule\Model\Renderer\Conditions::class);
-        $this->_element = $this->createPartialMock(
-            \Magento\Framework\Data\Form\Element\AbstractElement::class,
-            ['getRule']
+        $this->conditions = $this->objectManagerHelper->getObject('Magento\Rule\Model\Renderer\Conditions');
+        $this->_element = $this->getMock(
+            '\Magento\Framework\Data\Form\Element\AbstractElement',
+            ['getRule'],
+            [],
+            '',
+            false
         );
     }
 
     public function testRender()
     {
-        $rule = $this->getMockBuilder(\Magento\Rule\Model\AbstractModel::class)
+        $rule = $this->getMockBuilder('Magento\Rule\Model\AbstractModel')
             ->setMethods(['getConditions', '__sleep', '__wakeup'])
             ->disableOriginalConstructor()
             ->getMockForAbstractClass();
-        $conditions = $this->createPartialMock(\Magento\Rule\Model\Condition\Combine::class, ['asHtmlRecursive']);
+        $conditions = $this->getMock('\Magento\Rule\Model\Condition\Combine', ['asHtmlRecursive'], [], '', false);
 
         $this->_element->expects($this->any())
             ->method('getRule')

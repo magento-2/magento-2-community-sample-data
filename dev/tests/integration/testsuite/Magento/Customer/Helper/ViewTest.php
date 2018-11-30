@@ -8,7 +8,7 @@ namespace Magento\Customer\Helper;
 use Magento\Customer\Api\CustomerMetadataInterface;
 use Magento\TestFramework\Helper\Bootstrap;
 
-class ViewTest extends \PHPUnit\Framework\TestCase
+class ViewTest extends \PHPUnit_Framework_TestCase
 {
     /** @var \Magento\Customer\Helper\View */
     protected $_helper;
@@ -18,9 +18,9 @@ class ViewTest extends \PHPUnit\Framework\TestCase
 
     protected function setUp()
     {
-        $this->_customerMetadataService = $this->createMock(\Magento\Customer\Api\CustomerMetadataInterface::class);
+        $this->_customerMetadataService = $this->getMock('Magento\Customer\Api\CustomerMetadataInterface');
         $this->_helper = Bootstrap::getObjectManager()->create(
-            \Magento\Customer\Helper\View::class,
+            'Magento\Customer\Helper\View',
             ['customerMetadataService' => $this->_customerMetadataService]
         );
         parent::setUp();
@@ -41,10 +41,10 @@ class ViewTest extends \PHPUnit\Framework\TestCase
         $isMiddleNameAllowed = false,
         $isSuffixAllowed = false
     ) {
-        $visibleAttribute = $this->createMock(\Magento\Customer\Api\Data\AttributeMetadataInterface::class);
+        $visibleAttribute = $this->getMock('Magento\Customer\Api\Data\AttributeMetadataInterface');
         $visibleAttribute->expects($this->any())->method('isVisible')->will($this->returnValue(true));
 
-        $invisibleAttribute = $this->createMock(\Magento\Customer\Api\Data\AttributeMetadataInterface::class);
+        $invisibleAttribute = $this->getMock('Magento\Customer\Api\Data\AttributeMetadataInterface');
         $invisibleAttribute->expects($this->any())->method('isVisible')->will($this->returnValue(false));
 
         $this->_customerMetadataService->expects(
@@ -71,9 +71,7 @@ class ViewTest extends \PHPUnit\Framework\TestCase
     public function getCustomerNameDataProvider()
     {
         /** @var \Magento\Customer\Api\Data\CustomerInterfaceFactory $customerFactory */
-        $customerFactory = Bootstrap::getObjectManager()->create(
-            \Magento\Customer\Api\Data\CustomerInterfaceFactory::class
-        );
+        $customerFactory = Bootstrap::getObjectManager()->create('Magento\Customer\Api\Data\CustomerInterfaceFactory');
         return [
             'With disabled prefix, middle name, suffix' => [
                 $customerFactory->create()->setPrefix(

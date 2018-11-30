@@ -15,7 +15,7 @@ class IndexTest extends \Magento\TestFramework\TestCase\AbstractController
 
         $objectManager = \Magento\TestFramework\Helper\Bootstrap::getObjectManager();
         /** @var \Magento\Framework\App\ProductMetadataInterface $productMetadata */
-        $productMetadata = $objectManager->get(\Magento\Framework\App\ProductMetadataInterface::class);
+        $productMetadata = $objectManager->get('Magento\Framework\App\ProductMetadataInterface');
         $name = $productMetadata->getName();
         $edition = $productMetadata->getEdition();
 

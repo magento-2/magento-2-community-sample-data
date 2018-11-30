@@ -3,7 +3,6 @@
  * Copyright © Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
-
 namespace Magento\ProductVideo\Model\Plugin\Catalog\Product\Gallery;
 
 use Magento\ProductVideo\Model\Product\Attribute\Media\ExternalVideoEntryConverter;
@@ -57,8 +56,8 @@ class ReadHandler extends AbstractHandler
     {
         $ids = [];
         foreach ($mediaCollection as $item) {
-            if ($item['media_type'] === ExternalVideoEntryConverter::MEDIA_TYPE_CODE
-                && !isset($item['video_url'])
+            if ($item['media_type'] == ExternalVideoEntryConverter::MEDIA_TYPE_CODE
+                && !array_key_exists('video_url', $item)
             ) {
                 $ids[] = $item['value_id'];
             }
@@ -74,7 +73,7 @@ class ReadHandler extends AbstractHandler
     protected function loadVideoDataById(array $ids, $storeId = null)
     {
         $mainTableAlias = $this->resourceModel->getMainTableAlias();
-        $joinConditions = $mainTableAlias . '.value_id = store_value.value_id';
+        $joinConditions = $mainTableAlias.'.value_id = store_value.value_id';
         if (null !== $storeId) {
             $joinConditions = implode(
                 ' AND ',
@@ -136,10 +135,10 @@ class ReadHandler extends AbstractHandler
     protected function substituteNullsWithDefaultValues(array $rowData)
     {
         foreach ($this->getVideoProperties(false) as $key) {
-            if (empty($rowData[$key]) && !empty($rowData[$key . '_default'])) {
-                $rowData[$key] = $rowData[$key . '_default'];
+            if (empty($rowData[$key]) && !empty($rowData[$key.'_default'])) {
+                $rowData[$key] = $rowData[$key.'_default'];
             }
-            unset($rowData[$key . '_default']);
+            unset($rowData[$key.'_default']);
         }
 
         return $rowData;
@@ -152,7 +151,8 @@ class ReadHandler extends AbstractHandler
     protected function getVideoProperties($withDbMapping = true)
     {
         $properties = $this->videoPropertiesDbMapping;
-        unset($properties['value_id'], $properties['store_id']);
+        unset($properties['value_id']);
+        unset($properties['store_id']);
 
         return $withDbMapping ? $properties : array_keys($properties);
     }

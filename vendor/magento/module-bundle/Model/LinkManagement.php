@@ -168,8 +168,6 @@ class LinkManagement implements \Magento\Bundle\Api\ProductLinkManagementInterfa
      * @param string $linkedProductId
      * @param string $parentProductId
      * @return \Magento\Bundle\Model\Selection
-     * @SuppressWarnings(PHPMD.CyclomaticComplexity)
-     * @SuppressWarnings(PHPMD.NPathComplexity)
      */
     protected function mapProductLinkToSelectionModel(
         \Magento\Bundle\Model\Selection $selectionModel,
@@ -179,10 +177,7 @@ class LinkManagement implements \Magento\Bundle\Api\ProductLinkManagementInterfa
     ) {
         $selectionModel->setProductId($linkedProductId);
         $selectionModel->setParentProductId($parentProductId);
-        if ($productLink->getSelectionId() !== null) {
-            $selectionModel->setSelectionId($productLink->getSelectionId());
-        }
-        if ($productLink->getOptionId() !== null) {
+        if (($productLink->getOptionId() !== null)) {
             $selectionModel->setOptionId($productLink->getOptionId());
         }
         if ($productLink->getPosition() !== null) {
@@ -222,13 +217,8 @@ class LinkManagement implements \Magento\Bundle\Api\ProductLinkManagementInterfa
             );
         }
 
-        $linkField = $this->getMetadataPool()->getMetadata(ProductInterface::class)->getLinkField();
-
         $options = $this->optionCollection->create();
-
         $options->setIdFilter($optionId);
-        $options->setProductLinkFilter($product->getData($linkField));
-
         $existingOption = $options->getFirstItem();
 
         if (!$existingOption->getId()) {
@@ -240,6 +230,7 @@ class LinkManagement implements \Magento\Bundle\Api\ProductLinkManagementInterfa
             );
         }
 
+        $linkField = $this->getMetadataPool()->getMetadata(ProductInterface::class)->getLinkField();
         /* @var $resource \Magento\Bundle\Model\ResourceModel\Bundle */
         $resource = $this->bundleFactory->create();
         $selections = $resource->getSelectionsData($product->getData($linkField));
@@ -252,8 +243,7 @@ class LinkManagement implements \Magento\Bundle\Api\ProductLinkManagementInterfa
         if ($selections) {
             foreach ($selections as $selection) {
                 if ($selection['option_id'] == $optionId &&
-                    $selection['product_id'] == $linkProductModel->getEntityId() &&
-                    $selection['parent_product_id'] == $product->getData($linkField)) {
+                    $selection['product_id'] == $linkProductModel->getEntityId()) {
                     if (!$product->getCopyFromView()) {
                         throw new CouldNotSaveException(
                             __(
@@ -310,6 +300,7 @@ class LinkManagement implements \Magento\Bundle\Api\ProductLinkManagementInterfa
                     continue;
                 }
                 $excludeSelectionIds[] = $selection->getSelectionId();
+                $usedProductIds[] = $selection->getProductId();
             }
         }
         if (empty($removeSelectionIds)) {
@@ -346,7 +337,7 @@ class LinkManagement implements \Magento\Bundle\Api\ProductLinkManagementInterfa
         $this->dataObjectHelper->populateWithArray(
             $link,
             $selection->getData(),
-            \Magento\Bundle\Api\Data\LinkInterface::class
+            '\Magento\Bundle\Api\Data\LinkInterface'
         );
         $link->setIsDefault($selection->getIsDefault())
             ->setId($selection->getSelectionId())

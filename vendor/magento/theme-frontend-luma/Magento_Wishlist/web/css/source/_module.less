@@ -267,7 +267,7 @@
     }
 
     .cart.table-wrapper {
-        .towishlist {
+        .action-towishlist {
             .lib-icon-font(
             @icon-wishlist-full,
             @_icon-font-size: 18px,
@@ -369,8 +369,9 @@
 
             .lib-css(background, @color-white);
             .lib-css(border, @border-width__base solid @color-gray-light2);
-            .lib-css(box-shadow, @_shadow);
             border-top: none;
+            .lib-css(box-shadow, @_shadow);
+            display: none;
             left: 0;
             margin: 9px 0 0 -1px;
             padding: 0 9px 9px;

@@ -37,7 +37,7 @@ class OrderGetStatusTest extends WebapiAbstract
     public function testOrderGetStatus()
     {
         /** @var \Magento\Sales\Model\Order $order */
-        $order = $this->objectManager->create(\Magento\Sales\Model\Order::class);
+        $order = $this->objectManager->create('Magento\Sales\Model\Order');
         $order->loadByIncrementId(self::ORDER_INCREMENT_ID);
 
         $serviceInfo = [

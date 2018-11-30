@@ -22,7 +22,7 @@ class Remove extends \Magento\AdminNotification\Controller\Adminhtml\Notificatio
     public function execute()
     {
         if ($id = $this->getRequest()->getParam('id')) {
-            $model = $this->_objectManager->create(\Magento\AdminNotification\Model\Inbox::class)->load($id);
+            $model = $this->_objectManager->create('Magento\AdminNotification\Model\Inbox')->load($id);
 
             if (!$model->getId()) {
                 $this->_redirect('adminhtml/*/');
@@ -31,12 +31,11 @@ class Remove extends \Magento\AdminNotification\Controller\Adminhtml\Notificatio
 
             try {
                 $model->setIsRemove(1)->save();
-                $this->messageManager->addSuccessMessage(__('The message has been removed.'));
+                $this->messageManager->addSuccess(__('The message has been removed.'));
             } catch (\Magento\Framework\Exception\LocalizedException $e) {
-                $this->messageManager->addErrorMessage($e->getMessage());
+                $this->messageManager->addError($e->getMessage());
             } catch (\Exception $e) {
-                $this->messageManager
-                    ->addExceptionMessage($e, __("We couldn't remove the messages because of an error."));
+                $this->messageManager->addException($e, __("We couldn't remove the messages because of an error."));
             }
 
             $this->_redirect('adminhtml/*/');

@@ -15,7 +15,6 @@ class ManageTest extends \Magento\TestFramework\TestCase\AbstractController
      * @var \Magento\Customer\Model\Session
      */
     protected $customerSession;
-
     /**
      * @var \Magento\Framework\Session\Generic
      */
@@ -25,9 +24,9 @@ class ManageTest extends \Magento\TestFramework\TestCase\AbstractController
     {
         parent::setUp();
         $objectManager = \Magento\TestFramework\Helper\Bootstrap::getObjectManager();
-        $this->customerSession = $objectManager->get(\Magento\Customer\Model\Session::class);
+        $this->customerSession = $objectManager->get('Magento\Customer\Model\Session');
         $this->customerSession->setCustomerId(1);
-        $this->coreSession = $objectManager->get(\Magento\Framework\Session\Generic::class);
+        $this->coreSession = $objectManager->get('Magento\Framework\Session\Generic');
         $this->coreSession->setData('_form_key', 'formKey');
     }
 
@@ -58,7 +57,7 @@ class ManageTest extends \Magento\TestFramework\TestCase\AbstractController
          * Check that success message
          */
         $this->assertSessionMessages(
-            $this->equalTo(['We have saved your subscription.']),
+            $this->equalTo(['We saved the subscription.']),
             \Magento\Framework\Message\MessageInterface::TYPE_SUCCESS
         );
     }
@@ -68,7 +67,6 @@ class ManageTest extends \Magento\TestFramework\TestCase\AbstractController
      */
     public function testSaveActionRemoveSubscription()
     {
-
         $this->getRequest()
             ->setParam('form_key', 'formKey')
             ->setParam('is_subscribed', '0');
@@ -85,7 +83,7 @@ class ManageTest extends \Magento\TestFramework\TestCase\AbstractController
          * Check that success message
          */
         $this->assertSessionMessages(
-            $this->equalTo(['We have updated your subscription.']),
+            $this->equalTo(['We removed the subscription.']),
             \Magento\Framework\Message\MessageInterface::TYPE_SUCCESS
         );
     }

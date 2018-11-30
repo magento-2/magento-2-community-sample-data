@@ -5,11 +5,6 @@
  */
 namespace Magento\Framework\View\Asset\PreProcessor;
 
-/**
- * Interface ChainFactoryInterface
- *
- * @api
- */
 interface ChainFactoryInterface
 {
     /**

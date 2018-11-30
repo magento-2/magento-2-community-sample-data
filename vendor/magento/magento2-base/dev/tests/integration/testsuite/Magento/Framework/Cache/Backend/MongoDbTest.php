@@ -5,7 +5,7 @@
  */
 namespace Magento\Framework\Cache\Backend;
 
-class MongoDbTest extends \PHPUnit\Framework\TestCase
+class MongoDbTest extends \PHPUnit_Framework_TestCase
 {
     protected $_connectionString;
 
@@ -139,10 +139,10 @@ class MongoDbTest extends \PHPUnit\Framework\TestCase
 
     /**
      * @param int $extraLifeTime
-     * @param \PHPUnit\Framework\Constraint\Constraint $constraint
+     * @param \PHPUnit_Framework_Constraint $constraint
      * @dataProvider touchDataProvider
      */
-    public function testTouch($extraLifeTime, \PHPUnit\Framework\Constraint\Constraint $constraint)
+    public function testTouch($extraLifeTime, \PHPUnit_Framework_Constraint $constraint)
     {
         $cacheId = 'test';
         $this->_model->save('test data', $cacheId, [], 2);

@@ -9,7 +9,6 @@
 
 namespace Zend\Mvc\Service;
 
-use Interop\Container\ContainerInterface;
 use Zend\ServiceManager\FactoryInterface;
 use Zend\ServiceManager\ServiceLocatorInterface;
 use Zend\View\Resolver as ViewResolver;
@@ -22,14 +21,12 @@ class ViewTemplateMapResolverFactory implements FactoryInterface
      * Creates a Zend\View\Resolver\AggregateResolver and populates it with the
      * ['view_manager']['template_map']
      *
-     * @param  ContainerInterface $container
-     * @param  string $name
-     * @param  null|array $options
+     * @param  ServiceLocatorInterface $serviceLocator
      * @return ViewResolver\TemplateMapResolver
      */
-    public function __invoke(ContainerInterface $container, $name, array $options = null)
+    public function createService(ServiceLocatorInterface $serviceLocator)
     {
-        $config = $container->get('config');
+        $config = $serviceLocator->get('Config');
         $map = [];
         if (is_array($config) && isset($config['view_manager'])) {
             $config = $config['view_manager'];
@@ -38,18 +35,5 @@ class ViewTemplateMapResolverFactory implements FactoryInterface
             }
         }
         return new ViewResolver\TemplateMapResolver($map);
-    }
-
-    /**
-     * Create and return ViewResolver\TemplateMapResolver instance
-     *
-     * For use with zend-servicemanager v2; proxies to __invoke().
-     *
-     * @param ServiceLocatorInterface $container
-     * @return ViewResolver\TemplateMapResolver
-     */
-    public function createService(ServiceLocatorInterface $container)
-    {
-        return $this($container, ViewResolver\TemplateMapResolver::class);
     }
 }

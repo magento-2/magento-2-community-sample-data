@@ -39,14 +39,14 @@ class DateTime
     /**
      * Format date to internal format
      *
-     * @param string|\DateTimeInterface|bool|null $date
+     * @param string|\DateTime|bool|null $date
      * @param boolean $includeTime
      * @return string|null
      * @api
      */
     public function formatDate($date, $includeTime = true)
     {
-        if ($date instanceof \DateTimeInterface) {
+        if ($date instanceof \DateTime) {
             $format = $includeTime ? self::DATETIME_PHP_FORMAT : self::DATE_PHP_FORMAT;
             return $date->format($format);
         } elseif (empty($date)) {
@@ -79,9 +79,6 @@ class DateTime
      * @param int $time
      * @return string The given time in given format
      *
-     * @deprecated 101.0.1
-     * @see Use Intl library for datetime handling: http://php.net/manual/en/book.intl.php
-     *
      * @codeCoverageIgnore
      */
     public function gmDate($format, $time)
@@ -94,9 +91,6 @@ class DateTime
      *
      * @param string $timeStr
      * @return int
-     *
-     * @deprecated 101.0.1
-     * @see Use Intl library for datetime handling: http://php.net/manual/en/book.intl.php
      *
      * @codeCoverageIgnore
      */

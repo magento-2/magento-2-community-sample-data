@@ -9,7 +9,6 @@ namespace Magento\Customer\Api\Data;
 /**
  * Interface for customer groups search results.
  * @api
- * @since 100.0.2
  */
 interface GroupSearchResultsInterface extends \Magento\Framework\Api\SearchResultsInterface
 {

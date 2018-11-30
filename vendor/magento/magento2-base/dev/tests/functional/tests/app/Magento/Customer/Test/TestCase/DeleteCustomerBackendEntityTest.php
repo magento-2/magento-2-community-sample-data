@@ -25,13 +25,14 @@ use Magento\Mtf\TestCase\Injectable;
  * 4. Fill in data according to dataset
  * 5. Perform all assertions according to dataset
  *
- * @group Customers
+ * @group Customers_(CS)
  * @ZephyrId MAGETWO-24764
  */
 class DeleteCustomerBackendEntityTest extends Injectable
 {
     /* tags */
     const MVP = 'yes';
+    const DOMAIN = 'CS';
     /* end tags */
 
     /**

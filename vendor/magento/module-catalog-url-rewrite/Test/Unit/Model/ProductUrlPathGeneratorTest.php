@@ -9,7 +9,7 @@ use Magento\CatalogUrlRewrite\Model\ProductUrlPathGenerator;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
 use Magento\Store\Model\ScopeInterface;
 
-class ProductUrlPathGeneratorTest extends \PHPUnit\Framework\TestCase
+class ProductUrlPathGeneratorTest extends \PHPUnit_Framework_TestCase
 {
     /** @var \Magento\CatalogUrlRewrite\Model\ProductUrlPathGenerator */
     protected $productUrlPathGenerator;
@@ -34,7 +34,7 @@ class ProductUrlPathGeneratorTest extends \PHPUnit\Framework\TestCase
 
     protected function setUp()
     {
-        $this->category = $this->createMock(\Magento\Catalog\Model\Category::class);
+        $this->category = $this->getMock('Magento\Catalog\Model\Category', [], [], '', false);
         $productMethods = [
             '__wakeup',
             'getData',
@@ -46,17 +46,21 @@ class ProductUrlPathGeneratorTest extends \PHPUnit\Framework\TestCase
             'setStoreId',
         ];
 
-        $this->product = $this->createPartialMock(\Magento\Catalog\Model\Product::class, $productMethods);
-        $this->storeManager = $this->createMock(\Magento\Store\Model\StoreManagerInterface::class);
-        $this->scopeConfig = $this->createMock(\Magento\Framework\App\Config\ScopeConfigInterface::class);
-        $this->categoryUrlPathGenerator = $this->createMock(
-            \Magento\CatalogUrlRewrite\Model\CategoryUrlPathGenerator::class
+        $this->product = $this->getMock('Magento\Catalog\Model\Product', $productMethods, [], '', false);
+        $this->storeManager = $this->getMock('Magento\Store\Model\StoreManagerInterface');
+        $this->scopeConfig = $this->getMock('Magento\Framework\App\Config\ScopeConfigInterface');
+        $this->categoryUrlPathGenerator = $this->getMock(
+            'Magento\CatalogUrlRewrite\Model\CategoryUrlPathGenerator',
+            [],
+            [],
+            '',
+            false
         );
-        $this->productRepository = $this->createMock(\Magento\Catalog\Api\ProductRepositoryInterface::class);
+        $this->productRepository = $this->getMock('Magento\Catalog\Api\ProductRepositoryInterface');
         $this->productRepository->expects($this->any())->method('getById')->willReturn($this->product);
 
         $this->productUrlPathGenerator = (new ObjectManager($this))->getObject(
-            \Magento\CatalogUrlRewrite\Model\ProductUrlPathGenerator::class,
+            'Magento\CatalogUrlRewrite\Model\ProductUrlPathGenerator',
             [
                 'storeManager' => $this->storeManager,
                 'scopeConfig' => $this->scopeConfig,
@@ -105,7 +109,7 @@ class ProductUrlPathGeneratorTest extends \PHPUnit\Framework\TestCase
     {
         $this->product->expects($this->any())->method('getUrlKey')->will($this->returnValue($productUrlKey));
         $this->product->expects($this->any())->method('formatUrlKey')->will($this->returnValue($productUrlKey));
-        $this->assertSame($expectedUrlKey, $this->productUrlPathGenerator->getUrlKey($this->product));
+        $this->assertEquals($expectedUrlKey, $this->productUrlPathGenerator->getUrlKey($this->product));
     }
 
     /**
@@ -114,7 +118,7 @@ class ProductUrlPathGeneratorTest extends \PHPUnit\Framework\TestCase
     public function getUrlKeyDataProvider()
     {
         return [
-            'URL Key use default' => [false, null],
+            'URL Key use default' => [false, false],
             'URL Key empty' => ['product-url', 'product-url'],
         ];
     }
@@ -164,7 +168,7 @@ class ProductUrlPathGeneratorTest extends \PHPUnit\Framework\TestCase
         $storeId = 1;
         $this->product->expects($this->once())->method('getData')->with('url_path')
             ->will($this->returnValue('product-path'));
-        $store = $this->createMock(\Magento\Store\Model\Store::class);
+        $store = $this->getMock('Magento\Store\Model\Store', [], [], '', false);
         $store->expects($this->once())->method('getId')->will($this->returnValue($storeId));
         $this->storeManager->expects($this->once())->method('getStore')->will($this->returnValue($store));
         $this->scopeConfig->expects($this->once())->method('getValue')

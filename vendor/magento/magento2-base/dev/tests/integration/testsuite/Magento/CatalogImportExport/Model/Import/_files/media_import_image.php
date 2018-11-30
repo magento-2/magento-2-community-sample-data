@@ -6,7 +6,7 @@
 
 /** @var \Magento\Framework\Filesystem\Directory\Write $mediaDirectory */
 $mediaDirectory = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->get(
-    \Magento\Framework\Filesystem::class
+    'Magento\Framework\Filesystem'
 )->getDirectoryWrite(
     \Magento\Framework\App\Filesystem\DirectoryList::MEDIA
 );

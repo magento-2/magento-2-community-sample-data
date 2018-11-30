@@ -57,10 +57,6 @@ class ReviewRenderer extends \Magento\Framework\View\Element\Template implements
         $templateType = self::DEFAULT_VIEW,
         $displayIfNoReviews = false
     ) {
-        if (!$product->getRatingSummary()) {
-            $this->_reviewFactory->create()->getEntitySummary($product, $this->_storeManager->getStore()->getId());
-        }
-
         if (!$product->getRatingSummary() && !$displayIfNoReviews) {
             return '';
         }
@@ -72,6 +68,9 @@ class ReviewRenderer extends \Magento\Framework\View\Element\Template implements
 
         $this->setDisplayIfEmpty($displayIfNoReviews);
 
+        if (!$product->getRatingSummary()) {
+            $this->_reviewFactory->create()->getEntitySummary($product, $this->_storeManager->getStore()->getId());
+        }
         $this->setProduct($product);
 
         return $this->toHtml();

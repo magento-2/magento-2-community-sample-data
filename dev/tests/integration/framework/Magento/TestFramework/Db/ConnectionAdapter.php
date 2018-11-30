@@ -1,13 +1,12 @@
 <?php
 /**
+ * Test framework custom connection adapter
+ *
  * Copyright © Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\TestFramework\Db;
 
-/**
- * Test framework custom connection adapter
- */
 class ConnectionAdapter extends \Magento\Framework\Model\ResourceModel\Type\Db\Pdo\Mysql
 {
     /**

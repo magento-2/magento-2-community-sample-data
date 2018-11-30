@@ -1,18 +1,15 @@
 define([
     'jquery',
-    'underscore',
     'Magento_Customer/js/customer-data'
-], function ($, _, customerData) {
+], function ($, customerData) {
     'use strict';
 
     var selectors = {
         formSelector: '#product_addtocart_form',
-        productIdSelector: '#product_addtocart_form [name="product"]',
-        itemIdSelector: '#product_addtocart_form [name="item"]'
+        productIdSelector: '#product_addtocart_form [name="product"]'
     },
     cartData = customerData.get('cart'),
     productId = $(selectors.productIdSelector).val(),
-    itemId = $(selectors.itemIdSelector).val(),
 
     /**
     * set productOptions according to cart data from customer-data
@@ -26,10 +23,8 @@ define([
         if (!(data && data.items && data.items.length && productId)) {
             return false;
         }
-        changedProductOptions = _.find(data.items, function (item) {
-            if (item['item_id'] === itemId) {
-                return item['product_id'] === productId;
-            }
+        changedProductOptions = data.items.find(function (item) {
+            return item['product_id'] === productId;
         });
         changedProductOptions = changedProductOptions && changedProductOptions.options &&
             changedProductOptions.options.reduce(function (obj, val) {

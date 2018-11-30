@@ -6,7 +6,7 @@
 
 namespace Magento\Store\Test\Unit\Ui\Component\Listing\Column;
 
-class StoreTest extends \PHPUnit\Framework\TestCase
+class StoreTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\Store\Ui\Component\Listing\Column\Store
@@ -51,28 +51,34 @@ class StoreTest extends \PHPUnit\Framework\TestCase
     protected function setUp()
     {
         $objectManager = new \Magento\Framework\TestFramework\Unit\Helper\ObjectManager($this);
-        $this->contextMock = $this->getMockBuilder(\Magento\Framework\View\Element\UiComponent\ContextInterface::class)
+        $this->processorMock = $this->getMockBuilder('Magento\Framework\View\Element\UiComponent\Processor')
             ->disableOriginalConstructor()
             ->setMethods([])
             ->getMock();
-        $this->uiComponentFactoryMock = $this->getMockBuilder(\Magento\Framework\View\Element\UiComponentFactory::class)
+        $this->contextMock = $this->getMockBuilder('Magento\Framework\View\Element\UiComponent\ContextInterface')
             ->disableOriginalConstructor()
             ->setMethods([])
             ->getMock();
-        $this->systemStoreMock = $this->getMockBuilder(\Magento\Store\Model\System\Store::class)
+        $this->uiComponentFactoryMock = $this->getMockBuilder('Magento\Framework\View\Element\UiComponentFactory')
             ->disableOriginalConstructor()
             ->setMethods([])
             ->getMock();
-        $this->escaperMock = $this->getMockBuilder(\Magento\Framework\Escaper::class)
+        $this->systemStoreMock = $this->getMockBuilder('Magento\Store\Model\System\Store')
             ->disableOriginalConstructor()
             ->setMethods([])
             ->getMock();
-        $this->storeManagerMock = $this->getMockBuilder(\Magento\Store\Model\StoreManagerInterface::class)
+        $this->escaperMock = $this->getMockBuilder('Magento\Framework\Escaper')
+            ->disableOriginalConstructor()
+            ->setMethods([])
+            ->getMock();
+        $this->contextMock->expects($this->atLeastOnce())->method('getProcessor')->willReturn($this->processorMock);
+        $this->processorMock->expects($this->atLeastOnce())->method('register');
+        $this->storeManagerMock = $this->getMockBuilder('Magento\Store\Model\StoreManagerInterface')
             ->disableOriginalConstructor()
             ->setMethods([])
             ->getMock();
         $this->model = $objectManager->getObject(
-            \Magento\Store\Ui\Component\Listing\Column\Store::class,
+            'Magento\Store\Ui\Component\Listing\Column\Store',
             [
                 'context' => $this->contextMock,
                 'uiComponent' => $this->uiComponentFactoryMock,
@@ -105,12 +111,6 @@ class StoreTest extends \PHPUnit\Framework\TestCase
 
     public function testPrepare()
     {
-        $this->processorMock = $this->getMockBuilder(\Magento\Framework\View\Element\UiComponent\Processor::class)
-            ->disableOriginalConstructor()
-            ->setMethods([])
-            ->getMock();
-        $this->contextMock->expects($this->atLeastOnce())->method('getProcessor')->willReturn($this->processorMock);
-        $this->processorMock->expects($this->atLeastOnce())->method('register');
         $this->storeManagerMock->expects($this->atLeastOnce())->method('isSingleStoreMode')->willReturn(false);
         $this->model->prepare();
         $config = $this->model->getDataByKey('config');
@@ -119,12 +119,6 @@ class StoreTest extends \PHPUnit\Framework\TestCase
 
     public function testPrepareWithSingleStore()
     {
-        $this->processorMock = $this->getMockBuilder(\Magento\Framework\View\Element\UiComponent\Processor::class)
-            ->disableOriginalConstructor()
-            ->setMethods([])
-            ->getMock();
-        $this->contextMock->expects($this->atLeastOnce())->method('getProcessor')->willReturn($this->processorMock);
-        $this->processorMock->expects($this->atLeastOnce())->method('register');
         $this->storeManagerMock->expects($this->atLeastOnce())->method('isSingleStoreMode')->willReturn(true);
         $this->model->prepare();
         $config = $this->model->getDataByKey('config');

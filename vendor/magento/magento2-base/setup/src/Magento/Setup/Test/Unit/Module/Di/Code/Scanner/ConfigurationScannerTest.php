@@ -5,7 +5,7 @@
  */
 namespace Magento\Setup\Test\Unit\Module\Di\Code\Scanner;
 
-class ConfigurationScannerTest extends \PHPUnit\Framework\TestCase
+class ConfigurationScannerTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\Framework\App\Config\FileResolver | \PHPUnit_Framework_MockObject_MockObject
@@ -24,17 +24,17 @@ class ConfigurationScannerTest extends \PHPUnit\Framework\TestCase
 
     protected function setUp()
     {
-        $this->fileResolverMock = $this->getMockBuilder(\Magento\Framework\App\Config\FileResolver::class)
+        $this->fileResolverMock = $this->getMockBuilder('Magento\Framework\App\Config\FileResolver')
             ->disableOriginalConstructor()
             ->getMock();
 
-        $this->areaListMock = $this->getMockBuilder(\Magento\Framework\App\AreaList::class)
+        $this->areaListMock = $this->getMockBuilder('Magento\Framework\App\AreaList')
             ->disableOriginalConstructor()
             ->getMock();
 
         $objectManagerHelper = new \Magento\Framework\TestFramework\Unit\Helper\ObjectManager($this);
         $this->model = $objectManagerHelper->getObject(
-            \Magento\Setup\Module\Di\Code\Scanner\ConfigurationScanner::class,
+            'Magento\Setup\Module\Di\Code\Scanner\ConfigurationScanner',
             [
                 'fileResolver' => $this->fileResolverMock,
                 'areaList' => $this->areaListMock,
@@ -45,7 +45,7 @@ class ConfigurationScannerTest extends \PHPUnit\Framework\TestCase
     public function testScan()
     {
         $codes = ['code1', 'code2'];
-        $iteratorMock = $this->getMockBuilder(\Magento\Framework\Config\FileIterator::class)
+        $iteratorMock = $this->getMockBuilder('Magento\Framework\Config\FileIterator')
             ->disableOriginalConstructor()
             ->getMock();
         $this->areaListMock->expects($this->once())

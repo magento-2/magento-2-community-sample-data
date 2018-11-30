@@ -5,28 +5,12 @@
  */
 namespace Magento\Paypal\Test\Unit\Helper;
 
-class DataTest extends \PHPUnit\Framework\TestCase
+class DataTest extends \PHPUnit_Framework_TestCase
 {
     /**
-     * @var string
+     * @var \PHPUnit_Framework_MockObject_MockObject
      */
-    private static $htmlTransactionId =
-        '<a target="_blank" href="https://www%1$s.paypal.com/cgi-bin/webscr?cmd=_view-a-trans&id=%2$s">%2$s</a>';
-
-    /**
-     * @var string
-     */
-    private static $txnId = 'XXX123123XXX';
-
-    /**
-     * @var \Magento\Payment\Api\PaymentMethodListInterface|\PHPUnit_Framework_MockObject_MockObject
-     */
-    private $paymentMethodList;
-
-    /**
-     * @var \Magento\Payment\Model\Method\InstanceFactory|\PHPUnit_Framework_MockObject_MockObject
-     */
-    private $paymentMethodInstanceFactory;
+    protected $_paymentDataMock;
 
     /**
      * @var \Magento\Paypal\Model\Config | \PHPUnit_Framework_MockObject_MockObject
@@ -40,19 +24,20 @@ class DataTest extends \PHPUnit\Framework\TestCase
 
     protected function setUp()
     {
-        $this->paymentMethodList = $this->getMockBuilder(\Magento\Payment\Api\PaymentMethodListInterface::class)
-            ->disableOriginalConstructor()
-            ->getMockForAbstractClass();
+        $this->_paymentDataMock = $this->getMockBuilder(
+            'Magento\Payment\Helper\Data'
+        )->disableOriginalConstructor()->setMethods(
+            ['getStoreMethods', 'getPaymentMethods']
+        )->getMock();
 
-        $this->paymentMethodInstanceFactory = $this->getMockBuilder(
-            \Magento\Payment\Model\Method\InstanceFactory::class
-        )->disableOriginalConstructor()->getMock();
-
-        $this->configMock = $this->getMockBuilder(\Magento\Paypal\Model\Config::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-
-        $configMockFactory = $this->getMockBuilder(\Magento\Paypal\Model\ConfigFactory::class)
+        $this->configMock = $this->getMock(
+            'Magento\Paypal\Model\Config',
+            [],
+            [],
+            '',
+            false
+        );
+        $configMockFactory = $this->getMockBuilder('Magento\Paypal\Model\ConfigFactory')
             ->disableOriginalConstructor()
             ->setMethods(['create'])
             ->getMock();
@@ -61,22 +46,12 @@ class DataTest extends \PHPUnit\Framework\TestCase
 
         $objectManager = new \Magento\Framework\TestFramework\Unit\Helper\ObjectManager($this);
         $this->_helper = $objectManager->getObject(
-            \Magento\Paypal\Helper\Data::class,
+            'Magento\Paypal\Helper\Data',
             [
+                'paymentData' => $this->_paymentDataMock,
                 'methodCodes' => ['expressCheckout' => 'paypal_express', 'hostedPro' => 'hosted_pro'],
                 'configFactory' => $configMockFactory
             ]
-        );
-
-        $objectManager->setBackwardCompatibleProperty(
-            $this->_helper,
-            'paymentMethodList',
-            $this->paymentMethodList
-        );
-        $objectManager->setBackwardCompatibleProperty(
-            $this->_helper,
-            'paymentMethodInstanceFactory',
-            $this->paymentMethodInstanceFactory
         );
     }
 
@@ -84,20 +59,21 @@ class DataTest extends \PHPUnit\Framework\TestCase
      * @dataProvider getBillingAgreementMethodsDataProvider
      * @param $store
      * @param $quote
-     * @param $paymentMethodsMap
+     * @param $paymentMethods
      * @param $expectedResult
      */
-    public function testGetBillingAgreementMethods($store, $quote, $paymentMethodsMap, $expectedResult)
+    public function testGetBillingAgreementMethods($store, $quote, $paymentMethods, $expectedResult)
     {
-        $this->paymentMethodList->expects(static::once())
-            ->method('getActiveList')
-            ->with($store)
-            ->willReturn(array_column($paymentMethodsMap, 0));
-
-        $this->paymentMethodInstanceFactory->expects(static::any())
-            ->method('create')
-            ->willReturnMap($paymentMethodsMap);
-
+        $this->_paymentDataMock->expects(
+            $this->any()
+        )->method(
+            'getStoreMethods'
+        )->with(
+            $store,
+            $quote
+        )->will(
+            $this->returnValue($paymentMethods)
+        );
         $this->assertEquals($expectedResult, $this->_helper->getBillingAgreementMethods($store, $quote));
     }
 
@@ -107,119 +83,49 @@ class DataTest extends \PHPUnit\Framework\TestCase
     public function getBillingAgreementMethodsDataProvider()
     {
         $quoteMock = $this->getMockBuilder(
-            \Magento\Quote\Model\Quote::class
-        )->disableOriginalConstructor()->getMock();
-
-        $methodMock = $this->getMockBuilder(
-            \Magento\Payment\Api\Data\PaymentMethodInterface::class
+            'Magento\Quote\Model\Quote'
+        )->disableOriginalConstructor()->setMethods(
+            null
+        );
+        $methodInterfaceMock = $this->getMockBuilder(
+            'Magento\Paypal\Model\Billing\Agreement\MethodInterface'
         )->getMock();
 
-        $agreementMethodInstanceMock = $this->getMockBuilder(
-            \Magento\Paypal\Model\Method\Agreement::class
-        )->disableOriginalConstructor()->getMock();
-        $agreementMethodInstanceMock->expects($this->any())
-            ->method('isAvailable')
-            ->willReturn(true);
-
-        $abstractMethodInstanceMock = $this->getMockBuilder(
-            \Magento\Payment\Model\Method\Cc::class
-        )->disableOriginalConstructor()->getMock();
-
-        $adapterMethodInstanceMock = $this->getMockBuilder(
-            \Magento\Payment\Model\Method\Adapter::class
-        )->disableOriginalConstructor()->getMock();
-
         return [
-            [
-                '1',
-                $quoteMock,
-                [
-                    [$methodMock, $agreementMethodInstanceMock]
-                ],
-                [$agreementMethodInstanceMock]
-            ],
-            [
-                '1',
-                $quoteMock,
-                [
-                    [$methodMock, $abstractMethodInstanceMock]
-                ],
-                []
-            ],
-            [
-                '1',
-                $quoteMock,
-                [
-                    [$methodMock, $adapterMethodInstanceMock]
-                ],
-                []
-            ]
+            ['1', $quoteMock, [$methodInterfaceMock], [$methodInterfaceMock]],
+            ['1', $quoteMock, [new \StdClass()], []]
         ];
     }
 
     /**
-     * Sandbox mode
-     * Expected link <a target="_blank" href="https://www.sandbox.paypal.com/...</a>
-     *
      * @param string $methodCode
-     * @dataProvider getHtmlTransactionIdProvider
+     * @param string $htmlTransactionId
+     * @dataProvider testGetHtmlTransactionIdProvider
      */
-    public function testGetHtmlTransactionSandboxLink($methodCode)
+    public function testGetHtmlTransactionId($methodCode, $htmlTransactionId)
     {
-        $expectedLink = sprintf(self::$htmlTransactionId, '.sandbox', self::$txnId);
+        $txnId = 'XXX123123XXX';
+        $htmlTransactionId = sprintf($htmlTransactionId, 'sandbox', $txnId);
 
-        $this->configMock->expects($this->once())
+        $this->configMock->expects($this->any())
             ->method('getValue')
-            ->with('sandboxFlag')
+            ->with($this->stringContains('sandboxFlag'))
             ->willReturn(true);
 
-        $this->assertEquals(
-            $expectedLink,
-            $this->_helper->getHtmlTransactionId($methodCode, self::$txnId)
-        );
-    }
-
-    /**
-     * Real mode
-     * Expected link <a target="_blank" href="https://www.paypal.com/...  </a>
-     *
-     * @param string $methodCode
-     * @dataProvider getHtmlTransactionIdProvider
-     */
-    public function testGetHtmlTransactionRealLink($methodCode)
-    {
-        $expectedLink = sprintf(self::$htmlTransactionId, '', self::$txnId);
-
-        $this->configMock->expects($this->once())
-            ->method('getValue')
-            ->with('sandboxFlag')
-            ->willReturn(false);
-
-        $this->assertEquals(
-            $expectedLink,
-            $this->_helper->getHtmlTransactionId($methodCode, self::$txnId)
-        );
+        $this->assertEquals($htmlTransactionId, $this->_helper->getHtmlTransactionId($methodCode, $txnId));
     }
 
     /**
      * @return array
      */
-    public function getHtmlTransactionIdProvider()
+    public function testGetHtmlTransactionIdProvider()
     {
+        $htmlTransactionId =
+            '<a target="_blank" href="https://www.%1$s.paypal.com/cgi-bin/webscr?cmd=_view-a-trans&id=%2$s">%2$s</a>';
         return [
-            ['paypal_express'],
-            ['hosted_pro']
+            ['paypal_express', $htmlTransactionId],
+            ['payflow_express', 'XXX123123XXX'],
+            ['hosted_pro', $htmlTransactionId]
         ];
-    }
-
-    /**
-     * Invokes with method not in payment list
-     * Expected result just returned txtId: "XXX123123XXX"
-     */
-    public function testGetHtmlTransactionMethodNotInPaymentList()
-    {
-        $methodCode = 'payflow_express';
-
-        $this->assertEquals(self::$txnId, $this->_helper->getHtmlTransactionId($methodCode, self::$txnId));
     }
 }

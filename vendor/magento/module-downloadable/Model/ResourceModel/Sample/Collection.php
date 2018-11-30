@@ -10,14 +10,12 @@ use Magento\Catalog\Api\Data\ProductInterface;
 /**
  * Downloadable samples resource collection
  *
- * @api
- * @since 100.0.2
+ * @author      Magento Core Team <core@magentocommerce.com>
  */
 class Collection extends \Magento\Framework\Model\ResourceModel\Db\Collection\AbstractCollection
 {
     /**
      * @var \Magento\Framework\EntityManager\MetadataPool
-     * @since 100.1.0
      */
     protected $metadataPool;
 
@@ -57,10 +55,7 @@ class Collection extends \Magento\Framework\Model\ResourceModel\Db\Collection\Ab
      */
     protected function _construct()
     {
-        $this->_init(
-            \Magento\Downloadable\Model\Sample::class,
-            \Magento\Downloadable\Model\ResourceModel\Sample::class
-        );
+        $this->_init('Magento\Downloadable\Model\Sample', 'Magento\Downloadable\Model\ResourceModel\Sample');
     }
 
     /**

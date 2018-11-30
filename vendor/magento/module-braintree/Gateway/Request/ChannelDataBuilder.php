@@ -5,16 +5,19 @@
  */
 namespace Magento\Braintree\Gateway\Request;
 
-use Magento\Framework\App\ObjectManager;
-use Magento\Framework\App\ProductMetadataInterface;
-use Magento\Payment\Gateway\Config\Config;
 use Magento\Payment\Gateway\Request\BuilderInterface;
+use Magento\Framework\App\ProductMetadataInterface;
 
 /**
  * Class BnCodeDataBuilder
  */
 class ChannelDataBuilder implements BuilderInterface
 {
+    /**
+     * @var ProductMetadataInterface
+     */
+    private $productMetadata;
+
     /**
      * @var string
      */
@@ -26,25 +29,13 @@ class ChannelDataBuilder implements BuilderInterface
     private static $channelValue = 'Magento2_Cart_%s_BT';
 
     /**
-     * @var ProductMetadataInterface
-     */
-    private $productMetadata;
-
-    /**
-     * @var Config
-     */
-    private $config;
-
-    /**
      * Constructor
      *
      * @param ProductMetadataInterface $productMetadata
-     * @param Config $config
      */
-    public function __construct(ProductMetadataInterface $productMetadata, Config $config = null)
+    public function __construct(ProductMetadataInterface $productMetadata)
     {
         $this->productMetadata = $productMetadata;
-        $this->config = $config ?: ObjectManager::getInstance()->get(Config::class);
     }
 
     /**
@@ -52,9 +43,8 @@ class ChannelDataBuilder implements BuilderInterface
      */
     public function build(array $buildSubject)
     {
-        $channel = $this->config->getValue('channel');
         return [
-            self::$channel => $channel ?: sprintf(self::$channelValue, $this->productMetadata->getEdition())
+            self::$channel => sprintf(self::$channelValue, $this->productMetadata->getEdition())
         ];
     }
 }

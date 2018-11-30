@@ -18,7 +18,7 @@ class Form extends \Magento\Catalog\Controller\Adminhtml\Product\Edit
         $this->_initProduct();
         $this->getResponse()->setBody(
             $this->_view->getLayout()->createBlock(
-                \Magento\Downloadable\Block\Adminhtml\Catalog\Product\Edit\Tab\Downloadable::class,
+                'Magento\Downloadable\Block\Adminhtml\Catalog\Product\Edit\Tab\Downloadable',
                 'admin.product.downloadable.information'
             )->toHtml()
         );

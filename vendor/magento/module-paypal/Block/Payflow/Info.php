@@ -5,10 +5,10 @@
  */
 namespace Magento\Paypal\Block\Payflow;
 
+use Magento\Paypal\Model;
+
 /**
- * @deprecated 100.2.0 This class should not be used because parent class can handle client calls.
- *             Class was not removed for backward compatibility.
- * @see \Magento\Paypal\Block\Payment\Info
+ * Payflow payment info
  */
 class Info extends \Magento\Paypal\Block\Payment\Info
 {
@@ -16,7 +16,6 @@ class Info extends \Magento\Paypal\Block\Payment\Info
      * Don't show CC type
      *
      * @return false
-     * @deprecated 100.2.0 unused
      */
     public function getCcTypeName()
     {

@@ -7,8 +7,6 @@ namespace Magento\Framework\Search\Adapter\Mysql;
 
 /**
  * Class for generating sql condition for calculating store manager
- *
- * @api
  */
 class ScoreBuilder
 {

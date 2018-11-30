@@ -11,8 +11,7 @@ use Magento\Framework\App\Filesystem\DirectoryList;
 /**
  * Abstract adapter model
  *
- * @api
- * @since 100.0.2
+ * @author      Magento Core Team <core@magentocommerce.com>
  */
 abstract class AbstractAdapter
 {

@@ -17,7 +17,7 @@ class IndexTest extends \Magento\TestFramework\TestCase\AbstractBackendControlle
     public function testIndexAction()
     {
         $objectManager = Bootstrap::getObjectManager();
-        $configResource = $objectManager->get(\Magento\Config\Model\ResourceModel\Config::class);
+        $configResource = $objectManager->get('Magento\Config\Model\ResourceModel\Config');
         $configResource->saveConfig(
             'currency/options/base',
             'USD',

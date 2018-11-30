@@ -7,7 +7,7 @@ namespace Magento\UrlRewrite\Test\Unit\Helper;
 
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
 
-class UrlRewriteTest extends \PHPUnit\Framework\TestCase
+class UrlRewriteTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\UrlRewrite\Helper\UrlRewrite
@@ -17,7 +17,7 @@ class UrlRewriteTest extends \PHPUnit\Framework\TestCase
     protected function setUp()
     {
         $this->_helper = (new \Magento\Framework\TestFramework\Unit\Helper\ObjectManager($this))->getObject(
-            \Magento\UrlRewrite\Helper\UrlRewrite::class
+            'Magento\UrlRewrite\Helper\UrlRewrite'
         );
     }
 

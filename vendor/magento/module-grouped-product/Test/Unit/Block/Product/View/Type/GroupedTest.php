@@ -5,7 +5,7 @@
  */
 namespace Magento\GroupedProduct\Test\Unit\Block\Product\View\Type;
 
-class GroupedTest extends \PHPUnit\Framework\TestCase
+class GroupedTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\GroupedProduct\Block\Product\View\Type\Grouped
@@ -38,8 +38,14 @@ class GroupedTest extends \PHPUnit\Framework\TestCase
             'getTypeId',
             '__wakeup',
         ];
-        $this->productMock = $this->createPartialMock(\Magento\Catalog\Model\Product::class, $methodsProduct);
-        $this->typeInstanceMock = $this->createMock(\Magento\GroupedProduct\Model\Product\Type\Grouped::class);
+        $this->productMock = $this->getMock('Magento\Catalog\Model\Product', $methodsProduct, [], '', false);
+        $this->typeInstanceMock = $this->getMock(
+            'Magento\GroupedProduct\Model\Product\Type\Grouped',
+            [],
+            [],
+            '',
+            false
+        );
         $this->productMock->expects(
             $this->any()
         )->method(
@@ -47,10 +53,16 @@ class GroupedTest extends \PHPUnit\Framework\TestCase
         )->will(
             $this->returnValue($this->typeInstanceMock)
         );
-        $this->configuredValueMock = $this->createPartialMock(\Magento\Framework\DataObject::class, ['getSuperGroup']);
-        $layout = $this->createMock(\Magento\Framework\View\LayoutInterface::class);
+        $this->configuredValueMock = $this->getMock(
+            'Magento\Framework\DataObject',
+            ['getSuperGroup'],
+            [],
+            '',
+            false
+        );
+        $layout = $this->getMock('Magento\Framework\View\LayoutInterface');
         $this->groupedView = $helper->getObject(
-            \Magento\GroupedProduct\Block\Product\View\Type\Grouped::class,
+            'Magento\GroupedProduct\Block\Product\View\Type\Grouped',
             [
                 'data' => ['product' => $this->productMock],
                 'layout' => $layout

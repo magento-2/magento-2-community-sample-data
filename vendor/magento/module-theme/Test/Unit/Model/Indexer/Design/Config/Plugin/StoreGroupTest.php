@@ -10,7 +10,7 @@ use Magento\Framework\Indexer\IndexerRegistry;
 use Magento\Theme\Model\Data\Design\Config;
 use Magento\Theme\Model\Indexer\Design\Config\Plugin\StoreGroup;
 
-class StoreGroupTest extends \PHPUnit\Framework\TestCase
+class StoreGroupTest extends \PHPUnit_Framework_TestCase
 {
     /** @var StoreGroup */
     protected $model;
@@ -20,7 +20,7 @@ class StoreGroupTest extends \PHPUnit\Framework\TestCase
 
     protected function setUp()
     {
-        $this->indexerRegistryMock = $this->getMockBuilder(\Magento\Framework\Indexer\IndexerRegistry::class)
+        $this->indexerRegistryMock = $this->getMockBuilder('Magento\Framework\Indexer\IndexerRegistry')
             ->disableOriginalConstructor()
             ->getMock();
 
@@ -30,12 +30,12 @@ class StoreGroupTest extends \PHPUnit\Framework\TestCase
     public function testAfterDelete()
     {
         /** @var \Magento\Store\Model\Group|\PHPUnit_Framework_MockObject_MockObject $subjectMock */
-        $subjectMock = $this->getMockBuilder(\Magento\Store\Model\Group::class)
+        $subjectMock = $this->getMockBuilder('Magento\Store\Model\Group')
             ->disableOriginalConstructor()
             ->getMock();
 
         /** @var IndexerInterface|\PHPUnit_Framework_MockObject_MockObject $indexerMock */
-        $indexerMock = $this->getMockBuilder(\Magento\Framework\Indexer\IndexerInterface::class)
+        $indexerMock = $this->getMockBuilder('Magento\Framework\Indexer\IndexerInterface')
             ->getMockForAbstractClass();
         $indexerMock->expects($this->once())
             ->method('invalidate');

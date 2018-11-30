@@ -11,7 +11,8 @@ use Magento\Catalog\Model\ResourceModel\Product\Link\Product\Collection as Produ
 /**
  * Catalog product link model
  *
- * @api
+ * @method \Magento\Catalog\Model\ResourceModel\Product\Link _getResource()
+ * @method \Magento\Catalog\Model\ResourceModel\Product\Link getResource()
  * @method int getProductId()
  * @method \Magento\Catalog\Model\Product\Link setProductId(int $value)
  * @method int getLinkedProductId()
@@ -21,7 +22,6 @@ use Magento\Catalog\Model\ResourceModel\Product\Link\Product\Collection as Produ
  *
  * @author      Magento Core Team <core@magentocommerce.com>
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
- * @since 100.0.2
  */
 class Link extends \Magento\Framework\Model\AbstractModel
 {
@@ -52,13 +52,12 @@ class Link extends \Magento\Framework\Model\AbstractModel
 
     /**
      * @var \Magento\Catalog\Model\Product\Link\SaveHandler
-     * @since 101.0.0
      */
     protected $saveProductLinks;
 
     /**
      * @var \Magento\CatalogInventory\Helper\Stock
-     * @deprecated 101.0.1
+     * @deprecated
      */
     protected $stockHelper;
 
@@ -95,7 +94,7 @@ class Link extends \Magento\Framework\Model\AbstractModel
      */
     protected function _construct()
     {
-        $this->_init(\Magento\Catalog\Model\ResourceModel\Product\Link::class);
+        $this->_init('Magento\Catalog\Model\ResourceModel\Product\Link');
     }
 
     /**
@@ -193,7 +192,7 @@ class Link extends \Magento\Framework\Model\AbstractModel
     {
         if (null === $this->saveProductLinks) {
             $this->saveProductLinks = \Magento\Framework\App\ObjectManager::getInstance()
-                ->get(\Magento\Catalog\Model\Product\Link\SaveHandler::class);
+                ->get('Magento\Catalog\Model\Product\Link\SaveHandler');
         }
         return $this->saveProductLinks;
     }

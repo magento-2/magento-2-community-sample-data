@@ -5,27 +5,21 @@
  */
 namespace Magento\Theme\Model\Design\Backend;
 
-use Magento\Framework\Serialize\Serializer\Json;
-
-class ExceptionsTest extends \PHPUnit\Framework\TestCase
+class ExceptionsTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\Theme\Model\Design\Backend\Exceptions
      */
-    private $exceptions = null;
-
-    /** @var Json */
-    private $serializer;
+    protected $_model = null;
 
     protected function setUp()
     {
-        $this->exceptions = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->create(
-            \Magento\Theme\Model\Design\Backend\Exceptions::class
+        $this->_model = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->create(
+            'Magento\Theme\Model\Design\Backend\Exceptions'
         );
-        $this->exceptions->setScope('default');
-        $this->exceptions->setScopeId(0);
-        $this->exceptions->setPath('design/theme/ua_regexp');
-        $this->serializer = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->get(Json::class);
+        $this->_model->setScope('default');
+        $this->_model->setScopeId(0);
+        $this->_model->setPath('design/theme/ua_regexp');
     }
 
     /**
@@ -39,10 +33,10 @@ class ExceptionsTest extends \PHPUnit\Framework\TestCase
             '2' => ['search' => '/Firefox/', 'value' => 'Magento/blank'],
         ];
 
-        $this->exceptions->setValue($value);
-        $this->exceptions->save();
+        $this->_model->setValue($value);
+        $this->_model->save();
 
-        $processedValue = $this->serializer->unserialize($this->exceptions->getValue());
+        $processedValue = unserialize($this->_model->getValue());
         $this->assertEquals(count($processedValue), 2, 'Number of saved values is wrong');
 
         $entry = $processedValue['1'];
@@ -62,10 +56,10 @@ class ExceptionsTest extends \PHPUnit\Framework\TestCase
             '3' => ['search' => '/Firefox/', 'value' => 'Magento/blank'],
         ];
 
-        $this->exceptions->setValue($value);
-        $this->exceptions->save();
+        $this->_model->setValue($value);
+        $this->_model->save();
 
-        $processedValue = $this->serializer->unserialize($this->exceptions->getValue());
+        $processedValue = unserialize($this->_model->getValue());
         $emptyIsSkipped = isset($processedValue['1']) && !isset($processedValue['2']) && isset($processedValue['3']);
         $this->assertTrue($emptyIsSkipped);
     }
@@ -78,10 +72,10 @@ class ExceptionsTest extends \PHPUnit\Framework\TestCase
      */
     public function testSaveException($designException, $regexp)
     {
-        $this->exceptions->setValue(['1' => $designException]);
-        $this->exceptions->save();
+        $this->_model->setValue(['1' => $designException]);
+        $this->_model->save();
 
-        $processedValue = $this->serializer->unserialize($this->exceptions->getValue());
+        $processedValue = unserialize($this->_model->getValue());
         $this->assertEquals($processedValue['1']['regexp'], $regexp);
     }
 
@@ -111,8 +105,8 @@ class ExceptionsTest extends \PHPUnit\Framework\TestCase
      */
     public function testSaveWrongException($value)
     {
-        $this->exceptions->setValue($value);
-        $this->exceptions->save();
+        $this->_model->setValue($value);
+        $this->_model->save();
     }
 
     /**

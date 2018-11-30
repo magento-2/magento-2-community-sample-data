@@ -8,7 +8,7 @@ namespace Magento\Paypal\Test\Unit\Observer;
 /**
  * Class HtmlTransactionIdObserverTest
  */
-class HtmlTransactionIdObserverTest extends \PHPUnit\Framework\TestCase
+class HtmlTransactionIdObserverTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\Paypal\Observer\HtmlTransactionIdObserver
@@ -37,10 +37,16 @@ class HtmlTransactionIdObserverTest extends \PHPUnit\Framework\TestCase
         $this->_observer = new \Magento\Framework\Event\Observer();
         $this->_observer->setEvent($this->_event);
 
-        $this->paypalDataMock = $this->createPartialMock(\Magento\Paypal\Helper\Data::class, ['getHtmlTransactionId']);
+        $this->paypalDataMock = $this->getMock(
+            '\Magento\Paypal\Helper\Data',
+            ['getHtmlTransactionId'],
+            [],
+            '',
+            false
+        );
         $objectManagerHelper = new \Magento\Framework\TestFramework\Unit\Helper\ObjectManager($this);
         $this->_model = $objectManagerHelper->getObject(
-            \Magento\Paypal\Observer\HtmlTransactionIdObserver::class,
+            'Magento\Paypal\Observer\HtmlTransactionIdObserver',
             [
                 'paypalData' => $this->paypalDataMock,
             ]
@@ -49,23 +55,23 @@ class HtmlTransactionIdObserverTest extends \PHPUnit\Framework\TestCase
 
     public function testObserveHtmlTransactionId()
     {
-        $observerMock = $this->getMockBuilder(\Magento\Framework\Event\Observer::class)
+        $observerMock = $this->getMockBuilder('Magento\Framework\Event\Observer')
             ->setMethods(['getDataObject'])
             ->disableOriginalConstructor()
             ->getMock();
-        $transactionMock = $this->getMockBuilder(\Magento\Sales\Model\Order\Payment\Transaction::class)
+        $transactionMock = $this->getMockBuilder('\Magento\Sales\Model\Order\Payment\Transaction')
             ->setMethods(['getOrder', 'getTxnId', 'setData'])
             ->disableOriginalConstructor()
             ->getMock();
-        $orderMock = $this->getMockBuilder(\Magento\Sales\Model\Order::class)
+        $orderMock = $this->getMockBuilder('\Magento\Sales\Model\Order')
             ->setMethods(['getPayment'])
             ->disableOriginalConstructor()
             ->getMock();
-        $paymentMock = $this->getMockBuilder(\Magento\Sales\Model\Order\Payment::class)
+        $paymentMock = $this->getMockBuilder('\Magento\Sales\Model\Order\Payment')
             ->setMethods(['getMethodInstance'])
             ->disableOriginalConstructor()
             ->getMock();
-        $methodInstanceMock = $this->getMockBuilder(\Magento\Payment\Model\MethodInterface::class)
+        $methodInstanceMock = $this->getMockBuilder('\Magento\Payment\Model\MethodInterface')
             ->setMethods(['getCode'])
             ->getMockForAbstractClass();
 

@@ -5,7 +5,7 @@
  */
 namespace Magento\OfflinePayments\Test\Unit\Model;
 
-class CheckmoTest extends \PHPUnit\Framework\TestCase
+class CheckmoTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\OfflinePayments\Model\Checkmo
@@ -20,14 +20,17 @@ class CheckmoTest extends \PHPUnit\Framework\TestCase
     protected function setUp()
     {
         $objectManagerHelper = new \Magento\Framework\TestFramework\Unit\Helper\ObjectManager($this);
-        $eventManager = $this->createMock(\Magento\Framework\Event\ManagerInterface::class);
-        $paymentDataMock = $this->createMock(\Magento\Payment\Helper\Data::class);
-        $this->_scopeConfig = $this->createPartialMock(
-            \Magento\Framework\App\Config\ScopeConfigInterface::class,
-            ['getValue', 'isSetFlag']
+        $eventManager = $this->getMock('Magento\Framework\Event\ManagerInterface', [], [], '', false);
+        $paymentDataMock = $this->getMock('Magento\Payment\Helper\Data', [], [], '', false);
+        $this->_scopeConfig = $this->getMock(
+            'Magento\Framework\App\Config\ScopeConfigInterface',
+            ['getValue', 'isSetFlag'],
+            [],
+            '',
+            false
         );
         $this->_object = $objectManagerHelper->getObject(
-            \Magento\OfflinePayments\Model\Checkmo::class,
+            'Magento\OfflinePayments\Model\Checkmo',
             [
                 'eventManager' => $eventManager,
                 'paymentData' => $paymentDataMock,

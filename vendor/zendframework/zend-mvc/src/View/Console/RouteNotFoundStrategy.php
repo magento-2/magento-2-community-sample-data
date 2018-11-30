@@ -25,6 +25,7 @@ use Zend\ServiceManager\Exception\ServiceNotFoundException;
 use Zend\Stdlib\ResponseInterface as Response;
 use Zend\Stdlib\StringUtils;
 use Zend\Text\Table;
+use Zend\Version\Version;
 use Zend\View\Model\ConsoleModel;
 
 class RouteNotFoundStrategy extends AbstractListenerAggregate
@@ -46,7 +47,7 @@ class RouteNotFoundStrategy extends AbstractListenerAggregate
     /**
      * {@inheritDoc}
      */
-    public function attach(EventManagerInterface $events, $priority = 1)
+    public function attach(EventManagerInterface $events)
     {
         $this->listeners[] = $events->attach(MvcEvent::EVENT_DISPATCH_ERROR, [$this, 'handleRouteNotFoundError']);
     }
@@ -203,7 +204,7 @@ class RouteNotFoundStrategy extends AbstractListenerAggregate
          * Handle an application with no defined banners
          */
         if (!count($banners)) {
-            return "Zend Framework application\nUsage:\n";
+            return sprintf("Zend Framework %s application\nUsage:\n", Version::VERSION);
         }
 
         /*
@@ -243,8 +244,7 @@ class RouteNotFoundStrategy extends AbstractListenerAggregate
 
                 // We prepend the usage by the module name (printed in red), so that each module is
                 // clearly visible by the user
-                $moduleName = sprintf(
-                    "%s\n%s\n%s\n",
+                $moduleName = sprintf("%s\n%s\n%s\n",
                     str_repeat('-', $console->getWidth()),
                     $name,
                     str_repeat('-', $console->getWidth())
@@ -450,7 +450,7 @@ class RouteNotFoundStrategy extends AbstractListenerAggregate
             return '';
         }
 
-        $reason    = (!empty($this->reason)) ? $this->reason : 'unknown';
+        $reason    = (isset($this->reason) && !empty($this->reason)) ? $this->reason : 'unknown';
         $reasons   = [
             Application::ERROR_CONTROLLER_NOT_FOUND => 'Could not match to a controller',
             Application::ERROR_CONTROLLER_INVALID   => 'Invalid controller specified',
@@ -459,8 +459,7 @@ class RouteNotFoundStrategy extends AbstractListenerAggregate
         ];
         $report = sprintf("\nReason for failure: %s\n", $reasons[$reason]);
 
-        // @TODO clean up once PHP 7 requirement is enforced
-        while ($exception instanceof \Exception || $exception instanceof \Throwable) {
+        while ($exception instanceof \Exception) {
             $report   .= sprintf("Exception: %s\nTrace:\n%s\n", $exception->getMessage(), $exception->getTraceAsString());
             $exception = $exception->getPrevious();
         }

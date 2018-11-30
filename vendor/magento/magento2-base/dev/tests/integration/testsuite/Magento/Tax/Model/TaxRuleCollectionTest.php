@@ -8,7 +8,7 @@ namespace Magento\Tax\Model;
 
 use Magento\TestFramework\Helper\Bootstrap;
 
-class TaxRuleCollectionTest extends \PHPUnit\Framework\TestCase
+class TaxRuleCollectionTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @magentoAppIsolation enabled
@@ -17,13 +17,11 @@ class TaxRuleCollectionTest extends \PHPUnit\Framework\TestCase
     public function testCreateTaxRuleCollectionItem()
     {
         /** @var \Magento\Tax\Model\ResourceModel\Calculation\Rule\Collection $collection */
-        $collection = Bootstrap::getObjectManager()->get(
-            \Magento\Tax\Model\ResourceModel\Calculation\Rule\Collection::class
-        );
+        $collection = Bootstrap::getObjectManager()->get('Magento\Tax\Model\ResourceModel\Calculation\Rule\Collection');
         $dbTaxRulesQty = $collection->count();
 
         /** @var \Magento\Tax\Model\Calculation\Rule $firstTaxRuleFixture */
-        $firstTaxRuleFixture = Bootstrap::getObjectManager()->get(\Magento\Framework\Registry::class)
+        $firstTaxRuleFixture = Bootstrap::getObjectManager()->get('Magento\Framework\Registry')
             ->registry('_fixture/Magento_Tax_Model_Calculation_Rule');
         $expectedFirstTaxRuleId = $firstTaxRuleFixture->getId();
 
@@ -32,7 +30,7 @@ class TaxRuleCollectionTest extends \PHPUnit\Framework\TestCase
         }
         /** @var \Magento\Tax\Model\TaxRuleCollection $taxRulesCollection */
         $taxRulesCollection = Bootstrap::getObjectManager()
-            ->create(\Magento\Tax\Model\TaxRuleCollection::class);
+            ->create('Magento\Tax\Model\TaxRuleCollection');
         $collectionTaxRulesQty = $taxRulesCollection->count();
         $this->assertEquals($dbTaxRulesQty, $collectionTaxRulesQty, 'Tax rules quantity is invalid.');
         $taxRule = $taxRulesCollection->getFirstItem()->getData();
@@ -45,7 +43,6 @@ class TaxRuleCollectionTest extends \PHPUnit\Framework\TestCase
             'customer_tax_classes' => $firstTaxRuleFixture->getCustomerTaxClassIds(),
             'product_tax_classes' => $firstTaxRuleFixture->getProductTaxClassIds(),
             'tax_rates' => $firstTaxRuleFixture->getTaxRateIds(),
-            'tax_rates_codes' => $firstTaxRuleFixture->getTaxRatesCodes()
         ];
 
         $this->assertEquals($expectedTaxRuleData, $taxRule, 'Tax rule data is invalid.');

@@ -78,7 +78,7 @@ class ToOrderItem
         $this->dataObjectHelper->populateWithArray(
             $orderItem,
             array_merge($orderItemData, $data),
-            \Magento\Sales\Api\Data\OrderItemInterface::class
+            '\Magento\Sales\Api\Data\OrderItemInterface'
         );
         $orderItem->setProductOptions($options);
         if ($item->getParentItem()) {

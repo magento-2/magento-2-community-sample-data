@@ -6,15 +6,17 @@
 
 namespace Magento\SalesRule\Test\TestCase;
 
-use Magento\Catalog\Test\Fixture\CatalogProductSimple;
-use Magento\Customer\Test\Fixture\Customer;
-use Magento\Mtf\Fixture\FixtureFactory;
-use Magento\Mtf\TestCase\Injectable;
-use Magento\SalesRule\Test\Block\Adminhtml\Promo\Quote\Edit\Section\ManageCouponCode;
+use Magento\SalesRule\Test\Block\Adminhtml\Promo\Quote\Edit\PromoQuoteForm;
+use Magento\SalesRule\Test\Block\Adminhtml\Promo\Quote\Edit\Section\BlockPromoSalesRuleEditTabCoupons;
+use Magento\SalesRule\Test\Block\Adminhtml\Promo\Quote\Edit\Section\BlockPromoSalesRuleEditTabCoupons\Grid;
 use Magento\SalesRule\Test\Fixture\SalesRule;
 use Magento\SalesRule\Test\Page\Adminhtml\PromoQuoteEdit;
 use Magento\SalesRule\Test\Page\Adminhtml\PromoQuoteIndex;
 use Magento\SalesRule\Test\Page\Adminhtml\PromoQuoteNew;
+use Magento\Mtf\Fixture\FixtureFactory;
+use Magento\Mtf\TestCase\Injectable;
+use Magento\Catalog\Test\Fixture\CatalogProductSimple;
+use Magento\Customer\Test\Fixture\Customer;
 
 /**
  * Precondition:
@@ -28,13 +30,14 @@ use Magento\SalesRule\Test\Page\Adminhtml\PromoQuoteNew;
  * 3. Create Cart Price rule according to dataset and click "Save" button.
  * 4. Perform asserts.
  *
- * @group Shopping_Cart_Price_Rules
+ * @group Shopping_Cart_Price_Rules_(CS)
  * @ZephyrId MAGETWO-24855
  */
 class CreateSalesRuleEntityTest extends Injectable
 {
     /* tags */
     const MVP = 'yes';
+    const DOMAIN = 'CS';
     const TEST_TYPE = 'extended_acceptance_test';
     /* end tags */
 
@@ -99,9 +102,12 @@ class CreateSalesRuleEntityTest extends Injectable
      *
      * @param SalesRule $salesRule
      * @param CatalogProductSimple $productForSalesRule1
-     * @param CatalogProductSimple $productForSalesRule2
-     * @param Customer $customer
-     * @param string $conditionEntity
+     * @param CatalogProductSimple|null $productForSalesRule2
+     * @param Customer|null $customer
+     * @param string|null $conditionEntity
+     * @param array|null $generateCouponsSettings
+     *
+     * @return array
      */
     public function testCreateSalesRule(
         SalesRule $salesRule,
@@ -109,9 +115,10 @@ class CreateSalesRuleEntityTest extends Injectable
         CatalogProductSimple $productForSalesRule2 = null,
         Customer $customer = null,
         $conditionEntity = null,
-        SalesRule $salesRuleEdit = null
+        array $generateCouponsSettings = null
     ) {
         $replace = null;
+        $generatedCouponCodes = null;
         $this->salesRuleName = $salesRule->getName();
 
         // Prepare data
@@ -130,21 +137,29 @@ class CreateSalesRuleEntityTest extends Injectable
         $this->promoQuoteNew->open();
         $this->promoQuoteNew->getSalesRuleForm()->fill($salesRule, null, $replace);
 
-        if ($salesRule->getCouponType() == "Auto") {
+        if (
+            ($salesRule->getUseAutoGeneration() == 'Yes' || $salesRule->getCouponType() == "Auto")
+            && !empty($generateCouponsSettings)
+        ) {
             $this->promoQuoteNew->getFormPageActions()->saveAndContinue();
-            $form = $this->promoQuoteEdit->getSalesRuleForm();
-            $form->openSection('manage_coupon_code');
-            /** @var ManageCouponCode $section */
-            $section = $form->getSection('manage_coupon_code');
-            $section->fill($salesRuleEdit);
-            $section->generateCouponCodes();
-            $couponCode = $section->getGeneratedCouponCode();
-            $this->promoQuoteEdit->getFormPageActions()->save();
 
-            return ["couponCode" => $couponCode];
+            /** @var PromoQuoteForm $salesRuleForm */
+            $salesRuleForm = $this->promoQuoteNew->getSalesRuleForm();
+            $salesRuleForm->generateCoupons($generateCouponsSettings);
+
+            /** @var BlockPromoSalesRuleEditTabCoupons $manageCouponCodesSection */
+            $manageCouponCodesSection = $salesRuleForm->getSection('block_promo_sales_rule_edit_tab_coupons');
+
+            /** @var Grid $couponGrid */
+            $couponGrid = $manageCouponCodesSection->getCouponGrid();
+
+            /** @var array $generatedCouponCodes */
+            $generatedCouponCodes = $couponGrid->getCouponCodes();
         } else {
             $this->promoQuoteNew->getFormPageActions()->save();
         }
+
+        return ['salesRule' => $salesRule, 'couponCodes' => $generatedCouponCodes];
     }
 
     /**

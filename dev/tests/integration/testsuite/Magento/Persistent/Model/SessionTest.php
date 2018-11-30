@@ -5,7 +5,7 @@
  */
 namespace Magento\Persistent\Model;
 
-class SessionTest extends \PHPUnit\Framework\TestCase
+class SessionTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * Session model
@@ -32,7 +32,7 @@ class SessionTest extends \PHPUnit\Framework\TestCase
     {
         $this->objectManager = \Magento\TestFramework\Helper\Bootstrap::getObjectManager();
         $this->session = $this->objectManager->create(
-            \Magento\Persistent\Model\Session::class
+            'Magento\Persistent\Model\Session'
         );
         $this->existingCookies = $_COOKIE;
     }
@@ -85,7 +85,7 @@ class SessionTest extends \PHPUnit\Framework\TestCase
     public function testLoadByCookieKey()
     {
         /** @var \Magento\Persistent\Model\Session $preSession */
-        $preSession = $this->objectManager->get(\Magento\Persistent\Model\SessionFactory::class)
+        $preSession = $this->objectManager->get('Magento\Persistent\Model\SessionFactory')
             ->create()
             ->loadByCookieKey();
         $this->assertNull($preSession->getCustomerId());
@@ -94,7 +94,7 @@ class SessionTest extends \PHPUnit\Framework\TestCase
         $this->session->setPersistentCookie(1000, '/');
 
         /** @var \Magento\Persistent\Model\Session $postSession */
-        $postSession = $this->objectManager->get(\Magento\Persistent\Model\SessionFactory::class)
+        $postSession = $this->objectManager->get('Magento\Persistent\Model\SessionFactory')
             ->create()
             ->loadByCookieKey();
         $this->assertEquals(1, $postSession->getCustomerId());

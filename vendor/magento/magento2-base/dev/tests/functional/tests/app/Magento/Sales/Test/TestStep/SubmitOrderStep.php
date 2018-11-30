@@ -8,11 +8,10 @@ namespace Magento\Sales\Test\TestStep;
 
 use Magento\Customer\Test\Fixture\Address;
 use Magento\Customer\Test\Fixture\Customer;
-use Magento\Mtf\Fixture\FixtureFactory;
-use Magento\Mtf\TestStep\TestStepInterface;
-use Magento\Sales\Test\Fixture\OrderInjectable;
 use Magento\Sales\Test\Page\Adminhtml\OrderCreateIndex;
 use Magento\Sales\Test\Page\Adminhtml\SalesOrderView;
+use Magento\Mtf\Fixture\FixtureFactory;
+use Magento\Mtf\TestStep\TestStepInterface;
 
 /**
  * Submit Order step.
@@ -24,67 +23,38 @@ class SubmitOrderStep implements TestStepInterface
      *
      * @var OrderCreateIndex
      */
-    private $orderCreateIndex;
+    protected $orderCreateIndex;
 
     /**
      * Sales order view.
      *
      * @var SalesOrderView
      */
-    private $salesOrderView;
+    protected $salesOrderView;
 
     /**
      * Factory for fixtures.
      *
      * @var FixtureFactory
      */
-    private $fixtureFactory;
+    protected $fixtureFactory;
 
     /**
-     * Customer fixture.
-     *
-     * @var Customer
-     */
-    private $customer;
-
-    /**
-     * Billing Address fixture.
-     *
-     * @var Address
-     */
-    private $billingAddress;
-
-    /**
-     * Products fixtures.
-     *
-     * @var array|\Magento\Mtf\Fixture\FixtureInterface[]
-     */
-    private $products;
-
-    /**
-     * Fixture OrderInjectable.
-     *
-     * @var OrderInjectable
-     */
-    private $order;
-
-    /**
+     * @constructor
      * @param OrderCreateIndex $orderCreateIndex
      * @param SalesOrderView $salesOrderView
      * @param FixtureFactory $fixtureFactory
      * @param Customer $customer
+     * @param Address $billingAddress
      * @param \Magento\Mtf\Fixture\FixtureInterface[] $products
-     * @param Address|null $billingAddress
-     * @param OrderInjectable|null $order
      */
     public function __construct(
         OrderCreateIndex $orderCreateIndex,
         SalesOrderView $salesOrderView,
         FixtureFactory $fixtureFactory,
         Customer $customer,
-        array $products,
-        Address $billingAddress = null,
-        OrderInjectable $order = null
+        Address $billingAddress,
+        array $products
     ) {
         $this->orderCreateIndex = $orderCreateIndex;
         $this->salesOrderView = $salesOrderView;
@@ -92,7 +62,6 @@ class SubmitOrderStep implements TestStepInterface
         $this->customer = $customer;
         $this->billingAddress = $billingAddress;
         $this->products = $products;
-        $this->order = $order;
     }
 
     /**
@@ -105,16 +74,16 @@ class SubmitOrderStep implements TestStepInterface
         $this->orderCreateIndex->getCreateBlock()->submitOrder();
         $this->salesOrderView->getMessagesBlock()->waitSuccessMessage();
         $orderId = trim($this->salesOrderView->getTitleBlock()->getTitle(), '#');
-        $data = [
-            'id' => $orderId,
-            'customer_id' => ['customer' => $this->customer],
-            'entity_id' => ['products' => $this->products],
-            'billing_address_id' => ['billingAddress' => $this->billingAddress],
-        ];
-        $orderData = $this->order !== null ? $this->order->getData() : [];
         $order = $this->fixtureFactory->createByCode(
             'orderInjectable',
-            ['data' => array_merge($data, $orderData)]
+            [
+                'data' => [
+                    'id' => $orderId,
+                    'customer_id' => ['customer' => $this->customer],
+                    'entity_id' => ['products' => $this->products],
+                    'billing_address_id' => ['billingAddress' => $this->billingAddress],
+                ]
+            ]
         );
 
         return ['orderId' => $orderId, 'order' => $order];

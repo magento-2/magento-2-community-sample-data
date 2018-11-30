@@ -11,7 +11,7 @@ use Magento\Framework\App\Config\ScopeConfigInterface;
 /**
  * Test class for \Magento\Customer\Block\Form\Edit
  */
-class EditTest extends \PHPUnit\Framework\TestCase
+class EditTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var ScopeConfigInterface
@@ -34,7 +34,13 @@ class EditTest extends \PHPUnit\Framework\TestCase
             ->getMock();
 
         /** @var \Magento\Framework\View\Element\Template\Context | \PHPUnit_Framework_MockObject_MockObject $context */
-        $context = $this->createMock(\Magento\Framework\View\Element\Template\Context::class);
+        $context = $this->getMock(
+            'Magento\Framework\View\Element\Template\Context',
+            [],
+            [],
+            '',
+            false
+        );
         $context->expects($this->any())
             ->method('getScopeConfig')
             ->willReturn($this->scopeConfigMock);
@@ -42,7 +48,7 @@ class EditTest extends \PHPUnit\Framework\TestCase
         $objectManager = new \Magento\Framework\TestFramework\Unit\Helper\ObjectManager($this);
 
         $this->block = $objectManager->getObject(
-            \Magento\Customer\Block\Form\Edit::class,
+            '\Magento\Customer\Block\Form\Edit',
             ['context' => $context]
         );
     }

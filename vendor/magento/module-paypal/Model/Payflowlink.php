@@ -11,8 +11,6 @@ namespace Magento\Paypal\Model;
 use Magento\Payment\Model\Method\AbstractMethod;
 use Magento\Payment\Model\Method\ConfigInterfaceFactory;
 use Magento\Paypal\Model\Payflow\Service\Response\Handler\HandlerInterface;
-use Magento\Sales\Api\Data\OrderPaymentInterface;
-use Magento\Sales\Model\Order;
 use Magento\Sales\Model\Order\Email\Sender\OrderSender;
 
 /**
@@ -43,12 +41,12 @@ class Payflowlink extends \Magento\Paypal\Model\Payflowpro
     /**
      * @var string
      */
-    protected $_formBlockType = \Magento\Paypal\Block\Payflow\Link\Form::class;
+    protected $_formBlockType = 'Magento\Paypal\Block\Payflow\Link\Form';
 
     /**
      * @var string
      */
-    protected $_infoBlockType = \Magento\Paypal\Block\Payment\Info::class;
+    protected $_infoBlockType = 'Magento\Paypal\Block\Payflow\Link\Info';
 
     /**
      * Availability option
@@ -242,13 +240,11 @@ class Payflowlink extends \Magento\Paypal\Model\Payflowpro
             case \Magento\Paypal\Model\Config::PAYMENT_ACTION_AUTH:
             case \Magento\Paypal\Model\Config::PAYMENT_ACTION_SALE:
                 $payment = $this->getInfoInstance();
-                /** @var Order $order */
                 $order = $payment->getOrder();
                 $order->setCanSendNewEmailFlag(false);
                 $payment->setAmountAuthorized($order->getTotalDue());
                 $payment->setBaseAmountAuthorized($order->getBaseTotalDue());
                 $this->_generateSecureSilentPostHash($payment);
-                $this->setStore($order->getStoreId());
                 $request = $this->_buildTokenRequest($payment);
                 $response = $this->postRequest($request, $this->getConfig());
                 $this->_processTokenErrors($response, $payment);
@@ -312,16 +308,18 @@ class Payflowlink extends \Magento\Paypal\Model\Payflowpro
         $response = $this->getResponse();
         $payment = $order->getPayment();
         $payment->setTransactionId($response->getPnref())->setIsTransactionClosed(0);
-        $payment->setCcType($response->getData(OrderPaymentInterface::CC_TYPE));
-
         $canSendNewOrderEmail = true;
+
         if ($response->getResult() == self::RESPONSE_CODE_FRAUDSERVICE_FILTER ||
             $response->getResult() == self::RESPONSE_CODE_DECLINED_BY_FILTER
         ) {
             $canSendNewOrderEmail = false;
 
-            $payment->setIsTransactionPending(true)
-                ->setIsFraudDetected(true);
+            $payment->setIsTransactionPending(
+                true
+            )->setIsFraudDetected(
+                true
+            );
 
             $fraudMessage = $response->getData('respmsg');
             if ($response->getData('fps_prexmldata')) {

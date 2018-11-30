@@ -8,7 +8,6 @@ namespace Magento\Quote\Api\Data;
 /**
  * Interface AddressInterface
  * @api
- * @since 100.0.2
  */
 interface AddressInterface extends \Magento\Framework\Api\CustomAttributesDataInterface
 {
@@ -371,7 +370,7 @@ interface AddressInterface extends \Magento\Framework\Api\CustomAttributesDataIn
     /**
      * Set customer address id
      *
-     * @param int|null $customerAddressId
+     * @param int $customerAddressId
      * @return $this
      */
     public function setCustomerAddressId($customerAddressId);

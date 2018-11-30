@@ -6,10 +6,7 @@
 namespace Magento\Directory\Model\ResourceModel;
 
 /**
- * Country Resource Model
- *
- * @api
- * @since 100.0.2
+ * Directory Country Resource Model
  */
 class Country extends \Magento\Framework\Model\ResourceModel\Db\AbstractDb
 {
@@ -44,7 +41,7 @@ class Country extends \Magento\Framework\Model\ResourceModel\Db\AbstractDb
 
             default:
                 throw new \Magento\Framework\Exception\LocalizedException(
-                    __('Please correct the country code: %1.', htmlspecialchars($code))
+                    __('Please correct the country code: %1.', $code)
                 );
         }
 

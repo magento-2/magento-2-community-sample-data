@@ -5,10 +5,6 @@
  */
 namespace Magento\Checkout\Controller\Express;
 
-/**
- * Interface \Magento\Checkout\Controller\Express\RedirectLoginInterface
- *
- */
 interface RedirectLoginInterface
 {
     /**

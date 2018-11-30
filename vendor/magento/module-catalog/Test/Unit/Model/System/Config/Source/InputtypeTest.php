@@ -5,7 +5,7 @@
  */
 namespace Magento\Catalog\Test\Unit\Model\System\Config\Source;
 
-class InputtypeTest extends \PHPUnit\Framework\TestCase
+class InputtypeTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\Framework\TestFramework\Unit\Helper\ObjectManager
@@ -20,7 +20,7 @@ class InputtypeTest extends \PHPUnit\Framework\TestCase
     protected function setUp()
     {
         $this->_helper = new \Magento\Framework\TestFramework\Unit\Helper\ObjectManager($this);
-        $this->_model = $this->_helper->getObject(\Magento\Catalog\Model\System\Config\Source\Inputtype::class);
+        $this->_model = $this->_helper->getObject('Magento\Catalog\Model\System\Config\Source\Inputtype');
     }
 
     public function testToOptionArrayIsArray()

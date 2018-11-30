@@ -18,8 +18,6 @@ use Magento\Framework\Registry;
 
 /**
  * Adminhtml billing agreement related orders tab
- * @api
- * @since 100.0.2
  */
 class Orders extends ExtendedGrid implements TabInterface
 {
@@ -106,7 +104,6 @@ class Orders extends ExtendedGrid implements TabInterface
      * Get grid url
      *
      * @return string
-     * @since 100.1.0
      */
     public function getGridUrl()
     {

@@ -22,14 +22,14 @@ use Magento\Catalog\Test\Page\Product\CatalogProductCompare;
  * 4. Navigate to compare page(click "compare product" link at the top of the page).
  * 5. Perform all asserts.
  *
- * @group Compare_Products
+ * @group Compare_Products_(MX)
  * @ZephyrId MAGETWO-25843
  */
 class AddCompareProductsTest extends AbstractCompareProductsTest
 {
     /* tags */
     const MVP = 'yes';
-    const TO_MAINTAIN = 'yes';
+    const DOMAIN = 'MX';
     /* end tags */
 
     /**
@@ -76,8 +76,7 @@ class AddCompareProductsTest extends AbstractCompareProductsTest
     {
         $this->cmsIndex->open();
         $this->cmsIndex->getLinksBlock()->openLink("Compare Products");
-        $productsCount = count($this->products);
-        for ($i = 1; $i <= $productsCount; $i++) {
+        for ($i = 1; $i <= count($this->products); $i++) {
             $this->catalogProductCompare->getCompareProductsBlock()->removeProduct();
         }
     }

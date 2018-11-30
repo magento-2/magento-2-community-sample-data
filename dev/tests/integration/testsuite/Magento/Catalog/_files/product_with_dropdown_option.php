@@ -7,14 +7,14 @@
 /** @var \Magento\TestFramework\ObjectManager $objectManager */
 $objectManager = \Magento\TestFramework\Helper\Bootstrap::getObjectManager();
 
-$objectManager->removeSharedInstance(\Magento\Catalog\Model\ProductRepository::class);
-$objectManager->removeSharedInstance(\Magento\Catalog\Model\Product\Option\Repository::class);
-$objectManager->removeSharedInstance(\Magento\Catalog\Model\Product\Option\SaveHandler::class);
+$objectManager->removeSharedInstance('Magento\Catalog\Model\ProductRepository');
+$objectManager->removeSharedInstance('Magento\Catalog\Model\Product\Option\Repository');
+$objectManager->removeSharedInstance('Magento\Catalog\Model\Product\Option\SaveHandler');
 
-$productRepository = $objectManager->get(\Magento\Catalog\Model\ProductRepository::class);
+$productRepository = $objectManager->get('Magento\Catalog\Model\ProductRepository');
 
 /** @var $product \Magento\Catalog\Model\Product */
-$product = $objectManager->create(\Magento\Catalog\Model\Product::class);
+$product = $objectManager->create('Magento\Catalog\Model\Product');
 
 $product->setTypeId(
     'simple'
@@ -75,10 +75,8 @@ $options = [
 $customOptions = [];
 
 /** @var \Magento\Catalog\Api\Data\ProductCustomOptionInterfaceFactory $customOptionFactory */
-$customOptionFactory = $objectManager->create(\Magento\Catalog\Api\Data\ProductCustomOptionInterfaceFactory::class);
-$optionValueFactory = $objectManager->create(
-    \Magento\Catalog\Api\Data\ProductCustomOptionValuesInterfaceFactory::class
-);
+$customOptionFactory = $objectManager->create('Magento\Catalog\Api\Data\ProductCustomOptionInterfaceFactory');
+$optionValueFactory = $objectManager->create('Magento\Catalog\Api\Data\ProductCustomOptionValuesInterfaceFactory');
 
 foreach ($options as $option) {
     /** @var \Magento\Catalog\Api\Data\ProductCustomOptionInterface $customOption */

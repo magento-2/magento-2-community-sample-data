@@ -1,41 +1,35 @@
 <?php
 /**
- * @link      http://github.com/zendframework/zend-view for the canonical source repository
- * @copyright Copyright (c) 2005-2016 Zend Technologies USA Inc. (http://www.zend.com)
+ * Zend Framework (http://framework.zend.com/)
+ *
+ * @link      http://github.com/zendframework/zf2 for the canonical source repository
+ * @copyright Copyright (c) 2005-2015 Zend Technologies USA Inc. (http://www.zend.com)
  * @license   http://framework.zend.com/license/new-bsd New BSD License
  */
 
 namespace Zend\View\Helper;
 
-use Zend\Mvc\Controller\Plugin\FlashMessenger as V2PluginFlashMessenger;
-use Zend\Mvc\Plugin\FlashMessenger\FlashMessenger as PluginFlashMessenger;
-use Zend\View\Exception\InvalidArgumentException;
+use Zend\Mvc\Controller\Plugin\FlashMessenger as PluginFlashMessenger;
+use Zend\ServiceManager\ServiceLocatorAwareInterface;
+use Zend\ServiceManager\ServiceLocatorInterface;
+use Zend\I18n\View\Helper\AbstractTranslatorHelper;
 
 /**
  * Helper to proxy the plugin flash messenger
- *
- * Duck-types against Zend\I18n\Translator\TranslatorAwareInterface.
- *
- * @deprecated This helper will be removed in version 3.0 of this component.
- *     At that time, it will be available in zendframework/zend-mvc-plugin-flashmessenger.
  */
-class FlashMessenger extends AbstractHelper
+class FlashMessenger extends AbstractTranslatorHelper implements ServiceLocatorAwareInterface
 {
-    use TranslatorAwareTrait;
-
     /**
      * Default attributes for the open format tag
      *
-     * @todo For version 3, have the keys reference the class constants in the
-     *     FlashMessenger plugin.
      * @var array
      */
     protected $classMessages = [
-        'info'    => 'info',
-        'error'   => 'error',
-        'success' => 'success',
-        'default' => 'default',
-        'warning' => 'warning',
+        PluginFlashMessenger::NAMESPACE_INFO => 'info',
+        PluginFlashMessenger::NAMESPACE_ERROR => 'error',
+        PluginFlashMessenger::NAMESPACE_SUCCESS => 'success',
+        PluginFlashMessenger::NAMESPACE_DEFAULT => 'default',
+        PluginFlashMessenger::NAMESPACE_WARNING => 'warning',
     ];
 
     /**
@@ -64,15 +58,22 @@ class FlashMessenger extends AbstractHelper
     /**
      * Flash messenger plugin
      *
-     * @var V2PluginFlashMessenger|PluginFlashMessenger
+     * @var PluginFlashMessenger
      */
     protected $pluginFlashMessenger;
+
+    /**
+     * Service locator
+     *
+     * @var ServiceLocatorInterface
+     */
+    protected $serviceLocator;
 
     /**
      * Returns the flash messenger plugin controller
      *
      * @param  string|null $namespace
-     * @return FlashMessenger|V2PluginFlashMessenger|PluginFlashMessenger
+     * @return FlashMessenger|PluginFlashMessenger
      */
     public function __invoke($namespace = null)
     {
@@ -105,7 +106,7 @@ class FlashMessenger extends AbstractHelper
      * @param  null|bool $autoEscape
      * @return string
      */
-    public function render($namespace = 'default', array $classes = [], $autoEscape = null)
+    public function render($namespace = PluginFlashMessenger::NAMESPACE_DEFAULT, array $classes = [], $autoEscape = null)
     {
         $flashMessenger = $this->getPluginFlashMessenger();
         $messages = $flashMessenger->getMessagesFromNamespace($namespace);
@@ -120,7 +121,7 @@ class FlashMessenger extends AbstractHelper
      * @param  bool|null $autoEscape
      * @return string
      */
-    public function renderCurrent($namespace = 'default', array $classes = [], $autoEscape = null)
+    public function renderCurrent($namespace = PluginFlashMessenger::NAMESPACE_DEFAULT, array $classes = [], $autoEscape = null)
     {
         $flashMessenger = $this->getPluginFlashMessenger();
         $messages = $flashMessenger->getCurrentMessagesFromNamespace($namespace);
@@ -137,21 +138,17 @@ class FlashMessenger extends AbstractHelper
      * @return string
      */
     protected function renderMessages(
-        $namespace = 'default',
+        $namespace = PluginFlashMessenger::NAMESPACE_DEFAULT,
         array $messages = [],
         array $classes = [],
         $autoEscape = null
     ) {
-        if (empty($messages)) {
-            return '';
-        }
-
         // Prepare classes for opening tag
         if (empty($classes)) {
             if (isset($this->classMessages[$namespace])) {
                 $classes = $this->classMessages[$namespace];
             } else {
-                $classes = $this->classMessages['default'];
+                $classes = $this->classMessages[PluginFlashMessenger::NAMESPACE_DEFAULT];
             }
             $classes = [$classes];
         }
@@ -161,9 +158,9 @@ class FlashMessenger extends AbstractHelper
         }
 
         // Flatten message array
-        $escapeHtml           = $this->getEscapeHtmlHelper();
-        $messagesToPrint      = [];
-        $translator           = $this->getTranslator();
+        $escapeHtml      = $this->getEscapeHtmlHelper();
+        $messagesToPrint = [];
+        $translator = $this->getTranslator();
         $translatorTextDomain = $this->getTranslatorTextDomain();
         array_walk_recursive(
             $messages,
@@ -289,24 +286,11 @@ class FlashMessenger extends AbstractHelper
     /**
      * Set the flash messenger plugin
      *
-     * @param  V2PluginFlashMessenger|PluginFlashMessenger $pluginFlashMessenger
+     * @param  PluginFlashMessenger $pluginFlashMessenger
      * @return FlashMessenger
-     * @throws InvalidArgumentException for an invalid $pluginFlashMessenger
      */
-    public function setPluginFlashMessenger($pluginFlashMessenger)
+    public function setPluginFlashMessenger(PluginFlashMessenger $pluginFlashMessenger)
     {
-        if (! $pluginFlashMessenger instanceof V2PluginFlashMessenger
-            && ! $pluginFlashMessenger instanceof PluginFlashMessenger
-        ) {
-            throw new InvalidArgumentException(sprintf(
-                '%s expects either a %s or %s instance; received %s',
-                __METHOD__,
-                V2PluginFlashMessenger::class,
-                PluginFlashMessenger::class,
-                (is_object($pluginFlashMessenger) ? get_class($pluginFlashMessenger) : gettype($pluginFlashMessenger))
-            ));
-        }
-
         $this->pluginFlashMessenger = $pluginFlashMessenger;
         return $this;
     }
@@ -314,19 +298,37 @@ class FlashMessenger extends AbstractHelper
     /**
      * Get the flash messenger plugin
      *
-     * @return V2PluginFlashMessenger|PluginFlashMessenger
+     * @return PluginFlashMessenger
      */
     public function getPluginFlashMessenger()
     {
         if (null === $this->pluginFlashMessenger) {
-            $this->setPluginFlashMessenger(
-                class_exists(PluginFlashMessenger::class)
-                ? new PluginFlashMessenger()
-                : new V2PluginFlashMessenger()
-            );
+            $this->setPluginFlashMessenger(new PluginFlashMessenger());
         }
 
         return $this->pluginFlashMessenger;
+    }
+
+    /**
+     * Set the service locator.
+     *
+     * @param  ServiceLocatorInterface $serviceLocator
+     * @return AbstractHelper
+     */
+    public function setServiceLocator(ServiceLocatorInterface $serviceLocator)
+    {
+        $this->serviceLocator = $serviceLocator;
+        return $this;
+    }
+
+    /**
+     * Get the service locator.
+     *
+     * @return ServiceLocatorInterface
+     */
+    public function getServiceLocator()
+    {
+        return $this->serviceLocator;
     }
 
     /**
@@ -344,7 +346,7 @@ class FlashMessenger extends AbstractHelper
             $this->escapeHtmlHelper = $this->view->plugin('escapehtml');
         }
 
-        if (! $this->escapeHtmlHelper instanceof EscapeHtml) {
+        if (!$this->escapeHtmlHelper instanceof EscapeHtml) {
             $this->escapeHtmlHelper = new EscapeHtml();
         }
 

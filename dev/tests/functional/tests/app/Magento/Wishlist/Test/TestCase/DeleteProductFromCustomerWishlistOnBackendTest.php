@@ -27,13 +27,14 @@ use Magento\Customer\Test\Page\Adminhtml\CustomerIndexEdit;
  * 5. Click 'Delete'
  * 6. Perform assertions
  *
- * @group Wishlist
+ * @group Wishlist_(CS)
  * @ZephyrId MAGETWO-27813
  */
 class DeleteProductFromCustomerWishlistOnBackendTest extends AbstractWishlistTest
 {
     /* tags */
     const MVP = 'no';
+    const DOMAIN = 'CS';
     /* end tags */
 
     /**

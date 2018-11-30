@@ -1,5 +1,5 @@
 <?php
-/**
+/***
  * Copyright © Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
@@ -16,7 +16,7 @@ use PHPUnit_Framework_MockObject_MockObject as MockObject;
 /**
  * BlockActionsTest contains unit tests for \Magento\Cms\Ui\Component\Listing\Column\BlockActions class
  */
-class BlockActionsTest extends \PHPUnit\Framework\TestCase
+class BlockActionsTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var BlockActions
@@ -37,16 +37,16 @@ class BlockActionsTest extends \PHPUnit\Framework\TestCase
     {
         $objectManager = new ObjectManager($this);
 
-        $context = $this->createMock(ContextInterface::class);
+        $context = $this->getMock(ContextInterface::class);
 
         $processor = $this->getMockBuilder(Processor::class)
             ->disableOriginalConstructor()
             ->getMock();
-        $context->expects(static::never())
+        $context->expects(static::once())
             ->method('getProcessor')
             ->willReturn($processor);
 
-        $this->urlBuilder = $this->createMock(UrlInterface::class);
+        $this->urlBuilder = $this->getMock(UrlInterface::class);
 
         $this->escaper = $this->getMockBuilder(Escaper::class)
             ->disableOriginalConstructor()
@@ -74,9 +74,9 @@ class BlockActionsTest extends \PHPUnit\Framework\TestCase
                     [
                         'block_id' => $blockId,
                         'title' => $title
-                    ]
-                ]
-            ]
+                    ],
+                ],
+            ],
         ];
         $name = 'item_name';
         $expectedItems = [
@@ -93,11 +93,11 @@ class BlockActionsTest extends \PHPUnit\Framework\TestCase
                         'label' => __('Delete'),
                         'confirm' => [
                             'title' => __('Delete %1', $title),
-                            'message' => __('Are you sure you want to delete a %1 record?', $title)
+                            'message' => __('Are you sure you wan\'t to delete a %1 record?', $title)
                         ],
-                    ]
+                    ],
                 ],
-            ]
+            ],
         ];
 
         $this->escaper->expects(static::once())
@@ -112,14 +112,14 @@ class BlockActionsTest extends \PHPUnit\Framework\TestCase
                     [
                         BlockActions::URL_PATH_EDIT,
                         [
-                            'block_id' => $blockId
+                            'block_id' => $blockId,
                         ],
                         'test/url/edit',
                     ],
                     [
                         BlockActions::URL_PATH_DELETE,
                         [
-                            'block_id' => $blockId
+                            'block_id' => $blockId,
                         ],
                         'test/url/delete',
                     ],

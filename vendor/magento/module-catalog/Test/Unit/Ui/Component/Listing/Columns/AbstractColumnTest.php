@@ -14,7 +14,7 @@ use Magento\Framework\View\Element\UiComponent\Processor;
 /**
  * Class AbstractColumnTest
  */
-abstract class AbstractColumnTest extends \PHPUnit\Framework\TestCase
+abstract class AbstractColumnTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var Column
@@ -54,7 +54,7 @@ abstract class AbstractColumnTest extends \PHPUnit\Framework\TestCase
             ->disableOriginalConstructor()
             ->getMock();
 
-        $this->contextMock->expects($this->never())
+        $this->contextMock->expects($this->any())
             ->method('getProcessor')
             ->willReturn($this->processorMock);
     }

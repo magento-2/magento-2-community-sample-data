@@ -24,7 +24,7 @@ use Magento\TestFramework\Helper\Bootstrap;
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  * @magentoAppArea frontend
  */
-class AccountManagementTest extends \PHPUnit\Framework\TestCase
+class AccountManagementTest extends \PHPUnit_Framework_TestCase
 {
     /** @var AccountManagementInterface */
     private $accountManagement;
@@ -60,19 +60,17 @@ class AccountManagementTest extends \PHPUnit\Framework\TestCase
     {
         $this->objectManager = Bootstrap::getObjectManager();
         $this->accountManagement = $this->objectManager
-            ->create(\Magento\Customer\Api\AccountManagementInterface::class);
+            ->create('Magento\Customer\Api\AccountManagementInterface');
         $this->customerRepository = $this->objectManager
-            ->create(\Magento\Customer\Api\CustomerRepositoryInterface::class);
+            ->create('Magento\Customer\Api\CustomerRepositoryInterface');
         $this->addressRepository =
-            $this->objectManager->create(\Magento\Customer\Api\AddressRepositoryInterface::class);
+            $this->objectManager->create('Magento\Customer\Api\AddressRepositoryInterface');
 
-        $this->addressFactory = $this->objectManager->create(\Magento\Customer\Api\Data\AddressInterfaceFactory::class);
-        $this->customerFactory = $this->objectManager->create(
-            \Magento\Customer\Api\Data\CustomerInterfaceFactory::class
-        );
-        $this->dataObjectHelper = $this->objectManager->create(\Magento\Framework\Api\DataObjectHelper::class);
+        $this->addressFactory = $this->objectManager->create('Magento\Customer\Api\Data\AddressInterfaceFactory');
+        $this->customerFactory = $this->objectManager->create('Magento\Customer\Api\Data\CustomerInterfaceFactory');
+        $this->dataObjectHelper = $this->objectManager->create('Magento\Framework\Api\DataObjectHelper');
 
-        $regionFactory = $this->objectManager->create(\Magento\Customer\Api\Data\RegionInterfaceFactory::class);
+        $regionFactory = $this->objectManager->create('Magento\Customer\Api\Data\RegionInterfaceFactory');
         $address = $this->addressFactory->create();
         $address->setId('1')
             ->setCountryId('US')
@@ -110,10 +108,10 @@ class AccountManagementTest extends \PHPUnit\Framework\TestCase
         $this->_expectedAddresses = [$address, $address2];
 
         $this->dataProcessor = $this->objectManager
-            ->create(\Magento\Framework\Reflection\DataObjectProcessor::class);
+            ->create('Magento\Framework\Reflection\DataObjectProcessor');
 
         $this->extensibleDataObjectConverter = $this->objectManager
-            ->create(\Magento\Framework\Api\ExtensibleDataObjectConverter::class);
+            ->create('Magento\Framework\Api\ExtensibleDataObjectConverter');
     }
 
     /**
@@ -122,9 +120,9 @@ class AccountManagementTest extends \PHPUnit\Framework\TestCase
     protected function tearDown()
     {
         /** @var \Magento\Customer\Model\CustomerRegistry $customerRegistry */
-        $customerRegistry = $this->objectManager->get(\Magento\Customer\Model\CustomerRegistry::class);
+        $customerRegistry = $this->objectManager->get('Magento\Customer\Model\CustomerRegistry');
         /** @var \Magento\Customer\Model\CustomerRegistry $addressRegistry */
-        $addressRegistry = $this->objectManager->get(\Magento\Customer\Model\AddressRegistry::class);
+        $addressRegistry = $this->objectManager->get('Magento\Customer\Model\AddressRegistry');
         //Cleanup customer from registry
         $customerRegistry->remove(1);
         $addressRegistry->remove(1);
@@ -202,14 +200,14 @@ class AccountManagementTest extends \PHPUnit\Framework\TestCase
     public function testActivateAccount()
     {
         /** @var \Magento\Customer\Model\Customer $customerModel */
-        $customerModel = $this->objectManager->create(\Magento\Customer\Model\Customer::class);
+        $customerModel = $this->objectManager->create('Magento\Customer\Model\Customer');
         $customerModel->load(1);
         // Assert in just one test that the fixture is working
         $this->assertNotNull($customerModel->getConfirmation(), 'New customer needs to be confirmed');
 
         $this->accountManagement->activate($customerModel->getEmail(), $customerModel->getConfirmation());
 
-        $customerModel = $this->objectManager->create(\Magento\Customer\Model\Customer::class);
+        $customerModel = $this->objectManager->create('Magento\Customer\Model\Customer');
         $customerModel->load(1);
         $this->assertNull($customerModel->getConfirmation(), 'Customer should be considered confirmed now');
     }
@@ -221,7 +219,7 @@ class AccountManagementTest extends \PHPUnit\Framework\TestCase
     public function testActivateCustomerConfirmationKeyWrongKey()
     {
         /** @var \Magento\Customer\Model\Customer $customerModel */
-        $customerModel = $this->objectManager->create(\Magento\Customer\Model\Customer::class);
+        $customerModel = $this->objectManager->create('Magento\Customer\Model\Customer');
         $customerModel->load(1);
         $key = $customerModel->getConfirmation();
 
@@ -239,7 +237,7 @@ class AccountManagementTest extends \PHPUnit\Framework\TestCase
     public function testActivateCustomerWrongAccount()
     {
         /** @var \Magento\Customer\Model\Customer $customerModel */
-        $customerModel = $this->objectManager->create(\Magento\Customer\Model\Customer::class);
+        $customerModel = $this->objectManager->create('Magento\Customer\Model\Customer');
         $customerModel->load(1);
         $key = $customerModel->getConfirmation();
         try {
@@ -261,7 +259,7 @@ class AccountManagementTest extends \PHPUnit\Framework\TestCase
     public function testActivateCustomerAlreadyActive()
     {
         /** @var \Magento\Customer\Model\Customer $customerModel */
-        $customerModel = $this->objectManager->create(\Magento\Customer\Model\Customer::class);
+        $customerModel = $this->objectManager->create('Magento\Customer\Model\Customer');
         $customerModel->load(1);
         $key = $customerModel->getConfirmation();
         $this->accountManagement->activate($customerModel->getEmail(), $key);
@@ -355,32 +353,6 @@ class AccountManagementTest extends \PHPUnit\Framework\TestCase
             $this->assertEquals('resetPasswordLinkToken is a required field.', $ie->getLogMessage());
             $this->assertEmpty($ie->getErrors());
         }
-    }
-
-    /**
-     * @magentoDataFixture Magento/Customer/_files/customer.php
-     */
-    public function testValidateResetPasswordLinkTokenWithoutId()
-    {
-        $token = 'randomStr123';
-        $this->setResetPasswordData($token, 'Y-m-d H:i:s');
-
-        $this->assertTrue(
-            $this->accountManagement->validateResetPasswordLinkToken(0, $token)
-        );
-    }
-
-    /**
-     * @magentoDataFixture Magento/Customer/_files/two_customers.php
-     * @expectedException \Magento\Framework\Exception\State\ExpiredException
-     */
-    public function testValidateResetPasswordLinkTokenAmbiguous()
-    {
-        $token = 'randomStr123';
-        $this->setResetPasswordData($token, 'Y-m-d H:i:s', 1);
-        $this->setResetPasswordData($token, 'Y-m-d H:i:s', 2);
-
-        $this->accountManagement->validateResetPasswordLinkToken(0, $token);
     }
 
     /**
@@ -635,6 +607,32 @@ class AccountManagementTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
+     * @magentoDataFixture Magento/Customer/_files/customer.php
+     */
+    public function testValidateResetPasswordLinkTokenWithoutId()
+    {
+        $token = 'randomStr123';
+        $this->setResetPasswordData($token, 'Y-m-d H:i:s');
+
+        $this->assertTrue(
+            $this->accountManagement->validateResetPasswordLinkToken(0, $token)
+        );
+    }
+
+    /**
+     * @magentoDataFixture Magento/Customer/_files/two_customers.php
+     * @expectedException \Magento\Framework\Exception\State\ExpiredException
+     */
+    public function testValidateResetPasswordLinkTokenAmbiguous()
+    {
+        $token = 'randomStr123';
+        $this->setResetPasswordData($token, 'Y-m-d H:i:s', 1);
+        $this->setResetPasswordData($token, 'Y-m-d H:i:s', 2);
+
+        $this->accountManagement->validateResetPasswordLinkToken(0, $token);
+    }
+
+    /**
      * @magentoAppArea frontend
      * @magentoDataFixture Magento/Customer/_files/customer.php
      * @magentoDbIsolation enabled
@@ -660,7 +658,7 @@ class AccountManagementTest extends \PHPUnit\Framework\TestCase
         $this->dataObjectHelper->populateWithArray(
             $customerEntity,
             $customerData,
-            \Magento\Customer\Api\Data\CustomerInterface::class
+            '\Magento\Customer\Api\Data\CustomerInterface'
         );
 
         $customerAfter = $this->accountManagement->createAccount($customerEntity, '_aPassword1');
@@ -675,12 +673,12 @@ class AccountManagementTest extends \PHPUnit\Framework\TestCase
         $attributesBefore = $this->extensibleDataObjectConverter->toFlatArray(
             $existingCustomer,
             [],
-            \Magento\Customer\Api\Data\CustomerInterface::class
+            '\Magento\Customer\Api\Data\CustomerInterface'
         );
         $attributesAfter = $this->extensibleDataObjectConverter->toFlatArray(
             $customerAfter,
             [],
-            \Magento\Customer\Api\Data\CustomerInterface::class
+            '\Magento\Customer\Api\Data\CustomerInterface'
         );
         // ignore 'updated_at'
         unset($attributesBefore['updated_at']);
@@ -723,7 +721,7 @@ class AccountManagementTest extends \PHPUnit\Framework\TestCase
         $password = '_aPassword1';
 
         /** @var \Magento\Customer\Model\Customer $customerModel */
-        $customerModel = $this->objectManager->create(\Magento\Customer\Model\CustomerFactory::class)->create();
+        $customerModel = $this->objectManager->create('Magento\Customer\Model\CustomerFactory')->create();
         $customerModel->setEmail($email)
             ->setFirstname($firstname)
             ->setLastname($lastname)
@@ -732,7 +730,7 @@ class AccountManagementTest extends \PHPUnit\Framework\TestCase
         $customerModel->save();
         /** @var \Magento\Customer\Model\Customer $customerModel */
         $savedModel = $this->objectManager
-            ->create(\Magento\Customer\Model\CustomerFactory::class)
+            ->create('Magento\Customer\Model\CustomerFactory')
             ->create()
             ->load($customerModel->getId());
         $dataInModel = $savedModel->getData();
@@ -748,11 +746,11 @@ class AccountManagementTest extends \PHPUnit\Framework\TestCase
 
         /** @var \Magento\Framework\Api\SimpleDataObjectConverter $simpleDataObjectConverter */
         $simpleDataObjectConverter = Bootstrap::getObjectManager()
-            ->get(\Magento\Framework\Api\SimpleDataObjectConverter::class);
+            ->get('Magento\Framework\Api\SimpleDataObjectConverter');
 
         $dataInService = $simpleDataObjectConverter->toFlatArray(
             $savedCustomer,
-            \Magento\Customer\Api\Data\CustomerInterface::class
+            'Magento\Customer\Api\Data\CustomerInterface'
         );
         $expectedDifferences = [
             'created_at',
@@ -829,9 +827,9 @@ class AccountManagementTest extends \PHPUnit\Framework\TestCase
             ->setLastname($lastname)
             ->setGroupId($groupId);
         /** @var \Magento\Framework\Math\Random $mathRandom */
-        $password = $this->objectManager->get(\Magento\Framework\Math\Random::class)->getRandomString(8);
+        $password = $this->objectManager->get('Magento\Framework\Math\Random')->getRandomString(8);
         /** @var \Magento\Framework\Encryption\EncryptorInterface $encryptor */
-        $encryptor = $this->objectManager->get(\Magento\Framework\Encryption\EncryptorInterface::class);
+        $encryptor = $this->objectManager->get('Magento\Framework\Encryption\EncryptorInterface');
         $passwordHash = $encryptor->getHash($password, true);
         $savedCustomer = $this->accountManagement->createAccountWithPasswordHash(
             $newCustomerEntity,
@@ -864,7 +862,7 @@ class AccountManagementTest extends \PHPUnit\Framework\TestCase
         $existingCustomer = $this->customerRepository->getById($existingCustId);
         $customerEntity = $this->customerFactory->create();
         $this->dataObjectHelper->mergeDataObjects(
-            \Magento\Customer\Api\Data\CustomerInterface::class,
+            '\Magento\Customer\Api\Data\CustomerInterface',
             $customerEntity,
             $existingCustomer
         );
@@ -926,12 +924,9 @@ class AccountManagementTest extends \PHPUnit\Framework\TestCase
 
         $expected = $this->dataProcessor->buildOutputDataArray(
             $this->_expectedAddresses[0],
-            \Magento\Customer\Api\Data\AddressInterface::class
+            'Magento\Customer\Api\Data\AddressInterface'
         );
-        $result = $this->dataProcessor->buildOutputDataArray(
-            $address,
-            \Magento\Customer\Api\Data\AddressInterface::class
-        );
+        $result = $this->dataProcessor->buildOutputDataArray($address, 'Magento\Customer\Api\Data\AddressInterface');
         /*
          * TODO : Data builder / populateWithArray currently does not detect
          * array type and returns street as string instead of array. Need to fix this.
@@ -947,6 +942,7 @@ class AccountManagementTest extends \PHPUnit\Framework\TestCase
     public function testSaveNewAddressDefaults()
     {
         $customerId = 1;
+
         /** @var $addressShipping \Magento\Customer\Api\Data\AddressInterface */
         $addressShipping = $this->_expectedAddresses[0]->setId(null);
         $addressShipping->setIsDefaultShipping(true)->setIsDefaultBilling(false)->setCustomerId($customerId);
@@ -961,9 +957,7 @@ class AccountManagementTest extends \PHPUnit\Framework\TestCase
 
         $addressShippingExpected = $this->addressRepository->save($addressShipping);
         $addressBillingExpected = $this->addressRepository->save($addressBilling);
-        /** @var \Magento\Customer\Model\CustomerRegistry $customerRegistry */
-        $customerRegistry = $this->objectManager->get(\Magento\Customer\Model\CustomerRegistry::class);
-        $customerRegistry->remove(1);
+
         // Call api under test
         $shippingResponse = $this->accountManagement->getDefaultShippingAddress($customerId);
         $billingResponse = $this->accountManagement->getDefaultBillingAddress($customerId);
@@ -972,11 +966,11 @@ class AccountManagementTest extends \PHPUnit\Framework\TestCase
         // \Magento\Customer\Api\AccountManagementInterface::getDefaultShippingAddress
         $addressShippingExpected = $this->dataProcessor->buildOutputDataArray(
             $addressShippingExpected,
-            \Magento\Customer\Api\Data\AddressInterface::class
+            'Magento\Customer\Api\Data\AddressInterface'
         );
         $shippingResponse = $this->dataProcessor->buildOutputDataArray(
             $shippingResponse,
-            \Magento\Customer\Api\Data\AddressInterface::class
+            'Magento\Customer\Api\Data\AddressInterface'
         );
 
         // Response should have this set since we save as default shipping
@@ -987,11 +981,11 @@ class AccountManagementTest extends \PHPUnit\Framework\TestCase
         // \Magento\Customer\Api\AccountManagementInterface::getDefaultShippingAddress
         $addressBillingExpected = $this->dataProcessor->buildOutputDataArray(
             $addressBillingExpected,
-            \Magento\Customer\Api\Data\AddressInterface::class
+            'Magento\Customer\Api\Data\AddressInterface'
         );
         $billingResponse = $this->dataProcessor->buildOutputDataArray(
             $billingResponse,
-            \Magento\Customer\Api\Data\AddressInterface::class
+            'Magento\Customer\Api\Data\AddressInterface'
         );
 
         // Response should have this set since we save as default billing
@@ -1019,10 +1013,10 @@ class AccountManagementTest extends \PHPUnit\Framework\TestCase
     protected function setResetPasswordData(
         $resetToken,
         $date,
-        int $customerIdFromFixture = 1
+        $customerIdFromFixture = 1
     ) {
         /** @var \Magento\Customer\Model\Customer $customerModel */
-        $customerModel = $this->objectManager->create(\Magento\Customer\Model\Customer::class);
+        $customerModel = $this->objectManager->create('Magento\Customer\Model\Customer');
         $customerModel->load($customerIdFromFixture);
         $customerModel->setRpToken($resetToken);
         $customerModel->setRpTokenCreatedAt(date($date));

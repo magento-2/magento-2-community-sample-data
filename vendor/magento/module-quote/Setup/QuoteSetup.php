@@ -13,8 +13,7 @@ use Magento\Framework\App\Config\ScopeConfigInterface;
 use Magento\Framework\Setup\ModuleDataSetupInterface;
 
 /**
- * Quote module setup class
- *
+ * Setup Model of Quote Module
  * @SuppressWarnings(PHPMD.CyclomaticComplexity)
  * @codeCoverageIgnore
  */
@@ -76,9 +75,9 @@ class QuoteSetup extends EavSetup
      */
     protected function _flatTableExist($table)
     {
-        $tablesList = $this->getConnection()->listTables();
+        $tablesList = $this->getSetup()->getConnection(self::$connectionName)->listTables();
         return in_array(
-            strtoupper($this->getTable($table)),
+            strtoupper($this->getSetup()->getTable($table, self::$connectionName)),
             array_map('strtoupper', $tablesList)
         );
     }
@@ -94,10 +93,10 @@ class QuoteSetup extends EavSetup
     public function addAttribute($entityTypeId, $code, array $attr)
     {
         if (isset(
-            $this->_flatEntityTables[$entityTypeId]
-        ) && $this->_flatTableExist(
-            $this->_flatEntityTables[$entityTypeId]
-        )
+                $this->_flatEntityTables[$entityTypeId]
+            ) && $this->_flatTableExist(
+                $this->_flatEntityTables[$entityTypeId]
+            )
         ) {
             $this->_addFlatAttribute($this->_flatEntityTables[$entityTypeId], $code, $attr);
         } else {
@@ -116,14 +115,15 @@ class QuoteSetup extends EavSetup
      */
     protected function _addFlatAttribute($table, $attribute, $attr)
     {
-        $tableInfo = $this->getConnection()
-            ->describeTable($this->getTable($table));
+        $tableInfo = $this->getSetup()
+            ->getConnection(self::$connectionName)
+            ->describeTable($this->getSetup()->getTable($table, self::$connectionName));
         if (isset($tableInfo[$attribute])) {
             return $this;
         }
         $columnDefinition = $this->_getAttributeColumnDefinition($attribute, $attr);
-        $this->getConnection()->addColumn(
-            $this->getTable($table),
+        $this->getSetup()->getConnection(self::$connectionName)->addColumn(
+            $this->getSetup()->getTable($table, self::$connectionName),
             $attribute,
             $columnDefinition
         );
@@ -194,26 +194,5 @@ class QuoteSetup extends EavSetup
     public function getEncryptor()
     {
         return $this->_encryptor;
-    }
-
-    /**
-     * Get quote connection
-     *
-     * @return \Magento\Framework\DB\Adapter\AdapterInterface
-     */
-    public function getConnection()
-    {
-        return $this->getSetup()->getConnection(self::$connectionName);
-    }
-
-    /**
-     * Get table name
-     *
-     * @param string $table
-     * @return string
-     */
-    public function getTable($table)
-    {
-        return $this->getSetup()->getTable($table, self::$connectionName);
     }
 }

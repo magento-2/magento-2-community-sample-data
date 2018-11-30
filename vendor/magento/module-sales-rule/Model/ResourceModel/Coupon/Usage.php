@@ -27,10 +27,9 @@ class Usage extends \Magento\Framework\Model\ResourceModel\Db\AbstractDb
      *
      * @param int $customerId
      * @param mixed $couponId
-     * @param bool $increment
      * @return void
      */
-    public function updateCustomerCouponTimesUsed($customerId, $couponId, $increment = true)
+    public function updateCustomerCouponTimesUsed($customerId, $couponId)
     {
         $connection = $this->getConnection();
         $select = $connection->select();
@@ -45,13 +44,13 @@ class Usage extends \Magento\Framework\Model\ResourceModel\Db\AbstractDb
 
         $timesUsed = $connection->fetchOne($select, [':coupon_id' => $couponId, ':customer_id' => $customerId]);
 
-        if ($timesUsed !== false) {
+        if ($timesUsed > 0) {
             $this->getConnection()->update(
                 $this->getMainTable(),
-                ['times_used' => $timesUsed + ($increment ? 1 : -1)],
+                ['times_used' => $timesUsed + 1],
                 ['coupon_id = ?' => $couponId, 'customer_id = ?' => $customerId]
             );
-        } elseif ($increment) {
+        } else {
             $this->getConnection()->insert(
                 $this->getMainTable(),
                 ['coupon_id' => $couponId, 'customer_id' => $customerId, 'times_used' => 1]

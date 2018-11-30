@@ -11,7 +11,7 @@ use Magento\Authorization\Model\UserContextInterface;
 /**
  * Tests \Magento\Webapi\Model\Authorization\OauthUserContext
  */
-class OauthUserContextTest extends \PHPUnit\Framework\TestCase
+class OauthUserContextTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\Framework\TestFramework\Unit\Helper\ObjectManager
@@ -47,12 +47,12 @@ class OauthUserContextTest extends \PHPUnit\Framework\TestCase
     {
         $this->objectManager = new \Magento\Framework\TestFramework\Unit\Helper\ObjectManager($this);
 
-        $this->request = $this->getMockBuilder(\Magento\Framework\Webapi\Request::class)
+        $this->request = $this->getMockBuilder('Magento\Framework\Webapi\Request')
             ->disableOriginalConstructor()
             ->setMethods(['getConsumerId'])
             ->getMock();
 
-        $this->integrationService = $this->getMockBuilder(\Magento\Integration\Api\IntegrationServiceInterface::class)
+        $this->integrationService = $this->getMockBuilder('Magento\Integration\Api\IntegrationServiceInterface')
             ->disableOriginalConstructor()
             ->setMethods(
                 [
@@ -68,18 +68,18 @@ class OauthUserContextTest extends \PHPUnit\Framework\TestCase
             )
             ->getMock();
 
-        $this->oauthRequestHelper = $this->getMockBuilder(\Magento\Framework\Oauth\Helper\Request::class)
+        $this->oauthRequestHelper = $this->getMockBuilder('Magento\Framework\Oauth\Helper\Request')
             ->disableOriginalConstructor()
             ->setMethods(['prepareRequest', 'getRequestUrl'])
             ->getMock();
 
-        $this->oauthService = $this->getMockBuilder(\Magento\Framework\Oauth\Oauth::class)
+        $this->oauthService = $this->getMockBuilder('Magento\Framework\Oauth\Oauth')
             ->disableOriginalConstructor()
             ->setMethods(['validateAccessTokenRequest'])
             ->getMock();
 
         $this->oauthUserContext = $this->objectManager->getObject(
-            \Magento\Webapi\Model\Authorization\OauthUserContext::class,
+            'Magento\Webapi\Model\Authorization\OauthUserContext',
             [
                 'request' => $this->request,
                 'integrationService' => $this->integrationService,
@@ -128,7 +128,7 @@ class OauthUserContextTest extends \PHPUnit\Framework\TestCase
      */
     public function setupUserId($integrationId, $oauthRequest)
     {
-        $integration = $this->getMockBuilder(\Magento\Integration\Model\Integration::class)
+        $integration = $this->getMockBuilder('Magento\Integration\Model\Integration')
             ->disableOriginalConstructor()
             ->setMethods(['getId', '__wakeup'])
             ->getMock();

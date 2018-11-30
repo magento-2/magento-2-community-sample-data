@@ -5,7 +5,7 @@
  */
 namespace Magento\Store\Model;
 
-class WebsiteTest extends \PHPUnit\Framework\TestCase
+class WebsiteTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\Store\Model\Website
@@ -15,7 +15,7 @@ class WebsiteTest extends \PHPUnit\Framework\TestCase
     protected function setUp()
     {
         $this->_model = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->create(
-            \Magento\Store\Model\Website::class
+            'Magento\Store\Model\Website'
         );
         $this->_model->load(1);
     }
@@ -50,7 +50,7 @@ class WebsiteTest extends \PHPUnit\Framework\TestCase
     {
         /* Groups */
         $expectedGroup = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->create(
-            \Magento\Store\Model\Group::class
+            'Magento\Store\Model\Group'
         );
         $expectedGroup->setId(123);
         $this->_model->setDefaultGroupId($expectedGroup->getId());
@@ -61,7 +61,7 @@ class WebsiteTest extends \PHPUnit\Framework\TestCase
 
         /* Stores */
         $expectedStore = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->create(
-            \Magento\Store\Model\Store::class
+            'Magento\Store\Model\Store'
         );
         $expectedStore->setId(456);
         $expectedGroup->setDefaultStoreId($expectedStore->getId());
@@ -75,7 +75,7 @@ class WebsiteTest extends \PHPUnit\Framework\TestCase
     {
         $groups = $this->_model->getGroups();
         $this->assertEquals([1], array_keys($groups));
-        $this->assertInstanceOf(\Magento\Store\Model\Group::class, $groups[1]);
+        $this->assertInstanceOf('Magento\Store\Model\Group', $groups[1]);
         $this->assertEquals(1, $groups[1]->getId());
     }
 
@@ -92,7 +92,7 @@ class WebsiteTest extends \PHPUnit\Framework\TestCase
     public function testGetDefaultGroup()
     {
         $defaultGroup = $this->_model->getDefaultGroup();
-        $this->assertInstanceOf(\Magento\Store\Model\Group::class, $defaultGroup);
+        $this->assertInstanceOf('Magento\Store\Model\Group', $defaultGroup);
         $this->assertEquals(1, $defaultGroup->getId());
 
         $this->_model->setDefaultGroupId(null);
@@ -103,7 +103,7 @@ class WebsiteTest extends \PHPUnit\Framework\TestCase
     {
         $stores = $this->_model->getStores();
         $this->assertEquals([1], array_keys($stores));
-        $this->assertInstanceOf(\Magento\Store\Model\Store::class, $stores[1]);
+        $this->assertInstanceOf('Magento\Store\Model\Store', $stores[1]);
         $this->assertEquals(1, $stores[1]->getId());
     }
 
@@ -145,20 +145,20 @@ class WebsiteTest extends \PHPUnit\Framework\TestCase
     public function testGetBaseCurrency()
     {
         $currency = $this->_model->getBaseCurrency();
-        $this->assertInstanceOf(\Magento\Directory\Model\Currency::class, $currency);
+        $this->assertInstanceOf('Magento\Directory\Model\Currency', $currency);
         $this->assertEquals('USD', $currency->getCode());
     }
 
     public function testGetDefaultStore()
     {
         $defaultStore = $this->_model->getDefaultStore();
-        $this->assertInstanceOf(\Magento\Store\Model\Store::class, $defaultStore);
+        $this->assertInstanceOf('Magento\Store\Model\Store', $defaultStore);
         $this->assertEquals(1, $defaultStore->getId());
     }
 
     public function testGetDefaultStoresSelect()
     {
-        $this->assertInstanceOf(\Magento\Framework\DB\Select::class, $this->_model->getDefaultStoresSelect());
+        $this->assertInstanceOf('Magento\Framework\DB\Select', $this->_model->getDefaultStoresSelect());
     }
 
     public function testIsReadonly()

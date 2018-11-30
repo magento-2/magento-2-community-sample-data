@@ -31,9 +31,7 @@ class Share extends \Magento\Framework\App\Config\Value implements \Magento\Fram
      */
     protected $_customerResource;
 
-    /**
-     * @var \Magento\Store\Model\StoreManagerInterface
-     */
+    /** @var  \Magento\Store\Model\StoreManagerInterface */
     protected $_storeManager;
 
     /**

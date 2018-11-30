@@ -8,7 +8,7 @@ namespace Magento\ProductAlert\Test\Unit\Block\Product\View;
 /**
  * Test class for \Magento\ProductAlert\Block\Product\View\Price
  */
-class PriceTest extends \PHPUnit\Framework\TestCase
+class PriceTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \PHPUnit_Framework_MockObject_MockObject|\Magento\ProductAlert\Helper\Data
@@ -38,25 +38,31 @@ class PriceTest extends \PHPUnit\Framework\TestCase
     protected function setUp()
     {
         $objectManager = new \Magento\Framework\TestFramework\Unit\Helper\ObjectManager($this);
-        $this->_helper = $this->createPartialMock(
-            \Magento\ProductAlert\Helper\Data::class,
-            ['isPriceAlertAllowed', 'getSaveUrl']
+        $this->_helper = $this->getMock(
+            'Magento\ProductAlert\Helper\Data',
+            ['isPriceAlertAllowed', 'getSaveUrl'],
+            [],
+            '',
+            false
         );
-        $this->_product = $this->createPartialMock(
-            \Magento\Catalog\Model\Product::class,
-            ['getCanShowPrice', 'getId', '__wakeup']
+        $this->_product = $this->getMock(
+            'Magento\Catalog\Model\Product',
+            ['getCanShowPrice', 'getId', '__wakeup'],
+            [],
+            '',
+            false
         );
         $this->_product->expects($this->any())->method('getId')->will($this->returnValue(1));
         $this->_registry = $this->getMockBuilder(
-            \Magento\Framework\Registry::class
+            'Magento\Framework\Registry'
         )->disableOriginalConstructor()->setMethods(
             ['registry']
         )->getMock();
         $this->_block = $objectManager->getObject(
-            \Magento\ProductAlert\Block\Product\View\Price::class,
+            'Magento\ProductAlert\Block\Product\View\Price',
             ['helper' => $this->_helper, 'registry' => $this->_registry]
         );
-        $this->_layout = $this->createMock(\Magento\Framework\View\Layout::class);
+        $this->_layout = $this->getMock('Magento\Framework\View\Layout', [], [], '', false);
     }
 
     public function testSetTemplatePriceAlertAllowed()

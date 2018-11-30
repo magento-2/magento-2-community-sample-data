@@ -8,7 +8,7 @@ namespace Magento\Test\Integrity\Modular;
 use Magento\Framework\App\Filesystem\DirectoryList;
 use Magento\Framework\Component\ComponentRegistrar;
 
-class SystemConfigFilesTest extends \PHPUnit\Framework\TestCase
+class SystemConfigFilesTest extends \PHPUnit_Framework_TestCase
 {
     public function testConfiguration()
     {
@@ -16,19 +16,21 @@ class SystemConfigFilesTest extends \PHPUnit\Framework\TestCase
 
         // disable config caching to not pollute it
         /** @var $cacheState \Magento\Framework\App\Cache\StateInterface */
-        $cacheState = $objectManager->get(\Magento\Framework\App\Cache\StateInterface::class);
+        $cacheState = $objectManager->get('Magento\Framework\App\Cache\StateInterface');
         $cacheState->setEnabled(\Magento\Framework\App\Cache\Type\Config::TYPE_IDENTIFIER, false);
 
         /** @var \Magento\Framework\Filesystem $filesystem */
-        $filesystem = $objectManager->get(\Magento\Framework\Filesystem::class);
+        $filesystem = $objectManager->get('Magento\Framework\Filesystem');
         $modulesDir = $filesystem->getDirectoryRead(DirectoryList::ROOT);
         /** @var $moduleDirSearch \Magento\Framework\Component\DirSearch */
-        $moduleDirSearch = $objectManager->get(\Magento\Framework\Component\DirSearch::class);
-        $fileList = $moduleDirSearch
-            ->collectFiles(ComponentRegistrar::MODULE, 'etc/adminhtml/system.xml');
-        $configMock = $this->createPartialMock(
-            \Magento\Framework\Module\Dir\Reader::class,
-            ['getConfigurationFiles', 'getModuleDir']
+        $moduleDirSearch = $objectManager->get('Magento\Framework\Component\DirSearch');
+        $fileList = $moduleDirSearch->collectFiles(ComponentRegistrar::MODULE, 'etc/adminhtml/system.xml');
+        $configMock = $this->getMock(
+            'Magento\Framework\Module\Dir\Reader',
+            ['getConfigurationFiles', 'getModuleDir'],
+            [],
+            '',
+            false
         );
         $configMock->expects($this->any())->method('getConfigurationFiles')->will($this->returnValue($fileList));
         $configMock->expects(
@@ -43,7 +45,7 @@ class SystemConfigFilesTest extends \PHPUnit\Framework\TestCase
         );
         try {
             $objectManager->create(
-                \Magento\Config\Model\Config\Structure\Reader::class,
+                'Magento\Config\Model\Config\Structure\Reader',
                 ['moduleReader' => $configMock, 'runtimeValidation' => true]
             );
         } catch (\Magento\Framework\Exception\LocalizedException $exp) {

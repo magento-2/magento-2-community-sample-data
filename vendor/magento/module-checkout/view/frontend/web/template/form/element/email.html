@@ -22,8 +22,7 @@
                        type="email"
                        data-bind="
                             textInput: email,
-                            hasFocus: emailFocused,
-                            mageInit: {'mage/trim-input':{}}"
+                            hasFocus: emailFocused"
                        name="username"
                        data-validate="{required:true, 'validate-email':true}"
                        id="customer-email" />
@@ -40,10 +39,7 @@
                 </label>
                 <div class="control">
                     <input class="input-text"
-                           data-bind="
-                                attr: {
-                                    placeholder: $t('Password'),
-                                }"
+                           placeholder="Password"
                            type="password"
                            name="password"
                            id="customer-password"

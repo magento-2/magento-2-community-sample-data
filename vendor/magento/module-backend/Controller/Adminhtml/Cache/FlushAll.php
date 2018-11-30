@@ -9,13 +9,6 @@ namespace Magento\Backend\Controller\Adminhtml\Cache;
 class FlushAll extends \Magento\Backend\Controller\Adminhtml\Cache
 {
     /**
-     * Authorization level of a basic admin session
-     *
-     * @see _isAllowed()
-     */
-    const ADMIN_RESOURCE = 'Magento_Backend::flush_cache_storage';
-
-    /**
      * Flush cache storage
      *
      * @return \Magento\Backend\Model\View\Result\Redirect
@@ -27,7 +20,7 @@ class FlushAll extends \Magento\Backend\Controller\Adminhtml\Cache
         foreach ($this->_cacheFrontendPool as $cacheFrontend) {
             $cacheFrontend->getBackend()->clean();
         }
-        $this->messageManager->addSuccessMessage(__("You flushed the cache storage."));
+        $this->messageManager->addSuccess(__("You flushed the cache storage."));
         /** @var \Magento\Backend\Model\View\Result\Redirect $resultRedirect */
         $resultRedirect = $this->resultRedirectFactory->create();
         return $resultRedirect->setPath('adminhtml/*');

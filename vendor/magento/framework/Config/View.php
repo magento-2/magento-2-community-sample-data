@@ -3,12 +3,16 @@
  * Copyright © Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
-namespace Magento\Framework\Config;
 
 /**
  * View configuration files handler
+ */
+namespace Magento\Framework\Config;
+
+/**
+ * Class View
  *
- * @api
+ * @property DesignResolverInterface $_fileResolver
  */
 class View extends \Magento\Framework\Config\Reader\Filesystem
 {
@@ -42,7 +46,7 @@ class View extends \Magento\Framework\Config\Reader\Filesystem
         ValidationStateInterface $validationState,
         $fileName,
         $idAttributes = [],
-        $domDocumentClass = \Magento\Framework\Config\Dom::class,
+        $domDocumentClass = 'Magento\Framework\Config\Dom',
         $defaultScope = 'global',
         $xpath = []
     ) {
@@ -71,7 +75,7 @@ class View extends \Magento\Framework\Config\Reader\Filesystem
     public function getVars($module)
     {
         $this->initData();
-        return $this->data['vars'][$module] ?? [];
+        return isset($this->data['vars'][$module]) ? $this->data['vars'][$module] : [];
     }
 
     /**
@@ -110,7 +114,7 @@ class View extends \Magento\Framework\Config\Reader\Filesystem
     public function getMediaEntities($module, $mediaType)
     {
         $this->initData();
-        return $this->data['media'][$module][$mediaType] ?? [];
+        return isset($this->data['media'][$module][$mediaType]) ? $this->data['media'][$module][$mediaType] : [];
     }
 
     /**
@@ -124,7 +128,19 @@ class View extends \Magento\Framework\Config\Reader\Filesystem
     public function getMediaAttributes($module, $mediaType, $mediaId)
     {
         $this->initData();
-        return $this->data['media'][$module][$mediaType][$mediaId] ?? [];
+        return isset($this->data['media'][$module][$mediaType][$mediaId])
+            ? $this->data['media'][$module][$mediaType][$mediaId]
+            : [];
+    }
+
+    /**
+     * Return copy of DOM
+     *
+     * @return \Magento\Framework\Config\Dom
+     */
+    public function getDomConfigCopy()
+    {
+        return clone $this->_getDomConfigModel();
     }
 
     /**
@@ -136,7 +152,7 @@ class View extends \Magento\Framework\Config\Reader\Filesystem
     {
         $idAttributes = [
             '/view/vars' => 'module',
-            '/view/vars/(var/)*var' => 'name',
+            '/view/vars/var' => 'name',
             '/view/exclude/item' => ['type', 'item'],
         ];
         foreach ($this->xpath as $attribute) {
@@ -161,7 +177,7 @@ class View extends \Magento\Framework\Config\Reader\Filesystem
     public function getExcludedFiles()
     {
         $items = $this->getItems();
-        return $items['file'] ?? [];
+        return isset($items['file']) ? $items['file'] : [];
     }
 
     /**
@@ -172,7 +188,7 @@ class View extends \Magento\Framework\Config\Reader\Filesystem
     public function getExcludedDir()
     {
         $items = $this->getItems();
-        return $items['directory'] ?? [];
+        return isset($items['directory']) ? $items['directory'] : [];
     }
 
     /**
@@ -183,7 +199,7 @@ class View extends \Magento\Framework\Config\Reader\Filesystem
     protected function getItems()
     {
         $this->initData();
-        return $this->data['exclude'] ?? [];
+        return isset($this->data['exclude']) ? $this->data['exclude'] : [];
     }
 
     /**
@@ -200,7 +216,6 @@ class View extends \Magento\Framework\Config\Reader\Filesystem
 
     /**
      * {@inheritdoc}
-     * @since 100.1.0
      */
     public function read($scope = null)
     {

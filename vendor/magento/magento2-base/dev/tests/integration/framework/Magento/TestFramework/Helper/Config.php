@@ -20,7 +20,7 @@ class Config
     {
         /** @var \Magento\Framework\Module\ModuleListInterface $moduleList */
         $moduleList = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->get(
-            \Magento\Framework\Module\ModuleListInterface::class
+            'Magento\Framework\Module\ModuleListInterface'
         );
         return $moduleList->getNames();
     }

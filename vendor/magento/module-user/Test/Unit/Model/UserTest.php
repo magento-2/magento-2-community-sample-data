@@ -6,15 +6,14 @@
 
 namespace Magento\User\Test\Unit\Model;
 
-use Magento\Framework\Serialize\Serializer\Json;
+use Magento\User\Model\UserValidationRules;
 
 /**
  * Test class for \Magento\User\Model\User testing
  *
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
- * @SuppressWarnings(PHPMD.TooManyFields)
  */
-class UserTest extends \PHPUnit\Framework\TestCase
+class UserTest extends \PHPUnit_Framework_TestCase
 {
     /** @var \Magento\User\Model\User */
     private $model;
@@ -28,14 +27,14 @@ class UserTest extends \PHPUnit\Framework\TestCase
      */
     protected function setUp()
     {
-        $this->userDataMock = $this->getMockBuilder(\Magento\User\Helper\Data::class)
+        $this->userDataMock = $this->getMockBuilder('Magento\User\Helper\Data')
             ->disableOriginalConstructor()
             ->setMethods([])
             ->getMock();
 
         $objectManagerHelper = new \Magento\Framework\TestFramework\Unit\Helper\ObjectManager($this);
         $this->model = $objectManagerHelper->getObject(
-            \Magento\User\Model\User::class,
+            'Magento\User\Model\User',
             [
                 'userData' => $this->userDataMock,
             ]
@@ -73,7 +72,7 @@ class UserTest extends \PHPUnit\Framework\TestCase
     public function testChangeResetPasswordLinkToken()
     {
         $token = '1';
-        $this->assertInstanceOf(\Magento\User\Model\User::class, $this->model->changeResetPasswordLinkToken($token));
+        $this->assertInstanceOf('Magento\User\Model\User', $this->model->changeResetPasswordLinkToken($token));
         $this->assertEquals($token, $this->model->getRpToken());
         $this->assertInternalType('string', $this->model->getRpTokenCreatedAt());
     }

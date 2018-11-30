@@ -5,6 +5,7 @@
  */
 namespace Magento\Framework\Mview\View;
 
+use Magento\Framework\App\ResourceConnection;
 use Magento\Framework\Phrase;
 
 class Changelog implements ChangelogInterface

@@ -5,10 +5,10 @@
  */
 namespace Magento\Checkout\Block\Checkout;
 
+use Magento\Directory\Helper\Data as DirectoryHelper;
+use Magento\Customer\Model\Session;
 use Magento\Customer\Api\CustomerRepositoryInterface as CustomerRepository;
 use Magento\Customer\Helper\Address as AddressHelper;
-use Magento\Customer\Model\Session;
-use Magento\Directory\Helper\Data as DirectoryHelper;
 
 class AttributeMerger
 {
@@ -23,8 +23,6 @@ class AttributeMerger
         'textarea'    => 'Magento_Ui/js/form/element/textarea',
         'multiline'   => 'Magento_Ui/js/form/components/group',
         'multiselect' => 'Magento_Ui/js/form/element/multiselect',
-        'image' => 'Magento_Ui/js/form/element/media',
-        'file' => 'Magento_Ui/js/form/element/media',
     ];
 
     /**
@@ -34,7 +32,6 @@ class AttributeMerger
      */
     protected $templateMap = [
         'image' => 'media',
-        'file' => 'media',
     ];
 
     /**
@@ -48,7 +45,6 @@ class AttributeMerger
         'alphanumeric' => 'validate-alphanum',
         'url' => 'validate-url',
         'email' => 'email2',
-        'length' => 'validate-length',
     ];
 
     /**
@@ -314,35 +310,21 @@ class AttributeMerger
      */
     protected function getDefaultValue($attributeCode)
     {
-        if ($attributeCode === 'country_id') {
-            return $this->directoryHelper->getDefaultCountry();
-        }
-
-        $customer = $this->getCustomer();
-        if ($customer === null) {
-            return null;
-        }
-
-        $attributeValue = null;
         switch ($attributeCode) {
-            case 'prefix':
-                $attributeValue = $customer->getPrefix();
-                break;
             case 'firstname':
-                $attributeValue = $customer->getFirstname();
-                break;
-            case 'middlename':
-                $attributeValue = $customer->getMiddlename();
+                if ($this->getCustomer()) {
+                    return $this->getCustomer()->getFirstname();
+                }
                 break;
             case 'lastname':
-                $attributeValue = $customer->getLastname();
+                if ($this->getCustomer()) {
+                    return $this->getCustomer()->getLastname();
+                }
                 break;
-            case 'suffix':
-                $attributeValue = $customer->getSuffix();
-                break;
+            case 'country_id':
+                return $this->directoryHelper->getDefaultCountry();
         }
-
-        return $attributeValue;
+        return null;
     }
 
     /**
@@ -378,7 +360,7 @@ class AttributeMerger
      *
      * @param array $countryOptions
      * @return array
-     * @deprecated 100.2.0
+     * @deprecated
      */
     protected function orderCountryOptions(array $countryOptions)
     {
@@ -398,6 +380,7 @@ class AttributeMerger
             } else {
                 $tailOptions[] = $countryOption;
             }
+
         }
         return array_merge($headOptions, $tailOptions);
     }

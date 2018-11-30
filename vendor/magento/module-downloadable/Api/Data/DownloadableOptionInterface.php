@@ -8,7 +8,6 @@ namespace Magento\Downloadable\Api\Data;
 /**
  * Downloadable Option
  * @api
- * @since 100.0.2
  */
 interface DownloadableOptionInterface
 {

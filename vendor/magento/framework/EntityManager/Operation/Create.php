@@ -5,9 +5,7 @@
  */
 namespace Magento\Framework\EntityManager\Operation;
 
-use Magento\Framework\App\ObjectManager;
-use Magento\Framework\DB\Adapter\DuplicateException;
-use Magento\Framework\EntityManager\Sequence\SequenceApplier;
+use Magento\Framework\EntityManager\Operation\CreateInterface;
 use Magento\Framework\EntityManager\Operation\Create\CreateMain;
 use Magento\Framework\EntityManager\Operation\Create\CreateAttributes;
 use Magento\Framework\EntityManager\Operation\Create\CreateExtensions;
@@ -15,13 +13,9 @@ use Magento\Framework\EntityManager\MetadataPool;
 use Magento\Framework\EntityManager\EventManager;
 use Magento\Framework\EntityManager\TypeResolver;
 use Magento\Framework\App\ResourceConnection;
-use Magento\Framework\Exception\AlreadyExistsException;
-use Magento\Framework\Phrase;
 
 /**
  * Class Create
- *
- * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  */
 class Create implements CreateInterface
 {
@@ -61,11 +55,6 @@ class Create implements CreateInterface
     private $createExtensions;
 
     /**
-     * @var SequenceApplier
-     */
-    private $sequenceApplier;
-
-    /**
      * @param MetadataPool $metadataPool
      * @param TypeResolver $typeResolver
      * @param ResourceConnection $resourceConnection
@@ -97,7 +86,6 @@ class Create implements CreateInterface
      * @param array $arguments
      * @return object
      * @throws \Exception
-     * @throws AlreadyExistsException
      */
     public function execute($entity, $arguments = [])
     {
@@ -114,9 +102,6 @@ class Create implements CreateInterface
                 ]
             );
             $this->eventManager->dispatchEntityEvent($entityType, 'save_before', ['entity' => $entity]);
-
-            $entity = $this->getSequenceApplier()->apply($entity);
-
             $entity = $this->createMain->execute($entity, $arguments);
             $entity = $this->createAttributes->execute($entity, $arguments);
             $entity = $this->createExtensions->execute($entity, $arguments);
@@ -129,29 +114,10 @@ class Create implements CreateInterface
                 ]
             );
             $connection->commit();
-        } catch (DuplicateException $e) {
-            $connection->rollBack();
-            throw new AlreadyExistsException(new Phrase('Unique constraint violation found'), $e);
         } catch (\Exception $e) {
             $connection->rollBack();
             throw $e;
         }
         return $entity;
-    }
-
-    /**
-     * @return SequenceApplier
-     *
-     * @deprecated 100.2.0
-     */
-    private function getSequenceApplier()
-    {
-        if (!$this->sequenceApplier) {
-            $this->sequenceApplier = ObjectManager::getInstance()->get(
-                SequenceApplier::class
-            );
-        }
-
-        return $this->sequenceApplier;
     }
 }

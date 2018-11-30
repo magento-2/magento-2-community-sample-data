@@ -6,7 +6,7 @@
 
 namespace Magento\Wishlist\Test\Unit\Controller\Index;
 
-class PluginTest extends \PHPUnit\Framework\TestCase
+class PluginTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\Customer\Model\Session|\PHPUnit_Framework_MockObject_MockObject
@@ -35,7 +35,7 @@ class PluginTest extends \PHPUnit\Framework\TestCase
 
     protected function setUp()
     {
-        $this->customerSession = $this->getMockBuilder(\Magento\Customer\Model\Session::class)
+        $this->customerSession = $this->getMockBuilder('Magento\Customer\Model\Session')
             ->disableOriginalConstructor()
             ->setMethods([
                 'authenticate',
@@ -50,10 +50,10 @@ class PluginTest extends \PHPUnit\Framework\TestCase
             ])
             ->getMock();
 
-        $this->authenticationState = $this->createMock(\Magento\Wishlist\Model\AuthenticationState::class);
-        $this->config = $this->createMock(\Magento\Framework\App\Config::class);
-        $this->redirector = $this->createMock(\Magento\Store\App\Response\Redirect::class);
-        $this->request = $this->createMock(\Magento\Framework\App\Request\Http::class);
+        $this->authenticationState = $this->getMock('Magento\Wishlist\Model\AuthenticationState', [], [], '', false);
+        $this->config = $this->getMock('Magento\Framework\App\Config', [], [], '', false);
+        $this->redirector = $this->getMock('\Magento\Store\App\Response\Redirect', [], [], '', false);
+        $this->request = $this->getMock('Magento\Framework\App\Request\Http', [], [], '', false);
     }
 
     protected function tearDown()
@@ -90,8 +90,8 @@ class PluginTest extends \PHPUnit\Framework\TestCase
             'product' => 1,
         ];
 
-        $actionFlag = $this->createMock(\Magento\Framework\App\ActionFlag::class);
-        $indexController = $this->createMock(\Magento\Wishlist\Controller\Index\Index::class);
+        $actionFlag = $this->getMock('Magento\Framework\App\ActionFlag', [], [], '', false);
+        $indexController = $this->getMock('Magento\Wishlist\Controller\Index\Index', [], [], '', false);
 
         $actionFlag
             ->expects($this->once())

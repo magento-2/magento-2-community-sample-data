@@ -8,7 +8,7 @@ namespace Magento\SalesRule\Test\Unit\Block\Adminhtml\Promo\Quote\Edit;
 use Magento\SalesRule\Model\RegistryConstants;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
 
-class DeleteButtonTest extends \PHPUnit\Framework\TestCase
+class DeleteButtonTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\SalesRule\Block\Adminhtml\Promo\Quote\Edit\DeleteButton
@@ -27,14 +27,14 @@ class DeleteButtonTest extends \PHPUnit\Framework\TestCase
 
     protected function setUp()
     {
-        $this->urlBuilderMock = $this->createMock(\Magento\Framework\UrlInterface::class);
-        $this->registryMock = $this->createMock(\Magento\Framework\Registry::class);
-        $contextMock = $this->createMock(\Magento\Backend\Block\Widget\Context::class);
+        $this->urlBuilderMock = $this->getMock('\Magento\Framework\UrlInterface', [], [], '', false);
+        $this->registryMock = $this->getMock('\Magento\Framework\Registry', [], [], '', false);
+        $contextMock = $this->getMock('\Magento\Backend\Block\Widget\Context', [], [], '', false);
 
         $contextMock->expects($this->once())->method('getUrlBuilder')->willReturn($this->urlBuilderMock);
 
         $this->model = (new ObjectManager($this))->getObject(
-            \Magento\SalesRule\Block\Adminhtml\Promo\Quote\Edit\DeleteButton::class,
+            'Magento\SalesRule\Block\Adminhtml\Promo\Quote\Edit\DeleteButton',
             [
                 'context' => $contextMock,
                 'registry' => $this->registryMock

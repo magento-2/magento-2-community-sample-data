@@ -8,7 +8,7 @@ namespace Magento\Theme\Test\Unit\Controller\Adminhtml\Design\Config\FileUploade
 use Magento\Theme\Controller\Adminhtml\Design\Config\FileUploader\Save;
 use Magento\Framework\Controller\ResultFactory;
 
-class SaveTest extends \PHPUnit\Framework\TestCase
+class SaveTest extends \PHPUnit_Framework_TestCase
 {
     /** @var \Magento\Backend\App\Action\Context|\PHPUnit_Framework_MockObject_MockObject */
     protected $context;
@@ -27,29 +27,23 @@ class SaveTest extends \PHPUnit\Framework\TestCase
 
     public function setUp()
     {
-        $this->context = $this->getMockBuilder(\Magento\Backend\App\Action\Context::class)
+        $this->context = $this->getMockBuilder('Magento\Backend\App\Action\Context')
             ->disableOriginalConstructor()
             ->getMock();
-        $this->resultFactory = $this->getMockBuilder(\Magento\Framework\Controller\ResultFactory::class)
+        $this->resultFactory = $this->getMockBuilder('Magento\Framework\Controller\ResultFactory')
             ->disableOriginalConstructor()
             ->getMock();
-        $this->resultPage = $this->getMockBuilder(\Magento\Framework\Controller\ResultInterface::class)
+        $this->resultPage = $this->getMockBuilder('Magento\Framework\Controller\ResultInterface')
             ->setMethods(['setData'])
             ->getMockForAbstractClass();
-        $this->fileProcessor = $this->getMockBuilder(
-            \Magento\Theme\Model\Design\Config\FileUploader\FileProcessor::class
-        )->disableOriginalConstructor()
+        $this->fileProcessor = $this->getMockBuilder('Magento\Theme\Model\Design\Config\FileUploader\FileProcessor')
+            ->disableOriginalConstructor()
             ->getMock();
         $this->context->expects($this->once())
             ->method('getResultFactory')
             ->willReturn($this->resultFactory);
 
         $this->controller = new Save($this->context, $this->fileProcessor);
-    }
-
-    protected function tearDown()
-    {
-        $_FILES = [];
     }
 
     public function testExecute()

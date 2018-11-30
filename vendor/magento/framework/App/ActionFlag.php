@@ -5,15 +5,6 @@
  */
 namespace Magento\Framework\App;
 
-/**
- * Request processing flag that allows to stop request dispatching in action controller from an observer
- * Downside of this approach is temporal coupling and global communication.
- * Will be deprecated when Action Component is decoupled.
- *
- * Please use plugins to prevent action dispatching instead.
- *
- * @api
- */
 class ActionFlag
 {
     /**
@@ -65,7 +56,9 @@ class ActionFlag
             $action = $this->_request->getActionName();
         }
         if ('' === $flag) {
-            return $this->_flags[$this->_getControllerKey()] ?? [];
+            return isset(
+                $this->_flags[$this->_getControllerKey()]
+            ) ? $this->_flags[$this->_getControllerKey()] : [];
         } elseif (isset($this->_flags[$this->_getControllerKey()][$action][$flag])) {
             return $this->_flags[$this->_getControllerKey()][$action][$flag];
         } else {

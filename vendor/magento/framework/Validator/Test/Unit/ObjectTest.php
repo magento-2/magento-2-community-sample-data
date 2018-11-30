@@ -5,7 +5,7 @@
  */
 namespace Magento\Framework\Validator\Test\Unit;
 
-class ObjectTest extends \PHPUnit\Framework\TestCase
+class ObjectTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\Framework\Validator\DataObject

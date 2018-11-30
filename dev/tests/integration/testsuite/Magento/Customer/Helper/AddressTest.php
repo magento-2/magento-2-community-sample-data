@@ -5,7 +5,7 @@
  */
 namespace Magento\Customer\Helper;
 
-class AddressTest extends \PHPUnit\Framework\TestCase
+class AddressTest extends \PHPUnit_Framework_TestCase
 {
     /** @var \Magento\Customer\Helper\Address */
     protected $helper;
@@ -13,7 +13,7 @@ class AddressTest extends \PHPUnit\Framework\TestCase
     protected function setUp()
     {
         $this->helper = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->get(
-            \Magento\Customer\Helper\Address::class
+            'Magento\Customer\Helper\Address'
         );
     }
 
@@ -30,9 +30,9 @@ class AddressTest extends \PHPUnit\Framework\TestCase
     {
         return [
             ['bad-code', ''],
-            ['city', 'required-entry'],
+            ['city', ' required-entry'],
             ['company', ''],
-            ['country_id', 'required-entry'],
+            ['country_id', ' required-entry'],
             ['fax', ''],
             ['firstname', 'required-entry'],
             ['lastname', 'required-entry'],

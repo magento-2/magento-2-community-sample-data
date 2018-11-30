@@ -7,7 +7,7 @@ namespace Magento\Setup\Test\Unit\Model\Cron;
 
 use Magento\Framework\App\State;
 
-class JobStaticRegenerateTest extends \PHPUnit\Framework\TestCase
+class JobStaticRegenerateTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \PHPUnit_Framework_MockObject_MockObject|\Magento\Setup\Model\Cron\JobStaticRegenerate
@@ -143,7 +143,7 @@ class JobStaticRegenerateTest extends \PHPUnit\Framework\TestCase
      */
     protected function getJobStaticRegenerateMock($methods = null)
     {
-        return $this->createPartialMock(\Magento\Setup\Model\Cron\JobStaticRegenerate::class, $methods);
+        return $this->getMock(\Magento\Setup\Model\Cron\JobStaticRegenerate::class, $methods, [], '', false);
     }
 
     /**
@@ -153,7 +153,7 @@ class JobStaticRegenerateTest extends \PHPUnit\Framework\TestCase
      */
     protected function getFilesystemObjectMock($methods = null)
     {
-        return $this->createPartialMock(\Magento\Deploy\Model\Filesystem::class, $methods);
+        return $this->getMock(\Magento\Deploy\Model\Filesystem::class, $methods, [], '', false);
     }
 
     /**
@@ -163,7 +163,7 @@ class JobStaticRegenerateTest extends \PHPUnit\Framework\TestCase
      */
     protected function getStatucObjectMock($methods = null)
     {
-        return $this->createPartialMock(\Magento\Setup\Model\Cron\Status::class, $methods);
+        return $this->getMock(\Magento\Setup\Model\Cron\Status::class, $methods, [], '', false);
     }
 
     /**
@@ -173,7 +173,7 @@ class JobStaticRegenerateTest extends \PHPUnit\Framework\TestCase
      */
     protected function getCleanFilesObjectMock($methods = null)
     {
-        return $this->createPartialMock(\Magento\Framework\App\State\CleanupFiles::class, $methods);
+        return $this->getMock(\Magento\Framework\App\State\CleanupFiles::class, $methods, [], '', false);
     }
 
     /**
@@ -183,7 +183,7 @@ class JobStaticRegenerateTest extends \PHPUnit\Framework\TestCase
      */
     protected function getCacheObjectMock($methods = null)
     {
-        return $this->createPartialMock(\Magento\Framework\App\State\CleanupFiles::class, $methods);
+        return $this->getMock(\Magento\Framework\App\State\CleanupFiles::class, $methods, [], '', false);
     }
 
     /**
@@ -203,6 +203,6 @@ class JobStaticRegenerateTest extends \PHPUnit\Framework\TestCase
      */
     protected function getModeObjectMock($methods = null)
     {
-        return $this->createPartialMock(\Magento\Deploy\Model\Mode::class, $methods);
+        return $this->getMock(\Magento\Deploy\Model\Mode::class, $methods, [], '', false);
     }
 }

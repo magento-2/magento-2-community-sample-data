@@ -9,10 +9,8 @@ use Magento\Checkout\Controller\Cart\Index;
 
 /**
  * Class IndexTest
- *
- * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  */
-class IndexTest extends \PHPUnit\Framework\TestCase
+class IndexTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var Index
@@ -74,19 +72,19 @@ class IndexTest extends \PHPUnit\Framework\TestCase
      */
     protected function setUp()
     {
-        $this->request = $this->createMock(\Magento\Framework\App\Request\Http::class);
-        $this->response = $this->createMock(\Magento\Framework\App\Response\Http::class);
-        $this->quote = $this->createMock(\Magento\Quote\Model\Quote::class);
-        $this->eventManager = $this->createMock(\Magento\Framework\Event\Manager::class);
-        $this->checkoutSession = $this->createMock(\Magento\Checkout\Model\Session::class);
+        $this->request = $this->getMock('Magento\Framework\App\Request\Http', [], [], '', false);
+        $this->response = $this->getMock('Magento\Framework\App\Response\Http', [], [], '', false);
+        $this->quote = $this->getMock('Magento\Quote\Model\Quote', [], [], '', false);
+        $this->eventManager = $this->getMock('Magento\Framework\Event\Manager', [], [], '', false);
+        $this->checkoutSession = $this->getMock('Magento\Checkout\Model\Session', [], [], '', false);
 
-        $this->objectManagerMock = $this->createMock(\Magento\Framework\ObjectManager\ObjectManager::class);
+        $this->objectManagerMock = $this->getMock('Magento\Framework\ObjectManager\ObjectManager', [], [], '', false);
 
-        $this->messageManager = $this->getMockBuilder(\Magento\Framework\Message\ManagerInterface::class)
+        $this->messageManager = $this->getMockBuilder('Magento\Framework\Message\ManagerInterface')
             ->disableOriginalConstructor()
             ->getMock();
 
-        $context = $this->createMock(\Magento\Framework\App\Action\Context::class);
+        $context = $this->getMock('Magento\Framework\App\Action\Context', [], [], '', false);
         $context->expects($this->once())
             ->method('getObjectManager')
             ->willReturn($this->objectManagerMock);
@@ -103,13 +101,13 @@ class IndexTest extends \PHPUnit\Framework\TestCase
             ->method('getMessageManager')
             ->willReturn($this->messageManager);
 
-        $this->cart = $this->getMockBuilder(\Magento\Checkout\Model\Cart::class)
+        $this->cart = $this->getMockBuilder('Magento\Checkout\Model\Cart')
             ->disableOriginalConstructor()
             ->getMock();
-        $this->scopeConfig = $this->getMockBuilder(\Magento\Framework\App\Config\ScopeConfigInterface::class)
+        $this->scopeConfig = $this->getMockBuilder('Magento\Framework\App\Config\ScopeConfigInterface')
             ->disableOriginalConstructor()
             ->getMock();
-        $this->resultPageFactory = $this->getMockBuilder(\Magento\Framework\View\Result\PageFactory::class)
+        $this->resultPageFactory = $this->getMockBuilder('Magento\Framework\View\Result\PageFactory')
             ->disableOriginalConstructor()
             ->setMethods(['create'])
             ->getMock();
@@ -117,7 +115,7 @@ class IndexTest extends \PHPUnit\Framework\TestCase
         $objectManagerHelper = new \Magento\Framework\TestFramework\Unit\Helper\ObjectManager($this);
 
         $this->controller = $objectManagerHelper->getObject(
-            \Magento\Checkout\Controller\Cart\Index::class,
+            'Magento\Checkout\Controller\Cart\Index',
             [
                 'context' => $context,
                 'checkoutSession' => $this->checkoutSession,
@@ -133,21 +131,21 @@ class IndexTest extends \PHPUnit\Framework\TestCase
      */
     public function testExecuteWithMessages()
     {
-        $title = $this->getMockBuilder(\Magento\Framework\View\Page\Title::class)
+        $title = $this->getMockBuilder('Magento\Framework\View\Page\Title')
             ->disableOriginalConstructor()
             ->getMock();
         $title->expects($this->once())
             ->method('set')
             ->with('Shopping Cart');
 
-        $config = $this->getMockBuilder(\Magento\Framework\View\Page\Config::class)
+        $config = $this->getMockBuilder('Magento\Framework\View\Page\Config')
             ->disableOriginalConstructor()
             ->getMock();
         $config->expects($this->once())
             ->method('getTitle')
             ->willReturn($title);
 
-        $page = $this->getMockBuilder(\Magento\Framework\View\Result\Page::class)
+        $page = $this->getMockBuilder('Magento\Framework\View\Result\Page')
             ->disableOriginalConstructor()
             ->getMock();
 
@@ -159,6 +157,6 @@ class IndexTest extends \PHPUnit\Framework\TestCase
             ->method('create')
             ->willReturn($page);
         $result = $this->controller->execute();
-        $this->assertInstanceOf(\Magento\Framework\View\Result\Page::class, $result);
+        $this->assertInstanceOf('Magento\Framework\View\Result\Page', $result);
     }
 }

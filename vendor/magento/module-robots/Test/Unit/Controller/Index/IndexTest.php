@@ -6,7 +6,7 @@
 
 namespace Magento\Robots\Test\Unit\Controller\Index;
 
-class IndexTest extends \PHPUnit\Framework\TestCase
+class IndexTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\Framework\App\Action\Context|\PHPUnit_Framework_MockObject_MockObject

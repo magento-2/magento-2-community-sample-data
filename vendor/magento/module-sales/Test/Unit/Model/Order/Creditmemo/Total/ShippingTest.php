@@ -8,7 +8,7 @@
 
 namespace Magento\Sales\Test\Unit\Model\Order\Creditmemo\Total;
 
-class ShippingTest extends \PHPUnit\Framework\TestCase
+class ShippingTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \PHPUnit_Framework_MockObject_MockObject
@@ -29,7 +29,7 @@ class ShippingTest extends \PHPUnit\Framework\TestCase
     {
         $objectManager = new \Magento\Framework\TestFramework\Unit\Helper\ObjectManager($this);
 
-        $this->creditmemoMock = $this->getMockBuilder(\Magento\Sales\Model\Order\Creditmemo::class)
+        $this->creditmemoMock = $this->getMockBuilder('Magento\Sales\Model\Order\Creditmemo')
             ->disableOriginalConstructor()
             ->setMethods(
                 [
@@ -47,7 +47,7 @@ class ShippingTest extends \PHPUnit\Framework\TestCase
                 ]
             )->getMock();
 
-        $priceCurrencyMock = $this->createMock(\Magento\Framework\Pricing\PriceCurrencyInterface::class);
+        $priceCurrencyMock = $this->getMock('Magento\Framework\Pricing\PriceCurrencyInterface');
         $priceCurrencyMock->expects($this->any())
             ->method('round')
             ->willReturnCallback(
@@ -56,10 +56,10 @@ class ShippingTest extends \PHPUnit\Framework\TestCase
                 }
             );
 
-        $this->taxConfig = $this->createMock(\Magento\Tax\Model\Config::class);
+        $this->taxConfig = $this->getMock('Magento\Tax\Model\Config', [], [], '', false);
 
         $this->shippingCollector = $objectManager->getObject(
-            \Magento\Sales\Model\Order\Creditmemo\Total\Shipping::class,
+            'Magento\Sales\Model\Order\Creditmemo\Total\Shipping',
             [
                 'priceCurrency' => $priceCurrencyMock,
             ]
@@ -87,7 +87,7 @@ class ShippingTest extends \PHPUnit\Framework\TestCase
 
         $this->taxConfig->expects($this->any())->method('displaySalesShippingInclTax')->willReturn(false);
 
-        $currencyMock = $this->getMockBuilder(\Magento\Directory\Model\Currency::class)
+        $currencyMock = $this->getMockBuilder('Magento\Directory\Model\Currency')
             ->disableOriginalConstructor()
             ->getMock();
         $currencyMock->expects($this->once())

@@ -9,9 +9,7 @@
 
 namespace Zend\Mvc\Service;
 
-use Interop\Container\ContainerInterface;
 use Zend\Console\Console;
-use Zend\Mvc\Router\RouteStackInterface;
 use Zend\ServiceManager\FactoryInterface;
 use Zend\ServiceManager\ServiceLocatorInterface;
 
@@ -20,42 +18,45 @@ class RouterFactory implements FactoryInterface
     /**
      * Create and return the router
      *
-     * Delegates to either the ConsoleRouter or HttpRouter service based
-     * on the environment type.
+     * Retrieves the "router" key of the Config service, and uses it
+     * to instantiate the router. Uses the TreeRouteStack implementation by
+     * default.
      *
-     * @param  ContainerInterface $container
-     * @param  string $name
-     * @param  null|array $options
-     * @return RouteStackInterface
+     * @param  ServiceLocatorInterface        $serviceLocator
+     * @param  string|null                     $cName
+     * @param  string|null                     $rName
+     * @return \Zend\Mvc\Router\RouteStackInterface
      */
-    public function __invoke(ContainerInterface $container, $name, array $options = null)
+    public function createService(ServiceLocatorInterface $serviceLocator, $cName = null, $rName = null)
     {
+        $config             = $serviceLocator->has('Config') ? $serviceLocator->get('Config') : [];
+
+        // Defaults
+        $routerClass        = 'Zend\Mvc\Router\Http\TreeRouteStack';
+        $routerConfig       = isset($config['router']) ? $config['router'] : [];
+
         // Console environment?
-        if ($name === 'ConsoleRouter'                                   // force console router
-            || (strtolower($name) === 'router' && Console::isConsole()) // auto detect console
+        if ($rName === 'ConsoleRouter'                       // force console router
+            || ($cName === 'router' && Console::isConsole()) // auto detect console
         ) {
-            return $container->get('ConsoleRouter');
+            // We are in a console, use console router defaults.
+            $routerClass = 'Zend\Mvc\Router\Console\SimpleRouteStack';
+            $routerConfig = isset($config['console']['router']) ? $config['console']['router'] : [];
         }
 
-        return $container->get('HttpRouter');
-    }
-
-    /**
-     * Create and return RouteStackInterface instance
-     *
-     * For use with zend-servicemanager v2; proxies to __invoke().
-     *
-     * @param ServiceLocatorInterface $container
-     * @param null|string $normalizedName
-     * @param null|string $requestedName
-     * @return RouteStackInterface
-     */
-    public function createService(ServiceLocatorInterface $container, $normalizedName = null, $requestedName = null)
-    {
-        if ($normalizedName === 'router' && Console::isConsole()) {
-            $requestedName = 'ConsoleRouter';
+        // Obtain the configured router class, if any
+        if (isset($routerConfig['router_class']) && class_exists($routerConfig['router_class'])) {
+            $routerClass = $routerConfig['router_class'];
         }
 
-        return $this($container, $requestedName);
+        // Inject the route plugins
+        if (!isset($routerConfig['route_plugins'])) {
+            $routePluginManager = $serviceLocator->get('RoutePluginManager');
+            $routerConfig['route_plugins'] = $routePluginManager;
+        }
+
+        // Obtain an instance
+        $factory = sprintf('%s::factory', $routerClass);
+        return call_user_func($factory, $routerConfig);
     }
 }

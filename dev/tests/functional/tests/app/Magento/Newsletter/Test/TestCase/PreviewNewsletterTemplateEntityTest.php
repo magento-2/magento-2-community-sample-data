@@ -25,13 +25,14 @@ use Magento\Mtf\TestCase\Injectable;
  * 4. Click "Preview Template" button at the top of the page
  * 5. Perform all assertions
  *
- * @group Newsletters
+ * @group Newsletters_(MX)
  * @ZephyrId MAGETWO-51979
  */
 class PreviewNewsletterTemplateEntityTest extends Injectable
 {
     /* tags */
     const MVP = 'yes';
+    const DOMAIN = 'MX';
     /* end tags */
 
     /**

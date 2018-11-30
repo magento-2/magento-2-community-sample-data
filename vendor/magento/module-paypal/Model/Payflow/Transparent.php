@@ -5,6 +5,7 @@
  */
 namespace Magento\Paypal\Model\Payflow;
 
+use Magento\Framework\DataObject;
 use Magento\Payment\Helper\Formatter;
 use Magento\Payment\Model\InfoInterface;
 use Magento\Paypal\Model\Payflowpro;
@@ -36,12 +37,12 @@ class Transparent extends Payflowpro implements TransparentInterface
     /**
      * @var string
      */
-    protected $_formBlockType = \Magento\Payment\Block\Transparent\Info::class;
+    protected $_formBlockType = 'Magento\Payment\Block\Transparent\Info';
 
     /**
      * @var string
      */
-    protected $_infoBlockType = \Magento\Paypal\Block\Payment\Info::class;
+    protected $_infoBlockType = 'Magento\Paypal\Block\Payflow\Info';
 
     /**
      * @var ResponseValidator
@@ -166,8 +167,6 @@ class Transparent extends Payflowpro implements TransparentInterface
         $request->setData('origid', $token);
         $request->setData('amt', $this->formatPrice($amount));
         $request->setData('currency', $order->getBaseCurrencyCode());
-        $request->setData('taxamt', $this->formatPrice($order->getBaseTaxAmount()));
-        $request->setData('freightamt', $this->formatPrice($order->getBaseShippingAmount()));
 
         $response = $this->postRequest($request, $this->getConfig());
         $this->processErrors($response);

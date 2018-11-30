@@ -34,6 +34,7 @@ class SetLinkStatusObserver implements ObserverInterface
         $this->_itemsFactory = $itemsFactory;
     }
 
+
     /**
      * Set status of link
      *
@@ -83,7 +84,7 @@ class SetLinkStatusObserver implements ObserverInterface
                 if ($item->getProductType() == \Magento\Downloadable\Model\Product\Type::TYPE_DOWNLOADABLE
                     || $item->getRealProductType() == \Magento\Downloadable\Model\Product\Type::TYPE_DOWNLOADABLE
                 ) {
-                    if ($order->isCanceled() || in_array($item->getStatusId(), $expiredStatuses)) {
+                    if (in_array($item->getStatusId(), $expiredStatuses)) {
                         $downloadableItemsStatuses[$item->getId()] = $linkStatuses['expired'];
                     } else {
                         $downloadableItemsStatuses[$item->getId()] = $linkStatuses['avail'];

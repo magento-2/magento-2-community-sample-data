@@ -7,10 +7,6 @@
  */
 namespace Magento\Framework\App\ResourceConnection;
 
-/**
- * Interface \Magento\Framework\App\ResourceConnection\ConfigInterface
- *
- */
 interface ConfigInterface
 {
     /**

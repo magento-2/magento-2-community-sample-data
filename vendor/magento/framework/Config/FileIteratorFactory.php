@@ -6,9 +6,6 @@
  */
 namespace Magento\Framework\Config;
 
-/**
- * @api
- */
 class FileIteratorFactory
 {
     /**

@@ -33,7 +33,7 @@ abstract class AbstractConfigureBlock extends Form
     public function getCustomOptionsBlock()
     {
         return $this->blockFactory->create(
-            \Magento\Catalog\Test\Block\Product\View\CustomOptions::class,
+            'Magento\Catalog\Test\Block\Product\View\CustomOptions',
             ['element' => $this->_rootElement->find($this->customOptionsSelector)]
         );
     }

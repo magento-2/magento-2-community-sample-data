@@ -10,81 +10,63 @@ use Magento\CatalogUrlRewrite\Block\UrlKeyRenderer;
 use Magento\CatalogUrlRewrite\Model\CategoryUrlRewriteGenerator;
 use Magento\CatalogUrlRewrite\Model\UrlRewriteBunchReplacer;
 use Magento\Framework\App\Config\ScopeConfigInterface;
+use Magento\Framework\App\ObjectManager;
 use Magento\Store\Model\ScopeInterface;
 use Magento\UrlRewrite\Model\UrlPersistInterface;
 use Magento\Framework\Event\ObserverInterface;
-use Magento\CatalogUrlRewrite\Model\Map\DatabaseMapPool;
-use Magento\CatalogUrlRewrite\Model\Map\DataCategoryUrlRewriteDatabaseMap;
-use Magento\CatalogUrlRewrite\Model\Map\DataProductUrlRewriteDatabaseMap;
 
-/**
- * Generates Category Url Rewrites after move/save and Products Url Rewrites assigned to the category that's being saved
- */
 class CategoryProcessUrlRewriteMovingObserver implements ObserverInterface
 {
-    /**
-     * @var \Magento\CatalogUrlRewrite\Model\CategoryUrlRewriteGenerator
-     */
+    /** @var CategoryUrlRewriteGenerator */
     protected $categoryUrlRewriteGenerator;
 
-    /**
-     * @var \Magento\UrlRewrite\Model\UrlPersistInterface
-     */
+    /** @var UrlPersistInterface */
     protected $urlPersist;
 
-    /**
-     * @var \Magento\Framework\App\Config\ScopeConfigInterface
-     */
+    /** @var ScopeConfigInterface */
     protected $scopeConfig;
 
-    /**
-     * @var \Magento\CatalogUrlRewrite\Observer\UrlRewriteHandler
-     */
+    /** @var UrlRewriteHandler */
     protected $urlRewriteHandler;
 
     /**
-     * @var \Magento\CatalogUrlRewrite\Model\UrlRewriteBunchReplacer
+     * Url Rewrite Replacer based on bunches.
+     *
+     * @var UrlRewriteBunchReplacer
      */
     private $urlRewriteBunchReplacer;
-
-    /**
-     * @var \Magento\CatalogUrlRewrite\Model\Map\DatabaseMapPool
-     */
-    private $databaseMapPool;
-
-    /**
-     * @var string[]
-     */
-    private $dataUrlRewriteClassNames;
 
     /**
      * @param CategoryUrlRewriteGenerator $categoryUrlRewriteGenerator
      * @param UrlPersistInterface $urlPersist
      * @param ScopeConfigInterface $scopeConfig
      * @param UrlRewriteHandler $urlRewriteHandler
-     * @param UrlRewriteBunchReplacer $urlRewriteBunchReplacer
-     * @param \Magento\CatalogUrlRewrite\Model\Map\DatabaseMapPool $databaseMapPool
-     * @param string[] $dataUrlRewriteClassNames
      */
     public function __construct(
         CategoryUrlRewriteGenerator $categoryUrlRewriteGenerator,
         UrlPersistInterface $urlPersist,
         ScopeConfigInterface $scopeConfig,
-        UrlRewriteHandler $urlRewriteHandler,
-        UrlRewriteBunchReplacer $urlRewriteBunchReplacer,
-        DatabaseMapPool $databaseMapPool,
-        $dataUrlRewriteClassNames = [
-        DataCategoryUrlRewriteDatabaseMap::class,
-        DataProductUrlRewriteDatabaseMap::class
-        ]
+        UrlRewriteHandler $urlRewriteHandler
     ) {
         $this->categoryUrlRewriteGenerator = $categoryUrlRewriteGenerator;
         $this->urlPersist = $urlPersist;
         $this->scopeConfig = $scopeConfig;
         $this->urlRewriteHandler = $urlRewriteHandler;
-        $this->urlRewriteBunchReplacer = $urlRewriteBunchReplacer;
-        $this->databaseMapPool = $databaseMapPool;
-        $this->dataUrlRewriteClassNames = $dataUrlRewriteClassNames;
+    }
+
+    /**
+     * Retrieve Url Rewrite Replacer based on bunches.
+     *
+     * @deprecated
+     * @return UrlRewriteBunchReplacer
+     */
+    private function getUrlRewriteBunchReplacer()
+    {
+        if (!$this->urlRewriteBunchReplacer) {
+            $this->urlRewriteBunchReplacer = ObjectManager::getInstance()->get(UrlRewriteBunchReplacer::class);
+        }
+
+        return $this->urlRewriteBunchReplacer;
     }
 
     /**
@@ -102,26 +84,12 @@ class CategoryProcessUrlRewriteMovingObserver implements ObserverInterface
                 $category->getStoreId()
             );
             $category->setData('save_rewrites_history', $saveRewritesHistory);
-            $categoryUrlRewriteResult = $this->categoryUrlRewriteGenerator->generate($category, true);
+            $urlRewrites = array_merge(
+                $this->categoryUrlRewriteGenerator->generate($category, true),
+                $this->urlRewriteHandler->generateProductUrlRewrites($category)
+            );
             $this->urlRewriteHandler->deleteCategoryRewritesForChildren($category);
-            $this->urlRewriteBunchReplacer->doBunchReplace($categoryUrlRewriteResult);
-            $productUrlRewriteResult = $this->urlRewriteHandler->generateProductUrlRewrites($category);
-            $this->urlRewriteBunchReplacer->doBunchReplace($productUrlRewriteResult);
-            //frees memory for maps that are self-initialized in multiple classes that were called by the generators
-            $this->resetUrlRewritesDataMaps($category);
-        }
-    }
-
-    /**
-     * Resets used data maps to free up memory and temporary tables
-     *
-     * @param Category $category
-     * @return void
-     */
-    private function resetUrlRewritesDataMaps($category)
-    {
-        foreach ($this->dataUrlRewriteClassNames as $className) {
-            $this->databaseMapPool->resetMap($className, $category->getEntityId());
+            $this->getUrlRewriteBunchReplacer()->doBunchReplace($urlRewrites);
         }
     }
 }

@@ -35,13 +35,15 @@ class CleanMergedJsCss
      * Clean files in database on cleaning merged assets
      *
      * @param \Magento\Framework\View\Asset\MergeService $subject
-     * @param void $result
+     * @param callable $proceed
      *
      * @return void
      * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      */
-    public function afterCleanMergedJsCss(\Magento\Framework\View\Asset\MergeService $subject, $result)
+    public function aroundCleanMergedJsCss(\Magento\Framework\View\Asset\MergeService $subject, \Closure $proceed)
     {
+        $proceed();
+
         /** @var \Magento\Framework\Filesystem\Directory\ReadInterface $pubStaticDirectory */
         $pubStaticDirectory = $this->filesystem->getDirectoryRead(DirectoryList::STATIC_VIEW);
         $mergedDir = $pubStaticDirectory->getAbsolutePath() . '/'

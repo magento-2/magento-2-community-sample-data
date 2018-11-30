@@ -26,11 +26,8 @@ use Magento\Vault\Model\VaultPaymentInterface;
  * Class ConfigProvider
  * @api
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
- *
- * @api
- * @since 100.1.0
  */
-class TokensConfigProvider
+final class TokensConfigProvider
 {
     /**
      * @var PaymentTokenRepositoryInterface
@@ -114,7 +111,6 @@ class TokensConfigProvider
     /**
      * @param string $vaultPaymentCode
      * @return TokenUiComponentInterface[]
-     * @since 100.1.0
      */
     public function getTokensComponents($vaultPaymentCode)
     {
@@ -250,7 +246,7 @@ class TokensConfigProvider
     /**
      * Get payment data helper instance
      * @return Data
-     * @deprecated 100.1.0
+     * @deprecated
      */
     private function getPaymentDataHelper()
     {
@@ -263,7 +259,7 @@ class TokensConfigProvider
     /**
      * Returns order repository instance
      * @return OrderRepositoryInterface
-     * @deprecated 100.2.0
+     * @deprecated
      */
     private function getOrderRepository()
     {
@@ -278,7 +274,7 @@ class TokensConfigProvider
     /**
      * Returns payment token management instance
      * @return PaymentTokenManagementInterface
-     * @deprecated 100.2.0
+     * @deprecated
      */
     private function getPaymentTokenManagement()
     {

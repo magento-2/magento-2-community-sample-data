@@ -29,27 +29,17 @@ class SetRememberMeStatusForAjaxLoginObserver implements ObserverInterface
     protected $_persistentData = null;
 
     /**
-     * @var \Magento\Framework\Serialize\Serializer\Json
-     */
-    private $serializer;
-
-    /**
-     * SetRememberMeStatusForAjaxLoginObserver constructor.
+     * Constructor
      *
      * @param \Magento\Persistent\Helper\Data $persistentData
      * @param \Magento\Persistent\Helper\Session $persistentSession
-     * @param \Magento\Framework\Serialize\Serializer\Json|null $serializer
-     * @throws \RuntimeException
      */
     public function __construct(
         \Magento\Persistent\Helper\Data $persistentData,
-        \Magento\Persistent\Helper\Session $persistentSession,
-        \Magento\Framework\Serialize\Serializer\Json $serializer = null
+        \Magento\Persistent\Helper\Session $persistentSession
     ) {
         $this->_persistentData = $persistentData;
         $this->_persistentSession = $persistentSession;
-        $this->serializer = $serializer ?: \Magento\Framework\App\ObjectManager::getInstance()
-            ->get(\Magento\Framework\Serialize\Serializer\Json::class);
     }
 
     /**
@@ -73,7 +63,7 @@ class SetRememberMeStatusForAjaxLoginObserver implements ObserverInterface
             $requestData = [];
             $content = $request->getContent();
             if ($content) {
-                $requestData = $this->serializer->unserialize($content);
+                $requestData = \Zend_Json::decode($content);
             }
             $isRememberMeChecked = empty($requestData['persistent_remember_me']) ? false : true;
             $this->_persistentSession->setRememberMeChecked((bool)$isRememberMeChecked);

@@ -13,7 +13,7 @@ use Magento\Setup\Module\I18n\Parser\Adapter\Php\Tokenizer;
 /**
  * @covers \Magento\Setup\Module\I18n\Parser\Adapter\Php\Tokenizer\PhraseCollector
  */
-class PhraseCollectorTest extends \PHPUnit\Framework\TestCase
+class PhraseCollectorTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var PhraseCollector
@@ -33,11 +33,11 @@ class PhraseCollectorTest extends \PHPUnit\Framework\TestCase
     protected function setUp()
     {
         $this->objectManager = new ObjectManager($this);
-        $this->tokenizerMock = $this->getMockBuilder(\Magento\Setup\Module\I18n\Parser\Adapter\Php\Tokenizer::class)
+        $this->tokenizerMock = $this->getMockBuilder('Magento\Setup\Module\I18n\Parser\Adapter\Php\Tokenizer')
             ->disableOriginalConstructor()
             ->getMock();
         $this->phraseCollector = $this->objectManager->getObject(
-            \Magento\Setup\Module\I18n\Parser\Adapter\Php\Tokenizer\PhraseCollector::class,
+            'Magento\Setup\Module\I18n\Parser\Adapter\Php\Tokenizer\PhraseCollector',
             [
                 'tokenizer' => $this->tokenizerMock
             ]
@@ -180,7 +180,7 @@ class PhraseCollectorTest extends \PHPUnit\Framework\TestCase
         $value,
         $line = null
     ) {
-        $token = $this->getMockBuilder(\Magento\Setup\Module\I18n\Parser\Adapter\Php\Tokenizer\Token::class)
+        $token = $this->getMockBuilder('Magento\Setup\Module\I18n\Parser\Adapter\Php\Tokenizer\Token')
             ->disableOriginalConstructor()
             ->getMock();
         $token->expects($this->any())
@@ -216,7 +216,7 @@ class PhraseCollectorTest extends \PHPUnit\Framework\TestCase
         $phraseString = "'first part' . ' second part'";
 
         $reflectionMethod = new \ReflectionMethod(
-            \Magento\Setup\Module\I18n\Parser\Adapter\Php\Tokenizer\PhraseCollector::class,
+            '\Magento\Setup\Module\I18n\Parser\Adapter\Php\Tokenizer\PhraseCollector',
             '_collectPhrase'
         );
 

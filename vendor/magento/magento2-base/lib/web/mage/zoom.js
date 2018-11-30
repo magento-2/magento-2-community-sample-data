@@ -2,13 +2,7 @@
  * Copyright © Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
-
-/**
- * @deprecated since version 2.2.0
- */
 (function (root, factory) {
-    'use strict';
-
     if (typeof define === 'function' && define.amd) {
         define([
             'jquery',
@@ -29,11 +23,11 @@
             hideDelay: '100',
             effects: {
                 show: {
-                    effect: 'fade',
+                    effect: "fade",
                     duration: 100
                 },
                 hide: {
-                    effect: 'fade',
+                    effect: "fade",
                     duration: 100
                 }
             },
@@ -70,14 +64,13 @@
         noticeOriginal: '',
 
         /**
-         * Widget constructor.
+         * Widget constructor
          * @protected
          */
         _create: function () {
             this._setZoomData();
             this._render();
             this._bind();
-
             if (this.largeImage[0].complete) {
                 this._largeImageLoaded();
             }
@@ -86,17 +79,15 @@
         },
 
         /**
-         * Render zoom controls.
+         * Render zoom controls
          * @protected
          */
         _render: function () {
-            var noticeContainer;
-
             this.element.append(this._renderControl('track').append(this._renderControl('lens')));
             this.element.append(this._renderControl('display'))
                 .find(this.options.selectors.zoomInner)
                 .append(this._renderLargeImage());
-            noticeContainer = this.element.find(this.options.controls.notice.container);
+            var noticeContainer = this.element.find(this.options.controls.notice.container);
             noticeContainer = noticeContainer.length ?
                 noticeContainer :
                 this.element;
@@ -104,14 +95,13 @@
         },
 
         /**
-         * Toggle zoom notice.
+         * Toggle zoom notice
          * @protected
          */
         _toggleNotice: function () {
-            this.noticeOriginal = this.notice.text() !== this.options.controls.notice.text ?
+            this.noticeOriginal = (this.notice.text() !== this.options.controls.notice.text ?
                 this.notice.text() :
-                this.noticeOriginal;
-
+                this.noticeOriginal);
             if (this.getZoomRatio() > 1 && this.largeImageSrc && !this.activated) {
                 this.notice.text(this.options.controls.notice.text);
             } else {
@@ -120,48 +110,43 @@
         },
 
         /**
-         * Render zoom control.
-         *
-         * @param {String} control - name of the control
+         * Render zoom control
+         * @param {string} control - name of the control
          * @return {Element} DOM-element
          * @protected
          */
         _renderControl: function (control) {
             var controlData = this.options.controls[control],
                 templateData = {},
-                css = {},
-                controlElement;
-
+                css = {};
             switch (control) {
-                case 'display':
-                    templateData = {
-                        img: this.largeImageSrc
-                    };
-                    css = {
-                        width: controlData.width,
-                        height: controlData.height
-                    };
-                    break;
-
-                case 'notice':
-                    templateData = {
-                        text: controlData.text || ''
-                    };
-                    break;
+            case 'display':
+                templateData = {
+                    img: this.largeImageSrc
+                };
+                css = {
+                    width: controlData.width,
+                    height: controlData.height
+                };
+                break;
+            case 'notice':
+                templateData = {
+                    text: controlData.text || ''
+                };
+                break;
             }
-            controlElement = this.element.find(this.options.selectors[control]);
+            var controlElement = this.element.find(this.options.selectors[control]);
             controlElement = controlElement.length ?
                 controlElement :
                 $(mageTemplate(controlData.template, {
                     data: templateData
                 }));
             this[control] = controlElement.css(css);
-
             return this[control];
         },
 
         /**
-         * Refresh zoom controls.
+         * Refresh zoom controls
          * @protected
          */
         _refresh: function () {
@@ -171,9 +156,8 @@
         },
 
         /**
-         * Refresh zoom control position and css.
-         *
-         * @param {String} control - name of the control
+         * Refresh zoom control position and css
+         * @param {string} control - name of the control
          * @protected
          */
         _refreshControl: function (control) {
@@ -182,47 +166,42 @@
                 css = {
                     position: 'absolute'
                 };
-
             switch (control) {
-                case 'display':
-                    position = {
-                        my: 'left+' + this.options.controls.display.left + ' top+' +
-                            this.options.controls.display.top + '',
-                        at: 'left+' + $(this.image).outerWidth() + ' top',
-                        of: $(this.image)
-                    };
-                    break;
-
-                case 'track':
-                    $.extend(css, {
-                        height: $(this.image).height(),
-                        width: $(this.image).width()
-                    });
-                    position = {
-                        my: 'left top',
-                        at: 'left top',
-                        of: $(this.image)
-                    };
-                    break;
-
-                case 'lens':
-                    $.extend(css, this._calculateLensSize(), {
-                        background: controlData.background,
-                        opacity: controlData.opacity,
-                        left: 0,
-                        top: 0
-                    });
-                    break;
+            case 'display':
+                position = {
+                    my: 'left+' + this.options.controls.display.left + ' top+' + this.options.controls.display.top + '',
+                    at: 'left+' + $(this.image).outerWidth() + ' top',
+                    of: $(this.image)
+                };
+                break;
+            case 'track':
+                $.extend(css, {
+                    height: $(this.image).height(),
+                    width: $(this.image).width()
+                });
+                position = {
+                    my: 'left top',
+                    at: 'left top',
+                    of: $(this.image)
+                };
+                break;
+            case 'lens':
+                $.extend(css, this._calculateLensSize(), {
+                    background: controlData.background,
+                    opacity: controlData.opacity,
+                    left: 0,
+                    top: 0
+                });
+                break;
             }
             this[control].css(css);
-
             if (position) {
                 this[control].position(position);
             }
         },
 
         /**
-         * Bind zoom event handlers.
+         * Bind zoom event handlers
          * @protected
          */
         _bind: function () {
@@ -230,10 +209,7 @@
              *  and not required to re-bind events
              */
             var events = {};
-
             events[this.options.startZoomEvent + ' ' + this.options.selectors.image] = 'show';
-
-            /** Handler */
             events[this.options.stopZoomEvent + ' ' + this.options.selectors.track] = function () {
                 this._delay(this.hide, this.options.hideDelay || 0);
             };
@@ -246,7 +222,7 @@
         },
 
         /**
-         * Store initial zoom data.
+         * Store initial zoom data
          * @protected
          */
         _setZoomData: function () {
@@ -256,7 +232,7 @@
         },
 
         /**
-         * Update zoom when called enable method.
+         * Update zoom when called enable method
          * @override
          */
         enable: function () {
@@ -265,7 +241,7 @@
         },
 
         /**
-         * Toggle notice when called disable method.
+         * Toggle notice when called disable method
          * @override
          */
         disable: function () {
@@ -274,13 +250,11 @@
         },
 
         /**
-         * Show zoom controls.
-         *
+         * Show zoom controls
          * @param {Object} e - event object
          */
         show: function (e) {
             e.preventDefault();
-
             if (this.getZoomRatio() > 1 && this.largeImageSrc) {
                 e.stopImmediatePropagation();
                 this.activated = true;
@@ -298,7 +272,9 @@
             }
         },
 
-        /** Hide zoom controls */
+        /**
+         * Hide zoom controls
+         */
         hide: function () {
             this.activated = false;
             this._hide(this.display, this.options.effects.hide);
@@ -317,7 +293,6 @@
 
             if (!this.image.is($(this.options.selectors.image))) {
                 this._setZoomData();
-
                 if (this.largeImageSrc) {
                     this._refreshLargeImage();
                     this._refresh();
@@ -383,38 +358,31 @@
             this.largeImage = $('<img />', {
                 src: this.largeImageSrc
             });
-
             return this.largeImage;
         },
 
         /**
-         * Calculate zoom ratio.
-         *
-         * @return {Number}
+         * Calculate zoom ratio
+         * @return {number}
          * @protected
          */
         getZoomRatio: function () {
-            var imageWidth;
-
-            if (this.ratio === null || typeof this.ratio === 'undefined') {
-                imageWidth = $(this.image).width() || $(this.image).prop('width');
+            if (this.ratio === null || typeof (this.ratio) === 'undefined') {
+                var imageWidth = $(this.image).width() || $(this.image).prop('width');
 
                 return this.largeImageSize ? this.largeImageSize.width / imageWidth : 1;
             }
-
             return this.ratio;
         },
 
         /**
-         * Calculate lens size, depending on zoom ratio.
-         *
+         * Calculate lens size, depending on zoom ratio
          * @return {Object} object contain width and height fields
          * @protected
          */
         _calculateLensSize: function () {
             var displayData = this.options.controls.display,
                 ratio = this.getZoomRatio();
-
             return {
                 width: Math.ceil(displayData.width / ratio),
                 height: Math.ceil(displayData.height / ratio)
@@ -422,8 +390,7 @@
         },
 
         /**
-         * Refresh position of large image depending of position of zoom lens.
-         *
+         * Refresh position of large image depending of position of zoom lens
          * @param {Object} position
          * @param {Object} ui
          * @protected
@@ -440,7 +407,6 @@
          */
         _getLargeImageOffset: function (position) {
             var ratio = this.getZoomRatio();
-
             return {
                 top: -(position.top * ratio),
                 left: -(position.left * ratio)
@@ -448,15 +414,14 @@
         },
 
         /**
-         * Mouse move handler.
-         *
+         * Mouse move handler
          * @param {Object} e - event object
          * @protected
          */
         _move: function (e) {
             this.lens.position({
-                my: 'center',
-                at: 'left top',
+                my: "center",
+                at: "left top",
                 of: e,
                 collision: 'fit',
                 within: this.image,
@@ -465,31 +430,28 @@
         }
     });
 
-    /** Extension for zoom widget - white borders detection */
+    /**
+     * Extension for zoom widget - white borders detection
+     */
     $.widget('mage.zoom', $.mage.zoom, {
         /**
-         * Get aspect ratio of the element.
-         *
+         * Get aspect ratio of the element
          * @param {Object} element - jQuery collection
-         * @return {*}
+         * @return {Number}
          * @protected
          */
         _getAspectRatio: function (element) {
-            var width, height, aspectRatio;
-
             if (!element || !element.length) {
                 return null;
             }
-            width = element.width() || element.prop('width');
-            height = element.height() || element.prop('height');
-            aspectRatio = width / height;
-
+            var width = element.width() || element.prop('width'),
+                height = element.height() || element.prop('height'),
+                aspectRatio = width / height;
             return Math.round(aspectRatio * 100) / 100;
         },
 
         /**
-         * Calculate large image offset depending on enabled "white borders" functionality.
-         *
+         * Calculate large image offset depending on enabled "white borders" functionality
          * @return {Object}
          * @protected
          */
@@ -499,13 +461,12 @@
                 largeHeight = this.largeImageSize.height / ratio,
                 width = this.image.width() || this.image.prop('width'),
                 height = this.image.height() || this.image.prop('height'),
-                offsetLeft = width - largeWidth > 0 ?
+                offsetLeft = (width - largeWidth) > 0 ?
                 Math.ceil((width - largeWidth) / 2) :
                 0,
-                offsetTop = height - largeHeight > 0 ?
+                offsetTop = (height - largeHeight) > 0 ?
                 Math.ceil((height - largeHeight) / 2) :
                 0;
-
             return {
                 top: offsetTop,
                 left: offsetLeft
@@ -518,21 +479,18 @@
         _largeImageLoaded: function () {
             this._super();
             this.whiteBordersOffset = null;
-
             if (this._getAspectRatio(this.image) !== this._getAspectRatio(this.largeImage)) {
                 this.whiteBordersOffset = this._getWhiteBordersOffset();
             }
         },
-
         /**
          * @override
          */
         _getLargeImageOffset: function (position) {
             if (this.whiteBordersOffset) {
-                position.top -= this.whiteBordersOffset.top;
-                position.left -= this.whiteBordersOffset.left;
+                position.top = position.top - this.whiteBordersOffset.top;
+                position.left = position.left - this.whiteBordersOffset.left;
             }
-
             return this._superApply([position]);
         }
     });

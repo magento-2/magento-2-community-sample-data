@@ -12,7 +12,7 @@ use Magento\Framework\ObjectManagerInterface;
  */
 class ActionPoolFactory
 {
-    const INSTANCE = \Magento\Framework\View\Element\UiComponent\Control\ActionPoolInterface::class;
+    const INSTANCE = 'Magento\Framework\View\Element\UiComponent\Control\ActionPoolInterface';
 
     /**
      * @var ObjectManagerInterface

@@ -6,7 +6,7 @@
 namespace Magento\Framework\Indexer;
 
 /**
- * @api Implement custom Action Interface
+ * @api
  */
 interface ActionInterface
 {

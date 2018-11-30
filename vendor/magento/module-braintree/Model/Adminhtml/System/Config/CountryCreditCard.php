@@ -8,12 +8,13 @@ namespace Magento\Braintree\Model\Adminhtml\System\Config;
 use Magento\Framework\App\Cache\TypeListInterface;
 use Magento\Framework\App\Config\ScopeConfigInterface;
 use Magento\Framework\App\Config\Value;
+use Magento\Framework\App\ObjectManager;
 use Magento\Framework\Data\Collection\AbstractDb;
 use Magento\Framework\Math\Random;
 use Magento\Framework\Model\Context;
 use Magento\Framework\Model\ResourceModel\AbstractResource;
 use Magento\Framework\Registry;
-use Magento\Framework\Serialize\Serializer\Json;
+use Magento\Framework\Unserialize\SecureUnserializer;
 
 /**
  * Class CountryCreditCard
@@ -26,9 +27,9 @@ class CountryCreditCard extends Value
     protected $mathRandom;
 
     /**
-     * @var \Magento\Framework\Serialize\Serializer\Json
+     * @var SecureUnserializer
      */
-    private $serializer;
+    private $secureUnserializer;
 
     /**
      * @param \Magento\Framework\Model\Context $context
@@ -39,7 +40,7 @@ class CountryCreditCard extends Value
      * @param \Magento\Framework\Model\ResourceModel\AbstractResource $resource
      * @param \Magento\Framework\Data\Collection\AbstractDb $resourceCollection
      * @param array $data
-     * @param \Magento\Framework\Serialize\Serializer\Json $serializer
+     * @param SecureUnserializer|null $secureUnserializer
      */
     public function __construct(
         Context $context,
@@ -50,11 +51,10 @@ class CountryCreditCard extends Value
         AbstractResource $resource = null,
         AbstractDb $resourceCollection = null,
         array $data = [],
-        Json $serializer = null
+        SecureUnserializer $secureUnserializer = null
     ) {
         $this->mathRandom = $mathRandom;
-        $this->serializer = $serializer ?: \Magento\Framework\App\ObjectManager::getInstance()
-            ->get(Json::class);
+        $this->secureUnserializer = $secureUnserializer ?: ObjectManager::getInstance()->get(SecureUnserializer::class);
         parent::__construct($context, $registry, $config, $cacheTypeList, $resource, $resourceCollection, $data);
     }
 
@@ -68,7 +68,7 @@ class CountryCreditCard extends Value
         $value = $this->getValue();
         if (!is_array($value)) {
             try {
-                $value = $this->serializer->unserialize($value);
+                $value = $this->secureUnserializer->unserialize($value);
             } catch (\InvalidArgumentException $e) {
                 $value = [];
             }
@@ -85,7 +85,7 @@ class CountryCreditCard extends Value
                 $result[$country] = $data['cc_types'];
             }
         }
-        $this->setValue($this->serializer->serialize($result));
+        $this->setValue(serialize($result));
         return $this;
     }
 
@@ -96,11 +96,10 @@ class CountryCreditCard extends Value
      */
     public function afterLoad()
     {
-        if ($this->getValue()) {
-            $value = $this->serializer->unserialize($this->getValue());
-            if (is_array($value)) {
-                $this->setValue($this->encodeArrayFieldValue($value));
-            }
+        $value = unserialize($this->getValue());
+        if (is_array($value)) {
+            $value = $this->encodeArrayFieldValue($value);
+            $this->setValue($value);
         }
         return $this;
     }

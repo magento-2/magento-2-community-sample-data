@@ -5,6 +5,7 @@
  */
 namespace Magento\Setup\Module\Di\Compiler\Log;
 
+
 class Log
 {
     const GENERATION_ERROR = 1;
@@ -80,17 +81,11 @@ class Log
      * Write entries
      *
      * @return void
-     * @throws \Magento\Framework\Validator\Exception
      */
     public function report()
     {
         $this->_successWriter->write($this->_successEntries);
         $this->_errorWriter->write($this->_errorEntries);
-        //do not take into account empty items since they are initialized in constructor.
-        $errors = array_filter($this->_errorEntries);
-        if (count($errors) > 0) {
-            throw new \Magento\Framework\Validator\Exception(__('Error during compilation'));
-        }
     }
 
     /**

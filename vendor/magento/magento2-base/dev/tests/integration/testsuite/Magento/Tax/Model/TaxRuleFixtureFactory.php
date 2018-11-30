@@ -27,7 +27,7 @@ class TaxRuleFixtureFactory
     public function __construct()
     {
         $this->objectManager = Bootstrap::getObjectManager();
-        $this->dataObjectHelper = $this->objectManager->create(\Magento\Framework\Api\DataObjectHelper::class);
+        $this->dataObjectHelper = $this->objectManager->create('Magento\Framework\Api\DataObjectHelper');
     }
 
     /**
@@ -39,9 +39,9 @@ class TaxRuleFixtureFactory
     public function createTaxRules($rulesData)
     {
         /** @var \Magento\Tax\Api\Data\TaxRuleInterfaceFactory $taxRuleFactory */
-        $taxRuleFactory = $this->objectManager->create(\Magento\Tax\Api\Data\TaxRuleInterfaceFactory::class);
+        $taxRuleFactory = $this->objectManager->create('Magento\Tax\Api\Data\TaxRuleInterfaceFactory');
         /** @var \Magento\Tax\Api\TaxRuleRepositoryInterface $taxRuleService */
-        $taxRuleService = $this->objectManager->create(\Magento\Tax\Api\TaxRuleRepositoryInterface::class);
+        $taxRuleService = $this->objectManager->create('Magento\Tax\Api\TaxRuleRepositoryInterface');
 
         $rules = [];
         foreach ($rulesData as $ruleData) {
@@ -49,7 +49,7 @@ class TaxRuleFixtureFactory
             $this->dataObjectHelper->populateWithArray(
                 $taxRule,
                 $ruleData,
-                \Magento\Tax\Api\Data\TaxRuleInterface::class
+                '\Magento\Tax\Api\Data\TaxRuleInterface'
             );
 
             $rules[$ruleData['code']] = $taxRuleService->save($taxRule)->getId();
@@ -66,7 +66,7 @@ class TaxRuleFixtureFactory
     public function deleteTaxRules($ruleIds)
     {
         /** @var \Magento\Tax\Api\TaxRuleRepositoryInterface $taxRuleService */
-        $taxRuleService = $this->objectManager->create(\Magento\Tax\Api\TaxRuleRepositoryInterface::class);
+        $taxRuleService = $this->objectManager->create('Magento\Tax\Api\TaxRuleRepositoryInterface');
 
         foreach ($ruleIds as $ruleId) {
             $taxRuleService->deleteById($ruleId);
@@ -84,9 +84,9 @@ class TaxRuleFixtureFactory
     public function createTaxRates($ratesData)
     {
         /** @var \Magento\Tax\Api\Data\TaxRateInterfaceFactory $taxRateFactory */
-        $taxRateFactory = $this->objectManager->create(\Magento\Tax\Api\Data\TaxRateInterfaceFactory::class);
+        $taxRateFactory = $this->objectManager->create('Magento\Tax\Api\Data\TaxRateInterfaceFactory');
         /** @var \Magento\Tax\Api\TaxRateRepositoryInterface $taxRateService */
-        $taxRateService = $this->objectManager->create(\Magento\Tax\Api\TaxRateRepositoryInterface::class);
+        $taxRateService = $this->objectManager->create('Magento\Tax\Api\TaxRateRepositoryInterface');
 
         $rates = [];
         foreach ($ratesData as $rateData) {
@@ -117,7 +117,7 @@ class TaxRuleFixtureFactory
     public function deleteTaxRates($rateIds)
     {
         /** @var \Magento\Tax\Api\TaxRateRepositoryInterface $taxRateService */
-        $taxRateService = $this->objectManager->create(\Magento\Tax\Api\TaxRateRepositoryInterface::class);
+        $taxRateService = $this->objectManager->create('Magento\Tax\Api\TaxRateRepositoryInterface');
         foreach ($rateIds as $rateId) {
             $taxRateService->deleteById($rateId);
         }
@@ -134,7 +134,7 @@ class TaxRuleFixtureFactory
         $classes = [];
         foreach ($classesData as $classData) {
             /** @var \Magento\Tax\Model\ClassModel $class */
-            $class = $this->objectManager->create(\Magento\Tax\Model\ClassModel::class)
+            $class = $this->objectManager->create('Magento\Tax\Model\ClassModel')
                 ->setClassName($classData['name'])
                 ->setClassType($classData['type'])
                 ->save();
@@ -151,7 +151,7 @@ class TaxRuleFixtureFactory
     public function deleteTaxClasses($classIds)
     {
         /** @var \Magento\Tax\Model\ClassModel $class */
-        $class = $this->objectManager->create(\Magento\Tax\Model\ClassModel::class);
+        $class = $this->objectManager->create('Magento\Tax\Model\ClassModel');
         foreach ($classIds as $classId) {
             $class->load($classId);
             $class->delete();

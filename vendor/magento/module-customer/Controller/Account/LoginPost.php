@@ -22,14 +22,10 @@ use Magento\Framework\App\Config\ScopeConfigInterface;
  */
 class LoginPost extends \Magento\Customer\Controller\AbstractAccount
 {
-    /**
-     * @var \Magento\Customer\Api\AccountManagementInterface
-     */
+    /** @var AccountManagementInterface */
     protected $customerAccountManagement;
 
-    /**
-     * @var \Magento\Framework\Data\Form\FormKey\Validator
-     */
+    /** @var Validator */
     protected $formKeyValidator;
 
     /**
@@ -85,7 +81,7 @@ class LoginPost extends \Magento\Customer\Controller\AbstractAccount
      * Get scope config
      *
      * @return ScopeConfigInterface
-     * @deprecated 100.0.10
+     * @deprecated
      */
     private function getScopeConfig()
     {
@@ -101,7 +97,7 @@ class LoginPost extends \Magento\Customer\Controller\AbstractAccount
     /**
      * Retrieve cookie manager
      *
-     * @deprecated 100.1.0
+     * @deprecated
      * @return \Magento\Framework\Stdlib\Cookie\PhpCookieManager
      */
     private function getCookieManager()
@@ -117,7 +113,7 @@ class LoginPost extends \Magento\Customer\Controller\AbstractAccount
     /**
      * Retrieve cookie metadata factory
      *
-     * @deprecated 100.1.0
+     * @deprecated
      * @return \Magento\Framework\Stdlib\Cookie\CookieMetadataFactory
      */
     private function getCookieMetadataFactory()
@@ -173,10 +169,10 @@ class LoginPost extends \Magento\Customer\Controller\AbstractAccount
                     );
                 } catch (UserLockedException $e) {
                     $message = __(
-                        'You did not sign in correctly or your account is temporarily disabled.'
+                        'Invalid login or password.'
                     );
                 } catch (AuthenticationException $e) {
-                    $message = __('You did not sign in correctly or your account is temporarily disabled.');
+                    $message = __('Invalid login or password.');
                 } catch (LocalizedException $e) {
                     $message = $e->getMessage();
                 } catch (\Exception $e) {

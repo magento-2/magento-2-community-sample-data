@@ -24,17 +24,18 @@ class ReaderPlugin
     /**
      * Merge reader's value with generated
      *
-     * @param \Magento\Framework\Config\ReaderInterface $subject
-     * @param array $result
-     * @param string|null $scope
-     * @return array
      * @SuppressWarnings(PHPMD.UnusedFormalParameter)
+     * @param \Magento\Framework\Config\ReaderInterface $subject
+     * @param \Closure $proceed
+     * @param string $scope
+     * @return array
      */
-    public function afterRead(
+    public function aroundRead(
         \Magento\Framework\Config\ReaderInterface $subject,
-        array $result,
+        \Closure $proceed,
         $scope = null
     ) {
+        $result = $proceed($scope);
         $result = array_merge_recursive($result, $this->requestGenerator->generate());
         return $result;
     }

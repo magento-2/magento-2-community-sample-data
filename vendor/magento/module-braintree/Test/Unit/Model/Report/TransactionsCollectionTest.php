@@ -11,6 +11,7 @@ use Magento\Braintree\Model\Report\FilterMapper;
 use Magento\Braintree\Model\Report\TransactionsCollection;
 use Magento\Framework\Api\Search\DocumentInterface;
 use Magento\Framework\Data\Collection\EntityFactoryInterface;
+use Magento\Store\Model\StoreManagerInterface;
 use PHPUnit_Framework_MockObject_MockObject as MockObject;
 
 /**
@@ -18,7 +19,7 @@ use PHPUnit_Framework_MockObject_MockObject as MockObject;
  *
  * Test for class \Magento\Braintree\Model\Report\TransactionsCollection
  */
-class TransactionsCollectionTest extends \PHPUnit\Framework\TestCase
+class TransactionsCollectionTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var BraintreeAdapter|MockObject
@@ -92,8 +93,9 @@ class TransactionsCollectionTest extends \PHPUnit\Framework\TestCase
 
         $collection = new TransactionsCollection(
             $this->entityFactory,
-            $this->adapterFactory,
-            $this->filterMapper
+            $this->braintreeAdapter,
+            $this->filterMapper,
+            $this->adapterFactory
         );
 
         $collection->addFieldToFilter('orderId', ['like' => '0']);
@@ -119,8 +121,9 @@ class TransactionsCollectionTest extends \PHPUnit\Framework\TestCase
 
         $collection = new TransactionsCollection(
             $this->entityFactory,
-            $this->adapterFactory,
-            $this->filterMapper
+            $this->braintreeAdapter,
+            $this->filterMapper,
+            $this->adapterFactory
         );
 
         $collection->addFieldToFilter('orderId', ['like' => '0']);
@@ -147,8 +150,9 @@ class TransactionsCollectionTest extends \PHPUnit\Framework\TestCase
 
         $collection = new TransactionsCollection(
             $this->entityFactory,
-            $this->adapterFactory,
-            $this->filterMapper
+            $this->braintreeAdapter,
+            $this->filterMapper,
+            $this->adapterFactory
         );
         $collection->setPageSize(TransactionsCollection::TRANSACTION_MAXIMUM_COUNT);
 
@@ -177,8 +181,9 @@ class TransactionsCollectionTest extends \PHPUnit\Framework\TestCase
 
         $collection = new TransactionsCollection(
             $this->entityFactory,
-            $this->adapterFactory,
-            $this->filterMapper
+            $this->braintreeAdapter,
+            $this->filterMapper,
+            $this->adapterFactory
         );
         $collection->setPageSize(null);
 
@@ -190,7 +195,7 @@ class TransactionsCollectionTest extends \PHPUnit\Framework\TestCase
 
     /**
      * Add fields to filter
-     *
+     * 
      * @dataProvider addToFilterDataProvider
      */
     public function testAddToFilter($field, $condition, $filterMapperCall, $expectedCondition)
@@ -202,8 +207,9 @@ class TransactionsCollectionTest extends \PHPUnit\Framework\TestCase
 
         $collection = new TransactionsCollection(
             $this->entityFactory,
-            $this->adapterFactory,
-            $this->filterMapper
+            $this->braintreeAdapter,
+            $this->filterMapper,
+            $this->adapterFactory
         );
 
         self::assertInstanceOf(
@@ -214,7 +220,7 @@ class TransactionsCollectionTest extends \PHPUnit\Framework\TestCase
 
     /**
      * addToFilter DataProvider
-     *
+     * 
      * @return array
      */
     public function addToFilterDataProvider()

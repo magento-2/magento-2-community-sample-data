@@ -5,7 +5,7 @@
  */
 namespace Magento\Customer\Test\Unit\Block\Form\Login;
 
-class InfoTest extends \PHPUnit\Framework\TestCase
+class InfoTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\Customer\Block\Form\Login\Info
@@ -30,23 +30,23 @@ class InfoTest extends \PHPUnit\Framework\TestCase
     protected function setUp()
     {
         $this->customerUrl = $this->getMockBuilder(
-            \Magento\Customer\Model\Url::class
+            'Magento\Customer\Model\Url'
         )->disableOriginalConstructor()->setMethods(
             ['getRegisterUrl']
         )->getMock();
         $this->checkoutData = $this->getMockBuilder(
-            \Magento\Checkout\Helper\Data::class
+            'Magento\Checkout\Helper\Data'
         )->disableOriginalConstructor()->setMethods(
             ['isContextCheckout']
         )->getMock();
         $this->coreUrl = $this->getMockBuilder(
-            \Magento\Framework\Url\Helper\Data::class
+            'Magento\Framework\Url\Helper\Data'
         )->disableOriginalConstructor()->setMethods(
             ['addRequestParam']
         )->getMock();
 
         $this->block = (new \Magento\Framework\TestFramework\Unit\Helper\ObjectManager($this))->getObject(
-            \Magento\Customer\Block\Form\Login\Info::class,
+            'Magento\Customer\Block\Form\Login\Info',
             [
                 'customerUrl' => $this->customerUrl,
                 'checkoutData' => $this->checkoutData,

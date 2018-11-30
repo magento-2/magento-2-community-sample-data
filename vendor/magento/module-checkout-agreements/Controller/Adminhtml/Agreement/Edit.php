@@ -6,34 +6,8 @@
  */
 namespace Magento\CheckoutAgreements\Controller\Adminhtml\Agreement;
 
-use Magento\CheckoutAgreements\Controller\Adminhtml\Agreement;
-use Magento\CheckoutAgreements\Model\AgreementFactory;
-use Magento\Backend\App\Action\Context;
-use Magento\Framework\Registry;
-use Magento\Framework\App\ObjectManager;
-use Magento\CheckoutAgreements\Block\Adminhtml\Agreement\Edit as BlockEdit;
-
-class Edit extends Agreement
+class Edit extends \Magento\CheckoutAgreements\Controller\Adminhtml\Agreement
 {
-    /**
-     * @var AgreementFactory
-     */
-    private $agreementFactory;
-
-    /**
-     * @param Context $context
-     * @param Registry $coreRegistry
-     * @param AgreementFactory $agreementFactory
-     */
-    public function __construct(
-        Context $context,
-        Registry $coreRegistry,
-        AgreementFactory $agreementFactory = null
-    ) {
-        $this->agreementFactory = $agreementFactory ?:
-                ObjectManager::getInstance()->get(AgreementFactory::class);
-        parent::__construct($context, $coreRegistry);
-    }
     /**
      * @return void
      * @SuppressWarnings(PHPMD.NPathComplexity)
@@ -41,7 +15,7 @@ class Edit extends Agreement
     public function execute()
     {
         $id = $this->getRequest()->getParam('id');
-        $agreementModel = $this->agreementFactory->create();
+        $agreementModel = $this->_objectManager->create('Magento\CheckoutAgreements\Model\Agreement');
 
         if ($id) {
             $agreementModel->load($id);
@@ -52,7 +26,7 @@ class Edit extends Agreement
             }
         }
 
-        $data = $this->_session->getAgreementData(true);
+        $data = $this->_objectManager->get('Magento\Backend\Model\Session')->getAgreementData(true);
         if (!empty($data)) {
             $agreementModel->setData($data);
         }
@@ -64,7 +38,7 @@ class Edit extends Agreement
             $id ? __('Edit Condition') : __('New Condition')
         )->_addContent(
             $this->_view->getLayout()->createBlock(
-                BlockEdit::class
+                'Magento\CheckoutAgreements\Block\Adminhtml\Agreement\Edit'
             )->setData(
                 'action',
                 $this->getUrl('checkout/*/save')

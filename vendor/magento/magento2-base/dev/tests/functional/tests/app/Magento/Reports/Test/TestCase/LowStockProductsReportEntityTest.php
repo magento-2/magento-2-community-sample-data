@@ -6,7 +6,8 @@
 
 namespace Magento\Reports\Test\TestCase;
 
-use Magento\Mtf\TestCase\Scenario;
+use Magento\Catalog\Test\Fixture\CatalogProductSimple;
+use Magento\Mtf\TestCase\Injectable;
 
 /**
  * Preconditions:
@@ -17,22 +18,25 @@ use Magento\Mtf\TestCase\Scenario;
  * 2. Open Reports > Low Stock.
  * 3. Perform appropriate assertions.
  *
- * @group Reports
+ * @group Reports_(MX)
  * @ZephyrId MAGETWO-27193
  */
-class LowStockProductsReportEntityTest extends Scenario
+class LowStockProductsReportEntityTest extends Injectable
 {
     /* tags */
     const MVP = 'no';
+    const DOMAIN = 'MX';
     /* end tags */
 
     /**
-     * Runs low stock products report test.
+     * Create product
      *
+     * @param CatalogProductSimple $product
      * @return void
      */
-    public function test()
+    public function test(CatalogProductSimple $product)
     {
-        $this->executeScenario();
+        // Preconditions
+        $product->persist();
     }
 }

@@ -6,11 +6,9 @@
 namespace Magento\Theme\Model;
 
 use Magento\Framework\App\DesignInterface;
-use Magento\Framework\App\ObjectManager;
 use Magento\Framework\Model\AbstractModel;
 use Magento\Framework\Model\ResourceModel\AbstractResource;
 use Magento\Framework\DataObject\IdentityInterface;
-use Magento\Framework\Serialize\SerializerInterface;
 
 /**
  * Design settings change model
@@ -58,11 +56,6 @@ class Design extends AbstractModel implements IdentityInterface, DesignInterface
     protected $_dateTime;
 
     /**
-     * @var SerializerInterface
-     */
-    private $serializer;
-
-    /**
      * @param \Magento\Framework\Model\Context $context
      * @param \Magento\Framework\Registry $registry
      * @param \Magento\Framework\Stdlib\DateTime\TimezoneInterface $localeDate
@@ -70,7 +63,6 @@ class Design extends AbstractModel implements IdentityInterface, DesignInterface
      * @param AbstractResource $resource
      * @param \Magento\Framework\Data\Collection\AbstractDb $resourceCollection
      * @param array $data
-     * @param SerializerInterface $serializer
      */
     public function __construct(
         \Magento\Framework\Model\Context $context,
@@ -79,12 +71,10 @@ class Design extends AbstractModel implements IdentityInterface, DesignInterface
         \Magento\Framework\Stdlib\DateTime $dateTime,
         AbstractResource $resource = null,
         \Magento\Framework\Data\Collection\AbstractDb $resourceCollection = null,
-        array $data = [],
-        SerializerInterface $serializer = null
+        array $data = []
     ) {
         $this->_localeDate = $localeDate;
         $this->_dateTime = $dateTime;
-        $this->serializer = $serializer ?: ObjectManager::getInstance()->get(SerializerInterface::class);
         parent::__construct($context, $registry, $resource, $resourceCollection, $data);
     }
 
@@ -95,7 +85,7 @@ class Design extends AbstractModel implements IdentityInterface, DesignInterface
      */
     protected function _construct()
     {
-        $this->_init(\Magento\Theme\Model\ResourceModel\Design::class);
+        $this->_init('Magento\Theme\Model\ResourceModel\Design');
     }
 
     /**
@@ -118,9 +108,9 @@ class Design extends AbstractModel implements IdentityInterface, DesignInterface
             if (!$result) {
                 $result = [];
             }
-            $this->_cacheManager->save($this->serializer->serialize($result), $changeCacheId, [self::CACHE_TAG], 86400);
+            $this->_cacheManager->save(serialize($result), $changeCacheId, [self::CACHE_TAG], 86400);
         } else {
-            $result = $this->serializer->unserialize($result);
+            $result = unserialize($result);
         }
 
         if ($result) {

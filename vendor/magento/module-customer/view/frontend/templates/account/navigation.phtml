@@ -4,16 +4,16 @@
  * See COPYING.txt for license details.
  */
 
-/** @var $block \Magento\Framework\View\Element\Html\Links */
+/** @var \Magento\Framework\View\Element\Html\Links $block */
 ?>
 <div class="block account-nav">
     <div class="title">
-        <strong><?= $block->escapeHtml(__('My Account')) ?></strong>
+        <strong><?php echo $block->escapeHtml(__('My Account')); ?></strong>
     </div>
     <div class="content">
         <nav class="account-nav">
             <ul class="nav items">
-                <?= $block->getChildHtml() ?>
+                <?php echo $block->getChildHtml();?>
             </ul>
         </nav>
     </div>

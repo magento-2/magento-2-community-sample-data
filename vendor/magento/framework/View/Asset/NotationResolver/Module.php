@@ -9,9 +9,6 @@ namespace Magento\Framework\View\Asset\NotationResolver;
 use Magento\Framework\View\Asset;
 use Magento\Framework\View\FileSystem;
 
-/**
- * Module notation normalizer
- */
 class Module
 {
     /**

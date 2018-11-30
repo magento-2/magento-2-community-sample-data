@@ -7,7 +7,6 @@ namespace Magento\Search\Api\Data;
 
 /**
  * @api
- * @since 100.1.0
  */
 interface SynonymGroupInterface
 {
@@ -15,7 +14,6 @@ interface SynonymGroupInterface
      * Gets group id
      *
      * @return int
-     * @since 100.1.0
      */
     public function getGroupId();
 
@@ -24,7 +22,6 @@ interface SynonymGroupInterface
      *
      * @param int $groupId
      * @return $this
-     * @since 100.1.0
      */
     public function setGroupId($groupId);
 
@@ -32,7 +29,6 @@ interface SynonymGroupInterface
      * Gets synonym group
      *
      * @return string
-     * @since 100.1.0
      */
     public function getSynonymGroup();
 
@@ -41,7 +37,6 @@ interface SynonymGroupInterface
      *
      * @param string $synonymGroup
      * @return $this
-     * @since 100.1.0
      */
     public function setSynonymGroup($synonymGroup);
 
@@ -49,7 +44,6 @@ interface SynonymGroupInterface
      * Gets store id
      *
      * @return int
-     * @since 100.1.0
      */
     public function getStoreId();
 
@@ -58,7 +52,6 @@ interface SynonymGroupInterface
      *
      * @param int $id
      * @return $this
-     * @since 100.1.0
      */
     public function setStoreId($id);
 
@@ -66,7 +59,6 @@ interface SynonymGroupInterface
      * Gets website id
      *
      * @return int
-     * @since 100.1.0
      */
     public function getWebsiteId();
 
@@ -75,7 +67,6 @@ interface SynonymGroupInterface
      *
      * @param int $id
      * @return $this
-     * @since 100.1.0
      */
     public function setWebsiteId($id);
 }

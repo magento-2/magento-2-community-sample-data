@@ -10,7 +10,7 @@ namespace Magento\SalesRule\Test\Unit\Model;
  *
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  */
-class UtilityTest extends \PHPUnit\Framework\TestCase
+class UtilityTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\SalesRule\Model\ResourceModel\Coupon\UsageFactory | \PHPUnit_Framework_MockObject_MockObject
@@ -74,18 +74,24 @@ class UtilityTest extends \PHPUnit\Framework\TestCase
 
     protected function setUp()
     {
-        $this->usageFactory = $this->createPartialMock(
-            \Magento\SalesRule\Model\ResourceModel\Coupon\UsageFactory::class,
-            ['create']
+        $this->usageFactory = $this->getMock(
+            'Magento\SalesRule\Model\ResourceModel\Coupon\UsageFactory',
+            ['create'],
+            [],
+            '',
+            false
         );
-        $this->couponFactory = $this->createPartialMock(\Magento\SalesRule\Model\CouponFactory::class, ['create']);
-        $this->objectFactory = $this->createPartialMock(\Magento\Framework\DataObjectFactory::class, ['create']);
-        $this->customerFactory = $this->createPartialMock(
-            \Magento\SalesRule\Model\Rule\CustomerFactory::class,
-            ['create']
+        $this->couponFactory = $this->getMock('Magento\SalesRule\Model\CouponFactory', ['create'], [], '', false);
+        $this->objectFactory = $this->getMock('Magento\Framework\DataObjectFactory', ['create'], [], '', false);
+        $this->customerFactory = $this->getMock(
+            'Magento\SalesRule\Model\Rule\CustomerFactory',
+            ['create'],
+            [],
+            '',
+            false
         );
-        $this->coupon = $this->createPartialMock(
-            \Magento\SalesRule\Model\Coupon::class,
+        $this->coupon = $this->getMock(
+            'Magento\SalesRule\Model\Coupon',
             [
                 'load',
                 'getId',
@@ -93,14 +99,22 @@ class UtilityTest extends \PHPUnit\Framework\TestCase
                 'getTimesUsed',
                 'getUsagePerCustomer',
                 '__wakeup'
-            ]
+            ],
+            [],
+            '',
+            false
         );
-        $this->quote = $this->createPartialMock(\Magento\Quote\Model\Quote::class, ['__wakeup', 'getStore']);
-        $this->customer = $this->createPartialMock(
-            \Magento\SalesRule\Model\Rule\Customer::class,
-            ['loadByCustomerRule', '__wakeup']
+        $this->quote = $this->getMock('Magento\Quote\Model\Quote', ['__wakeup', 'getStore'], [], '', false);
+        $this->customer = $this->getMock(
+            'Magento\SalesRule\Model\Rule\Customer',
+            ['loadByCustomerRule', '__wakeup'],
+            [],
+            '',
+            false
         );
-        $this->rule = $this->createPartialMock(\Magento\SalesRule\Model\Rule::class, [
+        $this->rule = $this->getMock(
+            'Magento\SalesRule\Model\Rule',
+            [
                 'hasIsValidForAddress',
                 'getIsValidForAddress',
                 'setIsValidForAddress',
@@ -108,17 +122,30 @@ class UtilityTest extends \PHPUnit\Framework\TestCase
                 'validate',
                 'afterLoad',
                 'getDiscountQty'
-            ]);
-        $this->address = $this->createPartialMock(\Magento\Quote\Model\Quote\Address::class, [
+            ],
+            [],
+            '',
+            false
+        );
+        $this->address = $this->getMock(
+            'Magento\Quote\Model\Quote\Address',
+            [
                 'isObjectNew',
                 'getQuote',
                 'setIsValidForAddress',
                 '__wakeup',
                 'validate',
                 'afterLoad'
-            ]);
+            ],
+            [],
+            '',
+            false
+        );
         $this->address->setQuote($this->quote);
-        $this->item = $this->createPartialMock(\Magento\Quote\Model\Quote\Item\AbstractItem::class, [
+
+        $this->item = $this->getMock(
+            'Magento\Quote\Model\Quote\Item\AbstractItem',
+            [
                 'getDiscountCalculationPrice',
                 'getCalculationPrice',
                 'getBaseDiscountCalculationPrice',
@@ -128,10 +155,13 @@ class UtilityTest extends \PHPUnit\Framework\TestCase
                 'getOptionByCode',
                 'getTotalQty',
                 '__wakeup'
-            ]);
+            ],
+            [],
+            '',
+            false
+        );
 
-        $this->priceCurrency = $this->getMockBuilder(\Magento\Framework\Pricing\PriceCurrencyInterface::class)
-            ->getMock();
+        $this->priceCurrency = $this->getMockBuilder('Magento\Framework\Pricing\PriceCurrencyInterface')->getMock();
         $this->utility = new \Magento\SalesRule\Model\Utility(
             $this->usageFactory,
             $this->couponFactory,
@@ -234,7 +264,7 @@ class UtilityTest extends \PHPUnit\Framework\TestCase
         $this->objectFactory->expects($this->once())
             ->method('create')
             ->will($this->returnValue($couponUsage));
-        $couponUsageModel = $this->createMock(\Magento\SalesRule\Model\ResourceModel\Coupon\Usage::class);
+        $couponUsageModel = $this->getMock('\Magento\SalesRule\Model\ResourceModel\Coupon\Usage', [], [], '', false);
         $couponUsage->setData(['coupon_id' => $couponId, 'times_used' => $timesUsed]);
         $this->usageFactory->expects($this->once())
             ->method('create')
@@ -388,7 +418,7 @@ class UtilityTest extends \PHPUnit\Framework\TestCase
         $this->getItemBasePrice();
         $this->item->setDiscountAmount($amount);
         $this->item->setBaseDiscountAmount($baseAmount);
-        $discountData = $this->createMock(\Magento\SalesRule\Model\Rule\Action\Discount\Data::class);
+        $discountData = $this->getMock('Magento\SalesRule\Model\Rule\Action\Discount\Data', [], [], '', false);
         $discountData->expects($this->atLeastOnce())
             ->method('getAmount')
             ->will($this->returnValue($amount));
@@ -454,7 +484,7 @@ class UtilityTest extends \PHPUnit\Framework\TestCase
             ->method('getQuote')
             ->will($this->returnValue($this->quote));
 
-        $store = $this->createMock(\Magento\Store\Model\Store::class);
+        $store = $this->getMock('Magento\Store\Model\Store', [], [], '', false);
         $this->priceCurrency->expects($this->any())
             ->method('round')
             ->will($this->returnValueMap([
@@ -470,7 +500,7 @@ class UtilityTest extends \PHPUnit\Framework\TestCase
 
         $this->item->setDiscountPercent($percent);
 
-        $discountData = $this->createMock(\Magento\SalesRule\Model\Rule\Action\Discount\Data::class);
+        $discountData = $this->getMock('Magento\SalesRule\Model\Rule\Action\Discount\Data', [], [], '', false);
         $discountData->expects($this->at(0))
             ->method('getAmount')
             ->will($this->returnValue($discountAmount));

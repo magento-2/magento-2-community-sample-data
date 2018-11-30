@@ -9,17 +9,12 @@ namespace Magento\Catalog\Test\Unit\Block\Category\Plugin;
 /**
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  */
-class PriceBoxTagsTest extends \PHPUnit\Framework\TestCase
+class PriceBoxTagsTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\Framework\Pricing\PriceCurrencyInterface | \PHPUnit_Framework_MockObject_MockObject
      */
     private $priceCurrencyInterface;
-
-    /**
-     * @var \Magento\Directory\Model\Currency | \PHPUnit_Framework_MockObject_MockObject
-     */
-    private $currency;
 
     /**
      * @var \Magento\Framework\Stdlib\DateTime\TimezoneInterface | \PHPUnit_Framework_MockObject_MockObject
@@ -51,9 +46,6 @@ class PriceBoxTagsTest extends \PHPUnit\Framework\TestCase
         $this->priceCurrencyInterface = $this->getMockBuilder(
             \Magento\Framework\Pricing\PriceCurrencyInterface::class
         )->getMock();
-        $this->currency = $this->getMockBuilder(\Magento\Directory\Model\Currency::class)
-            ->disableOriginalConstructor()
-            ->getMock();
         $this->timezoneInterface = $this->getMockBuilder(
             \Magento\Framework\Stdlib\DateTime\TimezoneInterface::class
         )->getMock();
@@ -90,7 +82,7 @@ class PriceBoxTagsTest extends \PHPUnit\Framework\TestCase
     public function testAfterGetCacheKey()
     {
         $date = date('Ymd');
-        $currencyCode = 'USD';
+        $currencySymbol = '$';
         $result = 'result_string';
         $billingAddress = ['billing_address'];
         $shippingAddress = ['shipping_address'];
@@ -103,7 +95,7 @@ class PriceBoxTagsTest extends \PHPUnit\Framework\TestCase
             '-',
             [
                 $result,
-                $currencyCode,
+                $currencySymbol,
                 $date,
                 $scopeId,
                 $customerGroupId,
@@ -112,8 +104,7 @@ class PriceBoxTagsTest extends \PHPUnit\Framework\TestCase
         );
         $priceBox = $this->getMockBuilder(\Magento\Framework\Pricing\Render\PriceBox::class)
             ->disableOriginalConstructor()->getMock();
-        $this->priceCurrencyInterface->expects($this->once())->method('getCurrency')->willReturn($this->currency);
-        $this->currency->expects($this->once())->method('getCode')->willReturn($currencyCode);
+        $this->priceCurrencyInterface->expects($this->once())->method('getCurrencySymbol')->willReturn($currencySymbol);
         $scope = $this->getMockBuilder(\Magento\Framework\App\ScopeInterface::class)->getMock();
         $this->scopeResolverInterface->expects($this->any())->method('getScope')->willReturn($scope);
         $scope->expects($this->any())->method('getId')->willReturn($scopeId);
@@ -128,8 +119,8 @@ class PriceBoxTagsTest extends \PHPUnit\Framework\TestCase
         $this->session->expects($this->once())->method('getCustomerId')->willReturn($customerId);
         $rateRequest = $this->getMockBuilder(\Magento\Framework\DataObject::class)->getMock();
         $this->taxCalculation->expects($this->once())->method('getRateRequest')->with(
-            new \Magento\Framework\DataObject($shippingAddress),
             new \Magento\Framework\DataObject($billingAddress),
+            new \Magento\Framework\DataObject($shippingAddress),
             $customerTaxClassId,
             $scopeId,
             $customerId

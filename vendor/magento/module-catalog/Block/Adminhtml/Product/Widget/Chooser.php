@@ -95,7 +95,7 @@ class Chooser extends Extended
         );
 
         $chooser = $this->getLayout()->createBlock(
-            \Magento\Widget\Block\Adminhtml\Widget\Chooser::class
+            'Magento\Widget\Block\Adminhtml\Widget\Chooser'
         )->setElement(
             $element
         )->setConfig(
@@ -202,7 +202,7 @@ class Chooser extends Extended
                 {jsObject}.categoryName = node.attributes.id != "none" ? node.text : false;
             }
         ';
-        $js = str_replace('{jsObject}', $this->escapeJs($this->getJsObjectName()), $js);
+        $js = str_replace('{jsObject}', $this->getJsObjectName(), $js);
         return $js;
     }
 

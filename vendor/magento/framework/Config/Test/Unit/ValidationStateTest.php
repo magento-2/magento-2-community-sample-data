@@ -5,7 +5,7 @@
  */
 namespace Magento\Framework\Config\Test\Unit;
 
-class ValidationStateTest extends \PHPUnit\Framework\TestCase
+class ValidationStateTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @param string $appMode

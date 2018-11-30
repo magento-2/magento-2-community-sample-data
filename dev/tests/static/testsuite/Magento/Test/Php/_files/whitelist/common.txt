@@ -1,7 +1,8 @@
-# Format: <componentType=module|library|theme|language|*> <componentName> <globPattern> or simply <globPattern>
-* * /
-dev/tests
-phpserver
-pub
+module * /
+library * /
+dev/tools/Magento
+dev/tests/api-functional
+dev/tests/functional
+dev/tests/integration
+dev/tests/static
 setup
-*.php

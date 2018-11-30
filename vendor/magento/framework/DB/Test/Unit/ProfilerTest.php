@@ -7,7 +7,7 @@
  */
 namespace Magento\Framework\DB\Test\Unit;
 
-class ProfilerTest extends \PHPUnit\Framework\TestCase
+class ProfilerTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * Profiler instance for test

@@ -6,7 +6,7 @@
 
 namespace Magento\GroupedImportExport\Test\Unit\Model\Import\Product\Type;
 
-use Magento\GroupedImportExport;
+use \Magento\GroupedImportExport;
 
 /**
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
@@ -68,62 +68,87 @@ class GroupedTest extends \Magento\ImportExport\Test\Unit\Model\Import\AbstractI
     {
         parent::setUp();
 
-        $this->setCollectionFactory = $this->createPartialMock(
+        $this->setCollectionFactory = $this->getMock(
             \Magento\Eav\Model\ResourceModel\Entity\Attribute\Set\CollectionFactory::class,
-            ['create']
+            ['create'],
+            [],
+            '',
+            false
         );
-        $this->setCollection = $this->createPartialMock(
+        $this->setCollection = $this->getMock(
             \Magento\Eav\Model\ResourceModel\Entity\Attribute\Set\Collection::class,
-            ['setEntityTypeFilter']
+            ['setEntityTypeFilter'],
+            [],
+            '',
+            false
         );
         $this->setCollectionFactory->expects($this->any())->method('create')->will(
             $this->returnValue($this->setCollection)
         );
         $this->setCollection->expects($this->any())->method('setEntityTypeFilter')->will($this->returnValue([]));
-        $this->attrCollectionFactory = $this->createPartialMock(
+        $this->attrCollectionFactory = $this->getMock(
             \Magento\Catalog\Model\ResourceModel\Product\Attribute\CollectionFactory::class,
-            ['create', 'addFieldToFilter']
+            ['create', 'addFieldToFilter'],
+            [],
+            '',
+            false
         );
         $this->attrCollectionFactory->expects($this->any())->method('create')->will($this->returnSelf());
         $this->attrCollectionFactory->expects($this->any())->method('addFieldToFilter')->willReturn([]);
-        $this->entityModel = $this->createPartialMock(
+        $this->entityModel = $this->getMock(
             \Magento\CatalogImportExport\Model\Import\Product::class,
-            ['getErrorAggregator', 'getNewSku', 'getOldSku', 'getNextBunch', 'isRowAllowedToImport', 'getRowScope']
+            ['getErrorAggregator', 'getNewSku', 'getOldSku', 'getNextBunch', 'isRowAllowedToImport', 'getRowScope'],
+            [],
+            '',
+            false
         );
         $this->entityModel->method('getErrorAggregator')->willReturn($this->getErrorAggregatorObject());
         $this->params = [
             0 => $this->entityModel,
             1 => 'grouped'
         ];
-        $this->links = $this->createMock(\Magento\GroupedImportExport\Model\Import\Product\Type\Grouped\Links::class);
-        $entityAttributes = [
-            [
-                'attribute_set_name' => 'attribute_id',
-                'attribute_id' => 'attributeSetName',
-            ]
-        ];
-        $this->connection = $this->createPartialMock(
-            \Magento\Framework\DB\Adapter\Pdo\Mysql::class,
-            ['select', 'fetchAll', 'fetchPairs', 'joinLeft', 'insertOnDuplicate', 'delete', 'quoteInto']
+        $this->links = $this->getMock(
+            \Magento\GroupedImportExport\Model\Import\Product\Type\Grouped\Links::class,
+            [],
+            [],
+            '',
+            false
         );
-        $this->select = $this->createPartialMock(
-            \Magento\Framework\DB\Select::class,
-            ['from', 'where', 'joinLeft', 'getConnection']
+        $entityAttributes = [[
+            'attribute_set_name' => 'attribute_id',
+            'attribute_id' => 'attributeSetName',
+        ]];
+        $this->connection = $this->getMock(
+            \Magento\Framework\DB\Adapter\Pdo\Mysql::class,
+            ['select', 'fetchAll', 'fetchPairs', 'joinLeft', 'insertOnDuplicate', 'delete', 'quoteInto'],
+            [],
+            '',
+            false
+        );
+        $this->select = $this->getMock(
+            'Magento\Framework\DB\Select',
+            ['from', 'where', 'joinLeft', 'getConnection'],
+            [],
+            '',
+            false
         );
         $this->select->expects($this->any())->method('from')->will($this->returnSelf());
         $this->select->expects($this->any())->method('where')->will($this->returnSelf());
         $this->select->expects($this->any())->method('joinLeft')->will($this->returnSelf());
         $this->connection->expects($this->any())->method('select')->will($this->returnValue($this->select));
-        $connectionMock = $this->createMock(\Magento\Framework\DB\Adapter\Pdo\Mysql::class);
+        $connectionMock = $this->getMock(\Magento\Framework\DB\Adapter\Pdo\Mysql::class, [], [], '', false);
         $connectionMock->expects($this->any())->method('quoteInto')->will($this->returnValue('query'));
         $this->select->expects($this->any())->method('getConnection')->willReturn($connectionMock);
         $this->connection->expects($this->any())->method('insertOnDuplicate')->willReturnSelf();
         $this->connection->expects($this->any())->method('delete')->willReturnSelf();
         $this->connection->expects($this->any())->method('quoteInto')->willReturn('');
         $this->connection->expects($this->any())->method('fetchAll')->will($this->returnValue($entityAttributes));
-        $this->resource = $this->createPartialMock(
+        $this->resource = $this->getMock(
             \Magento\Framework\App\ResourceConnection::class,
-            ['getConnection', 'getTableName']
+            ['getConnection', 'getTableName'],
+            [],
+            '',
+            false
         );
         $this->resource->expects($this->any())->method('getConnection')->will($this->returnValue($this->connection));
         $this->resource->expects($this->any())->method('getTableName')->will($this->returnValue('tableName'));
@@ -137,8 +162,8 @@ class GroupedTest extends \Magento\ImportExport\Test\Unit\Model\Import\AbstractI
                 'links' => $this->links
             ]
         );
-        $metadataPoolMock = $this->createMock(\Magento\Framework\EntityManager\MetadataPool::class);
-        $entityMetadataMock = $this->createMock(\Magento\Framework\EntityManager\EntityMetadata::class);
+        $metadataPoolMock = $this->getMock(\Magento\Framework\EntityManager\MetadataPool::class, [], [], '', false);
+        $entityMetadataMock = $this->getMock(\Magento\Framework\EntityManager\EntityMetadata::class, [], [], '', false);
         $metadataPoolMock->expects($this->any())
             ->method('getMetadata')
             ->with(\Magento\Catalog\Api\Data\ProductInterface::class)
@@ -161,7 +186,7 @@ class GroupedTest extends \Magento\ImportExport\Test\Unit\Model\Import\AbstractI
      * @param array $skus
      * @param array $bunch
      *
-     * @dataProvider saveDataProvider
+     * @dataProvider testSaveDataProvider
      */
     public function testSaveData($skus, $bunch)
     {
@@ -185,33 +210,33 @@ class GroupedTest extends \Magento\ImportExport\Test\Unit\Model\Import\AbstractI
      *
      * @return array
      */
-    public function saveDataProvider()
+    public function testSaveDataProvider()
     {
         return [
             [
                 'skus' => [
                     'newSku' => [
                         'sku_assoc1' => ['entity_id' => 1],
-                        'productsku' => ['entity_id' => 3, 'attr_set_code' => 'Default', 'type_id' => 'grouped']
+                        'productSku' => ['entity_id' => 3, 'attr_set_code' => 'Default', 'type_id' => 'grouped']
                     ],
                     'oldSku' => ['sku_assoc2' => ['entity_id' => 2]]
                 ],
                 'bunch' => [
                     'associated_skus' => 'sku_assoc1=1, sku_assoc2=2',
-                    'sku' => 'productsku',
+                    'sku' => 'productSku',
                     'product_type' => 'grouped'
                 ]
             ],
             [
                 'skus' => [
                     'newSku' => [
-                        'productsku' => ['entity_id' => 1, 'attr_set_code' => 'Default', 'type_id' => 'grouped']
+                        'productSku' => ['entity_id' => 1, 'attr_set_code' => 'Default', 'type_id' => 'grouped']
                     ],
                     'oldSku' => []
                 ],
                 'bunch' => [
                     'associated_skus' => '',
-                    'sku' => 'productsku',
+                    'sku' => 'productSku',
                     'product_type' => 'grouped'
                 ]
             ],
@@ -227,13 +252,13 @@ class GroupedTest extends \Magento\ImportExport\Test\Unit\Model\Import\AbstractI
                 'skus' => [
                     'newSku' => [
                         'sku_assoc1' => ['entity_id' => 1],
-                        'productsku' => ['entity_id' => 3, 'attr_set_code' => 'Default', 'type_id' => 'grouped']
+                        'productSku' => ['entity_id' => 3, 'attr_set_code' => 'Default', 'type_id' => 'grouped']
                     ],
                     'oldSku' => []
                 ],
                 'bunch' => [
                     'associated_skus' => 'sku_assoc1=1',
-                    'sku' => 'productsku',
+                    'sku' => 'productSku',
                     'product_type' => 'simple'
                 ]
             ]
@@ -247,7 +272,7 @@ class GroupedTest extends \Magento\ImportExport\Test\Unit\Model\Import\AbstractI
     {
         $this->entityModel->expects($this->once())->method('getNewSku')->will($this->returnValue([
             'sku_assoc1' => ['entity_id' => 1],
-            'productsku' => ['entity_id' => 2, 'attr_set_code' => 'Default', 'type_id' => 'grouped']
+            'productSku' => ['entity_id' => 2, 'attr_set_code' => 'Default', 'type_id' => 'grouped']
         ]));
         $this->entityModel->expects($this->once())->method('getOldSku')->will($this->returnValue([
             'sku_assoc2' => ['entity_id' => 3]
@@ -257,7 +282,7 @@ class GroupedTest extends \Magento\ImportExport\Test\Unit\Model\Import\AbstractI
 
         $bunch = [[
             'associated_skus' => 'sku_assoc1=1, sku_assoc2=2',
-            'sku' => 'productsku',
+            'sku' => 'productSku',
             'product_type' => 'grouped'
         ]];
         $this->entityModel->expects($this->at(2))->method('getNextBunch')->will($this->returnValue($bunch));

@@ -5,7 +5,7 @@
  */
 namespace Magento\Store\Model\App;
 
-class EmulationTest extends \PHPUnit\Framework\TestCase
+class EmulationTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\Store\Model\App\Emulation
@@ -19,11 +19,11 @@ class EmulationTest extends \PHPUnit\Framework\TestCase
     public function testEnvironmentEmulation()
     {
         $this->_model = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()
-            ->create(\Magento\Store\Model\App\Emulation::class);
+            ->create('Magento\Store\Model\App\Emulation');
         \Magento\TestFramework\Helper\Bootstrap::getInstance()
             ->loadArea(\Magento\Backend\App\Area\FrontNameResolver::AREA_CODE);
         $design = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()
-            ->get(\Magento\Framework\View\DesignInterface::class);
+            ->get('Magento\Framework\View\DesignInterface');
 
         $this->_model->startEnvironmentEmulation(1);
         $this->_model->stopEnvironmentEmulation();

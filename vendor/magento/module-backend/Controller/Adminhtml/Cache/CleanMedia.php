@@ -12,13 +12,6 @@ use Magento\Framework\Controller\ResultFactory;
 class CleanMedia extends \Magento\Backend\Controller\Adminhtml\Cache
 {
     /**
-     * Authorization level of a basic admin session
-     *
-     * @see _isAllowed()
-     */
-    const ADMIN_RESOURCE = 'Magento_Backend::flush_js_css';
-
-    /**
      * Clean JS/css files cache
      *
      * @return \Magento\Backend\Model\View\Result\Redirect
@@ -26,14 +19,13 @@ class CleanMedia extends \Magento\Backend\Controller\Adminhtml\Cache
     public function execute()
     {
         try {
-            $this->_objectManager->get(\Magento\Framework\View\Asset\MergeService::class)->cleanMergedJsCss();
+            $this->_objectManager->get('Magento\Framework\View\Asset\MergeService')->cleanMergedJsCss();
             $this->_eventManager->dispatch('clean_media_cache_after');
-            $this->messageManager->addSuccessMessage(__('The JavaScript/CSS cache has been cleaned.'));
+            $this->messageManager->addSuccess(__('The JavaScript/CSS cache has been cleaned.'));
         } catch (LocalizedException $e) {
-            $this->messageManager->addErrorMessage($e->getMessage());
+            $this->messageManager->addError($e->getMessage());
         } catch (\Exception $e) {
-            $this->messageManager
-                ->addExceptionMessage($e, __('An error occurred while clearing the JavaScript/CSS cache.'));
+            $this->messageManager->addException($e, __('An error occurred while clearing the JavaScript/CSS cache.'));
         }
 
         /** @var \Magento\Backend\Model\View\Result\Redirect $resultRedirect */

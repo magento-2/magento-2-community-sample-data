@@ -5,34 +5,24 @@
  */
 namespace Magento\Catalog\Model\Indexer\Category\Flat\Plugin;
 
-use Magento\Framework\Model\ResourceModel\Db\AbstractDb;
-use Magento\Framework\Model\AbstractModel;
-use Magento\Framework\Indexer\IndexerRegistry;
-use Magento\Catalog\Model\Indexer\Category\Flat\State;
-
 class StoreGroup
 {
-    /**
-     * @var bool
-     */
-    private $needInvalidating;
-
-    /**
-     * @var IndexerRegistry
-     */
+    /** @var \Magento\Framework\Indexer\IndexerRegistry */
     protected $indexerRegistry;
 
     /**
-     * @var State
+     * @var \Magento\Catalog\Model\Indexer\Category\Flat\State
      */
     protected $state;
 
     /**
-     * @param IndexerRegistry $indexerRegistry
-     * @param State $state
+     * @param \Magento\Framework\Indexer\IndexerRegistry $indexerRegistry
+     * @param \Magento\Catalog\Model\Indexer\Category\Flat\State $state
      */
-    public function __construct(IndexerRegistry $indexerRegistry, State $state)
-    {
+    public function __construct(
+        \Magento\Framework\Indexer\IndexerRegistry $indexerRegistry,
+        \Magento\Catalog\Model\Indexer\Category\Flat\State $state
+    ) {
         $this->indexerRegistry = $indexerRegistry;
         $this->state = $state;
     }
@@ -40,41 +30,31 @@ class StoreGroup
     /**
      * Validate changes for invalidating indexer
      *
-     * @param AbstractModel $group
+     * @param \Magento\Framework\Model\AbstractModel $group
      * @return bool
      */
-    protected function validate(AbstractModel $group)
+    protected function validate(\Magento\Framework\Model\AbstractModel $group)
     {
         return $group->dataHasChangedFor('root_category_id') && !$group->isObjectNew();
     }
 
     /**
-     * Check if need invalidate flat category indexer
+     * @param \Magento\Framework\Model\ResourceModel\Db\AbstractDb $subject
+     * @param callable $proceed
+     * @param \Magento\Framework\Model\AbstractModel $group
      *
-     * @param AbstractDb $subject
-     * @param AbstractModel $group
-     *
-     * @return void
+     * @return \Magento\Framework\Model\ResourceModel\Db\AbstractDb
      * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      */
-    public function beforeSave(AbstractDb $subject, AbstractModel $group)
-    {
-        $this->needInvalidating = $this->validate($group);
-    }
-
-    /**
-     * Invalidate flat category indexer if root category changed for store group
-     *
-     * @param AbstractDb $subject
-     * @param AbstractDb $objectResource
-     *
-     * @return AbstractDb
-     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
-     */
-    public function afterSave(AbstractDb $subject, AbstractDb $objectResource)
-    {
-        if ($this->needInvalidating && $this->state->isFlatEnabled()) {
-            $this->indexerRegistry->get(State::INDEXER_ID)->invalidate();
+    public function aroundSave(
+        \Magento\Framework\Model\ResourceModel\Db\AbstractDb $subject,
+        \Closure $proceed,
+        \Magento\Framework\Model\AbstractModel $group
+    ) {
+        $needInvalidating = $this->validate($group);
+        $objectResource = $proceed($group);
+        if ($needInvalidating && $this->state->isFlatEnabled()) {
+            $this->indexerRegistry->get(\Magento\Catalog\Model\Indexer\Category\Flat\State::INDEXER_ID)->invalidate();
         }
 
         return $objectResource;

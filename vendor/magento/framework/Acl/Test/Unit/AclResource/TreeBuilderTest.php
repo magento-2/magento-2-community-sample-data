@@ -5,7 +5,7 @@
  */
 namespace Magento\Framework\Acl\Test\Unit\AclResource;
 
-class TreeBuilderTest extends \PHPUnit\Framework\TestCase
+class TreeBuilderTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\Framework\Acl\AclResource\TreeBuilder

@@ -5,10 +5,6 @@
  */
 namespace Magento\Framework\View\Layout;
 
-/**
- * Interface \Magento\Framework\View\Layout\GeneratorInterface
- *
- */
 interface GeneratorInterface
 {
     /**

@@ -29,11 +29,6 @@ class FormElementErrors extends AbstractHelper
     protected $attributes = [];
 
     /**
-     * @var bool Whether or not to translate error messages during render.
-     */
-    protected $translateErrorMessages = true;
-
-    /**
      * Invoke helper as functor
      *
      * Proxies to {@link render()} if an element is passed.
@@ -44,7 +39,7 @@ class FormElementErrors extends AbstractHelper
      */
     public function __invoke(ElementInterface $element = null, array $attributes = [])
     {
-        if (! $element) {
+        if (!$element) {
             return $this;
         }
 
@@ -53,10 +48,6 @@ class FormElementErrors extends AbstractHelper
 
     /**
      * Render validation errors for the provided $element
-     *
-     * If {@link $translateErrorMessages} is true, and a translator is
-     * composed, messages retrieved from the element will be translated; if
-     * either is not the case, they will not.
      *
      * @param  ElementInterface $element
      * @param  array $attributes
@@ -69,9 +60,7 @@ class FormElementErrors extends AbstractHelper
         if (empty($messages)) {
             return '';
         }
-
-        $messages = $messages instanceof Traversable ? iterator_to_array($messages) : $messages;
-        if (! is_array($messages)) {
+        if (!is_array($messages) && !$messages instanceof Traversable) {
             throw new Exception\DomainException(sprintf(
                 '%s expects that $element->getMessages() will return an array or Traversable; received "%s"',
                 __METHOD__,
@@ -79,22 +68,27 @@ class FormElementErrors extends AbstractHelper
             ));
         }
 
-        // Flatten message array
-        $messages = $this->flattenMessages($messages);
-        if (empty($messages)) {
-            return '';
-        }
-
         // Prepare attributes for opening tag
         $attributes = array_merge($this->attributes, $attributes);
         $attributes = $this->createAttributesString($attributes);
-        if (! empty($attributes)) {
+        if (!empty($attributes)) {
             $attributes = ' ' . $attributes;
+        }
+
+        // Flatten message array
+        $escapeHtml      = $this->getEscapeHtmlHelper();
+        $messagesToPrint = [];
+        array_walk_recursive($messages, function ($item) use (&$messagesToPrint, $escapeHtml) {
+            $messagesToPrint[] = $escapeHtml($item);
+        });
+
+        if (empty($messagesToPrint)) {
+            return '';
         }
 
         // Generate markup
         $markup  = sprintf($this->getMessageOpenFormat(), $attributes);
-        $markup .= implode($this->getMessageSeparatorString(), $messages);
+        $markup .= implode($this->getMessageSeparatorString(), $messagesToPrint);
         $markup .= $this->getMessageCloseString();
 
         return $markup;
@@ -186,57 +180,5 @@ class FormElementErrors extends AbstractHelper
     public function getMessageSeparatorString()
     {
         return $this->messageSeparatorString;
-    }
-
-    /**
-     * Set the flag detailing whether or not to translate error messages.
-     *
-     * @param bool $flag
-     * @return self
-     */
-    public function setTranslateMessages($flag)
-    {
-        $this->translateErrorMessages = (bool) $flag;
-        return $this;
-    }
-
-    /**
-     * @param array $messages
-     * @return array
-     */
-    private function flattenMessages(array $messages)
-    {
-        return $this->translateErrorMessages && $this->getTranslator()
-            ? $this->flattenMessagesWithTranslator($messages)
-            : $this->flattenMessagesWithoutTranslator($messages);
-    }
-
-    /**
-     * @param array $messages
-     * @return array
-     */
-    private function flattenMessagesWithoutTranslator(array $messages)
-    {
-        $messagesToPrint = [];
-        array_walk_recursive($messages, function ($item) use (&$messagesToPrint) {
-            $messagesToPrint[] = $item;
-        });
-        return $messagesToPrint;
-    }
-
-    /**
-     * @param array $messages
-     * @return array
-     */
-    private function flattenMessagesWithTranslator(array $messages)
-    {
-        $translator      = $this->getTranslator();
-        $textDomain      = $this->getTranslatorTextDomain();
-        $messagesToPrint = [];
-        $messageCallback = function ($item) use (&$messagesToPrint, $translator, $textDomain) {
-            $messagesToPrint[] = $translator->translate($item, $textDomain);
-        };
-        array_walk_recursive($messages, $messageCallback);
-        return $messagesToPrint;
     }
 }

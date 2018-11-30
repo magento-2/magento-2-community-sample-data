@@ -10,7 +10,7 @@ use Magento\Framework\Exception\NoSuchEntityException;
 use Magento\Framework\Phrase;
 use Magento\Store\Model\ScopeValidator;
 
-class ScopeValidatorTest extends \PHPUnit\Framework\TestCase
+class ScopeValidatorTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var ScopeValidator
@@ -24,7 +24,7 @@ class ScopeValidatorTest extends \PHPUnit\Framework\TestCase
 
     protected function setUp()
     {
-        $this->scopeResolverPool = $this->getMockBuilder(\Magento\Framework\App\ScopeResolverPool::class)
+        $this->scopeResolverPool = $this->getMockBuilder('Magento\Framework\App\ScopeResolverPool')
             ->disableOriginalConstructor()
             ->getMock();
 
@@ -46,13 +46,13 @@ class ScopeValidatorTest extends \PHPUnit\Framework\TestCase
         $scope = 'websites';
         $scopeId = 1;
 
-        $scopeObject = $this->getMockBuilder(\Magento\Framework\App\ScopeInterface::class)
+        $scopeObject = $this->getMockBuilder('Magento\Framework\App\ScopeInterface')
             ->getMockForAbstractClass();
         $scopeObject->expects($this->once())
             ->method('getId')
             ->willReturn(false);
 
-        $scopeResolver = $this->getMockBuilder(\Magento\Framework\App\ScopeResolverInterface::class)
+        $scopeResolver = $this->getMockBuilder('Magento\Framework\App\ScopeResolverInterface')
             ->getMockForAbstractClass();
         $scopeResolver->expects($this->once())
             ->method('getScope')

@@ -61,6 +61,7 @@ class Save extends \Magento\Backend\App\Action
         $this->pageRepository = $pageRepository
             ?: \Magento\Framework\App\ObjectManager::getInstance()
                 ->get(\Magento\Cms\Api\PageRepositoryInterface::class);
+
         parent::__construct($context);
     }
 
@@ -89,10 +90,12 @@ class Save extends \Magento\Backend\App\Action
 
             $id = $this->getRequest()->getParam('page_id');
             if ($id) {
-                try {
-                    $model = $this->pageRepository->getById($id);
-                } catch (LocalizedException $e) {
+                $model->load($id);
+                if (!$model->getId()) {
                     $this->messageManager->addErrorMessage(__('This page no longer exists.'));
+                    /** \Magento\Backend\Model\View\Result\Redirect $resultRedirect */
+                    $resultRedirect = $this->resultRedirectFactory->create();
+
                     return $resultRedirect->setPath('*/*/');
                 }
             }
@@ -110,16 +113,16 @@ class Save extends \Magento\Backend\App\Action
 
             try {
                 $this->pageRepository->save($model);
-                $this->messageManager->addSuccessMessage(__('You saved the page.'));
+                $this->messageManager->addSuccess(__('You saved the page.'));
                 $this->dataPersistor->clear('cms_page');
                 if ($this->getRequest()->getParam('back')) {
                     return $resultRedirect->setPath('*/*/edit', ['page_id' => $model->getId(), '_current' => true]);
                 }
                 return $resultRedirect->setPath('*/*/');
             } catch (LocalizedException $e) {
-                $this->messageManager->addExceptionMessage($e->getPrevious() ?:$e);
+                $this->messageManager->addError($e->getMessage());
             } catch (\Exception $e) {
-                $this->messageManager->addExceptionMessage($e, __('Something went wrong while saving the page.'));
+                $this->messageManager->addException($e, __('Something went wrong while saving the page.'));
             }
 
             $this->dataPersistor->set('cms_page', $data);

@@ -34,19 +34,16 @@ class PayflowTest extends \Magento\TestFramework\TestCase\AbstractController
      */
     private $order;
 
-    /**
-     * @inheritdoc
-     */
     protected function setUp()
     {
-        parent::setUp();
+        parent::setup();
 
         /** @var FilterBuilder $filterBuilder */
         $filterBuilder = $this->_objectManager->get(FilterBuilder::class);
         $filters = [
             $filterBuilder->setField(OrderInterface::INCREMENT_ID)
                 ->setValue('100000001')
-                ->create(),
+                ->create()
         ];
 
         /** @var SearchCriteriaBuilder $searchCriteriaBuilder */
@@ -63,7 +60,8 @@ class PayflowTest extends \Magento\TestFramework\TestCase\AbstractController
         $this->order->getPayment()->setMethod(Config::METHOD_PAYFLOWLINK);
 
         /** @var $quote \Magento\Quote\Model\Quote */
-        $quote = $this->_objectManager->create(Quote::class)->setStoreid($this->order->getStoreid());
+        $quote = $this->_objectManager->create(Quote::class)
+            ->setStoreid($this->order->getStoreid());
 
         $this->quoteRepository = $this->_objectManager->get(CartRepositoryInterface::class);
         $this->quoteRepository->save($quote);
@@ -83,7 +81,7 @@ class PayflowTest extends \Magento\TestFramework\TestCase\AbstractController
 
     public function testReturnurlActionIsContentGenerated()
     {
-        $checkoutHelper = $this->_objectManager->create(\Magento\Paypal\Helper\Checkout::class);
+        $checkoutHelper = $this->_objectManager->create('Magento\Paypal\Helper\Checkout');
         $checkoutHelper->cancelCurrentOrder('test');
         $this->dispatch('paypal/payflow/returnurl');
         $this->assertContains("goToSuccessPage = ''", $this->getResponse()->getBody());
@@ -99,9 +97,9 @@ class PayflowTest extends \Magento\TestFramework\TestCase\AbstractController
         // Check P3P header
         $headerConstraints = [];
         foreach ($this->getResponse()->getHeaders() as $header) {
-            $headerConstraints[] = new \PHPUnit\Framework\Constraint\IsEqual($header->getFieldName());
+            $headerConstraints[] = new \PHPUnit_Framework_Constraint_IsEqual($header->getFieldName());
         }
-        $constraint = new \PHPUnit\Framework\Constraint\LogicalOr();
+        $constraint = new \PHPUnit_Framework_Constraint_Or();
         $constraint->setConstraints($headerConstraints);
         $this->assertThat('P3P', $constraint);
     }
@@ -109,13 +107,14 @@ class PayflowTest extends \Magento\TestFramework\TestCase\AbstractController
     /**
      * @magentoConfigFixture current_store payment/paypal_payflow/active 1
      * @magentoConfigFixture current_store paypal/general/business_account merchant_2012050718_biz@example.com
-     * @return void
      */
     public function testCancelAction()
     {
         $orderId = $this->order->getEntityId();
+
         /** @var \Magento\Sales\Model\Order $order */
         $order = $this->orderRepository->get($orderId);
+
         /** @var $quote \Magento\Quote\Model\Quote */
         $quote = $this->quoteRepository->get($order->getQuoteId());
 

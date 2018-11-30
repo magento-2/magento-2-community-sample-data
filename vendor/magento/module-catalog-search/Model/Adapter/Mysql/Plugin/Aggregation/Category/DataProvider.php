@@ -8,17 +8,12 @@ namespace Magento\CatalogSearch\Model\Adapter\Mysql\Plugin\Aggregation\Category;
 use Magento\Catalog\Model\Layer\Resolver;
 use Magento\Framework\App\ResourceConnection;
 use Magento\Framework\App\ScopeResolverInterface;
+use Magento\Framework\DB\Adapter\AdapterInterface;
 use Magento\Framework\DB\Ddl\Table;
 use Magento\Framework\DB\Select;
 use Magento\Framework\Search\Request\BucketInterface;
 use Magento\Framework\Search\Request\Dimension;
-use Magento\Framework\App\ObjectManager;
-use Magento\Framework\Search\Request\IndexScopeResolverInterface as TableResolver;
-use Magento\Catalog\Model\Indexer\Category\Product\AbstractAction;
 
-/**
- * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
- */
 class DataProvider
 {
     /**
@@ -39,27 +34,19 @@ class DataProvider
     protected $categoryFactory;
 
     /**
-     * @var TableResolver
-     */
-    private $tableResolver;
-
-    /**
      * DataProvider constructor.
      * @param ResourceConnection $resource
      * @param ScopeResolverInterface $scopeResolver
      * @param Resolver $layerResolver
-     * @param TableResolver|null $tableResolver
      */
     public function __construct(
         ResourceConnection $resource,
         ScopeResolverInterface $scopeResolver,
-        Resolver $layerResolver,
-        TableResolver $tableResolver = null
+        Resolver $layerResolver
     ) {
         $this->resource = $resource;
         $this->scopeResolver = $scopeResolver;
         $this->layer = $layerResolver->get();
-        $this->tableResolver = $tableResolver ?: ObjectManager::getInstance()->get(TableResolver::class);
     }
 
     /**
@@ -83,18 +70,9 @@ class DataProvider
             $currentScopeId = $this->scopeResolver->getScope($dimensions['scope']->getValue())->getId();
             $currentCategory = $this->layer->getCurrentCategory();
 
-            $catalogCategoryProductDimension = new Dimension(\Magento\Store\Model\Store::ENTITY, $currentScopeId);
-
-            $catalogCategoryProductTableName = $this->tableResolver->resolve(
-                AbstractAction::MAIN_INDEX_TABLE,
-                [
-                    $catalogCategoryProductDimension
-                ]
-            );
-
             $derivedTable = $this->resource->getConnection()->select();
             $derivedTable->from(
-                ['main_table' => $catalogCategoryProductTableName],
+                ['main_table' => $this->resource->getTableName('catalog_category_product_index')],
                 [
                     'value' => 'category_id'
                 ]

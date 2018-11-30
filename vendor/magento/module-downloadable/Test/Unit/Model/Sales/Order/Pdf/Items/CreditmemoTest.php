@@ -5,10 +5,7 @@
  */
 namespace Magento\Downloadable\Test\Unit\Model\Sales\Order\Pdf\Items;
 
-/**
- * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
- */
-class CreditmemoTest extends \PHPUnit\Framework\TestCase
+class CreditmemoTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\Downloadable\Model\Sales\Order\Pdf\Items\Creditmemo
@@ -35,26 +32,34 @@ class CreditmemoTest extends \PHPUnit\Framework\TestCase
             ->method('formatPriceTxt')
             ->will($this->returnCallback([$this, 'formatPrice']));
 
-        $this->pdf = $this->createPartialMock(
+        $this->pdf = $this->getMock(
             \Magento\Sales\Model\Order\Pdf\AbstractPdf::class,
-            ['drawLineBlocks', 'getPdf']
+            ['drawLineBlocks', 'getPdf'],
+            [],
+            '',
+            false,
+            false
         );
 
-        $filterManager = $this->createPartialMock(
-            \Magento\Framework\Filter\FilterManager::class,
-            ['stripTags']
+        $filterManager = $this->getMock(
+            'Magento\Framework\Filter\FilterManager',
+            ['stripTags'],
+            [],
+            '',
+            false
         );
         $filterManager->expects($this->any())->method('stripTags')->will($this->returnArgument(0));
 
         $modelConstructorArgs = $objectManager->getConstructArguments(
-            \Magento\Downloadable\Model\Sales\Order\Pdf\Items\Creditmemo::class,
+            'Magento\Downloadable\Model\Sales\Order\Pdf\Items\Creditmemo',
             ['string' => new \Magento\Framework\Stdlib\StringUtils(), 'filterManager' => $filterManager]
         );
 
-        $this->model = $this->getMockBuilder(\Magento\Downloadable\Model\Sales\Order\Pdf\Items\Creditmemo::class)
-            ->setMethods(['getLinks', 'getLinksTitle'])
-            ->setConstructorArgs($modelConstructorArgs)
-            ->getMock();
+        $this->model = $this->getMock(
+            \Magento\Downloadable\Model\Sales\Order\Pdf\Items\Creditmemo::class,
+            ['getLinks', 'getLinksTitle'],
+            $modelConstructorArgs
+        );
 
         $this->model->setOrder($this->order);
         $this->model->setPdf($this->pdf);

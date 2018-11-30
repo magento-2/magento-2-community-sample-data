@@ -5,7 +5,7 @@
  */
 namespace Magento\Framework\Cache\Test\Unit\Frontend\Decorator;
 
-class ProfilerTest extends \PHPUnit\Framework\TestCase
+class ProfilerTest extends \PHPUnit_Framework_TestCase
 {
     protected function setUp()
     {
@@ -37,14 +37,14 @@ class ProfilerTest extends \PHPUnit\Framework\TestCase
         $expectedResult
     ) {
         // Cache frontend setup
-        $frontendMock = $this->createMock(\Magento\Framework\Cache\FrontendInterface::class);
+        $frontendMock = $this->getMock('Magento\Framework\Cache\FrontendInterface');
 
         $frontendMock->expects($this->any())->method('getBackend')->will($this->returnValue($cacheBackend));
 
         $frontendMock->expects($this->any())->method('getLowLevelFrontend')->will($this->returnValue($cacheFrontend));
 
         // Profiler setup
-        $driver = $this->createMock(\Magento\Framework\Profiler\DriverInterface::class);
+        $driver = $this->getMock('Magento\Framework\Profiler\DriverInterface');
         $driver->expects($this->once())->method('start')->with($expectedProfileId, $expectedProfilerTags);
         $driver->expects($this->once())->method('stop')->with($expectedProfileId);
         \Magento\Framework\Profiler::add($driver);
@@ -62,11 +62,8 @@ class ProfilerTest extends \PHPUnit\Framework\TestCase
     public function proxyMethodDataProvider()
     {
         $backend = new \Zend_Cache_Backend_BlackHole();
-        $adaptee = $this->createMock(\Zend_Cache_Core::class);
-        $frontendFactory = function () use ($adaptee) {
-            return $adaptee;
-        };
-        $lowLevelFrontend = new \Magento\Framework\Cache\Frontend\Adapter\Zend($frontendFactory);
+        $adaptee = $this->getMock('Zend_Cache_Core', [], [], '', false);
+        $lowLevelFrontend = new \Magento\Framework\Cache\Frontend\Adapter\Zend($adaptee);
 
         return [
             [
@@ -78,7 +75,7 @@ class ProfilerTest extends \PHPUnit\Framework\TestCase
                 [
                     'group' => 'cache',
                     'operation' => 'cache:test',
-                    'frontend_type' => \Magento\Framework\Cache\Frontend\Adapter\Zend::class,
+                    'frontend_type' => 'Magento\Framework\Cache\Frontend\Adapter\Zend',
                     'backend_type' => 'BlackHole'
                 ],
                 111,
@@ -92,7 +89,7 @@ class ProfilerTest extends \PHPUnit\Framework\TestCase
                 [
                     'group' => 'cache',
                     'operation' => 'cache:load',
-                    'frontend_type' => \Magento\Framework\Cache\Frontend\Adapter\Zend::class,
+                    'frontend_type' => 'Magento\Framework\Cache\Frontend\Adapter\Zend',
                     'backend_type' => 'BlackHole'
                 ],
                 '111'
@@ -106,7 +103,7 @@ class ProfilerTest extends \PHPUnit\Framework\TestCase
                 [
                     'group' => 'cache',
                     'operation' => 'cache:save',
-                    'frontend_type' => \Magento\Framework\Cache\Frontend\Adapter\Zend::class,
+                    'frontend_type' => 'Magento\Framework\Cache\Frontend\Adapter\Zend',
                     'backend_type' => 'BlackHole'
                 ],
                 true
@@ -120,7 +117,7 @@ class ProfilerTest extends \PHPUnit\Framework\TestCase
                 [
                     'group' => 'cache',
                     'operation' => 'cache:remove',
-                    'frontend_type' => \Magento\Framework\Cache\Frontend\Adapter\Zend::class,
+                    'frontend_type' => 'Magento\Framework\Cache\Frontend\Adapter\Zend',
                     'backend_type' => 'BlackHole'
                 ],
                 true
@@ -134,7 +131,7 @@ class ProfilerTest extends \PHPUnit\Framework\TestCase
                 [
                     'group' => 'cache',
                     'operation' => 'cache:clean',
-                    'frontend_type' => \Magento\Framework\Cache\Frontend\Adapter\Zend::class,
+                    'frontend_type' => 'Magento\Framework\Cache\Frontend\Adapter\Zend',
                     'backend_type' => 'BlackHole'
                 ],
                 true

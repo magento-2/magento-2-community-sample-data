@@ -25,6 +25,8 @@ class AssertCartPriceRuleForm extends AbstractConstraint
     protected $skippedFields = [
         'conditions_serialized',
         'actions_serialized',
+        'from_date',
+        'to_date',
         'rule_id'
     ];
 
@@ -35,8 +37,7 @@ class AssertCartPriceRuleForm extends AbstractConstraint
      * @param PromoQuoteEdit $promoQuoteEdit
      * @param FixtureFactory $fixtureFactory
      * @param SalesRule $salesRule
-     * @param SalesRule $salesRuleOrigin [optional]
-     * @param SalesRule $salesRuleAdditional [optional]
+     * @param SalesRule $salesRuleOrigin
      * @return void
      */
     public function processAssert(
@@ -44,8 +45,7 @@ class AssertCartPriceRuleForm extends AbstractConstraint
         PromoQuoteEdit $promoQuoteEdit,
         FixtureFactory $fixtureFactory,
         SalesRule $salesRule,
-        SalesRule $salesRuleOrigin = null,
-        SalesRule $salesRuleAdditional = null
+        SalesRule $salesRuleOrigin = null
     ) {
         $filter = [
             'name' => $salesRule->hasData('name') ? $salesRule->getName() : $salesRuleOrigin->getName(),
@@ -61,9 +61,6 @@ class AssertCartPriceRuleForm extends AbstractConstraint
         $fixtureData = $salesRuleOrigin != null
             ? array_merge($salesRuleOrigin->getData(), $salesRule->getData())
             : $salesRule->getData();
-        if ($salesRuleAdditional) {
-            $fixtureData = array_merge($fixtureData, $salesRuleAdditional->getData());
-        }
         $dataDiff = $this->verify($fixtureData, $formData);
         \PHPUnit_Framework_Assert::assertTrue(
             empty($dataDiff),

@@ -3,7 +3,6 @@
  * Copyright © Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
-declare(strict_types=1);
 
 namespace Magento\Framework\File;
 
@@ -60,24 +59,24 @@ class Mime
     ];
 
     /**
-     * List of mime types that can be defined by file extension
+     * List of mime types that can be defined by file extension.
      *
      * @var array $defineByExtensionList
      */
     private $defineByExtensionList = [
-        'txt'  => 'text/plain',
-        'htm'  => 'text/html',
+        'txt' => 'text/plain',
+        'htm' => 'text/html',
         'html' => 'text/html',
-        'php'  => 'text/html',
-        'css'  => 'text/css',
-        'js'   => 'application/javascript',
+        'php' => 'text/html',
+        'css' => 'text/css',
+        'js' => 'application/javascript',
         'json' => 'application/json',
         'xml'  => 'application/xml',
-        'svg' => 'image/svg+xml'
+        'svg' => 'image/svg+xml',
     ];
 
     /**
-     * Get mime type of a file
+     * Get mime type of a file.
      *
      * @param string $file
      * @return string
@@ -112,7 +111,7 @@ class Mime
      * @param string $file
      * @return string
      */
-    private function getNativeMimeType(string $file): string
+    private function getNativeMimeType($file)
     {
         $extension = $this->getFileExtension($file);
         $result = mime_content_type($file);
@@ -126,12 +125,12 @@ class Mime
     }
 
     /**
-     * Get file extension by file name
+     * Get file extension by file name.
      *
      * @param string $file
      * @return string
      */
-    private function getFileExtension(string $file): string
+    private function getFileExtension($file)
     {
         return strtolower(pathinfo($file, PATHINFO_EXTENSION));
     }

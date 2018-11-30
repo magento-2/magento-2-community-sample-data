@@ -10,7 +10,7 @@ use \Magento\Sales\Model\CronJob\AggregateSalesReportBestsellersData;
 /**
  * Tests Magento\Sales\Model\CronJob\AggregateSalesReportBestsellersDataTest
  */
-class AggregateSalesReportBestsellersDataTest extends \PHPUnit\Framework\TestCase
+class AggregateSalesReportBestsellersDataTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\Framework\Locale\ResolverInterface|\PHPUnit_Framework_MockObject_MockObject
@@ -34,16 +34,16 @@ class AggregateSalesReportBestsellersDataTest extends \PHPUnit\Framework\TestCas
 
     protected function setUp()
     {
-        $this->localeResolverMock = $this->getMockBuilder(\Magento\Framework\Locale\ResolverInterface::class)
+        $this->localeResolverMock = $this->getMockBuilder('Magento\Framework\Locale\ResolverInterface')
             ->disableOriginalConstructor()
             ->getMock();
 
         $this->bestsellersFactoryMock =
-            $this->getMockBuilder(\Magento\Sales\Model\ResourceModel\Report\BestsellersFactory::class)
+            $this->getMockBuilder('Magento\Sales\Model\ResourceModel\Report\BestsellersFactory')
             ->disableOriginalConstructor()
             ->setMethods(['create'])
             ->getMock();
-        $this->localeDateMock = $this->getMockBuilder(\Magento\Framework\Stdlib\DateTime\TimezoneInterface::class)
+        $this->localeDateMock = $this->getMockBuilder('Magento\Framework\Stdlib\DateTime\TimezoneInterface')
             ->disableOriginalConstructor()
             ->getMock();
 
@@ -57,7 +57,7 @@ class AggregateSalesReportBestsellersDataTest extends \PHPUnit\Framework\TestCas
     public function testExecute()
     {
         $date = $this->setupAggregate();
-        $bestsellersMock = $this->getMockBuilder(\Magento\Sales\Model\ResourceModel\Report\Bestsellers::class)
+        $bestsellersMock = $this->getMockBuilder('Magento\Sales\Model\ResourceModel\Report\Bestsellers')
             ->disableOriginalConstructor()
             ->getMock();
         $bestsellersMock->expects($this->once())

@@ -5,6 +5,7 @@
  */
 namespace Magento\Paypal\Controller;
 
+use Magento\Framework\App\ObjectManager;
 use Magento\Sales\Api\PaymentFailuresInterface;
 
 /**
@@ -66,14 +67,14 @@ abstract class Payflow extends \Magento\Framework\App\Action\Action
         \Psr\Log\LoggerInterface $logger,
         PaymentFailuresInterface $paymentFailures = null
     ) {
-        parent::__construct($context);
-
         $this->_checkoutSession = $checkoutSession;
         $this->_orderFactory = $orderFactory;
         $this->_logger = $logger;
         $this->_payflowModelFactory = $payflowModelFactory;
         $this->_checkoutHelper = $checkoutHelper;
-        $this->paymentFailures = $paymentFailures ? : $this->_objectManager->get(PaymentFailuresInterface::class);
+        $this->paymentFailures = $paymentFailures ? : ObjectManager::getInstance()
+            ->get(PaymentFailuresInterface::class);
+        parent::__construct($context);
     }
 
     /**
@@ -87,7 +88,7 @@ abstract class Payflow extends \Magento\Framework\App\Action\Action
         $errorMsg = trim(strip_tags($errorMsg));
         $order = $this->_checkoutSession->getLastRealOrder();
         if ($order->getId()) {
-            $this->paymentFailures->handle((int)$order->getQuoteId(), $errorMsg);
+            $this->paymentFailures->handle($order->getQuoteId(), $errorMsg);
         }
 
         $gotoSection = false;

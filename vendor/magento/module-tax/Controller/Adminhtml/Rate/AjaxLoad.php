@@ -14,8 +14,7 @@ class AjaxLoad extends \Magento\Tax\Controller\Adminhtml\Rate
     /**
      * Json needed for the Ajax Edit Form
      *
-     * @return \Magento\Framework\Controller\Result\Json
-     * @throws \InvalidArgumentException
+     * @return void
      */
     public function execute()
     {
@@ -24,13 +23,13 @@ class AjaxLoad extends \Magento\Tax\Controller\Adminhtml\Rate
             /* @var \Magento\Tax\Api\Data\TaxRateInterface */
             $taxRateDataObject = $this->_taxRateRepository->get($rateId);
             /* @var array */
-            $resultArray = $this->_taxRateConverter->createArrayFromServiceObject($taxRateDataObject, true);
+            $resultArray= $this->_taxRateConverter->createArrayFromServiceObject($taxRateDataObject, true);
 
             $responseContent = [
                 'success' => true,
                 'error_message' => '',
-                'result' => $resultArray,
-            ];
+                'result'=>$resultArray,
+                ];
         } catch (NoSuchEntityException $e) {
             $responseContent = [
                 'success' => false,

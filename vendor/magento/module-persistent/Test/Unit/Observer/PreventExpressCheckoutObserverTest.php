@@ -5,10 +5,7 @@
  */
 namespace Magento\Persistent\Test\Unit\Observer;
 
-/**
- * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
- */
-class PreventExpressCheckoutObserverTest extends \PHPUnit\Framework\TestCase
+class PreventExpressCheckoutObserverTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\Persistent\Observer\PreventExpressCheckoutObserver
@@ -66,37 +63,37 @@ class PreventExpressCheckoutObserverTest extends \PHPUnit\Framework\TestCase
         $this->_observer->setEvent($this->_event);
 
         $this->_customerSession = $this->getMockBuilder(
-            \Magento\Customer\Model\Session::class
+            'Magento\Customer\Model\Session'
         )->disableOriginalConstructor()->setMethods(
             ['isLoggedIn']
         )->getMock();
 
         $this->_persistentSession = $this->getMockBuilder(
-            \Magento\Persistent\Helper\Session::class
+            'Magento\Persistent\Helper\Session'
         )->disableOriginalConstructor()->setMethods(
             ['isPersistent']
         )->getMock();
 
         $this->_messageManager = $this->getMockBuilder(
-            \Magento\Framework\Message\ManagerInterface::class
+            'Magento\Framework\Message\ManagerInterface'
         )->disableOriginalConstructor()->setMethods(
             []
         )->getMock();
 
         $this->_url = $this->getMockBuilder(
-            \Magento\Framework\UrlInterface::class
+            'Magento\Framework\UrlInterface'
         )->disableOriginalConstructor()->setMethods(
             []
         )->getMock();
 
         $this->_expressRedirectHelper = $this->getMockBuilder(
-            \Magento\Checkout\Helper\ExpressRedirect::class
+            'Magento\Checkout\Helper\ExpressRedirect'
         )->disableOriginalConstructor()->setMethods(
             ['redirectLogin']
         )->getMock();
 
         $this->_model = $helper->getObject(
-            \Magento\Persistent\Observer\PreventExpressCheckoutObserver::class,
+            'Magento\Persistent\Observer\PreventExpressCheckoutObserver',
             [
                 'customerSession' => $this->_customerSession,
                 'persistentSession' => $this->_persistentSession,
@@ -122,7 +119,7 @@ class PreventExpressCheckoutObserverTest extends \PHPUnit\Framework\TestCase
         $this->_event->setControllerAction(null);
         $this->_model->execute($this->_observer);
 
-        $this->_event->setControllerAction(new \stdClass());
+        $this->_event->setControllerAction(new \StdClass());
         $this->_model->execute($this->_observer);
 
         $expectedActionName = 'realAction';
@@ -130,7 +127,7 @@ class PreventExpressCheckoutObserverTest extends \PHPUnit\Framework\TestCase
         $request = new \Magento\Framework\DataObject();
         $request->setActionName($unexpectedActionName);
         $expressRedirectMock = $this->getMockBuilder(
-            \Magento\Checkout\Controller\Express\RedirectLoginInterface::class
+            'Magento\Checkout\Controller\Express\RedirectLoginInterface'
         )->disableOriginalConstructor()->setMethods(
             [
                 'getActionFlagList',

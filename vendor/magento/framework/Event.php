@@ -88,7 +88,7 @@ class Event extends \Magento\Framework\DataObject
      */
     public function getName()
     {
-        return $this->_data['name'] ?? null;
+        return isset($this->_data['name']) ? $this->_data['name'] : null;
     }
 
     /**

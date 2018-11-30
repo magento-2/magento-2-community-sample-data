@@ -12,7 +12,7 @@ use Magento\Braintree\Ui\Component\Report\Listing\Column\TransactionType;
 /**
  * Class CheckColumnOptionSourceTest
  */
-class CheckColumnOptionSourceTest extends \PHPUnit\Framework\TestCase
+class CheckColumnOptionSourceTest extends \PHPUnit_Framework_TestCase
 {
     public function testPaymentTypeSource()
     {

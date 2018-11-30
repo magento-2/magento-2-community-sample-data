@@ -17,7 +17,7 @@ class Chooser extends \Magento\SalesRule\Controller\Adminhtml\Promo\Quote
     {
         $uniqId = $this->getRequest()->getParam('uniq_id');
         $chooserBlock = $this->_view->getLayout()->createBlock(
-            \Magento\SalesRule\Block\Adminhtml\Promo\Widget\Chooser::class,
+            'Magento\SalesRule\Block\Adminhtml\Promo\Widget\Chooser',
             '',
             ['data' => ['id' => $uniqId]]
         );

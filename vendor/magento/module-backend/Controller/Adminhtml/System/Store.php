@@ -4,6 +4,8 @@
  * See COPYING.txt for license details.
  */
 
+// @codingStandardsIgnoreFile
+
 namespace Magento\Backend\Controller\Adminhtml\System;
 
 use Magento\Backend\App\Action;
@@ -97,21 +99,21 @@ abstract class Store extends Action
         }
         try {
             /** @var \Magento\Backup\Model\Db $backupDb */
-            $backupDb = $this->_objectManager->create(\Magento\Backup\Model\Db::class);
+            $backupDb = $this->_objectManager->create('Magento\Backup\Model\Db');
             /** @var \Magento\Backup\Model\Backup $backup */
-            $backup = $this->_objectManager->create(\Magento\Backup\Model\Backup::class);
+            $backup = $this->_objectManager->create('Magento\Backup\Model\Backup');
             /** @var Filesystem $filesystem */
-            $filesystem = $this->_objectManager->get(\Magento\Framework\Filesystem::class);
+            $filesystem = $this->_objectManager->get('Magento\Framework\Filesystem');
             $backup->setTime(time())
                 ->setType('db')
                 ->setPath($filesystem->getDirectoryRead(DirectoryList::VAR_DIR)->getAbsolutePath('backups'));
             $backupDb->createBackup($backup);
-            $this->messageManager->addSuccessMessage(__('The database was backed up.'));
+            $this->messageManager->addSuccess(__('The database was backed up.'));
         } catch (\Magento\Framework\Exception\LocalizedException $e) {
-            $this->messageManager->addErrorMessage($e->getMessage());
+            $this->messageManager->addError($e->getMessage());
             return false;
         } catch (\Exception $e) {
-            $this->messageManager->addExceptionMessage(
+            $this->messageManager->addException(
                 $e,
                 __('We can\'t create a backup right now. Please try again later.')
             );
@@ -128,11 +130,9 @@ abstract class Store extends Action
      */
     protected function _addDeletionNotice($typeTitle)
     {
-        $this->messageManager->addNoticeMessage(
+        $this->messageManager->addNotice(
             __(
-                'Deleting a %1 will not delete the information associated with the %1 (e.g. categories, products, etc.)'
-                . ', but the %1 will not be able to be restored. It is suggested that you create a database backup '
-                . 'before deleting the %1.',
+                'Deleting a %1 will not delete the information associated with the %1 (e.g. categories, products, etc.), but the %1 will not be able to be restored. It is suggested that you create a database backup before deleting the %1.',
                 $typeTitle
             )
         );

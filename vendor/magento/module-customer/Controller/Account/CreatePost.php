@@ -36,69 +36,43 @@ use Magento\Framework\Data\Form\FormKey\Validator;
  */
 class CreatePost extends \Magento\Customer\Controller\AbstractAccount
 {
-    /**
-     * @var \Magento\Customer\Api\AccountManagementInterface
-     */
+    /** @var AccountManagementInterface */
     protected $accountManagement;
 
-    /**
-     * @var \Magento\Customer\Helper\Address
-     */
+    /** @var Address */
     protected $addressHelper;
 
-    /**
-     * @var \Magento\Customer\Model\Metadata\FormFactory
-     */
+    /** @var FormFactory */
     protected $formFactory;
 
-    /**
-     * @var \Magento\Newsletter\Model\SubscriberFactory
-     */
+    /** @var SubscriberFactory */
     protected $subscriberFactory;
 
-    /**
-     * @var \Magento\Customer\Api\Data\RegionInterfaceFactory
-     */
+    /** @var RegionInterfaceFactory */
     protected $regionDataFactory;
 
-    /**
-     * @var \Magento\Customer\Api\Data\AddressInterfaceFactory
-     */
+    /** @var AddressInterfaceFactory */
     protected $addressDataFactory;
 
-    /**
-     * @var \Magento\Customer\Model\Registration
-     */
+    /** @var Registration */
     protected $registration;
 
-    /**
-     * @var \Magento\Customer\Api\Data\CustomerInterfaceFactory
-     */
+    /** @var CustomerInterfaceFactory */
     protected $customerDataFactory;
 
-    /**
-     * @var \Magento\Customer\Model\Url
-     */
+    /** @var CustomerUrl */
     protected $customerUrl;
 
-    /**
-     * @var \Magento\Framework\Escaper
-     */
+    /** @var Escaper */
     protected $escaper;
 
-    /**
-     * @var \Magento\Customer\Model\CustomerExtractor
-     */
+    /** @var CustomerExtractor */
     protected $customerExtractor;
 
-    /**
-     * @var \Magento\Framework\UrlInterface
-     */
+    /** @var \Magento\Framework\UrlInterface */
     protected $urlModel;
 
-    /**
-     * @var \Magento\Framework\Api\DataObjectHelper
-     */
+    /** @var DataObjectHelper  */
     protected $dataObjectHelper;
 
     /**
@@ -122,6 +96,8 @@ class CreatePost extends \Magento\Customer\Controller\AbstractAccount
     private $cookieMetadataManager;
 
     /**
+     * Form key validator.
+     *
      * @var Validator
      */
     private $formKeyValidator;
@@ -194,7 +170,7 @@ class CreatePost extends \Magento\Customer\Controller\AbstractAccount
     /**
      * Retrieve cookie manager
      *
-     * @deprecated 100.1.0
+     * @deprecated
      * @return \Magento\Framework\Stdlib\Cookie\PhpCookieManager
      */
     private function getCookieManager()
@@ -210,7 +186,7 @@ class CreatePost extends \Magento\Customer\Controller\AbstractAccount
     /**
      * Retrieve cookie metadata factory
      *
-     * @deprecated 100.1.0
+     * @deprecated
      * @return \Magento\Framework\Stdlib\Cookie\CookieMetadataFactory
      */
     private function getCookieMetadataFactory()
@@ -261,7 +237,7 @@ class CreatePost extends \Magento\Customer\Controller\AbstractAccount
         $this->dataObjectHelper->populateWithArray(
             $addressDataObject,
             $addressData,
-            \Magento\Customer\Api\Data\AddressInterface::class
+            '\Magento\Customer\Api\Data\AddressInterface'
         );
         $addressDataObject->setRegion($regionDataObject);
 

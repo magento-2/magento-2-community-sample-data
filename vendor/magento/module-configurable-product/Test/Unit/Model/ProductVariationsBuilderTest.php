@@ -6,7 +6,8 @@
 
 namespace Magento\ConfigurableProduct\Test\Unit\Model;
 
-class ProductVariationsBuilderTest extends \PHPUnit\Framework\TestCase
+
+class ProductVariationsBuilderTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var ProductVariationsBuilder
@@ -35,17 +36,30 @@ class ProductVariationsBuilderTest extends \PHPUnit\Framework\TestCase
 
     protected function setUp()
     {
-        $this->customAttributeFactory = $this->createMock(\Magento\Framework\Api\AttributeValueFactory::class);
-
-        $this->product = $this->createPartialMock(
-            \Magento\Catalog\Model\Product::class,
-            ['getData', 'getPrice', 'getName', 'getSku', '__wakeup', 'getCustomAttributes']
+        $this->customAttributeFactory = $this->getMock(
+            '\Magento\Framework\Api\AttributeValueFactory',
+            [],
+            [],
+            '',
+            false
         );
 
-        $this->productFactory = $this->createPartialMock(\Magento\Catalog\Model\ProductFactory::class, ['create']);
+        $this->product = $this->getMock(
+            '\Magento\Catalog\Model\Product',
+            ['getData', 'getPrice', 'getName', 'getSku', '__wakeup', 'getCustomAttributes'],
+            [],
+            '',
+            false
+        );
 
-        $this->variationMatrix = $this->createMock(
-            \Magento\ConfigurableProduct\Model\Product\Type\VariationMatrix::class
+        $this->productFactory = $this->getMock('\Magento\Catalog\Model\ProductFactory', ['create'], [], '', false);
+
+        $this->variationMatrix = $this->getMock(
+            '\Magento\ConfigurableProduct\Model\Product\Type\VariationMatrix',
+            [],
+            [],
+            '',
+            false
         );
 
         $this->model = new \Magento\ConfigurableProduct\Model\ProductVariationsBuilder(
@@ -57,9 +71,12 @@ class ProductVariationsBuilderTest extends \PHPUnit\Framework\TestCase
 
     public function testCreate()
     {
-        $output = $this->createPartialMock(
-            \Magento\Catalog\Model\Product::class,
-            ['setPrice', '__wakeup', 'setData', 'getCustomAttributes', 'setName', 'setSku', 'setVisibility']
+        $output = $this->getMock(
+            '\Magento\Catalog\Model\Product',
+            ['setPrice', '__wakeup', 'setData', 'getCustomAttributes', 'setName', 'setSku', 'setVisibility'],
+            [],
+            '',
+            false
         );
         $attributes = [10 => ['attribute_code' => 'sort_order']];
         $variations = [
@@ -79,7 +96,7 @@ class ProductVariationsBuilderTest extends \PHPUnit\Framework\TestCase
 
         $output->expects($this->at(0))->method('setData')->with($productData);
 
-        $attribute = $this->createMock(\Magento\Framework\Api\AttributeInterface::class);
+        $attribute = $this->getMock('\Magento\Framework\Api\AttributeInterface');
         $attribute->expects($this->once())
             ->method('setAttributeCode')
             ->with('sort_order')

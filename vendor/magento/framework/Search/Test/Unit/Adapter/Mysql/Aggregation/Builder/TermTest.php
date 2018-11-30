@@ -11,7 +11,7 @@ use Magento\Framework\Search\Adapter\Mysql\Aggregation\DataProviderInterface;
 use Magento\Framework\Search\Request\BucketInterface as RequestBucketInterface;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
 
-class TermTest extends \PHPUnit\Framework\TestCase
+class TermTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var Term
@@ -46,30 +46,30 @@ class TermTest extends \PHPUnit\Framework\TestCase
         $helper = new ObjectManager($this);
 
         $this->metricsBuilder = $this->getMockBuilder(
-            \Magento\Framework\Search\Adapter\Mysql\Aggregation\Builder\Metrics::class
+            'Magento\Framework\Search\Adapter\Mysql\Aggregation\Builder\Metrics'
         )
             ->setMethods(['build'])
             ->disableOriginalConstructor()
             ->getMock();
 
-        $this->select = $this->getMockBuilder(\Magento\Framework\DB\Select::class)
+        $this->select = $this->getMockBuilder('Magento\Framework\DB\Select')
             ->setMethods(['where', 'columns', 'group'])
             ->disableOriginalConstructor()
             ->getMock();
 
-        $this->bucket = $this->getMockBuilder(\Magento\Framework\Search\Request\BucketInterface::class)
+        $this->bucket = $this->getMockBuilder('Magento\Framework\Search\Request\BucketInterface')
             ->disableOriginalConstructor()
             ->getMockForAbstractClass();
 
         $this->dataProvider = $this->getMockBuilder(
-            \Magento\Framework\Search\Adapter\Mysql\Aggregation\DataProviderInterface::class
+            'Magento\Framework\Search\Adapter\Mysql\Aggregation\DataProviderInterface'
         )
             ->setMethods(['getDataSet', 'execute'])
             ->disableOriginalConstructor()
             ->getMockForAbstractClass();
 
         $this->term = $helper->getObject(
-            \Magento\Framework\Search\Adapter\Mysql\Aggregation\Builder\Term::class,
+            'Magento\Framework\Search\Adapter\Mysql\Aggregation\Builder\Term',
             ['metricsBuilder' => $this->metricsBuilder]
         );
     }
@@ -96,7 +96,7 @@ class TermTest extends \PHPUnit\Framework\TestCase
         $this->dataProvider->expects($this->once())->method('execute')->willReturn($this->select);
 
         /** @var \Magento\Framework\DB\Ddl\Table|\PHPUnit_Framework_MockObject_MockObject $table */
-        $table = $this->getMockBuilder(\Magento\Framework\DB\Ddl\Table::class)
+        $table = $this->getMockBuilder('Magento\Framework\DB\Ddl\Table')
             ->disableOriginalConstructor()
             ->getMock();
 

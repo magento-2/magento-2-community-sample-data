@@ -13,30 +13,34 @@ namespace Magento\Tax\Model\System\Message\Notification;
 class DiscountErrors implements \Magento\Tax\Model\System\Message\NotificationInterface
 {
     /**
+     * Store manager interface.
+     *
      * @var \Magento\Store\Model\StoreManagerInterface
      */
     private $storeManager;
 
     /**
+     * Store Url Interface object.
+     *
      * @var \Magento\Framework\UrlInterface
      */
     private $urlBuilder;
 
     /**
+     * Store tax configuration object.
+     *
      * @var \Magento\Tax\Model\Config
      */
     private $taxConfig;
 
     /**
-     * Websites with invalid discount settings
+     * Websites with invalid discount settings.
      *
      * @var array
      */
     private $storesWithInvalidSettings;
 
     /**
-     * Initialize dependencies
-     *
      * @param \Magento\Store\Model\StoreManagerInterface $storeManager
      * @param \Magento\Framework\UrlInterface $urlBuilder
      * @param \Magento\Tax\Model\Config $taxConfig
@@ -68,6 +72,7 @@ class DiscountErrors implements \Magento\Tax\Model\System\Message\NotificationIn
         if (!$this->taxConfig->isWrongDiscountSettingsIgnored() && $this->getStoresWithWrongSettings()) {
             return true;
         }
+
         return false;
     }
 
@@ -80,9 +85,11 @@ class DiscountErrors implements \Magento\Tax\Model\System\Message\NotificationIn
 
         if (!empty($this->getStoresWithWrongSettings()) && !$this->taxConfig->isWrongDiscountSettingsIgnored()) {
             $messageDetails .= '<strong>';
-            $messageDetails .= __('With customer tax applied “Before Discount”,'
-                . ' the final discount calculation may not match customers’ expectations. ');
-            $messageDetails .= '</strong><p>';
+            $messageDetails .= __(
+                'With customer tax applied “Before Discount”,' .
+                ' the final discount calculation may not match customers’ expectations.'
+            );
+            $messageDetails .= ' </strong><p>';
             $messageDetails .= __('Store(s) affected: ');
             $messageDetails .= implode(', ', $this->getStoresWithWrongSettings());
             $messageDetails .= '</p><p>';
@@ -92,7 +99,7 @@ class DiscountErrors implements \Magento\Tax\Model\System\Message\NotificationIn
             );
             $messageDetails .= "</p>";
         }
-        
+
         return $messageDetails;
     }
 
@@ -106,13 +113,13 @@ class DiscountErrors implements \Magento\Tax\Model\System\Message\NotificationIn
     }
 
     /**
-     * Check if tax discount settings are compatible
+     * Check if tax discount settings are compatible.
      *
      * Matrix for invalid discount settings is as follows:
      *      Before Discount / Excluding Tax
      *      Before Discount / Including Tax
      *
-     * @param null|int|bool|string|\Magento\Store\Model\Store $store $store
+     * @param null|int|bool|string|\Magento\Store\Model\Store $store
      * @return bool
      */
     private function checkSettings($store = null)
@@ -139,6 +146,7 @@ class DiscountErrors implements \Magento\Tax\Model\System\Message\NotificationIn
                 $this->storesWithInvalidSettings[] = $website->getName() . ' (' . $store->getName() . ')';
             }
         }
+
         return $this->storesWithInvalidSettings;
     }
 }

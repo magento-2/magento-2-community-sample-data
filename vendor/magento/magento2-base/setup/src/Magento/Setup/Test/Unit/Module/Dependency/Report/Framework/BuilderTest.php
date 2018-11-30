@@ -7,7 +7,7 @@ namespace Magento\Setup\Test\Unit\Module\Dependency\Report\Framework;
 
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
 
-class BuilderTest extends \PHPUnit\Framework\TestCase
+class BuilderTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\Setup\Module\Dependency\Report\Framework\Builder
@@ -17,9 +17,7 @@ class BuilderTest extends \PHPUnit\Framework\TestCase
     protected function setUp()
     {
         $objectManagerHelper = new ObjectManager($this);
-        $this->builder = $objectManagerHelper->getObject(
-            \Magento\Setup\Module\Dependency\Report\Framework\Builder::class
-        );
+        $this->builder = $objectManagerHelper->getObject('Magento\Setup\Module\Dependency\Report\Framework\Builder');
     }
 
     /**

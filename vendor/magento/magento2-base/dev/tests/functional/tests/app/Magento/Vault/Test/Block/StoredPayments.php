@@ -8,6 +8,7 @@ namespace Magento\Vault\Test\Block;
 use Magento\Mtf\Block\Block;
 use Magento\Mtf\Client\ElementInterface;
 use Magento\Mtf\Client\Locator;
+use Magento\Mtf\Fixture\InjectableFixture;
 
 class StoredPayments extends Block
 {
@@ -59,12 +60,12 @@ class StoredPayments extends Block
         $result = [];
         $elements = $this->_rootElement->getElements('./tbody/tr', Locator::SELECTOR_XPATH);
         foreach ($elements as $row) {
-            $card = substr($row->find('./td[@data-th="Card Number"]', Locator::SELECTOR_XPATH)->getText(), -4, 4);
+            $number = substr($row->find('./td[@data-th="Card Number"]', Locator::SELECTOR_XPATH)->getText(), -4, 4);
             $deleteButton = $row->find(
-                "./td[text()[contains(.,'{$card}')]]/following-sibling::td[@data-th='Actions']//span[text()='Delete']",
+                "./td[text()[contains(.,'{$number}')]]/following-sibling::td[@data-th='Actions']//span[text()='Delete']",
                 Locator::SELECTOR_XPATH
             );
-            $result[$card] = $deleteButton;
+            $result[$number] = $deleteButton;
         }
         return $result;
     }

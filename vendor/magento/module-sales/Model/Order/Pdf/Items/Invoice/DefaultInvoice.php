@@ -81,8 +81,8 @@ class DefaultInvoice extends \Magento\Sales\Model\Order\Pdf\Items\AbstractItems
         // draw item Prices
         $i = 0;
         $prices = $this->getItemPricesForDisplay();
-        $feedPrice = 375;
-        $feedSubtotal = $feedPrice + 190;
+        $feedPrice = 395;
+        $feedSubtotal = $feedPrice + 170;
         foreach ($prices as $priceData) {
             if (isset($priceData['label'])) {
                 // draw Price label

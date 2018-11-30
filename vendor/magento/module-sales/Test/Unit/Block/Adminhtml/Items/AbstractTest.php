@@ -5,7 +5,7 @@
  */
 namespace Magento\Sales\Test\Unit\Block\Adminhtml\Items;
 
-class AbstractTest extends \PHPUnit\Framework\TestCase
+class AbstractTest extends \PHPUnit_Framework_TestCase
 {
     /** @var \Magento\Framework\TestFramework\Unit\Helper\ObjectManager  */
     protected $_objectManager;
@@ -17,10 +17,13 @@ class AbstractTest extends \PHPUnit\Framework\TestCase
 
     public function testGetItemRenderer()
     {
-        $renderer = $this->createMock(\Magento\Framework\View\Element\AbstractBlock::class);
-        $layout = $this->createPartialMock(
-            \Magento\Framework\View\Layout::class,
-            ['getChildName', 'getBlock', 'getGroupChildNames', '__wakeup']
+        $renderer = $this->getMock('Magento\Framework\View\Element\AbstractBlock', [], [], '', false);
+        $layout = $this->getMock(
+            'Magento\Framework\View\Layout',
+            ['getChildName', 'getBlock', 'getGroupChildNames', '__wakeup'],
+            [],
+            '',
+            false
         );
         $layout->expects(
             $this->at(0)
@@ -44,10 +47,10 @@ class AbstractTest extends \PHPUnit\Framework\TestCase
 
         /** @var $block \Magento\Sales\Block\Adminhtml\Items\AbstractItems */
         $block = $this->_objectManager->getObject(
-            \Magento\Sales\Block\Adminhtml\Items\AbstractItems::class,
+            'Magento\Sales\Block\Adminhtml\Items\AbstractItems',
             [
                 'context' => $this->_objectManager->getObject(
-                    \Magento\Backend\Block\Template\Context::class,
+                    'Magento\Backend\Block\Template\Context',
                     ['layout' => $layout]
                 )
             ]
@@ -62,10 +65,13 @@ class AbstractTest extends \PHPUnit\Framework\TestCase
      */
     public function testGetItemRendererThrowsExceptionForNonexistentRenderer()
     {
-        $renderer = $this->createMock(\stdClass::class);
-        $layout = $this->createPartialMock(
-            \Magento\Framework\View\Layout::class,
-            ['getChildName', 'getBlock', '__wakeup']
+        $renderer = $this->getMock('StdClass');
+        $layout = $this->getMock(
+            'Magento\Framework\View\Layout',
+            ['getChildName', 'getBlock', '__wakeup'],
+            [],
+            '',
+            false
         );
         $layout->expects(
             $this->at(0)
@@ -89,10 +95,10 @@ class AbstractTest extends \PHPUnit\Framework\TestCase
 
         /** @var $block \Magento\Sales\Block\Adminhtml\Items\AbstractItems */
         $block = $this->_objectManager->getObject(
-            \Magento\Sales\Block\Adminhtml\Items\AbstractItems::class,
+            'Magento\Sales\Block\Adminhtml\Items\AbstractItems',
             [
                 'context' => $this->_objectManager->getObject(
-                    \Magento\Backend\Block\Template\Context::class,
+                    'Magento\Backend\Block\Template\Context',
                     ['layout' => $layout]
                 )
             ]

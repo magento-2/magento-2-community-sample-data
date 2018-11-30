@@ -13,7 +13,6 @@ class Child extends \Magento\Test\Di\Aggregate\AggregateParent
 
     /**
      * Child constructor.
-     *
      * @param \Magento\Test\Di\DiInterface $interface
      * @param \Magento\Test\Di\DiParent $parent
      * @param \Magento\Test\Di\Child $child

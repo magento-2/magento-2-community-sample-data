@@ -8,7 +8,7 @@ namespace Magento\Payment\Test\Unit\Plugin;
 /**
  * Class PaymentConfigurationProcessTest.
  */
-class PaymentConfigurationProcessTest extends \PHPUnit\Framework\TestCase
+class PaymentConfigurationProcessTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\Store\Model\StoreManagerInterface|\PHPUnit_Framework_MockObject_MockObject

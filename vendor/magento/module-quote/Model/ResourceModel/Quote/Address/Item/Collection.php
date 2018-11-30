@@ -19,10 +19,7 @@ class Collection extends \Magento\Framework\Model\ResourceModel\Db\VersionContro
      */
     protected function _construct()
     {
-        $this->_init(
-            \Magento\Quote\Model\Quote\Address\Item::class,
-            \Magento\Quote\Model\ResourceModel\Quote\Address\Item::class
-        );
+        $this->_init('Magento\Quote\Model\Quote\Address\Item', 'Magento\Quote\Model\ResourceModel\Quote\Address\Item');
     }
 
     /**

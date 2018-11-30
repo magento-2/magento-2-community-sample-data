@@ -6,8 +6,6 @@
 namespace Magento\Sales\Block\Adminhtml\Order\Create;
 
 use Magento\Framework\Pricing\PriceCurrencyInterface;
-use Magento\Catalog\Model\Product;
-use Magento\Catalog\Pricing\Price\FinalPrice;
 
 /**
  * Adminhtml sales order create abstract block
@@ -133,21 +131,11 @@ abstract class AbstractCreate extends \Magento\Backend\Block\Widget
     }
 
     /**
-     * @param Product $product
-     * @return string
-     */
-    public function getItemPrice(Product $product)
-    {
-        $price = $product->getPriceInfo()->getPrice(FinalPrice::PRICE_CODE)->getValue();
-        return $this->convertPrice($price);
-    }
-
-    /**
      * Convert price
      *
-     * @param int|float $value
+     * @param float $value
      * @param bool $format
-     * @return string|int|float
+     * @return float
      */
     public function convertPrice($value, $format = true)
     {
@@ -159,23 +147,5 @@ abstract class AbstractCreate extends \Magento\Backend\Block\Widget
                 $this->getStore()
             )
             : $this->priceCurrency->convert($value, $this->getStore());
-    }
-
-    /**
-     * If item is quote or wishlist we need to get product from it.
-     *
-     * @param $item
-     *
-     * @return Product
-     */
-    public function getProduct($item)
-    {
-        if ($item instanceof Product) {
-            $product = $item;
-        } else {
-            $product = $item->getProduct();
-        }
-
-        return $product;
     }
 }

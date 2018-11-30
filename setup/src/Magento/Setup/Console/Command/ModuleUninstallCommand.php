@@ -5,7 +5,6 @@
  */
 namespace Magento\Setup\Console\Command;
 
-use Magento\Framework\App\Console\MaintenanceModeEnabler;
 use Magento\Framework\App\DeploymentConfig;
 use Magento\Framework\App\MaintenanceMode;
 use Magento\Framework\Backup\Factory;
@@ -39,6 +38,13 @@ class ModuleUninstallCommand extends AbstractModuleCommand
     const INPUT_KEY_BACKUP_CODE = 'backup-code';
     const INPUT_KEY_BACKUP_MEDIA = 'backup-media';
     const INPUT_KEY_BACKUP_DB = 'backup-db';
+
+    /**
+     * Maintenance mode
+     *
+     * @var MaintenanceMode
+     */
+    private $maintenanceMode;
 
     /**
      * Deployment Configuration
@@ -104,24 +110,16 @@ class ModuleUninstallCommand extends AbstractModuleCommand
     private $moduleRegistryUninstaller;
 
     /**
-     * @var MaintenanceModeEnabler
-     */
-    private $maintenanceModeEnabler;
-
-    /**
      * Constructor
      *
      * @param ComposerInformation $composer
      * @param DeploymentConfig $deploymentConfig
      * @param FullModuleList $fullModuleList
-     * @param MaintenanceMode $maintenanceMode deprecated, use $maintenanceModeEnabler instead
+     * @param MaintenanceMode $maintenanceMode
      * @param ObjectManagerProvider $objectManagerProvider
      * @param UninstallCollector $collector
      * @param ModuleUninstaller $moduleUninstaller
      * @param ModuleRegistryUninstaller $moduleRegistryUninstaller
-     * @param MaintenanceModeEnabler $maintenanceModeEnabler
-     *
-     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      */
     public function __construct(
         ComposerInformation $composer,
@@ -131,21 +129,19 @@ class ModuleUninstallCommand extends AbstractModuleCommand
         ObjectManagerProvider $objectManagerProvider,
         UninstallCollector $collector,
         ModuleUninstaller $moduleUninstaller,
-        ModuleRegistryUninstaller $moduleRegistryUninstaller,
-        MaintenanceModeEnabler $maintenanceModeEnabler = null
+        ModuleRegistryUninstaller $moduleRegistryUninstaller
     ) {
         parent::__construct($objectManagerProvider);
         $this->composer = $composer;
         $this->deploymentConfig = $deploymentConfig;
+        $this->maintenanceMode = $maintenanceMode;
         $this->fullModuleList = $fullModuleList;
-        $this->packageInfo = $this->objectManager->get(\Magento\Framework\Module\PackageInfoFactory::class)->create();
+        $this->packageInfo = $this->objectManager->get('Magento\Framework\Module\PackageInfoFactory')->create();
         $this->collector = $collector;
-        $this->dependencyChecker = $this->objectManager->get(\Magento\Framework\Module\DependencyChecker::class);
-        $this->backupRollbackFactory = $this->objectManager->get(\Magento\Framework\Setup\BackupRollbackFactory::class);
+        $this->dependencyChecker = $this->objectManager->get('Magento\Framework\Module\DependencyChecker');
+        $this->backupRollbackFactory = $this->objectManager->get('Magento\Framework\Setup\BackupRollbackFactory');
         $this->moduleUninstaller = $moduleUninstaller;
         $this->moduleRegistryUninstaller = $moduleRegistryUninstaller;
-        $this->maintenanceModeEnabler =
-            $maintenanceModeEnabler ?: $this->objectManager->get(MaintenanceModeEnabler::class);
     }
 
     /**
@@ -232,47 +228,42 @@ class ModuleUninstallCommand extends AbstractModuleCommand
         if (!$helper->ask($input, $output, $question) && $input->isInteractive()) {
             return Cli::RETURN_FAILURE;
         }
-
-        $result = $this->maintenanceModeEnabler->executeInMaintenanceMode(
-            function () use ($input, $output, $modules, $helper) {
-                try {
-                    $this->takeBackup($input, $output);
-                    $dbBackupOption = $input->getOption(self::INPUT_KEY_BACKUP_DB);
-                    if ($input->getOption(self::INPUT_KEY_REMOVE_DATA)) {
+        try {
+            $output->writeln('<info>Enabling maintenance mode</info>');
+            $this->maintenanceMode->set(true);
+            $this->takeBackup($input, $output);
+            $dbBackupOption = $input->getOption(self::INPUT_KEY_BACKUP_DB);
+            if ($input->getOption(self::INPUT_KEY_REMOVE_DATA)) {
+                $this->removeData($modules, $output, $dbBackupOption);
+            } else {
+                if (!empty($this->collector->collectUninstall())) {
+                    $question = new ConfirmationQuestion(
+                        'You are about to remove a module(s) that might have database data. '
+                        . 'Do you want to remove the data from database?[y/N]',
+                        false
+                    );
+                    if ($helper->ask($input, $output, $question) || !$input->isInteractive()) {
                         $this->removeData($modules, $output, $dbBackupOption);
-                    } else {
-                        if (!empty($this->collector->collectUninstall())) {
-                            $question = new ConfirmationQuestion(
-                                'You are about to remove a module(s) that might have database data. '
-                                . 'Do you want to remove the data from database?[y/N]',
-                                false
-                            );
-                            if ($helper->ask($input, $output, $question) || !$input->isInteractive()) {
-                                $this->removeData($modules, $output, $dbBackupOption);
-                            }
-                        } else {
-                            $output->writeln(
-                                '<info>You are about to remove a module(s) that might have database data. '
-                                . 'Remove the database data manually after uninstalling, if desired.</info>'
-                            );
-                        }
                     }
-                    $this->moduleRegistryUninstaller->removeModulesFromDb($output, $modules);
-                    $this->moduleRegistryUninstaller->removeModulesFromDeploymentConfig($output, $modules);
-                    $this->moduleUninstaller->uninstallCode($output, $modules);
-                    $this->cleanup($input, $output);
-                    return Cli::RETURN_SUCCESS;
-                } catch (\Exception $e) {
-                    $output->writeln('<error>' . $e->getMessage() . '</error>');
-                    $output->writeln('<error>Please disable maintenance mode after you resolved above issues</error>');
-                    return Cli::RETURN_FAILURE;
+                } else {
+                    $output->writeln(
+                        '<info>You are about to remove a module(s) that might have database data. '
+                        . 'Remove the database data manually after uninstalling, if desired.</info>'
+                    );
                 }
-            },
-            $output,
-            true
-        );
-
-        return $result;
+            }
+            $this->moduleRegistryUninstaller->removeModulesFromDb($output, $modules);
+            $this->moduleRegistryUninstaller->removeModulesFromDeploymentConfig($output, $modules);
+            $this->moduleUninstaller->uninstallCode($output, $modules);
+            $this->cleanup($input, $output);
+            $output->writeln('<info>Disabling maintenance mode</info>');
+            $this->maintenanceMode->set(false);
+        } catch (\Exception $e) {
+            $output->writeln('<error>' . $e->getMessage() . '</error>');
+            $output->writeln('<error>Please disable maintenance mode after you resolved above issues</error>');
+            return Cli::RETURN_FAILURE;
+        }
+        return Cli::RETURN_SUCCESS;
     }
 
     /**
@@ -383,10 +374,10 @@ class ModuleUninstallCommand extends AbstractModuleCommand
     {
         $areaCode = 'adminhtml';
         /** @var \Magento\Framework\App\State $appState */
-        $appState = $this->objectManager->get(\Magento\Framework\App\State::class);
+        $appState = $this->objectManager->get('Magento\Framework\App\State');
         $appState->setAreaCode($areaCode);
         /** @var \Magento\Framework\ObjectManager\ConfigLoaderInterface $configLoader */
-        $configLoader = $this->objectManager->get(\Magento\Framework\ObjectManager\ConfigLoaderInterface::class);
+        $configLoader = $this->objectManager->get('Magento\Framework\ObjectManager\ConfigLoaderInterface');
         $this->objectManager->configure($configLoader->load($areaCode));
     }
 }

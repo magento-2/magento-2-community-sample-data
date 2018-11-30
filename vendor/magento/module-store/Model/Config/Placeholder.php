@@ -1,13 +1,12 @@
 <?php
 /**
+ * Placeholder configuration values processor. Replace placeholders in configuration with config values
+ *
  * Copyright © Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Store\Model\Config;
 
-/**
- * Placeholder configuration values processor. Replace placeholders in configuration with config values
- */
 class Placeholder
 {
     /**
@@ -71,7 +70,7 @@ class Placeholder
     }
 
     /**
-     * Replace placeholders with config values
+     * Replace placeholders with config values.
      *
      * @param string $value
      * @param array $data
@@ -91,15 +90,15 @@ class Placeholder
             if ($url) {
                 $value = str_replace('{{' . $placeholder . '}}', $url, $value);
             } elseif (strpos($value, $this->urlPlaceholder) !== false) {
-                $distroBaseUrl = $this->request->getDistroBaseUrl();
-
-                $value = str_replace($this->urlPlaceholder, $distroBaseUrl, $value);
+                // localhost is replaced for cli requests, for http requests method getDistroBaseUrl is used
+                $value = str_replace($this->urlPlaceholder, 'http://localhost/', $value);
             }
 
             if (null !== $this->_getPlaceholder($value)) {
                 $value = $this->_processPlaceholders($value, $data);
             }
         }
+
         return $value;
     }
 

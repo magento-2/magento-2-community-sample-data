@@ -9,9 +9,6 @@ namespace Magento\Newsletter\Model\ResourceModel\Template;
  * Newsletter templates collection
  *
  * @author      Magento Core Team <core@magentocommerce.com>
- *
- * @api
- * @since 100.0.2
  */
 class Collection extends \Magento\Framework\Model\ResourceModel\Db\Collection\AbstractCollection
 {
@@ -22,10 +19,7 @@ class Collection extends \Magento\Framework\Model\ResourceModel\Db\Collection\Ab
      */
     protected function _construct()
     {
-        $this->_init(
-            \Magento\Newsletter\Model\Template::class,
-            \Magento\Newsletter\Model\ResourceModel\Template::class
-        );
+        $this->_init('Magento\Newsletter\Model\Template', 'Magento\Newsletter\Model\ResourceModel\Template');
     }
 
     /**

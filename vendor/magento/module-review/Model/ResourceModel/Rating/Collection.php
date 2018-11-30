@@ -8,10 +8,7 @@ namespace Magento\Review\Model\ResourceModel\Rating;
 /**
  * Rating collection resource model
  *
- * @api
- *
  * @author      Magento Core Team <core@magentocommerce.com>
- * @since 100.0.2
  */
 class Collection extends \Magento\Framework\Model\ResourceModel\Db\Collection\AbstractCollection
 {
@@ -68,7 +65,7 @@ class Collection extends \Magento\Framework\Model\ResourceModel\Db\Collection\Ab
      */
     protected function _construct()
     {
-        $this->_init(\Magento\Review\Model\Rating::class, \Magento\Review\Model\ResourceModel\Rating::class);
+        $this->_init('Magento\Review\Model\Rating', 'Magento\Review\Model\ResourceModel\Rating');
     }
 
     /**

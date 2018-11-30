@@ -23,7 +23,6 @@ use Magento\Framework\Search\RequestInterface;
 /**
  * Mapper class. Maps library request to specific adapter dependent query
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
- * @api
  */
 class Mapper
 {
@@ -73,16 +72,6 @@ class Mapper
     private $temporaryStorage;
 
     /**
-     * @var string
-     */
-    private $relevanceCalculationMethod;
-
-    /**
-     * @var TemporaryStorageFactory
-     */
-    private $temporaryStorageFactory;
-
-    /**
      * @param ScoreBuilderFactory $scoreBuilderFactory
      * @param Builder $filterBuilder
      * @param ConditionManager $conditionManager
@@ -92,9 +81,6 @@ class Mapper
      * @param Query\Builder\Match $matchBuilder
      * @param TemporaryStorageFactory $temporaryStorageFactory
      * @param IndexBuilderInterface[] $indexProviders
-     * @param string $relevanceCalculationMethod
-     *
-     * @SuppressWarnings(PHPMD.ExcessiveParameterList)
      */
     public function __construct(
         ScoreBuilderFactory $scoreBuilderFactory,
@@ -105,8 +91,7 @@ class Mapper
         QueryContainerFactory $queryContainerFactory,
         Match $matchBuilder,
         TemporaryStorageFactory $temporaryStorageFactory,
-        array $indexProviders,
-        $relevanceCalculationMethod = 'SUM'
+        array $indexProviders
     ) {
         $this->scoreBuilderFactory = $scoreBuilderFactory;
         $this->filterBuilder = $filterBuilder;
@@ -117,21 +102,14 @@ class Mapper
         $this->queryContainerFactory = $queryContainerFactory;
         $this->matchBuilder = $matchBuilder;
         $this->temporaryStorage = $temporaryStorageFactory->create();
-        $this->temporaryStorageFactory = $temporaryStorageFactory;
-        if (!in_array($relevanceCalculationMethod, ['SUM', 'MAX'], true)) {
-            throw new \LogicException('Unsupported relevance calculation method used. Only SUM and MAX are allowed');
-        }
-        $this->relevanceCalculationMethod = $relevanceCalculationMethod;
     }
 
     /**
      * Build adapter dependent query
      *
      * @param RequestInterface $request
-     * @return Select
      * @throws \LogicException
-     * @throws \Zend_Db_Exception
-     * @throws \InvalidArgumentException
+     * @return Select
      */
     public function buildQuery(RequestInterface $request)
     {
@@ -166,18 +144,15 @@ class Mapper
             $indexBuilder
         );
 
-        $select->limit($request->getSize(), $request->getFrom());
-        $select->order('relevance ' . Select::SQL_DESC)->order('entity_id ' . Select::SQL_DESC);
+        $select->limit($request->getSize());
+        $select->order('relevance ' . Select::SQL_DESC);
         return $select;
     }
 
     /**
-     * Creates Select which wraps search result select
-     *
-     * It is used to group search results by entity id.
-     *
      * @param Select $select
      * @param ScoreBuilder $scoreBuilder
+     * @param string $scorePattern
      * @return Select
      */
     private function createAroundSelect(Select $select, ScoreBuilder $scoreBuilder)
@@ -187,7 +162,7 @@ class Mapper
             ['main_select' => $select],
             [
                 $this->entityMetadata->getEntityId() => 'entity_id',
-                'relevance' => sprintf('%s(%s)', $this->relevanceCalculationMethod, $scoreBuilder->getScoreAlias()),
+                'relevance' => sprintf('MAX(%s)', $scoreBuilder->getScoreAlias())
             ]
         )->group($this->entityMetadata->getEntityId());
         return $parentSelect;

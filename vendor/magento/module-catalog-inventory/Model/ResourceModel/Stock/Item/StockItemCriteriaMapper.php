@@ -18,7 +18,6 @@ use Magento\CatalogInventory\Api\StockConfigurationInterface;
 /**
  * Interface StockItemCriteriaMapper
  * @package Magento\CatalogInventory\Model\ResourceModel\Stock\Status
- * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  */
 class StockItemCriteriaMapper extends GenericMapper
 {
@@ -29,7 +28,7 @@ class StockItemCriteriaMapper extends GenericMapper
 
     /**
      * @var StoreManagerInterface
-     * @deprecated 100.1.0
+     * @deprecated
      */
     private $storeManager;
 
@@ -58,7 +57,7 @@ class StockItemCriteriaMapper extends GenericMapper
      */
     protected function init()
     {
-        $this->initResource(\Magento\CatalogInventory\Model\ResourceModel\Stock\Item::class);
+        $this->initResource('Magento\CatalogInventory\Model\ResourceModel\Stock\Item');
         $this->map['qty'] = ['main_table', 'qty', 'qty'];
     }
 
@@ -99,9 +98,12 @@ class StockItemCriteriaMapper extends GenericMapper
     /**
      * @inheritdoc
      */
-    public function mapProductsFilter(...$products)
+    public function mapProductsFilter($products)
     {
         $productIds = [];
+        if (!is_array($products)) {
+            $products = [$products];
+        }
         foreach ($products as $product) {
             if ($product instanceof \Magento\Catalog\Model\Product) {
                 $productIds[] = $product->getId();
@@ -164,13 +166,13 @@ class StockItemCriteriaMapper extends GenericMapper
     /**
      * @return StockConfigurationInterface
      *
-     * @deprecated 100.1.0
+     * @deprecated
      */
     private function getStockConfiguration()
     {
         if ($this->stockConfiguration === null) {
             $this->stockConfiguration = \Magento\Framework\App\ObjectManager::getInstance()
-                ->get(\Magento\CatalogInventory\Api\StockConfigurationInterface::class);
+                ->get('Magento\CatalogInventory\Api\StockConfigurationInterface');
         }
         return $this->stockConfiguration;
     }

@@ -12,9 +12,6 @@ use Magento\Framework\Registry;
 use Magento\Framework\Stdlib\DateTime\Filter\Date;
 use Magento\Framework\App\Request\DataPersistorInterface;
 
-/**
- * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
- */
 class Save extends \Magento\CatalogRule\Controller\Adminhtml\Promo\Catalog
 {
     /**
@@ -48,11 +45,11 @@ class Save extends \Magento\CatalogRule\Controller\Adminhtml\Promo\Catalog
 
             /** @var \Magento\CatalogRule\Api\CatalogRuleRepositoryInterface $ruleRepository */
             $ruleRepository = $this->_objectManager->get(
-                \Magento\CatalogRule\Api\CatalogRuleRepositoryInterface::class
+                'Magento\CatalogRule\Api\CatalogRuleRepositoryInterface'
             );
 
             /** @var \Magento\CatalogRule\Model\Rule $model */
-            $model = $this->_objectManager->create(\Magento\CatalogRule\Model\Rule::class);
+            $model = $this->_objectManager->create('Magento\CatalogRule\Model\Rule');
 
             try {
                 $this->_eventManager->dispatch(
@@ -68,7 +65,7 @@ class Save extends \Magento\CatalogRule\Controller\Adminhtml\Promo\Catalog
                 $validateResult = $model->validateData(new \Magento\Framework\DataObject($data));
                 if ($validateResult !== true) {
                     foreach ($validateResult as $errorMessage) {
-                        $this->messageManager->addErrorMessage($errorMessage);
+                        $this->messageManager->addError($errorMessage);
                     }
                     $this->_getSession()->setPageData($data);
                     $this->dataPersistor->set('catalog_rule', $data);
@@ -83,13 +80,13 @@ class Save extends \Magento\CatalogRule\Controller\Adminhtml\Promo\Catalog
 
                 $model->loadPost($data);
 
-                $this->_objectManager->get(\Magento\Backend\Model\Session::class)->setPageData($data);
+                $this->_objectManager->get('Magento\Backend\Model\Session')->setPageData($data);
                 $this->dataPersistor->set('catalog_rule', $data);
 
                 $ruleRepository->save($model);
 
-                $this->messageManager->addSuccessMessage(__('You saved the rule.'));
-                $this->_objectManager->get(\Magento\Backend\Model\Session::class)->setPageData(false);
+                $this->messageManager->addSuccess(__('You saved the rule.'));
+                $this->_objectManager->get('Magento\Backend\Model\Session')->setPageData(false);
                 $this->dataPersistor->clear('catalog_rule');
 
                 if ($this->getRequest()->getParam('auto_apply')) {
@@ -98,7 +95,7 @@ class Save extends \Magento\CatalogRule\Controller\Adminhtml\Promo\Catalog
                 } else {
                     if ($model->isRuleBehaviorChanged()) {
                         $this->_objectManager
-                            ->create(\Magento\CatalogRule\Model\Flag::class)
+                            ->create('Magento\CatalogRule\Model\Flag')
                             ->loadSelf()
                             ->setState(1)
                             ->save();
@@ -111,13 +108,13 @@ class Save extends \Magento\CatalogRule\Controller\Adminhtml\Promo\Catalog
                 }
                 return;
             } catch (LocalizedException $e) {
-                $this->messageManager->addErrorMessage($e->getMessage());
+                $this->messageManager->addError($e->getMessage());
             } catch (\Exception $e) {
-                $this->messageManager->addErrorMessage(
+                $this->messageManager->addError(
                     __('Something went wrong while saving the rule data. Please review the error log.')
                 );
-                $this->_objectManager->get(\Psr\Log\LoggerInterface::class)->critical($e);
-                $this->_objectManager->get(\Magento\Backend\Model\Session::class)->setPageData($data);
+                $this->_objectManager->get('Psr\Log\LoggerInterface')->critical($e);
+                $this->_objectManager->get('Magento\Backend\Model\Session')->setPageData($data);
                 $this->dataPersistor->set('catalog_rule', $data);
                 $this->_redirect('catalog_rule/*/edit', ['id' => $this->getRequest()->getParam('rule_id')]);
                 return;

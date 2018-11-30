@@ -9,7 +9,7 @@ use Magento\Framework\Message\MessageInterface;
 use Magento\Framework\View\Element\Message\InterpretationMediator;
 use Magento\Framework\View\Element\Message\InterpretationStrategy;
 
-class InterpretationMediatorTest extends \PHPUnit\Framework\TestCase
+class InterpretationMediatorTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var InterpretationStrategy | \PHPUnit_Framework_MockObject_MockObject
@@ -29,12 +29,12 @@ class InterpretationMediatorTest extends \PHPUnit\Framework\TestCase
     protected function setUp()
     {
         $this->interpretationStrategy = $this->getMockBuilder(
-            \Magento\Framework\View\Element\Message\InterpretationStrategy::class
+            'Magento\Framework\View\Element\Message\InterpretationStrategy'
         )
             ->disableOriginalConstructor()
             ->getMock();
-        $this->messageMock = $this->createMock(
-            \Magento\Framework\Message\MessageInterface::class
+        $this->messageMock = $this->getMock(
+            'Magento\Framework\Message\MessageInterface'
         );
 
         $this->interpretationMediator = new InterpretationMediator(

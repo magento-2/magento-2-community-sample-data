@@ -8,7 +8,7 @@ namespace Magento\Newsletter\Model\ResourceModel;
 
 use Magento\TestFramework\Helper\Bootstrap;
 
-class SubscriberTest extends \PHPUnit\Framework\TestCase
+class SubscriberTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\Newsletter\Model\ResourceModel\Subscriber
@@ -18,7 +18,7 @@ class SubscriberTest extends \PHPUnit\Framework\TestCase
     protected function setUp()
     {
         $this->_resourceModel = Bootstrap::getObjectManager()
-            ->create(\Magento\Newsletter\Model\ResourceModel\Subscriber::class);
+            ->create('Magento\Newsletter\Model\ResourceModel\Subscriber');
     }
 
     /**
@@ -28,7 +28,7 @@ class SubscriberTest extends \PHPUnit\Framework\TestCase
     {
         /** @var \Magento\Customer\Api\CustomerRepositoryInterface $customerRepository */
         $customerRepository = Bootstrap::getObjectManager()
-            ->create(\Magento\Customer\Api\CustomerRepositoryInterface::class);
+            ->create('Magento\Customer\Api\CustomerRepositoryInterface');
         $customerData = $customerRepository->getById(1);
         $result = $this->_resourceModel->loadByCustomerData($customerData);
 
@@ -44,7 +44,7 @@ class SubscriberTest extends \PHPUnit\Framework\TestCase
     {
         /** @var \Magento\Customer\Api\CustomerRepositoryInterface $customerRepository */
         $customerRepository = Bootstrap::getObjectManager()
-            ->create(\Magento\Customer\Api\CustomerRepositoryInterface::class);
+            ->create('Magento\Customer\Api\CustomerRepositoryInterface');
         $customerData = $customerRepository->getById(2);
         $result = $this->_resourceModel->loadByCustomerData($customerData);
 

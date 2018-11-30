@@ -24,20 +24,11 @@ class TypeDuplication implements ValidatorInterface
     protected $_argumentsReader;
 
     /**
-     * @var \Magento\Framework\Code\Reader\ScalarTypesProvider
+     * @param \Magento\Framework\Code\Reader\ArgumentsReader $argumentsReader
      */
-    private $scalarTypesProvider;
-
-    /**
-     * @param \Magento\Framework\Code\Reader\ArgumentsReader|null $argumentsReader
-     * @param \Magento\Framework\Code\Reader\ScalarTypesProvider|null $scalarTypesProvider
-     */
-    public function __construct(
-        \Magento\Framework\Code\Reader\ArgumentsReader $argumentsReader = null,
-        \Magento\Framework\Code\Reader\ScalarTypesProvider $scalarTypesProvider = null
-    ) {
+    public function __construct(\Magento\Framework\Code\Reader\ArgumentsReader $argumentsReader = null)
+    {
         $this->_argumentsReader = $argumentsReader ?: new \Magento\Framework\Code\Reader\ArgumentsReader();
-        $this->scalarTypesProvider = $scalarTypesProvider ?: new \Magento\Framework\Code\Reader\ScalarTypesProvider();
     }
 
     /**
@@ -97,7 +88,7 @@ class TypeDuplication implements ValidatorInterface
         $output = [];
         foreach ($arguments as $argument) {
             $type = $argument['type'];
-            if (!$type || in_array($type, $this->scalarTypesProvider->getTypes())) {
+            if (!$type || $type == 'array') {
                 continue;
             }
             $reflection = new \ReflectionClass($type);

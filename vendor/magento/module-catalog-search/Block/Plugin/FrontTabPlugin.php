@@ -5,14 +5,11 @@
  */
 namespace Magento\CatalogSearch\Block\Plugin;
 
-use Magento\Catalog\Block\Adminhtml\Product\Attribute\Edit\Tab\Front as ProductAttributeFrontTabBlock;
+use Magento\Catalog\Block\Adminhtml\Product\Attribute\Edit\Tab\Front;
 use Magento\CatalogSearch\Model\Source\Weight;
 use Magento\Framework\Data\Form;
 use Magento\Framework\Data\Form\Element\Fieldset;
 
-/**
- * Plugin for Magento\Catalog\Block\Adminhtml\Product\Attribute\Edit\Tab\Front
- */
 class FrontTabPlugin
 {
     /**
@@ -29,14 +26,15 @@ class FrontTabPlugin
     }
 
     /**
-     * Add Search Weight field
-     *
-     * @param ProductAttributeFrontTabBlock $subject
+     * @param Front $subject
+     * @param callable $proceed
      * @param Form $form
-     * @return void
+     * @return Front
+     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      */
-    public function beforeSetForm(ProductAttributeFrontTabBlock $subject, Form $form)
+    public function aroundSetForm(Front $subject, \Closure $proceed, Form $form)
     {
+        $block = $proceed($form);
         /** @var Fieldset $fieldset */
         $fieldset = $form->getElement('front_fieldset');
         $fieldset->addField(
@@ -49,8 +47,17 @@ class FrontTabPlugin
             ],
             'is_searchable'
         );
+
         $subject->getChildBlock('form_after')
-            ->addFieldMap('search_weight', 'search_weight')
-            ->addFieldDependence('search_weight', 'searchable', '1');
+            ->addFieldMap(
+                'search_weight',
+                'search_weight'
+            )
+            ->addFieldDependence(
+                'search_weight',
+                'searchable',
+                '1'
+            );
+        return $block;
     }
 }

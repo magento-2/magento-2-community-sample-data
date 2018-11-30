@@ -6,11 +6,13 @@
 namespace Magento\Braintree\Gateway\Command;
 
 use Braintree\Transaction;
-use Magento\Braintree\Gateway\SubjectReader;
+use Magento\Braintree\Gateway\Helper\SubjectReader;
+use Magento\Braintree\Model\Adapter\BraintreeAdapter;
 use Magento\Braintree\Model\Adapter\BraintreeAdapterFactory;
 use Magento\Braintree\Model\Adapter\BraintreeSearchAdapter;
 use Magento\Framework\Api\FilterBuilder;
 use Magento\Framework\Api\SearchCriteriaBuilder;
+use Magento\Framework\App\ObjectManager;
 use Magento\Payment\Gateway\Command\CommandPoolInterface;
 use Magento\Payment\Gateway\CommandInterface;
 use Magento\Payment\Gateway\Data\OrderAdapterInterface;
@@ -77,15 +79,15 @@ class CaptureStrategyCommand implements CommandInterface
     private $braintreeSearchAdapter;
 
     /**
-     * Constructor
-     *
      * @param CommandPoolInterface $commandPool
      * @param TransactionRepositoryInterface $repository
      * @param FilterBuilder $filterBuilder
      * @param SearchCriteriaBuilder $searchCriteriaBuilder
      * @param SubjectReader $subjectReader
-     * @param BraintreeAdapterFactory $braintreeAdapterFactory,
+     * @param BraintreeAdapter $braintreeAdapter
      * @param BraintreeSearchAdapter $braintreeSearchAdapter
+     * @param BraintreeAdapterFactory|null $braintreeAdapterFactory
+     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      */
     public function __construct(
         CommandPoolInterface $commandPool,
@@ -93,16 +95,18 @@ class CaptureStrategyCommand implements CommandInterface
         FilterBuilder $filterBuilder,
         SearchCriteriaBuilder $searchCriteriaBuilder,
         SubjectReader $subjectReader,
-        BraintreeAdapterFactory $braintreeAdapterFactory,
-        BraintreeSearchAdapter $braintreeSearchAdapter
+        BraintreeAdapter $braintreeAdapter,
+        BraintreeSearchAdapter $braintreeSearchAdapter,
+        BraintreeAdapterFactory $braintreeAdapterFactory = null
     ) {
         $this->commandPool = $commandPool;
         $this->transactionRepository = $repository;
         $this->filterBuilder = $filterBuilder;
         $this->searchCriteriaBuilder = $searchCriteriaBuilder;
         $this->subjectReader = $subjectReader;
-        $this->braintreeAdapterFactory = $braintreeAdapterFactory;
         $this->braintreeSearchAdapter = $braintreeSearchAdapter;
+        $this->braintreeAdapterFactory = $braintreeAdapterFactory ?
+            : ObjectManager::getInstance()->get(BraintreeAdapterFactory::class);
     }
 
     /**

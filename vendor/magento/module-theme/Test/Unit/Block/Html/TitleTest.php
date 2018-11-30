@@ -7,7 +7,7 @@ namespace Magento\Theme\Test\Unit\Block\Html;
 
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager as ObjectManagerHelper;
 
-class TitleTest extends \PHPUnit\Framework\TestCase
+class TitleTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var ObjectManagerHelper
@@ -35,16 +35,16 @@ class TitleTest extends \PHPUnit\Framework\TestCase
     protected function setUp()
     {
         $this->objectManagerHelper = new ObjectManagerHelper($this);
-        $this->pageConfigMock = $this->createMock(\Magento\Framework\View\Page\Config::class);
-        $this->pageTitleMock = $this->createMock(\Magento\Framework\View\Page\Title::class);
+        $this->pageConfigMock = $this->getMock('Magento\Framework\View\Page\Config', [], [], '', false);
+        $this->pageTitleMock = $this->getMock('Magento\Framework\View\Page\Title', [], [], '', false);
 
         $context = $this->objectManagerHelper->getObject(
-            \Magento\Framework\View\Element\Template\Context::class,
+            'Magento\Framework\View\Element\Template\Context',
             ['pageConfig' => $this->pageConfigMock]
         );
 
         $this->htmlTitle = $this->objectManagerHelper->getObject(
-            \Magento\Theme\Block\Html\Title::class,
+            'Magento\Theme\Block\Html\Title',
             ['context' => $context]
         );
     }

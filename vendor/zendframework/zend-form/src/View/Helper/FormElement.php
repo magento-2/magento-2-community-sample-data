@@ -77,11 +77,11 @@ class FormElement extends BaseAbstractHelper
      * Proxies to {@link render()}.
      *
      * @param  ElementInterface|null $element
-     * @return string
+     * @return string|FormElement
      */
     public function __invoke(ElementInterface $element = null)
     {
-        if (! $element) {
+        if (!$element) {
             return $this;
         }
 
@@ -100,7 +100,7 @@ class FormElement extends BaseAbstractHelper
     public function render(ElementInterface $element)
     {
         $renderer = $this->getView();
-        if (! method_exists($renderer, 'plugin')) {
+        if (!method_exists($renderer, 'plugin')) {
             // Bail early if renderer is not pluggable
             return '';
         }

@@ -3,7 +3,6 @@
  * Copyright © Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
-
 namespace Magento\CatalogInventory\Api;
 
 use Magento\TestFramework\Helper\Bootstrap;
@@ -26,16 +25,8 @@ class StockStatusTest extends WebapiAbstract
         $objectManager = Bootstrap::getObjectManager();
 
         /** @var \Magento\Catalog\Model\Product $product */
-        $product = $objectManager->get(\Magento\Catalog\Model\Product::class)->load(1);
+        $product = $objectManager->get('Magento\Catalog\Model\Product')->load(1);
         $expectedData = $product->getQuantityAndStockStatus();
-        $actualData = $this->getProductStockStatus($productSku);
-        $this->assertArrayHasKey('stock_item', $actualData);
-        $this->assertEquals($expectedData['is_in_stock'], $actualData['stock_item']['is_in_stock']);
-        $this->assertEquals($expectedData['qty'], $actualData['stock_item']['qty']);
-    }
-
-    private function getProductStockStatus($productSku)
-    {
         $serviceInfo = [
             'rest' => [
                 'resourcePath' => self::RESOURCE_PATH . "/$productSku",
@@ -50,25 +41,6 @@ class StockStatusTest extends WebapiAbstract
 
         $requestData = ['productSku' => $productSku];
         $actualData = $this->_webApiCall($serviceInfo, $requestData);
-
-        return $actualData;
-    }
-
-    /**
-     * @magentoApiDataFixture Magento/Catalog/_files/product_simple_sku_with_slash.php
-     */
-    public function testGetProductStockStatusBySkuWithSlashes()
-    {
-        $productSku = [
-            'rest' => 'sku%252fwith%252fslashes',
-            'soap' => 'sku%2fwith%2fslashes'
-        ];
-        $objectManager = Bootstrap::getObjectManager();
-
-        /** @var \Magento\Catalog\Model\Product $product */
-        $product = $objectManager->get(\Magento\Catalog\Model\Product::class)->load(1);
-        $expectedData = $product->getQuantityAndStockStatus();
-        $actualData = $this->getProductStockStatus($productSku[TESTS_WEB_API_ADAPTER]);
         $this->assertArrayHasKey('stock_item', $actualData);
         $this->assertEquals($expectedData['is_in_stock'], $actualData['stock_item']['is_in_stock']);
         $this->assertEquals($expectedData['qty'], $actualData['stock_item']['qty']);

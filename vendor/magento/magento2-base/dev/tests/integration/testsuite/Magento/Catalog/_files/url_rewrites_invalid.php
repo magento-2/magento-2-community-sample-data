@@ -13,9 +13,7 @@ require __DIR__ . '/url_rewrites.php';
  * Invalid rewrite for product assigned to different category
  */
 /** @var $rewrite \Magento\UrlRewrite\Model\UrlRewrite */
-$rewrite = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->create(
-    \Magento\UrlRewrite\Model\UrlRewrite::class
-);
+$rewrite = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->create('Magento\UrlRewrite\Model\UrlRewrite');
 $rewrite->setStoreId(
     1
 )->setIdPath(
@@ -35,9 +33,7 @@ $rewrite->setStoreId(
 /**
  * Invalid rewrite for product assigned to category that doesn't belong to store
  */
-$rewrite = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->create(
-    \Magento\UrlRewrite\Model\UrlRewrite::class
-);
+$rewrite = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->create('Magento\UrlRewrite\Model\UrlRewrite');
 $rewrite->setStoreId(
     1
 )->setIdPath(

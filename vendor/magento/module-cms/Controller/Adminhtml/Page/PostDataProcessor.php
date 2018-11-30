@@ -9,7 +9,6 @@ namespace Magento\Cms\Controller\Adminhtml\Page;
 use Magento\Cms\Model\Page\DomValidationState;
 use Magento\Framework\App\ObjectManager;
 use Magento\Framework\Config\Dom\ValidationException;
-use Magento\Framework\Config\Dom\ValidationSchemaException;
 
 /**
  * Class PostDataProcessor
@@ -119,7 +118,7 @@ class PostDataProcessor
         foreach ($data as $field => $value) {
             if (in_array($field, array_keys($requiredFields)) && $value == '') {
                 $errorNo = false;
-                $this->messageManager->addErrorMessage(
+                $this->messageManager->addError(
                     __('To apply changes you should fill in hidden required "%1" field', $requiredFields[$field])
                 );
             }
@@ -140,7 +139,6 @@ class PostDataProcessor
             if (!empty($data['layout_update_xml']) && !$layoutXmlValidator->isValid($data['layout_update_xml'])) {
                 return false;
             }
-            
             if (!empty($data['custom_layout_update_xml']) &&
                 !$layoutXmlValidator->isValid($data['custom_layout_update_xml'])
             ) {
@@ -148,10 +146,8 @@ class PostDataProcessor
             }
         } catch (ValidationException $e) {
             return false;
-        } catch (ValidationSchemaException $e) {
-            return false;
         } catch (\Exception $e) {
-            $this->messageManager->addExceptionMessage($e);
+            $this->messageManager->addExceptionMessage($e, $e->getMessage());
             return false;
         }
 

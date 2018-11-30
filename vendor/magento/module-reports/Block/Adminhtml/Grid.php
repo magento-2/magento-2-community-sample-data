@@ -9,9 +9,7 @@ namespace Magento\Reports\Block\Adminhtml;
 /**
  * Backend report grid block
  *
- * @api
  * @author     Magento Core Team <core@magentocommerce.com>
- * @since 100.0.2
  */
 class Grid extends \Magento\Backend\Block\Widget\Grid
 {
@@ -127,8 +125,8 @@ class Grid extends \Magento\Backend\Block\Widget\Grid
                  * Validate from and to date
                  */
                 try {
-                    $from = $this->_localeDate->date($this->getFilter('report_from'), null, false, false);
-                    $to = $this->_localeDate->date($this->getFilter('report_to'), null, false, false);
+                    $from = $this->_localeDate->scopeDate(null, $this->getFilter('report_from'), false);
+                    $to = $this->_localeDate->scopeDate(null, $this->getFilter('report_to'), false);
 
                     $collection->setInterval($from, $to);
                 } catch (\Exception $e) {
@@ -375,7 +373,7 @@ class Grid extends \Magento\Backend\Block\Widget\Grid
     {
         $this->addChild(
             'refresh_button',
-            \Magento\Backend\Block\Widget\Button::class,
+            'Magento\Backend\Block\Widget\Button',
             ['label' => __('Refresh'), 'onclick' => "{$this->getJsObjectName()}.doFilter();", 'class' => 'task']
         );
     }

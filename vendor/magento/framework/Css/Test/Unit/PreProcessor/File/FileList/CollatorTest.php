@@ -7,7 +7,7 @@ namespace Magento\Framework\Css\Test\Unit\PreProcessor\File\FileList;
 
 use \Magento\Framework\Css\PreProcessor\File\FileList\Collator;
 
-class CollatorTest extends \PHPUnit\Framework\TestCase
+class CollatorTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var Collator
@@ -52,7 +52,7 @@ class CollatorTest extends \PHPUnit\Framework\TestCase
     {
         $theme = null;
         if ($themeFullPath !== null) {
-            $theme = $this->getMockForAbstractClass(\Magento\Framework\View\Design\ThemeInterface::class);
+            $theme = $this->getMockForAbstractClass('Magento\Framework\View\Design\ThemeInterface');
             $theme->expects($this->any())->method('getFullPath')->will($this->returnValue($themeFullPath));
         }
         return new \Magento\Framework\View\File($filename, $module, $theme);

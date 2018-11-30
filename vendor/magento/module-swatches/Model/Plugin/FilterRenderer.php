@@ -20,7 +20,7 @@ class FilterRenderer
      *
      * @var string
      */
-    protected $block = \Magento\Swatches\Block\LayeredNavigation\RenderLayered::class;
+    protected $block = 'Magento\Swatches\Block\LayeredNavigation\RenderLayered';
 
     /**
      * @var \Magento\Swatches\Helper\Data

@@ -12,6 +12,7 @@ use Magento\Framework\Search\Request\IndexScopeResolverInterface;
 use Magento\Framework\Indexer\IndexStructureInterface;
 use Magento\Framework\Indexer\ScopeResolver\FlatScopeResolver;
 use Magento\Framework\Indexer\ScopeResolver\IndexScopeResolver;
+use Magento\Framework\Indexer\SaveHandler\Batch;
 
 class IndexerHandler implements IndexerInterface
 {

@@ -7,9 +7,6 @@ namespace Magento\Sales\Block\Adminhtml\Order\Invoice\Create;
 
 /**
  * Adminhtml invoice items grid
- *
- * @api
- * @since 100.0.2
  */
 class Items extends \Magento\Sales\Block\Adminhtml\Items\AbstractItems
 {
@@ -57,7 +54,7 @@ class Items extends \Magento\Sales\Block\Adminhtml\Items\AbstractItems
         $onclick = "submitAndReloadArea($('invoice_item_container'),'" . $this->getUpdateUrl() . "')";
         $this->addChild(
             'update_button',
-            \Magento\Backend\Block\Widget\Button::class,
+            'Magento\Backend\Block\Widget\Button',
             ['class' => 'update-button', 'label' => __('Update Qty\'s'), 'onclick' => $onclick]
         );
         $this->_disableSubmitButton = true;
@@ -79,7 +76,7 @@ class Items extends \Magento\Sales\Block\Adminhtml\Items\AbstractItems
         }
         $this->addChild(
             'submit_button',
-            \Magento\Backend\Block\Widget\Button::class,
+            'Magento\Backend\Block\Widget\Button',
             [
                 'label' => $_submitLabel,
                 'class' => 'save submit-button primary' . $submitButtonClass,

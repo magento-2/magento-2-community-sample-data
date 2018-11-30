@@ -7,7 +7,7 @@ namespace Magento\Checkout\Test\Unit\Model\Config\Source\Cart;
 
 use \Magento\Checkout\Model\Config\Source\Cart\Summary;
 
-class SummaryTest extends \PHPUnit\Framework\TestCase
+class SummaryTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var Summary

@@ -13,7 +13,7 @@ use PHPUnit_Framework_MockObject_MockObject as MockObject;
 /**
  * Class ExtensionTest
  */
-class ExtensionTest extends \PHPUnit\Framework\TestCase
+class ExtensionTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var ComposerInformation|MockObject

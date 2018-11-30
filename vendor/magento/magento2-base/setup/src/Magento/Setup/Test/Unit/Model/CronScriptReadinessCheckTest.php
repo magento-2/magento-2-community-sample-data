@@ -10,7 +10,7 @@ use Magento\Framework\Phrase;
 use Magento\Setup\Model\Cron\ReadinessCheck;
 use Magento\Setup\Model\CronScriptReadinessCheck;
 
-class CronScriptReadinessCheckTest extends \PHPUnit\Framework\TestCase
+class CronScriptReadinessCheckTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \PHPUnit_Framework_MockObject_MockObject|\Magento\Framework\Filesystem\Directory\Read
@@ -24,8 +24,8 @@ class CronScriptReadinessCheckTest extends \PHPUnit\Framework\TestCase
 
     public function setUp()
     {
-        $filesystem = $this->createMock(\Magento\Framework\Filesystem::class);
-        $this->read = $this->createMock(\Magento\Framework\Filesystem\Directory\Read::class);
+        $filesystem = $this->getMock('Magento\Framework\Filesystem', [], [], '', false);
+        $this->read = $this->getMock('Magento\Framework\Filesystem\Directory\Read', [], [], '', false);
         $filesystem->expects($this->once())->method('getDirectoryRead')->willReturn($this->read);
         $this->cronScriptReadinessCheck = new CronScriptReadinessCheck($filesystem);
     }

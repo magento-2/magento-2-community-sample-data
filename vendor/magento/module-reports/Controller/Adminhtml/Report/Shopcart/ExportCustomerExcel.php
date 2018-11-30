@@ -19,7 +19,7 @@ class ExportCustomerExcel extends \Magento\Reports\Controller\Adminhtml\Report\S
     {
         $fileName = 'shopcart_customer.xml';
         $content = $this->_view->getLayout()->createBlock(
-            \Magento\Reports\Block\Adminhtml\Shopcart\Customer\Grid::class
+            'Magento\Reports\Block\Adminhtml\Shopcart\Customer\Grid'
         )->getExcelFile(
             $fileName
         );

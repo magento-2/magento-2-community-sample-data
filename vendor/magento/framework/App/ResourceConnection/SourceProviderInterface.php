@@ -5,9 +5,6 @@
  */
 namespace Magento\Framework\App\ResourceConnection;
 
-/**
- * @api
- */
 interface SourceProviderInterface extends \Traversable
 {
     /**

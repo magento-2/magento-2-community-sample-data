@@ -11,9 +11,6 @@ use Magento\Framework\View\Result\LayoutFactory;
 use Magento\Framework\View\Result\PageFactory;
 use Magento\Payment\Block\Transparent\Iframe;
 
-/**
- * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
- */
 class Redirect extends \Magento\Sales\Controller\Adminhtml\Order\Create
 {
     /**
@@ -74,11 +71,11 @@ class Redirect extends \Magento\Sales\Controller\Adminhtml\Order\Create
      */
     protected function _returnQuote($cancelOrder, $errorMsg)
     {
-        $directpostSession = $this->_objectManager->get(\Magento\Authorizenet\Model\Directpost\Session::class);
+        $directpostSession = $this->_objectManager->get('Magento\Authorizenet\Model\Directpost\Session');
         $incrementId = $directpostSession->getLastOrderIncrementId();
         if ($incrementId && $directpostSession->isCheckoutOrderIncrementIdExist($incrementId)) {
             /* @var $order \Magento\Sales\Model\Order */
-            $order = $this->_objectManager->create(\Magento\Sales\Model\Order::class)->loadByIncrementId($incrementId);
+            $order = $this->_objectManager->create('Magento\Sales\Model\Order')->loadByIncrementId($incrementId);
             if ($order->getId()) {
                 $directpostSession->removeCheckoutOrderIncrementId($order->getIncrementId());
                 if ($cancelOrder && $order->getState() == \Magento\Sales\Model\Order::STATE_PENDING_PAYMENT) {
@@ -102,13 +99,13 @@ class Redirect extends \Magento\Sales\Controller\Adminhtml\Order\Create
             && isset($redirectParams['controller_action_name'])
         ) {
             $params['redirect_parent'] = $this->helper->getSuccessOrderUrl($redirectParams);
-            $directpostSession = $this->_objectManager->get(\Magento\Authorizenet\Model\Directpost\Session::class);
+            $directpostSession = $this->_objectManager->get('Magento\Authorizenet\Model\Directpost\Session');
             $directpostSession->unsetData('quote_id');
             //cancel old order
             $oldOrder = $this->_getOrderCreateModel()->getSession()->getOrder();
             if ($oldOrder->getId()) {
                 /* @var $order \Magento\Sales\Model\Order */
-                $order = $this->_objectManager->create(\Magento\Sales\Model\Order::class)
+                $order = $this->_objectManager->create('Magento\Sales\Model\Order')
                     ->loadByIncrementId($redirectParams['x_invoice_num']);
 
                 if ($order->getId()) {
@@ -120,7 +117,7 @@ class Redirect extends \Magento\Sales\Controller\Adminhtml\Order\Create
             //clear sessions
             $this->_getSession()->clearStorage();
             $directpostSession->removeCheckoutOrderIncrementId($redirectParams['x_invoice_num']);
-            $this->_objectManager->get(\Magento\Backend\Model\Session::class)->clearStorage();
+            $this->_objectManager->get('Magento\Backend\Model\Session')->clearStorage();
             $this->messageManager->addSuccess(__('You created the order.'));
         }
 

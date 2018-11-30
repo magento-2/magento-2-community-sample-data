@@ -8,7 +8,7 @@ namespace Magento\Framework\Controller\Test\Unit\Result;
 
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager as ObjectManagerHelper;
 
-class ForwardTest extends \PHPUnit\Framework\TestCase
+class ForwardTest extends \PHPUnit_Framework_TestCase
 {
     /** @var \Magento\Framework\Controller\Result\Forward */
     protected $forward;
@@ -23,10 +23,10 @@ class ForwardTest extends \PHPUnit\Framework\TestCase
     {
         $this->objectManagerHelper = new ObjectManagerHelper($this);
 
-        $this->requestInterface = $this->getMockBuilder(\Magento\Framework\App\Request\Http::class)
+        $this->requestInterface = $this->getMockBuilder('Magento\Framework\App\Request\Http')
             ->disableOriginalConstructor()->getMock();
         $this->forward = $this->objectManagerHelper->getObject(
-            \Magento\Framework\Controller\Result\Forward::class,
+            'Magento\Framework\Controller\Result\Forward',
             [
                 'request' => $this->requestInterface
             ]
@@ -36,17 +36,14 @@ class ForwardTest extends \PHPUnit\Framework\TestCase
     public function testSetModule()
     {
         $module = 'test_module';
-        $this->assertInstanceOf(
-            \Magento\Framework\Controller\Result\Forward::class,
-            $this->forward->setModule($module)
-        );
+        $this->assertInstanceOf('Magento\Framework\Controller\Result\Forward', $this->forward->setModule($module));
     }
 
     public function testSetController()
     {
         $controller = 'test_controller';
         $this->assertInstanceOf(
-            \Magento\Framework\Controller\Result\Forward::class,
+            'Magento\Framework\Controller\Result\Forward',
             $this->forward->setController($controller)
         );
     }
@@ -55,7 +52,7 @@ class ForwardTest extends \PHPUnit\Framework\TestCase
     {
         $params = ['param1', 'param2', 3];
         $this->assertInstanceOf(
-            \Magento\Framework\Controller\Result\Forward::class,
+            'Magento\Framework\Controller\Result\Forward',
             $this->forward->setParams($params)
         );
     }
@@ -67,7 +64,7 @@ class ForwardTest extends \PHPUnit\Framework\TestCase
         $this->requestInterface->expects($this->once())->method('setActionName')->with($action);
         $this->requestInterface->expects($this->once())->method('setDispatched');
         $this->assertInstanceOf(
-            \Magento\Framework\Controller\Result\Forward::class,
+            'Magento\Framework\Controller\Result\Forward',
             $this->forward->forward($action)
         );
     }
@@ -88,7 +85,7 @@ class ForwardTest extends \PHPUnit\Framework\TestCase
         $this->requestInterface->expects($this->once())->method('setActionName')->with($action);
         $this->requestInterface->expects($this->once())->method('setDispatched');
         $this->assertInstanceOf(
-            \Magento\Framework\Controller\Result\Forward::class,
+            'Magento\Framework\Controller\Result\Forward',
             $this->forward->forward($action)
         );
     }

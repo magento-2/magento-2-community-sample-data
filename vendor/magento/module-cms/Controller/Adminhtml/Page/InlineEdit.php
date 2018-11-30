@@ -18,7 +18,9 @@ use Magento\Cms\Api\Data\PageInterface;
 class InlineEdit extends \Magento\Backend\App\Action
 {
     /**
-     * Authorization level of a basic admin session
+     * Authorization level of a basic admin session.
+     *
+     * @see _isAllowed()
      */
     const ADMIN_RESOURCE = 'Magento_Cms::save';
 
@@ -57,7 +59,6 @@ class InlineEdit extends \Magento\Backend\App\Action
 
     /**
      * @return \Magento\Framework\Controller\ResultInterface
-     * @throws \Magento\Framework\Exception\LocalizedException
      */
     public function execute()
     {
@@ -117,6 +118,7 @@ class InlineEdit extends \Magento\Backend\App\Action
         $pageData['custom_root_template'] = isset($pageData['custom_root_template'])
             ? $pageData['custom_root_template']
             : null;
+
         return $pageData;
     }
 
@@ -162,6 +164,7 @@ class InlineEdit extends \Magento\Backend\App\Action
     public function setCmsPageData(\Magento\Cms\Model\Page $page, array $extendedPageData, array $pageData)
     {
         $page->setData(array_merge($page->getData(), $extendedPageData, $pageData));
+
         return $this;
     }
 }

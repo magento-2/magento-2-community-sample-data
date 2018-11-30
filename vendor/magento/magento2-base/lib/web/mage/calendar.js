@@ -3,7 +3,9 @@
  * See COPYING.txt for license details.
  */
 
+/*jshint browser:true jquery:true */
 /*eslint max-depth: 0*/
+
 (function (factory) {
     'use strict';
 
@@ -552,7 +554,7 @@
         //Set date/time according to timezone offset
         $(el).datepicker('setTimezoneDate')
             // To ensure that user can re-select date field without clicking outside it first.
-            .blur().trigger('change');
+            .blur();
     };
 
     return {

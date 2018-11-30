@@ -22,10 +22,7 @@ namespace Magento\Test\Integrity;
 
 use Magento\Framework\Component\ComponentRegistrar;
 
-/**
- * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
- */
-class ViewFileReferenceTest extends \PHPUnit\Framework\TestCase
+class ViewFileReferenceTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\Framework\View\Design\Fallback\Rule\RuleInterface
@@ -61,24 +58,24 @@ class ViewFileReferenceTest extends \PHPUnit\Framework\TestCase
     {
         $objectManager = \Magento\TestFramework\Helper\Bootstrap::getObjectManager();
         $objectManager->configure(
-            ['preferences' => [\Magento\Theme\Model\Theme::class => \Magento\Theme\Model\Theme\Data::class]]
+            ['preferences' => ['Magento\Theme\Model\Theme' => 'Magento\Theme\Model\Theme\Data']]
         );
 
-        self::$_componentRegistrar = $objectManager->get(\Magento\Framework\Component\ComponentRegistrar::class);
+        self::$_componentRegistrar = $objectManager->get('Magento\Framework\Component\ComponentRegistrar');
 
         /** @var $fallbackPool \Magento\Framework\View\Design\Fallback\RulePool */
-        $fallbackPool = $objectManager->get(\Magento\Framework\View\Design\Fallback\RulePool::class);
+        $fallbackPool = $objectManager->get('Magento\Framework\View\Design\Fallback\RulePool');
         self::$_fallbackRule = $fallbackPool->getRule(
             $fallbackPool::TYPE_STATIC_FILE
         );
 
         self::$_viewFilesFallback = $objectManager->get(
-            \Magento\Framework\View\Design\FileResolution\Fallback\StaticFile::class
+            'Magento\Framework\View\Design\FileResolution\Fallback\StaticFile'
         );
-        self::$_filesFallback = $objectManager->get(\Magento\Framework\View\Design\FileResolution\Fallback\File::class);
+        self::$_filesFallback = $objectManager->get('Magento\Framework\View\Design\FileResolution\Fallback\File');
 
         // Themes to be checked
-        self::$_themeCollection = $objectManager->get(\Magento\Theme\Model\Theme\Collection::class);
+        self::$_themeCollection = $objectManager->get('Magento\Theme\Model\Theme\Collection');
 
         // Compose list of locales, needed to be checked for themes
         self::$_checkThemeLocales = [];

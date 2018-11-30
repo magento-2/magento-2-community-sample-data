@@ -59,7 +59,6 @@ class FileFactory
         $dir = $this->_filesystem->getDirectoryWrite($baseDir);
         $isFile = false;
         $file = null;
-        $fileContent = $this->getFileContent($content);
         if (is_array($content)) {
             if (!isset($content['type']) || !isset($content['value'])) {
                 throw new \InvalidArgumentException("Invalid arguments. Keys 'type' and 'value' are required.");
@@ -77,7 +76,7 @@ class FileFactory
             ->setHeader('Pragma', 'public', true)
             ->setHeader('Cache-Control', 'must-revalidate, post-check=0, pre-check=0', true)
             ->setHeader('Content-type', $contentType, true)
-            ->setHeader('Content-Length', $contentLength === null ? strlen($fileContent) : $contentLength, true)
+            ->setHeader('Content-Length', $contentLength === null ? strlen($content) : $contentLength, true)
             ->setHeader('Content-Disposition', 'attachment; filename="' . $fileName . '"', true)
             ->setHeader('Last-Modified', date('r'), true);
 
@@ -89,8 +88,7 @@ class FileFactory
                     echo $stream->read(1024);
                 }
             } else {
-                $dir->writeFile($fileName, $fileContent);
-                $file = $fileName;
+                $dir->writeFile($fileName, $content);
                 $stream = $dir->openFile($fileName, 'r');
                 while (!$stream->eof()) {
                     echo $stream->read(1024);
@@ -103,20 +101,5 @@ class FileFactory
             }
         }
         return $this->_response;
-    }
-
-    /**
-     * Returns file content for writing.
-     *
-     * @param string|array $content
-     * @return string|array
-     */
-    private function getFileContent($content)
-    {
-        if (isset($content['type']) && $content['type'] === 'string') {
-            return $content['value'];
-        }
-
-        return $content;
     }
 }

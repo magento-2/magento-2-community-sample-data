@@ -8,7 +8,7 @@ namespace Magento\Reports\Model\ResourceModel\Review\Customer;
 /**
  * @magentoAppArea adminhtml
  */
-class CollectionTest extends \PHPUnit\Framework\TestCase
+class CollectionTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\Reports\Model\ResourceModel\Review\Customer\Collection

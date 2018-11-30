@@ -5,10 +5,7 @@
  */
 namespace Magento\Catalog\Model\Product\Type;
 
-/**
- * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
- */
-class AbstractTypeTest extends \PHPUnit\Framework\TestCase
+class AbstractTypeTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\Catalog\Model\Product\Type\AbstractType
@@ -18,33 +15,35 @@ class AbstractTypeTest extends \PHPUnit\Framework\TestCase
     protected function setUp()
     {
         $productRepository = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->get(
-            \Magento\Catalog\Api\ProductRepositoryInterface::class
+            'Magento\Catalog\Api\ProductRepositoryInterface'
         );
         $catalogProductOption = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->get(
-            \Magento\Catalog\Model\Product\Option::class
+            'Magento\Catalog\Model\Product\Option'
         );
-        $catalogProductType = $this->createMock(\Magento\Catalog\Model\Product\Type::class);
-        $eventManager = $this->createPartialMock(\Magento\Framework\Event\ManagerInterface::class, ['dispatch']);
-        $fileStorageDb = $this->createMock(\Magento\MediaStorage\Helper\File\Storage\Database::class);
-        $filesystem = $this->createMock(\Magento\Framework\Filesystem::class);
-        $registry = $this->createMock(\Magento\Framework\Registry::class);
-        $logger = $this->createMock(\Psr\Log\LoggerInterface::class);
-        $serializer = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->get(
-            \Magento\Framework\Serialize\Serializer\Json::class
+        $catalogProductType = $this->getMock('Magento\Catalog\Model\Product\Type', [], [], '', false);
+        $eventManager = $this->getMock(
+            'Magento\Framework\Event\ManagerInterface',
+            ['dispatch'],
+            [],
+            '',
+            false
         );
+        $fileStorageDb = $this->getMock('Magento\MediaStorage\Helper\File\Storage\Database', [], [], '', false);
+        $filesystem = $this->getMock('Magento\Framework\Filesystem', [], [], '', false);
+        $registry = $this->getMock('Magento\Framework\Registry', [], [], '', false);
+        $logger = $this->getMock('Psr\Log\LoggerInterface', [], [], '', false);
         $this->_model = $this->getMockForAbstractClass(
-            \Magento\Catalog\Model\Product\Type\AbstractType::class,
+            'Magento\Catalog\Model\Product\Type\AbstractType',
             [
                 $catalogProductOption,
-                \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->get(\Magento\Eav\Model\Config::class),
+                \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->get('Magento\Eav\Model\Config'),
                 $catalogProductType,
                 $eventManager,
                 $fileStorageDb,
                 $filesystem,
                 $registry,
                 $logger,
-                $productRepository,
-                $serializer
+                $productRepository
             ]
         );
     }
@@ -52,7 +51,7 @@ class AbstractTypeTest extends \PHPUnit\Framework\TestCase
     public function testGetRelationInfo()
     {
         $info = $this->_model->getRelationInfo();
-        $this->assertInstanceOf(\Magento\Framework\DataObject::class, $info);
+        $this->assertInstanceOf('Magento\Framework\DataObject', $info);
         $this->assertNotSame($info, $this->_model->getRelationInfo());
     }
 
@@ -72,7 +71,7 @@ class AbstractTypeTest extends \PHPUnit\Framework\TestCase
     public function testGetSetAttributes()
     {
         $repository = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->create(
-            \Magento\Catalog\Model\ProductRepository::class
+            'Magento\Catalog\Model\ProductRepository'
         );
         $product = $repository->get('simple');
         // fixture
@@ -84,7 +83,7 @@ class AbstractTypeTest extends \PHPUnit\Framework\TestCase
         $this->assertArrayHasKey('name', $attributes);
         $isTypeExists = false;
         foreach ($attributes as $attribute) {
-            $this->assertInstanceOf(\Magento\Catalog\Model\ResourceModel\Eav\Attribute::class, $attribute);
+            $this->assertInstanceOf('Magento\Catalog\Model\ResourceModel\Eav\Attribute', $attribute);
             $applyTo = $attribute->getApplyTo();
             if (count($applyTo) > 0 && !in_array('simple', $applyTo)) {
                 $isTypeExists = true;
@@ -111,7 +110,7 @@ class AbstractTypeTest extends \PHPUnit\Framework\TestCase
     {
         /** @var $product \Magento\Catalog\Model\Product */
         $product = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->create(
-            \Magento\Catalog\Model\Product::class
+            'Magento\Catalog\Model\Product'
         )->load(
             1
         );
@@ -120,7 +119,7 @@ class AbstractTypeTest extends \PHPUnit\Framework\TestCase
         $this->assertNull($this->_model->getAttributeById(null, $product));
 
         $sku = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->get(
-            \Magento\Eav\Model\Config::class
+            'Magento\Eav\Model\Config'
         )->getAttribute(
             'catalog_product',
             'sku'
@@ -140,7 +139,7 @@ class AbstractTypeTest extends \PHPUnit\Framework\TestCase
     public function testIsVirtual()
     {
         $product = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->create(
-            \Magento\Catalog\Model\Product::class
+            'Magento\Catalog\Model\Product'
         );
         $this->assertFalse($this->_model->isVirtual($product));
     }
@@ -151,7 +150,7 @@ class AbstractTypeTest extends \PHPUnit\Framework\TestCase
     public function testIsSalable()
     {
         $product = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->create(
-            \Magento\Catalog\Model\Product::class
+            'Magento\Catalog\Model\Product'
         );
         $this->assertTrue($this->_model->isSalable($product));
 
@@ -170,7 +169,7 @@ class AbstractTypeTest extends \PHPUnit\Framework\TestCase
     {
         /** @var $product \Magento\Catalog\Model\Product */
         $product = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->create(
-            \Magento\Catalog\Model\Product::class
+            'Magento\Catalog\Model\Product'
         );
         $product->load(10);
         // fixture
@@ -181,10 +180,10 @@ class AbstractTypeTest extends \PHPUnit\Framework\TestCase
         $this->assertArrayHasKey(0, $result);
         $this->assertSame($product, $result[0]);
         $buyRequest = $product->getCustomOption('info_buyRequest');
-        $this->assertInstanceOf(\Magento\Framework\DataObject::class, $buyRequest);
+        $this->assertInstanceOf('Magento\Framework\DataObject', $buyRequest);
         $this->assertEquals($product->getId(), $buyRequest->getProductId());
         $this->assertSame($product, $buyRequest->getProduct());
-        $this->assertEquals(json_encode($requestData), $buyRequest->getValue());
+        $this->assertEquals(serialize($requestData), $buyRequest->getValue());
     }
 
     /**
@@ -193,7 +192,7 @@ class AbstractTypeTest extends \PHPUnit\Framework\TestCase
     public function testPrepareForCartOptionsException()
     {
         $repository = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->create(
-            \Magento\Catalog\Model\ProductRepository::class
+            'Magento\Catalog\Model\ProductRepository'
         );
         $product = $repository->get('simple');
         // fixture
@@ -216,7 +215,7 @@ class AbstractTypeTest extends \PHPUnit\Framework\TestCase
     {
         /** @var $product \Magento\Catalog\Model\Product */
         $product = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->create(
-            \Magento\Catalog\Model\Product::class
+            'Magento\Catalog\Model\Product'
         );
         $product->setSkipCheckRequiredOption('_');
         $this->_model->checkProductBuyState($product);
@@ -229,7 +228,7 @@ class AbstractTypeTest extends \PHPUnit\Framework\TestCase
     public function testCheckProductBuyStateException()
     {
         $repository = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->create(
-            \Magento\Catalog\Model\ProductRepository::class
+            'Magento\Catalog\Model\ProductRepository'
         );
         $product = $repository->get('simple');
         // fixture
@@ -243,13 +242,13 @@ class AbstractTypeTest extends \PHPUnit\Framework\TestCase
     {
         /** @var $product \Magento\Catalog\Model\Product */
         $product = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->create(
-            \Magento\Catalog\Model\Product::class
+            'Magento\Catalog\Model\Product'
         );
         $this->assertEquals([], $this->_model->getOrderOptions($product));
 
         $product->load(1);
         // fixture
-        $product->addCustomOption('info_buyRequest', json_encode(['qty' => 2]));
+        $product->addCustomOption('info_buyRequest', serialize(new \Magento\Framework\DataObject(['qty' => 2])));
         foreach ($product->getOptions() as $option) {
             if ('field' == $option->getType()) {
                 $product->addCustomOption('option_ids', $option->getId());
@@ -282,7 +281,7 @@ class AbstractTypeTest extends \PHPUnit\Framework\TestCase
     public function testBeforeSave()
     {
         $repository = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->create(
-            \Magento\Catalog\Model\ProductRepository::class
+            'Magento\Catalog\Model\ProductRepository'
         );
         $product = $repository->get('simple');
         // fixture
@@ -298,7 +297,7 @@ class AbstractTypeTest extends \PHPUnit\Framework\TestCase
     public function testGetSku()
     {
         $repository = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->create(
-            \Magento\Catalog\Model\ProductRepository::class
+            'Magento\Catalog\Model\ProductRepository'
         );
         $product = $repository->get('simple');
         // fixture
@@ -312,7 +311,7 @@ class AbstractTypeTest extends \PHPUnit\Framework\TestCase
     {
         /** @var $product \Magento\Catalog\Model\Product */
         $product = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->create(
-            \Magento\Catalog\Model\Product::class
+            'Magento\Catalog\Model\Product'
         );
         $this->assertEmpty($this->_model->getOptionSku($product));
 
@@ -372,9 +371,7 @@ class AbstractTypeTest extends \PHPUnit\Framework\TestCase
     {
         $this->assertFalse(
             $this->_model->getForceChildItemQtyChanges(
-                \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->create(
-                    \Magento\Catalog\Model\Product::class
-                )
+                \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->create('Magento\Catalog\Model\Product')
             )
         );
     }
@@ -385,9 +382,7 @@ class AbstractTypeTest extends \PHPUnit\Framework\TestCase
             3.0,
             $this->_model->prepareQuoteItemQty(
                 3,
-                \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->create(
-                    \Magento\Catalog\Model\Product::class
-                )
+                \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->create('Magento\Catalog\Model\Product')
             )
         );
     }
@@ -413,9 +408,7 @@ class AbstractTypeTest extends \PHPUnit\Framework\TestCase
     {
         $this->assertFalse(
             $this->_model->isComposite(
-                \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->create(
-                    \Magento\Catalog\Model\Product::class
-                )
+                \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->create('Magento\Catalog\Model\Product')
             )
         );
         $this->assertTrue($this->_model->canUseQtyDecimals());
@@ -423,9 +416,7 @@ class AbstractTypeTest extends \PHPUnit\Framework\TestCase
         $this->_model->setConfig($config);
         $this->assertTrue(
             $this->_model->isComposite(
-                \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->create(
-                    \Magento\Catalog\Model\Product::class
-                )
+                \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->create('Magento\Catalog\Model\Product')
             )
         );
         $this->assertFalse($this->_model->canUseQtyDecimals());
@@ -437,7 +428,7 @@ class AbstractTypeTest extends \PHPUnit\Framework\TestCase
     public function testGetSearchableData()
     {
         $product = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->create(
-            \Magento\Catalog\Model\Product::class
+            'Magento\Catalog\Model\Product'
         );
         $product->load(1);
         // fixture
@@ -466,7 +457,7 @@ class AbstractTypeTest extends \PHPUnit\Framework\TestCase
     public function testCheckProductConfiguration()
     {
         $product = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->create(
-            \Magento\Catalog\Model\Product::class
+            'Magento\Catalog\Model\Product'
         );
         $buyRequest = new \Magento\Framework\DataObject(['qty' => 5]);
         $this->_model->checkProductConfiguration($product, $buyRequest);

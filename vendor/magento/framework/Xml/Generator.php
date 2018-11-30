@@ -146,6 +146,8 @@ class Generator
      */
     protected function _getIndexedArrayItemName()
     {
-        return $this->_defaultIndexedArrayItemName ?? self::DEFAULT_ENTITY_ITEM_NAME;
+        return isset($this->_defaultIndexedArrayItemName)
+            ? $this->_defaultIndexedArrayItemName
+            : self::DEFAULT_ENTITY_ITEM_NAME;
     }
 }

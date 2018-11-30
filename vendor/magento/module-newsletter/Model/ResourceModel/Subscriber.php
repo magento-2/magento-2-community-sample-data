@@ -9,9 +9,6 @@ namespace Magento\Newsletter\Model\ResourceModel;
  * Newsletter subscriber resource model
  *
  * @author      Magento Core Team <core@magentocommerce.com>
- *
- * @api
- * @since 100.0.2
  */
 class Subscriber extends \Magento\Framework\Model\ResourceModel\Db\AbstractDb
 {
@@ -118,37 +115,17 @@ class Subscriber extends \Magento\Framework\Model\ResourceModel\Db\AbstractDb
      */
     public function loadByCustomerData(\Magento\Customer\Api\Data\CustomerInterface $customer)
     {
-        $select = $this->connection
-            ->select()
-            ->from($this->getMainTable())
-            ->where('customer_id=:customer_id and store_id=:store_id');
+        $select = $this->connection->select()->from($this->getMainTable())->where('customer_id=:customer_id');
 
-        $result = $this->connection
-            ->fetchRow(
-                $select,
-                [
-                    'customer_id' => $customer->getId(),
-                    'store_id' => $customer->getStoreId()
-                ]
-            );
+        $result = $this->connection->fetchRow($select, ['customer_id' => $customer->getId()]);
 
         if ($result) {
             return $result;
         }
 
-        $select = $this->connection
-            ->select()
-            ->from($this->getMainTable())
-            ->where('subscriber_email=:subscriber_email and store_id=:store_id');
+        $select = $this->connection->select()->from($this->getMainTable())->where('subscriber_email=:subscriber_email');
 
-        $result = $this->connection
-            ->fetchRow(
-                $select,
-                [
-                    'subscriber_email' => $customer->getEmail(),
-                    'store_id' => $customer->getStoreId()
-                ]
-            );
+        $result = $this->connection->fetchRow($select, ['subscriber_email' => $customer->getEmail()]);
 
         if ($result) {
             return $result;

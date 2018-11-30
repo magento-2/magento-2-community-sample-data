@@ -11,7 +11,7 @@ namespace Magento\Framework\View\Test\Unit\Layout\Reader;
 use Magento\Framework\View\Layout\ScheduledStructure;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager as ObjectManagerHelper;
 
-class MoveTest extends \PHPUnit\Framework\TestCase
+class MoveTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var ObjectManagerHelper
@@ -37,16 +37,16 @@ class MoveTest extends \PHPUnit\Framework\TestCase
     {
         $this->objectManagerHelper = new ObjectManagerHelper($this);
 
-        $this->scheduledStructureMock = $this->getMockBuilder(\Magento\Framework\View\Layout\ScheduledStructure::class)
+        $this->scheduledStructureMock = $this->getMockBuilder('Magento\Framework\View\Layout\ScheduledStructure')
             ->disableOriginalConstructor()->getMock();
-        $this->contextMock = $this->getMockBuilder(\Magento\Framework\View\Layout\Reader\Context::class)
+        $this->contextMock = $this->getMockBuilder('Magento\Framework\View\Layout\Reader\Context')
             ->disableOriginalConstructor()->getMock();
 
         $this->contextMock->expects($this->any())
             ->method('getScheduledStructure')
             ->willReturn($this->scheduledStructureMock);
 
-        $this->move = $this->objectManagerHelper->getObject(\Magento\Framework\View\Layout\Reader\Move::class);
+        $this->move = $this->objectManagerHelper->getObject('Magento\Framework\View\Layout\Reader\Move');
     }
 
     /**

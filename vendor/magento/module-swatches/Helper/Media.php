@@ -5,15 +5,14 @@
  */
 namespace Magento\Swatches\Helper;
 
-use Magento\Catalog\Helper\Image;
-use Magento\Framework\App\Area;
 use Magento\Framework\App\Filesystem\DirectoryList;
+use Magento\Framework\App\Area;
+use Magento\Catalog\Helper\Image;
 
 /**
  * Helper to move images from tmp to catalog directory
- * @api
+ *
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
- * @since 100.0.2
  */
 class Media extends \Magento\Framework\App\Helper\AbstractHelper
 {
@@ -68,11 +67,6 @@ class Media extends \Magento\Framework\App\Helper\AbstractHelper
     protected $swatchImageTypes = ['swatch_image', 'swatch_thumb'];
 
     /**
-     * @var \Magento\Theme\Model\ResourceModel\Theme\Collection
-     */
-    private $registeredThemesCache;
-
-    /**
      * @param \Magento\Catalog\Model\Product\Media\Config $mediaConfig
      * @param \Magento\Framework\Filesystem $filesystem
      * @param \Magento\MediaStorage\Helper\File\Storage\Database $fileStorageDb
@@ -97,6 +91,7 @@ class Media extends \Magento\Framework\App\Helper\AbstractHelper
         $this->imageFactory = $imageFactory;
         $this->themeCollection = $themeCollection;
         $this->viewConfig = $configInterface;
+
     }
 
     /**
@@ -106,9 +101,9 @@ class Media extends \Magento\Framework\App\Helper\AbstractHelper
      */
     public function getSwatchAttributeImage($swatchType, $file)
     {
-        $generationPath = $swatchType . '/' . $this->getFolderNameSize($swatchType) . $file;
+        $generationPath = $swatchType. '/' . $this->getFolderNameSize($swatchType). $file;
         $absoluteImagePath = $this->mediaDirectory
-            ->getAbsolutePath($this->getSwatchMediaPath() . '/' . $generationPath);
+            ->getAbsolutePath($this->getSwatchMediaPath().'/'.$generationPath);
         if (!file_exists($absoluteImagePath)) {
             $this->generateSwatchVariations($file);
         }
@@ -253,7 +248,7 @@ class Media extends \Magento\Framework\App\Helper\AbstractHelper
     public function getImageConfig()
     {
         $imageConfig = [];
-        foreach ($this->getRegisteredThemes() as $theme) {
+        foreach ($this->themeCollection->loadRegisteredThemes() as $theme) {
             $config = $this->viewConfig->getViewConfig([
                 'area' => Area::AREA_FRONTEND,
                 'themeModel' => $theme,
@@ -333,17 +328,5 @@ class Media extends \Magento\Framework\App\Helper\AbstractHelper
     protected function prepareFile($file)
     {
         return ltrim(str_replace('\\', '/', $file), '/');
-    }
-
-    /**
-     * @return \Magento\Theme\Model\ResourceModel\Theme\Collection
-     */
-    private function getRegisteredThemes()
-    {
-        if ($this->registeredThemesCache === null) {
-            $this->registeredThemesCache = $this->themeCollection->loadRegisteredThemes();
-        }
-
-        return $this->registeredThemesCache;
     }
 }

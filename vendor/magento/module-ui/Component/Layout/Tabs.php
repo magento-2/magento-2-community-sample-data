@@ -6,12 +6,12 @@
 namespace Magento\Ui\Component\Layout;
 
 use Magento\Framework\View\Element\Template;
-use Magento\Framework\View\Element\UiComponent\BlockWrapperInterface;
 use Magento\Framework\View\Element\UiComponent\DataSourceInterface;
-use Magento\Framework\View\Element\UiComponent\LayoutInterface;
+use Magento\Ui\Component\Layout\Tabs\TabInterface;
 use Magento\Framework\View\Element\UiComponentFactory;
 use Magento\Framework\View\Element\UiComponentInterface;
-use Magento\Ui\Component\Layout\Tabs\TabInterface;
+use Magento\Framework\View\Element\UiComponent\LayoutInterface;
+use Magento\Framework\View\Element\UiComponent\BlockWrapperInterface;
 
 /**
  * Class Tabs
@@ -85,7 +85,7 @@ class Tabs extends \Magento\Framework\View\Layout\Generic implements LayoutInter
             if ($childComponent instanceof DataSourceInterface) {
                 continue;
             }
-            if ($childComponent instanceof BlockWrapperInterface) {
+            if ($childComponent instanceof \Magento\Ui\Component\Wrapper\Block) {
                 $this->addWrappedBlock($childComponent, $childrenAreas);
                 continue;
             }
@@ -183,16 +183,13 @@ class Tabs extends \Magento\Framework\View\Layout\Generic implements LayoutInter
         if (!$block->canShowTab()) {
             return;
         }
-        if (!$block instanceof TabInterface) {
-            parent::addWrappedBlock($childComponent, $areas);
-        }
         $block->setData('target_form', $this->namespace);
 
         $config = [];
         if ($block->isAjaxLoaded()) {
             $config['url'] = $block->getTabUrl();
         } else {
-            $config['content'] = $childComponent->getData('config/content') ?: $block->toHtml();
+            $config['content'] = $block->toHtml();
         }
 
         $tabComponent = $this->createTabComponent($childComponent, $name);
@@ -303,7 +300,7 @@ class Tabs extends \Magento\Framework\View\Layout\Generic implements LayoutInter
         if (isset($config['dataScope'])) {
             $dataScope = $config['dataScope'];
             unset($config['dataScope']);
-        } elseif ($name !== $parentName) {
+        } else if ($name !== $parentName) {
             $dataScope = $name;
         }
 
@@ -350,21 +347,15 @@ class Tabs extends \Magento\Framework\View\Layout\Generic implements LayoutInter
     protected function addNavigationBlock()
     {
         $pageLayout = $this->component->getContext()->getPageLayout();
-
-        $navName = 'tabs_nav';
-        if ($pageLayout->hasElement($navName)) {
-            $navName = $this->component->getName() . '_tabs_nav';
-        }
-
         /** @var \Magento\Ui\Component\Layout\Tabs\Nav $navBlock */
         if (isset($this->navContainerName)) {
             $navBlock = $pageLayout->addBlock(
-                \Magento\Ui\Component\Layout\Tabs\Nav::class,
-                $navName,
+                'Magento\Ui\Component\Layout\Tabs\Nav',
+                'tabs_nav',
                 $this->navContainerName
             );
         } else {
-            $navBlock = $pageLayout->addBlock(\Magento\Ui\Component\Layout\Tabs\Nav::class, $navName, 'content');
+            $navBlock = $pageLayout->addBlock('Magento\Ui\Component\Layout\Tabs\Nav', 'tabs_nav', 'content');
         }
         $navBlock->setTemplate('Magento_Ui::layout/tabs/nav/default.phtml');
         $navBlock->setData('data_scope', $this->namespace);

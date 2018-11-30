@@ -7,12 +7,11 @@
 namespace Magento\Catalog\Test\TestCase\Product;
 
 use Magento\Catalog\Test\Fixture\CatalogProductSimple;
-use Magento\Store\Test\Fixture\Store;
 use Magento\Catalog\Test\Page\Adminhtml\CatalogProductEdit;
 use Magento\Catalog\Test\Page\Adminhtml\CatalogProductIndex;
 use Magento\Mtf\TestCase\Injectable;
-use Magento\Mtf\Fixture\FixtureFactory;
-use Magento\Catalog\Test\Fixture\Category;
+use Magento\Mtf\TestStep\TestStepFactory;
+use Magento\Store\Test\Fixture\Store;
 
 /**
  * Precondition:
@@ -27,7 +26,7 @@ use Magento\Catalog\Test\Fixture\Category;
  * 5. Click "Save".
  * 6. Perform asserts.
  *
- * @group Products
+ * @group Products_(MX)
  * @ZephyrId MAGETWO-23544, MAGETWO-21125
  */
 class UpdateSimpleProductEntityTest extends Injectable
@@ -35,6 +34,7 @@ class UpdateSimpleProductEntityTest extends Injectable
     /* tags */
     const TEST_TYPE = 'acceptance_test, extended_acceptance_test';
     const MVP = 'yes';
+    const DOMAIN = 'MX';
     /* end tags */
 
     /**
@@ -59,28 +59,28 @@ class UpdateSimpleProductEntityTest extends Injectable
     protected $configData;
 
     /**
-     * Fixture Factory.
+     * Test step factory.
      *
-     * @var FixtureFactory
+     * @var TestStepFactory
      */
-    private $fixtureFactory;
+    private $testStepFactory;
 
     /**
      * Injection data.
      *
      * @param CatalogProductIndex $productGrid
      * @param CatalogProductEdit $editProductPage
-     * @param FixtureFactory $fixtureFactory
+     * @param TestStepFactory $testStepFactory
      * @return void
      */
     public function __inject(
         CatalogProductIndex $productGrid,
         CatalogProductEdit $editProductPage,
-        FixtureFactory $fixtureFactory
+        TestStepFactory $testStepFactory
     ) {
         $this->productGrid = $productGrid;
         $this->editProductPage = $editProductPage;
-        $this->fixtureFactory = $fixtureFactory;
+        $this->testStepFactory = $testStepFactory;
     }
 
     /**
@@ -91,6 +91,7 @@ class UpdateSimpleProductEntityTest extends Injectable
      * @param Store|null $store
      * @param string $configData
      * @return array
+     * @SuppressWarnings(PHPMD.NPathComplexity)
      */
     public function test(
         CatalogProductSimple $initialProduct,
@@ -101,14 +102,19 @@ class UpdateSimpleProductEntityTest extends Injectable
         $this->configData = $configData;
         // Preconditions
         $initialProduct->persist();
-        $category = $this->getCategory($initialProduct, $product);
+        $initialCategory = $initialProduct->hasData('category_ids')
+            ? $initialProduct->getDataFieldConfig('category_ids')['source']->getCategories()[0]
+            : null;
+        $category = $product->hasData('category_ids') && $product->getCategoryIds()[0]
+            ? $product->getDataFieldConfig('category_ids')['source']->getCategories()[0]
+            : $initialCategory;
 
         if ($store) {
             $store->persist();
             $productName[$store->getStoreId()] = $product->getName();
         }
 
-        $this->objectManager->create(
+        $this->testStepFactory->create(
             \Magento\Config\Test\TestStep\SetupConfigurationStep::class,
             ['configData' => $configData]
         )->run();
@@ -132,23 +138,6 @@ class UpdateSimpleProductEntityTest extends Injectable
     }
 
     /**
-     * Get Category instance.
-     *
-     * @param CatalogProductSimple $initialProduct
-     * @param CatalogProductSimple $product
-     * @return Category
-     */
-    protected function getCategory(CatalogProductSimple $initialProduct, CatalogProductSimple $product)
-    {
-        $initialCategory = $initialProduct->hasData('category_ids')
-            ? $initialProduct->getDataFieldConfig('category_ids')['source']->getCategories()[0]
-            : null;
-        return $product->hasData('category_ids') && $product->getCategoryIds()[0]
-            ? $product->getDataFieldConfig('category_ids')['source']->getCategories()[0]
-            : $initialCategory;
-    }
-
-    /**
      * Clear data after test.
      *
      * @return void
@@ -156,7 +145,7 @@ class UpdateSimpleProductEntityTest extends Injectable
     public function tearDown()
     {
         if ($this->configData) {
-            $this->objectManager->create(
+            $this->testStepFactory->create(
                 \Magento\Config\Test\TestStep\SetupConfigurationStep::class,
                 ['configData' => $this->configData, 'rollback' => true]
             )->run();

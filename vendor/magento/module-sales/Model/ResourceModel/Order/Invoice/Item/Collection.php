@@ -8,9 +8,7 @@ namespace Magento\Sales\Model\ResourceModel\Order\Invoice\Item;
 /**
  * Flat sales order invoice item collection
  *
- * @api
  * @author      Magento Core Team <core@magentocommerce.com>
- * @since 100.0.2
  */
 class Collection extends \Magento\Sales\Model\ResourceModel\Collection\AbstractCollection
 {
@@ -35,10 +33,7 @@ class Collection extends \Magento\Sales\Model\ResourceModel\Collection\AbstractC
      */
     protected function _construct()
     {
-        $this->_init(
-            \Magento\Sales\Model\Order\Invoice\Item::class,
-            \Magento\Sales\Model\ResourceModel\Order\Invoice\Item::class
-        );
+        $this->_init('Magento\Sales\Model\Order\Invoice\Item', 'Magento\Sales\Model\ResourceModel\Order\Invoice\Item');
     }
 
     /**

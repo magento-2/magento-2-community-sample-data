@@ -17,17 +17,19 @@ namespace Magento\SalesRule\Test\TestCase;
  * 4. Perform asserts.
  *
  * @group Shopping_Cart_Price_Rules
- * @ZephyrId MAGETWO-59665
+ * @ZephyrId MAGETWO-69066
  */
 class ShoppingCartWithFreeShippingTest extends \Magento\Mtf\TestCase\Injectable
 {
     /**
+     * Test step factory.
+     *
      * @var \Magento\Mtf\TestStep\TestStepFactory
      */
     private $testStepFactory;
 
     /**
-     * Inject data
+     * Inject data.
      *
      * @param \Magento\Mtf\TestStep\TestStepFactory $testStepFactory
      * @return void
@@ -39,7 +41,7 @@ class ShoppingCartWithFreeShippingTest extends \Magento\Mtf\TestCase\Injectable
     }
 
     /**
-     * Test sales rule with free shipping applied by product weight
+     * Test sales rule with free shipping applied by product weight.
      *
      * @param \Magento\SalesRule\Test\Fixture\SalesRule $salesRule
      * @param \Magento\Catalog\Test\Fixture\CatalogProductSimple $product

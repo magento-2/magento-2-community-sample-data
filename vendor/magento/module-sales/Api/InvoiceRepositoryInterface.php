@@ -10,7 +10,6 @@ namespace Magento\Sales\Api;
  *
  * An invoice is a record of the receipt of payment for an order.
  * @api
- * @since 100.0.2
  */
 interface InvoiceRepositoryInterface
 {
@@ -21,10 +20,10 @@ interface InvoiceRepositoryInterface
      * included. See http://devdocs.magento.com/codelinks/attributes.html#InvoiceRepositoryInterface to
      * determine which call to use to get detailed information about all attributes for an object.
      *
-     * @param \Magento\Framework\Api\SearchCriteriaInterface $searchCriteria The search criteria.
+     * @param \Magento\Framework\Api\SearchCriteria $searchCriteria The search criteria.
      * @return \Magento\Sales\Api\Data\InvoiceSearchResultInterface Invoice search result interface.
      */
-    public function getList(\Magento\Framework\Api\SearchCriteriaInterface $searchCriteria);
+    public function getList(\Magento\Framework\Api\SearchCriteria $searchCriteria);
 
     /**
      * Return Invoice object

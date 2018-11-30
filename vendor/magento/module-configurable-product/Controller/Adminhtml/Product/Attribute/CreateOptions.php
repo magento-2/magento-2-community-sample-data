@@ -7,6 +7,7 @@
 namespace Magento\ConfigurableProduct\Controller\Adminhtml\Product\Attribute;
 
 use Magento\Backend\App\Action;
+use Magento\Catalog\Controller\Adminhtml\Product;
 use Magento\Catalog\Model\ResourceModel\Eav\AttributeFactory;
 
 class CreateOptions extends Action
@@ -16,7 +17,7 @@ class CreateOptions extends Action
      *
      * @see _isAllowed()
      */
-    const ADMIN_RESOURCE = 'Magento_Catalog::products';
+    const ADMIN_RESOURCE = 'Magento_Catalog::attributes_attributes';
 
     /**
      * @var \Magento\Framework\Json\Helper\Data

@@ -32,14 +32,11 @@ class Edit extends \Magento\Tax\Controller\Adminhtml\Rate
         $resultPage = $this->initResultPage();
         $layout = $resultPage->getLayout();
 
-        $toolbarSaveBlock = $layout->createBlock(\Magento\Tax\Block\Adminhtml\Rate\Toolbar\Save::class)
+        $toolbarSaveBlock = $layout->createBlock('Magento\Tax\Block\Adminhtml\Rate\Toolbar\Save')
             ->assign('header', __('Edit Tax Rate'))
             ->assign(
                 'form',
-                $layout->createBlock(
-                    \Magento\Tax\Block\Adminhtml\Rate\Form::class,
-                    'tax_rate_form'
-                )->setShowLegend(true)
+                $layout->createBlock('Magento\Tax\Block\Adminhtml\Rate\Form', 'tax_rate_form')->setShowLegend(true)
             );
 
         $resultPage->addBreadcrumb(__('Manage Tax Rates'), __('Manage Tax Rates'), $this->getUrl('tax/rate'))

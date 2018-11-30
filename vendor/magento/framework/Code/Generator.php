@@ -7,11 +7,6 @@ namespace Magento\Framework\Code;
 
 use Magento\Framework\Code\Generator\DefinedClasses;
 use Magento\Framework\Code\Generator\EntityAbstract;
-use Magento\Framework\Code\Generator\Io;
-use Magento\Framework\ObjectManagerInterface;
-use Magento\Framework\Phrase;
-use Magento\Framework\Filesystem\Driver\File;
-use Psr\Log\LoggerInterface;
 
 class Generator
 {
@@ -22,7 +17,7 @@ class Generator
     const GENERATION_SKIP = 'skip';
 
     /**
-     * @var Io
+     * @var \Magento\Framework\Code\Generator\Io
      */
     protected $_ioObject;
 
@@ -37,33 +32,26 @@ class Generator
     protected $definedClasses;
 
     /**
-     * @var ObjectManagerInterface
+     * @var \Magento\Framework\ObjectManagerInterface
      */
     protected $objectManager;
 
     /**
-     * Logger instance
-     *
-     * @var LoggerInterface
-     */
-    private $logger;
-
-    /**
-     * @param Generator\Io $ioObject
-     * @param array $generatedEntities
+     * @param Generator\Io   $ioObject
+     * @param array          $generatedEntities
      * @param DefinedClasses $definedClasses
-     * @param LoggerInterface $logger
      */
     public function __construct(
-        Io $ioObject = null,
+        \Magento\Framework\Code\Generator\Io $ioObject = null,
         array $generatedEntities = [],
-        DefinedClasses $definedClasses = null,
-        LoggerInterface $logger = null
+        DefinedClasses $definedClasses = null
     ) {
-        $this->_ioObject = $ioObject ?: new Io(new File());
+        $this->_ioObject = $ioObject
+            ?: new \Magento\Framework\Code\Generator\Io(
+                new \Magento\Framework\Filesystem\Driver\File()
+            );
         $this->definedClasses = $definedClasses ?: new DefinedClasses();
         $this->_generatedEntities = $generatedEntities;
-        $this->logger = $logger;
     }
 
     /**
@@ -123,16 +111,8 @@ class Generator
         if ($generator !== null) {
             $this->tryToLoadSourceClass($className, $generator);
             if (!($file = $generator->generate())) {
-                /** @var $logger LoggerInterface */
                 $errors = $generator->getErrors();
-                $errors[] = 'Class ' . $className . ' generation error: The requested class did not generate properly, '
-                    . 'because the \'generated\' directory permission is read-only. '
-                    . 'If --- after running the \'bin/magento setup:di:compile\' CLI command when the \'generated\' '
-                    . 'directory permission is set to write --- the requested class did not generate properly, then '
-                    . 'you must add the generated class object to the signature of the related construct method, only.';
-                $message = implode(PHP_EOL, $errors);
-                $this->getLogger()->critical($message);
-                throw new \RuntimeException($message);
+                throw new \RuntimeException(implode(' ', $errors));
             }
             if (!$this->definedClasses->isClassLoadableFromMemory($className)) {
                 $this->_ioObject->includeFile($file);
@@ -142,25 +122,12 @@ class Generator
     }
 
     /**
-     * Retrieve logger
-     *
-     * @return LoggerInterface
-     */
-    private function getLogger()
-    {
-        if (!$this->logger) {
-            $this->logger = $this->getObjectManager()->get(LoggerInterface::class);
-        }
-        return $this->logger;
-    }
-
-    /**
      * Create entity generator
      *
      * @param string $generatorClass
      * @param string $entityName
      * @param string $className
-     * @return EntityAbstract
+     * @return \Magento\Framework\Code\Generator\EntityAbstract
      */
     protected function createGeneratorInstance($generatorClass, $entityName, $className)
     {
@@ -173,10 +140,10 @@ class Generator
     /**
      * Set object manager instance.
      *
-     * @param ObjectManagerInterface $objectManager
+     * @param \Magento\Framework\ObjectManagerInterface $objectManager
      * @return $this
      */
-    public function setObjectManager(ObjectManagerInterface $objectManager)
+    public function setObjectManager(\Magento\Framework\ObjectManagerInterface $objectManager)
     {
         $this->objectManager = $objectManager;
         return $this;
@@ -185,11 +152,11 @@ class Generator
     /**
      * Get object manager instance.
      *
-     * @return ObjectManagerInterface
+     * @return \Magento\Framework\ObjectManagerInterface
      */
     public function getObjectManager()
     {
-        if (!($this->objectManager instanceof ObjectManagerInterface)) {
+        if (!($this->objectManager instanceof \Magento\Framework\ObjectManagerInterface)) {
             throw new \LogicException(
                 "Object manager was expected to be set using setObjectManger() "
                 . "before getObjectManager() invocation."
@@ -202,7 +169,7 @@ class Generator
      * Try to load/generate source class to check if it is valid or not.
      *
      * @param string $className
-     * @param EntityAbstract $generator
+     * @param \Magento\Framework\Code\Generator\EntityAbstract $generator
      * @return void
      * @throws \RuntimeException
      */
@@ -211,7 +178,7 @@ class Generator
         $sourceClassName = $generator->getSourceClassName();
         if (!$this->definedClasses->isClassLoadable($sourceClassName)) {
             if ($this->generateClass($sourceClassName) !== self::GENERATION_SUCCESS) {
-                $phrase = new Phrase(
+                $phrase = new \Magento\Framework\Phrase(
                     'Source class "%1" for "%2" generation does not exist.',
                     [$sourceClassName, $className]
                 );
@@ -232,7 +199,7 @@ class Generator
     {
         if (!$resultEntityType || !$sourceClassName) {
             return self::GENERATION_ERROR;
-        } elseif ($this->definedClasses->isClassLoadableFromDisc($resultClass)) {
+        } else if ($this->definedClasses->isClassLoadableFromDisc($resultClass)) {
             $generatedFileName = $this->_ioObject->generateResultFileName($resultClass);
             /**
              * Must handle two edge cases: a competing process has generated the class and written it to disc already,
@@ -244,7 +211,7 @@ class Generator
                 $this->_ioObject->includeFile($generatedFileName);
             }
             return self::GENERATION_SKIP;
-        } elseif (!isset($this->_generatedEntities[$resultEntityType])) {
+        } else if (!isset($this->_generatedEntities[$resultEntityType])) {
             throw new \InvalidArgumentException('Unknown generation entity.');
         }
         return false;

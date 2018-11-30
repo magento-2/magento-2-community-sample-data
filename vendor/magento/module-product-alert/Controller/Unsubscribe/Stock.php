@@ -52,11 +52,11 @@ class Stock extends UnsubscribeController
                 throw new NoSuchEntityException();
             }
 
-            $model = $this->_objectManager->create(\Magento\ProductAlert\Model\Stock::class)
+            $model = $this->_objectManager->create('Magento\ProductAlert\Model\Stock')
                 ->setCustomerId($this->customerSession->getCustomerId())
                 ->setProductId($product->getId())
                 ->setWebsiteId(
-                    $this->_objectManager->get(\Magento\Store\Model\StoreManagerInterface::class)
+                    $this->_objectManager->get('Magento\Store\Model\StoreManagerInterface')
                         ->getStore()
                         ->getWebsiteId()
                 )

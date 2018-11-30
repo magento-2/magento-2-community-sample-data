@@ -4,6 +4,8 @@
  * See COPYING.txt for license details.
  */
 
+// @codingStandardsIgnoreFile
+
 namespace Magento\Framework\Pricing\Render;
 
 use Magento\Framework\Pricing\Amount\AmountInterface;
@@ -12,7 +14,7 @@ use Magento\Framework\Pricing\Price\PriceInterface;
 use Magento\Framework\View\Element\AbstractBlock;
 
 /**
- * @api
+ * RenderPool
  */
 class RendererPool extends AbstractBlock
 {
@@ -24,12 +26,12 @@ class RendererPool extends AbstractBlock
     /**
      * Default price renderer
      */
-    const PRICE_RENDERER_DEFAULT = \Magento\Framework\Pricing\Render\PriceBox::class;
+    const PRICE_RENDERER_DEFAULT = 'Magento\Framework\Pricing\Render\PriceBox';
 
     /**
      * Default amount renderer
      */
-    const AMOUNT_RENDERER_DEFAULT = \Magento\Framework\Pricing\Render\Amount::class;
+    const AMOUNT_RENDERER_DEFAULT = 'Magento\Framework\Pricing\Render\Amount';
 
     /**
      * Create amount renderer
@@ -77,8 +79,7 @@ class RendererPool extends AbstractBlock
         $renderBlock = $this->getLayout()->createBlock($renderClassName, '', $arguments);
         if (!$renderBlock instanceof PriceBoxRenderInterface) {
             throw new \InvalidArgumentException(
-                'Block "' . $renderClassName
-                . '" must implement \Magento\Framework\Pricing\Render\PriceBoxRenderInterface'
+                'Block "' . $renderClassName . '" must implement \Magento\Framework\Pricing\Render\PriceBoxRenderInterface'
             );
         }
         $renderBlock->setTemplate($this->getRenderBlockTemplate($type, $priceCode));
@@ -141,8 +142,7 @@ class RendererPool extends AbstractBlock
         $amountBlock = $this->getLayout()->createBlock($renderClassName, '', $arguments);
         if (!$amountBlock instanceof AmountRenderInterface) {
             throw new \InvalidArgumentException(
-                'Block "' . $renderClassName
-                . '" must implement \Magento\Framework\Pricing\Render\AmountRenderInterface'
+                'Block "' . $renderClassName . '" must implement \Magento\Framework\Pricing\Render\AmountRenderInterface'
             );
         }
         $amountBlock->setTemplate($this->getAmountRenderBlockTemplate($type, $priceCode));
@@ -156,15 +156,15 @@ class RendererPool extends AbstractBlock
      */
     public function getAdjustmentRenders(SaleableInterface $saleableItem = null, PriceInterface $price = null)
     {
-        $itemType = null === $saleableItem ? 'default' : $saleableItem->getTypeId();
-        $priceType = null === $price ? 'default' : $price->getPriceCode();
+        $itemType = is_null($saleableItem) ? 'default' : $saleableItem->getTypeId();
+        $priceType = is_null($price) ? 'default' : $price->getPriceCode();
 
         $fallbackPattern = [
             "{$itemType}/adjustments/{$priceType}",
             "{$itemType}/adjustments/default",
             "default/adjustments/{$priceType}",
             "default/adjustments/default",
-        ];
+            ];
         $renders = $this->findDataByPattern($fallbackPattern);
         if ($renders) {
             foreach ($renders as $code => $configuration) {

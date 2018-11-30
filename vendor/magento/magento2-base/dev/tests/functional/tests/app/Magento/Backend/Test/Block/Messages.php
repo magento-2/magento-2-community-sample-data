@@ -40,14 +40,14 @@ class Messages extends Block
      *
      * @var string
      */
-    protected $errorMessage = '[data-ui-id$=message-error], .message-error';
+    protected $errorMessage = '[data-ui-id$=message-error]';
 
     /**
      * Notice message selector.
      *
      * @var string
      */
-    protected $noticeMessage = '[data-ui-id$=message-notice], .message-notice';
+    protected $noticeMessage = '[data-ui-id$=message-notice]';
 
     /**
      * Warning message selector.
@@ -64,6 +64,19 @@ class Messages extends Block
     public function waitSuccessMessage()
     {
         return $this->waitForElementVisible($this->successMessage, Locator::SELECTOR_CSS);
+    }
+
+    /**
+     * Wait for success message and refresh page.
+     *
+     * @return bool
+     */
+    public function waitSuccessMessageAndRefreshPage()
+    {
+        $this->waitSuccessMessage();
+        $this->browser->refresh();
+
+        return $this->waitForElementNotVisible($this->successMessage, Locator::SELECTOR_CSS);
     }
 
     /**
@@ -121,9 +134,9 @@ class Messages extends Block
      */
     public function getErrorMessage()
     {
-        $this->waitForElementVisible($this->errorMessage);
-
-        return $this->_rootElement->find($this->errorMessage)->getText();
+        return $this->_rootElement
+            ->find($this->errorMessage, Locator::SELECTOR_CSS)
+            ->getText();
     }
 
     /**
@@ -167,16 +180,6 @@ class Messages extends Block
     }
 
     /**
-     * Check for success message.
-     *
-     * @return bool
-     */
-    public function assertSuccessMessage()
-    {
-        return $this->waitForElementVisible($this->successMessage, Locator::SELECTOR_CSS);
-    }
-
-    /**
      * Check for notice message.
      *
      * @return bool
@@ -195,24 +198,6 @@ class Messages extends Block
     {
         $this->waitForElementVisible($this->noticeMessage);
         return $this->_rootElement->find($this->noticeMessage)->getText();
-    }
-
-    /**
-     * Get all notice messages which are present on the page.
-     *
-     * @return array
-     */
-    public function getNoticeMessages()
-    {
-        $this->waitForElementVisible($this->noticeMessage);
-        $elements = $this->_rootElement->getElements($this->noticeMessage);
-
-        $messages = [];
-        foreach ($elements as $element) {
-            $messages[] = $element->getText();
-        }
-
-        return $messages;
     }
 
     /**

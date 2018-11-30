@@ -9,7 +9,7 @@
 
 namespace Magento\Catalog\Test\Unit\Model\Product\Attribute;
 
-class ManagementTest extends \PHPUnit\Framework\TestCase
+class ManagementTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\Catalog\Model\Product\Attribute\Management
@@ -23,7 +23,7 @@ class ManagementTest extends \PHPUnit\Framework\TestCase
 
     protected function setUp()
     {
-        $this->attrManagementMock = $this->createMock(\Magento\Eav\Api\AttributeManagementInterface::class);
+        $this->attrManagementMock = $this->getMock('\Magento\Eav\Api\AttributeManagementInterface');
         $this->model = new \Magento\Catalog\Model\Product\Attribute\Management($this->attrManagementMock);
     }
 
@@ -62,7 +62,7 @@ class ManagementTest extends \PHPUnit\Framework\TestCase
     public function testGetAttributes()
     {
         $attributeSetId = 1;
-        $attributeMock = $this->createMock(\Magento\Catalog\Api\Data\ProductAttributeInterface::class);
+        $attributeMock = $this->getMock('\Magento\Catalog\Api\Data\ProductAttributeInterface');
 
         $this->attrManagementMock->expects($this->once())
             ->method('getAttributes')

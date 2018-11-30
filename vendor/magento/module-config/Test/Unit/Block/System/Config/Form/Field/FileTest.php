@@ -9,7 +9,7 @@
  */
 namespace Magento\Config\Test\Unit\Block\System\Config\Form\Field;
 
-class FileTest extends \PHPUnit\Framework\TestCase
+class FileTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\Config\Block\System\Config\Form\Field\File
@@ -39,7 +39,7 @@ class FileTest extends \PHPUnit\Framework\TestCase
         ];
 
         $this->file = $objectManager->getObject(
-            \Magento\Config\Block\System\Config\Form\Field\File::class,
+            'Magento\Config\Block\System\Config\Form\Field\File',
             ['data' => $this->testData]
         );
 

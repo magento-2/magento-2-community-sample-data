@@ -11,7 +11,7 @@ use Magento\Swatches\Model\Swatch;
 /**
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  */
-class ConfigurableTest extends \PHPUnit\Framework\TestCase
+class ConfigurableTest extends \PHPUnit_Framework_TestCase
 {
     /** @var Configurable */
     private $configurable;
@@ -60,26 +60,30 @@ class ConfigurableTest extends \PHPUnit\Framework\TestCase
 
     protected function setUp()
     {
-        $this->arrayUtils = $this->createMock(\Magento\Framework\Stdlib\ArrayUtils::class);
-        $this->jsonEncoder = $this->createMock(\Magento\Framework\Json\EncoderInterface::class);
-        $this->helper = $this->createMock(\Magento\ConfigurableProduct\Helper\Data::class);
-        $this->swatchHelper = $this->createMock(\Magento\Swatches\Helper\Data::class);
-        $this->swatchMediaHelper = $this->createMock(\Magento\Swatches\Helper\Media::class);
-        $this->catalogProduct = $this->createMock(\Magento\Catalog\Helper\Product::class);
-        $this->currentCustomer = $this->createMock(\Magento\Customer\Helper\Session\CurrentCustomer::class);
-        $this->priceCurrency = $this->createMock(\Magento\Framework\Pricing\PriceCurrencyInterface::class);
-        $this->configurableAttributeData = $this->createMock(
-            \Magento\ConfigurableProduct\Model\ConfigurableAttributeData::class
+        $this->arrayUtils = $this->getMock('\Magento\Framework\Stdlib\ArrayUtils', [], [], '', false);
+        $this->jsonEncoder = $this->getMock('\Magento\Framework\Json\EncoderInterface', [], [], '', false);
+        $this->helper = $this->getMock('\Magento\ConfigurableProduct\Helper\Data', [], [], '', false);
+        $this->swatchHelper = $this->getMock('\Magento\Swatches\Helper\Data', [], [], '', false);
+        $this->swatchMediaHelper = $this->getMock('\Magento\Swatches\Helper\Media', [], [], '', false);
+        $this->catalogProduct = $this->getMock('\Magento\Catalog\Helper\Product', [], [], '', false);
+        $this->currentCustomer = $this->getMock('\Magento\Customer\Helper\Session\CurrentCustomer', [], [], '', false);
+        $this->priceCurrency = $this->getMock('\Magento\Framework\Pricing\PriceCurrencyInterface', [], [], '', false);
+        $this->configurableAttributeData = $this->getMock(
+            'Magento\ConfigurableProduct\Model\ConfigurableAttributeData',
+            [],
+            [],
+            '',
+            false
         );
-        $this->product = $this->createMock(\Magento\Catalog\Model\Product::class);
-        $this->typeInstance = $this->createMock(\Magento\Catalog\Model\Product\Type\AbstractType::class);
-        $this->scopeConfig = $this->createMock(\Magento\Framework\App\Config\ScopeConfigInterface::class);
-        $this->imageHelper = $this->createMock(\Magento\Catalog\Helper\Image::class);
-        $this->urlBuilder = $this->createMock(\Magento\Framework\UrlInterface::class);
+        $this->product = $this->getMock('\Magento\Catalog\Model\Product', [], [], '', false);
+        $this->typeInstance = $this->getMock('\Magento\Catalog\Model\Product\Type\AbstractType', [], [], '', false);
+        $this->scopeConfig = $this->getMock('\Magento\Framework\App\Config\ScopeConfigInterface', [], [], '', false);
+        $this->imageHelper = $this->getMock('\Magento\Catalog\Helper\Image', [], [], '', false);
+        $this->urlBuilder = $this->getMock('\Magento\Framework\UrlInterface');
 
         $objectManager = new \Magento\Framework\TestFramework\Unit\Helper\ObjectManager($this);
         $this->configurable = $objectManager->getObject(
-            \Magento\Swatches\Block\Product\Renderer\Configurable::class,
+            '\Magento\Swatches\Block\Product\Renderer\Configurable',
             [
                 'scopeConfig' => $this->scopeConfig,
                 'imageHelper' => $this->imageHelper,
@@ -149,27 +153,34 @@ class ConfigurableTest extends \PHPUnit\Framework\TestCase
 
     private function prepareGetJsonSwatchConfig()
     {
-        $product1 = $this->createMock(\Magento\Catalog\Model\Product::class);
-        $product1->expects($this->atLeastOnce())->method('isSaleable')->willReturn(true);
+        $product1 = $this->getMock('\Magento\Catalog\Model\Product', [], [], '', false);
         $product1->expects($this->atLeastOnce())->method('getData')->with('code')->willReturn(1);
 
-        $product2 = $this->createMock(\Magento\Catalog\Model\Product::class);
-        $product2->expects($this->atLeastOnce())->method('isSaleable')->willReturn(true);
+        $product2 = $this->getMock('\Magento\Catalog\Model\Product', [], [], '', false);
         $product2->expects($this->atLeastOnce())->method('getData')->with('code')->willReturn(3);
 
         $simpleProducts = [$product1, $product2];
-        $configurableType = $this->createMock(\Magento\ConfigurableProduct\Model\Product\Type\Configurable::class);
-        $configurableType->expects($this->atLeastOnce())->method('getUsedProducts')->with($this->product, null)
+        $configurableType = $this->getMock(
+            '\Magento\ConfigurableProduct\Model\Product\Type\Configurable',
+            [],
+            [],
+            '',
+            false
+        );
+        $configurableType->expects($this->atLeastOnce())->method('getSalableUsedProducts')->with($this->product, null)
             ->willReturn($simpleProducts);
         $this->product->expects($this->any())->method('getTypeInstance')->willReturn($configurableType);
 
-        $productAttribute1 = $this->createMock(\Magento\Eav\Model\Entity\Attribute\AbstractAttribute::class);
+        $productAttribute1 = $this->getMock('\Magento\Eav\Model\Entity\Attribute\AbstractAttribute', [], [], '', false);
         $productAttribute1->expects($this->any())->method('getId')->willReturn(1);
         $productAttribute1->expects($this->any())->method('getAttributeCode')->willReturn('code');
 
-        $attribute1 = $this->createPartialMock(
-            \Magento\ConfigurableProduct\Model\Product\Type\Configurable\Attribute::class,
-            ['getProductAttribute']
+        $attribute1 = $this->getMock(
+            '\Magento\ConfigurableProduct\Model\Product\Type\Configurable\Attribute',
+            ['getProductAttribute'],
+            [],
+            '',
+            false
         );
         $attribute1->expects($this->any())->method('getProductAttribute')->willReturn($productAttribute1);
 
@@ -318,58 +329,5 @@ class ConfigurableTest extends \PHPUnit\Framework\TestCase
             ->willReturn($url);
 
         $this->assertEquals($url, $this->configurable->getMediaCallback());
-    }
-
-    /**
-     * @param array $imageConfig
-     * @param array $sizeConfig
-     * @param string $encodedSizeConfig
-     * @return void
-     * @dataProvider getJsonSwatchSizeConfigDataProvider
-     */
-    public function testGetJsonSwatchSizeConfig(array $imageConfig, array $sizeConfig, string $encodedSizeConfig)
-    {
-        $this->swatchMediaHelper->expects($this->once())
-            ->method('getImageConfig')
-            ->willReturn($imageConfig);
-        $this->jsonEncoder->expects($this->once())
-            ->method('encode')
-            ->with($sizeConfig)
-            ->willReturn($encodedSizeConfig);
-
-        $this->assertEquals($encodedSizeConfig, $this->configurable->getJsonSwatchSizeConfig());
-    }
-
-    /**
-     * @return array
-     */
-    public function getJsonSwatchSizeConfigDataProvider(): array
-    {
-        return [
-            [
-                'imageConfig' => [
-                    Swatch::SWATCH_IMAGE_NAME => [
-                        'width' => 30,
-                        'height' => 30,
-                    ],
-                    Swatch::SWATCH_THUMBNAIL_NAME => [
-                        'width' => 50,
-                        'height' => 50,
-                    ],
-                ],
-                'sizeConfig' => [
-                    Configurable::SWATCH_IMAGE_NAME => [
-                        'width' => 30,
-                        'height' => 30,
-                    ],
-                    Configurable::SWATCH_THUMBNAIL_NAME => [
-                        'width' => 50,
-                        'height' => 50,
-                    ],
-                ],
-                'encodedSizeConfig' =>
-                    '{"swatchImage":{"width":30,"height":30},"swatchThumb":{"height":50,"width":50}}',
-            ],
-        ];
     }
 }

@@ -59,7 +59,7 @@ class AssignProducts extends \Magento\Backend\Block\Template
     {
         if (null === $this->blockGrid) {
             $this->blockGrid = $this->getLayout()->createBlock(
-                \Magento\Catalog\Block\Adminhtml\Category\Tab\Product::class,
+                'Magento\Catalog\Block\Adminhtml\Category\Tab\Product',
                 'category.product.grid'
             );
         }

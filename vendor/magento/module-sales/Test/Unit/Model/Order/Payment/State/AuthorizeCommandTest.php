@@ -15,7 +15,7 @@ use PHPUnit_Framework_MockObject_MockObject as MockObject;
 /**
  * @see AuthorizeCommand
  */
-class AuthorizeCommandTest extends \PHPUnit\Framework\TestCase
+class AuthorizeCommandTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var float

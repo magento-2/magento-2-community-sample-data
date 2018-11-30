@@ -9,7 +9,7 @@
  */
 namespace Magento\Framework\Validator\Test\Unit;
 
-class ConstraintTest extends \PHPUnit\Framework\TestCase
+class ConstraintTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\Framework\Validator\Constraint
@@ -17,7 +17,7 @@ class ConstraintTest extends \PHPUnit\Framework\TestCase
     protected $_constraint;
 
     /**
-     * @var \Magento\Framework\Validator\ValidatorInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @var \Magento\Framework\Validator\ValidatorInterface|PHPUnit_Framework_MockObject_MockObject
      */
     protected $_validatorMock;
 
@@ -27,7 +27,7 @@ class ConstraintTest extends \PHPUnit\Framework\TestCase
     protected function setUp()
     {
         $this->_validatorMock = $this->getMockBuilder(
-            \Magento\Framework\Validator\AbstractValidator::class
+            'Magento\Framework\Validator\AbstractValidator'
         )->setMethods(
             ['isValid', 'getMessages']
         )->getMock();
@@ -98,9 +98,7 @@ class ConstraintTest extends \PHPUnit\Framework\TestCase
     public function testSetTranslator()
     {
         /** @var \Magento\Framework\Translate\AbstractAdapter $translator */
-        $translator = $this->getMockBuilder(
-            \Magento\Framework\Translate\AdapterInterface::class
-        )->getMockForAbstractClass();
+        $translator = $this->getMockBuilder('Magento\Framework\Translate\AdapterInterface')->getMockForAbstractClass();
         $this->_constraint->setTranslator($translator);
         $this->assertEquals($translator, $this->_validatorMock->getTranslator());
         $this->assertEquals($translator, $this->_constraint->getTranslator());

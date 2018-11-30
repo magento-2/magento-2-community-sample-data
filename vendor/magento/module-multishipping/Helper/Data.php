@@ -22,7 +22,11 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper
 
     /**#@-*/
 
-    /**#@-*/
+    /**
+     * Checkout session
+     *
+     * @var \Magento\Checkout\Model\Session
+     */
     protected $checkoutSession;
 
     /**

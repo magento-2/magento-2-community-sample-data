@@ -27,7 +27,7 @@ class SearchCriteriaFactory
      */
     public function __construct(
         \Magento\Framework\ObjectManagerInterface $objectManager,
-        $instanceName = \Magento\Framework\Api\Search\SearchCriteria::class
+        $instanceName = 'Magento\Framework\Api\Search\SearchCriteria'
     ) {
         $this->_objectManager = $objectManager;
         $this->_instanceName = $instanceName;

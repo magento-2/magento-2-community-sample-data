@@ -5,10 +5,6 @@
  */
 namespace Magento\Ui\DataProvider\Modifier;
 
-/**
- * Interface \Magento\Ui\DataProvider\Modifier\PoolInterface
- *
- */
 interface PoolInterface
 {
     /**

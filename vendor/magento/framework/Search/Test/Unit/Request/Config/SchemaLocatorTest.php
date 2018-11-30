@@ -5,7 +5,7 @@
  */
 namespace Magento\Framework\Search\Test\Unit\Request\Config;
 
-class SchemaLocatorTest extends \PHPUnit\Framework\TestCase
+class SchemaLocatorTest extends \PHPUnit_Framework_TestCase
 {
     /** @var \Magento\Framework\Cache\Config\SchemaLocator */
     protected $schemaLocator;
@@ -20,7 +20,7 @@ class SchemaLocatorTest extends \PHPUnit\Framework\TestCase
     {
         $this->urnResolver = new \Magento\Framework\Config\Dom\UrnResolver();
         /** @var \Magento\Framework\Config\Dom\UrnResolver $urnResolverMock */
-        $this->urnResolverMock = $this->createMock(\Magento\Framework\Config\Dom\UrnResolver::class);
+        $this->urnResolverMock = $this->getMock('Magento\Framework\Config\Dom\UrnResolver', [], [], '', false);
         $this->schemaLocator = new \Magento\Framework\Search\Request\Config\SchemaLocator($this->urnResolverMock);
     }
 

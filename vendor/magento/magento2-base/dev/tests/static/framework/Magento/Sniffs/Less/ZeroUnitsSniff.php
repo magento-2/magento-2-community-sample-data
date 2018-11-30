@@ -5,8 +5,8 @@
  */
 namespace Magento\Sniffs\Less;
 
-use PHP_CodeSniffer\Sniffs\Sniff;
-use PHP_CodeSniffer\Files\File;
+use PHP_CodeSniffer_File;
+use PHP_CodeSniffer_Sniff;
 
 /**
  * Class ZeroUnitsSniff
@@ -18,7 +18,7 @@ use PHP_CodeSniffer\Files\File;
  * @link http://devdocs.magento.com/guides/v2.0/coding-standards/code-standard-less.html#floating-values
  *
  */
-class ZeroUnitsSniff implements Sniff
+class ZeroUnitsSniff implements PHP_CodeSniffer_Sniff
 {
     const CSS_PROPERTY_UNIT_PX = 'px';
     const CSS_PROPERTY_UNIT_EM = 'em';
@@ -53,7 +53,7 @@ class ZeroUnitsSniff implements Sniff
     /**
      * {@inheritdoc}
      */
-    public function process(File $phpcsFile, $stackPtr)
+    public function process(PHP_CodeSniffer_File $phpcsFile, $stackPtr)
     {
         $tokens = $phpcsFile->getTokens();
         $tokenCode = $tokens[$stackPtr]['code'];
@@ -66,14 +66,14 @@ class ZeroUnitsSniff implements Sniff
             && T_STRING === $nextToken['code']
             && in_array($nextToken['content'], $this->units)
         ) {
-            $phpcsFile->addError('Units specified for "0" value', $stackPtr, 'ZeroUnitFound');
+            $phpcsFile->addError('Units specified for "0" value', $stackPtr);
         }
 
         if ((T_DNUMBER === $tokenCode)
             && 0 === strpos($tokenContent, "0")
             && ((float)$tokenContent < 1)
         ) {
-            $phpcsFile->addError('Values starts from "0"', $stackPtr, 'ZeroUnitFound');
+            $phpcsFile->addError('Values starts from "0"', $stackPtr);
         }
     }
 }

@@ -1,195 +1,125 @@
 <?php
 /**
+ *
  * Copyright © Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
-declare(strict_types=1);
-
 namespace Magento\OfflineShipping\Test\Unit\Model\Quote\Address;
 
-use Magento\OfflineShipping\Model\Quote\Address\FreeShipping;
-use Magento\OfflineShipping\Model\SalesRule\Calculator;
-use Magento\Quote\Model\Quote;
-use Magento\Quote\Model\Quote\Address;
-use Magento\Quote\Model\Quote\Item;
-use Magento\Store\Api\Data\StoreInterface;
-use Magento\Store\Model\StoreManagerInterface;
-use PHPUnit_Framework_MockObject_MockObject as MockObject;
-
-class FreeShippingTest extends \PHPUnit\Framework\TestCase
+class FreeShippingTest extends \PHPUnit_Framework_TestCase
 {
-    private static $websiteId = 1;
-
-    private static $customerGroupId = 2;
-
-    private static $couponCode = 3;
-
-    private static $storeId = 1;
-
     /**
-     * @var FreeShipping
+     * @var \Magento\OfflineShipping\Model\Quote\Address\FreeShipping
      */
     private $model;
 
     /**
-     * @var MockObject|StoreManagerInterface
+     * @var \PHPUnit_Framework_MockObject_MockObject|\Magento\Store\Model\StoreManagerInterface
      */
-    private $storeManager;
+    private $storeManagerMock;
 
     /**
-     * @var MockObject|Calculator
+     * @var \PHPUnit_Framework_MockObject_MockObject|\Magento\OfflineShipping\Model\SalesRule\Calculator
      */
-    private $calculator;
+    private $calculatorMock;
 
     protected function setUp()
     {
-        $this->storeManager = $this->createMock(StoreManagerInterface::class);
-        $this->calculator = $this->createMock(Calculator::class);
+        $this->storeManagerMock = $this->getMock(\Magento\Store\Model\StoreManagerInterface::class);
+        $this->calculatorMock = $this->getMock(
+            \Magento\OfflineShipping\Model\SalesRule\Calculator::class,
+            [],
+            [],
+            '',
+            false
+        );
 
-        $this->model = new FreeShipping(
-            $this->storeManager,
-            $this->calculator
+        $this->model = new \Magento\OfflineShipping\Model\Quote\Address\FreeShipping(
+            $this->storeManagerMock,
+            $this->calculatorMock
         );
     }
 
-    /**
-     * Checks free shipping availability based on quote items and cart rule calculations.
-     *
-     * @param int $addressFree
-     * @param int $fItemFree
-     * @param int $sItemFree
-     * @param bool $expected
-     * @dataProvider itemsDataProvider
-     */
-    public function testIsFreeShipping(int $addressFree, int $fItemFree, int $sItemFree, bool $expected)
+    public function testIsFreeShippingIfNoItems()
     {
-        $address = $this->getShippingAddress();
-        $this->withStore();
-        $quote = $this->getQuote($address);
-        $fItem = $this->getItem($quote);
-        $sItem = $this->getItem($quote);
-        $items = [$fItem, $sItem];
-
-        $this->calculator->method('init')
-            ->with(self::$websiteId, self::$customerGroupId, self::$couponCode);
-        $this->calculator->method('processFreeShipping')
-            ->withConsecutive(
-                [$fItem],
-                [$sItem]
-            )
-            ->willReturnCallback(function () use ($fItem, $sItem, $addressFree, $fItemFree, $sItemFree) {
-                // emulate behavior of cart rule calculator
-                $fItem->getAddress()->setFreeShipping($addressFree);
-                $fItem->setFreeShipping($fItemFree);
-                $sItem->setFreeShipping($sItemFree);
-            });
-
-        $actual = $this->model->isFreeShipping($quote, $items);
-        self::assertEquals($expected, $actual);
-        self::assertEquals($expected, $address->getFreeShipping());
+        $quoteMock = $this->getMock(\Magento\Quote\Model\Quote::class, [], [], '', false);
+        $this->assertFalse($this->model->isFreeShipping($quoteMock, []));
     }
 
-    /**
-     * Gets list of variations with free shipping availability.
-     *
-     * @return array
-     */
-    public function itemsDataProvider(): array
+    public function testIsFreeShipping()
     {
-        return [
-            ['addressFree' => 1, 'fItemFree' => 0, 'sItemFree' => 0, 'expected' => true],
-            ['addressFree' => 0, 'fItemFree' => 1, 'sItemFree' => 0, 'expected' => false],
-            ['addressFree' => 0, 'fItemFree' => 0, 'sItemFree' => 1, 'expected' => false],
-            ['addressFree' => 0, 'fItemFree' => 1, 'sItemFree' => 1, 'expected' => true],
-        ];
-    }
+        $storeId = 100;
+        $websiteId = 200;
+        $customerGroupId = 300;
+        $quoteMock = $this->getMock(
+            \Magento\Quote\Model\Quote::class,
+            ['getShippingAddress', 'getStoreId', 'getCustomerGroupId', 'getCouponCode'],
+            [],
+            '',
+            false
+        );
+        $itemMock = $this->getMock(
+            \Magento\Quote\Model\Quote\Item::class,
+            [
+                'getNoDiscount',
+                'getParentItemId',
+                'getFreeShipping',
+                'getAddress',
+                'isChildrenCalculated',
+                'getHasChildren',
+                'getChildren'
+            ],
+            [],
+            '',
+            false
+        );
 
-    /**
-     * Creates mock object for store entity.
-     */
-    private function withStore()
-    {
-        $store = $this->getMockBuilder(StoreInterface::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $this->storeManager->method('getStore')
-            ->with(self::$storeId)
-            ->willReturn($store);
+        $quoteMock->expects($this->once())->method('getStoreId')->willReturn($storeId);
+        $storeMock = $this->getMock(\Magento\Store\Api\Data\StoreInterface::class);
+        $storeMock->expects($this->once())->method('getWebsiteId')->willReturn($websiteId);
+        $this->storeManagerMock->expects($this->once())->method('getStore')->with($storeId)->willReturn($storeMock);
 
-        $store->method('getWebsiteId')
-            ->willReturn(self::$websiteId);
-    }
+        $quoteMock->expects($this->once())->method('getCustomerGroupId')->willReturn($customerGroupId);
+        $quoteMock->expects($this->once())->method('getCouponCode')->willReturn(null);
 
-    /**
-     * Get mock object for quote entity.
-     *
-     * @param Address $address
-     * @return Quote
-     */
-    private function getQuote(Address $address): Quote
-    {
-        /** @var Quote|MockObject $quote */
-        $quote = $this->getMockBuilder(Quote::class)
-            ->disableOriginalConstructor()
-            ->setMethods(
-                [
-                    'getCouponCode', 'getCustomerGroupId', 'getShippingAddress', 'getStoreId', 'getItemsQty',
-                    'getVirtualItemsQty'
-                ]
-            )
-            ->getMock();
+        $this->calculatorMock->expects($this->once())
+            ->method('init')
+            ->with($websiteId, $customerGroupId, null)
+            ->willReturnSelf();
 
-        $quote->method('getStoreId')
-            ->willReturn(self::$storeId);
-        $quote->method('getCustomerGroupId')
-            ->willReturn(self::$customerGroupId);
-        $quote->method('getCouponCode')
-            ->willReturn(self::$couponCode);
-        $quote->method('getShippingAddress')
-            ->willReturn($address);
-        $quote->method('getItemsQty')
-            ->willReturn(2);
-        $quote->method('getVirtualItemsQty')
-            ->willReturn(0);
+        $itemMock->expects($this->once())->method('getNoDiscount')->willReturn(false);
+        $itemMock->expects($this->once())->method('getParentItemId')->willReturn(false);
+        $this->calculatorMock->expects($this->exactly(2))->method('processFreeShipping')->willReturnSelf();
+        $itemMock->expects($this->once())->method('getFreeShipping')->willReturn(true);
 
-        return $quote;
-    }
+        $addressMock = $this->getMock(
+            \Magento\Quote\Model\Quote\Address::class,
+            ['getFreeShipping', 'setFreeShipping'],
+            [],
+            '',
+            false
+        );
+        $itemAddressMock = $this->getMock(
+            \Magento\Quote\Model\Quote\Address::class,
+            ['getFreeShipping', 'setFreeShipping'],
+            [],
+            '',
+            false
+        );
+        $itemMock->expects($this->exactly(2))->method('getAddress')->willReturn($itemAddressMock);
+        $itemAddressMock->expects($this->once())->method('getFreeShipping')->willReturn(false);
+        $addressMock->expects($this->once())->method('getFreeShipping')->willReturn(true);
+        $addressMock->expects($this->once())->method('setFreeShipping')->with(0)->willReturnSelf();
+        $itemAddressMock->expects($this->once())->method('setFreeShipping')->with(true)->willReturnSelf();
+        $quoteMock->expects($this->any())->method('getShippingAddress')->willReturn($addressMock);
 
-    /**
-     * Gets stub object for shipping address.
-     *
-     * @return Address|MockObject
-     */
-    private function getShippingAddress(): Address
-    {
-        /** @var Address|MockObject $address */
-        $address = $this->getMockBuilder(Address::class)
-            ->disableOriginalConstructor()
-            ->setMethods(['beforeSave'])
-            ->getMock();
+        $itemMock->expects($this->once())->method('getHasChildren')->willReturn(true);
+        $itemMock->expects($this->once())->method('isChildrenCalculated')->willReturn(true);
 
-        return $address;
-    }
+        $childMock = $this->getMock(\Magento\Quote\Model\Quote\Item::class, ['setFreeShipping'], [], '', false);
+        $childMock->expects($this->once())->method('setFreeShipping')->with(true)->willReturnSelf();
+        $itemMock->expects($this->once())->method('getChildren')->willReturn([$childMock]);
 
-    /**
-     * Gets stub object for quote item.
-     *
-     * @param Quote $quote
-     * @return Item
-     */
-    private function getItem(Quote $quote): Item
-    {
-        /** @var Item|MockObject $item */
-        $item = $this->getMockBuilder(Item::class)
-            ->disableOriginalConstructor()
-            ->setMethods(['getHasChildren'])
-            ->getMock();
-        $item->setQuote($quote);
-        $item->setNoDiscount(0);
-        $item->setParentItemId(0);
-        $item->method('getHasChildren')
-            ->willReturn(0);
-
-        return $item;
+        $this->assertTrue($this->model->isFreeShipping($quoteMock, [$itemMock]));
     }
 }

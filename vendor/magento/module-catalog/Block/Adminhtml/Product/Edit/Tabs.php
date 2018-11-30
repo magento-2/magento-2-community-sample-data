@@ -31,7 +31,7 @@ class Tabs extends WigetTabs
     /**
      * @var string
      */
-    protected $_attributeTabBlock = \Magento\Catalog\Block\Adminhtml\Product\Edit\Tab\Attributes::class;
+    protected $_attributeTabBlock = 'Magento\Catalog\Block\Adminhtml\Product\Edit\Tab\Attributes';
 
     /**
      * @var string
@@ -189,7 +189,7 @@ class Tabs extends WigetTabs
                         'label' => __('Websites'),
                         'content' => $this->_translateHtml(
                             $this->getLayout()->createBlock(
-                                \Magento\Catalog\Block\Adminhtml\Product\Edit\Tab\Websites::class
+                                'Magento\Catalog\Block\Adminhtml\Product\Edit\Tab\Websites'
                             )->toHtml()
                         ),
                         'group_code' => self::BASIC_TAB_GROUP_CODE

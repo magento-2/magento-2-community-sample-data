@@ -11,8 +11,7 @@ use Magento\Framework\View\Element\UiComponent\ContextInterface;
 use Magento\Framework\UrlInterface;
 
 /**
- * @api
- * @since 100.0.2
+ * Class Columns
  */
 class Columns extends AbstractComponent
 {

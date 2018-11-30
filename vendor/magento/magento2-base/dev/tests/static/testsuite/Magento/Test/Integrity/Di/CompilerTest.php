@@ -23,7 +23,7 @@ use Magento\TestFramework\Integrity\PluginValidator;
 /**
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  */
-class CompilerTest extends \PHPUnit\Framework\TestCase
+class CompilerTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var string
@@ -62,11 +62,6 @@ class CompilerTest extends \PHPUnit\Framework\TestCase
      */
     protected $pluginValidator;
 
-    /**
-     * @var string[]|null
-     */
-    private $pluginBlacklist;
-
     protected function setUp()
     {
         $this->_shell = new \Magento\Framework\Shell(new \Magento\Framework\Shell\CommandRenderer());
@@ -74,8 +69,8 @@ class CompilerTest extends \PHPUnit\Framework\TestCase
         $basePath = str_replace('\\', '/', $basePath);
 
         $directoryList = new DirectoryList($basePath);
-        $this->_generationDir = $directoryList->getPath(DirectoryList::GENERATED_CODE);
-        $this->_compilationDir = $directoryList->getPath(DirectoryList::GENERATED_METADATA);
+        $this->_generationDir = $directoryList->getPath(DirectoryList::GENERATION);
+        $this->_compilationDir = $directoryList->getPath(DirectoryList::DI);
 
         $this->_command = 'php ' . $basePath . '/bin/magento setup:di:compile';
 
@@ -84,7 +79,7 @@ class CompilerTest extends \PHPUnit\Framework\TestCase
         $argumentInterpreter = new \Magento\Framework\Data\Argument\Interpreter\Composite(
             [
                 'boolean' => new \Magento\Framework\Data\Argument\Interpreter\Boolean($booleanUtils),
-                'string' => new \Magento\Framework\Data\Argument\Interpreter\BaseStringUtils($booleanUtils),
+                'string' => new \Magento\Framework\Data\Argument\Interpreter\StringUtils($booleanUtils),
                 'number' => new \Magento\Framework\Data\Argument\Interpreter\Number(),
                 'null' => new \Magento\Framework\Data\Argument\Interpreter\NullType(),
                 'object' => new \Magento\Framework\Data\Argument\Interpreter\DataObject($booleanUtils),
@@ -106,35 +101,11 @@ class CompilerTest extends \PHPUnit\Framework\TestCase
         );
         $this->_validator = new \Magento\Framework\Code\Validator();
         $this->_validator->add(new \Magento\Framework\Code\Validator\ConstructorIntegrity());
+        $this->_validator->add(new \Magento\Framework\Code\Validator\ContextAggregation());
         $this->_validator->add(new \Magento\Framework\Code\Validator\TypeDuplication());
         $this->_validator->add(new \Magento\Framework\Code\Validator\ArgumentSequence());
         $this->_validator->add(new \Magento\Framework\Code\Validator\ConstructorArgumentTypes());
         $this->pluginValidator = new PluginValidator(new InterfaceValidator());
-    }
-
-    /**
-     * Return plugin blacklist class names
-     *
-     * @return string[]
-     */
-    private function getPluginBlacklist(): array
-    {
-        if ($this->pluginBlacklist === null) {
-            $blacklistFiles = str_replace(
-                '\\',
-                '/',
-                realpath(__DIR__) . '/../_files/blacklist/compiler_plugins*.txt'
-            );
-            $blacklistItems = [];
-            foreach (glob($blacklistFiles) as $fileName) {
-                $blacklistItems = array_merge(
-                    $blacklistItems,
-                    file($fileName, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES)
-                );
-            }
-            $this->pluginBlacklist = $blacklistItems;
-        }
-        return $this->pluginBlacklist;
     }
 
     /**
@@ -186,7 +157,7 @@ class CompilerTest extends \PHPUnit\Framework\TestCase
     /**
      * Checks if class is a real one or generated Factory
      * @param string $instanceName class name
-     * @throws \PHPUnit\Framework\AssertionFailedError
+     * @throws \PHPUnit_Framework_AssertionFailedError
      * @return bool
      */
     protected function _classExistsAsReal($instanceName)
@@ -330,15 +301,15 @@ class CompilerTest extends \PHPUnit\Framework\TestCase
         $generator = new \Magento\Framework\Code\Generator(
             $generatorIo,
             [
-                Factory::ENTITY_TYPE => \Magento\Framework\ObjectManager\Code\Generator\Factory::class,
-                Repository::ENTITY_TYPE => \Magento\Framework\ObjectManager\Code\Generator\Repository::class,
-                Converter::ENTITY_TYPE => \Magento\Framework\ObjectManager\Code\Generator\Converter::class,
-                Mapper::ENTITY_TYPE => \Magento\Framework\Api\Code\Generator\Mapper::class,
-                SearchResults::ENTITY_TYPE => \Magento\Framework\Api\Code\Generator\SearchResults::class,
+                Factory::ENTITY_TYPE => 'Magento\Framework\ObjectManager\Code\Generator\Factory',
+                Repository::ENTITY_TYPE => 'Magento\Framework\ObjectManager\Code\Generator\Repository',
+                Converter::ENTITY_TYPE => 'Magento\Framework\ObjectManager\Code\Generator\Converter',
+                Mapper::ENTITY_TYPE => 'Magento\Framework\Api\Code\Generator\Mapper',
+                SearchResults::ENTITY_TYPE => 'Magento\Framework\Api\Code\Generator\SearchResults',
                 ExtensionAttributesInterfaceGenerator::ENTITY_TYPE =>
-                    \Magento\Framework\Api\Code\Generator\ExtensionAttributesInterfaceGenerator::class,
+                    'Magento\Framework\Api\Code\Generator\ExtensionAttributesInterfaceGenerator',
                 ExtensionAttributesGenerator::ENTITY_TYPE =>
-                    \Magento\Framework\Api\Code\Generator\ExtensionAttributesGenerator::class
+                    'Magento\Framework\Api\Code\Generator\ExtensionAttributesGenerator'
             ]
         );
         $generationAutoloader = new \Magento\Framework\Code\Generator\Autoloader($generator);
@@ -390,7 +361,6 @@ class CompilerTest extends \PHPUnit\Framework\TestCase
      * Get application plugins
      *
      * @return array
-     * @throws \Exception
      */
     protected function pluginDataProvider()
     {
@@ -407,14 +377,29 @@ class CompilerTest extends \PHPUnit\Framework\TestCase
                 $type = \Magento\Framework\App\Utility\Classes::resolveVirtualType($type);
                 if ($node->attributes->getNamedItem('type')) {
                     $plugin = $node->attributes->getNamedItem('type')->nodeValue;
-                    if (!in_array($plugin, $this->getPluginBlacklist())) {
-                        $plugin = \Magento\Framework\App\Utility\Classes::resolveVirtualType($plugin);
-                        $plugins[] = ['plugin' => $plugin, 'intercepted type' => $type];
-                    }
+                    $plugin = \Magento\Framework\App\Utility\Classes::resolveVirtualType($plugin);
+                    $plugins[] = ['plugin' => $plugin, 'intercepted type' => $type];
                 }
             }
         }
 
         return $plugins;
+    }
+
+    /**
+     * Test DI compiler
+     *
+     * @depends testConfigurationOfInstanceParameters
+     * @depends testConstructorIntegrity
+     * @depends testPluginInterfaces
+     */
+    public function testCompiler()
+    {
+        $this->markTestSkipped('MAGETWO-52570');
+        try {
+            $this->_shell->execute($this->_command);
+        } catch (\Magento\Framework\Exception\LocalizedException $exception) {
+            $this->fail($exception->getPrevious()->getMessage());
+        }
     }
 }

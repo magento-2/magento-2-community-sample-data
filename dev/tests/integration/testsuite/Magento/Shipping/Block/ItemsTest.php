@@ -5,17 +5,17 @@
  */
 namespace Magento\Shipping\Block;
 
-class ItemsTest extends \PHPUnit\Framework\TestCase
+class ItemsTest extends \PHPUnit_Framework_TestCase
 {
     public function testGetCommentsHtml()
     {
         $layout = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->get(
-            \Magento\Framework\View\LayoutInterface::class
+            'Magento\Framework\View\LayoutInterface'
         );
-        $block = $layout->createBlock(\Magento\Shipping\Block\Items::class, 'block');
-        $childBlock = $layout->addBlock(\Magento\Framework\View\Element\Text::class, 'shipment_comments', 'block');
+        $block = $layout->createBlock('Magento\Shipping\Block\Items', 'block');
+        $childBlock = $layout->addBlock('Magento\Framework\View\Element\Text', 'shipment_comments', 'block');
         $shipment = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->create(
-            \Magento\Sales\Model\Order\Shipment::class
+            'Magento\Sales\Model\Order\Shipment'
         );
 
         $expectedHtml = '<b>Any html</b>';

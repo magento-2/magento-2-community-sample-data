@@ -27,7 +27,7 @@ class SearchResultFactory
      */
     public function __construct(
         \Magento\Framework\ObjectManagerInterface $objectManager,
-        $instanceName = \Magento\Framework\Api\Search\SearchResult::class
+        $instanceName = 'Magento\Framework\Api\Search\SearchResult'
     ) {
         $this->_objectManager = $objectManager;
         $this->_instanceName = $instanceName;

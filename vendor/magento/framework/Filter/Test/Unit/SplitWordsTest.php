@@ -5,7 +5,7 @@
  */
 namespace Magento\Framework\Filter\Test\Unit;
 
-class SplitWordsTest extends \PHPUnit\Framework\TestCase
+class SplitWordsTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * Bug: $maxWordLength parameter has a misleading name. It limits qty of words in the result.

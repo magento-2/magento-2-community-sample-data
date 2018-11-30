@@ -5,9 +5,6 @@
  */
 namespace Magento\Framework\Search\Adapter\Mysql\Aggregation;
 
-/**
- * @api
- */
 class DataProviderContainer
 {
     /**

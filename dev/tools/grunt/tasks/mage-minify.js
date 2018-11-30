@@ -17,8 +17,8 @@ module.exports = function (grunt) {
      */
     function getConfig(options, file) {
         return _.extend({
-            input: file.src,
-            output: file.dest
+            fileIn: file.src,
+            fileOut: file.dest
         }, options);
     }
 
@@ -43,7 +43,7 @@ module.exports = function (grunt) {
                 }
             };
 
-            compressor.minify(config);
+            new compressor.minify(config);
         });
     });
 };

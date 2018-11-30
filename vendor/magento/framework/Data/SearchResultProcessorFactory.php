@@ -10,7 +10,7 @@ namespace Magento\Framework\Data;
  */
 class SearchResultProcessorFactory
 {
-    const DEFAULT_INSTANCE_NAME = \Magento\Framework\Data\SearchResultProcessor::class;
+    const DEFAULT_INSTANCE_NAME = 'Magento\Framework\Data\SearchResultProcessor';
 
     /**
      * Object Manager instance

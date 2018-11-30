@@ -12,7 +12,6 @@ use \Magento\Framework\DataObject\IdentityInterface;
  * Reports Recently Viewed Products Block
  *
  * @author     Magento Core Team <core@magentocommerce.com>
- * @deprecated 100.2.0
  */
 class Viewed extends AbstractProduct implements IdentityInterface
 {

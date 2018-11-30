@@ -10,7 +10,7 @@ namespace Magento\TestFramework\TestCase;
 
 use Magento\Framework\Component\ComponentRegistrar;
 
-abstract class AbstractConfigFiles extends \PHPUnit\Framework\TestCase
+abstract class AbstractConfigFiles extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var string
@@ -44,12 +44,12 @@ abstract class AbstractConfigFiles extends \PHPUnit\Framework\TestCase
         $xmlFiles = $this->getXmlConfigFiles();
         if (!empty($xmlFiles)) {
             $this->_fileResolverMock = $this->getMockBuilder(
-                \Magento\Framework\App\Arguments\FileResolver\Primary::class
+                'Magento\Framework\App\Arguments\FileResolver\Primary'
             )->disableOriginalConstructor()->getMock();
 
             /* Enable Validation regardless of MAGE_MODE */
             $validateStateMock = $this->getMockBuilder(
-                \Magento\Framework\Config\ValidationStateInterface::class
+                'Magento\Framework\Config\ValidationStateInterface'
             )->disableOriginalConstructor()->getMock();
             $validateStateMock->expects($this->any())->method('isValidationRequired')->will($this->returnValue(true));
 
@@ -79,7 +79,7 @@ abstract class AbstractConfigFiles extends \PHPUnit\Framework\TestCase
         if ($skip) {
             $this->markTestSkipped('There are no xml files in the system for this test.');
         }
-        $validationStateMock = $this->createMock(\Magento\Framework\Config\ValidationStateInterface::class);
+        $validationStateMock = $this->getMock('\Magento\Framework\Config\ValidationStateInterface', [], [], '', false);
         $validationStateMock->method('isValidationRequired')
             ->willReturn(false);
         $domConfig = new \Magento\Framework\Config\Dom($file, $validationStateMock);
@@ -139,9 +139,9 @@ abstract class AbstractConfigFiles extends \PHPUnit\Framework\TestCase
     {
         $objectManager = \Magento\TestFramework\Helper\Bootstrap::getObjectManager();
         /** @var $moduleDirSearch \Magento\Framework\Component\DirSearch */
-        $moduleDirSearch = $objectManager->get(\Magento\Framework\Component\DirSearch::class);
+        $moduleDirSearch = $objectManager->get('Magento\Framework\Component\DirSearch');
 
-        return $objectManager->get(\Magento\Framework\Config\FileIteratorFactory::class)
+        return $objectManager->get('Magento\Framework\Config\FileIteratorFactory')
             ->create($moduleDirSearch->collectFiles(ComponentRegistrar::MODULE, $this->_getConfigFilePathGlob()));
     }
 

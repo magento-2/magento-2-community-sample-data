@@ -21,18 +21,18 @@ class ApplyRules extends \Magento\CatalogRule\Controller\Adminhtml\Promo\Catalog
         $errorMessage = __('We can\'t apply the rules.');
         try {
             /** @var Job $ruleJob */
-            $ruleJob = $this->_objectManager->get(\Magento\CatalogRule\Model\Rule\Job::class);
+            $ruleJob = $this->_objectManager->get('Magento\CatalogRule\Model\Rule\Job');
             $ruleJob->applyAll();
 
             if ($ruleJob->hasSuccess()) {
-                $this->messageManager->addSuccessMessage($ruleJob->getSuccess());
-                $this->_objectManager->create(\Magento\CatalogRule\Model\Flag::class)->loadSelf()->setState(0)->save();
+                $this->messageManager->addSuccess($ruleJob->getSuccess());
+                $this->_objectManager->create('Magento\CatalogRule\Model\Flag')->loadSelf()->setState(0)->save();
             } elseif ($ruleJob->hasError()) {
-                $this->messageManager->addErrorMessage($errorMessage . ' ' . $ruleJob->getError());
+                $this->messageManager->addError($errorMessage . ' ' . $ruleJob->getError());
             }
         } catch (\Exception $e) {
-            $this->_objectManager->create(\Psr\Log\LoggerInterface::class)->critical($e);
-            $this->messageManager->addErrorMessage($errorMessage);
+            $this->_objectManager->create('Psr\Log\LoggerInterface')->critical($e);
+            $this->messageManager->addError($errorMessage);
         }
 
         /** @var \Magento\Backend\Model\View\Result\Redirect $resultRedirect */

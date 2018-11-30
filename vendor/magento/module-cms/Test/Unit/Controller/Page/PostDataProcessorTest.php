@@ -15,7 +15,7 @@ use Magento\Framework\View\Model\Layout\Update\ValidatorFactory;
  * Class PostDataProcessorTest
  * @package Magento\Cms\Test\Unit\Controller\Page
  */
-class PostDataProcessorTest extends \PHPUnit\Framework\TestCase
+class PostDataProcessorTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var Date|\PHPUnit_Framework_MockObject_MockObject
@@ -65,7 +65,7 @@ class PostDataProcessorTest extends \PHPUnit\Framework\TestCase
             'title' => ''
         ];
         $this->messageManagerMock->expects($this->once())
-            ->method('addErrorMessage')
+            ->method('addError')
             ->with(__('To apply changes you should fill in hidden required "%1" field', 'Page Title'));
 
         $this->assertFalse($this->postDataProcessor->validateRequireEntry($postData));

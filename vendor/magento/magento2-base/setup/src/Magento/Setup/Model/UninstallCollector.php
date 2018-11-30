@@ -56,14 +56,14 @@ class UninstallCollector
         $setup = $this->dataSetupFactory->create();
         $result = $setup->getConnection()->select()->from($setup->getTable('setup_module'), ['module']);
         if (isset($filterModules) && sizeof($filterModules) > 0) {
-            $result->where('module in( ? )', $filterModules);
+            $result->where('module in( ? )', implode(',', $filterModules));
         }
         // go through modules
         foreach ($setup->getConnection()->fetchAll($result) as $row) {
             $uninstallClassName = str_replace('_', '\\', $row['module']) . '\Setup\Uninstall';
             if (class_exists($uninstallClassName)) {
                 $uninstallClass = $this->objectManager->create($uninstallClassName);
-                if (is_subclass_of($uninstallClass, \Magento\Framework\Setup\UninstallInterface::class)) {
+                if (is_subclass_of($uninstallClass, 'Magento\Framework\Setup\UninstallInterface')) {
                     $uninstallList[$row['module']] = $uninstallClass;
                 }
             }

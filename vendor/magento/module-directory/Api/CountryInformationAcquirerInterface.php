@@ -9,7 +9,6 @@ namespace Magento\Directory\Api;
  * Country information acquirer interface
  *
  * @api
- * @since 100.0.2
  */
 interface CountryInformationAcquirerInterface
 {

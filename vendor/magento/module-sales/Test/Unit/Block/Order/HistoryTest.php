@@ -5,7 +5,7 @@
  */
 namespace Magento\Sales\Test\Unit\Block\Order;
 
-class HistoryTest extends \PHPUnit\Framework\TestCase
+class HistoryTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\Sales\Block\Order\History
@@ -54,28 +54,28 @@ class HistoryTest extends \PHPUnit\Framework\TestCase
 
     protected function setUp()
     {
-        $this->context = $this->createMock(\Magento\Framework\View\Element\Template\Context::class);
+        $this->context = $this->getMock('Magento\Framework\View\Element\Template\Context', [], [], '', false, false);
         $this->orderCollectionFactory =
-            $this->getMockBuilder(\Magento\Sales\Model\ResourceModel\Order\CollectionFactory::class)
+            $this->getMockBuilder('Magento\Sales\Model\ResourceModel\Order\CollectionFactory')
             ->disableOriginalConstructor()->setMethods(['create'])->getMock();
         $this->orderCollectionFactoryInterface =
             $this->getMockBuilder(\Magento\Sales\Model\ResourceModel\Order\CollectionFactoryInterface::class)
                 ->disableOriginalConstructor()->setMethods(['create'])->getMock();
-        $this->objectManager = $this->createMock(\Magento\Framework\ObjectManagerInterface::class);
+        $this->objectManager = $this->getMock(\Magento\Framework\ObjectManagerInterface::class, [], [], '', false);
         $this->objectManager->expects($this->any())
             ->method('get')
             ->will($this->returnValue($this->orderCollectionFactoryInterface));
         \Magento\Framework\App\ObjectManager::setInstance($this->objectManager);
 
-        $this->customerSession = $this->getMockBuilder(\Magento\Customer\Model\Session::class)
+        $this->customerSession = $this->getMockBuilder('Magento\Customer\Model\Session')
             ->setMethods(['getCustomerId'])->disableOriginalConstructor()->getMock();
 
-        $this->orderConfig = $this->getMockBuilder(\Magento\Sales\Model\Order\Config::class)
+        $this->orderConfig = $this->getMockBuilder('Magento\Sales\Model\Order\Config')
             ->setMethods(['getVisibleOnFrontStatuses'])->disableOriginalConstructor()->getMock();
 
-        $this->pageConfig = $this->getMockBuilder(\Magento\Framework\View\Page\Config::class)
+        $this->pageConfig = $this->getMockBuilder('Magento\Framework\View\Page\Config')
             ->disableOriginalConstructor()->getMock();
-        $this->pageTitleMock = $this->getMockBuilder(\Magento\Framework\View\Page\Title::class)
+        $this->pageTitleMock = $this->getMockBuilder('Magento\Framework\View\Page\Title')
             ->disableOriginalConstructor()
             ->getMock();
     }
@@ -94,9 +94,13 @@ class HistoryTest extends \PHPUnit\Framework\TestCase
             ->method('getVisibleOnFrontStatuses')
             ->will($this->returnValue($statuses));
 
-        $orderCollection = $this->createPartialMock(
-            \Magento\Sales\Model\ResourceModel\Order\Collection::class,
-            ['addFieldToSelect', 'addFieldToFilter', 'setOrder']
+        $orderCollection = $this->getMock(
+            'Magento\Sales\Model\ResourceModel\Order\Collection',
+            ['addFieldToSelect', 'addFieldToFilter', 'setOrder'],
+            [],
+            '',
+            false,
+            false
         );
 
         $this->context->expects($this->any())

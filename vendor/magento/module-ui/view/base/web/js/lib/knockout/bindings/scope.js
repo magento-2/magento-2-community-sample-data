@@ -7,10 +7,8 @@ define([
     'ko',
     'uiRegistry',
     'mage/translate',
-    '../template/renderer',
-    'jquery',
-    '../../logger/console-logger'
-], function (ko, registry, $t, renderer, $, consoleLogger) {
+    '../template/renderer'
+], function (ko, registry, $t, renderer) {
     'use strict';
 
     /**
@@ -18,11 +16,9 @@ define([
      * Applies bindings to descendant nodes.
      * @param {HTMLElement} el - element to apply bindings to.
      * @param {ko.bindingContext} bindingContext - instance of ko.bindingContext, passed to binding initially.
-     * @param {Promise} promise - instance of jQuery promise
      * @param {Object} component - component instance to attach to new context
      */
-    function applyComponents(el, bindingContext, promise, component) {
-        promise.resolve();
+    function applyComponents(el, bindingContext, component) {
         component = bindingContext.createChildContext(component);
 
         ko.utils.extend(component, {
@@ -57,25 +53,9 @@ define([
          */
         update: function (el, valueAccessor, allBindings, viewModel, bindingContext) {
             var component = valueAccessor(),
-                promise = $.Deferred(),
-                apply = applyComponents.bind(this, el, bindingContext, promise),
-                loggerUtils = consoleLogger.utils;
+                apply = applyComponents.bind(this, el, bindingContext);
 
             if (typeof component === 'string') {
-                loggerUtils.asyncLog(
-                    promise,
-                    {
-                        data: {
-                            component: component
-                        },
-                        messages: loggerUtils.createMessages(
-                            'requestingComponent',
-                            'requestingComponentIsLoaded',
-                            'requestingComponentIsFailed'
-                        )
-                    }
-                );
-
                 registry.get(component, apply);
             } else if (typeof component === 'function') {
                 component(apply);

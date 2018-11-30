@@ -12,10 +12,6 @@ use Magento\Framework\Exception\NoSuchEntityException;
  * Newsletter problems collection
  *
  * @SuppressWarnings(PHPMD.LongVariable)
- * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
- *
- * @api
- * @since 100.0.2
  */
 class Collection extends \Magento\Framework\Model\ResourceModel\Db\Collection\AbstractCollection
 {
@@ -91,7 +87,7 @@ class Collection extends \Magento\Framework\Model\ResourceModel\Db\Collection\Ab
      */
     protected function _construct()
     {
-        $this->_init(\Magento\Newsletter\Model\Problem::class, \Magento\Newsletter\Model\ResourceModel\Problem::class);
+        $this->_init('Magento\Newsletter\Model\Problem', 'Magento\Newsletter\Model\ResourceModel\Problem');
     }
 
     /**

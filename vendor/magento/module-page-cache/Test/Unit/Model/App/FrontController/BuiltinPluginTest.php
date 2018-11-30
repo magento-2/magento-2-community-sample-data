@@ -8,7 +8,7 @@ namespace Magento\PageCache\Test\Unit\Model\App\FrontController;
 
 use Magento\PageCache\Model\App\FrontController\BuiltinPlugin;
 
-class BuiltinPluginTest extends \PHPUnit\Framework\TestCase
+class BuiltinPluginTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var BuiltinPlugin
@@ -60,13 +60,19 @@ class BuiltinPluginTest extends \PHPUnit\Framework\TestCase
      */
     protected function setUp()
     {
-        $this->configMock = $this->createMock(\Magento\PageCache\Model\Config::class);
-        $this->versionMock = $this->createMock(\Magento\Framework\App\PageCache\Version::class);
-        $this->kernelMock = $this->createMock(\Magento\Framework\App\PageCache\Kernel::class);
-        $this->stateMock = $this->createMock(\Magento\Framework\App\State::class);
-        $this->frontControllerMock = $this->createMock(\Magento\Framework\App\FrontControllerInterface::class);
-        $this->requestMock = $this->createMock(\Magento\Framework\App\RequestInterface::class);
-        $this->responseMock = $this->createMock(\Magento\Framework\App\Response\Http::class);
+        $this->configMock = $this->getMock('Magento\PageCache\Model\Config', [], [], '', false);
+        $this->versionMock = $this->getMock('Magento\Framework\App\PageCache\Version', [], [], '', false);
+        $this->kernelMock = $this->getMock('Magento\Framework\App\PageCache\Kernel', [], [], '', false);
+        $this->stateMock = $this->getMock('Magento\Framework\App\State', [], [], '', false);
+        $this->frontControllerMock = $this->getMock(
+            'Magento\Framework\App\FrontControllerInterface',
+            [],
+            [],
+            '',
+            false
+        );
+        $this->requestMock = $this->getMock('Magento\Framework\App\RequestInterface', [], [], '', false);
+        $this->responseMock = $this->getMock('Magento\Framework\App\Response\Http', [], [], '', false);
         $response = $this->responseMock;
         $this->closure = function () use ($response) {
             return $response;
@@ -151,7 +157,7 @@ class BuiltinPluginTest extends \PHPUnit\Framework\TestCase
             ->method('getMode')
             ->will($this->returnValue($state));
 
-        $result = $this->createMock(\Magento\Framework\Controller\ResultInterface::class);
+        $result = $this->getMock('Magento\Framework\Controller\ResultInterface', [], [], '', false);
         $result->expects($this->never())->method('setHeader');
         $closure =  function () use ($result) {
             return $result;

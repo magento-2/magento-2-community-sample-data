@@ -32,7 +32,7 @@ class LayoutFactory
      */
     public function __construct(
         \Magento\Framework\ObjectManagerInterface $objectManager,
-        $instanceName = \Magento\Framework\View\LayoutInterface::class
+        $instanceName = 'Magento\Framework\View\LayoutInterface'
     ) {
         $this->_objectManager = $objectManager;
         $this->_instanceName = $instanceName;

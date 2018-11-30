@@ -13,7 +13,7 @@ namespace Magento\Cookie\Test\Unit\Model\Config\Backend;
 use Magento\Framework\Session\Config\Validator\CookieLifetimeValidator;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
 
-class LifetimeTest extends \PHPUnit\Framework\TestCase
+class LifetimeTest extends \PHPUnit_Framework_TestCase
 {
     /** @var \PHPUnit_Framework_MockObject_MockObject | CookieLifetimeValidator */
     private $validatorMock;
@@ -27,16 +27,15 @@ class LifetimeTest extends \PHPUnit\Framework\TestCase
     protected function setUp()
     {
         $this->validatorMock = $this->getMockBuilder(
-            \Magento\Framework\Session\Config\Validator\CookieLifetimeValidator::class
+            'Magento\Framework\Session\Config\Validator\CookieLifetimeValidator'
         )->disableOriginalConstructor()
             ->getMock();
-        $this->resourceMock = $this->getMockBuilder(\Magento\Framework\Module\ModuleResource::class)
+        $this->resourceMock = $this->getMockBuilder('Magento\Framework\Module\ModuleResource')
             ->disableOriginalConstructor('delete')
             ->getMock();
 
         $objectManager = new ObjectManager($this);
-        $this->model = $objectManager->getObject(
-            \Magento\Cookie\Model\Config\Backend\Lifetime::class,
+        $this->model = $objectManager->getObject('Magento\Cookie\Model\Config\Backend\Lifetime',
             [
                 'configValidator' => $this->validatorMock,
                 'resource' => $this->resourceMock

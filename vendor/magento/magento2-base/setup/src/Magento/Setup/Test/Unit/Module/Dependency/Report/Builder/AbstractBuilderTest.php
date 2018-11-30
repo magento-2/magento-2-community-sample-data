@@ -5,7 +5,7 @@
  */
 namespace Magento\Setup\Test\Unit\Module\Dependency\Report\Builder;
 
-class AbstractBuilderTest extends \PHPUnit\Framework\TestCase
+class AbstractBuilderTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\Setup\Module\Dependency\ParserInterface|\PHPUnit_Framework_MockObject_MockObject
@@ -24,11 +24,11 @@ class AbstractBuilderTest extends \PHPUnit\Framework\TestCase
 
     protected function setUp()
     {
-        $this->dependenciesParserMock = $this->createMock(\Magento\Setup\Module\Dependency\ParserInterface::class);
-        $this->reportWriterMock = $this->createMock(\Magento\Setup\Module\Dependency\Report\WriterInterface::class);
+        $this->dependenciesParserMock = $this->getMock('Magento\Setup\Module\Dependency\ParserInterface');
+        $this->reportWriterMock = $this->getMock('Magento\Setup\Module\Dependency\Report\WriterInterface');
 
         $this->builder = $this->getMockForAbstractClass(
-            \Magento\Setup\Module\Dependency\Report\Builder\AbstractBuilder::class,
+            'Magento\Setup\Module\Dependency\Report\Builder\AbstractBuilder',
             ['dependenciesParser' => $this->dependenciesParserMock, 'reportWriter' => $this->reportWriterMock]
         );
     }
@@ -79,7 +79,7 @@ class AbstractBuilderTest extends \PHPUnit\Framework\TestCase
         ];
 
         $parseResult = ['foo', 'bar', 'baz'];
-        $configMock = $this->createMock(\Magento\Setup\Module\Dependency\Report\Data\ConfigInterface::class);
+        $configMock = $this->getMock('\Magento\Setup\Module\Dependency\Report\Data\ConfigInterface');
 
         $this->dependenciesParserMock->expects(
             $this->once()

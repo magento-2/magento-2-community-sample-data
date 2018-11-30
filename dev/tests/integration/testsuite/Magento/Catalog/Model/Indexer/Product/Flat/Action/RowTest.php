@@ -33,18 +33,18 @@ class RowTest extends \Magento\TestFramework\Indexer\TestCase
     protected function setUp()
     {
         $this->_product = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->create(
-            \Magento\Catalog\Model\Product::class
+            'Magento\Catalog\Model\Product'
         );
         $this->_category = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->create(
-            \Magento\Catalog\Model\Category::class
+            'Magento\Catalog\Model\Category'
         );
         $this->_processor = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->create(
-            \Magento\Catalog\Model\Indexer\Product\Flat\Processor::class
+            'Magento\Catalog\Model\Indexer\Product\Flat\Processor'
         );
     }
 
     /**
-     * @magentoDbIsolation disabled
+     * @magentoDbIsolation enabled
      * @magentoDataFixture Magento/Catalog/_files/row_fixture.php
      * @magentoConfigFixture current_store catalog/frontend/flat_catalog_product 1
      * @magentoAppArea frontend
@@ -52,22 +52,21 @@ class RowTest extends \Magento\TestFramework\Indexer\TestCase
     public function testProductUpdate()
     {
         $categoryFactory = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()
-            ->create(\Magento\Catalog\Model\CategoryFactory::class);
+            ->create('Magento\Catalog\Model\CategoryFactory');
         $listProduct = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()
-            ->create(\Magento\Catalog\Block\Product\ListProduct::class);
+            ->create('Magento\Catalog\Block\Product\ListProduct');
 
         $this->_processor->getIndexer()->setScheduled(false);
         $this->assertFalse(
             $this->_processor->getIndexer()->isScheduled(),
             'Indexer is in scheduled mode when turned to update on save mode'
         );
+        $this->_processor->reindexAll();
 
         $this->_product->load(1);
         $this->_product->setName('Updated Product');
         $this->_product->save();
 
-        $this->_processor->reindexAll();
-        
         $category = $categoryFactory->create()->load(9);
         $layer = $listProduct->getLayer();
         $layer->setCurrentCategory($category);

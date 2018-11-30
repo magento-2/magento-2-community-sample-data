@@ -32,7 +32,6 @@ class AfterEntityLoad implements ObserverInterface
             }
             $entity->getResource()->afterLoad($entity);
             $entity->afterLoad();
-            $entity->setOrigData();
             $entity->setHasDataChanges(false);
         }
     }

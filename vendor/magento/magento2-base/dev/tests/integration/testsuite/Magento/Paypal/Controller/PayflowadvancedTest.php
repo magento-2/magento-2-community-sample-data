@@ -34,19 +34,16 @@ class PayflowadvancedTest extends \Magento\TestFramework\TestCase\AbstractContro
      */
     private $order;
 
-    /**
-     * @inheritdoc
-     */
     protected function setUp()
     {
-        parent::setUp();
+        parent::setup();
 
         /** @var FilterBuilder $filterBuilder */
         $filterBuilder = $this->_objectManager->get(FilterBuilder::class);
         $filters = [
             $filterBuilder->setField(OrderInterface::INCREMENT_ID)
                 ->setValue('100000001')
-                ->create(),
+                ->create()
         ];
 
         /** @var SearchCriteriaBuilder $searchCriteriaBuilder */
@@ -84,7 +81,7 @@ class PayflowadvancedTest extends \Magento\TestFramework\TestCase\AbstractContro
 
     public function testReturnurlActionIsContentGenerated()
     {
-        $checkoutHelper = $this->_objectManager->create(\Magento\Paypal\Helper\Checkout::class);
+        $checkoutHelper = $this->_objectManager->create('Magento\Paypal\Helper\Checkout');
         $checkoutHelper->cancelCurrentOrder('test');
         $this->dispatch('paypal/payflowadvanced/returnurl');
         $this->assertContains("goToSuccessPage = ''", $this->getResponse()->getBody());
@@ -102,13 +99,14 @@ class PayflowadvancedTest extends \Magento\TestFramework\TestCase\AbstractContro
     /**
      * @magentoConfigFixture current_store payment/paypal_payflow/active 1
      * @magentoConfigFixture current_store paypal/general/business_account merchant_2012050718_biz@example.com
-     * @return void
      */
     public function testCancelAction()
     {
         $orderId = $this->order->getEntityId();
+
         /** @var \Magento\Sales\Model\Order $order */
         $order = $this->orderRepository->get($orderId);
+
         /** @var $quote \Magento\Quote\Model\Quote */
         $quote = $this->quoteRepository->get($order->getQuoteId());
 

@@ -160,8 +160,8 @@ body {
 
 .main {
     margin: 0 auto;
-    max-width: @email-body__width;
     text-align: left; // Necessary to prevent all text from centering in Outlook 2003
+    width: @email-body__width;
 }
 
 .header {
@@ -284,22 +284,6 @@ body {
         h5,
         h6 {
             margin-top: 0;
-        }
-    }
-}
-
-.message-details {
-    margin-bottom: @indent__s;
-
-    b {
-        font-weight: bold;
-    }
-
-    td {
-        padding-bottom: @indent__xs;
-
-        b {
-            margin-right: @indent__s;
         }
     }
 }

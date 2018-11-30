@@ -7,7 +7,7 @@ namespace Magento\Framework\View\Test\Unit\Layout\Argument\Interpreter;
 
 use \Magento\Framework\View\Layout\Argument\Interpreter\Passthrough;
 
-class PassthroughTest extends \PHPUnit\Framework\TestCase
+class PassthroughTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var Passthrough

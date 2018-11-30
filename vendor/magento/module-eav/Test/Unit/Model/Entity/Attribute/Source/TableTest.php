@@ -5,12 +5,12 @@
  */
 namespace Magento\Eav\Test\Unit\Model\Entity\Attribute\Source;
 
-use Magento\Eav\Model\Entity\Attribute\AbstractAttribute;
-use Magento\Eav\Model\Entity\Attribute\Source\AbstractSource;
-use Magento\Eav\Model\ResourceModel\Entity\Attribute\Option\Collection as AttributeOptionCollection;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
-use Magento\Store\Api\Data\StoreInterface;
+use Magento\Eav\Model\Entity\Attribute\Source\AbstractSource;
+use Magento\Eav\Model\Entity\Attribute\AbstractAttribute;
 use Magento\Store\Model\StoreManagerInterface;
+use Magento\Store\Api\Data\StoreInterface;
+use Magento\Eav\Model\ResourceModel\Entity\Attribute\Option\Collection as AttributeOptionCollection;
 use Magento\Framework\Escaper;
 
 /**
@@ -18,7 +18,7 @@ use Magento\Framework\Escaper;
  *
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  */
-class TableTest extends \PHPUnit\Framework\TestCase
+class TableTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\Eav\Model\Entity\Attribute\Source\Table
@@ -70,7 +70,7 @@ class TableTest extends \PHPUnit\Framework\TestCase
     {
         $objectManager = new ObjectManager($this);
 
-        $this->collectionFactory = $this->createPartialMock(
+        $this->collectionFactory = $this->getMock(
             \Magento\Eav\Model\ResourceModel\Entity\Attribute\Option\CollectionFactory::class,
             [
                 'create',
@@ -80,7 +80,10 @@ class TableTest extends \PHPUnit\Framework\TestCase
                 'setStoreFilter',
                 'load',
                 'toOptionArray'
-            ]
+            ],
+            [],
+            '',
+            false
         );
 
         $this->attributeOptionCollectionMock = $this->getMockBuilder(AttributeOptionCollection::class)
@@ -88,10 +91,12 @@ class TableTest extends \PHPUnit\Framework\TestCase
             ->disableOriginalConstructor()
             ->getMock();
 
-        $this->attrOptionFactory = $this->createPartialMock(
-            \Magento\Eav\Model\ResourceModel\Entity\Attribute\OptionFactory::class,
-            ['create']
-        );
+        $this->attrOptionFactory = $this->getMockBuilder(
+            \Magento\Eav\Model\ResourceModel\Entity\Attribute\OptionFactory::class
+        )
+            ->setMethods(['create'])
+            ->disableOriginalConstructor()
+            ->getMockForAbstractClass();
 
         $this->sourceMock = $this->getMockBuilder(AbstractSource::class)
             ->disableOriginalConstructor()
@@ -119,6 +124,7 @@ class TableTest extends \PHPUnit\Framework\TestCase
                 'escaper' => $this->escaper,
             ]
         );
+
         $this->model->setAttribute($this->abstractAttributeMock);
 
         $this->storeManagerMock = $this->getMockForAbstractClass(StoreManagerInterface::class);
@@ -133,10 +139,20 @@ class TableTest extends \PHPUnit\Framework\TestCase
 
     public function testGetFlatColumns()
     {
-        $abstractFrontendMock = $this->createMock(\Magento\Eav\Model\Entity\Attribute\Frontend\AbstractFrontend::class);
+        $abstractFrontendMock = $this->getMock(
+            \Magento\Eav\Model\Entity\Attribute\Frontend\AbstractFrontend::class,
+            [],
+            [],
+            '',
+            false
+        );
 
-        $this->abstractAttributeMock->expects($this->any())->method('getFrontend')->willReturn(($abstractFrontendMock));
-        $this->abstractAttributeMock->expects($this->any())->method('getAttributeCode')->willReturn('code');
+        $this->abstractAttributeMock->expects($this->any())
+            ->method('getFrontend')
+            ->willReturn(($abstractFrontendMock));
+        $this->abstractAttributeMock->expects($this->any())
+            ->method('getAttributeCode')
+            ->willReturn('code');
 
         $flatColumns = $this->model->getFlatColumns();
 
@@ -308,11 +324,18 @@ class TableTest extends \PHPUnit\Framework\TestCase
             ->disableOriginalConstructor()
             ->getMockForAbstractClass();
 
+        $this->abstractAttributeMock = $this->getMockBuilder(
+            \Magento\Eav\Model\Entity\Attribute\AbstractAttribute::class
+        )
+            ->setMethods(['getAttributeCode', 'getEntity', 'getBackend', 'getId'])
+            ->disableOriginalConstructor()
+            ->getMockForAbstractClass();
         $this->abstractAttributeMock->expects($this->any())->method('getAttributeCode')->willReturn($attributeCode);
         $entity = $this->getMockBuilder(\Magento\Eav\Model\Entity\AbstractEntity::class)
             ->setMethods(['getLinkField'])
             ->disableOriginalConstructor()
             ->getMockForAbstractClass();
+
         $this->abstractAttributeMock->expects($this->once())->method('getEntity')->willReturn($entity);
         $entity->expects($this->once())->method('getLinkField')->willReturn('entity_id');
         $select = $this->getMockBuilder(\Magento\Framework\DB\Select::class)
@@ -325,14 +348,18 @@ class TableTest extends \PHPUnit\Framework\TestCase
             ->setMethods(['getTable'])
             ->disableOriginalConstructor()
             ->getMockForAbstractClass();
+
         $this->abstractAttributeMock->expects($this->any())->method('getBackend')->willReturn($backend);
+
         $backend->expects($this->any())->method('getTable')->willReturn('table_name');
+
         $this->abstractAttributeMock->expects($this->any())->method('getId')->willReturn(1);
+
         $collection->expects($this->once())->method('getStoreId')->willReturn(1);
         $connection = $this->getMockBuilder(\Magento\Framework\DB\Adapter\AdapterInterface::class)
             ->disableOriginalConstructor()
             ->getMock();
-        $expr = $this->getMockBuilder(\Zend_Db_Expr::class)
+        $expr = $this->getMockBuilder('Zend_Db_Expr')
             ->disableOriginalConstructor()
             ->getMock();
         $connection->expects($this->once())->method('getCheckSql')->willReturn($expr);
@@ -341,11 +368,14 @@ class TableTest extends \PHPUnit\Framework\TestCase
             ->disableOriginalConstructor()
             ->getMock();
         $this->attrOptionFactory->expects($this->once())->method('create')->willReturn($attrOption);
+
         $attrOption->expects($this->once())->method('addOptionValueToCollection')
             ->with($collection, $this->abstractAttributeMock, $expr)
             ->willReturnSelf();
+
         $select->expects($this->once())->method('order')->with("{$attributeCode} {$dir}");
 
+        $this->model->setAttribute($this->abstractAttributeMock);
         $this->assertEquals($this->model, $this->model->addValueSortToCollection($collection, $dir));
     }
 
@@ -355,7 +385,10 @@ class TableTest extends \PHPUnit\Framework\TestCase
      * @param array $options
      * @param array $optionsDefault
      * @param array $expectedResult
+     *
      * @dataProvider getAllOptionsDataProvider
+     *
+     * @return void
      */
     public function testGetAllOptions(
         $withEmpty,
@@ -367,12 +400,21 @@ class TableTest extends \PHPUnit\Framework\TestCase
         $storeId = '1';
         $attributeId = '42';
 
-        $this->abstractAttributeMock->expects($this->once())->method('getStoreId')->willReturn(null);
+        $this->abstractAttributeMock->expects($this->once())
+            ->method('getStoreId')
+            ->willReturn(null);
 
-        $this->storeManagerMock->expects($this->once())->method('getStore')->willReturn($this->storeMock);
-        $this->storeMock->expects($this->once())->method('getId')->willReturn($storeId);
+        $this->storeManagerMock->expects($this->once())
+            ->method('getStore')
+            ->willReturn($this->storeMock);
 
-        $this->abstractAttributeMock->expects($this->once())->method('getId')->willReturn($attributeId);
+        $this->storeMock->expects($this->once())
+            ->method('getId')
+            ->willReturn($storeId);
+
+        $this->abstractAttributeMock->expects($this->once())
+            ->method('getId')
+            ->willReturn($attributeId);
 
         $this->collectionFactory->expects($this->once())
             ->method('create')
@@ -391,6 +433,7 @@ class TableTest extends \PHPUnit\Framework\TestCase
         $this->collectionFactory->expects($this->once())
             ->method('load')
             ->willReturn($this->attributeOptionCollectionMock);
+
         $this->attributeOptionCollectionMock->expects($this->any())
             ->method('toOptionArray')
             ->willReturnMap(

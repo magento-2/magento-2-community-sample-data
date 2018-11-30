@@ -8,31 +8,24 @@ namespace Magento\Checkout\Block\Cart;
 use Magento\Store\Model\ScopeInterface;
 
 /**
- * Cart sidebar block
- *
- * @api
+ * Cart sidebar block.
  */
 class Sidebar extends AbstractCart
 {
     /**
-     * Xml pah to checkout sidebar display value
+     * Xml pah to checkout sidebar display value.
      */
     const XML_PATH_CHECKOUT_SIDEBAR_DISPLAY = 'checkout/sidebar/display';
 
     /**
-     * Xml pah to checkout sidebar count value
+     * Xml pah to checkout sidebar count value.
      */
     const XML_PATH_CHECKOUT_SIDEBAR_COUNT = 'checkout/sidebar/count';
 
     /**
-     * @var \Magento\Catalog\Helper\Image
+     * @var \Magento\Catalog\Helper\Image.
      */
     protected $imageHelper;
-
-    /**
-     * @var \Magento\Framework\Serialize\Serializer\Json
-     */
-    private $serializer;
 
     /**
      * @param \Magento\Framework\View\Element\Template\Context $context
@@ -41,8 +34,7 @@ class Sidebar extends AbstractCart
      * @param \Magento\Catalog\Helper\Image $imageHelper
      * @param \Magento\Customer\CustomerData\JsLayoutDataProviderPoolInterface $jsLayoutDataProvider
      * @param array $data
-     * @param \Magento\Framework\Serialize\Serializer\Json|null $serializer
-     * @throws \RuntimeException
+     * @codeCoverageIgnore
      */
     public function __construct(
         \Magento\Framework\View\Element\Template\Context $context,
@@ -50,8 +42,7 @@ class Sidebar extends AbstractCart
         \Magento\Checkout\Model\Session $checkoutSession,
         \Magento\Catalog\Helper\Image $imageHelper,
         \Magento\Customer\CustomerData\JsLayoutDataProviderPoolInterface $jsLayoutDataProvider,
-        array $data = [],
-        \Magento\Framework\Serialize\Serializer\Json $serializer = null
+        array $data = []
     ) {
         if (isset($data['jsLayout'])) {
             $this->jsLayout = array_merge_recursive($jsLayoutDataProvider->getData(), $data['jsLayout']);
@@ -62,12 +53,10 @@ class Sidebar extends AbstractCart
         parent::__construct($context, $customerSession, $checkoutSession, $data);
         $this->_isScopePrivate = false;
         $this->imageHelper = $imageHelper;
-        $this->serializer = $serializer ?: \Magento\Framework\App\ObjectManager::getInstance()
-            ->get(\Magento\Framework\Serialize\Serializer\Json::class);
     }
 
     /**
-     * Returns minicart config
+     * Returns minicart config.
      *
      * @return array
      */
@@ -82,17 +71,8 @@ class Sidebar extends AbstractCart
             'baseUrl' => $this->getBaseUrl(),
             'minicartMaxItemsVisible' => $this->getMiniCartMaxItemsCount(),
             'websiteId' => $this->_storeManager->getStore()->getWebsiteId(),
-            'maxItemsToDisplay' => $this->getMaxItemsToDisplay()
+            'maxItemsToDisplay' => $this->getMaxItemsToDisplay(),
         ];
-    }
-
-    /**
-     * @return string
-     * @since 100.2.0
-     */
-    public function getSerializedConfig()
-    {
-        return $this->serializer->serialize($this->getConfig());
     }
 
     /**
@@ -106,7 +86,7 @@ class Sidebar extends AbstractCart
     }
 
     /**
-     * Get one page checkout page url
+     * Get one page checkout page url.
      *
      * @codeCoverageIgnore
      * @return string
@@ -117,7 +97,7 @@ class Sidebar extends AbstractCart
     }
 
     /**
-     * Get shopping cart page url
+     * Get shopping cart page url.
      *
      * @return string
      * @codeCoverageIgnore
@@ -128,7 +108,7 @@ class Sidebar extends AbstractCart
     }
 
     /**
-     * Get update cart item url
+     * Get update cart item url.
      *
      * @return string
      * @codeCoverageIgnore
@@ -139,7 +119,7 @@ class Sidebar extends AbstractCart
     }
 
     /**
-     * Get remove cart item url
+     * Get remove cart item url.
      *
      * @return string
      * @codeCoverageIgnore
@@ -150,7 +130,7 @@ class Sidebar extends AbstractCart
     }
 
     /**
-     * Define if Mini Shopping Cart Pop-Up Menu enabled
+     * Define if Mini Shopping Cart Pop-Up Menu enabled.
      *
      * @return bool
      * @codeCoverageIgnore
@@ -165,7 +145,7 @@ class Sidebar extends AbstractCart
     }
 
     /**
-     * Return totals from custom quote if needed
+     * Return totals from custom quote if needed.
      *
      * @return array
      */
@@ -179,7 +159,7 @@ class Sidebar extends AbstractCart
     }
 
     /**
-     * Retrieve subtotal block html
+     * Retrieve subtotal block html.
      *
      * @codeCoverageIgnore
      * @return string
@@ -201,7 +181,7 @@ class Sidebar extends AbstractCart
     }
 
     /**
-     * Return max visible item count for minicart
+     * Return max visible item count for minicart.
      *
      * @return int
      */
@@ -211,8 +191,8 @@ class Sidebar extends AbstractCart
     }
 
     /**
-     * Returns maximum cart items to display
-     * This setting regulates how many items will be displayed in minicart
+     * Returns maximum cart items to display.
+     * This setting regulates how many items will be displayed in minicart.
      *
      * @return int
      */

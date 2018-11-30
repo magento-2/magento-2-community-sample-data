@@ -8,10 +8,7 @@ namespace Magento\Wishlist\Test\Unit\Observer;
 
 use \Magento\Wishlist\Observer\AddToCart as Observer;
 
-/**
- * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
- */
-class AddToCartTest extends \PHPUnit\Framework\TestCase
+class AddToCartTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var Observer
@@ -50,34 +47,35 @@ class AddToCartTest extends \PHPUnit\Framework\TestCase
 
     protected function setUp()
     {
-        $this->checkoutSession = $this->getMockBuilder(
-            \Magento\Checkout\Model\Session::class
-        )->setMethods(
-            [
-                'getSharedWishlist',
-                'getWishlistPendingMessages',
-                'getWishlistPendingUrls',
-                'getWishlistIds',
-                'getSingleWishlistId',
-                'setSingleWishlistId',
-                'setWishlistIds',
-                'setWishlistPendingUrls',
-                'setWishlistPendingMessages',
-                'setNoCartRedirect',
-            ]
-        )->disableOriginalConstructor()->getMock();
-        $this->customerSession = $this->getMockBuilder(\Magento\Customer\Model\Session::class)
+        $this->checkoutSession = $this->getMockBuilder('Magento\Checkout\Model\Session')
+            ->setMethods(
+                [
+                    'getSharedWishlist',
+                    'getWishlistPendingMessages',
+                    'getWishlistPendingUrls',
+                    'getWishlistIds',
+                    'getSingleWishlistId',
+                    'setSingleWishlistId',
+                    'setWishlistIds',
+                    'setWishlistPendingUrls',
+                    'setWishlistPendingMessages',
+                    'setNoCartRedirect',
+                ]
+            )
+            ->disableOriginalConstructor()
+            ->getMock();
+        $this->customerSession = $this->getMockBuilder('Magento\Customer\Model\Session')
             ->disableOriginalConstructor()
             ->setMethods(['setWishlistItemCount', 'isLoggedIn', 'getCustomerId'])
             ->getMock();
-        $this->wishlistFactory = $this->getMockBuilder(\Magento\Wishlist\Model\WishlistFactory::class)
+        $this->wishlistFactory = $this->getMockBuilder('Magento\Wishlist\Model\WishlistFactory')
             ->disableOriginalConstructor()
             ->setMethods(['create'])
             ->getMock();
-        $this->wishlist = $this->getMockBuilder(\Magento\Wishlist\Model\Wishlist::class)
+        $this->wishlist = $this->getMockBuilder('Magento\Wishlist\Model\Wishlist')
             ->disableOriginalConstructor()
             ->getMock();
-        $this->messageManager = $this->getMockBuilder(\Magento\Framework\Message\ManagerInterface::class)
+        $this->messageManager = $this->getMockBuilder('Magento\Framework\Message\ManagerInterface')
             ->getMock();
 
         $this->wishlistFactory->expects($this->any())
@@ -99,21 +97,21 @@ class AddToCartTest extends \PHPUnit\Framework\TestCase
         $url = 'http://some.pending/url';
         $message = 'some error msg';
 
-        $eventObserver = $this->getMockBuilder(\Magento\Framework\Event\Observer::class)
+        $eventObserver = $this->getMockBuilder('Magento\Framework\Event\Observer')
             ->disableOriginalConstructor()
             ->getMock();
-        $event = $this->getMockBuilder(\Magento\Framework\Event::class)
+        $event = $this->getMockBuilder('Magento\Framework\Event')
             ->setMethods(['getRequest', 'getResponse'])
             ->disableOriginalConstructor()
             ->getMock();
-        $request = $this->getMockBuilder(\Magento\Framework\App\RequestInterface::class)->getMock();
-        $response = $this->getMockBuilder(\Magento\Framework\App\ResponseInterface::class)
+        $request = $this->getMockBuilder('Magento\Framework\App\RequestInterface')->getMock();
+        $response = $this->getMockBuilder('Magento\Framework\App\ResponseInterface')
             ->setMethods(['setRedirect'])
             ->getMockForAbstractClass();
-        $wishlists = $this->getMockBuilder(\Magento\Wishlist\Model\ResourceModel\Wishlist\Collection::class)
+        $wishlists = $this->getMockBuilder('Magento\Wishlist\Model\ResourceModel\Wishlist\Collection')
             ->disableOriginalConstructor()
             ->getMock();
-        $loadedWishlist = $this->getMockBuilder(\Magento\Wishlist\Model\Wishlist\Item::class)
+        $loadedWishlist = $this->getMockBuilder('Magento\Wishlist\Model\Wishlist\Item')
             ->setMethods(['getId', 'delete'])
             ->disableOriginalConstructor()
             ->getMock();

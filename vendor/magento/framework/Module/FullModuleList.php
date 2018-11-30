@@ -55,7 +55,7 @@ class FullModuleList implements ModuleListInterface
     public function getOne($name)
     {
         $data = $this->getAll();
-        return $data[$name] ?? null;
+        return isset($data[$name]) ? $data[$name] : null;
     }
 
     /**

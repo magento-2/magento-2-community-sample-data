@@ -5,9 +5,6 @@
  */
 namespace Magento\Braintree\Gateway\Config;
 
-use Magento\Framework\App\Config\ScopeConfigInterface;
-use Magento\Framework\Serialize\Serializer\Json;
-
 /**
  * Class Config
  */
@@ -34,30 +31,6 @@ class Config extends \Magento\Payment\Gateway\Config\Config
     const FRAUD_PROTECTION = 'fraudprotection';
 
     /**
-     * @var \Magento\Framework\Serialize\Serializer\Json
-     */
-    private $serializer;
-
-    /**
-     * Braintree config constructor
-     *
-     * @param ScopeConfigInterface $scopeConfig
-     * @param null|string $methodCode
-     * @param string $pathPattern
-     * @param Json|null $serializer
-     */
-    public function __construct(
-        ScopeConfigInterface $scopeConfig,
-        $methodCode = null,
-        $pathPattern = self::DEFAULT_PATH_PATTERN,
-        Json $serializer = null
-    ) {
-        parent::__construct($scopeConfig, $methodCode, $pathPattern);
-        $this->serializer = $serializer ?: \Magento\Framework\App\ObjectManager::getInstance()
-            ->get(Json::class);
-    }
-
-    /**
      * Get list of available dynamic descriptors keys
      * @var array
      */
@@ -73,12 +46,9 @@ class Config extends \Magento\Payment\Gateway\Config\Config
      */
     public function getCountrySpecificCardTypeConfig($storeId = null)
     {
-        $countryCardTypes = $this->getValue(self::KEY_COUNTRY_CREDIT_CARD, $storeId);
-        if (!$countryCardTypes) {
-            return [];
-        }
-        $countryCardTypes = $this->serializer->unserialize($countryCardTypes);
-        return is_array($countryCardTypes) ? $countryCardTypes : [];
+        $countriesCardTypes = unserialize($this->getValue(self::KEY_COUNTRY_CREDIT_CARD, $storeId));
+
+        return is_array($countriesCardTypes) ? $countriesCardTypes : [];
     }
 
     /**
@@ -131,7 +101,7 @@ class Config extends \Magento\Payment\Gateway\Config\Config
      */
     public function isCvvEnabled($storeId = null)
     {
-        return (bool)$this->getValue(self::KEY_USE_CVV, $storeId);
+        return (bool) $this->getValue(self::KEY_USE_CVV, $storeId);
     }
 
     /**
@@ -142,7 +112,7 @@ class Config extends \Magento\Payment\Gateway\Config\Config
      */
     public function isVerify3DSecure($storeId = null)
     {
-        return (bool)$this->getValue(self::KEY_VERIFY_3DSECURE, $storeId);
+        return (bool) $this->getValue(self::KEY_VERIFY_3DSECURE, $storeId);
     }
 
     /**
@@ -233,7 +203,7 @@ class Config extends \Magento\Payment\Gateway\Config\Config
      */
     public function hasFraudProtection($storeId = null)
     {
-        return (bool)$this->getValue(Config::FRAUD_PROTECTION, $storeId);
+        return (bool) $this->getValue(Config::FRAUD_PROTECTION, $storeId);
     }
 
     /**
@@ -244,7 +214,7 @@ class Config extends \Magento\Payment\Gateway\Config\Config
      */
     public function isActive($storeId = null)
     {
-        return (bool)$this->getValue(self::KEY_ACTIVE, $storeId);
+        return (bool) $this->getValue(self::KEY_ACTIVE, $storeId);
     }
 
     /**

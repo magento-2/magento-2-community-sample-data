@@ -8,7 +8,7 @@ namespace Magento\Framework\Model\Test\Unit\ResourceModel\Db;
 /**
  * Unit test for CreateEntityRow class.
  */
-class CreateEntityRowTest extends \PHPUnit\Framework\TestCase
+class CreateEntityRowTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * Subject of testing.
@@ -30,7 +30,7 @@ class CreateEntityRowTest extends \PHPUnit\Framework\TestCase
     protected function setUp()
     {
         $this->connection = $this->getMockForAbstractClass(
-            \Magento\Framework\DB\Adapter\AdapterInterface::class,
+            'Magento\Framework\DB\Adapter\AdapterInterface',
             [],
             '',
             false,
@@ -43,7 +43,13 @@ class CreateEntityRowTest extends \PHPUnit\Framework\TestCase
             ->method('lastInsertId')
             ->willReturn(1);
 
-        $metadata = $this->createMock(\Magento\Framework\EntityManager\EntityMetadata::class);
+        $metadata = $this->getMock(
+            'Magento\Framework\EntityManager\EntityMetadata',
+            [],
+            [],
+            '',
+            false
+        );
 
         $metadata->expects($this->any())
             ->method('getLinkField')
@@ -65,7 +71,13 @@ class CreateEntityRowTest extends \PHPUnit\Framework\TestCase
             ->method('generateIdentifier')
             ->willReturn('100000001');
 
-        $this->metadataPool = $this->createMock(\Magento\Framework\EntityManager\MetadataPool::class);
+        $this->metadataPool = $this->getMock(
+            'Magento\Framework\EntityManager\MetadataPool',
+            [],
+            [],
+            '',
+            false
+        );
 
         $this->metadataPool->expects($this->any())
             ->method('getMetadata')

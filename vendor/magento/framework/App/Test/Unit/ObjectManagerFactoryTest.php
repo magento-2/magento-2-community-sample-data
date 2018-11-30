@@ -10,7 +10,7 @@ use Magento\Framework\App\Bootstrap;
 /**
  * @covers \Magento\Framework\App\ObjectManagerFactory
  */
-class ObjectManagerFactoryTest extends \PHPUnit\Framework\TestCase
+class ObjectManagerFactoryTest extends \PHPUnit_Framework_TestCase
 {
     /** @var callable[] */
     protected static $originalAutoloadFunctions;

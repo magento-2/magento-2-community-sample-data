@@ -9,10 +9,7 @@ use Magento\Framework\UrlInterface;
 use Magento\Theme\Model\Design\Backend\File;
 use Magento\Framework\App\Filesystem\DirectoryList;
 
-/**
- * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
- */
-class FileTest extends \PHPUnit\Framework\TestCase
+class FileTest extends \PHPUnit_Framework_TestCase
 {
     /** @var \Magento\Framework\Filesystem\Directory\WriteInterface|\PHPUnit_Framework_MockObject_MockObject */
     protected $mediaDirectory;
@@ -22,11 +19,6 @@ class FileTest extends \PHPUnit\Framework\TestCase
 
     /** @var File */
     protected $fileBackend;
-
-    /**
-     * @var \Magento\Framework\File\Mime|\PHPUnit_Framework_MockObject_MockObject
-     */
-    private $mime;
 
     public function setUp()
     {
@@ -51,10 +43,6 @@ class FileTest extends \PHPUnit\Framework\TestCase
         $this->urlBuilder = $this->getMockBuilder(\Magento\Framework\UrlInterface::class)
             ->getMockForAbstractClass();
 
-        $this->mime = $this->getMockBuilder(\Magento\Framework\File\Mime::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-
         $this->fileBackend = new File(
             $context,
             $registry,
@@ -64,13 +52,6 @@ class FileTest extends \PHPUnit\Framework\TestCase
             $requestData,
             $filesystem,
             $this->urlBuilder
-        );
-
-        $objectManager = new \Magento\Framework\TestFramework\Unit\Helper\ObjectManager($this);
-        $objectManager->setBackwardCompatibleProperty(
-            $this->fileBackend,
-            'mime',
-            $this->mime
         );
     }
 
@@ -107,10 +88,6 @@ class FileTest extends \PHPUnit\Framework\TestCase
     public function testAfterLoad()
     {
         $value = 'filename.jpg';
-        $mime = 'image/jpg';
-
-        $absoluteFilePath = '/absolute_path/' . $value;
-
         $this->fileBackend->setValue($value);
         $this->fileBackend->setFieldConfig(
             [
@@ -129,11 +106,6 @@ class FileTest extends \PHPUnit\Framework\TestCase
             ->method('isExist')
             ->with('value/' . $value)
             ->willReturn(true);
-        $this->mediaDirectory->expects($this->once())
-            ->method('getAbsolutePath')
-            ->with('value/' . $value)
-            ->willReturn($absoluteFilePath);
-
         $this->urlBuilder->expects($this->once())
             ->method('getBaseUrl')
             ->with(['_type' => UrlInterface::URL_TYPE_MEDIA])
@@ -147,11 +119,6 @@ class FileTest extends \PHPUnit\Framework\TestCase
             ->with('value/' . $value)
             ->willReturn(['size' => 234234]);
 
-        $this->mime->expects($this->once())
-            ->method('getMimeType')
-            ->with($absoluteFilePath)
-            ->willReturn($mime);
-
         $this->fileBackend->afterLoad();
         $this->assertEquals(
             [
@@ -160,63 +127,10 @@ class FileTest extends \PHPUnit\Framework\TestCase
                     'file' => $value,
                     'size' => 234234,
                     'exists' => true,
-                    'name' => $value,
-                    'type' => $mime,
                 ]
             ],
             $this->fileBackend->getValue()
         );
-    }
-
-    /**
-     * @dataProvider beforeSaveDataProvider
-     * @param string $fileName
-     */
-    public function testBeforeSave($fileName)
-    {
-        $expectedFileName = basename($fileName);
-        $expectedTmpMediaPath = 'tmp/design/file/' . $expectedFileName;
-        $this->fileBackend->setScope('store');
-        $this->fileBackend->setScopeId(1);
-        $this->fileBackend->setValue(
-            [
-                [
-                    'url' => 'http://magento2.com/pub/media/tmp/image/' . $fileName,
-                    'file' => $fileName,
-                    'size' => 234234,
-                ]
-            ]
-        );
-        $this->fileBackend->setFieldConfig(
-            [
-                'upload_dir' => [
-                    'value' => 'value',
-                    'config' => 'system/filesystem/media',
-                ],
-            ]
-        );
-
-        $this->mediaDirectory->expects($this->once())
-            ->method('copyFile')
-            ->with($expectedTmpMediaPath, '/' . $expectedFileName)
-            ->willReturn(true);
-        $this->mediaDirectory->expects($this->once())
-            ->method('delete')
-            ->with($expectedTmpMediaPath);
-
-        $this->fileBackend->beforeSave();
-        $this->assertEquals($expectedFileName, $this->fileBackend->getValue());
-    }
-
-    /**
-     * @return array
-     */
-    public function beforeSaveDataProvider()
-    {
-        return [
-            'Normal file name' => ['filename.jpg'],
-            'Vulnerable file name' => ['../../../../../../../../etc/passwd'],
-        ];
     }
 
     /**

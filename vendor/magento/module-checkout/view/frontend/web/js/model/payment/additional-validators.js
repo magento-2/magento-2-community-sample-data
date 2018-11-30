@@ -2,55 +2,50 @@
  * Copyright © Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
+define(
+    [],
+    function() {
+        'use strict';
+        var validators = [];
+        return {
+            /**
+             * Register unique validator
+             *
+             * @param validator
+             */
+            registerValidator: function(validator) {
+                validators.push(validator);
+            },
 
-/**
- * @api
- */
-define([], function () {
-    'use strict';
+            /**
+             * Returns array of registered validators
+             *
+             * @returns {Array}
+             */
+            getValidators: function() {
+                return validators;
+            },
 
-    var validators = [];
+            /**
+             * Process validators
+             *
+             * @returns {boolean}
+             */
+            validate: function() {
+                var validationResult = true;
 
-    return {
-        /**
-         * Register unique validator
-         *
-         * @param {*} validator
-         */
-        registerValidator: function (validator) {
-            validators.push(validator);
-        },
+                if (validators.length <= 0) {
+                    return validationResult;
+                }
 
-        /**
-         * Returns array of registered validators
-         *
-         * @returns {Array}
-         */
-        getValidators: function () {
-            return validators;
-        },
-
-        /**
-         * Process validators
-         *
-         * @returns {Boolean}
-         */
-        validate: function () {
-            var validationResult = true;
-
-            if (validators.length <= 0) {
+                validators.forEach(function(item) {
+                    if (item.validate() == false) {
+                        validationResult = false;
+                        return false;
+                    }
+                });
                 return validationResult;
             }
-
-            validators.forEach(function (item) {
-                if (item.validate() == false) { //eslint-disable-line eqeqeq
-                    validationResult = false;
-
-                    return false;
-                }
-            });
-
-            return validationResult;
-        }
-    };
-});
+        };
+    }
+);

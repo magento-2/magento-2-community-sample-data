@@ -46,6 +46,7 @@ class AssertGlobalSearchCustomerName extends AbstractConstraint
             $customerIndex->getCustomerGridBlock()->getAllIds(),
             'Customer grid does not have ' . $customerName . ' in search results'
         );
+
     }
 
     /**

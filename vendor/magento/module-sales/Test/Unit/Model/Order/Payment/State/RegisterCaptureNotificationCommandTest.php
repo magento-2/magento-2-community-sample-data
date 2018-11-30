@@ -15,7 +15,7 @@ use PHPUnit_Framework_MockObject_MockObject as MockObject;
 /**
  * @see RegisterCaptureNotificationCommand
  */
-class RegisterCaptureNotificationCommandTest extends \PHPUnit\Framework\TestCase
+class RegisterCaptureNotificationCommandTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var float
@@ -41,19 +41,17 @@ class RegisterCaptureNotificationCommandTest extends \PHPUnit\Framework\TestCase
     public function testExecute(
         $isTransactionPending,
         $isFraudDetected,
-        $currentState,
         $expectedState,
         $expectedStatus,
         $expectedMessage
     ) {
-        $order = $this->getOrder($currentState);
         $actualReturn = (new RegisterCaptureNotificationCommand($this->getStatusResolver()))->execute(
             $this->getPayment($isTransactionPending, $isFraudDetected),
             $this->amount,
-            $order
+            $this->getOrder()
         );
 
-        $this->assertOrderStateAndStatus($order, $expectedState, $expectedStatus);
+        $this->assertOrderStateAndStatus($this->getOrder(), $expectedState, $expectedStatus);
         self::assertEquals(__($expectedMessage, $this->amount), $actualReturn);
     }
 
@@ -66,15 +64,6 @@ class RegisterCaptureNotificationCommandTest extends \PHPUnit\Framework\TestCase
             [
                 false,
                 false,
-                Order::STATE_COMPLETE,
-                Order::STATE_COMPLETE,
-                $this->newOrderStatus,
-                'Registered notification about captured amount of %1.'
-            ],
-            [
-                false,
-                false,
-                null,
                 Order::STATE_PROCESSING,
                 $this->newOrderStatus,
                 'Registered notification about captured amount of %1.'
@@ -82,7 +71,6 @@ class RegisterCaptureNotificationCommandTest extends \PHPUnit\Framework\TestCase
             [
                 true,
                 false,
-                Order::STATE_PROCESSING,
                 Order::STATE_PAYMENT_REVIEW,
                 $this->newOrderStatus,
                 'An amount of %1 will be captured after being approved at the payment gateway.'
@@ -90,7 +78,6 @@ class RegisterCaptureNotificationCommandTest extends \PHPUnit\Framework\TestCase
             [
                 false,
                 true,
-                Order::STATE_PROCESSING,
                 Order::STATE_PAYMENT_REVIEW,
                 Order::STATUS_FRAUD,
                 'Order is suspended as its capture amount %1 is suspected to be fraudulent.'
@@ -98,7 +85,6 @@ class RegisterCaptureNotificationCommandTest extends \PHPUnit\Framework\TestCase
             [
                 true,
                 true,
-                Order::STATE_PROCESSING,
                 Order::STATE_PAYMENT_REVIEW,
                 Order::STATUS_FRAUD,
                 'Order is suspended as its capture amount %1 is suspected to be fraudulent.'
@@ -121,19 +107,15 @@ class RegisterCaptureNotificationCommandTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * @param string|null $state
      * @return Order|MockObject
      */
-    private function getOrder($state)
+    private function getOrder()
     {
-        /** @var Order|MockObject $order */
         $order = $this->getMockBuilder(Order::class)
             ->disableOriginalConstructor()
-            ->setMethods(['getBaseCurrency', 'getOrderStatusByState'])
             ->getMock();
         $order->method('getBaseCurrency')
             ->willReturn($this->getCurrency());
-        $order->setState($state);
 
         return $order;
     }
@@ -177,7 +159,7 @@ class RegisterCaptureNotificationCommandTest extends \PHPUnit\Framework\TestCase
      */
     private function assertOrderStateAndStatus($order, $expectedState, $expectedStatus)
     {
-        self::assertEquals($expectedState, $order->getState(), 'The order {state} should match.');
-        self::assertEquals($expectedStatus, $order->getStatus(), 'The order {status} should match.');
+        $order->method('setState')->with($expectedState);
+        $order->method('setStatus')->with($expectedStatus);
     }
 }

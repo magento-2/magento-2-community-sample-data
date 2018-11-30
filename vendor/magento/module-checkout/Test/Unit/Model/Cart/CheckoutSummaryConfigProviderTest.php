@@ -11,7 +11,10 @@ use Magento\Framework\UrlInterface;
 use Magento\Checkout\Model\Cart\CheckoutSummaryConfigProvider;
 use Magento\Store\Model\ScopeInterface;
 
-class CheckoutSummaryConfigProviderTest extends \PHPUnit\Framework\TestCase
+/**
+ * Test for Magento\Checkout\Model\Cart\CheckoutSummaryConfigProvider.
+ */
+class CheckoutSummaryConfigProviderTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \PHPUnit_Framework_MockObject_MockObject|\Magento\Framework\UrlInterface
@@ -35,6 +38,11 @@ class CheckoutSummaryConfigProviderTest extends \PHPUnit\Framework\TestCase
         $this->model = new CheckoutSummaryConfigProvider($this->urlBuilderMock, $this->scopeConfigMock);
     }
 
+    /**
+     * @covers \Magento\Checkout\Model\Cart\CheckoutSummaryConfigProvider
+     * 
+     * @return void
+     */
     public function testGetConfig()
     {
         $maxItemsCount = 10;

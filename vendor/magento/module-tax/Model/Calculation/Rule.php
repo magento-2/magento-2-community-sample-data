@@ -11,6 +11,9 @@ use Magento\Tax\Api\Data\TaxRuleInterface;
 
 /**
  * Tax Rule Model
+ *
+ * @method \Magento\Tax\Model\ResourceModel\Calculation\Rule _getResource()
+ * @method \Magento\Tax\Model\ResourceModel\Calculation\Rule getResource()
  */
 class Rule extends \Magento\Framework\Model\AbstractExtensibleModel implements TaxRuleInterface
 {
@@ -28,7 +31,11 @@ class Rule extends \Magento\Framework\Model\AbstractExtensibleModel implements T
     const KEY_CALCULATE_SUBTOTAL     = 'calculate_subtotal';
     /**#@-*/
 
-    /**#@-*/
+    /**
+     * Prefix of model events names
+     *
+     * @var string
+     */
     protected $_eventPrefix = 'tax_rule';
 
     /**
@@ -91,7 +98,7 @@ class Rule extends \Magento\Framework\Model\AbstractExtensibleModel implements T
             $resourceCollection,
             $data
         );
-        $this->_init(\Magento\Tax\Model\ResourceModel\Calculation\Rule::class);
+        $this->_init('Magento\Tax\Model\ResourceModel\Calculation\Rule');
         $this->_taxClass = $taxClass;
     }
 
@@ -214,7 +221,7 @@ class Rule extends \Magento\Framework\Model\AbstractExtensibleModel implements T
      */
     public function getCalculateSubtotal()
     {
-        return (bool)$this->getData(self::KEY_CALCULATE_SUBTOTAL);
+        return (bool) $this->getData(self::KEY_CALCULATE_SUBTOTAL);
     }
 
     /**
@@ -224,7 +231,6 @@ class Rule extends \Magento\Framework\Model\AbstractExtensibleModel implements T
     {
         return $this->getData(self::KEY_PRIORITY);
     }
-
     //@codeCoverageIgnoreEnd
 
     /**

@@ -5,6 +5,8 @@
  */
 namespace Magento\Ui\Component\Control;
 
+use Magento\Framework\View\Element\Template;
+
 /**
  * Class SplitButton
  *

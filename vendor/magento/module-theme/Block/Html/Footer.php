@@ -9,9 +9,6 @@ use Magento\Customer\Model\Context;
 
 /**
  * Html page footer block
- *
- * @api
- * @since 100.0.2
  */
 class Footer extends \Magento\Framework\View\Element\Template implements \Magento\Framework\DataObject\IdentityInterface
 {
@@ -100,7 +97,6 @@ class Footer extends \Magento\Framework\View\Element\Template implements \Magent
      * Retrieve Miscellaneous HTML information
      *
      * @return string
-     * @since 100.1.0
      */
     public function getMiscellaneousHtml()
     {

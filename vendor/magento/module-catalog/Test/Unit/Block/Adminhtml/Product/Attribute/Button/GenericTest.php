@@ -13,7 +13,7 @@ use Magento\Framework\View\Element\UiComponent\Context;
 /**
  * Class GenericTest
  */
-class GenericTest extends \PHPUnit\Framework\TestCase
+class GenericTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var Context|\PHPUnit_Framework_MockObject_MockObject

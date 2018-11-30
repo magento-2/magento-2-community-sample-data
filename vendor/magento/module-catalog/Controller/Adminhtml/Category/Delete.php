@@ -8,9 +8,7 @@ namespace Magento\Catalog\Controller\Adminhtml\Category;
 
 class Delete extends \Magento\Catalog\Controller\Adminhtml\Category
 {
-    /**
-     * @var \Magento\Catalog\Api\CategoryRepositoryInterface
-     */
+    /** @var \Magento\Catalog\Api\CategoryRepositoryInterface */
     protected $categoryRepository;
 
     /**
@@ -44,12 +42,12 @@ class Delete extends \Magento\Catalog\Controller\Adminhtml\Category
                 $this->_eventManager->dispatch('catalog_controller_category_delete', ['category' => $category]);
                 $this->_auth->getAuthStorage()->setDeletedPath($category->getPath());
                 $this->categoryRepository->delete($category);
-                $this->messageManager->addSuccessMessage(__('You deleted the category.'));
+                $this->messageManager->addSuccess(__('You deleted the category.'));
             } catch (\Magento\Framework\Exception\LocalizedException $e) {
-                $this->messageManager->addErrorMessage($e->getMessage());
+                $this->messageManager->addError($e->getMessage());
                 return $resultRedirect->setPath('catalog/*/edit', ['_current' => true]);
             } catch (\Exception $e) {
-                $this->messageManager->addErrorMessage(__('Something went wrong while trying to delete the category.'));
+                $this->messageManager->addError(__('Something went wrong while trying to delete the category.'));
                 return $resultRedirect->setPath('catalog/*/edit', ['_current' => true]);
             }
         }

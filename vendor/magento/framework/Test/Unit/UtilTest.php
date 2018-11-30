@@ -7,7 +7,7 @@
  */
 namespace Magento\Framework\Test\Unit;
 
-class UtilTest extends \PHPUnit\Framework\TestCase
+class UtilTest extends \PHPUnit_Framework_TestCase
 {
     public function testGetTrimmedPhpVersion()
     {

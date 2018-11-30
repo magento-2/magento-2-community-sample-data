@@ -6,7 +6,7 @@
 
 namespace Magento\Setup\Test\Unit\Module\Setup;
 
-class ResourceConfigTest extends \PHPUnit\Framework\TestCase
+class ResourceConfigTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @dataProvider getConnectionNameDataProvider

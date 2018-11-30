@@ -7,7 +7,7 @@ namespace Magento\Framework\View\Test\Unit\Design\Fallback\Rule;
 
 use \Magento\Framework\View\Design\Fallback\Rule\ModularSwitch;
 
-class ModularSwitchTest extends \PHPUnit\Framework\TestCase
+class ModularSwitchTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var ModularSwitch
@@ -27,10 +27,10 @@ class ModularSwitchTest extends \PHPUnit\Framework\TestCase
     protected function setUp()
     {
         $this->ruleNonModular = $this->getMockForAbstractClass(
-            \Magento\Framework\View\Design\Fallback\Rule\RuleInterface::class
+            '\Magento\Framework\View\Design\Fallback\Rule\RuleInterface'
         );
         $this->ruleModular = $this->getMockForAbstractClass(
-            \Magento\Framework\View\Design\Fallback\Rule\RuleInterface::class
+            '\Magento\Framework\View\Design\Fallback\Rule\RuleInterface'
         );
         $this->object = new ModularSwitch($this->ruleNonModular, $this->ruleModular);
     }

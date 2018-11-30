@@ -5,7 +5,7 @@
  */
 namespace Magento\Catalog\Test\Unit\Model\ProductTypes\Config;
 
-class XsdMergedTest extends \PHPUnit\Framework\TestCase
+class XsdMergedTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * Path to xsd schema file

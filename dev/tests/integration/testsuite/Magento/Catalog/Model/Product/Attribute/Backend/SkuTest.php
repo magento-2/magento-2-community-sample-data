@@ -9,7 +9,7 @@ namespace Magento\Catalog\Model\Product\Attribute\Backend;
  * Test class for \Magento\Catalog\Model\Product\Attribute\Backend\Sku.
  * @magentoAppArea adminhtml
  */
-class SkuTest extends \PHPUnit\Framework\TestCase
+class SkuTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @magentoDataFixture Magento/Catalog/_files/product_simple.php
@@ -17,7 +17,7 @@ class SkuTest extends \PHPUnit\Framework\TestCase
     public function testGenerateUniqueSkuExistingProduct()
     {
         $repository = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->create(
-            \Magento\Catalog\Model\ProductRepository::class
+            'Magento\Catalog\Model\ProductRepository'
         );
         $product = $repository->get('simple');
         $product->setId(null);
@@ -45,14 +45,14 @@ class SkuTest extends \PHPUnit\Framework\TestCase
     public function testGenerateUniqueLongSku()
     {
         $repository = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->create(
-            \Magento\Catalog\Model\ProductRepository::class
+            'Magento\Catalog\Model\ProductRepository'
         );
         $product = $repository->get('simple');
         $product->setSku('0123456789012345678901234567890123456789012345678901234567890123');
 
         /** @var \Magento\Catalog\Model\Product\Copier $copier */
         $copier = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->get(
-            \Magento\Catalog\Model\Product\Copier::class
+            'Magento\Catalog\Model\Product\Copier'
         );
         $copier->copy($product);
         $this->assertEquals('0123456789012345678901234567890123456789012345678901234567890123', $product->getSku());
@@ -80,7 +80,7 @@ class SkuTest extends \PHPUnit\Framework\TestCase
     {
         /** @var $product \Magento\Catalog\Model\Product */
         $product = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->create(
-            \Magento\Catalog\Model\Product::class
+            'Magento\Catalog\Model\Product'
         );
         $product->setTypeId(
             \Magento\Catalog\Model\Product\Type::TYPE_SIMPLE

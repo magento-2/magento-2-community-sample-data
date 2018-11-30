@@ -7,7 +7,7 @@
 use Magento\TestFramework\Helper\Bootstrap;
 
 /** @var \Magento\CatalogRule\Model\Rule $rule */
-$rule = Bootstrap::getObjectManager()->get(\Magento\CatalogRule\Model\RuleFactory::class)->create();
+$rule = Bootstrap::getObjectManager()->get('Magento\CatalogRule\Model\RuleFactory')->create();
 $rule->loadPost([
     'name' => 'test_rule',
     'is_active' => '1',
@@ -23,13 +23,13 @@ $rule->loadPost([
     'sub_discount_amount' => 0,
     'conditions' => [
         '1' => [
-            'type' => \Magento\CatalogRule\Model\Rule\Condition\Combine::class,
+            'type' => 'Magento\CatalogRule\Model\Rule\Condition\Combine',
             'aggregator' => 'all',
             'value' => '1',
             'new_child' => '',
         ],
         '1--1' => [
-            'type' => \Magento\CatalogRule\Model\Rule\Condition\Product::class,
+            'type' => 'Magento\CatalogRule\Model\Rule\Condition\Product',
             'attribute' => 'test_attribute',
             'operator' => '==',
             'value' => 'test_attribute_value',

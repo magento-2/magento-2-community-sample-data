@@ -22,7 +22,7 @@ class Scheme implements RouteInterface
     /**
      * Scheme to match.
      *
-     * @var string
+     * @var array
      */
     protected $scheme;
 

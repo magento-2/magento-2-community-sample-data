@@ -5,121 +5,98 @@
  */
 namespace Magento\Paypal\Test\Unit\Model;
 
-use Magento\Framework\App\Config\ScopeConfigInterface;
-use Magento\Framework\DataObject;
-use Magento\Framework\TestFramework\Unit\Helper\ObjectManager as ObjectManagerHelper;
-use Magento\Payment\Model\Method\ConfigInterfaceFactory;
-use Magento\Paypal\Block\Payment\Info;
-use Magento\Paypal\Model\Config;
-use Magento\Paypal\Model\Payflow\Request;
-use Magento\Paypal\Model\Payflow\RequestFactory;
-use Magento\Paypal\Model\Payflow\Service\Gateway;
 use Magento\Paypal\Model\Payflowlink;
-use Magento\Sales\Model\Order;
-use Magento\Sales\Model\Order\Payment;
+use Magento\Paypal\Model\Config;
 use Magento\Store\Model\ScopeInterface;
-use Magento\Store\Model\Store;
-use Magento\Store\Model\StoreManagerInterface;
-use PHPUnit_Framework_MockObject_MockObject as MockObject;
+use Magento\Framework\TestFramework\Unit\Helper\ObjectManager as ObjectManagerHelper;
 
-/**
- * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
- */
-class PayflowlinkTest extends \PHPUnit\Framework\TestCase
+class PayflowlinkTest extends \PHPUnit_Framework_TestCase
 {
-    /**
-     * @var Payflowlink
-     */
-    private $model;
+    /** @var Payflowlink */
+    protected $model;
 
-    /**
-     * @var Payment|MockObject
-     */
-    private $infoInstance;
+    /** @var  \Magento\Sales\Model\Order\Payment|\PHPUnit_Framework_MockObject_MockObject */
+    protected $infoInstance;
 
-    /**
-     * @var Request|MockObject
-     */
-    private $payflowRequest;
+    /** @var  \Magento\Paypal\Model\Payflow\Request|\PHPUnit_Framework_MockObject_MockObject */
+    protected $payflowRequest;
 
-    /**
-     * @var Config|MockObject
-     */
-    private $paypalConfig;
+    /** @var  \Magento\Paypal\Model\Config|\PHPUnit_Framework_MockObject_MockObject */
+    protected $paypalConfig;
 
-    /**
-     * @var Store|MockObject
-     */
-    private $store;
+    /** @var  \Magento\Store\Model\Store|\PHPUnit_Framework_MockObject_MockObject */
+    protected $store;
 
-    /**
-     * @var Gateway|MockObject
-     */
-    private $gateway;
+    /** @var  \Magento\Paypal\Model\Payflow\Service\Gateway|\PHPUnit_Framework_MockObject_MockObject */
+    private $gatewayMock;
 
-    /**
-     * @var ScopeConfigInterface|MockObject
-     */
-    private $scopeConfig;
+    /** @var \Magento\Framework\App\Config\ScopeConfigInterface|\PHPUnit_Framework_MockObject_MockObject */
+    protected $scopeConfigMock;
 
     protected function setUp()
     {
-        $this->store = $this->createMock(Store::class);
-        $storeManager = $this->createMock(
-            StoreManagerInterface::class
+        $this->store = $this->getMock(
+            'Magento\Store\Model\Store',
+            [],
+            [],
+            '',
+            false
         );
-        $this->paypalConfig = $this->getMockBuilder(Config::class)
+        $storeManager = $this->getMock(
+            'Magento\Store\Model\StoreManagerInterface'
+        );
+        $this->paypalConfig = $this->getMockBuilder('Magento\Paypal\Model\Config')
             ->disableOriginalConstructor()
             ->getMock();
 
-        $configFactory = $this->getMockBuilder(ConfigInterfaceFactory::class)
+        $configFactoryMock = $this->getMockBuilder('Magento\Payment\Model\Method\ConfigInterfaceFactory')
             ->setMethods(['create'])
             ->disableOriginalConstructor()
             ->getMock();
 
-        $requestFactory = $this->getMockBuilder(RequestFactory::class)
+        $requestFactory = $this->getMockBuilder('Magento\Paypal\Model\Payflow\RequestFactory')
             ->setMethods(['create'])
             ->disableOriginalConstructor()
             ->getMock();
 
-        $this->payflowRequest = $this->getMockBuilder(Request::class)
+        $this->payflowRequest = $this->getMockBuilder('Magento\Paypal\Model\Payflow\Request')
             ->disableOriginalConstructor()
             ->getMock();
 
-        $this->infoInstance = $this->getMockBuilder(Payment::class)
+        $this->infoInstance = $this->getMockBuilder('Magento\Sales\Model\Order\Payment')
             ->disableOriginalConstructor()
             ->getMock();
 
-        $this->scopeConfig = $this->getMockBuilder(ScopeConfigInterface::class)
+        $this->scopeConfigMock = $this->getMockBuilder('Magento\Framework\App\Config\ScopeConfigInterface')
             ->getMockForAbstractClass();
 
-        $this->gateway = $this->getMockBuilder(Gateway::class)
+        $this->gatewayMock = $this->getMockBuilder('Magento\Paypal\Model\Payflow\Service\Gateway')
             ->disableOriginalConstructor()
             ->getMock();
 
-        $storeManager->method('getStore')
-            ->willReturn($this->store);
-        $configFactory->method('create')
+        $storeManager->expects($this->any())->method('getStore')->will($this->returnValue($this->store));
+        $configFactoryMock->expects($this->any())
+            ->method('create')
             ->willReturn($this->paypalConfig);
-        $this->payflowRequest->method('__call')
-            ->willReturnCallback(function ($method) {
+        $this->payflowRequest->expects($this->any())
+            ->method('__call')
+            ->will($this->returnCallback(function ($method) {
                 if (strpos($method, 'set') === 0) {
                     return $this->payflowRequest;
                 }
                 return null;
-            });
-        $requestFactory->method('create')
-            ->willReturn($this->payflowRequest);
+            }));
+        $requestFactory->expects($this->any())->method('create')->will($this->returnValue($this->payflowRequest));
 
         $helper = new ObjectManagerHelper($this);
         $this->model = $helper->getObject(
-            Payflowlink::class,
+            'Magento\Paypal\Model\Payflowlink',
             [
-                'scopeConfig' => $this->scopeConfig,
+                'scopeConfig' => $this->scopeConfigMock,
                 'storeManager' => $storeManager,
-                'configFactory' => $configFactory,
+                'configFactory' => $configFactoryMock,
                 'requestFactory' => $requestFactory,
-                'gateway' => $this->gateway,
+                'gateway' => $this->gatewayMock,
             ]
         );
         $this->model->setInfoInstance($this->infoInstance);
@@ -127,18 +104,24 @@ class PayflowlinkTest extends \PHPUnit\Framework\TestCase
 
     public function testInitialize()
     {
-        $storeId = 1;
-        $order = $this->createMock(Order::class);
-        $order->method('getStoreId')
-            ->willReturn($storeId);
-        $this->infoInstance->method('getOrder')
-            ->willReturn($order);
-        $this->infoInstance->method('setAdditionalInformation')
-            ->willReturnSelf();
-        $this->paypalConfig->method('getBuildNotationCode')
-            ->willReturn('build notation code');
+        $order = $this->getMock(
+            'Magento\Sales\Model\Order',
+            [],
+            [],
+            '',
+            false
+        );
+        $this->infoInstance->expects($this->any())
+            ->method('getOrder')
+            ->will($this->returnValue($order));
+        $this->infoInstance->expects($this->any())
+            ->method('setAdditionalInformation')
+            ->will($this->returnSelf());
+        $this->paypalConfig->expects($this->once())
+            ->method('getBuildNotationCode')
+            ->will($this->returnValue('build notation code'));
 
-        $response = new DataObject(
+        $response = new \Magento\Framework\DataObject(
             [
                 'result' => '0',
                 'pnref' => 'V19A3D27B61E',
@@ -149,10 +132,11 @@ class PayflowlinkTest extends \PHPUnit\Framework\TestCase
                 'result_code' => '0',
             ]
         );
-        $this->gateway->method('postRequest')
+        $this->gatewayMock->expects($this->once())
+            ->method('postRequest')
             ->willReturn($response);
 
-        $this->payflowRequest->expects(self::exactly(3))
+        $this->payflowRequest->expects($this->exactly(3))
             ->method('setData')
             ->willReturnMap(
                 [
@@ -165,15 +149,14 @@ class PayflowlinkTest extends \PHPUnit\Framework\TestCase
                         'BUTTONSOURCE' => 'build notation code',
                         'tender' => 'C',
                     ],
-                    self::returnSelf()
+                    $this->returnSelf()
                 ],
-                ['USER1', 1, self::returnSelf()],
-                ['USER2', 'a20d3dc6824c1f7780c5529dc37ae5e', self::returnSelf()]
+                ['USER1', 1, $this->returnSelf()],
+                ['USER2', 'a20d3dc6824c1f7780c5529dc37ae5e', $this->returnSelf()]
             );
 
-        $stateObject = new DataObject();
-        $this->model->initialize(Config::PAYMENT_ACTION_AUTH, $stateObject);
-        self::assertEquals($storeId, $this->model->getStore(), '{Store} should be set');
+        $stateObject = new \Magento\Framework\DataObject();
+        $this->model->initialize(\Magento\Paypal\Model\Config::PAYMENT_ACTION_AUTH, $stateObject);
     }
 
     /**
@@ -184,7 +167,7 @@ class PayflowlinkTest extends \PHPUnit\Framework\TestCase
     public function testIsActive($expectedResult, $configResult)
     {
         $storeId = 15;
-        $this->scopeConfig->expects($this->once())
+        $this->scopeConfigMock->expects($this->once())
             ->method('getValue')
             ->with(
                 "payment/payflow_link/active",
@@ -204,10 +187,5 @@ class PayflowlinkTest extends \PHPUnit\Framework\TestCase
             [false, '0'],
             [true, '1']
         ];
-    }
-
-    public function testGetInfoBlockType()
-    {
-        static::assertEquals(Info::class, $this->model->getInfoBlockType());
     }
 }

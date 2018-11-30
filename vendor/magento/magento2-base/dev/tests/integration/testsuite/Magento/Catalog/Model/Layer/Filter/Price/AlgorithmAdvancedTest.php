@@ -10,12 +10,13 @@ use Magento\TestFramework\Helper\Bootstrap;
 
 /**
  * Test class for \Magento\Catalog\Model\Layer\Filter\Price.
+ *
+ * @magentoDataFixture Magento/Catalog/Model/Layer/Filter/Price/_files/products_advanced.php
  */
-class AlgorithmAdvancedTest extends \PHPUnit\Framework\TestCase
+class AlgorithmAdvancedTest extends \PHPUnit_Framework_TestCase
 {
     /**
-     * @magentoDataFixture Magento/Catalog/Model/Layer/Filter/Price/_files/products_advanced.php
-     * @magentoDbIsolation disabled
+     * @magentoDbIsolation enabled
      * @magentoAppIsolation enabled
      * @magentoConfigFixture current_store catalog/search/engine mysql
      * @covers \Magento\Framework\Search\Dynamic\Algorithm::calculateSeparators
@@ -29,7 +30,7 @@ class AlgorithmAdvancedTest extends \PHPUnit\Framework\TestCase
         /** @var $objectManager \Magento\TestFramework\ObjectManager */
         $objectManager = Bootstrap::getObjectManager();
         /** @var $request \Magento\TestFramework\Request */
-        $request = $objectManager->get(\Magento\TestFramework\Request::class);
+        $request = $objectManager->get('Magento\TestFramework\Request');
         $request->setParam('price', null);
         $model = $this->_prepareFilter($layer, $priceResource);
         $this->assertEquals(
@@ -54,11 +55,11 @@ class AlgorithmAdvancedTest extends \PHPUnit\Framework\TestCase
     {
         /** @var \Magento\Framework\Search\Dynamic\Algorithm $model */
         $model = Bootstrap::getObjectManager()
-            ->create(\Magento\Framework\Search\Dynamic\Algorithm::class);
+            ->create('Magento\Framework\Search\Dynamic\Algorithm');
         /** @var $filter \Magento\Catalog\Model\Layer\Filter\Price */
         $filter = Bootstrap::getObjectManager()
             ->create(
-                \Magento\Catalog\Model\Layer\Filter\Price::class,
+                'Magento\Catalog\Model\Layer\Filter\Price',
                 ['layer' => $layer, 'resource' => $priceResource, 'priceAlgorithm' => $model]
             );
         $filter->setLayer($layer)->setAttributeModel(new DataObject(['attribute_code' => 'price']));
@@ -66,9 +67,9 @@ class AlgorithmAdvancedTest extends \PHPUnit\Framework\TestCase
             $filter->apply(
                 $request,
                 Bootstrap::getObjectManager()->get(
-                    \Magento\Framework\View\LayoutInterface::class
+                    'Magento\Framework\View\LayoutInterface'
                 )->createBlock(
-                    \Magento\Framework\View\Element\Text::class
+                    'Magento\Framework\View\Element\Text'
                 )
             );
             $interval = $filter->getInterval();
@@ -87,8 +88,7 @@ class AlgorithmAdvancedTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * @magentoDataFixture Magento/Catalog/Model/Layer/Filter/Price/_files/products_advanced.php
-     * @magentoDbIsolation disabled
+     * @magentoDbIsolation enabled
      * @magentoAppIsolation enabled
      * @magentoConfigFixture current_store catalog/search/engine mysql
      * @covers \Magento\Framework\Search\Dynamic\Algorithm::calculateSeparators
@@ -104,7 +104,7 @@ class AlgorithmAdvancedTest extends \PHPUnit\Framework\TestCase
         /** @var $objectManager \Magento\TestFramework\ObjectManager */
         $objectManager = Bootstrap::getObjectManager();
         /** @var $request \Magento\TestFramework\Request */
-        $request = $objectManager->get(\Magento\TestFramework\Request::class);
+        $request = $objectManager->get('Magento\TestFramework\Request');
         $request->setParam('price', '10-100');
         $model = $this->_prepareFilter($layer, $priceResource, $request);
         $this->assertEquals(
@@ -122,10 +122,10 @@ class AlgorithmAdvancedTest extends \PHPUnit\Framework\TestCase
     protected function createLayer()
     {
         $layer = Bootstrap::getObjectManager()
-            ->create(\Magento\Catalog\Model\Layer\Category::class);
+            ->create('Magento\Catalog\Model\Layer\Category');
         $layer->setCurrentCategory(4);
         $layer->setState(
-            Bootstrap::getObjectManager()->create(\Magento\Catalog\Model\Layer\State::class)
+            Bootstrap::getObjectManager()->create('Magento\Catalog\Model\Layer\State')
         );
         return $layer;
     }
@@ -137,7 +137,7 @@ class AlgorithmAdvancedTest extends \PHPUnit\Framework\TestCase
     protected function createPriceResource($layer)
     {
         return Bootstrap::getObjectManager()
-            ->create(\Magento\Catalog\Model\ResourceModel\Layer\Filter\Price::class, ['layer' => $layer]);
+            ->create('Magento\Catalog\Model\ResourceModel\Layer\Filter\Price', ['layer' => $layer]);
     }
 
     /**
@@ -147,6 +147,6 @@ class AlgorithmAdvancedTest extends \PHPUnit\Framework\TestCase
     protected function createInterval($priceResource)
     {
         return Bootstrap::getObjectManager()
-            ->create(\Magento\CatalogSearch\Model\Price\Interval::class, ['resource' => $priceResource]);
+            ->create('Magento\CatalogSearch\Model\Price\Interval', ['resource' => $priceResource]);
     }
 }

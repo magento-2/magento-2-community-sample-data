@@ -12,34 +12,30 @@ use Magento\Bundle\Model\Product\Price;
 use Magento\Catalog\Model\Product\Type;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
 
-class PriceBackendTest extends \PHPUnit\Framework\TestCase
+class PriceBackendTest extends \PHPUnit_Framework_TestCase
 {
     const CLOSURE_VALUE = 'CLOSURE';
-
     /** @var  PriceBackend */
     private $priceBackendPlugin;
-
     /** @var  \PHPUnit_Framework_MockObject_MockObject */
     private $priceAttributeMock;
-
     /** @var  \Closure */
     private $closure;
-
     /** @var  \PHPUnit_Framework_MockObject_MockObject */
     private $productMock;
 
     protected function setUp()
     {
         $objectManager = new ObjectManager($this);
-        $this->priceBackendPlugin = $objectManager->getObject(\Magento\Bundle\Model\Plugin\PriceBackend::class);
+        $this->priceBackendPlugin = $objectManager->getObject('Magento\Bundle\Model\Plugin\PriceBackend');
 
         $this->closure = function () {
             return static::CLOSURE_VALUE;
         };
-        $this->priceAttributeMock = $this->getMockBuilder(\Magento\Catalog\Model\Product\Attribute\Backend\Price::class)
+        $this->priceAttributeMock = $this->getMockBuilder('Magento\Catalog\Model\Product\Attribute\Backend\Price')
             ->disableOriginalConstructor()
             ->getMock();
-        $this->productMock = $this->getMockBuilder(\Magento\Catalog\Model\Product::class)
+        $this->productMock = $this->getMockBuilder('Magento\Catalog\Model\Product')
             ->disableOriginalConstructor()
             ->setMethods(['getTypeId', 'getPriceType', '__wakeUp'])
             ->getMock();

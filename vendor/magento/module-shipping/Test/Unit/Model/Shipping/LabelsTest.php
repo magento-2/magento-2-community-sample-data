@@ -5,7 +5,8 @@
  */
 namespace Magento\Shipping\Test\Unit\Model\Shipping;
 
-use Magento\Framework\TestFramework\Unit\Helper\ObjectManager as ObjectManagerHelper;
+use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
+use Magento\Framework\DataObject;
 use Magento\Sales\Model\Order\Shipment;
 use Magento\Store\Model\ScopeInterface;
 
@@ -13,10 +14,8 @@ use Magento\Store\Model\ScopeInterface;
  * Class LabelsTest
  *
  * Test class for \Magento\Shipping\Model\Shipping\Labels
- *
- * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  */
-class LabelsTest extends \PHPUnit\Framework\TestCase
+class LabelsTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\Shipping\Model\Shipping\Labels
@@ -38,77 +37,57 @@ class LabelsTest extends \PHPUnit\Framework\TestCase
      */
     protected $region;
 
-    /**
-     * @var \PHPUnit_Framework_MockObject_MockObject
-     */
-    private $carrierFactory;
-
-    /**
-     * @var \PHPUnit_Framework_MockObject_MockObject
-     */
-    private $user;
-
     protected function setUp()
     {
-        $this->request = $this->getMockBuilder(\Magento\Shipping\Model\Shipment\Request::class)
+        $this->request = $this->getMockBuilder('Magento\Shipping\Model\Shipment\Request')
             ->disableOriginalConstructor()
             ->getMock();
-        $requestFactory = $this->getMockBuilder(\Magento\Shipping\Model\Shipment\RequestFactory::class)
+        $requestFactory = $this->getMockBuilder('Magento\Shipping\Model\Shipment\RequestFactory')
             ->disableOriginalConstructor()
             ->setMethods(['create'])
             ->getMock();
         $requestFactory->expects(static::any())->method('create')->willReturn($this->request);
-        $this->carrierFactory = $this->getMockBuilder(\Magento\Shipping\Model\CarrierFactory::class)
+
+        $carrier = $this->getMockBuilder('Magento\Shipping\Model\Carrier\AbstractCarrier')
+            ->disableOriginalConstructor()
+            ->getMock();
+
+        $carrierFactory = $this->getMockBuilder('Magento\Shipping\Model\CarrierFactory')
             ->disableOriginalConstructor()
             ->setMethods(['create'])
             ->getMock();
-        $storeManager = $this->getStoreManager();
-        $this->user = $this->getMockBuilder(\Magento\User\Model\User::class)
-            ->disableOriginalConstructor()
-            ->setMethods(['getFirstname', 'getLastname', 'getEmail', 'getName'])
-            ->getMock();
+        $carrierFactory->expects(static::any())->method('create')->willReturn($carrier);
 
-        $authSession = $this->getMockBuilder(\Magento\Backend\Model\Auth\Session::class)
-            ->disableOriginalConstructor()
-            ->setMethods(['getUser'])
-            ->getMock();
-        $authSession->expects(static::any())->method('getUser')->willReturn($this->user);
+        $storeManager = $this->getStoreManager();
+        $authSession = $this->getAuthSession();
         $regionFactory = $this->getRegionFactory();
-        $this->scopeConfig = $this->getMockBuilder(\Magento\Framework\App\Config::class)
+
+        $this->scopeConfig = $this->getMockBuilder('\Magento\Framework\App\Config')
             ->disableOriginalConstructor()
             ->setMethods(['getValue'])
             ->getMock();
-        $objectManagerHelper = new ObjectManagerHelper($this);
-        $this->labels = $objectManagerHelper->getObject(
-            \Magento\Shipping\Model\Shipping\Labels::class,
-            [
-                'shipmentRequestFactory' => $requestFactory,
-                'carrierFactory' => $this->carrierFactory,
-                'storeManager' => $storeManager,
-                'scopeConfig' => $this->scopeConfig,
-                'authSession' => $authSession,
-                'regionFactory' => $regionFactory
-            ]
-        );
+
+        $objectManagerHelper = new ObjectManager($this);
+        $this->labels = $objectManagerHelper->getObject('Magento\Shipping\Model\Shipping\Labels', [
+            'shipmentRequestFactory' => $requestFactory,
+            'carrierFactory' => $carrierFactory,
+            'storeManager' => $storeManager,
+            'scopeConfig' => $this->scopeConfig,
+            'authSession' => $authSession,
+            'regionFactory' => $regionFactory
+        ]);
     }
 
     /**
-     * @dataProvider requestToShipmentDataProvider
+     * @covers \Magento\Shipping\Model\Shipping\Labels
      */
-    public function testRequestToShipment($regionId)
+    public function testRequestToShipment()
     {
-        $carrier = $this->getMockBuilder(\Magento\Shipping\Model\Carrier\AbstractCarrier::class)
+        $order = $this->getMockBuilder('Magento\Sales\Model\Order')
             ->disableOriginalConstructor()
             ->getMock();
-        $this->carrierFactory->expects(static::any())->method('create')->willReturn($carrier);
-        $order = $this->getMockBuilder(\Magento\Sales\Model\Order::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $this->user->expects($this->atLeastOnce())->method('getFirstname')->willReturn('John');
-        $this->user->expects($this->atLeastOnce())->method('getLastname')->willReturn('Doe');
-        $this->user->expects($this->once())->method('getName')->willReturn('John Doe');
-        $this->user->expects($this->once())->method('getEmail')->willReturn('admin@admin.test.com');
-        $shippingMethod = $this->getMockBuilder(\Magento\Framework\DataObject::class)
+
+        $shippingMethod = $this->getMockBuilder('Magento\Framework\DataObject')
             ->disableOriginalConstructor()
             ->setMethods(['getCarrierCode'])
             ->getMock();
@@ -131,7 +110,7 @@ class LabelsTest extends \PHPUnit\Framework\TestCase
             ->willReturn(2);
 
         $storeId = 33;
-        $shipment = $this->getMockBuilder(\Magento\Sales\Model\Order\Shipment::class)
+        $shipment = $this->getMockBuilder('Magento\Sales\Model\Order\Shipment')
             ->disableOriginalConstructor()
             ->getMock();
         $shipment->expects(static::once())->method('getOrder')->willReturn($order);
@@ -141,7 +120,7 @@ class LabelsTest extends \PHPUnit\Framework\TestCase
         $this->scopeConfig->expects(static::any())
             ->method('getValue')
             ->willReturnMap([
-                [Shipment::XML_PATH_STORE_REGION_ID, ScopeInterface::SCOPE_STORE, $storeId, $regionId],
+                [Shipment::XML_PATH_STORE_REGION_ID, ScopeInterface::SCOPE_STORE, $storeId, 'CA'],
                 [Shipment::XML_PATH_STORE_ADDRESS1, ScopeInterface::SCOPE_STORE, $storeId, 'Beverly Heals'],
                 ['general/store_information', ScopeInterface::SCOPE_STORE, $storeId, [
                     'name' => 'General Store', 'phone' => '(244)1500301'
@@ -151,35 +130,38 @@ class LabelsTest extends \PHPUnit\Framework\TestCase
                 [Shipment::XML_PATH_STORE_COUNTRY_ID, ScopeInterface::SCOPE_STORE, $storeId, 'US'],
                 [Shipment::XML_PATH_STORE_ADDRESS2, ScopeInterface::SCOPE_STORE, $storeId, '1st Park Avenue'],
             ]);
+
         $this->labels->requestToShipment($shipment);
     }
 
     /**
-     * @expectedException \Magento\Framework\Exception\LocalizedException
-     * @dataProvider requestToShipmentLocalizedExceptionDataProvider
+     * @return \PHPUnit_Framework_MockObject_MockObject
      */
-    public function testRequestToShipmentLocalizedException($isShipmentCarrierNotNull)
+    protected function getAuthSession()
     {
-        $order = $this->getMockBuilder(\Magento\Sales\Model\Order::class)
+        $user = $this->getMockBuilder('Magento\User\Model\User')
             ->disableOriginalConstructor()
+            ->setMethods(['getFirstname', 'getLastname', 'getEmail', 'getName'])
             ->getMock();
-        $shipment = $this->getMockBuilder(\Magento\Sales\Model\Order\Shipment::class)
+        $user->expects(static::exactly(2))
+            ->method('getFirstname')
+            ->willReturn('John');
+        $user->expects(static::exactly(2))
+            ->method('getLastname')
+            ->willReturn('Doe');
+        $user->expects(static::once())
+            ->method('getName')
+            ->willReturn('John Doe');
+        $user->expects(static::once())
+            ->method('getEmail')
+            ->willReturn('admin@admin.test.com');
+
+        $authSession = $this->getMockBuilder('Magento\Backend\Model\Auth\Session')
             ->disableOriginalConstructor()
+            ->setMethods(['getUser'])
             ->getMock();
-        $shippingMethod = $this->getMockBuilder(\Magento\Framework\DataObject::class)
-            ->disableOriginalConstructor()
-            ->setMethods(['getCarrierCode'])
-            ->getMock();
-        $order->expects($this->atLeastOnce())
-            ->method('getShippingMethod')
-            ->with(true)
-            ->willReturn($shippingMethod);
-        $this->carrierFactory
-            ->expects(static::any())
-            ->method('create')
-            ->willReturn($isShipmentCarrierNotNull ? $shippingMethod : null);
-        $shipment->expects($this->once())->method('getOrder')->willReturn($order);
-        $this->labels->requestToShipment($shipment);
+        $authSession->expects(static::any())->method('getUser')->willReturn($user);
+        return $authSession;
     }
 
     /**
@@ -187,14 +169,14 @@ class LabelsTest extends \PHPUnit\Framework\TestCase
      */
     protected function getStoreManager()
     {
-        $store = $this->getMockBuilder(\Magento\Store\Model\Store::class)
+        $store = $this->getMockBuilder('Magento\Store\Model\Store')
             ->disableOriginalConstructor()
             ->getMock();
         $store->expects(static::any())
             ->method('getBaseCurrencyCode')
             ->willReturn('USD');
 
-        $storeManager = $this->getMockBuilder(\Magento\Store\Model\StoreManager::class)
+        $storeManager = $this->getMockBuilder('Magento\Store\Model\StoreManager')
             ->disableOriginalConstructor()
             ->setMethods(['getStore'])
             ->getMock();
@@ -207,11 +189,11 @@ class LabelsTest extends \PHPUnit\Framework\TestCase
      */
     protected function getRegionFactory()
     {
-        $this->region = $this->getMockBuilder(\Magento\Directory\Model\Region::class)
+        $this->region = $this->getMockBuilder('Magento\Directory\Model\Region')
             ->disableOriginalConstructor()
             ->setMethods(['load', 'getCode'])
             ->getMock();
-        $regionFactory = $this->getMockBuilder(\Magento\Directory\Model\RegionFactory::class)
+        $regionFactory = $this->getMockBuilder('Magento\Directory\Model\RegionFactory')
             ->disableOriginalConstructor()
             ->setMethods(['create'])
             ->getMock();
@@ -224,7 +206,7 @@ class LabelsTest extends \PHPUnit\Framework\TestCase
      */
     protected function getRecipientAddress()
     {
-        $address = $this->getMockBuilder(\Magento\Sales\Model\Order\Address::class)
+        $address = $this->getMockBuilder('Magento\Sales\Model\Order\Address')
             ->disableOriginalConstructor()
             ->getMock();
         $address->expects(static::exactly(2))
@@ -258,37 +240,5 @@ class LabelsTest extends \PHPUnit\Framework\TestCase
             ->method('getCountryId')
             ->willReturn(1);
         return $address;
-    }
-
-    /**
-     * Data provider to testRequestToShipment
-     * @return array
-     */
-    public function requestToShipmentDataProvider()
-    {
-        return [
-            [
-                'CA'
-            ],
-            [
-                null
-            ]
-        ];
-    }
-
-    /**
-     * Data provider to testRequestToShipmentLocalizedException
-     * @return array
-     */
-    public function requestToShipmentLocalizedExceptionDataProvider()
-    {
-        return [
-            [
-                true
-            ],
-            [
-                false
-            ]
-        ];
     }
 }

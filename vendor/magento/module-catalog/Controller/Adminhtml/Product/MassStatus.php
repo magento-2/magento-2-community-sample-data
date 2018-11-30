@@ -12,9 +12,6 @@ use Magento\Framework\Controller\ResultFactory;
 use Magento\Ui\Component\MassAction\Filter;
 use Magento\Catalog\Model\ResourceModel\Product\CollectionFactory;
 
-/**
- * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
- */
 class MassStatus extends \Magento\Catalog\Controller\Adminhtml\Product
 {
     /**
@@ -25,12 +22,12 @@ class MassStatus extends \Magento\Catalog\Controller\Adminhtml\Product
     /**
      * MassActions filter
      *
-     * @var Filter
+     * @var \Magento\Ui\Component\MassAction\Filter
      */
     protected $filter;
 
     /**
-     * @var CollectionFactory
+     * @var \Magento\Catalog\Model\ResourceModel\Product\CollectionFactory
      */
     protected $collectionFactory;
 
@@ -38,8 +35,8 @@ class MassStatus extends \Magento\Catalog\Controller\Adminhtml\Product
      * @param Action\Context $context
      * @param Builder $productBuilder
      * @param \Magento\Catalog\Model\Indexer\Product\Price\Processor $productPriceIndexerProcessor
-     * @param Filter $filter
-     * @param CollectionFactory $collectionFactory
+     * @param \Magento\Ui\Component\MassAction\Filter $filter
+     * @param \Magento\Catalog\Model\ResourceModel\Product\CollectionFactory $collectionFactory
      */
     public function __construct(
         \Magento\Backend\App\Action\Context $context,
@@ -65,7 +62,7 @@ class MassStatus extends \Magento\Catalog\Controller\Adminhtml\Product
     public function _validateMassStatus(array $productIds, $status)
     {
         if ($status == \Magento\Catalog\Model\Product\Attribute\Source\Status::STATUS_ENABLED) {
-            if (!$this->_objectManager->create(\Magento\Catalog\Model\Product::class)->isProductsHasSku($productIds)) {
+            if (!$this->_objectManager->create('Magento\Catalog\Model\Product')->isProductsHasSku($productIds)) {
                 throw new \Magento\Framework\Exception\LocalizedException(
                     __('Please make sure to define SKU values for all processed products.')
                 );
@@ -92,14 +89,12 @@ class MassStatus extends \Magento\Catalog\Controller\Adminhtml\Product
 
         try {
             $this->_validateMassStatus($productIds, $status);
-            $this->_objectManager->get(\Magento\Catalog\Model\Product\Action::class)
+            $this->_objectManager->get('Magento\Catalog\Model\Product\Action')
                 ->updateAttributes($productIds, ['status' => $status], $storeId);
-            $this->messageManager->addSuccessMessage(
-                __('A total of %1 record(s) have been updated.', count($productIds))
-            );
+            $this->messageManager->addSuccess(__('A total of %1 record(s) have been updated.', count($productIds)));
             $this->_productPriceIndexerProcessor->reindexList($productIds);
         } catch (\Magento\Framework\Exception\LocalizedException $e) {
-            $this->messageManager->addErrorMessage($e->getMessage());
+            $this->messageManager->addError($e->getMessage());
         } catch (\Exception $e) {
             $this->_getSession()->addException($e, __('Something went wrong while updating the product(s) status.'));
         }

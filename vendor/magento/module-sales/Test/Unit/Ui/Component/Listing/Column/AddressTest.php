@@ -12,7 +12,7 @@ use Magento\Sales\Ui\Component\Listing\Column\Address;
 /**
  * Class AddressTest
  */
-class AddressTest extends \PHPUnit\Framework\TestCase
+class AddressTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var Address
@@ -27,15 +27,15 @@ class AddressTest extends \PHPUnit\Framework\TestCase
     protected function setUp()
     {
         $objectManager = new ObjectManager($this);
-        $contextMock = $this->getMockBuilder(\Magento\Framework\View\Element\UiComponent\ContextInterface::class)
+        $contextMock = $this->getMockBuilder('Magento\Framework\View\Element\UiComponent\ContextInterface')
             ->getMockForAbstractClass();
-        $processor = $this->getMockBuilder(\Magento\Framework\View\Element\UiComponent\Processor::class)
+        $processor = $this->getMockBuilder('Magento\Framework\View\Element\UiComponent\Processor')
             ->disableOriginalConstructor()
             ->getMock();
-        $contextMock->expects($this->never())->method('getProcessor')->willReturn($processor);
-        $this->escaper = $this->createPartialMock(\Magento\Framework\Escaper::class, ['escapeHtml']);
+        $contextMock->expects($this->any())->method('getProcessor')->willReturn($processor);
+        $this->escaper = $this->getMock('Magento\Framework\Escaper', ['escapeHtml'], [], '', false);
         $this->model = $objectManager->getObject(
-            \Magento\Sales\Ui\Component\Listing\Column\Address::class,
+            'Magento\Sales\Ui\Component\Listing\Column\Address',
             [
                 'context' => $contextMock,
                 'escaper' => $this->escaper,
@@ -47,7 +47,7 @@ class AddressTest extends \PHPUnit\Framework\TestCase
     {
         $itemName = 'itemName';
         $oldItemValue = "itemValue\n";
-        $newItemValue = "itemValue<br />\n";
+        $newItemValue = 'itemValue<br/>';
         $dataSource = [
             'data' => [
                 'items' => [
@@ -57,7 +57,7 @@ class AddressTest extends \PHPUnit\Framework\TestCase
         ];
 
         $this->model->setData('name', $itemName);
-        $this->escaper->expects($this->any())->method('escapeHtml')->with($oldItemValue)->willReturnArgument(0);
+        $this->escaper->expects($this->once())->method('escapeHtml')->with($newItemValue)->willReturnArgument(0);
         $dataSource = $this->model->prepareDataSource($dataSource);
         $this->assertEquals($newItemValue, $dataSource['data']['items'][0][$itemName]);
     }

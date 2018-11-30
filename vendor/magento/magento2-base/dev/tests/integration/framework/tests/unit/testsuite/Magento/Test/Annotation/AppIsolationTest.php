@@ -9,7 +9,7 @@
  */
 namespace Magento\Test\Annotation;
 
-class AppIsolationTest extends \PHPUnit\Framework\TestCase
+class AppIsolationTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\TestFramework\Annotation\AppIsolation
@@ -23,7 +23,13 @@ class AppIsolationTest extends \PHPUnit\Framework\TestCase
 
     protected function setUp()
     {
-        $this->_application = $this->createPartialMock(\Magento\TestFramework\Application::class, ['reinitialize']);
+        $this->_application = $this->getMock(
+            'Magento\TestFramework\Application',
+            ['reinitialize'],
+            [],
+            '',
+            false
+        );
         $this->_object = new \Magento\TestFramework\Annotation\AppIsolation($this->_application);
     }
 
@@ -67,7 +73,7 @@ class AppIsolationTest extends \PHPUnit\Framework\TestCase
     public function testEndTestIsolationController()
     {
         /** @var $controllerTest \Magento\TestFramework\TestCase\AbstractController */
-        $controllerTest = $this->getMockForAbstractClass(\Magento\TestFramework\TestCase\AbstractController::class);
+        $controllerTest = $this->getMockForAbstractClass('Magento\TestFramework\TestCase\AbstractController');
         $this->_application->expects($this->once())->method('reinitialize');
         $this->_object->endTest($controllerTest);
     }

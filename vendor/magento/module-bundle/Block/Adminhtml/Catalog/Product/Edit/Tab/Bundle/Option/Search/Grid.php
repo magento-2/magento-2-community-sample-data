@@ -138,7 +138,7 @@ class Grid extends \Magento\Backend\Block\Widget\Grid\Extended
             [
                 'header' => __('ID'),
                 'index' => 'entity_id',
-                'renderer' => \Magento\Backend\Block\Widget\Grid\Column\Renderer\Checkbox::class,
+                'renderer' => 'Magento\Backend\Block\Widget\Grid\Column\Renderer\Checkbox',
                 'type' => 'skip-list'
             ]
         );

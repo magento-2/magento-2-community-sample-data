@@ -13,8 +13,6 @@
  */
 namespace Magento\Catalog\Block\Adminhtml\Product\Helper\Form;
 
-use Magento\Framework\App\ObjectManager;
-use Magento\Framework\App\Request\DataPersistorInterface;
 use Magento\Framework\Registry;
 use Magento\Catalog\Model\Product;
 use Magento\Eav\Model\Entity\Attribute;
@@ -71,11 +69,6 @@ class Gallery extends \Magento\Framework\View\Element\AbstractBlock
     protected $registry;
 
     /**
-     * @var DataPersistorInterface
-     */
-    private $dataPersistor;
-
-    /**
      * @param \Magento\Framework\View\Element\Context $context
      * @param \Magento\Store\Model\StoreManagerInterface $storeManager
      * @param Registry $registry
@@ -87,13 +80,11 @@ class Gallery extends \Magento\Framework\View\Element\AbstractBlock
         \Magento\Store\Model\StoreManagerInterface $storeManager,
         Registry $registry,
         \Magento\Framework\Data\Form $form,
-        $data = [],
-        DataPersistorInterface $dataPersistor = null
+        $data = []
     ) {
         $this->storeManager = $storeManager;
         $this->registry = $registry;
         $this->form = $form;
-        $this->dataPersistor = $dataPersistor ?: ObjectManager::getInstance()->get(DataPersistorInterface::class);
         parent::__construct($context, $data);
     }
 
@@ -113,24 +104,7 @@ class Gallery extends \Magento\Framework\View\Element\AbstractBlock
      */
     public function getImages()
     {
-        $images = $this->getDataObject()->getData('media_gallery') ?: null;
-        if ($images === null) {
-            $images = ((array)$this->dataPersistor->get('catalog_product'))['product']['media_gallery'] ?? null;
-        }
-
-        return $images;
-    }
-
-    /**
-     * Get value for given type.
-     *
-     * @param string $type
-     * @return string|null
-     */
-    public function getImageValue(string $type)
-    {
-        $product = (array)$this->dataPersistor->get('catalog_product');
-        return $product['product'][$type] ?? null;
+        return $this->getDataObject()->getData('media_gallery') ?: null;
     }
 
     /**

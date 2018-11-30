@@ -11,14 +11,10 @@ namespace Magento\Framework\App\Response\HeaderProvider;
  */
 abstract class AbstractHeaderProvider implements \Magento\Framework\App\Response\HeaderProvider\HeaderProviderInterface
 {
-    /**
-     * @var string
-     */
+    /** @var string */
     protected $headerName = '';
 
-    /**
-     * @var string
-     */
+    /** @var string */
     protected $headerValue = '';
 
     /**

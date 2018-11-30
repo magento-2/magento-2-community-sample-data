@@ -11,7 +11,7 @@ use Magento\Framework\TestFramework\Unit\Helper\ObjectManager as ObjectManagerHe
  * Class DiscountsTest
  * @package Magento\SalesRule\Model\Rss
  */
-class DiscountsTest extends \PHPUnit\Framework\TestCase
+class DiscountsTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\SalesRule\Model\Rss\Discounts
@@ -30,14 +30,17 @@ class DiscountsTest extends \PHPUnit\Framework\TestCase
 
     protected function setUp()
     {
-        $this->collectionFactory = $this->createPartialMock(
-            \Magento\SalesRule\Model\ResourceModel\Rule\CollectionFactory::class,
-            ['create']
+        $this->collectionFactory = $this->getMock(
+            'Magento\SalesRule\Model\ResourceModel\Rule\CollectionFactory',
+            ['create'],
+            [],
+            '',
+            false
         );
 
         $this->objectManagerHelper = new ObjectManagerHelper($this);
         $this->discounts = $this->objectManagerHelper->getObject(
-            \Magento\SalesRule\Model\Rss\Discounts::class,
+            'Magento\SalesRule\Model\Rss\Discounts',
             [
                 'collectionFactory' => $this->collectionFactory
             ]
@@ -46,12 +49,18 @@ class DiscountsTest extends \PHPUnit\Framework\TestCase
 
     public function testGetDiscountCollection()
     {
-        $ruleCollection = $this->createPartialMock(\Magento\SalesRule\Model\ResourceModel\Rule\Collection::class, [
+        $ruleCollection = $this->getMock(
+            'Magento\SalesRule\Model\ResourceModel\Rule\Collection',
+            [
                 'addWebsiteGroupDateFilter',
                 'addFieldToFilter',
                 'setOrder',
                 'load'
-            ]);
+            ],
+            [],
+            '',
+            false
+        );
         $this->collectionFactory->expects($this->once())->method('create')->will($this->returnValue($ruleCollection));
         $ruleCollection->expects($this->once())->method('addWebsiteGroupDateFilter')->will($this->returnSelf());
         $ruleCollection->expects($this->once())->method('addFieldToFilter')->will($this->returnSelf());

@@ -6,10 +6,9 @@
 namespace Magento\Quote\Model\QuoteRepository;
 
 use Magento\Quote\Api\Data\CartInterface;
-use Magento\Customer\Api\AddressRepositoryInterface;
+use Magento\Framework\Exception\InputException;
 use Magento\Framework\App\ObjectManager;
 use Magento\Framework\Exception\NoSuchEntityException;
-use Magento\Framework\Exception\InputException;
 
 class SaveHandler
 {
@@ -34,7 +33,9 @@ class SaveHandler
     private $shippingAssignmentPersister;
 
     /**
-     * @var AddressRepositoryInterface
+     * Customer address CRUD interface.
+     *
+     * @var \Magento\Customer\Api\AddressRepositoryInterface
      */
     private $addressRepository;
 
@@ -43,31 +44,34 @@ class SaveHandler
      * @param \Magento\Quote\Model\Quote\Item\CartItemPersister $cartItemPersister
      * @param \Magento\Quote\Model\Quote\Address\BillingAddressPersister $billingAddressPersister
      * @param \Magento\Quote\Model\Quote\ShippingAssignment\ShippingAssignmentPersister $shippingAssignmentPersister
-     * @param AddressRepositoryInterface $addressRepository
+     * @param \Magento\Customer\Api\AddressRepositoryInterface $addressRepository
      */
     public function __construct(
         \Magento\Quote\Model\ResourceModel\Quote $quoteResource,
         \Magento\Quote\Model\Quote\Item\CartItemPersister $cartItemPersister,
         \Magento\Quote\Model\Quote\Address\BillingAddressPersister $billingAddressPersister,
         \Magento\Quote\Model\Quote\ShippingAssignment\ShippingAssignmentPersister $shippingAssignmentPersister,
-        AddressRepositoryInterface $addressRepository = null
+        \Magento\Customer\Api\AddressRepositoryInterface $addressRepository = null
     ) {
         $this->quoteResourceModel = $quoteResource;
         $this->cartItemPersister = $cartItemPersister;
         $this->billingAddressPersister = $billingAddressPersister;
         $this->shippingAssignmentPersister = $shippingAssignmentPersister;
         $this->addressRepository = $addressRepository
-            ?: ObjectManager::getInstance()->get(AddressRepositoryInterface::class);
+            ?: ObjectManager::getInstance()->get(\Magento\Customer\Api\AddressRepositoryInterface::class);
     }
 
     /**
-     * Process and save quote data
+     * Process and save quote data.
      *
      * @param CartInterface $quote
+     *
      * @return CartInterface
+     *
      * @throws InputException
      * @throws \Magento\Framework\Exception\CouldNotSaveException
      * @throws \Magento\Framework\Exception\LocalizedException
+     * @throws \Magento\Framework\Exception\NoSuchEntityException
      */
     public function save(CartInterface $quote)
     {
@@ -106,10 +110,12 @@ class SaveHandler
     }
 
     /**
-     * Process shipping assignment
+     * Process shipping assignment.
      *
      * @param \Magento\Quote\Model\Quote $quote
+     *
      * @return void
+     *
      * @throws InputException
      */
     private function processShippingAssignment($quote)

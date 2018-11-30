@@ -36,13 +36,13 @@ class Edit extends \Magento\Cms\Controller\Adminhtml\Block
     {
         // 1. Get ID and create model
         $id = $this->getRequest()->getParam('block_id');
-        $model = $this->_objectManager->create(\Magento\Cms\Model\Block::class);
+        $model = $this->_objectManager->create('Magento\Cms\Model\Block');
 
         // 2. Initial checking
         if ($id) {
             $model->load($id);
             if (!$model->getId()) {
-                $this->messageManager->addErrorMessage(__('This block no longer exists.'));
+                $this->messageManager->addError(__('This block no longer exists.'));
                 /** @var \Magento\Backend\Model\View\Result\Redirect $resultRedirect */
                 $resultRedirect = $this->resultRedirectFactory->create();
                 return $resultRedirect->setPath('*/*/');

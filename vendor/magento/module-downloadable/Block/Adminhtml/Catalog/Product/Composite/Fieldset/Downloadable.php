@@ -11,10 +11,6 @@
  */
 namespace Magento\Downloadable\Block\Adminhtml\Catalog\Product\Composite\Fieldset;
 
-/**
- * @api
- * @since 100.0.2
- */
 class Downloadable extends \Magento\Downloadable\Block\Catalog\Product\Links
 {
 }

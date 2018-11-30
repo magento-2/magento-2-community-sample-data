@@ -8,8 +8,7 @@ namespace Magento\Eav\Model\ResourceModel\Entity\Attribute\Group;
 /**
  * Eav attribute group resource collection
  *
- * @api
- * @since 100.0.2
+ * @author      Magento Core Team <core@magentocommerce.com>
  */
 class Collection extends \Magento\Framework\Model\ResourceModel\Db\Collection\AbstractCollection
 {
@@ -22,8 +21,8 @@ class Collection extends \Magento\Framework\Model\ResourceModel\Db\Collection\Ab
     protected function _construct()
     {
         $this->_init(
-            \Magento\Eav\Model\Entity\Attribute\Group::class,
-            \Magento\Eav\Model\ResourceModel\Entity\Attribute\Group::class
+            'Magento\Eav\Model\Entity\Attribute\Group',
+            'Magento\Eav\Model\ResourceModel\Entity\Attribute\Group'
         );
     }
 

@@ -11,8 +11,7 @@ use Magento\Catalog\Model\Product;
 /**
  * Class Data
  * Helper class for getting options
- * @api
- * @since 100.0.2
+ *
  */
 class Data
 {
@@ -51,13 +50,15 @@ class Data
                 );
                 $image->setData(
                     'medium_image_url',
-                    $this->imageHelper->init($product, 'product_page_image_medium_no_frame')
+                    $this->imageHelper->init($product, 'product_page_image_medium')
+                        ->constrainOnly(true)->keepAspectRatio(true)->keepFrame(false)
                         ->setImageFile($image->getFile())
                         ->getUrl()
                 );
                 $image->setData(
                     'large_image_url',
-                    $this->imageHelper->init($product, 'product_page_image_large_no_frame')
+                    $this->imageHelper->init($product, 'product_page_image_large')
+                        ->constrainOnly(true)->keepAspectRatio(true)->keepFrame(false)
                         ->setImageFile($image->getFile())
                         ->getUrl()
                 );
@@ -77,11 +78,23 @@ class Data
     public function getOptions($currentProduct, $allowedProducts)
     {
         $options = [];
-        $allowAttributes = $this->getAllowAttributes($currentProduct);
-
         foreach ($allowedProducts as $product) {
             $productId = $product->getId();
-            foreach ($allowAttributes as $attribute) {
+            $images = $this->getGalleryImages($product);
+            if ($images) {
+                foreach ($images as $image) {
+                    $options['images'][$productId][] =
+                        [
+                            'thumb' => $image->getData('small_image_url'),
+                            'img' => $image->getData('medium_image_url'),
+                            'full' => $image->getData('large_image_url'),
+                            'caption' => $image->getLabel(),
+                            'position' => $image->getPosition(),
+                            'isMain' => $image->getFile() == $product->getImage(),
+                        ];
+                }
+            }
+            foreach ($this->getAllowAttributes($currentProduct) as $attribute) {
                 $productAttribute = $attribute->getProductAttribute();
                 $productAttributeId = $productAttribute->getId();
                 $attributeValue = $product->getData($productAttribute->getAttributeCode());

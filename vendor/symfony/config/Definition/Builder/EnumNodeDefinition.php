@@ -23,6 +23,8 @@ class EnumNodeDefinition extends ScalarNodeDefinition
     private $values;
 
     /**
+     * @param array $values
+     *
      * @return $this
      */
     public function values(array $values)

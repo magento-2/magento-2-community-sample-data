@@ -5,7 +5,7 @@
  */
 namespace Magento\Framework\HTTP\Test\Unit;
 
-class HeaderTest extends \PHPUnit\Framework\TestCase
+class HeaderTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\Framework\TestFramework\Unit\Helper\ObjectManager
@@ -26,10 +26,15 @@ class HeaderTest extends \PHPUnit\Framework\TestCase
     {
         $this->_objectManager = new \Magento\Framework\TestFramework\Unit\Helper\ObjectManager($this);
 
-        $this->_request =
-            $this->createPartialMock(\Magento\Framework\App\Request\Http::class, ['getServer', 'getRequestUri']);
+        $this->_request = $this->getMock(
+            'Magento\Framework\App\Request\Http',
+            ['getServer', 'getRequestUri'],
+            [],
+            '',
+            false
+        );
 
-        $this->_converter = $this->createPartialMock(\Magento\Framework\Stdlib\StringUtils::class, ['cleanString']);
+        $this->_converter = $this->getMock('\Magento\Framework\Stdlib\StringUtils', ['cleanString']);
     }
 
     /**
@@ -52,11 +57,11 @@ class HeaderTest extends \PHPUnit\Framework\TestCase
         $this->_prepareCleanString($clean);
 
         $headerObject = $this->_objectManager->getObject(
-            \Magento\Framework\HTTP\Header::class,
+            'Magento\Framework\HTTP\Header',
             ['httpRequest' => $this->_request, 'converter' => $this->_converter]
         );
 
-        $method = new \ReflectionMethod(\Magento\Framework\HTTP\Header::class, $method);
+        $method = new \ReflectionMethod('\Magento\Framework\HTTP\Header', $method);
         $result = $method->invokeArgs($headerObject, ['clean' => $clean]);
 
         $this->assertEquals($expectedValue, $result);
@@ -134,7 +139,7 @@ class HeaderTest extends \PHPUnit\Framework\TestCase
         $this->_prepareCleanString($clean);
 
         $headerObject = $this->_objectManager->getObject(
-            \Magento\Framework\HTTP\Header::class,
+            'Magento\Framework\HTTP\Header',
             ['httpRequest' => $this->_request, 'converter' => $this->_converter]
         );
 

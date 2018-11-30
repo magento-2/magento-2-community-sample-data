@@ -9,9 +9,7 @@
 
 namespace Zend\Mvc\Service;
 
-use Zend\Mvc\Controller\PluginManager as ControllerPluginManager;
-
 class ControllerPluginManagerFactory extends AbstractPluginManagerFactory
 {
-    const PLUGIN_MANAGER_CLASS = ControllerPluginManager::class;
+    const PLUGIN_MANAGER_CLASS = 'Zend\Mvc\Controller\PluginManager';
 }

@@ -5,7 +5,7 @@
  */
 namespace Magento\OfflineShipping\Test\Unit\Model\Config\Source;
 
-class FlatrateTest extends \PHPUnit\Framework\TestCase
+class FlatrateTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\OfflineShipping\Model\Config\Source\Flatrate

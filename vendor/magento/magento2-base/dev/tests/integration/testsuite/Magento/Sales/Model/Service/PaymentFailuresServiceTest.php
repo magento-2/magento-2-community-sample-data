@@ -6,14 +6,11 @@
 namespace Magento\Sales\Model\Service;
 
 use Magento\Quote\Api\CartRepositoryInterface;
-use Magento\Quote\Model\Quote;
 use Magento\Sales\Api\PaymentFailuresInterface;
 use Magento\TestFramework\Helper\Bootstrap;
+use Magento\Quote\Model\Quote;
 
-/**
- * Tests \Magento\Sales\Api\PaymentFailuresInterface.
- */
-class PaymentFailuresServiceTest extends \PHPUnit\Framework\TestCase
+class PaymentFailuresServiceTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var PaymentFailuresInterface
@@ -26,25 +23,28 @@ class PaymentFailuresServiceTest extends \PHPUnit\Framework\TestCase
     private $quote;
 
     /**
-     * @var CartRepositoryInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @var string
      */
-    private $cartRepositoryMock;
+    private $quoteId = 'test01';
 
-    /**
-     * @inheritdoc
-     */
     protected function setUp()
     {
         $this->quote = Bootstrap::getObjectManager()->create(Quote::class);
-        $this->cartRepositoryMock = $this->getMockBuilder(CartRepositoryInterface::class)
+        $this->quote->load($this->quoteId, 'reserved_order_id');
+
+        $cartRepositoryMock = $this->getMockBuilder(CartRepositoryInterface::class)
             ->disableOriginalConstructor()
             ->setMethods(['get'])
             ->getMockForAbstractClass();
 
+        $cartRepositoryMock->method('get')
+            ->with($this->quoteId)
+            ->willReturn($this->quote);
+
         $this->paymentFailures = Bootstrap::getObjectManager()->create(
             PaymentFailuresInterface::class,
             [
-                'cartRepository' => $this->cartRepositoryMock,
+                'cartRepository' => $cartRepositoryMock
             ]
         );
     }
@@ -55,19 +55,13 @@ class PaymentFailuresServiceTest extends \PHPUnit\Framework\TestCase
      * @magentoConfigFixture current_store carriers/freeshipping/title Some Shipping Method
      * @magentoDbIsolation enabled
      * @magentoAppIsolation enabled
-     * @return void
      */
     public function testHandlerWithCustomer()
     {
         $errorMessage = __('Transaction declined.');
         $checkoutType = 'custom_checkout';
 
-        $this->quote->load('test01', 'reserved_order_id');
-        $this->cartRepositoryMock->method('get')
-            ->with($this->quote->getId())
-            ->willReturn($this->quote);
-
-        $this->paymentFailures->handle((int)$this->quote->getId(), $errorMessage);
+        $this->paymentFailures->handle($this->quoteId, $errorMessage);
 
         $paymentReflection = new \ReflectionClass($this->paymentFailures);
         $templateTimeMethod = $paymentReflection->getMethod('getLocaleDate');
@@ -85,10 +79,10 @@ class PaymentFailuresServiceTest extends \PHPUnit\Framework\TestCase
             'customerEmail' => 'aaa@aaa.com',
             'paymentMethod' => 'Some Title Of The Method',
             'shippingMethod' => 'Some Shipping Method',
-            'items' => 'Simple Product  x 2  USD 10<br />Custom Design Simple Product  x 1  USD 10',
+            'items' => 'Simple Product  x 2  USD 10<br />Simple Product  x 1  USD 10',
             'total' => 'USD 30.0000',
             'billingAddress' => $this->quote->getBillingAddress(),
-            'shippingAddress' => $this->quote->getShippingAddress(),
+            'shippingAddress' => $this->quote->getShippingAddress()
         ];
 
         $this->assertEquals($expectedVars, $templateVars);

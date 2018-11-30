@@ -5,7 +5,7 @@
  */
 namespace Magento\Framework\Json\Test\Unit\Helper;
 
-class DataTest extends \PHPUnit\Framework\TestCase
+class DataTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\Framework\Json\Helper\Data
@@ -21,14 +21,14 @@ class DataTest extends \PHPUnit\Framework\TestCase
     protected function setUp()
     {
         $objectManager = new \Magento\Framework\TestFramework\Unit\Helper\ObjectManager($this);
-        $this->jsonEncoderMock = $this->getMockBuilder(\Magento\Framework\Json\EncoderInterface::class)
+        $this->jsonEncoderMock = $this->getMockBuilder('Magento\Framework\Json\EncoderInterface')
             ->disableOriginalConstructor()
             ->getMock();
-        $this->jsonDecoderMock = $this->getMockBuilder(\Magento\Framework\Json\DecoderInterface::class)
+        $this->jsonDecoderMock = $this->getMockBuilder('Magento\Framework\Json\DecoderInterface')
             ->disableOriginalConstructor()
             ->getMock();
         $this->helper = $objectManager->getObject(
-            \Magento\Framework\Json\Helper\Data::class,
+            'Magento\Framework\Json\Helper\Data',
             [
                 'jsonEncoder' => $this->jsonEncoderMock,
                 'jsonDecoder' => $this->jsonDecoderMock,

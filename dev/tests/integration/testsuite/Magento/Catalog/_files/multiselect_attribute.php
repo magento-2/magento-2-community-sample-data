@@ -5,12 +5,10 @@
  */
 /* Create attribute */
 /** @var $installer \Magento\Catalog\Setup\CategorySetup */
-$installer = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->create(
-    \Magento\Catalog\Setup\CategorySetup::class
-);
+$installer = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->create('Magento\Catalog\Setup\CategorySetup');
 /** @var $attribute \Magento\Catalog\Model\ResourceModel\Eav\Attribute */
 $attribute = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->create(
-    \Magento\Catalog\Model\ResourceModel\Eav\Attribute::class
+    'Magento\Catalog\Model\ResourceModel\Eav\Attribute'
 );
 $attribute->setData(
     [
@@ -24,7 +22,7 @@ $attribute->setData(
         'is_searchable' => 0,
         'is_visible_in_advanced_search' => 0,
         'is_comparable' => 0,
-        'is_filterable' => 1,
+        'is_filterable' => 0,
         'is_filterable_in_search' => 0,
         'is_used_for_promo_rules' => 0,
         'is_html_allowed_on_front' => 1,
@@ -33,7 +31,7 @@ $attribute->setData(
         'used_for_sort_by' => 0,
         'frontend_label' => ['Multiselect Attribute'],
         'backend_type' => 'varchar',
-        'backend_model' => \Magento\Eav\Model\Entity\Attribute\Backend\ArrayBackend::class,
+        'backend_model' => 'Magento\Eav\Model\Entity\Attribute\Backend\ArrayBackend',
         'option' => [
             'value' => [
                 'option_1' => ['Option 1'],

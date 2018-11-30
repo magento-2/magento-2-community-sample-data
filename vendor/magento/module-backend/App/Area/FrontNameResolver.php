@@ -13,10 +13,6 @@ use Magento\Framework\App\DeploymentConfig;
 use Magento\Store\Model\ScopeInterface;
 use Magento\Store\Model\Store;
 
-/**
- * @api
- * @since 100.0.2
- */
 class FrontNameResolver implements \Magento\Framework\App\Area\FrontNameResolverInterface
 {
     const XML_PATH_USE_CUSTOM_ADMIN_PATH = 'admin/url/use_custom_path';
@@ -54,9 +50,7 @@ class FrontNameResolver implements \Magento\Framework\App\Area\FrontNameResolver
      */
     protected $deploymentConfig;
 
-    /**
-     * @var \Magento\Framework\App\Config\ScopeConfigInterface
-     */
+    /** @var ScopeConfigInterface */
     private $scopeConfig;
 
     /**

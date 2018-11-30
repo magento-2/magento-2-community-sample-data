@@ -6,6 +6,7 @@
 
 namespace Magento\Framework\Stdlib\Cookie;
 
+use \Magento\Framework\Stdlib\Cookie\PhpCookieManager;
 use \Magento\Framework\Stdlib\Test\Unit\Cookie\PhpCookieManagerTest;
 
 /**

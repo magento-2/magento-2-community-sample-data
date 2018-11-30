@@ -4,16 +4,13 @@
  * See COPYING.txt for license details.
  */
 
-declare(strict_types=1);
-
 namespace Magento\Backup\Test\Unit\Cron;
 
 use Magento\Backup\Cron\SystemBackup;
-use PHPUnit\Framework\TestCase;
 use Magento\Backup\Helper\Data as Helper;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
 
-class SystemBackupTest extends TestCase
+class SystemBackupTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var Helper|\PHPUnit_Framework_MockObject_MockObject
@@ -37,6 +34,8 @@ class SystemBackupTest extends TestCase
 
     /**
      * Test that cron doesn't do anything if backups are disabled.
+     *
+     * @return void
      */
     public function testDisabled()
     {

@@ -8,12 +8,10 @@
 
 namespace Magento\User\Model;
 
-use Magento\Framework\Serialize\Serializer\Json;
-
 /**
  * @magentoAppArea adminhtml
  */
-class UserTest extends \PHPUnit\Framework\TestCase
+class UserTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\User\Model\User
@@ -30,21 +28,11 @@ class UserTest extends \PHPUnit\Framework\TestCase
      */
     protected static $_newRole;
 
-    /**
-     * @var Json
-     */
-    private $serializer;
-
     protected function setUp()
     {
-        $this->_model = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->create(
-            \Magento\User\Model\User::class
-        );
+        $this->_model = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->create('Magento\User\Model\User');
         $this->_dateTime = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->create(
-            \Magento\Framework\Stdlib\DateTime::class
-        );
-        $this->serializer = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->create(
-            Json::class
+            'Magento\Framework\Stdlib\DateTime'
         );
     }
 
@@ -109,7 +97,7 @@ class UserTest extends \PHPUnit\Framework\TestCase
     public static function roleDataFixture()
     {
         self::$_newRole = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->create(
-            \Magento\Authorization\Model\Role::class
+            'Magento\Authorization\Model\Role'
         );
         self::$_newRole->setName('admin_role')->setRoleType('G')->setPid('1');
         self::$_newRole->save();
@@ -123,7 +111,7 @@ class UserTest extends \PHPUnit\Framework\TestCase
         $this->_model->loadByUsername(\Magento\TestFramework\Bootstrap::ADMIN_NAME);
         $this->_model->saveExtra(['test' => 'val']);
         $this->_model->loadByUsername(\Magento\TestFramework\Bootstrap::ADMIN_NAME);
-        $extra = $this->serializer->unserialize($this->_model->getExtra());
+        $extra = unserialize($this->_model->getExtra());
         $this->assertEquals($extra['test'], 'val');
     }
 
@@ -135,7 +123,7 @@ class UserTest extends \PHPUnit\Framework\TestCase
         $this->_model->loadByUsername(\Magento\TestFramework\Bootstrap::ADMIN_NAME);
         $roles = $this->_model->getRoles();
         $this->assertEquals(1, count($roles));
-        $this->assertEquals(\Magento\TestFramework\Bootstrap::ADMIN_ROLE_NAME, $this->_model->getRole()->getRoleName());
+        $this->assertEquals(1, $roles[0]);
         $this->_model->setRoleId(self::$_newRole->getId())->save();
         $roles = $this->_model->getRoles();
         $this->assertEquals(1, count($roles));
@@ -149,8 +137,8 @@ class UserTest extends \PHPUnit\Framework\TestCase
     {
         $this->_model->loadByUsername(\Magento\TestFramework\Bootstrap::ADMIN_NAME);
         $role = $this->_model->getRole();
-        $this->assertInstanceOf(\Magento\Authorization\Model\Role::class, $role);
-        $this->assertEquals(\Magento\TestFramework\Bootstrap::ADMIN_ROLE_NAME, $this->_model->getRole()->getRoleName());
+        $this->assertInstanceOf('Magento\Authorization\Model\Role', $role);
+        $this->assertEquals(1, $role->getId());
         $this->_model->setRoleId(self::$_newRole->getId())->save();
         $role = $this->_model->getRole();
         $this->assertEquals(self::$_newRole->getId(), $role->getId());
@@ -162,8 +150,7 @@ class UserTest extends \PHPUnit\Framework\TestCase
     public function testDeleteFromRole()
     {
         $this->_model->loadByUsername(\Magento\TestFramework\Bootstrap::ADMIN_NAME);
-        $roles = $this->_model->getRoles();
-        $this->_model->setRoleId(reset($roles))->deleteFromRole();
+        $this->_model->setRoleId(1)->deleteFromRole();
         $role = $this->_model->getRole();
         $this->assertNull($role->getId());
     }
@@ -171,17 +158,15 @@ class UserTest extends \PHPUnit\Framework\TestCase
     public function testRoleUserExists()
     {
         $this->_model->loadByUsername(\Magento\TestFramework\Bootstrap::ADMIN_NAME);
-        $role = $this->_model->getRole();
-        $this->_model->setRoleId($role->getId());
+        $this->_model->setRoleId(1);
         $this->assertTrue($this->_model->roleUserExists());
-        $this->_model->setRoleId(100);
+        $this->_model->setRoleId(2);
         $this->assertFalse($this->_model->roleUserExists());
     }
 
     public function testGetCollection()
     {
-        $this->assertInstanceOf(
-             \Magento\Framework\Model\ResourceModel\Db\Collection\AbstractCollection::class,
+        $this->assertInstanceOf('Magento\Framework\Model\ResourceModel\Db\Collection\AbstractCollection',
             $this->_model->getCollection());
     }
 
@@ -196,14 +181,13 @@ class UserTest extends \PHPUnit\Framework\TestCase
 
     public function testGetUninitializedAclRole()
     {
-        $newuser = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->create(\Magento\User\Model\User::class);
+        $newuser = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->create('Magento\User\Model\User');
         $newuser->setUserId(10);
         $this->assertNull($newuser->getAclRole(), "User role was not initialized and is expected to be empty.");
     }
 
     /**
      * @magentoAppIsolation enabled
-     * @magentoAdminConfigFixture admin/captcha/enable 0
      * @magentoAdminConfigFixture admin/security/use_case_sensitive_login 1
      */
     public function testAuthenticate()
@@ -219,7 +203,6 @@ class UserTest extends \PHPUnit\Framework\TestCase
 
     /**
      * @magentoAppIsolation enabled
-     * @magentoAdminConfigFixture admin/captcha/enable 0
      * @magentoConfigFixture current_store admin/security/use_case_sensitive_login 0
      */
     public function testAuthenticateCaseInsensitive()
@@ -254,9 +237,8 @@ class UserTest extends \PHPUnit\Framework\TestCase
      */
     public function testAuthenticateUserWithoutRole()
     {
-        $this->_model->loadByUsername(\Magento\TestFramework\Bootstrap::ADMIN_NAME);
-        $roles = $this->_model->getRoles();
-        $this->_model->setRoleId(reset($roles))->deleteFromRole();
+        $this->_model->load(1);
+        $this->_model->setRoleId(1)->deleteFromRole();
         $this->_model->authenticate(
             \Magento\TestFramework\Bootstrap::ADMIN_NAME,
             \Magento\TestFramework\Bootstrap::ADMIN_PASSWORD
@@ -265,7 +247,6 @@ class UserTest extends \PHPUnit\Framework\TestCase
 
     /**
      * @magentoDbIsolation enabled
-     * @magentoAdminConfigFixture admin/captcha/enable 0
      */
     public function testLoginsAreLogged()
     {
@@ -310,8 +291,7 @@ class UserTest extends \PHPUnit\Framework\TestCase
         $role = $this->_model->hasAssigned2Role($this->_model);
         $this->assertEquals(1, count($role));
         $this->assertArrayHasKey('role_id', $role[0]);
-        $roles = $this->_model->getRoles();
-        $this->_model->setRoleId(reset($roles))->deleteFromRole();
+        $this->_model->setRoleId(1)->deleteFromRole();
         $this->assertEmpty($this->_model->hasAssigned2Role($this->_model));
     }
 
@@ -356,7 +336,7 @@ class UserTest extends \PHPUnit\Framework\TestCase
         );
 
         /** @var \Magento\User\Model\User $model */
-        $model = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->create(\Magento\User\Model\User::class);
+        $model = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->create('Magento\User\Model\User');
         $model->load($this->_model->getId());
         $this->assertEquals(
             $this->_model->getPassword(),

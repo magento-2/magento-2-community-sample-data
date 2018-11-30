@@ -7,7 +7,7 @@ namespace Magento\GiftMessage\Test\Unit\Block\Cart;
 
 use Magento\GiftMessage\Block\Cart\GiftOptions;
 
-class GiftOptionsTest extends \PHPUnit\Framework\TestCase
+class GiftOptionsTest extends \PHPUnit_Framework_TestCase
 {
     /** @var \Magento\Backend\Block\Template\Context|\PHPUnit_Framework_MockObject_MockObject */
     protected $context;
@@ -29,11 +29,17 @@ class GiftOptionsTest extends \PHPUnit\Framework\TestCase
 
     protected function setUp()
     {
-        $this->context = $this->createMock(\Magento\Backend\Block\Template\Context::class);
-        $this->jsonEncoderMock = $this->createMock(\Magento\Framework\Json\Encoder::class);
-        $this->compositeConfigProvider = $this->createMock(\Magento\GiftMessage\Model\CompositeConfigProvider::class);
+        $this->context = $this->getMock('Magento\Backend\Block\Template\Context', [], [], '', false);
+        $this->jsonEncoderMock = $this->getMock('Magento\Framework\Json\Encoder', [], [], '', false);
+        $this->compositeConfigProvider = $this->getMock(
+            'Magento\GiftMessage\Model\CompositeConfigProvider',
+            [],
+            [],
+            '',
+            false
+        );
         $this->layoutProcessorMock = $this->getMockForAbstractClass(
-            \Magento\Checkout\Block\Checkout\LayoutProcessorInterface::class,
+            'Magento\Checkout\Block\Checkout\LayoutProcessorInterface',
             [],
             '',
             false

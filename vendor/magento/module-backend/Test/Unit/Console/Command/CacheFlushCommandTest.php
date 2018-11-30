@@ -22,7 +22,7 @@ class CacheFlushCommandTest extends AbstractCacheManageCommandTest
      * @param array $param
      * @param array $types
      * @param string $output
-     * @dataProvider executeDataProvider
+     * @dataProvider testExecuteDataProvider
      */
     public function testExecute($param, $types, $output)
     {

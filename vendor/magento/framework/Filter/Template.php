@@ -9,9 +9,6 @@
  */
 namespace Magento\Framework\Filter;
 
-/**
- * @api
- */
 class Template implements \Zend_Filter_Interface
 {
     /**
@@ -30,7 +27,11 @@ class Template implements \Zend_Filter_Interface
 
     /**#@-*/
 
-    /**#@-*/
+    /**
+     * Callbacks that will be applied after filtering
+     *
+     * @var array
+     */
     private $afterFilterCallbacks = [];
 
     /**
@@ -313,15 +314,15 @@ class Template implements \Zend_Filter_Interface
         $stackVars = $tokenizer->tokenize();
         $result = $default;
         $last = 0;
-        $stackVarsCount = count($stackVars);
-        for ($i = 0; $i < $stackVarsCount; $i++) {
+        for ($i = 0; $i < count($stackVars); $i++) {
             if ($i == 0 && isset($this->templateVars[$stackVars[$i]['name']])) {
                 // Getting of template value
                 $stackVars[$i]['variable'] = & $this->templateVars[$stackVars[$i]['name']];
-            } elseif (isset($stackVars[$i - 1]['variable'])
+            } elseif (
+                    isset($stackVars[$i - 1]['variable'])
                     && $stackVars[$i - 1]['variable'] instanceof \Magento\Framework\DataObject
             ) {
-                // If data object calling methods or getting properties
+                // If object calling methods or getting properties
                 if ($stackVars[$i]['type'] == 'property') {
                     $caller = 'get' . $this->string->upperCaseWords($stackVars[$i]['name'], '_', '');
                     $stackVars[$i]['variable'] = method_exists(
@@ -331,8 +332,9 @@ class Template implements \Zend_Filter_Interface
                         $stackVars[$i]['name']
                     );
                 } elseif ($stackVars[$i]['type'] == 'method') {
-                    // Calling of data object method
-                    if (method_exists($stackVars[$i - 1]['variable'], $stackVars[$i]['name'])
+                    // Calling of object method
+                    if (
+                            method_exists($stackVars[$i - 1]['variable'], $stackVars[$i]['name'])
                             || substr($stackVars[$i]['name'], 0, 3) == 'get'
                     ) {
                         $stackVars[$i]['args'] = $this->getStackArgs($stackVars[$i]['args']);
@@ -341,16 +343,6 @@ class Template implements \Zend_Filter_Interface
                             $stackVars[$i]['args']
                         );
                     }
-                }
-                $last = $i;
-            } elseif (isset($stackVars[$i - 1]['variable']) && $stackVars[$i]['type'] == 'method') {
-                // Calling object methods
-                if (method_exists($stackVars[$i - 1]['variable'], $stackVars[$i]['name'])) {
-                    $stackVars[$i]['args'] = $this->getStackArgs($stackVars[$i]['args']);
-                    $stackVars[$i]['variable'] = call_user_func_array(
-                        [$stackVars[$i - 1]['variable'], $stackVars[$i]['name']],
-                        $stackVars[$i]['args']
-                    );
                 }
                 $last = $i;
             }

@@ -14,7 +14,6 @@ use Zend\Config\Config;
 use Zend\Config\Factory as ConfigFactory;
 use Zend\EventManager\EventManagerInterface;
 use Zend\EventManager\ListenerAggregateInterface;
-use Zend\EventManager\ListenerAggregateTrait;
 use Zend\ModuleManager\Feature\ConfigProviderInterface;
 use Zend\ModuleManager\ModuleEvent;
 use Zend\Stdlib\ArrayUtils;
@@ -27,10 +26,13 @@ class ConfigListener extends AbstractListener implements
     ConfigMergerInterface,
     ListenerAggregateInterface
 {
-    use ListenerAggregateTrait;
-
     const STATIC_PATH = 'static_path';
     const GLOB_PATH   = 'glob_path';
+
+    /**
+     * @var array
+     */
+    protected $callbacks = [];
 
     /**
      * @var array
@@ -43,7 +45,7 @@ class ConfigListener extends AbstractListener implements
     protected $mergedConfig = [];
 
     /**
-     * @var Config|null
+     * @var Config
      */
     protected $mergedConfigObject;
 
@@ -77,18 +79,19 @@ class ConfigListener extends AbstractListener implements
     /**
      * {@inheritDoc}
      */
-    public function attach(EventManagerInterface $events, $priority = 1)
+    public function attach(EventManagerInterface $events)
     {
-        $this->listeners[] = $events->attach(ModuleEvent::EVENT_LOAD_MODULES, [$this, 'onloadModulesPre'], 1000);
+        $this->callbacks[] = $events->attach(ModuleEvent::EVENT_LOAD_MODULES, [$this, 'onloadModulesPre'], 1000);
 
         if ($this->skipConfig) {
             // We already have the config from cache, no need to collect or merge.
-            return;
+            return $this;
         }
 
-        $this->listeners[] = $events->attach(ModuleEvent::EVENT_LOAD_MODULE, [$this, 'onLoadModule']);
-        $this->listeners[] = $events->attach(ModuleEvent::EVENT_LOAD_MODULES, [$this, 'onLoadModules'], -1000);
-        $this->listeners[] = $events->attach(ModuleEvent::EVENT_MERGE_CONFIG, [$this, 'onMergeConfig'], 1000);
+        $this->callbacks[] = $events->attach(ModuleEvent::EVENT_LOAD_MODULE, [$this, 'onLoadModule']);
+        $this->callbacks[] = $events->attach(ModuleEvent::EVENT_LOAD_MODULES, [$this, 'onLoadModules'], -1000);
+        $this->callbacks[] = $events->attach(ModuleEvent::EVENT_MERGE_CONFIG, [$this, 'onMergeConfig'], 1000);
+        return $this;
     }
 
     /**
@@ -114,8 +117,8 @@ class ConfigListener extends AbstractListener implements
     {
         $module = $e->getModule();
 
-        if (! $module instanceof ConfigProviderInterface
-            && ! is_callable([$module, 'getConfig'])
+        if (!$module instanceof ConfigProviderInterface
+            && !is_callable([$module, 'getConfig'])
         ) {
             return $this;
         }
@@ -162,15 +165,11 @@ class ConfigListener extends AbstractListener implements
     {
         // Trigger MERGE_CONFIG event. This is a hook to allow the merged application config to be
         // modified before it is cached (In particular, allows the removal of config keys)
-        $originalEventName = $e->getName();
-        $e->setName(ModuleEvent::EVENT_MERGE_CONFIG);
-        $e->getTarget()->getEventManager()->triggerEvent($e);
-
-        // Reset event name
-        $e->setName($originalEventName);
+        $e->getTarget()->getEventManager()->trigger(ModuleEvent::EVENT_MERGE_CONFIG, $e);
 
         // If enabled, update the config cache
-        if ($this->getOptions()->getConfigCacheEnabled()
+        if (
+            $this->getOptions()->getConfigCacheEnabled()
             && false === $this->skipConfig
         ) {
             $configFile = $this->getOptions()->getConfigCacheFile();
@@ -178,6 +177,18 @@ class ConfigListener extends AbstractListener implements
         }
 
         return $this;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function detach(EventManagerInterface $events)
+    {
+        foreach ($this->callbacks as $index => $callback) {
+            if ($events->detach($callback)) {
+                unset($this->callbacks[$index]);
+            }
+        }
     }
 
     /**
@@ -273,10 +284,10 @@ class ConfigListener extends AbstractListener implements
             $paths = ArrayUtils::iteratorToArray($paths);
         }
 
-        if (! is_array($paths)) {
+        if (!is_array($paths)) {
             throw new Exception\InvalidArgumentException(
                 sprintf(
-                    'Argument passed to %s::%s() must be an array, '
+                    'Argument passed to %::%s() must be an array, '
                     . 'implement the Traversable interface, or be an '
                     . 'instance of Zend\Config\Config. %s given.',
                     __CLASS__,
@@ -301,7 +312,7 @@ class ConfigListener extends AbstractListener implements
      */
     protected function addConfigPath($path, $type)
     {
-        if (! is_string($path)) {
+        if (!is_string($path)) {
             throw new Exception\InvalidArgumentException(
                 sprintf(
                     'Parameter to %s::%s() must be a string; %s given.',
@@ -327,7 +338,7 @@ class ConfigListener extends AbstractListener implements
             $config = ArrayUtils::iteratorToArray($config);
         }
 
-        if (! is_array($config)) {
+        if (!is_array($config)) {
             throw new Exception\InvalidArgumentException(
                 sprintf(
                     'Config being merged must be an array, '

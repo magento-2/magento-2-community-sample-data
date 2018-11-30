@@ -12,7 +12,7 @@ use Magento\Store\Model\StoreManagerInterface;
 use Magento\Store\Model\ScopeInterface;
 use Magento\Framework\App\Config\ScopeConfigInterface;
 
-class ScopeFallbackResolverTest extends \PHPUnit\Framework\TestCase
+class ScopeFallbackResolverTest extends \PHPUnit_Framework_TestCase
 {
     /** @var ScopeFallbackResolver */
     protected $model;
@@ -22,7 +22,7 @@ class ScopeFallbackResolverTest extends \PHPUnit\Framework\TestCase
 
     protected function setUp()
     {
-        $this->storeManagerMock = $this->getMockBuilder(\Magento\Store\Model\StoreManagerInterface::class)
+        $this->storeManagerMock = $this->getMockBuilder('Magento\Store\Model\StoreManagerInterface')
             ->getMockForAbstractClass();
 
         $this->model = new ScopeFallbackResolver($this->storeManagerMock);
@@ -41,14 +41,14 @@ class ScopeFallbackResolverTest extends \PHPUnit\Framework\TestCase
     public function testGetFallbackScope($scope, $scopeId, $forConfig, $websiteId, $groupId, $result)
     {
         /** @var GroupInterface|\PHPUnit_Framework_MockObject_MockObject $groupMock */
-        $groupMock = $this->getMockBuilder(\Magento\Store\Api\Data\GroupInterface::class)
+        $groupMock = $this->getMockBuilder('Magento\Store\Api\Data\GroupInterface')
             ->getMockForAbstractClass();
         $groupMock->expects($this->any())
             ->method('getWebsiteId')
             ->willReturn($websiteId);
 
         /** @var StoreInterface|\PHPUnit_Framework_MockObject_MockObject $storeMock */
-        $storeMock = $this->getMockBuilder(\Magento\Store\Api\Data\StoreInterface::class)
+        $storeMock = $this->getMockBuilder('Magento\Store\Api\Data\StoreInterface')
             ->getMockForAbstractClass();
         $storeMock->expects($this->any())
             ->method('getWebsiteId')

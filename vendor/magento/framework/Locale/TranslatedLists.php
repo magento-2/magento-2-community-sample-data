@@ -4,6 +4,8 @@
  * See COPYING.txt for license details.
  */
 
+// @codingStandardsIgnoreFile
+
 namespace Magento\Framework\Locale;
 
 use Magento\Framework\Locale\Bundle\CurrencyBundle;
@@ -24,7 +26,6 @@ class TranslatedLists implements ListsInterface
     protected $localeResolver;
 
     /**
-     * @param \Magento\Framework\Locale\ConfigInterface $config
      * @param \Magento\Framework\Locale\ResolverInterface $localeResolver
      * @param string $locale
      */
@@ -105,8 +106,11 @@ class TranslatedLists implements ListsInterface
         $zones = \DateTimeZone::listIdentifiers(\DateTimeZone::ALL) ?: [];
         foreach ($zones as $code) {
             $options[] = [
-                'label' => \IntlTimeZone::createTimeZone($code)
-                    ->getDisplayName(false, \IntlTimeZone::DISPLAY_LONG, $locale) . ' (' . $code . ')',
+                'label' => \IntlTimeZone::createTimeZone($code)->getDisplayName(
+                        false,
+                        \IntlTimeZone::DISPLAY_LONG,
+                        $locale
+                    ) . ' (' . $code . ')',
                 'value' => $code,
             ];
         }

@@ -59,6 +59,7 @@ class Store extends \Magento\Backend\Block\System\Store\Edit\AbstractForm
             $storeModel->setData($postData['store']);
         }
         $fieldset = $form->addFieldset('store_fieldset', ['legend' => __('Store View Information')]);
+
         $storeAction = $this->_coreRegistry->registry('store_action');
         if ($storeAction == 'edit' || $storeAction == 'add') {
             $fieldset->addField(
@@ -75,6 +76,7 @@ class Store extends \Magento\Backend\Block\System\Store\Edit\AbstractForm
             );
             $fieldset = $this->prepareGroupIdField($form, $storeModel, $fieldset);
         }
+
         $fieldset->addField(
             'store_name',
             'text',
@@ -97,8 +99,7 @@ class Store extends \Magento\Backend\Block\System\Store\Edit\AbstractForm
                 'disabled' => $storeModel->isReadOnly()
             ]
         );
-        $isDisabledStatusField = $storeModel->isReadOnly()
-            || ($storeModel->getId() && $storeModel->isDefault() && $storeModel->isActive());
+
         $fieldset->addField(
             'store_is_active',
             'select',
@@ -108,19 +109,11 @@ class Store extends \Magento\Backend\Block\System\Store\Edit\AbstractForm
                 'value' => $storeModel->isActive(),
                 'options' => [0 => __('Disabled'), 1 => __('Enabled')],
                 'required' => true,
-                'disabled' => $isDisabledStatusField
+                'disabled' => $storeModel->isReadOnly()
+                    || ($storeModel->getId() && $storeModel->isDefault() && $storeModel->isActive())
             ]
         );
-        if ($isDisabledStatusField) {
-            $fieldset->addField(
-                'store_is_active_hidden',
-                'hidden',
-                [
-                    'name' => 'store[is_active]',
-                    'value' => $storeModel->isActive(),
-                ]
-            );
-        }
+
         $fieldset->addField(
             'store_sort_order',
             'text',
@@ -132,11 +125,13 @@ class Store extends \Magento\Backend\Block\System\Store\Edit\AbstractForm
                 'disabled' => $storeModel->isReadOnly()
             ]
         );
+
         $fieldset->addField(
             'store_is_default',
             'hidden',
             ['name' => 'store[is_default]', 'no_span' => true, 'value' => $storeModel->getIsDefault()]
         );
+
         $fieldset->addField(
             'store_store_id',
             'hidden',

@@ -10,22 +10,22 @@ namespace Magento\Framework\App;
 class FrontController implements FrontControllerInterface
 {
     /**
-     * @var RouterListInterface
+     * @var RouterList
      */
     protected $_routerList;
 
     /**
-     * @var \Magento\Framework\App\ResponseInterface
+     * @var \Magento\Framework\App\Response\Http
      */
     protected $response;
 
     /**
-     * @param RouterListInterface $routerList
-     * @param \Magento\Framework\App\ResponseInterface $response
+     * @param RouterList $routerList
+     * @param \Magento\Framework\App\Response\Http $response
      */
     public function __construct(
-        RouterListInterface $routerList,
-        \Magento\Framework\App\ResponseInterface $response
+        RouterList $routerList,
+        \Magento\Framework\App\Response\Http $response
     ) {
         $this->_routerList = $routerList;
         $this->response = $response;

@@ -6,11 +6,8 @@
 
 namespace Magento\Catalog\Test\Block\Adminhtml\Product\Attribute;
 
-use Magento\Mtf\Client\DriverInterface;
-use Magento\Mtf\Client\Element\SimpleElement;
-use Magento\Mtf\Client\ElementInterface;
 use Magento\Mtf\Client\Locator;
-use Magento\Mtf\System\Event\EventManagerInterface;
+use Magento\Mtf\Client\Element\SimpleElement;
 
 /**
  * Catalog product custom attribute element.
@@ -18,45 +15,25 @@ use Magento\Mtf\System\Event\EventManagerInterface;
 class CustomAttribute extends SimpleElement
 {
     /**
-     * Attribute input selector.
+     * Attribute input selector;
      *
      * @var string
      */
-    private $inputSelector = '[name="product[%s]"]';
-
-    /**
-     * Locator for data grid.
-     *
-     * @var string
-     */
-    private $dataGrid = '[data-role="grid"]';
+    protected $inputSelector = '[name="product[%s]"]';
 
     /**
      * Attribute class to element type reference.
      *
      * @var array
      */
-    private $classReferences = [];
-
-    /**
-     * Constructor
-     *
-     * @param DriverInterface $driver
-     * @param EventManagerInterface $eventManager
-     * @param Locator $locator
-     * @param ElementInterface $context
-     * @param array $classReferences
-     */
-    public function __construct(
-        DriverInterface $driver,
-        EventManagerInterface $eventManager,
-        Locator $locator,
-        ElementInterface $context,
-        array $classReferences
-    ) {
-        parent::__construct($driver, $eventManager, $locator, $context);
-        $this->classReferences = $classReferences;
-    }
+    protected $classReference = [
+        'admin__control-text' => null,
+        'textarea' => null,
+        'hasDatepicker' => 'datepicker',
+        'admin__control-select' => 'select',
+        'admin__control-multiselect' => 'multiselect',
+        'admin__actions-switch-checkbox' => 'switcher'
+    ];
 
     /**
      * Set attribute value.
@@ -71,11 +48,7 @@ class CustomAttribute extends SimpleElement
         $element = $this->getElementByClass($this->getElementClass($code));
         $value = is_array($data) ? $data['value'] : $data;
         if ($value !== null) {
-            $this->find(
-                str_replace('%code%', $code, $element['selector']),
-                Locator::SELECTOR_CSS,
-                $element['type']
-            )->setValue($value);
+            $this->find(sprintf($this->inputSelector, $code), Locator::SELECTOR_CSS, $element)->setValue($value);
         }
     }
 
@@ -93,17 +66,17 @@ class CustomAttribute extends SimpleElement
     }
 
     /**
-     * Get element by class.
+     * Get element type by class.
      *
      * @param string $class
-     * @return array|null
+     * @return string
      */
     private function getElementByClass($class)
     {
         $element = null;
-        foreach (array_keys($this->classReferences) as $key) {
-            if ($class == $key) {
-                return $this->classReferences[$class];
+        foreach ($this->classReference as $key => $reference) {
+            if (strpos($class, $key) !== false) {
+                $element = $reference;
             }
         }
         return $element;
@@ -117,9 +90,7 @@ class CustomAttribute extends SimpleElement
      */
     private function getElementClass($code)
     {
-        return $this->find($this->dataGrid)->isVisible()
-            ? 'dynamicRows'
-            : $this->find(sprintf($this->inputSelector, $code), Locator::SELECTOR_CSS)->getAttribute('class');
+        return $this->find(sprintf($this->inputSelector, $code), Locator::SELECTOR_CSS)->getAttribute('class');
     }
 
     /**

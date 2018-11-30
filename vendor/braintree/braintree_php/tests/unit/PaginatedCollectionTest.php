@@ -104,3 +104,4 @@ class PaginatedCollectionTest extends Setup
         $this->assertEquals(2, count($items));
     }
 }
+?>

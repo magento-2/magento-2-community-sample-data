@@ -11,7 +11,7 @@ use \Magento\Store\Model\Store;
 use \Magento\Framework\TestFramework\Unit\Helper\ObjectManager as ObjectManagerHelper;
 use \Magento\Framework\App\Config\ScopeConfigInterface;
 
-class HstsTest extends \PHPUnit\Framework\TestCase
+class HstsTest extends \PHPUnit_Framework_TestCase
 {
     /** Strict-Transport-Security (HSTS) Header name */
     const HEADER_NAME = 'Strict-Transport-Security';
@@ -33,12 +33,12 @@ class HstsTest extends \PHPUnit\Framework\TestCase
 
     protected function setUp()
     {
-        $this->scopeConfigMock = $this->getMockBuilder(\Magento\Framework\App\Config::class)
+        $this->scopeConfigMock = $this->getMockBuilder('\Magento\Framework\App\Config')
             ->disableOriginalConstructor()
             ->getMock();
         $objectManager = new ObjectManagerHelper($this);
         $this->object = $objectManager->getObject(
-            \Magento\Store\Model\HeaderProvider\Hsts::class,
+            '\Magento\Store\Model\HeaderProvider\Hsts',
             ['scopeConfig' => $this->scopeConfigMock]
         );
     }
@@ -56,7 +56,7 @@ class HstsTest extends \PHPUnit\Framework\TestCase
     /**
      * @param [] $configValuesMap
      * @param bool $expected
-     * @dataProvider canApplyDataProvider
+     * @dataProvider testCanApplyDataProvider
      */
     public function testCanApply($configValuesMap, $expected)
     {
@@ -71,7 +71,7 @@ class HstsTest extends \PHPUnit\Framework\TestCase
      *
      * @return array
      */
-    public function canApplyDataProvider()
+    public function testCanApplyDataProvider()
     {
         return [
             [

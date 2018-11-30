@@ -5,10 +5,9 @@
  */
 namespace Magento\Sales\Model\ResourceModel;
 
-use Magento\Framework\App\ObjectManager;
 use Magento\Framework\DB\Adapter\AdapterInterface;
+use Magento\Sales\Model\ResourceModel\AbstractGrid;
 use Magento\Framework\Model\ResourceModel\Db\Context;
-use Magento\Sales\Model\ResourceModel\Provider\NotSyncedDataProviderInterface;
 
 /**
  * Class Grid
@@ -41,16 +40,6 @@ class Grid extends AbstractGrid
     protected $columns;
 
     /**
-     * @var NotSyncedDataProviderInterface
-     */
-    private $notSyncedDataProvider;
-
-    /**
-     * Order grid rows batch size
-     */
-    const BATCH_SIZE = 100;
-
-    /**
      * @param Context $context
      * @param string $mainTableName
      * @param string $gridTableName
@@ -58,7 +47,6 @@ class Grid extends AbstractGrid
      * @param array $joins
      * @param array $columns
      * @param string $connectionName
-     * @param NotSyncedDataProviderInterface $notSyncedDataProvider
      */
     public function __construct(
         Context $context,
@@ -67,16 +55,13 @@ class Grid extends AbstractGrid
         $orderIdField,
         array $joins = [],
         array $columns = [],
-        $connectionName = null,
-        NotSyncedDataProviderInterface $notSyncedDataProvider = null
+        $connectionName = null
     ) {
         $this->mainTableName = $mainTableName;
         $this->gridTableName = $gridTableName;
         $this->orderIdField = $orderIdField;
         $this->joins = $joins;
         $this->columns = $columns;
-        $this->notSyncedDataProvider =
-            $notSyncedDataProvider ?: ObjectManager::getInstance()->get(NotSyncedDataProviderInterface::class);
         parent::__construct($context, $connectionName);
     }
 
@@ -93,20 +78,15 @@ class Grid extends AbstractGrid
     {
         $select = $this->getGridOriginSelect()
             ->where(($field ?: $this->mainTableName . '.entity_id') . ' = ?', $value);
-        $sql = $this->getConnection()
-            ->insertFromSelect(
-                $select,
-                $this->getTable($this->gridTableName),
-                array_keys($this->columns),
-                AdapterInterface::INSERT_ON_DUPLICATE
-            );
-
-        $this->addCommitCallback(function () use ($sql) {
-            $this->getConnection()->query($sql);
-        });
-
-        // need for backward compatibility
-        return $this->getConnection()->query($sql);
+        return $this->getConnection()->query(
+            $this->getConnection()
+                ->insertFromSelect(
+                    $select,
+                    $this->getTable($this->gridTableName),
+                    array_keys($this->columns),
+                    AdapterInterface::INSERT_ON_DUPLICATE
+                )
+        );
     }
 
     /**
@@ -114,20 +94,22 @@ class Grid extends AbstractGrid
      *
      * Only orders created/updated since the last method call will be added.
      *
-     * @return void
+     * @return \Zend_Db_Statement_Interface
      */
     public function refreshBySchedule()
     {
-        $notSyncedIds = $this->notSyncedDataProvider->getIds($this->mainTableName, $this->gridTableName);
-        foreach (array_chunk($notSyncedIds, self::BATCH_SIZE) as $bunch) {
-            $select = $this->getGridOriginSelect()->where($this->mainTableName . '.entity_id IN (?)', $bunch);
-            $fetchResult = $this->getConnection()->fetchAll($select);
-            $this->getConnection()->insertOnDuplicate(
-                $this->getTable($this->gridTableName),
-                $fetchResult,
-                array_keys($this->columns)
-            );
-        }
+        $select = $this->getGridOriginSelect()
+            ->where($this->mainTableName . '.updated_at >= ?', $this->getLastUpdatedAtValue());
+
+        return $this->getConnection()->query(
+            $this->getConnection()
+                ->insertFromSelect(
+                    $select,
+                    $this->getTable($this->gridTableName),
+                    array_keys($this->columns),
+                    AdapterInterface::INSERT_ON_DUPLICATE
+                )
+        );
     }
 
     /**

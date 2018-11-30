@@ -55,7 +55,7 @@ class Auto implements AlgorithmInterface
     /**
      * @param BucketInterface $bucket
      * @param array $dimensions
-     * @param EntityStorage $entityStorage
+     * @param int[] $entityIds
      * @return number
      */
     private function getRange($bucket, array $dimensions, EntityStorage $entityStorage)
@@ -87,6 +87,7 @@ class Auto implements AlgorithmInterface
     }
 
     /**
+     * @param DataProviderInterface $dataProvider
      * @return int
      */
     private function getMinRangePower()

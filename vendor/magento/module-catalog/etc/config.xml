@@ -11,10 +11,6 @@
             <navigation>
                 <max_depth>0</max_depth>
             </navigation>
-            <recently_products>
-                <recently_viewed_lifetime>1000</recently_viewed_lifetime>
-                <recently_compared_lifetime>1000</recently_compared_lifetime>
-            </recently_products>
             <fields_masks>
                 <sku>{{name}}</sku>
                 <meta_title>{{name}}</meta_title>
@@ -52,11 +48,6 @@
                 <forbidden_extensions>php,exe</forbidden_extensions>
             </custom_options>
         </catalog>
-        <indexer>
-            <catalog_product_price>
-                <dimensions_mode>none</dimensions_mode>
-            </catalog_product_price>
-        </indexer>
         <system>
             <media_storage_configuration>
                 <allowed_resources>

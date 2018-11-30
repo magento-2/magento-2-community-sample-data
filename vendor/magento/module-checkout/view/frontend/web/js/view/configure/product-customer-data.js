@@ -1,19 +1,15 @@
 require([
     'jquery',
-    'Magento_Customer/js/customer-data',
-    'underscore',
-    'domReady!'
-], function ($, customerData, _) {
+    'Magento_Customer/js/customer-data'
+], function ($, customerData) {
     'use strict';
 
     var selectors = {
         qtySelector: '#product_addtocart_form [name="qty"]',
-        productIdSelector: '#product_addtocart_form [name="product"]',
-        itemIdSelector: '#product_addtocart_form [name="item"]'
+        productIdSelector: '#product_addtocart_form [name="product"]'
     },
     cartData = customerData.get('cart'),
     productId = $(selectors.productIdSelector).val(),
-    itemId = $(selectors.itemIdSelector).val(),
     productQty,
     productQtyInput,
 
@@ -42,11 +38,9 @@ require([
         if (!(data && data.items && data.items.length && productId)) {
             return;
         }
-        product = _.find(data.items, function (item) {
-            if (item['item_id'] === itemId) {
-                return item['product_id'] === productId ||
-                    item['item_id'] === productId;
-            }
+        product = data.items.find(function (item) {
+            return item['product_id'] === productId ||
+                item['item_id'] === productId;
         });
 
         if (!product) {

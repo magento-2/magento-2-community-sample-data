@@ -7,8 +7,6 @@ namespace Magento\Framework\Exception;
 
 /**
  * Session exception
- *
- * @api
  */
 class SessionException extends LocalizedException
 {

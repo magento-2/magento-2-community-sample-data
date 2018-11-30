@@ -114,7 +114,7 @@
 		 */
 		set : function(n, v, e, p, d, s) {
 			document.cookie = n + "=" + escape(v) +
-				((e) ? "; expires=" + e.toUTCString() : "") +
+				((e) ? "; expires=" + e.toGMTString() : "") +
 				((p) ? "; path=" + escape(p) : "") +
 				((d) ? "; domain=" + d : "") +
 				((s) ? "; secure" : "");

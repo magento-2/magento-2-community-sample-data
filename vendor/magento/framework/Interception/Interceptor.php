@@ -19,18 +19,32 @@ use Magento\Framework\App\ObjectManager;
 trait Interceptor
 {
     /**
+     * Object Manager instance
+     *
+     * @var \Magento\Framework\ObjectManagerInterface
+     */
+    protected $pluginLocator = null;
+
+    /**
      * List of plugins
      *
-     * @var PluginListInterface
+     * @var \Magento\Framework\Interception\PluginListInterface
      */
-    private $pluginList;
+    protected $pluginList = null;
+
+    /**
+     * Invocation chain
+     *
+     * @var \Magento\Framework\Interception\ChainInterface
+     */
+    protected $chain = null;
 
     /**
      * Subject type name
      *
      * @var string
      */
-    private $subjectType;
+    protected $subjectType = null;
 
     /**
      * Initialize the Interceptor
@@ -39,7 +53,9 @@ trait Interceptor
      */
     public function ___init()
     {
-        $this->pluginList = ObjectManager::getInstance()->get(PluginListInterface::class);
+        $this->pluginLocator = ObjectManager::getInstance();
+        $this->pluginList = $this->pluginLocator->get('Magento\Framework\Interception\PluginListInterface');
+        $this->chain = $this->pluginLocator->get('Magento\Framework\Interception\ChainInterface');
         $this->subjectType = get_parent_class($this);
         if (method_exists($this->subjectType, '___init')) {
             parent::___init();
@@ -70,7 +86,7 @@ trait Interceptor
         } else {
             $properties = array_keys(get_object_vars($this));
         }
-        $properties = array_diff($properties, ['pluginList', 'subjectType']);
+        $properties = array_diff($properties, ['pluginLocator', 'pluginList', 'chain', 'subjectType', 'pluginLocator']);
         return $properties;
     }
 
@@ -97,62 +113,45 @@ trait Interceptor
      */
     protected function ___callPlugins($method, array $arguments, array $pluginInfo)
     {
-        $subject = $this;
-        $type = $this->subjectType;
-        $pluginList = $this->pluginList;
-
-        $next = function (...$arguments) use (
-            $method,
-            &$pluginInfo,
-            $subject,
-            $type,
-            $pluginList,
-            &$next
-        ) {
-            $capMethod = ucfirst($method);
-            $currentPluginInfo = $pluginInfo;
-            $result = null;
-
-            if (isset($currentPluginInfo[DefinitionInterface::LISTENER_BEFORE])) {
-                // Call 'before' listeners
-                foreach ($currentPluginInfo[DefinitionInterface::LISTENER_BEFORE] as $code) {
-                    $pluginInstance = $pluginList->getPlugin($type, $code);
-                    $pluginMethod = 'before' . $capMethod;
-                    $beforeResult = $pluginInstance->$pluginMethod($this, ...array_values($arguments));
-
-                    if ($beforeResult !== null) {
-                        $arguments = (array)$beforeResult;
-                    }
+        $capMethod = ucfirst($method);
+        $result = null;
+        if (isset($pluginInfo[DefinitionInterface::LISTENER_BEFORE])) {
+            // Call 'before' listeners
+            foreach ($pluginInfo[DefinitionInterface::LISTENER_BEFORE] as $code) {
+                $pluginInstance = $this->pluginList->getPlugin($this->subjectType, $code);
+                $pluginMethod = 'before' . $capMethod;
+                $beforeResult = $pluginInstance->$pluginMethod($this, ...array_values($arguments));
+                if ($beforeResult) {
+                    $arguments = $beforeResult;
                 }
+                unset($pluginInstance, $pluginMethod);
             }
-
-            if (isset($currentPluginInfo[DefinitionInterface::LISTENER_AROUND])) {
-                // Call 'around' listener
-                $code = $currentPluginInfo[DefinitionInterface::LISTENER_AROUND];
-                $pluginInfo = $pluginList->getNext($type, $method, $code);
-                $pluginInstance = $pluginList->getPlugin($type, $code);
-                $pluginMethod = 'around' . $capMethod;
-                $result = $pluginInstance->$pluginMethod($subject, $next, ...array_values($arguments));
-            } else {
-                // Call original method
-                $result = $subject->___callParent($method, $arguments);
+        }
+        if (isset($pluginInfo[DefinitionInterface::LISTENER_AROUND])) {
+            // Call 'around' listener
+            $chain = $this->chain;
+            $type = $this->subjectType;
+            /** @var \Magento\Framework\Interception\InterceptorInterface $subject */
+            $subject = $this;
+            $code = $pluginInfo[DefinitionInterface::LISTENER_AROUND];
+            $next = function () use ($chain, $type, $method, $subject, $code) {
+                return $chain->invokeNext($type, $method, $subject, func_get_args(), $code);
+            };
+            $pluginInstance = $this->pluginList->getPlugin($this->subjectType, $code);
+            $pluginMethod = 'around' . $capMethod;
+            $result = $pluginInstance->$pluginMethod($this, $next, ...array_values($arguments));
+            unset($pluginInstance, $pluginMethod);
+        } else {
+            // Call original method
+            $result = parent::$method(...array_values($arguments));
+        }
+        if (isset($pluginInfo[DefinitionInterface::LISTENER_AFTER])) {
+            // Call 'after' listeners
+            foreach ($pluginInfo[DefinitionInterface::LISTENER_AFTER] as $code) {
+                $result = $this->pluginList->getPlugin($this->subjectType, $code)
+                    ->{'after' . $capMethod}($this, $result);
             }
-
-            if (isset($currentPluginInfo[DefinitionInterface::LISTENER_AFTER])) {
-                // Call 'after' listeners
-                foreach ($currentPluginInfo[DefinitionInterface::LISTENER_AFTER] as $code) {
-                    $pluginInstance = $pluginList->getPlugin($type, $code);
-                    $pluginMethod = 'after' . $capMethod;
-                    $result = $pluginInstance->$pluginMethod($subject, $result, ...array_values($arguments));
-                }
-            }
-
-            return $result;
-        };
-
-        $result = $next(...array_values($arguments));
-        $next = null;
-
+        }
         return $result;
     }
 }

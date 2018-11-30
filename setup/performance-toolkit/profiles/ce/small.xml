@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <!--
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2013-2018 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 -->
@@ -22,9 +22,6 @@
                     </attribute>
                     <attribute>
                         <options>8</options>
-                    </attribute>
-                    <attribute>
-                        <options>5</options>
                     </attribute>
                 </attributes>
                 <sku>Configurable Product %s</sku>

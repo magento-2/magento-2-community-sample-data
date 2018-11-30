@@ -5,7 +5,7 @@
  */
 namespace Magento\Setup\Test\Unit\Model;
 
-class SearchTermManagerTest extends \PHPUnit\Framework\TestCase
+class SearchTermManagerTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\Setup\Model\SearchTermManager

@@ -7,12 +7,12 @@ namespace Magento\Email\Test\Unit\Model\Template\Config;
 
 use Magento\Framework\Component\ComponentRegistrar;
 
-class FileResolverTest extends \PHPUnit\Framework\TestCase
+class FileResolverTest extends \PHPUnit_Framework_TestCase
 {
     public function testGet()
     {
-        $fileIteratorFactory = $this->createMock(\Magento\Framework\Config\FileIteratorFactory::class);
-        $dirSearch = $this->createMock(\Magento\Framework\Component\DirSearch::class);
+        $fileIteratorFactory = $this->getMock('\Magento\Framework\Config\FileIteratorFactory', [], [], '', false);
+        $dirSearch = $this->getMock('\Magento\Framework\Component\DirSearch', [], [], '', false);
         $model = new \Magento\Email\Model\Template\Config\FileResolver($fileIteratorFactory, $dirSearch);
         $expected = ['found_file'];
         $fileIteratorFactory->expects($this->once())

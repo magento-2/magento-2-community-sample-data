@@ -12,7 +12,7 @@ use Magento\Framework\App\State;
 /**
  * @package Magento\Deploy\Test\Unit\Console\Command
  */
-class SetModeCommandTest extends \PHPUnit\Framework\TestCase
+class SetModeCommandTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\Deploy\Model\Mode|\PHPUnit_Framework_MockObject_MockObject
@@ -31,12 +31,12 @@ class SetModeCommandTest extends \PHPUnit\Framework\TestCase
 
     protected function setUp()
     {
-        $this->objectManagerMock = $this->getMockForAbstractClass(\Magento\Framework\ObjectManagerInterface::class);
-        $this->modeMock = $this->createMock(\Magento\Deploy\Model\Mode::class);
+        $this->objectManagerMock = $this->getMockForAbstractClass('Magento\Framework\ObjectManagerInterface');
+        $this->modeMock = $this->getMock('Magento\Deploy\Model\Mode', [], [], '', false);
 
         $objectManager = new \Magento\Framework\TestFramework\Unit\Helper\ObjectManager($this);
         $this->command = $objectManager->getObject(
-            \Magento\Deploy\Console\Command\SetModeCommand::class,
+            'Magento\Deploy\Console\Command\SetModeCommand',
             ['objectManager' => $this->objectManagerMock]
         );
 
@@ -63,18 +63,6 @@ class SetModeCommandTest extends \PHPUnit\Framework\TestCase
         $tester->execute(['mode' => 'developer']);
         $this->assertContains(
             "developer mode",
-            $tester->getDisplay()
-        );
-    }
-
-    public function testSetDefaultMode()
-    {
-        $this->modeMock->expects($this->once())->method('enableDefaultMode');
-
-        $tester = new CommandTester($this->command);
-        $tester->execute(['mode' => 'default']);
-        $this->assertContains(
-            "default mode",
             $tester->getDisplay()
         );
     }

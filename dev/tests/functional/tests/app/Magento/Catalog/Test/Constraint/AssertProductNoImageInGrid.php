@@ -36,9 +36,7 @@ class AssertProductNoImageInGrid extends AbstractConstraint
     }
 
     /**
-     * Returns a string representation of the object.
-     *
-     * @return string
+     * @inheritdoc
      */
     public function toString()
     {

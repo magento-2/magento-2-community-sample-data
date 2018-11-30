@@ -8,10 +8,7 @@ namespace Magento\Review\Model\ResourceModel;
 /**
  * Rating resource model
  *
- * @api
- *
  * @author      Magento Core Team <core@magentocommerce.com>
- * @since 100.0.2
  */
 class Rating extends \Magento\Framework\Model\ResourceModel\Db\AbstractDb
 {

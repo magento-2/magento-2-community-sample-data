@@ -6,12 +6,12 @@
 
 namespace Magento\Framework\Filesystem\Test\Unit\File;
 
-use Magento\Framework\Filesystem\Filter\ExcludeFilter;
+use \Magento\Framework\Filesystem\Filter\ExcludeFilter;
 
 /**
  * Class ExcludeFilterTest
  */
-class ExcludeFilterTest extends \PHPUnit\Framework\TestCase
+class ExcludeFilterTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Iterator
@@ -42,7 +42,7 @@ class ExcludeFilterTest extends \PHPUnit\Framework\TestCase
     /**
      * @return \Generator
      */
-    private function getFilesIterator()
+    private function getFilesIterator ()
     {
         $files = [
             BP . '/var/',
@@ -51,9 +51,7 @@ class ExcludeFilterTest extends \PHPUnit\Framework\TestCase
         ];
 
         foreach ($files as $file) {
-            $item = $this->getMockBuilder(
-                \SplFileInfoClass::class
-            )->setMethods(['__toString', 'getFilename'])->getMock();
+            $item = $this->getMockBuilder('SplFileInfoClass')->setMethods(['__toString', 'getFilename'])->getMock();
             $item->expects($this->any())->method('__toString')->willReturn($file);
             $item->expects($this->any())->method('getFilename')->willReturn('notDots');
             yield $item;

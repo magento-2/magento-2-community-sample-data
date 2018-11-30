@@ -5,15 +5,15 @@
  */
 namespace Magento\Cms\Test\Unit\Model\Wysiwyg\Images;
 
-use Magento\Cms\Model\Wysiwyg\Images\Storage\Collection as StorageCollection;
 use Magento\Framework\App\Filesystem\DirectoryList;
+use Magento\Cms\Model\Wysiwyg\Images\Storage\Collection as StorageCollection;
 
 /**
  * @SuppressWarnings(PHPMD.LongVariable)
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  * @SuppressWarnings(PHPMD.TooManyFields)
  */
-class StorageTest extends \PHPUnit\Framework\TestCase
+class StorageTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * Directory paths samples
@@ -107,11 +107,14 @@ class StorageTest extends \PHPUnit\Framework\TestCase
      */
     protected $objectManagerHelper;
 
+    /**
+     * @var array
+     */
     private $allowedImageExtensions = [
         'jpg' => 'image/jpg',
         'jpeg' => 'image/jpeg',
         'png' => 'image/png',
-        'gif' => 'image/png'
+        'gif' => 'image/png',
     ];
 
     /**
@@ -120,82 +123,112 @@ class StorageTest extends \PHPUnit\Framework\TestCase
      */
     protected function setUp()
     {
-        $this->filesystemMock = $this->createMock(\Magento\Framework\Filesystem::class);
-        $this->driverMock = $this->getMockBuilder(\Magento\Framework\Filesystem\DriverInterface::class)
-            ->setMethods(['getRealPathSafety'])
-            ->getMockForAbstractClass();
+        $this->filesystemMock = $this->getMock(\Magento\Framework\Filesystem::class, [], [], '', false);
+        $this->driverMock = $this->getMockForAbstractClass(
+            \Magento\Framework\Filesystem\DriverInterface::class,
+            [],
+            '',
+            false,
+            false,
+            true,
+            ['getRealPath']
+        );
+        $this->driverMock->expects($this->any())->method('getRealPath')->willReturnArgument(0);
 
-        $this->directoryMock = $this->createPartialMock(
+        $this->directoryMock = $this->getMock(
             \Magento\Framework\Filesystem\Directory\Write::class,
-            ['delete', 'getDriver', 'create', 'getRelativePath', 'isExist', 'isFile']
+            ['delete', 'getDriver', 'create', 'getRelativePath', 'isExist', 'isFile'],
+            [],
+            '',
+            false
         );
-        $this->directoryMock->expects(
-            $this->any()
-        )->method(
-            'getDriver'
-        )->will(
-            $this->returnValue($this->driverMock)
-        );
+        $this->directoryMock->expects($this->any())
+            ->method('getDriver')
+            ->willReturn($this->driverMock);
 
-        $this->filesystemMock = $this->createPartialMock(\Magento\Framework\Filesystem::class, ['getDirectoryWrite']);
-        $this->filesystemMock->expects(
-            $this->any()
-        )->method(
-            'getDirectoryWrite'
-        )->with(
-            DirectoryList::MEDIA
-        )->will(
-            $this->returnValue($this->directoryMock)
+        $this->filesystemMock = $this->getMock(
+            \Magento\Framework\Filesystem::class,
+            ['getDirectoryWrite'],
+            [],
+            '',
+            false
         );
+        $this->filesystemMock->expects($this->any())
+            ->method('getDirectoryWrite')
+            ->with(DirectoryList::MEDIA)
+            ->willReturn($this->directoryMock);
 
-        $this->adapterFactoryMock = $this->createMock(\Magento\Framework\Image\AdapterFactory::class);
-        $this->imageHelperMock = $this->createPartialMock(
+        $this->adapterFactoryMock = $this->getMock(
+            \Magento\Framework\Image\AdapterFactory::class,
+            [],
+            [],
+            '',
+            false
+        );
+        $this->imageHelperMock = $this->getMock(
             \Magento\Cms\Helper\Wysiwyg\Images::class,
-            ['getStorageRoot', 'getCurrentPath']
+            ['getStorageRoot'],
+            [],
+            '',
+            false
         );
-        $this->imageHelperMock->expects(
-            $this->any()
-        )->method(
-            'getStorageRoot'
-        )->will(
-            $this->returnValue(self::STORAGE_ROOT_DIR)
-        );
+        $this->imageHelperMock->expects($this->any())
+            ->method('getStorageRoot')
+            ->willReturn(self::STORAGE_ROOT_DIR);
 
         $this->resizeParameters = ['width' => 100, 'height' => 50];
 
-        $this->storageCollectionFactoryMock = $this->createPartialMock(
+        $this->storageCollectionFactoryMock = $this->getMock(
             \Magento\Cms\Model\Wysiwyg\Images\Storage\CollectionFactory::class,
-            ['create']
+            ['create'],
+            [],
+            '',
+            false
         );
-        $this->storageFileFactoryMock = $this->createMock(\Magento\MediaStorage\Model\File\Storage\FileFactory::class);
-        $this->storageDatabaseFactoryMock = $this->createMock(
-            \Magento\MediaStorage\Model\File\Storage\DatabaseFactory::class
+        $this->storageFileFactoryMock = $this->getMock(
+            \Magento\MediaStorage\Model\File\Storage\FileFactory::class,
+            [],
+            [],
+            '',
+            false
         );
-        $this->directoryDatabaseFactoryMock = $this->createPartialMock(
+        $this->storageDatabaseFactoryMock = $this->getMock(
+            \Magento\MediaStorage\Model\File\Storage\DatabaseFactory::class,
+            [],
+            [],
+            '',
+            false
+        );
+        $this->directoryDatabaseFactoryMock = $this->getMock(
             \Magento\MediaStorage\Model\File\Storage\Directory\DatabaseFactory::class,
-            ['create']
+            ['create'],
+            [],
+            '',
+            false
         );
-        $this->directoryCollectionMock = $this->createMock(
-            \Magento\MediaStorage\Model\File\Storage\Directory\Database::class
+        $this->directoryCollectionMock = $this->getMock(
+            \Magento\MediaStorage\Model\File\Storage\Directory\Database::class,
+            [],
+            [],
+            '',
+            false
         );
 
         $this->uploaderFactoryMock = $this->getMockBuilder(\Magento\MediaStorage\Model\File\UploaderFactory::class)
             ->disableOriginalConstructor()
             ->getMock();
         $this->sessionMock = $this->getMockBuilder(\Magento\Backend\Model\Session::class)
-            ->setMethods(
-                ['getCurrentPath', 'getName', 'getSessionId', 'getCookieLifetime', 'getCookiePath', 'getCookieDomain']
-            )
             ->disableOriginalConstructor()
             ->getMock();
-        $this->backendUrlMock = $this->createMock(\Magento\Backend\Model\Url::class);
+        $this->backendUrlMock = $this->getMock(\Magento\Backend\Model\Url::class, [], [], '', false);
 
         $this->coreFileStorageMock = $this->getMockBuilder(\Magento\MediaStorage\Helper\File\Storage\Database::class)
             ->disableOriginalConstructor()
             ->getMock();
+
         $allowedExtensions = [
             'allowed' => $this->allowedImageExtensions,
-            'image_allowed' => $this->allowedImageExtensions
+            'image_allowed' => $this->allowedImageExtensions,
         ];
 
         $this->objectManagerHelper = new \Magento\Framework\TestFramework\Unit\Helper\ObjectManager($this);
@@ -209,7 +242,7 @@ class StorageTest extends \PHPUnit\Framework\TestCase
                 'coreFileStorageDb' => $this->coreFileStorageMock,
                 'filesystem' => $this->filesystemMock,
                 'imageFactory' => $this->adapterFactoryMock,
-                'assetRepo' => $this->createMock(\Magento\Framework\View\Asset\Repository::class),
+                'assetRepo' => $this->getMock(\Magento\Framework\View\Asset\Repository::class, [], [], '', false),
                 'storageCollectionFactory' => $this->storageCollectionFactoryMock,
                 'storageFileFactory' => $this->storageFileFactoryMock,
                 'storageDatabaseFactory' => $this->storageDatabaseFactoryMock,
@@ -218,9 +251,9 @@ class StorageTest extends \PHPUnit\Framework\TestCase
                 'resizeParameters' => $this->resizeParameters,
                 'dirs' => [
                     'exclude' => [],
-                    'include' => []
+                    'include' => [],
                 ],
-                'extensions' => $allowedExtensions
+                'extensions' => $allowedExtensions,
             ]
         );
     }
@@ -246,11 +279,10 @@ class StorageTest extends \PHPUnit\Framework\TestCase
      */
     public function testDeleteDirectoryOverRoot()
     {
-        $this->expectException(
+        $this->setExpectedException(
             \Magento\Framework\Exception\LocalizedException::class,
             sprintf('Directory %s is not under storage root path.', self::INVALID_DIRECTORY_OVER_ROOT)
         );
-        $this->driverMock->expects($this->atLeastOnce())->method('getRealPathSafety')->will($this->returnArgument(0));
         $this->imagesStorage->deleteDirectory(self::INVALID_DIRECTORY_OVER_ROOT);
     }
 
@@ -259,11 +291,10 @@ class StorageTest extends \PHPUnit\Framework\TestCase
      */
     public function testDeleteRootDirectory()
     {
-        $this->expectException(
+        $this->setExpectedException(
             \Magento\Framework\Exception\LocalizedException::class,
             sprintf('We can\'t delete root directory %s right now.', self::STORAGE_ROOT_DIR)
         );
-        $this->driverMock->expects($this->atLeastOnce())->method('getRealPathSafety')->will($this->returnArgument(0));
         $this->imagesStorage->deleteDirectory(self::STORAGE_ROOT_DIR);
     }
 
@@ -298,7 +329,7 @@ class StorageTest extends \PHPUnit\Framework\TestCase
      * @param array $expectedRemoveKeys
      * @dataProvider dirsCollectionDataProvider
      */
-    public function testGetDirsCollection($exclude, $include, $fileNames, $expectedRemoveKeys)
+    public function testGetDirsCollection(array $exclude, array $include, array $fileNames, array $expectedRemoveKeys)
     {
         $this->imagesStorage = $this->objectManagerHelper->getObject(
             \Magento\Cms\Model\Wysiwyg\Images\Storage::class,
@@ -309,7 +340,7 @@ class StorageTest extends \PHPUnit\Framework\TestCase
                 'coreFileStorageDb' => $this->coreFileStorageMock,
                 'filesystem' => $this->filesystemMock,
                 'imageFactory' => $this->adapterFactoryMock,
-                'assetRepo' => $this->createMock(\Magento\Framework\View\Asset\Repository::class),
+                'assetRepo' => $this->getMock(\Magento\Framework\View\Asset\Repository::class, [], [], '', false),
                 'storageCollectionFactory' => $this->storageCollectionFactoryMock,
                 'storageFileFactory' => $this->storageFileFactoryMock,
                 'storageDatabaseFactory' => $this->storageDatabaseFactoryMock,
@@ -318,15 +349,15 @@ class StorageTest extends \PHPUnit\Framework\TestCase
                 'resizeParameters' => $this->resizeParameters,
                 'dirs' => [
                     'exclude' => $exclude,
-                    'include' => $include
-                ]
+                    'include' => $include,
+                ],
             ]
         );
 
         $collection = [];
         foreach ($fileNames as $filename) {
             /** @var \Magento\Framework\DataObject|\PHPUnit_Framework_MockObject_MockObject $objectMock */
-            $objectMock = $this->createPartialMock(\Magento\Framework\DataObject::class, ['getFilename']);
+            $objectMock = $this->getMock(\Magento\Framework\DataObject::class, ['getFilename'], [], '', false);
             $objectMock->expects($this->any())
                 ->method('getFilename')
                 ->willReturn(self::STORAGE_ROOT_DIR . $filename);
@@ -344,11 +375,11 @@ class StorageTest extends \PHPUnit\Framework\TestCase
         return [
             [
                 'exclude' => [
-                    ['name' => 'dress']
+                    ['name' => 'dress'],
                 ],
                 'include' => [],
                 'filenames' => [],
-                'expectRemoveKeys' => []
+                'expectRemoveKeys' => [],
             ],
             [
                 'exclude' => [],
@@ -356,36 +387,36 @@ class StorageTest extends \PHPUnit\Framework\TestCase
                 'filenames' => [
                     '/dress',
                 ],
-                'expectRemoveKeys' => []
+                'expectRemoveKeys' => [],
             ],
             [
                 'exclude' => [
-                    ['name' => 'dress']
+                    ['name' => 'dress'],
                 ],
                 'include' => [],
                 'filenames' => [
                     '/collection',
                 ],
-                'expectRemoveKeys' => []
+                'expectRemoveKeys' => [],
             ],
             [
                 'exclude' => [
                     ['name' => 'gear', 'regexp' => 1],
                     ['name' => 'home', 'regexp' => 1],
                     ['name' => 'collection'],
-                    ['name' => 'dress']
+                    ['name' => 'dress'],
                 ],
                 'include' => [
                     ['name' => 'home', 'regexp' => 1],
-                    ['name' => 'collection']
+                    ['name' => 'collection'],
                 ],
                 'filenames' => [
                     '/dress',
                     '/collection',
                     '/gear'
                 ],
-                'expectRemoveKeys' => [[0], [2]]
-            ]
+                'expectRemoveKeys' => [[0], [2]],
+            ],
         ];
     }
 
@@ -396,7 +427,7 @@ class StorageTest extends \PHPUnit\Framework\TestCase
      * @param array $collectionArray
      * @param array $expectedRemoveKeys
      */
-    protected function generalTestGetDirsCollection($path, $collectionArray = [], $expectedRemoveKeys = [])
+    protected function generalTestGetDirsCollection($path, array $collectionArray = [], array $expectedRemoveKeys = [])
     {
         /** @var StorageCollection|\PHPUnit_Framework_MockObject_MockObject $storageCollectionMock */
         $storageCollectionMock = $this->getMockBuilder(\Magento\Cms\Model\Wysiwyg\Images\Storage\Collection::class)
@@ -428,6 +459,9 @@ class StorageTest extends \PHPUnit\Framework\TestCase
         $this->imagesStorage->getDirsCollection($path);
     }
 
+    /**
+     * @return void
+     */
     public function testUploadFile()
     {
         $targetPath = '/target/path';
@@ -448,7 +482,7 @@ class StorageTest extends \PHPUnit\Framework\TestCase
                     'setFilesDispersion',
                     'checkMimeType',
                     'save',
-                    'getUploadedFileName'
+                    'getUploadedFileName',
                 ]
             )
             ->getMock();
@@ -468,21 +502,21 @@ class StorageTest extends \PHPUnit\Framework\TestCase
             [
                 [$realPath, $realPath],
                 [$thumbnailTargetPath, $thumbnailTargetPath],
-                [$thumbnailDestination, $thumbnailDestination]
+                [$thumbnailDestination, $thumbnailDestination],
             ]
         );
         $this->directoryMock->expects($this->atLeastOnce())->method('isFile')
             ->willReturnMap(
                 [
                     [$realPath, true],
-                    [$thumbnailDestination, true]
+                    [$thumbnailDestination, true],
                 ]
             );
         $this->directoryMock->expects($this->atLeastOnce())->method('isExist')
             ->willReturnMap(
                 [
                     [$realPath, true],
-                    [$thumbnailTargetPath, true]
+                    [$thumbnailTargetPath, true],
                 ]
             );
 

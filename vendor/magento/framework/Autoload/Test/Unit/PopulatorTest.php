@@ -9,14 +9,14 @@ use \Magento\Framework\Autoload\Populator;
 
 use Magento\Framework\App\Filesystem\DirectoryList;
 
-class PopulatorTest extends \PHPUnit\Framework\TestCase
+class PopulatorTest extends \PHPUnit_Framework_TestCase
 {
     /** @var \Magento\Framework\App\Filesystem\DirectoryList | \PHPUnit_Framework_MockObject_MockObject */
     protected $mockDirectoryList;
 
     protected function setUp()
     {
-        $this->mockDirectoryList = $this->getMockBuilder(\Magento\Framework\App\Filesystem\DirectoryList::class)
+        $this->mockDirectoryList = $this->getMockBuilder('\Magento\Framework\App\Filesystem\DirectoryList')
             ->disableOriginalConstructor()
             ->getMock();
 
@@ -27,7 +27,7 @@ class PopulatorTest extends \PHPUnit\Framework\TestCase
 
     public function testPopulateMappings()
     {
-        $mockAutoloader = $this->getMockBuilder(\Magento\Framework\Autoload\AutoloaderInterface::class)
+        $mockAutoloader = $this->getMockBuilder('\Magento\Framework\Autoload\AutoloaderInterface')
             ->disableOriginalConstructor()
             ->getMock();
 

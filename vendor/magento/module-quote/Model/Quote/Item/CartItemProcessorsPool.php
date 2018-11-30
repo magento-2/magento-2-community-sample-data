@@ -9,7 +9,7 @@ use Magento\Framework\App\ObjectManager;
 use Magento\Framework\ObjectManager\ConfigInterface;
 
 /**
- * @deprecated 100.1.0
+ * @deprecated
  */
 class CartItemProcessorsPool
 {
@@ -25,7 +25,7 @@ class CartItemProcessorsPool
 
     /**
      * @param ConfigInterface $objectManagerConfig
-     * @deprecated 100.1.0
+     * @deprecated
      */
     public function __construct(ConfigInterface $objectManagerConfig)
     {
@@ -34,7 +34,7 @@ class CartItemProcessorsPool
 
     /**
      * @return CartItemProcessorInterface[]
-     * @deprecated 100.1.0
+     * @deprecated
      */
     public function getCartItemProcessors()
     {
@@ -42,8 +42,7 @@ class CartItemProcessorsPool
             return $this->cartItemProcessors;
         }
 
-        $typePreference = $this->objectManagerConfig->getPreference(Repository::class);
-        $arguments = $this->objectManagerConfig->getArguments($typePreference);
+        $arguments = $this->objectManagerConfig->getArguments(\Magento\Quote\Model\Quote\Item\Repository::class);
         if (isset($arguments['cartItemProcessors'])) {
             // Workaround for compiled mode.
             $processors = isset($arguments['cartItemProcessors']['_vac_'])

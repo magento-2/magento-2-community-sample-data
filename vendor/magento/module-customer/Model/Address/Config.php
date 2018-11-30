@@ -7,22 +7,23 @@ namespace Magento\Customer\Model\Address;
 
 use Magento\Framework\Config\Data as ConfigData;
 use Magento\Framework\DataObject;
-use Magento\Framework\Serialize\SerializerInterface;
 use Magento\Store\Model\ScopeInterface;
 
 /**
- * Customer address configuration
+ * Customer address config
+ *
+ * @author     Magento Core Team <core@magentocommerce.com>
  */
 class Config extends ConfigData
 {
-    const DEFAULT_ADDRESS_RENDERER = \Magento\Customer\Block\Address\Renderer\DefaultRenderer::class;
+    const DEFAULT_ADDRESS_RENDERER = 'Magento\Customer\Block\Address\Renderer\DefaultRenderer';
 
     const XML_PATH_ADDRESS_TEMPLATE = 'customer/address_templates/';
 
     const DEFAULT_ADDRESS_FORMAT = 'oneline';
 
     /**
-     * Customer address templates per store
+     * Customer Address Templates per store
      *
      * @var array
      */
@@ -36,7 +37,8 @@ class Config extends ConfigData
     protected $_store = null;
 
     /**
-     * Default types per store, used for invalid code
+     * Default types per store
+     * Using for invalid code
      *
      * @var array
      */
@@ -58,15 +60,12 @@ class Config extends ConfigData
     protected $_scopeConfig;
 
     /**
-     * Constructor
-     *
-     * @param Config\Reader $reader
+     * @param \Magento\Customer\Model\Address\Config\Reader $reader
      * @param \Magento\Framework\Config\CacheInterface $cache
      * @param \Magento\Store\Model\StoreManagerInterface $storeManager
      * @param \Magento\Customer\Helper\Address $addressHelper
      * @param \Magento\Framework\App\Config\ScopeConfigInterface $scopeConfig
-     * @param string|null $cacheId
-     * @param SerializerInterface|null $serializer
+     * @param string $cacheId
      */
     public function __construct(
         \Magento\Customer\Model\Address\Config\Reader $reader,
@@ -74,10 +73,9 @@ class Config extends ConfigData
         \Magento\Store\Model\StoreManagerInterface $storeManager,
         \Magento\Customer\Helper\Address $addressHelper,
         \Magento\Framework\App\Config\ScopeConfigInterface $scopeConfig,
-        $cacheId = 'address_format',
-        SerializerInterface $serializer = null
+        $cacheId = 'address_format'
     ) {
-        parent::__construct($reader, $cache, $cacheId, $serializer);
+        parent::__construct($reader, $cache, $cacheId);
         $this->_storeManager = $storeManager;
         $this->_addressHelper = $addressHelper;
         $this->_scopeConfig = $scopeConfig;

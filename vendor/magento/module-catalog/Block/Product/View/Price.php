@@ -9,8 +9,6 @@
  */
 namespace Magento\Catalog\Block\Product\View;
 
-use Magento\Catalog\Model\Product;
-
 class Price extends \Magento\Framework\View\Element\Template
 {
     /**
@@ -39,8 +37,7 @@ class Price extends \Magento\Framework\View\Element\Template
      */
     public function getPrice()
     {
-        /** @var Product $product */
         $product = $this->_coreRegistry->registry('product');
-        return $product->getFormattedPrice();
+        return $product->getFormatedPrice();
     }
 }

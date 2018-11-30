@@ -9,7 +9,7 @@ namespace Magento\Framework\Archive\Test\Unit;
 
 use Composer\Composer;
 
-class ZipTest extends \PHPUnit\Framework\TestCase
+class ZipTest extends \PHPUnit_Framework_TestCase
 {
 
     /**
@@ -19,7 +19,7 @@ class ZipTest extends \PHPUnit\Framework\TestCase
 
     protected function setUp()
     {
-        $this->zip = $this->getMockBuilder(\Magento\Framework\Archive\Zip::class)
+        $this->zip = $this->getMockBuilder('\Magento\Framework\Archive\Zip')
             ->disableOriginalConstructor()
             ->getMock();
     }
@@ -30,7 +30,7 @@ class ZipTest extends \PHPUnit\Framework\TestCase
     public function testConstructorNoExceptions()
     {
         try {
-            $reflectedClass = new \ReflectionClass(\Magento\Framework\Archive\Zip::class);
+            $reflectedClass = new \ReflectionClass('\Magento\Framework\Archive\Zip');
             $constructor = $reflectedClass->getConstructor();
             $constructor->invoke($this->zip, []);
         } catch (\Exception $e) {

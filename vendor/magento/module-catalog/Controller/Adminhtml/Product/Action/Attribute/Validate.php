@@ -42,15 +42,15 @@ class Validate extends \Magento\Catalog\Controller\Adminhtml\Product\Action\Attr
      */
     public function execute()
     {
-        $response = $this->_objectManager->create(\Magento\Framework\DataObject::class);
+        $response = $this->_objectManager->create('Magento\Framework\DataObject');
         $response->setError(false);
         $attributesData = $this->getRequest()->getParam('attributes', []);
-        $data = $this->_objectManager->create(\Magento\Catalog\Model\Product::class);
+        $data = $this->_objectManager->create('Magento\Catalog\Model\Product');
 
         try {
             if ($attributesData) {
                 foreach ($attributesData as $attributeCode => $value) {
-                    $attribute = $this->_objectManager->get(\Magento\Eav\Model\Config::class)
+                    $attribute = $this->_objectManager->get('Magento\Eav\Model\Config')
                         ->getAttribute('catalog_product', $attributeCode);
                     if (!$attribute->getAttributeId()) {
                         unset($attributesData[$attributeCode]);
@@ -68,7 +68,7 @@ class Validate extends \Magento\Catalog\Controller\Adminhtml\Product\Action\Attr
             $response->setError(true);
             $response->setMessage($e->getMessage());
         } catch (\Exception $e) {
-            $this->messageManager->addExceptionMessage(
+            $this->messageManager->addException(
                 $e,
                 __('Something went wrong while updating the product(s) attributes.')
             );

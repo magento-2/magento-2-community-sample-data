@@ -7,9 +7,6 @@ namespace Magento\Variable\Block\System\Variable;
 
 /**
  * Custom Variable Edit Container
- *
- * @api
- * @since 100.0.2
  */
 class Edit extends \Magento\Backend\Block\Widget\Form\Container
 {
@@ -90,7 +87,11 @@ class Edit extends \Magento\Backend\Block\Widget\Form\Container
      */
     public function getFormHtml()
     {
-        return parent::getFormHtml();
+        $formHtml = parent::getFormHtml();
+        if (!$this->_storeManager->isSingleStoreMode() && $this->getVariable()->getId()) {
+            $formHtml = $formHtml;
+        }
+        return $formHtml;
     }
 
     /**

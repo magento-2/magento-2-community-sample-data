@@ -16,9 +16,7 @@ class RendererFactory
      */
     protected $_objectManager;
 
-    /**
-     * @var \Magento\Framework\Webapi\Rest\Request
-     */
+    /** @var \Magento\Framework\Webapi\Rest\Request */
     protected $_request;
 
     /**
@@ -72,9 +70,14 @@ class RendererFactory
             $acceptTypes = [$acceptTypes];
         }
         foreach ($acceptTypes as $acceptType) {
-            $renderer = $this->getRendererConfig($acceptType);
-            if ($renderer !== null) {
-                return $renderer['model'];
+            foreach ($this->_renders as $rendererConfig) {
+                $rendererType = $rendererConfig['type'];
+                if ($acceptType == $rendererType || $acceptType == current(
+                    explode('/', $rendererType)
+                ) . '/*' || $acceptType == '*/*'
+                ) {
+                    return $rendererConfig['model'];
+                }
             }
         }
         /** If server does not have renderer for any of the accepted types it SHOULD send 406 (not acceptable). */
@@ -87,31 +90,5 @@ class RendererFactory
             0,
             \Magento\Framework\Webapi\Exception::HTTP_NOT_ACCEPTABLE
         );
-    }
-
-    /**
-     * Get renderer config by accept type.
-     *
-     * @param string $acceptType
-     * @return array|null
-     */
-    private function getRendererConfig($acceptType)
-    {
-        // If Accept type = '*/*' then return default renderer.
-        if ($acceptType == '*/*' && isset($this->_renders['default'])) {
-            return $this->_renders['default'];
-        }
-        
-        foreach ($this->_renders as $rendererConfig) {
-            $rendererType = $rendererConfig['type'];
-            if ($acceptType == $rendererType
-                || $acceptType == current(explode('/', $rendererType)) . '/*'
-                || $acceptType == '*/*'
-            ) {
-                return $rendererConfig;
-            }
-        }
-
-        return null;
     }
 }

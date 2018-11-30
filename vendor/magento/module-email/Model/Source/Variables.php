@@ -9,6 +9,8 @@ use Magento\Store\Model\Store;
 
 /**
  * Store Contact Information source model
+ *
+ * @author     Magento Core Team <core@magentocommerce.com>
  */
 class Variables implements \Magento\Framework\Option\ArrayInterface
 {
@@ -60,7 +62,7 @@ class Variables implements \Magento\Framework\Option\ArrayInterface
     public function toOptionArray($withGroup = false)
     {
         $optionArray = [];
-        foreach ($this->getData() as $variable) {
+        foreach ($this->_configVariables as $variable) {
             $optionArray[] = [
                 'value' => '{{config path="' . $variable['value'] . '"}}',
                 'label' => $variable['label'],
@@ -80,6 +82,6 @@ class Variables implements \Magento\Framework\Option\ArrayInterface
      */
     public function getData()
     {
-        return $this->_configVariables;
+        return  $this->_configVariables;
     }
 }

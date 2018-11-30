@@ -43,7 +43,7 @@ class SuggestCategories extends \Magento\Catalog\Controller\Adminhtml\Category
         /** @var \Magento\Framework\Controller\Result\Json $resultJson */
         $resultJson = $this->resultJsonFactory->create();
         return $resultJson->setJsonData(
-            $this->layoutFactory->create()->createBlock(\Magento\Catalog\Block\Adminhtml\Category\Tree::class)
+            $this->layoutFactory->create()->createBlock('Magento\Catalog\Block\Adminhtml\Category\Tree')
                 ->getSuggestedCategoriesJson($this->getRequest()->getParam('label_part'))
         );
     }

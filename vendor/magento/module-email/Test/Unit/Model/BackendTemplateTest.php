@@ -14,7 +14,7 @@ namespace Magento\Email\Test\Unit\Model;
 use Magento\Email\Model\BackendTemplate;
 use Magento\Framework\ObjectManagerInterface;
 
-class BackendTemplateTest extends \PHPUnit\Framework\TestCase
+class BackendTemplateTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * Backend template mock
@@ -43,41 +43,30 @@ class BackendTemplateTest extends \PHPUnit\Framework\TestCase
      */
     protected $objectManagerBackup;
 
-    /**
-     * @var \Magento\Framework\Serialize\Serializer\Json|\PHPUnit_Framework_MockObject_MockObject
-     */
-    private $serializerMock;
-
     protected function setUp()
     {
         $helper = new \Magento\Framework\TestFramework\Unit\Helper\ObjectManager($this);
 
-        $this->scopeConfigMock = $this->createMock(\Magento\Framework\App\Config\ScopeConfigInterface::class);
+        $this->scopeConfigMock = $this->getMock('Magento\Framework\App\Config\ScopeConfigInterface');
         $this->scopeConfigMock->expects($this->any())->method('getValue')->willReturn(['test' => 1]);
 
-        $this->structureMock = $this->createMock(\Magento\Config\Model\Config\Structure::class);
+        $this->structureMock = $this->getMock('Magento\Config\Model\Config\Structure', [], [], '', false);
         $this->structureMock->expects($this->any())->method('getFieldPathsByAttribute')->willReturn(['path' => 'test']);
 
-        $this->resourceModelMock = $this->createMock(\Magento\Email\Model\ResourceModel\Template::class);
+        $this->resourceModelMock = $this->getMock('Magento\Email\Model\ResourceModel\Template', [], [], '', false);
         $this->resourceModelMock->expects($this->any())->method('getSystemConfigByPathsAndTemplateId')->willReturn(['test_config' => 2015]);
         /** @var ObjectManagerInterface|\PHPUnit_Framework_MockObject_MockObject $objectManagerMock*/
-        $objectManagerMock = $this->createMock(\Magento\Framework\ObjectManagerInterface::class);
+        $objectManagerMock = $this->getMock('Magento\Framework\ObjectManagerInterface');
         $objectManagerMock->expects($this->any())
             ->method('get')
-            ->with(\Magento\Email\Model\ResourceModel\Template::class)
+            ->with('Magento\Email\Model\ResourceModel\Template')
             ->will($this->returnValue($this->resourceModelMock));
 
         \Magento\Framework\App\ObjectManager::setInstance($objectManagerMock);
 
-        $this->serializerMock = $this->getMockBuilder(\Magento\Framework\Serialize\Serializer\Json::class)->getMock();
-
         $this->model = $helper->getObject(
-            \Magento\Email\Model\BackendTemplate::class,
-            [
-                'scopeConfig' => $this->scopeConfigMock,
-                'structure' => $this->structureMock,
-                'serializer' => $this->serializerMock
-            ]
+            'Magento\Email\Model\BackendTemplate',
+            ['scopeConfig' => $this->scopeConfigMock, 'structure' => $this->structureMock]
         );
     }
 
@@ -85,7 +74,7 @@ class BackendTemplateTest extends \PHPUnit\Framework\TestCase
     {
         parent::tearDown();
         /** @var ObjectManagerInterface|\PHPUnit_Framework_MockObject_MockObject $objectManagerMock*/
-        $objectManagerMock = $this->createMock(\Magento\Framework\ObjectManagerInterface::class);
+        $objectManagerMock = $this->getMock('Magento\Framework\ObjectManagerInterface');
         \Magento\Framework\App\ObjectManager::setInstance($objectManagerMock);
     }
 

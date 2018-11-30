@@ -19,24 +19,16 @@ use Magento\Integration\Model\ConsolidatedConfig;
  */
 class Integration
 {
-    /**
-     * @var \Magento\Integration\Api\AuthorizationServiceInterface
-     */
+    /** @var AuthorizationServiceInterface */
     protected $integrationAuthorizationService;
 
-    /**
-     * @var \Magento\Authorization\Model\Acl\AclRetriever
-     */
+    /** @var  AclRetriever */
     protected $aclRetriever;
 
-    /**
-     * @var \Magento\Integration\Model\IntegrationConfig
-     */
+    /** @var IntegrationConfig */
     protected $integrationConfig;
 
-    /**
-     * @var \Magento\Integration\Model\ConsolidatedConfig
-     */
+    /** @var ConsolidatedConfig */
     protected $consolidatedConfig;
 
     /**

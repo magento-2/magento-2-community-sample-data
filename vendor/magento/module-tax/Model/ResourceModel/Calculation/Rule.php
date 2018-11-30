@@ -6,7 +6,7 @@
 namespace Magento\Tax\Model\ResourceModel\Calculation;
 
 /**
- * Tax rule resource model
+ * Tax rate resource model
  *
  * @author      Magento Core Team <core@magentocommerce.com>
  */

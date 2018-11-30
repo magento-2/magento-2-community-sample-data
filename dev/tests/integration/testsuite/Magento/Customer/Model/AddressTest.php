@@ -6,7 +6,7 @@
 
 namespace Magento\Customer\Model;
 
-class AddressTest extends \PHPUnit\Framework\TestCase
+class AddressTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\Customer\Model\Address
@@ -21,10 +21,10 @@ class AddressTest extends \PHPUnit\Framework\TestCase
     protected function setUp()
     {
         $this->addressModel = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->create(
-            \Magento\Customer\Model\Address::class
+            'Magento\Customer\Model\Address'
         );
         $this->addressFactory = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->create(
-            \Magento\Customer\Api\Data\AddressInterfaceFactory::class
+            'Magento\Customer\Api\Data\AddressInterfaceFactory'
         );
     }
 

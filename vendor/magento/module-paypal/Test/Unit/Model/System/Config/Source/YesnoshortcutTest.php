@@ -7,7 +7,7 @@ namespace Magento\Paypal\Test\Unit\Model\System\Config\Source;
 
 use Magento\Paypal\Model\System\Config\Source\Yesnoshortcut;
 
-class YesnoshortcutTest extends \PHPUnit\Framework\TestCase
+class YesnoshortcutTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var Yesnoshortcut

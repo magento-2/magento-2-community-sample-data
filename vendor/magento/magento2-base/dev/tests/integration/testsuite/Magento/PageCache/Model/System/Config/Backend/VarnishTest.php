@@ -5,7 +5,7 @@
  */
 namespace Magento\PageCache\Model\System\Config\Backend;
 
-class VarnishTest extends \PHPUnit\Framework\TestCase
+class VarnishTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\PageCache\Model\System\Config\Backend\Varnish
@@ -20,7 +20,7 @@ class VarnishTest extends \PHPUnit\Framework\TestCase
     protected function setUp()
     {
         $this->_config = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->create(
-            \Magento\Framework\App\Config\MutableScopeConfigInterface::class
+            'Magento\Framework\App\Config\MutableScopeConfigInterface'
         );
         $data = [
             'access_list' => 'localhost',
@@ -30,7 +30,7 @@ class VarnishTest extends \PHPUnit\Framework\TestCase
         ];
         $this->_config->setValue('system/full_page_cache/default', $data);
         $this->_model = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->create(
-            \Magento\PageCache\Model\System\Config\Backend\Varnish::class
+            'Magento\PageCache\Model\System\Config\Backend\Varnish'
         );
     }
 

@@ -28,7 +28,7 @@
 "use strict";
 
 // top wrapper to prevent multiple inclusion (is this OK?)
-(function () {
+(function () { if(jQuery && jQuery.jstree) { return; }
 	var is_ie6 = false, is_ie7 = false, is_ff2 = false;
 
 /*

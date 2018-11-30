@@ -5,7 +5,7 @@
  */
 namespace Magento\TestFramework\CodingStandard\Tool;
 
-class CodeMessDetectorTest extends \PHPUnit\Framework\TestCase
+class CodeMessDetectorTest extends \PHPUnit_Framework_TestCase
 {
     public function testCanRun()
     {
@@ -15,7 +15,7 @@ class CodeMessDetectorTest extends \PHPUnit\Framework\TestCase
         );
 
         $this->assertEquals(
-            class_exists(\PHPMD\TextUI\Command::class),
+            class_exists('PHPMD\TextUI\Command'),
             $messDetector->canRun()
         );
     }

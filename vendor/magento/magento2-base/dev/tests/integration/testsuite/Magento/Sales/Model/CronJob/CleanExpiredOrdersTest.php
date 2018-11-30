@@ -8,7 +8,7 @@ namespace Magento\Sales\Model\CronJob;
 use Magento\TestFramework\Helper\Bootstrap;
 use \Magento\Sales\Model\Order;
 
-class CleanExpiredOrdersTest extends \PHPUnit\Framework\TestCase
+class CleanExpiredOrdersTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @magentoConfigFixture default sales/orders/delete_pending_after 0
@@ -18,11 +18,11 @@ class CleanExpiredOrdersTest extends \PHPUnit\Framework\TestCase
     public function testExecute()
     {
         /** @var CleanExpiredOrders $job */
-        $job = Bootstrap::getObjectManager()->create(\Magento\Sales\Model\CronJob\CleanExpiredOrders::class);
+        $job = Bootstrap::getObjectManager()->create('Magento\Sales\Model\CronJob\CleanExpiredOrders');
         $job->execute();
 
         /** @var Order $order */
-        $order = Bootstrap::getObjectManager()->create(\Magento\Sales\Model\Order::class);
+        $order = Bootstrap::getObjectManager()->create('Magento\Sales\Model\Order');
         $order->load('100000001', 'increment_id');
         $this->assertEquals(Order::STATE_CANCELED, $order->getStatus());
     }

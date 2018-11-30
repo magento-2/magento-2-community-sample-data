@@ -1,13 +1,10 @@
 <?php
-/**
- * Copyright © Magento, Inc. All rights reserved.
- * See COPYING.txt for license details.
- */
+
 namespace Magento\Security\Model;
 
 $om = \Magento\TestFramework\Helper\Bootstrap::getObjectManager();
 /** @var PasswordResetRequestEvent $passwordResetRequestEvent */
-$passwordResetRequestEvent = $om->create(\Magento\Security\Model\PasswordResetRequestEvent::class);
+$passwordResetRequestEvent = $om->create('Magento\Security\Model\PasswordResetRequestEvent');
 
 $passwordResetRequestEvent
     ->setRequestType(PasswordResetRequestEvent::ADMIN_PASSWORD_RESET_REQUEST)
@@ -16,7 +13,7 @@ $passwordResetRequestEvent
     ->setIp('3232249856')
     ->save();
 
-$passwordResetRequestEvent = $om->create(\Magento\Security\Model\PasswordResetRequestEvent::class);
+$passwordResetRequestEvent = $om->create('Magento\Security\Model\PasswordResetRequestEvent');
 $passwordResetRequestEvent
     ->setRequestType(PasswordResetRequestEvent::ADMIN_PASSWORD_RESET_REQUEST)
     ->setAccountReference('test273.dev@gmail.com')
@@ -24,7 +21,7 @@ $passwordResetRequestEvent
     ->setIp('3232249857')
     ->save();
 
-$passwordResetRequestEvent = $om->create(\Magento\Security\Model\PasswordResetRequestEvent::class);
+$passwordResetRequestEvent = $om->create('Magento\Security\Model\PasswordResetRequestEvent');
 $passwordResetRequestEvent
     ->setRequestType(PasswordResetRequestEvent::ADMIN_PASSWORD_RESET_REQUEST)
     ->setAccountReference('test2745.dev@gmail.com')

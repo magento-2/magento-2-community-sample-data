@@ -43,11 +43,11 @@ class DownloadableTest extends AbstractProductExportImportTestCase
      * @dataProvider exportImportDataProvider
      * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      *
-     * @todo remove after MAGETWO-38240 resolved
+     * @todo remove after MAGETWO-49467 resolved
      */
     public function testExport($fixtures, $skus, $skippedAttributes = [], $rollbackFixtures = [])
     {
-        $this->markTestSkipped('Uncomment after MAGETWO-38240 resolved');
+        $this->markTestSkipped('Uncomment after MAGETWO-49467 resolved');
     }
 
     /**
@@ -56,11 +56,11 @@ class DownloadableTest extends AbstractProductExportImportTestCase
      * @dataProvider exportImportDataProvider
      * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      *
-     * @todo remove after MAGETWO-38240 resolved
+     * @todo remove after MAGETWO-49467 resolved
      */
     public function testImportDelete($fixtures, $skus, $skippedAttributes = [], $rollbackFixtures = [])
     {
-        $this->markTestSkipped('Uncomment after MAGETWO-38240 resolved');
+        $this->markTestSkipped('Uncomment after MAGETWO-49467 resolved');
     }
 
     /**
@@ -72,30 +72,12 @@ class DownloadableTest extends AbstractProductExportImportTestCase
      * @param string[] $skus
      * @param string[] $skippedAttributes
      * @dataProvider importReplaceDataProvider
-     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      *
-     * @todo remove after MAGETWO-38240 resolved
+     * @todo remove after MAGETWO-49467 resolved
      */
     public function testImportReplace($fixtures, $skus, $skippedAttributes = [], $rollbackFixtures = [])
     {
-        $this->markTestSkipped('Uncomment after MAGETWO-38240 resolved');
-    }
-
-    /**
-     * @magentoAppArea adminhtml
-     * @magentoDbIsolation enabled
-     * @magentoAppIsolation enabled
-     *
-     * @param array $fixtures
-     * @param string[] $skus
-     * @param string[] $skippedAttributes
-     * @dataProvider importReplaceDataProvider
-     *
-     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
-     */
-    public function testImportReplaceWithPagination($fixtures, $skus, $skippedAttributes = [])
-    {
-        $this->markTestSkipped('Uncomment after MAGETWO-38240 resolved');
+        $this->markTestSkipped('Uncomment after MAGETWO-49467 resolved');
     }
 
     /**

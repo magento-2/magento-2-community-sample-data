@@ -9,7 +9,6 @@ namespace Magento\Sales\Api\Data;
  * Interface for creation arguments for Shipment.
  *
  * @api
- * @since 100.1.2
  */
 interface ShipmentCreationArgumentsInterface extends \Magento\Framework\Api\ExtensibleDataInterface
 {
@@ -17,7 +16,6 @@ interface ShipmentCreationArgumentsInterface extends \Magento\Framework\Api\Exte
      * Gets existing extension attributes.
      *
      * @return \Magento\Sales\Api\Data\ShipmentCreationArgumentsExtensionInterface|null
-     * @since 100.1.2
      */
     public function getExtensionAttributes();
 
@@ -27,7 +25,6 @@ interface ShipmentCreationArgumentsInterface extends \Magento\Framework\Api\Exte
      * @param \Magento\Sales\Api\Data\ShipmentCreationArgumentsExtensionInterface $extensionAttributes
      *
      * @return $this
-     * @since 100.1.2
      */
     public function setExtensionAttributes(
         \Magento\Sales\Api\Data\ShipmentCreationArgumentsExtensionInterface $extensionAttributes

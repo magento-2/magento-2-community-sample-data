@@ -10,7 +10,7 @@ use Magento\Setup\Fixtures\FixtureModel;
 use Magento\Setup\Console\Command\GenerateFixturesCommand;
 use Symfony\Component\Console\Tester\CommandTester;
 
-class GenerateFixturesCommandTest extends \PHPUnit\Framework\TestCase
+class GenerateFixturesCommandTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var FixtureModel|\PHPUnit_Framework_MockObject_MockObject
@@ -24,7 +24,7 @@ class GenerateFixturesCommandTest extends \PHPUnit\Framework\TestCase
 
     public function setUp()
     {
-        $this->fixtureModel = $this->createMock(\Magento\Setup\Fixtures\FixtureModel::class);
+        $this->fixtureModel = $this->getMock('Magento\Setup\Fixtures\FixtureModel', [], [], '', false);
         $this->command = new GenerateFixturesCommand($this->fixtureModel);
     }
 
@@ -33,7 +33,7 @@ class GenerateFixturesCommandTest extends \PHPUnit\Framework\TestCase
         $this->fixtureModel->expects($this->once())->method('loadConfig')->with('path_to_profile.xml');
         $this->fixtureModel->expects($this->once())->method('initObjectManager');
         $this->fixtureModel->expects($this->once())->method('loadFixtures');
-
+        
         $commandTester = new CommandTester($this->command);
         $commandTester->execute(['profile' => 'path_to_profile.xml']);
     }
@@ -44,7 +44,6 @@ class GenerateFixturesCommandTest extends \PHPUnit\Framework\TestCase
      */
     public function testExecuteInvalidLanguageArgument()
     {
-
         $commandTester = new CommandTester($this->command);
         $commandTester->execute([]);
     }

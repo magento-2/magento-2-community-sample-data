@@ -9,10 +9,7 @@ use Magento\Framework\Exception\LocalizedException;
 
 /**
  * Entity/Attribute/Model - attribute backend abstract
- *
- * @api
  * @SuppressWarnings(PHPMD.NumberOfChildren)
- * @since 100.0.2
  */
 abstract class AbstractBackend implements \Magento\Eav\Model\Entity\Attribute\Backend\BackendInterface
 {
@@ -237,8 +234,7 @@ abstract class AbstractBackend implements \Magento\Eav\Model\Entity\Attribute\Ba
             && $attribute->isValueEmpty($value)
             && $attribute->isValueEmpty($attribute->getDefaultValue())
         ) {
-            $label = $attribute->getFrontend()->getLabel();
-            throw new LocalizedException(__('The value of attribute "%1" must be set', $label));
+            throw new LocalizedException(__('The value of attribute "%1" must be set', $attrCode));
         }
 
         if ($attribute->getIsUnique()
