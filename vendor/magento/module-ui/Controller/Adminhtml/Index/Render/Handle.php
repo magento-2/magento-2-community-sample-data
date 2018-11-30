@@ -5,7 +5,6 @@
  */
 namespace Magento\Ui\Controller\Adminhtml\Index\Render;
 
-use Magento\Framework\App\Action\HttpGetActionInterface as HttpGetActionInterface;
 use Magento\Framework\View\Element\Template;
 use Magento\Ui\Component\Control\ActionPool;
 use Magento\Ui\Component\Wrapper\UiComponent;
@@ -17,9 +16,8 @@ use Magento\Framework\App\ObjectManager;
 
 /**
  * Class Handle
- * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  */
-class Handle extends AbstractAction implements HttpGetActionInterface
+class Handle extends AbstractAction
 {
     /**
      * @var ContextFactory
@@ -57,7 +55,7 @@ class Handle extends AbstractAction implements HttpGetActionInterface
         $context = $this->contextFactory->create(
             [
                 'namespace' => $namespace,
-                'pageLayout' => $layout
+                'pageLayout' => $layout,
             ]
         );
 
@@ -81,7 +79,7 @@ class Handle extends AbstractAction implements HttpGetActionInterface
      * @param mixed $dataProviderConfigData
      * @return bool
      */
-    private function validateAclResource($dataProviderConfigData)
+    private function validateAclResource($dataProviderConfigData): bool
     {
         if (isset($dataProviderConfigData['aclResource'])
             && !$this->_authorization->isAllowed($dataProviderConfigData['aclResource'])
@@ -89,6 +87,7 @@ class Handle extends AbstractAction implements HttpGetActionInterface
             if (!$this->_request->isAjax()) {
                 $this->_redirect('admin/denied');
             }
+
             return false;
         }
 

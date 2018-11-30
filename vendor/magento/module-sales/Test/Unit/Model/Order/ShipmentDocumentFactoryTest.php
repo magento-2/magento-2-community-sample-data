@@ -16,10 +16,8 @@ use Magento\Sales\Api\Data\ShipmentInterface;
 use Magento\Sales\Model\Order\Shipment\TrackFactory;
 use Magento\Sales\Model\Order\Shipment\Track;
 use Magento\Framework\EntityManager\HydratorInterface;
-use Magento\Sales\Model\Order\ShipmentDocumentFactory\ExtensionAttributesProcessor;
 
 /**
- * Class ShipmentDocumentFactoryTest
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  */
 class ShipmentDocumentFactoryTest extends \PHPUnit\Framework\TestCase
@@ -70,11 +68,6 @@ class ShipmentDocumentFactoryTest extends \PHPUnit\Framework\TestCase
     private $hydratorMock;
 
     /**
-     * @var \PHPUnit_Framework_MockObject_MockObject|ExtensionAttributesProcessor
-     */
-    private $extensionAttributeProcessorMock;
-
-    /**
      * @var \PHPUnit_Framework_MockObject_MockObject|Track
      */
     private $trackMock;
@@ -119,15 +112,10 @@ class ShipmentDocumentFactoryTest extends \PHPUnit\Framework\TestCase
             ->disableOriginalConstructor()
             ->getMockForAbstractClass();
 
-        $this->extensionAttributeProcessorMock = $this->getMockBuilder(ExtensionAttributesProcessor::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-
         $this->shipmentDocumentFactory = new ShipmentDocumentFactory(
             $this->shipmentFactoryMock,
             $this->hydratorPoolMock,
-            $this->trackFactoryMock,
-            $this->extensionAttributeProcessorMock
+            $this->trackFactoryMock
         );
     }
 
@@ -140,17 +128,8 @@ class ShipmentDocumentFactoryTest extends \PHPUnit\Framework\TestCase
         $packages = [];
         $items = [1 => 10];
 
-        $this->extensionAttributeProcessorMock->expects($this->never())->method('execute');
         $this->itemMock->expects($this->once())->method('getOrderItemId')->willReturn(1);
         $this->itemMock->expects($this->once())->method('getQty')->willReturn(10);
-        $this->itemMock->expects($this->once())
-            ->method('getOrderItemId')
-            ->willReturn(1);
-
-        $this->itemMock->expects($this->once())
-            ->method('getQty')
-            ->willReturn(10);
-
         $this->shipmentFactoryMock->expects($this->once())
             ->method('create')
             ->with(

@@ -4,22 +4,22 @@
  */
 namespace Temando\Shipping\Plugin\Sales\Order;
 
+use Psr\Log\LoggerInterface;
 use Magento\Framework\Filesystem\Driver\Https as HttpsDownloader;
+use Magento\Sales\Api\Data\ShipmentExtensionFactory;
+use Magento\Sales\Api\Data\ShipmentInterface;
 use Magento\Sales\Api\Data\OrderInterface;
 use Magento\Sales\Api\Data\ShipmentCommentCreationInterface;
 use Magento\Sales\Api\Data\ShipmentCreationArgumentsInterface;
-use Magento\Sales\Api\Data\ShipmentExtensionFactory;
-use Magento\Sales\Api\Data\ShipmentInterface;
 use Magento\Sales\Model\Order\ShipmentDocumentFactory;
-use Psr\Log\LoggerInterface;
 
 /**
  * ShipmentDocumentFactoryPlugin
  *
- * @package Temando\Shipping\Plugin
- * @author  Christoph Aßmann <christoph.assmann@netresearch.de>
- * @license https://opensource.org/licenses/osl-3.0.php Open Software License (OSL 3.0)
- * @link    https://www.temando.com/
+ * @package  Temando\Shipping\Plugin
+ * @author   Christoph Aßmann <christoph.assmann@netresearch.de>
+ * @license  http://opensource.org/licenses/osl-3.0.php Open Software License (OSL 3.0)
+ * @link     http://www.temando.com/
  */
 class ShipmentDocumentFactoryPlugin
 {

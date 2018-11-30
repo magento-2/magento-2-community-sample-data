@@ -1,32 +1,4 @@
 
-5.0.2 / 2018-11-12
-==================
-
-  * Add support for newer version of module-core
-
-5.0.1 / 2018-10-22
-==================
-
-  * PPI-559 Update translations
-
-5.0.0 / 2018-10-15
-==================
-
-  * PPI-559 Fix webhooks on Magento 2.3.0
-  * Restrict to 2.3.0 due to breaking changes required by Magento
-
-4.4.3 / 2018-10-09
-==================
-
-  * PPI-559 Fix webhooks on Magento 2.3.0
-
-4.4.2 / 2018-09-27
-==================
-
-  * PPI-560 Fix validation message with html tags
-  * PPI-561 Fix composer requirements after 2.3.0 change
-  * PPI-563 Fix store lookup on cancel observer
-
 4.4.1 / 2018-08-31
 ==================
 

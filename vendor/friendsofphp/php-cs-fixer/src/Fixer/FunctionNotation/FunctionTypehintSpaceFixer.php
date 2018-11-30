@@ -30,7 +30,7 @@ final class FunctionTypehintSpaceFixer extends AbstractFixer
     {
         return new FixerDefinition(
             'Add missing space between function\'s argument and its typehint.',
-            [new CodeSample("<?php\nfunction sample(array\$a)\n{}\n")]
+            array(new CodeSample("<?php\nfunction sample(array\$a)\n{}"))
         );
     }
 
@@ -54,7 +54,7 @@ final class FunctionTypehintSpaceFixer extends AbstractFixer
                 continue;
             }
 
-            $startParenthesisIndex = $tokens->getNextTokenOfKind($index, ['(', ';', [T_CLOSE_TAG]]);
+            $startParenthesisIndex = $tokens->getNextTokenOfKind($index, array('(', ';', array(T_CLOSE_TAG)));
             if (!$tokens[$startParenthesisIndex]->equals('(')) {
                 continue;
             }
@@ -67,9 +67,11 @@ final class FunctionTypehintSpaceFixer extends AbstractFixer
                 }
 
                 // skip ... before $variable for variadic parameter
-                $prevNonWhitespaceIndex = $tokens->getPrevNonWhitespace($iter);
-                if ($tokens[$prevNonWhitespaceIndex]->isGivenKind(T_ELLIPSIS)) {
-                    $iter = $prevNonWhitespaceIndex;
+                if (defined('T_ELLIPSIS')) {
+                    $prevNonWhitespaceIndex = $tokens->getPrevNonWhitespace($iter);
+                    if ($tokens[$prevNonWhitespaceIndex]->isGivenKind(T_ELLIPSIS)) {
+                        $iter = $prevNonWhitespaceIndex;
+                    }
                 }
 
                 // skip & before $variable for parameter passed by reference
@@ -78,8 +80,8 @@ final class FunctionTypehintSpaceFixer extends AbstractFixer
                     $iter = $prevNonWhitespaceIndex;
                 }
 
-                if (!$tokens[$iter - 1]->equalsAny([[T_WHITESPACE], [T_COMMENT], [T_DOC_COMMENT], '(', ','])) {
-                    $tokens->insertAt($iter, new Token([T_WHITESPACE, ' ']));
+                if (!$tokens[$iter - 1]->equalsAny(array(array(T_WHITESPACE), array(T_COMMENT), array(T_DOC_COMMENT), '(', ','))) {
+                    $tokens->insertAt($iter, new Token(array(T_WHITESPACE, ' ')));
                 }
             }
         }

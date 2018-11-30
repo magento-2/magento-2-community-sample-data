@@ -53,19 +53,6 @@
                                                                                 </item>
                                                                             </item>
                                                                         </item>
-                                                                        <item name="click-and-collect-container" xsi:type="array">
-                                                                            <item name="component" xsi:type="string">uiComponent</item>
-                                                                            <item name="displayArea" xsi:type="string">click-and-collect-form</item>
-                                                                            <item name="children" xsi:type="array">
-                                                                                <item name="pickup-locations-block-container" xsi:type="array">
-                                                                                    <item name="component" xsi:type="string">Temando_Shipping/js/view/checkout/shipping/pickup-locations-form</item>
-                                                                                    <item name="provider" xsi:type="string">checkoutProvider</item>
-                                                                                    <item name="config" xsi:type="array">
-                                                                                        <item name="template" xsi:type="string">Temando_Shipping/checkout/shipping/pickup-locations-form</item>
-                                                                                    </item>
-                                                                                </item>
-                                                                            </item>
-                                                                        </item>
                                                                     </item>
                                                                 </item>
                                                             </item>

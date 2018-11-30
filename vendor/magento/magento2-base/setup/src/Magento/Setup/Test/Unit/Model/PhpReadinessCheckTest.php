@@ -413,6 +413,7 @@ namespace Magento\Setup\Model;
 
 /**
  * @param $param
+ *
  * @return int|string
  */
 function ini_get($param)

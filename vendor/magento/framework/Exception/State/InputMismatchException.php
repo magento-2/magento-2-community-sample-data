@@ -11,7 +11,6 @@ use Magento\Framework\Exception\StateException;
 
 /**
  * @api
- * @since 100.0.2
  */
 class InputMismatchException extends StateException
 {

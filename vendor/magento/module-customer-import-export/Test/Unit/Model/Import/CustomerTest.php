@@ -4,6 +4,8 @@
  * See COPYING.txt for license details.
  */
 
+// @codingStandardsIgnoreFile
+
 /**
  * Test class for \Magento\CustomerImportExport\Model\Import\Customer
  */
@@ -91,15 +93,11 @@ class CustomerTest extends \PHPUnit\Framework\TestCase
                     '_saveCustomerAttributes',
                     '_deleteCustomerEntities',
                     'getErrorAggregator',
-                    'getCustomerStorage',
-                ]
-            )
+                    'getCustomerStorage'
+                ])
             ->getMock();
 
-        $errorAggregator = $this->createPartialMock(
-            \Magento\ImportExport\Model\Import\ErrorProcessing\ProcessingErrorAggregator::class,
-            ['hasToBeTerminated']
-        );
+        $errorAggregator = $this->createPartialMock(\Magento\ImportExport\Model\Import\ErrorProcessing\ProcessingErrorAggregator::class, ['hasToBeTerminated']);
 
         $availableBehaviors = new \ReflectionProperty($modelMock, '_availableBehaviors');
         $availableBehaviors->setAccessible(true);
@@ -109,9 +107,9 @@ class CustomerTest extends \PHPUnit\Framework\TestCase
         $dataSourceModelMock = $this->getMockBuilder(\Magento\ImportExport\Model\ResourceModel\Import\Data::class)
             ->disableOriginalConstructor()
             ->setMethods([
-                    'getNextBunch',
-                    '__wakeup',
-                ])
+                'getNextBunch',
+                '__wakeup',
+            ])
             ->getMock();
 
         $dataSourceModelMock->expects($this->at(0))

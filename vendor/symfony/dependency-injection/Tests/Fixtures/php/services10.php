@@ -19,16 +19,11 @@ class ProjectServiceContainer extends Container
     private $parameters;
     private $targetDirs = array();
 
-    /**
-     * @internal but protected for BC on cache:clear
-     */
-    protected $privates = array();
-
     public function __construct()
     {
         $this->parameters = $this->getDefaultParameters();
 
-        $this->services = $this->privates = array();
+        $this->services = array();
         $this->methodMap = array(
             'test' => 'getTestService',
         );
@@ -36,28 +31,30 @@ class ProjectServiceContainer extends Container
         $this->aliases = array();
     }
 
-    public function reset()
-    {
-        $this->privates = array();
-        parent::reset();
-    }
-
+    /**
+     * {@inheritdoc}
+     */
     public function compile()
     {
         throw new LogicException('You cannot compile a dumped container that was already compiled.');
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function isCompiled()
     {
         return true;
     }
 
-    public function getRemovedIds()
+    /**
+     * {@inheritdoc}
+     */
+    public function isFrozen()
     {
-        return array(
-            'Psr\\Container\\ContainerInterface' => true,
-            'Symfony\\Component\\DependencyInjection\\ContainerInterface' => true,
-        );
+        @trigger_error(sprintf('The %s() method is deprecated since Symfony 3.3 and will be removed in 4.0. Use the isCompiled() method instead.', __METHOD__), E_USER_DEPRECATED);
+
+        return true;
     }
 
     /**
@@ -70,11 +67,14 @@ class ProjectServiceContainer extends Container
         return $this->services['test'] = new \stdClass(array('only dot' => '.', 'concatenation as value' => '.\'\'.', 'concatenation from the start value' => '\'\'.', '.' => 'dot as a key', '.\'\'.' => 'concatenation as a key', '\'\'.' => 'concatenation from the start key', 'optimize concatenation' => 'string1-string2', 'optimize concatenation with empty string' => 'string1string2', 'optimize concatenation from the start' => 'start', 'optimize concatenation at the end' => 'end', 'new line' => 'string with '."\n".'new line'));
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function getParameter($name)
     {
-        $name = (string) $name;
+        $name = strtolower($name);
 
-        if (!(isset($this->parameters[$name]) || isset($this->loadedDynamicParameters[$name]) || array_key_exists($name, $this->parameters))) {
+        if (!(isset($this->parameters[$name]) || array_key_exists($name, $this->parameters) || isset($this->loadedDynamicParameters[$name]))) {
             throw new InvalidArgumentException(sprintf('The parameter "%s" must be defined.', $name));
         }
         if (isset($this->loadedDynamicParameters[$name])) {
@@ -84,18 +84,27 @@ class ProjectServiceContainer extends Container
         return $this->parameters[$name];
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function hasParameter($name)
     {
-        $name = (string) $name;
+        $name = strtolower($name);
 
-        return isset($this->parameters[$name]) || isset($this->loadedDynamicParameters[$name]) || array_key_exists($name, $this->parameters);
+        return isset($this->parameters[$name]) || array_key_exists($name, $this->parameters) || isset($this->loadedDynamicParameters[$name]);
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function setParameter($name, $value)
     {
         throw new LogicException('Impossible to call set() on a frozen ParameterBag.');
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function getParameterBag()
     {
         if (null === $this->parameterBag) {
@@ -115,7 +124,7 @@ class ProjectServiceContainer extends Container
     /**
      * Computes a dynamic parameter.
      *
-     * @param string $name The name of the dynamic parameter to load
+     * @param string The name of the dynamic parameter to load
      *
      * @return mixed The value of the dynamic parameter
      *

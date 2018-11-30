@@ -34,8 +34,7 @@ $batch = $viewModel->getBatch();
                 <?php if ($failedShipmentCount) : ?>
                     <tr>
                         <th><?= $block->escapeHtml(__('Number of Shipments failed to book')); ?></th>
-                        <td>
-                            <?= /* @noEscape */ $failedShipmentCount ?>
+                        <td><?= /* @noEscape */ $failedShipmentCount ?>
                             <a href="<?= $block->escapeUrl($viewModel->getSolveUrl()); ?>">
                                 <?= $block->escapeHtml(__('Find Solutions')); ?>
                             </a>
@@ -94,7 +93,7 @@ $batch = $viewModel->getBatch();
                 <tbody>
                 <?php foreach ($batch->getIncludedShipments() as $includedShipment) : ?>
                     <?php $shipmentInfo = $viewModel->getShipmentInfoForGrid($includedShipment->getShipmentId())?>
-                    <?php if ($shipmentInfo->getData('shipment_id')) : ?>
+                     <?php if ($shipmentInfo->getData('shipment_id')) : ?>
                         <tr class="data-row">
                             <td><?= $block->escapeHtml($shipmentInfo->getData('shipment_id')) ?></td>
                             <td><?= $block->escapeHtml($shipmentInfo->getData('ship_to_name')) ?></td>

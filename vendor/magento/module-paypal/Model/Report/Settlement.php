@@ -4,6 +4,8 @@
  * See COPYING.txt for license details.
  */
 
+// @codingStandardsIgnoreFile
+
 namespace Magento\Paypal\Model\Report;
 
 use DateTime;
@@ -309,10 +311,15 @@ class Settlement extends \Magento\Framework\Model\AbstractModel
      */
     public static function createConnection(array $config)
     {
-        if (!isset($config['hostname'])
-            || !isset($config['username'])
-            || !isset($config['password'])
-            || !isset($config['path'])
+        if (!isset(
+                $config['hostname']
+            ) || !isset(
+                $config['username']
+            ) || !isset(
+                $config['password']
+            ) || !isset(
+                $config['path']
+            )
         ) {
             throw new \InvalidArgumentException('Required config elements: hostname, username, password, path');
         }
@@ -409,8 +416,9 @@ class Settlement extends \Magento\Framework\Model\AbstractModel
     private function getBodyItems(array $line, array $sectionColumns, array $rowMap)
     {
         $bodyItem = [];
-        for ($i = 1, $count = count($line); $i < $count; $i++) {
-            if (isset($rowMap[$sectionColumns[$i]])) {
+        $lineCount = count($line);
+        for ($i = 1, $count = $lineCount; $i < $count; $i++) {
+            if(isset($rowMap[$sectionColumns[$i]])) {
                 if (in_array($rowMap[$sectionColumns[$i]], $this->dateTimeColumns)) {
                     $line[$i] = $this->formatDateTimeColumns($line[$i]);
                 }

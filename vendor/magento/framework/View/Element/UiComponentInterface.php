@@ -11,7 +11,6 @@ use Magento\Framework\View\Element\UiComponent\ContextInterface;
  * Interface UiComponentInterface
  *
  * @api
- * @since 100.0.2
  */
 interface UiComponentInterface extends BlockInterface
 {

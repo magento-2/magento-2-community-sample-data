@@ -46,7 +46,7 @@ trait loadTasks
     /**
      * @param null|string $pathToComposer
      *
-     * @return Config
+     * @return Init
      */
     protected function taskComposerConfig($pathToComposer = null)
     {
@@ -76,7 +76,7 @@ trait loadTasks
     /**
      * @param null|string $pathToComposer
      *
-     * @return RequireDependency
+     * @return Remove
      */
     protected function taskComposerRequire($pathToComposer = null)
     {
@@ -86,7 +86,7 @@ trait loadTasks
     /**
      * @param null|string $pathToComposer
      *
-     * @return CreateProject
+     * @return Remove
      */
     protected function taskComposerCreateProject($pathToComposer = null)
     {

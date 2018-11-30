@@ -24,7 +24,6 @@ use Magento\Store\Model\Store;
 use Magento\Store\Model\StoreManagerInterface;
 use Magento\Ui\Component\Form\Field;
 use Magento\Ui\DataProvider\EavValidationRules;
-use Magento\Ui\DataProvider\Modifier\PoolInterface;
 
 /**
  * Class DataProvider
@@ -34,7 +33,7 @@ use Magento\Ui\DataProvider\Modifier\PoolInterface;
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  * @since 101.0.0
  */
-class DataProvider extends \Magento\Ui\DataProvider\ModifierPoolDataProvider
+class DataProvider extends \Magento\Ui\DataProvider\AbstractDataProvider
 {
     /**
      * @var string
@@ -161,7 +160,6 @@ class DataProvider extends \Magento\Ui\DataProvider\ModifierPoolDataProvider
      * @param CategoryFactory $categoryFactory
      * @param array $meta
      * @param array $data
-     * @param PoolInterface|null $pool
      * @SuppressWarnings(PHPMD.ExcessiveParameterList)
      */
     public function __construct(
@@ -176,8 +174,7 @@ class DataProvider extends \Magento\Ui\DataProvider\ModifierPoolDataProvider
         \Magento\Framework\App\RequestInterface $request,
         CategoryFactory $categoryFactory,
         array $meta = [],
-        array $data = [],
-        PoolInterface $pool = null
+        array $data = []
     ) {
         $this->eavValidationRules = $eavValidationRules;
         $this->collection = $categoryCollectionFactory->create();
@@ -188,12 +185,12 @@ class DataProvider extends \Magento\Ui\DataProvider\ModifierPoolDataProvider
         $this->request = $request;
         $this->categoryFactory = $categoryFactory;
 
-        parent::__construct($name, $primaryFieldName, $requestFieldName, $meta, $data, $pool);
+        parent::__construct($name, $primaryFieldName, $requestFieldName, $meta, $data);
     }
 
     /**
      * @inheritdoc
-     * @since 102.0.0
+     * @since 101.1.0
      */
     public function getMeta()
     {
@@ -205,7 +202,7 @@ class DataProvider extends \Magento\Ui\DataProvider\ModifierPoolDataProvider
         if ($category) {
             $meta = $this->addUseDefaultValueCheckbox($category, $meta);
         }
-        // Default and custom settings
+
         return $meta;
     }
 
@@ -308,7 +305,6 @@ class DataProvider extends \Magento\Ui\DataProvider\ModifierPoolDataProvider
 
             $this->loadedData[$category->getId()] = $categoryData;
         }
-
         return $this->loadedData;
     }
 
@@ -392,7 +388,7 @@ class DataProvider extends \Magento\Ui\DataProvider\ModifierPoolDataProvider
      * @param \Magento\Catalog\Model\Category $category
      * @param array $categoryData
      * @return array
-     * @deprecated 102.0.0
+     * @deprecated 101.1.0
      * @since 101.0.0
      */
     protected function addUseDefaultSettings($category, $categoryData)
@@ -492,20 +488,12 @@ class DataProvider extends \Magento\Ui\DataProvider\ModifierPoolDataProvider
                 unset($categoryData[$attributeCode]);
 
                 $fileName = $category->getData($attributeCode);
-                $fileInfo = $this->getFileInfo();
+                if ($this->getFileInfo()->isExist($fileName)) {
+                    $stat = $this->getFileInfo()->getStat($fileName);
+                    $mime = $this->getFileInfo()->getMimeType($fileName);
 
-                if ($fileInfo->isExist($fileName)) {
-                    $stat = $fileInfo->getStat($fileName);
-                    $mime = $fileInfo->getMimeType($fileName);
-
-                    $categoryData[$attributeCode][0]['name'] = basename($fileName);
-
-                    if ($fileInfo->isBeginsWithMediaDirectoryPath($fileName)) {
-                        $categoryData[$attributeCode][0]['url'] = $fileName;
-                    } else {
-                        $categoryData[$attributeCode][0]['url'] = $category->getImageUrl($attributeCode);
-                    }
-
+                    $categoryData[$attributeCode][0]['name'] = $fileName;
+                    $categoryData[$attributeCode][0]['url'] = $category->getImageUrl($attributeCode);
                     $categoryData[$attributeCode][0]['size'] = isset($stat) ? $stat['size'] : 0;
                     $categoryData[$attributeCode][0]['type'] = $mime;
                 }
@@ -593,7 +581,7 @@ class DataProvider extends \Magento\Ui\DataProvider\ModifierPoolDataProvider
      * Retrieve scope overridden value
      *
      * @return ScopeOverriddenValue
-     * @deprecated 102.0.0
+     * @deprecated 101.1.0
      */
     private function getScopeOverriddenValue()
     {
@@ -610,7 +598,7 @@ class DataProvider extends \Magento\Ui\DataProvider\ModifierPoolDataProvider
      * Retrieve array manager
      *
      * @return ArrayManager
-     * @deprecated 102.0.0
+     * @deprecated 101.1.0
      */
     private function getArrayManager()
     {
@@ -628,7 +616,7 @@ class DataProvider extends \Magento\Ui\DataProvider\ModifierPoolDataProvider
      *
      * @return FileInfo
      *
-     * @deprecated 102.0.0
+     * @deprecated 101.1.0
      */
     private function getFileInfo()
     {

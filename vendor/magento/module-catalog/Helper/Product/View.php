@@ -4,6 +4,8 @@
  * See COPYING.txt for license details.
  */
 
+// @codingStandardsIgnoreFile
+
 namespace Magento\Catalog\Helper\Product;
 
 use Magento\Framework\View\Result\Page as ResultPage;
@@ -109,7 +111,6 @@ class View extends \Magento\Framework\App\Helper\AbstractHelper
      */
     private function preparePageMetadata(ResultPage $resultPage, $product)
     {
-        $pageLayout = $resultPage->getLayout();
         $pageConfig = $resultPage->getConfig();
 
         $metaTitle = $product->getMetaTitle();
@@ -139,7 +140,7 @@ class View extends \Magento\Framework\App\Helper\AbstractHelper
             );
         }
 
-        $pageMainTitle = $pageLayout->getBlock('page.main.title');
+        $pageMainTitle = $resultPage->getLayout()->getBlock('page.main.title');
         if ($pageMainTitle) {
             $pageMainTitle->setPageTitle($product->getName());
         }

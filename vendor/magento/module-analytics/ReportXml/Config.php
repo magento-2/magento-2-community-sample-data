@@ -8,6 +8,8 @@ namespace Magento\Analytics\ReportXml;
 use Magento\Framework\Config\DataInterface;
 
 /**
+ * Class Config
+ *
  * Config of ReportXml
  */
 class Config implements ConfigInterface

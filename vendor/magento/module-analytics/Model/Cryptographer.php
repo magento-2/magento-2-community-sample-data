@@ -56,18 +56,13 @@ class Cryptographer
             try {
                 $source = (string)$source;
             } catch (\Exception $e) {
-                throw new LocalizedException(
-                    __(
-                        'The data is invalid. '
-                        . 'Enter the data as a string or data that can be converted into a string and try again.'
-                    )
-                );
+                throw new LocalizedException(__('Input data must be string or convertible into string.'));
             }
         } elseif (!$source) {
-            throw new LocalizedException(__('The data is invalid. Enter the data as a string and try again.'));
+            throw new LocalizedException(__('Input data must be non-empty string.'));
         }
         if (!$this->validateCipherMethod($this->cipherMethod)) {
-            throw new LocalizedException(__('The data is invalid. Use a valid cipher method and try again.'));
+            throw new LocalizedException(__('Not valid cipher method.'));
         }
         $initializationVector = $this->getInitializationVector();
 
@@ -95,7 +90,7 @@ class Cryptographer
     {
         $token = $this->analyticsToken->getToken();
         if (!$token) {
-            throw new LocalizedException(__('Enter the encryption key and try again.'));
+            throw new LocalizedException(__('Encryption key can\'t be empty.'));
         }
         return hash('sha256', $token);
     }

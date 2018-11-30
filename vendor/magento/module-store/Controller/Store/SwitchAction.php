@@ -15,13 +15,13 @@ use Magento\Framework\Exception\NoSuchEntityException;
 use Magento\Store\Api\StoreCookieManagerInterface;
 use Magento\Store\Api\StoreRepositoryInterface;
 use Magento\Store\Model\StoreIsInactiveException;
+use Magento\Store\Model\StoreResolver;
 use Magento\Store\Model\StoreManagerInterface;
 use Magento\Store\Model\StoreSwitcher;
 use Magento\Store\Model\StoreSwitcherInterface;
 
 /**
  * Handles store switching url and makes redirect.
- *
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  */
 class SwitchAction extends Action
@@ -33,7 +33,7 @@ class SwitchAction extends Action
 
     /**
      * @var HttpContext
-     * @deprecated 100.2.5
+     * @deprecated
      */
     protected $httpContext;
 
@@ -44,7 +44,7 @@ class SwitchAction extends Action
 
     /**
      * @var StoreManagerInterface
-     * @deprecated 100.2.5
+     * @deprecated
      */
     protected $storeManager;
 
@@ -77,19 +77,17 @@ class SwitchAction extends Action
         $this->storeRepository = $storeRepository;
         $this->storeManager = $storeManager;
         $this->messageManager = $context->getMessageManager();
-        $this->storeSwitcher = $storeSwitcher ?: ObjectManager::getInstance()->get(StoreSwitcherInterface::class);
+        $this->storeSwitcher = $storeSwitcher ?: ObjectManager::getInstance()->get(StoreSwitcher::class);
     }
 
     /**
-     * Execute action
-     *
      * @return void
      * @throws StoreSwitcher\CannotSwitchStoreException
      */
     public function execute()
     {
         $targetStoreCode = $this->_request->getParam(
-            \Magento\Store\Model\StoreManagerInterface::PARAM_NAME,
+            StoreResolver::PARAM_NAME,
             $this->storeCookieManager->getStoreCodeFromCookie()
         );
         $fromStoreCode = $this->_request->getParam('___from_store');
@@ -104,7 +102,7 @@ class SwitchAction extends Action
         } catch (StoreIsInactiveException $e) {
             $error = __('Requested store is inactive');
         } catch (NoSuchEntityException $e) {
-            $error = __("The store that was requested wasn't found. Verify the store and try again.");
+            $error = __('Requested store is not found');
         }
         if ($error !== null) {
             $this->messageManager->addErrorMessage($error);

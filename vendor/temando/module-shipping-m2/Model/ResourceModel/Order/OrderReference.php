@@ -11,10 +11,10 @@ use Temando\Shipping\Setup\SetupSchema;
 /**
  * Temando Order Reference Resource Model
  *
- * @package Temando\Shipping\Model
- * @author  Christoph Aßmann <christoph.assmann@netresearch.de>
- * @license https://opensource.org/licenses/osl-3.0.php Open Software License (OSL 3.0)
- * @link    https://www.temando.com/
+ * @package  Temando\Shipping\Model
+ * @author   Christoph Aßmann <christoph.assmann@netresearch.de>
+ * @license  http://opensource.org/licenses/osl-3.0.php Open Software License (OSL 3.0)
+ * @link     http://www.temando.com/
  */
 class OrderReference extends AbstractDb
 {
@@ -28,8 +28,6 @@ class OrderReference extends AbstractDb
     }
 
     /**
-     * Read entity id by using sales order id.
-     *
      * @param int $orderId
      * @return string
      */
@@ -49,8 +47,6 @@ class OrderReference extends AbstractDb
     }
 
     /**
-     * Read entity id by using platform order id.
-     *
      * @param string $extOrderId
      * @return string
      */
@@ -70,8 +66,6 @@ class OrderReference extends AbstractDb
     }
 
     /**
-     * Read sales order id by using platform order id.
-     *
      * @param string $extOrderId
      * @return string
      */
@@ -86,27 +80,6 @@ class OrderReference extends AbstractDb
             ->where('ext_order_id = :ext_order_id');
 
         $bind  = [':ext_order_id' => (string)$extOrderId];
-
-        return $connection->fetchOne($select, $bind);
-    }
-
-    /**
-     * Read platform order id by using sales order id.
-     *
-     * @param string $orderId
-     * @return string
-     */
-    public function getExtOrderIdByOrderId($orderId)
-    {
-        $connection = $this->getConnection();
-        $tableName  = $this->getMainTable();
-        $table      = $this->getTable($tableName);
-
-        $select = $connection->select()
-            ->from($table, OrderReferenceInterface::EXT_ORDER_ID)
-            ->where('order_id = :order_id');
-
-        $bind  = [':order_id' => (string)$orderId];
 
         return $connection->fetchOne($select, $bind);
     }

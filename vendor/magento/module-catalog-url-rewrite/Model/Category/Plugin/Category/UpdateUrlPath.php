@@ -3,8 +3,6 @@
  * Copyright © Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
-declare(strict_types=1);
-
 namespace Magento\CatalogUrlRewrite\Model\Category\Plugin\Category;
 
 use Magento\Framework\Model\AbstractModel;
@@ -17,7 +15,7 @@ use Magento\Store\Model\Store;
 use Magento\Catalog\Model\ResourceModel\Category as CategoryResource;
 
 /**
- * Generate and save url-rewrites for category if its parent have specified url-key for different store views.
+ * Generate and save url-rewrites for category if its parent have specified url-key for different store views
  */
 class UpdateUrlPath
 {
@@ -60,7 +58,7 @@ class UpdateUrlPath
     }
 
     /**
-     * Perform url updating for different stores.
+     * Perform url updating for different stores
      *
      * @param CategoryResource $subject
      * @param CategoryResource $result
@@ -72,14 +70,13 @@ class UpdateUrlPath
         CategoryResource $subject,
         CategoryResource $result,
         AbstractModel $category
-    ): CategoryResource {
+    ) {
         $parentCategoryId = $category->getParentId();
         if ($category->isObjectNew()
             && !$category->isInRootCategoryList()
-            && !empty($parentCategoryId)
-        ) {
+            && !empty($parentCategoryId)) {
             foreach ($category->getStoreIds() as $storeId) {
-                if (!$this->isGlobalScope((int)$storeId)
+                if (!$this->isGlobalScope($storeId)
                     && $this->storeViewService->doesEntityHaveOverriddenUrlPathForStore(
                         $storeId,
                         $parentCategoryId,
@@ -92,29 +89,25 @@ class UpdateUrlPath
                 }
             }
         }
-
         return $result;
     }
 
     /**
-     * Check that store id is in global scope.
+     * Check that store id is in global scope
      *
-     * @param int $storeId
+     * @param int|null $storeId
      * @return bool
      */
     private function isGlobalScope(int $storeId): bool
     {
-        return $storeId === Store::DEFAULT_STORE_ID;
+        return null === $storeId || $storeId === Store::DEFAULT_STORE_ID;
     }
 
     /**
-     * Updates category url path.
-     *
      * @param Category $category
-     * @param CategoryResource $categoryResource
-     * @return void
+     * @param \Magento\Catalog\Model\ResourceModel\Category $categoryResource
      */
-    private function updateUrlPathForCategory(Category $category, CategoryResource $categoryResource): void
+    private function updateUrlPathForCategory(Category $category, CategoryResource $categoryResource)
     {
         $category->unsUrlPath();
         $category->setUrlPath($this->categoryUrlPathGenerator->getUrlPath($category));

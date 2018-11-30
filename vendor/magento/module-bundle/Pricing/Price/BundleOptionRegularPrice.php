@@ -10,15 +10,14 @@ namespace Magento\Bundle\Pricing\Price;
 use Magento\Bundle\Pricing\Adjustment\BundleCalculatorInterface;
 use Magento\Catalog\Model\Product;
 use Magento\Framework\Pricing\Price\AbstractPrice;
-use Magento\Framework\Pricing\PriceCurrencyInterface;
 
 /**
- * Bundle option price model with final price.
+ * Bundle option price model with final price
  */
 class BundleOptionRegularPrice extends AbstractPrice implements BundleOptionPriceInterface
 {
     /**
-     * Price model code.
+     * Price model code
      */
     const PRICE_CODE = 'bundle_option_regular_price';
 
@@ -28,7 +27,7 @@ class BundleOptionRegularPrice extends AbstractPrice implements BundleOptionPric
     protected $calculator;
 
     /**
-     * @var BundleOptions
+     * @var \Magento\Bundle\Pricing\Price\BundleOptions
      */
     private $bundleOptions;
 
@@ -36,14 +35,14 @@ class BundleOptionRegularPrice extends AbstractPrice implements BundleOptionPric
      * @param Product $saleableItem
      * @param float $quantity
      * @param BundleCalculatorInterface $calculator
-     * @param PriceCurrencyInterface $priceCurrency
+     * @param \Magento\Framework\Pricing\PriceCurrencyInterface $priceCurrency
      * @param BundleOptions $bundleOptions
      */
     public function __construct(
         Product $saleableItem,
         $quantity,
         BundleCalculatorInterface $calculator,
-        PriceCurrencyInterface $priceCurrency,
+        \Magento\Framework\Pricing\PriceCurrencyInterface $priceCurrency,
         BundleOptions $bundleOptions
     ) {
         parent::__construct($saleableItem, $quantity, $calculator, $priceCurrency);
@@ -59,27 +58,26 @@ class BundleOptionRegularPrice extends AbstractPrice implements BundleOptionPric
         if (null === $this->value) {
             $this->value = $this->bundleOptions->calculateOptions($this->product);
         }
-
         return $this->value;
     }
 
     /**
-     * Get Options with attached Selections collection.
+     * Get Options with attached Selections collection
      *
      * @return \Magento\Bundle\Model\ResourceModel\Option\Collection
      */
-    public function getOptions() : \Magento\Bundle\Model\ResourceModel\Option\Collection
+    public function getOptions()
     {
         return $this->bundleOptions->getOptions($this->product);
     }
 
     /**
-     * Get selection amount.
+     * Get selection amount
      *
      * @param \Magento\Bundle\Model\Selection $selection
      * @return \Magento\Framework\Pricing\Amount\AmountInterface
      */
-    public function getOptionSelectionAmount($selection) : \Magento\Framework\Pricing\Amount\AmountInterface
+    public function getOptionSelectionAmount($selection)
     {
         return $this->bundleOptions->getOptionSelectionAmount(
             $this->product,
@@ -89,11 +87,11 @@ class BundleOptionRegularPrice extends AbstractPrice implements BundleOptionPric
     }
 
     /**
-     * Get minimal amount of bundle price with options.
+     * Get minimal amount of bundle price with options
      *
      * @return \Magento\Framework\Pricing\Amount\AmountInterface
      */
-    public function getAmount() : \Magento\Framework\Pricing\Amount\AmountInterface
+    public function getAmount()
     {
         return $this->calculator->getOptionsAmount($this->product);
     }

@@ -76,18 +76,18 @@ class Options extends Section
     protected $staticDataRow = '[data-index="container_type_static"] div:nth-child(%d)';
 
     /**
-     * Locator for file_extension field.
-     *
-     * @var string
-     */
-    private $hintMessage = "div[data-index='file_extension'] div[id^='notice']";
-
-    /**
      * Sort rows data.
      *
      * @var array
      */
     protected $sortRowsData = [];
+
+    /**
+     * Locator for file_extension field.
+     *
+     * @var string
+     */
+    private $hintMessage = "div[data-index='file_extension'] div[id^='notice']";
 
     /**
      * Fill custom options form on tab.
@@ -347,8 +347,7 @@ class Options extends Section
     {
         $option = substr($inputType, strpos($inputType, "/") + 1);
         $option = str_replace([' ', '&'], "", $option);
-        $end = strpos($option, '-');
-        if ($end !== false) {
+        if ($end = strpos($option, '-')) {
             $option = substr($option, 0, $end) . ucfirst(substr($option, ($end + 1)));
         }
 

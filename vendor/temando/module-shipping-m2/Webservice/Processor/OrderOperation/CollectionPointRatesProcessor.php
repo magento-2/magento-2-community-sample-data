@@ -6,12 +6,13 @@ namespace Temando\Shipping\Webservice\Processor\OrderOperation;
 
 use Magento\Framework\Api\SearchCriteriaBuilder;
 use Magento\Quote\Model\Quote\Address\RateRequest;
-use Temando\Shipping\Api\Data\Delivery\QuoteCollectionPointInterface;
+use Temando\Shipping\Api\Data\CollectionPoint\QuoteCollectionPointInterface;
 use Temando\Shipping\Api\Data\Order\ShippingExperienceInterface;
 use Temando\Shipping\Api\Data\Order\ShippingExperienceInterfaceFactory;
 use Temando\Shipping\Model\OrderInterface;
-use Temando\Shipping\Model\ResourceModel\Delivery\CollectionPointSearchResult;
+use Temando\Shipping\Model\ResourceModel\CollectionPoint\CollectionPointSearchResult;
 use Temando\Shipping\Model\ResourceModel\Repository\QuoteCollectionPointRepositoryInterface;
+use Temando\Shipping\Model\Shipping\RateRequest\Extractor;
 use Temando\Shipping\Webservice\Response\Type\OrderResponseTypeInterface;
 
 /**
@@ -21,11 +22,16 @@ use Temando\Shipping\Webservice\Response\Type\OrderResponseTypeInterface;
  *
  * @package Temando\Shipping\Webservice
  * @author  Christoph Aßmann <christoph.assmann@netresearch.de>
- * @license https://opensource.org/licenses/osl-3.0.php Open Software License (OSL 3.0)
- * @link    https://www.temando.com/
+ * @license http://opensource.org/licenses/osl-3.0.php Open Software License (OSL 3.0)
+ * @link    http://www.temando.com/
  */
 class CollectionPointRatesProcessor implements RatesProcessorInterface
 {
+    /**
+     * @var Extractor
+     */
+    private $rateRequestExtractor;
+
     /**
      * @var SearchCriteriaBuilder
      */
@@ -43,22 +49,25 @@ class CollectionPointRatesProcessor implements RatesProcessorInterface
 
     /**
      * CollectionPointRatesProcessor constructor.
+     * @param Extractor $rateRequestExtractor
      * @param SearchCriteriaBuilder $searchCriteriaBuilder
      * @param QuoteCollectionPointRepositoryInterface $collectionPointRepository
      * @param ShippingExperienceInterfaceFactory $shippingExperienceFactory
      */
     public function __construct(
+        Extractor $rateRequestExtractor,
         SearchCriteriaBuilder $searchCriteriaBuilder,
         QuoteCollectionPointRepositoryInterface $collectionPointRepository,
         ShippingExperienceInterfaceFactory $shippingExperienceFactory
     ) {
+        $this->rateRequestExtractor = $rateRequestExtractor;
         $this->searchCriteriaBuilder = $searchCriteriaBuilder;
         $this->collectionPointRepository = $collectionPointRepository;
         $this->shippingExperienceFactory = $shippingExperienceFactory;
     }
 
     /**
-     * Load shipping experiences for the selected collection point.
+     * Extract collection point shipping experiences from response.
      *
      * @param RateRequest $rateRequest
      * @param OrderInterface $requestType
@@ -70,19 +79,20 @@ class CollectionPointRatesProcessor implements RatesProcessorInterface
         OrderInterface $requestType,
         OrderResponseTypeInterface $responseType
     ) {
-        $collectionPoint = $requestType->getCollectionPoint();
-        if ($collectionPoint === null) {
+        $collectionPointId = $requestType->getCollectionPoint()->getCollectionPointId();
+        if (!$collectionPointId) {
             // no selected collection point in request
             return [];
         }
 
+        $shippingAddress = $this->rateRequestExtractor->getShippingAddress($rateRequest);
         $this->searchCriteriaBuilder->addFilter(
             QuoteCollectionPointInterface::RECIPIENT_ADDRESS_ID,
-            $collectionPoint->getRecipientAddressId()
+            $shippingAddress->getId()
         );
         $this->searchCriteriaBuilder->addFilter(
             QuoteCollectionPointInterface::COLLECTION_POINT_ID,
-            $collectionPoint->getCollectionPointId()
+            $collectionPointId
         );
         $this->searchCriteriaBuilder->setPageSize(1);
         $this->searchCriteriaBuilder->setCurrentPage(1);

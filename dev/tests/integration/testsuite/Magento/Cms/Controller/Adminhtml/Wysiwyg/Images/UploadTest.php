@@ -26,11 +26,6 @@ class UploadTest extends \PHPUnit\Framework\TestCase
     /**
      * @var string
      */
-    private $fullDirectoryPath;
-
-    /**
-     * @var string
-     */
     private $fileName = 'magento_small_image.jpg';
 
     /**
@@ -49,13 +44,8 @@ class UploadTest extends \PHPUnit\Framework\TestCase
     protected function setUp()
     {
         $this->objectManager = \Magento\TestFramework\Helper\Bootstrap::getObjectManager();
-        $directoryName = 'directory1';
         $this->filesystem = $this->objectManager->get(\Magento\Framework\Filesystem::class);
-        /** @var \Magento\Cms\Helper\Wysiwyg\Images $imagesHelper */
-        $imagesHelper = $this->objectManager->get(\Magento\Cms\Helper\Wysiwyg\Images::class);
         $this->mediaDirectory = $this->filesystem->getDirectoryWrite(DirectoryList::MEDIA);
-        $this->fullDirectoryPath = $imagesHelper->getStorageRoot() . DIRECTORY_SEPARATOR . $directoryName;
-        $this->mediaDirectory->create($this->mediaDirectory->getRelativePath($this->fullDirectoryPath));
         $this->model = $this->objectManager->get(\Magento\Cms\Controller\Adminhtml\Wysiwyg\Images\Upload::class);
         $fixtureDir = realpath(__DIR__ . '/../../../../../Catalog/_files');
         $tmpFile = $this->filesystem->getDirectoryRead(DirectoryList::PUB)->getAbsolutePath() . $this->fileName;
@@ -80,14 +70,19 @@ class UploadTest extends \PHPUnit\Framework\TestCase
      */
     public function testExecute()
     {
-        $this->model->getRequest()->setParams(['type' => 'image/png']);
-        $this->model->getStorage()->getSession()->setCurrentPath($this->fullDirectoryPath);
-        $this->model->execute();
+        $directoryName = 'directory1';
+        /** @var \Magento\Cms\Helper\Wysiwyg\Images $imagesHelper */
+        $imagesHelper = $this->objectManager->get(\Magento\Cms\Helper\Wysiwyg\Images::class);
+        $fullDirectoryPath = $imagesHelper->getStorageRoot() . DIRECTORY_SEPARATOR . $directoryName;
+        $this->mediaDirectory->create($this->mediaDirectory->getRelativePath($fullDirectoryPath));
 
+        $this->model->getRequest()->setParams(['type' => 'image/png']);
+        $this->model->getStorage()->getSession()->setCurrentPath($fullDirectoryPath);
+        $this->model->execute();
         $this->assertTrue(
             $this->mediaDirectory->isExist(
                 $this->mediaDirectory->getRelativePath(
-                    $this->fullDirectoryPath . DIRECTORY_SEPARATOR . $this->fileName
+                    $fullDirectoryPath . DIRECTORY_SEPARATOR . $this->fileName
                 )
             )
         );
@@ -110,42 +105,6 @@ class UploadTest extends \PHPUnit\Framework\TestCase
         $this->model->getStorage()->getSession()->setCurrentPath($wysiwygDir);
         $this->model->execute();
         $this->assertTrue(is_file($fullDirectoryPath . DIRECTORY_SEPARATOR . $this->fileName));
-    }
-
-    /**
-     * Execute method with traversal directory path to check that there is no ability to create file not
-     * under media directory.
-     *
-     * @return void
-     */
-    public function testExecuteWithWrongPath()
-    {
-        $dirPath = '/../../../etc/';
-        $this->model->getRequest()->setParams(['type' => 'image/png']);
-        $this->model->getStorage()->getSession()->setCurrentPath($dirPath);
-        $this->model->execute();
-
-        $this->assertFileNotExists(
-            $this->fullDirectoryPath . $dirPath . $this->fileName
-        );
-    }
-
-    /**
-     * Execute method with traversal file path to check that there is no ability to create file not
-     * under media directory.
-     *
-     * @return void
-     */
-    public function testExecuteWithWrongFileName()
-    {
-        $newFilename = '/../../../../etc/new_file.png';
-        $_FILES['image']['name'] = $newFilename;
-        $_FILES['image']['tmp_name'] = __DIR__ . DIRECTORY_SEPARATOR . $this->fileName;
-        $this->model->getRequest()->setParams(['type' => 'image/png']);
-        $this->model->getStorage()->getSession()->setCurrentPath($this->fullDirectoryPath);
-        $this->model->execute();
-
-        $this->assertFileNotExists($this->fullDirectoryPath . $newFilename);
     }
 
     /**

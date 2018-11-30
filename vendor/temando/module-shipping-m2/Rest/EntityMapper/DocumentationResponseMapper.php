@@ -6,7 +6,7 @@ namespace Temando\Shipping\Rest\EntityMapper;
 
 use Temando\Shipping\Model\DocumentationInterface;
 use Temando\Shipping\Model\DocumentationInterfaceFactory;
-use Temando\Shipping\Rest\Response\Fields\Generic\Documentation;
+use Temando\Shipping\Rest\Response\Type\Generic\Documentation;
 
 /**
  * Map API data to application data object

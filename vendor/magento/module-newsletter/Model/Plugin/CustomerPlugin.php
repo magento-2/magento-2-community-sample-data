@@ -11,6 +11,7 @@ use Magento\Newsletter\Model\SubscriberFactory;
 use Magento\Framework\Api\ExtensionAttributesFactory;
 use Magento\Newsletter\Model\ResourceModel\Subscriber;
 use Magento\Customer\Api\Data\CustomerExtensionInterface;
+use Magento\Framework\App\ObjectManager;
 
 class CustomerPlugin
 {
@@ -40,17 +41,18 @@ class CustomerPlugin
      * Initialize dependencies.
      *
      * @param SubscriberFactory $subscriberFactory
-     * @param ExtensionAttributesFactory $extensionFactory
-     * @param Subscriber $subscriberResource
+     * @param ExtensionAttributesFactory|null $extensionFactory
+     * @param Subscriber|null $subscriberResource
      */
     public function __construct(
         SubscriberFactory $subscriberFactory,
-        ExtensionAttributesFactory $extensionFactory,
-        Subscriber $subscriberResource
+        ExtensionAttributesFactory $extensionFactory = null,
+        Subscriber $subscriberResource = null
     ) {
         $this->subscriberFactory = $subscriberFactory;
-        $this->extensionFactory = $extensionFactory;
-        $this->subscriberResource = $subscriberResource;
+        $this->extensionFactory = $extensionFactory
+            ?: ObjectManager::getInstance()->get(ExtensionAttributesFactory::class);
+        $this->subscriberResource = $subscriberResource ?: ObjectManager::getInstance()->get(Subscriber::class);
     }
 
     /**
@@ -69,7 +71,6 @@ class CustomerPlugin
         $resultId = $result->getId();
         /** @var \Magento\Newsletter\Model\Subscriber $subscriber */
         $subscriber = $this->subscriberFactory->create();
-
         $subscriber->updateSubscription($resultId);
         // update the result only if the original customer instance had different value.
         $initialExtensionAttributes = $result->getExtensionAttributes();
@@ -78,22 +79,19 @@ class CustomerPlugin
             $initialExtensionAttributes = $this->extensionFactory->create(CustomerInterface::class);
             $result->setExtensionAttributes($initialExtensionAttributes);
         }
-
         $newExtensionAttributes = $customer->getExtensionAttributes();
         if ($newExtensionAttributes
             && $initialExtensionAttributes->getIsSubscribed() !== $newExtensionAttributes->getIsSubscribed()
         ) {
-            if ($newExtensionAttributes->getIsSubscribed()) {
+            if ($newExtensionAttributes->getIsSubscribed() === true) {
                 $subscriber->subscribeCustomerById($resultId);
-            } else {
+            } elseif ($newExtensionAttributes->getIsSubscribed() === false) {
                 $subscriber->unsubscribeCustomerById($resultId);
             }
         }
-
         $isSubscribed = $subscriber->isSubscribed();
         $this->customerSubscriptionStatus[$resultId] = $isSubscribed;
         $initialExtensionAttributes->setIsSubscribed($isSubscribed);
-
         return $result;
     }
 
@@ -151,7 +149,6 @@ class CustomerPlugin
     public function afterGetById(CustomerRepository $subject, CustomerInterface $customer)
     {
         $extensionAttributes = $customer->getExtensionAttributes();
-
         if ($extensionAttributes === null) {
             /** @var CustomerExtensionInterface $extensionAttributes */
             $extensionAttributes = $this->extensionFactory->create(CustomerInterface::class);
@@ -161,7 +158,6 @@ class CustomerPlugin
             $isSubscribed = $this->isSubscribed($customer);
             $extensionAttributes->setIsSubscribed($isSubscribed);
         }
-
         return $customer;
     }
 
@@ -169,7 +165,7 @@ class CustomerPlugin
      * This method returns newsletters subscription status for given customer.
      *
      * @param CustomerInterface $customer
-     * @return bool
+     * @return mixed
      */
     private function isSubscribed(CustomerInterface $customer)
     {
@@ -179,7 +175,6 @@ class CustomerPlugin
             $this->customerSubscriptionStatus[$customerId] = isset($subscriber['subscriber_status'])
                 && $subscriber['subscriber_status'] == 1;
         }
-
         return $this->customerSubscriptionStatus[$customerId];
     }
 }

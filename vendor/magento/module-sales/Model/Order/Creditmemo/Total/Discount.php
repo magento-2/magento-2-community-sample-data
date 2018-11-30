@@ -77,7 +77,7 @@ class Discount extends AbstractTotal
     }
 
     /**
-     * Get base shipping amount
+     * Get base shipping amount.
      *
      * @param \Magento\Sales\Model\Order\Creditmemo $creditmemo
      * @return float
@@ -85,11 +85,13 @@ class Discount extends AbstractTotal
     private function getBaseShippingAmount(\Magento\Sales\Model\Order\Creditmemo $creditmemo): float
     {
         $baseShippingAmount = (float)$creditmemo->getBaseShippingAmount();
+
         if (!$baseShippingAmount) {
             $baseShippingInclTax = (float)$creditmemo->getBaseShippingInclTax();
             $baseShippingTaxAmount = (float)$creditmemo->getBaseShippingTaxAmount();
             $baseShippingAmount = $baseShippingInclTax - $baseShippingTaxAmount;
         }
+
         return $baseShippingAmount;
     }
 }

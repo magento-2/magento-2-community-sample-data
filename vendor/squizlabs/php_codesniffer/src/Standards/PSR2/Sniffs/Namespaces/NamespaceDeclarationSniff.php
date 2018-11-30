@@ -41,9 +41,8 @@ class NamespaceDeclarationSniff implements Sniff
     {
         $tokens = $phpcsFile->getTokens();
 
-        $end = $phpcsFile->findEndOfStatement($stackPtr);
-        for ($i = ($end + 1); $i < ($phpcsFile->numTokens - 1); $i++) {
-            if ($tokens[$i]['line'] === $tokens[$end]['line']) {
+        for ($i = ($stackPtr + 1); $i < ($phpcsFile->numTokens - 1); $i++) {
+            if ($tokens[$i]['line'] === $tokens[$stackPtr]['line']) {
                 continue;
             }
 

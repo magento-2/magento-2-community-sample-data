@@ -3,7 +3,6 @@
  * Copyright © Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
-declare(strict_types=1);
 
 use Magento\Tax\Model\Calculation;
 use Magento\Tax\Model\Config;
@@ -21,7 +20,7 @@ $taxCalculationData['including_tax_apply_tax_after_discount'] = [
         SetupUtil::TAX_RATE_OVERRIDES => [
             SetupUtil::TAX_RATE_TX => 10,
             SetupUtil::TAX_STORE_RATE => 10,
-            SetupUtil::TAX_RATE_SHIPPING => 10,
+            SetupUtil::TAX_RATE_SHIPPING => 10
         ],
         SetupUtil::TAX_RULE_OVERRIDES => [
             [

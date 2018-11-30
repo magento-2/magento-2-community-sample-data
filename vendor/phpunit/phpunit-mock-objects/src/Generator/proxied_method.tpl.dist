@@ -13,7 +13,7 @@
         }
 
         $this->__phpunit_getInvocationMocker()->invoke(
-            new \PHPUnit\Framework\MockObject\Invocation\ObjectInvocation(
+            new PHPUnit_Framework_MockObject_Invocation_Object(
                 '{class_name}', '{method_name}', $arguments, '{return_type}', $this, {clone_arguments}
             )
         );

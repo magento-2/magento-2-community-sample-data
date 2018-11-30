@@ -2,16 +2,30 @@
 /**
  * Refer to LICENSE.txt distributed with the Temando Shipping module for notice of license
  */
-?>
 
-<?php
-/** @var \Magento\Sales\Block\Adminhtml\Order\View\Info $block */
-/** @var \Temando\Shipping\ViewModel\Order\Location $viewModel */
+/**
+ * @var \Magento\Sales\Block\Adminhtml\Order\View\Info $block
+ */
+
+$order = $block->getOrder();
+
+$orderAdminDate = $block->formatDate(
+    $block->getOrderAdminDate($order->getCreatedAt()),
+    \IntlDateFormatter::MEDIUM,
+    true
+);
+
+$orderStoreDate = $block->formatDate(
+    $order->getCreatedAt(),
+    \IntlDateFormatter::MEDIUM,
+    true,
+    $block->getTimezoneForStore($order->getStore())
+);
+
+/** @var \Temando\Shipping\ViewModel\Order\Location $locationViewModel */
 $viewModel = $block->getData('locationViewModel');
 /** @var \Temando\Shipping\ViewModel\Order\OrderDetails $orderDetailsViewModel */
 $orderDetailsViewModel = $block->getData('orderDetailsViewModel');
-
-$order = $block->getOrder();
 ?>
 
 <section class="admin__page-section order-view-account-information">
@@ -41,8 +55,6 @@ $order = $block->getOrder();
             </div>
             <div class="admin__page-section-item-content">
                 <table class="admin__table-secondary order-information-table">
-                    <?php $orderAdminDate = $orderDetailsViewModel->getOrderAdminDate($order) ?>
-                    <?php $orderStoreDate = $orderDetailsViewModel->getOrderStoreDate($order) ?>
                     <tr>
                         <th><?= $block->escapeHtml(__('Order Date')) ?></th>
                         <td><?= $block->escapeHtml($orderAdminDate) ?></td>
@@ -126,12 +138,6 @@ $order = $block->getOrder();
                             <td><?= $block->escapeHtml($extOrderId) ?></td>
                         </tr>
                     <?php endif; ?>
-                    <?php if ($orderDetailsViewModel->isPickupOrder($order)) : ?>
-                        <tr>
-                            <th><?= $block->escapeHtml(__('Order Type')) ?></th>
-                            <td><?= $block->escapeHtml(__('Pickup')) ?></td>
-                        </tr>
-                    <?php endif; ?>
                 </table>
             </div>
         </div>
@@ -207,7 +213,12 @@ $order = $block->getOrder();
 
         <?php if (!$order->getIsVirtual()) : ?>
             <div class="admin__page-section-item order-shipping-address">
-                <?php if (!$viewModel->hasDeliveryLocation($order)) : ?>
+                <?php
+                    /* Shipping Address */
+                    $deliveryLocationAddressHtml = $viewModel->getCollectionPointAddressHtml($order);
+                ?>
+
+                <?php if (!$deliveryLocationAddressHtml) : ?>
                     <?php // render original shipping address ?>
                     <div class="admin__page-section-item-title">
                         <span class="title"><?= $block->escapeHtml(__('Shipping Address')) ?></span>
@@ -224,12 +235,10 @@ $order = $block->getOrder();
                     </div>
 
                     <div class="admin__page-section-item-content order-shipping-primary-address">
-                        <span class="subtitle">
-                            <?= $block->escapeHtml($viewModel->getDeliveryLocationTitle($order)) ?>
-                        </span>
+                        <span class="subtitle"><?= $block->escapeHtml(__('Collection Point')) ?></span>
                     </div>
                     <address class="admin__page-section-item-content order-shipping-primary-address">
-                        <?= /* @noEscape */ $viewModel->getDeliveryLocationAddressHtml($order) ?>
+                        <?= /* @noEscape */ $deliveryLocationAddressHtml; ?>
                     </address>
 
                     <div class="admin__page-section-item-content order-shipping-secondary-address">

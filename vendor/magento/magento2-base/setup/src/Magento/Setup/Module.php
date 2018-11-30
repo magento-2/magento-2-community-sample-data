@@ -31,6 +31,13 @@ class Module implements
         /** @var \Zend\EventManager\SharedEventManager $sharedEvents */
         $sharedEvents = $events->getSharedManager();
 
+        // register DiStrictAbstractServiceFactory explicitly
+        $serviceManager = $application->getServiceManager();
+
+        $strictAbstractFactory = $serviceManager->get('DiStrictAbstractServiceFactory');
+        $serviceManager->addAbstractFactory($strictAbstractFactory);
+        $serviceManager->get('controllermanager')->addAbstractFactory($strictAbstractFactory);
+
         $moduleRouteListener = new ModuleRouteListener();
         $moduleRouteListener->attach($events);
 
@@ -52,10 +59,8 @@ class Module implements
                 $headers->addHeaderLine('Expires', '1970-01-01');
                 $headers->addHeaderLine('X-Frame-Options: SAMEORIGIN');
                 $headers->addHeaderLine('X-Content-Type-Options: nosniff');
-                /** @var \Zend\Http\Header\UserAgent $userAgentHeader */
-                $userAgentHeader = $e->getRequest()->getHeader('User-Agent');
-                $xssHeaderValue = $userAgentHeader && $userAgentHeader->getFieldValue()
-                    && strpos($userAgentHeader->getFieldValue(), XssProtection::IE_8_USER_AGENT) === false
+                $xssHeaderValue = !empty($_SERVER['HTTP_USER_AGENT'])
+                    && strpos($_SERVER['HTTP_USER_AGENT'], XssProtection::IE_8_USER_AGENT) === false
                     ? XssProtection::HEADER_ENABLED : XssProtection::HEADER_DISABLED;
                 $headers->addHeaderLine('X-XSS-Protection: ' . $xssHeaderValue);
             }

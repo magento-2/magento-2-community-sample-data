@@ -8,9 +8,6 @@ namespace Temando\Shipping\Api\Data\CollectionPoint;
  * Temando Order Collection Point Interface – Order Details/Fulfillment
  *
  * @api
- * @deprecated since 1.4.0
- * @see \Temando\Shipping\Api\Data\Delivery\OrderCollectionPointInterface
- *
  * @package Temando\Shipping\Api
  * @author  Christoph Aßmann <christoph.assmann@netresearch.de>
  * @license http://opensource.org/licenses/osl-3.0.php Open Software License (OSL 3.0)

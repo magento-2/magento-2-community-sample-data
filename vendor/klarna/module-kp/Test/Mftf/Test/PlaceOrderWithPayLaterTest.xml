@@ -33,11 +33,11 @@
         <actionGroup ref="KpFillInGuest" stepKey="kpFillInGuest"/>
         <wait stepKey="paymentWait1" time="15"/>
 
-        <click selector="{{KpGuestCheckoutShippingSection.firstShippingMethod}}" stepKey="kpSelectFirstShippingMethod"/>
+        <click selector="{{GuestCheckoutShippingSection.firstShippingMethod}}" stepKey="kpSelectFirstShippingMethod"/>
         <wait stepKey="paymentWait2" time="15"/>
 
-        <waitForElement selector="{{KpGuestCheckoutShippingSection.next}}" time="30" stepKey="kpWaitForNextButton"/>
-        <click selector="{{KpGuestCheckoutShippingSection.next}}" stepKey="kpClickNext"/>
+        <waitForElement selector="{{GuestCheckoutShippingSection.next}}" time="30" stepKey="kpWaitForNextButton"/>
+        <click selector="{{GuestCheckoutShippingSection.next}}" stepKey="kpClickNext"/>
 
         <wait stepKey="paymentWait3" time="15"/>
 
@@ -45,19 +45,19 @@
         <waitForElement selector="#klarna_pay_later" time="30" stepKey="kpWaitForPayLater"/>
         <click selector="#klarna_pay_later" stepKey="kpSelectPaymentMethod"/>
         <wait stepKey="paymentWait4" time="15"/>
-        <!--TODO: <see selector="{{KpGuestCheckoutPaymentSection.billingAddress}}" userInput="{{CustomerAddressSimple.street[0]}}" stepKey="kpSeeAddress"/>-->
-        <waitForElement selector="{{KpGuestCheckoutPaymentSection.placeOrder}}" time="30" stepKey="kpWaitForPlaceOrderButton"/>
+        <!--TODO: <see selector="{{GuestCheckoutPaymentSection.billingAddress}}" userInput="{{CustomerAddressSimple.street[0]}}" stepKey="kpSeeAddress"/>-->
+        <waitForElement selector="{{GuestCheckoutPaymentSection.placeOrder}}" time="30" stepKey="kpWaitForPlaceOrderButton"/>
         <!--<waitForElement selector="" time="60" stepKey="kpWaitForIframeToLoad"/>-->
         <!-- Add any additional steps here, eg select terms, etc... -->
 
-        <conditionalClick selector="{{KpGuestCheckoutPaymentSection.cartItemsArea}}" dependentSelector="{{KpGuestCheckoutPaymentSection.cartItemsAreaActive}}" visible="false" stepKey="kpExposeMiniCart"/>
-        <see selector="{{KpGuestCheckoutPaymentSection.cartItems}}" userInput="{{_defaultProduct.name}}" stepKey="kpSeeProductInCart"/>
-        <!--<see selector="{{KpGuestCheckoutPaymentSection.billingAddress}}" userInput="{{CustomerAddressSimple.street[0]}}" stepKey="kpSeeBillingAddress"/>-->
+        <conditionalClick selector="{{GuestCheckoutPaymentSection.cartItemsArea}}" dependentSelector="{{GuestCheckoutPaymentSection.cartItemsAreaActive}}" visible="false" stepKey="kpExposeMiniCart"/>
+        <see selector="{{GuestCheckoutPaymentSection.cartItems}}" userInput="{{_defaultProduct.name}}" stepKey="kpSeeProductInCart"/>
+        <!--<see selector="{{GuestCheckoutPaymentSection.billingAddress}}" userInput="{{CustomerAddressSimple.street[0]}}" stepKey="kpSeeBillingAddress"/>-->
         <click selector=".payment-method._active button.action.primary.checkout" stepKey="kpClickPlaceOrder"/>
         <wait stepKey="paymentWait5" time="15"/>
         <!-- Add any additional steps here, eg enter DOB, SSN, etc... -->
-        <grabTextFrom selector="{{KpCheckoutSuccessMainSection.orderNumber}}" stepKey="kpGrabOrderNumber"/>
-        <see selector="{{KpCheckoutSuccessMainSection.success}}" userInput="Your order # is:" stepKey="kpSeeOrderNumber"/>
-        <see selector="{{KpCheckoutSuccessMainSection.success}}" userInput="We'll email you an order confirmation with details and tracking info." stepKey="kpSeeEmailYou"/>
+        <grabTextFrom selector="{{CheckoutSuccessMainSection.orderNumber}}" stepKey="kpGrabOrderNumber"/>
+        <see selector="{{CheckoutSuccessMainSection.success}}" userInput="Your order # is:" stepKey="kpSeeOrderNumber"/>
+        <see selector="{{CheckoutSuccessMainSection.success}}" userInput="We'll email you an order confirmation with details and tracking info." stepKey="kpSeeEmailYou"/>
     </test>
 </tests>

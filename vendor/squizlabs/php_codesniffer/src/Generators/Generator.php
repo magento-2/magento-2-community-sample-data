@@ -14,6 +14,7 @@ namespace PHP_CodeSniffer\Generators;
 
 use PHP_CodeSniffer\Ruleset;
 use PHP_CodeSniffer\Autoload;
+use PHP_CodeSniffer\Util\Common;
 
 abstract class Generator
 {

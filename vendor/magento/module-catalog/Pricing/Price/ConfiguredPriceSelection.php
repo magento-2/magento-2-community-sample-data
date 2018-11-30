@@ -9,8 +9,6 @@ namespace Magento\Catalog\Pricing\Price;
 
 use Magento\Catalog\Model\Product;
 use Magento\Framework\Api\ExtensibleDataInterface;
-use Magento\Framework\Pricing\Adjustment\CalculatorInterface;
-use Magento\Catalog\Pricing\Price\ConfiguredPriceInterface;
 
 /**
  * Configured price selection model
@@ -18,15 +16,15 @@ use Magento\Catalog\Pricing\Price\ConfiguredPriceInterface;
 class ConfiguredPriceSelection
 {
     /**
-     * @var CalculatorInterface
+     * @var \Magento\Framework\Pricing\Adjustment\CalculatorInterface
      */
     private $calculator;
 
     /**
-     * @param CalculatorInterface $calculator
+     * @param \Magento\Framework\Pricing\Adjustment\CalculatorInterface $calculator
      */
     public function __construct(
-        CalculatorInterface $calculator
+        \Magento\Framework\Pricing\Adjustment\CalculatorInterface $calculator
     ) {
         $this->calculator = $calculator;
     }
@@ -34,10 +32,10 @@ class ConfiguredPriceSelection
     /**
      * Get Selection pricing list.
      *
-     * @param ConfiguredPriceInterface $price
+     * @param \Magento\Catalog\Pricing\Price\ConfiguredPriceInterface $price
      * @return array
      */
-    public function getSelectionPriceList(ConfiguredPriceInterface $price): array
+    public function getSelectionPriceList(\Magento\Catalog\Pricing\Price\ConfiguredPriceInterface $price): array
     {
         $selectionPriceList = [];
         foreach ($price->getOptions() as $option) {
@@ -46,12 +44,11 @@ class ConfiguredPriceSelection
                 $this->createSelectionPriceList($option, $price->getProduct())
             );
         }
-
         return $selectionPriceList;
     }
 
     /**
-     * Create Selection Price List.
+     * Create Selection Price List
      *
      * @param ExtensibleDataInterface $option
      * @param Product $product

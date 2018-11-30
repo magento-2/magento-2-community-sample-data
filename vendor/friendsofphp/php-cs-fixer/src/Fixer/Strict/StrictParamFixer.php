@@ -31,7 +31,7 @@ final class StrictParamFixer extends AbstractFixer
     {
         return new FixerDefinition(
             'Functions should be used with `$strict` param set to `true`.',
-            [new CodeSample("<?php\n\$a = array_keys(\$b);\n\$a = array_search(\$b, \$c);\n\$a = base64_decode(\$b);\n\$a = in_array(\$b, \$c);\n\$a = mb_detect_encoding(\$b, \$c);\n")],
+            array(new CodeSample("<?php\n\$a = array_keys(\$b);\n\$a = array_search(\$b, \$c);\n\$a = base64_decode(\$b);\n\$a = in_array(\$b, \$c);\n\$a = mb_detect_encoding(\$b, \$c);\n")),
             'The functions "array_keys", "array_search", "base64_decode", "in_array" and "mb_detect_encoding" should be used with $strict param.',
             'Risky when the fixed function is overridden or if the code relies on non-strict usage.'
         );
@@ -61,15 +61,15 @@ final class StrictParamFixer extends AbstractFixer
         static $map = null;
 
         if (null === $map) {
-            $trueToken = new Token([T_STRING, 'true']);
+            $trueToken = new Token(array(T_STRING, 'true'));
 
-            $map = [
-                'array_keys' => [null, null, $trueToken],
-                'array_search' => [null, null, $trueToken],
-                'base64_decode' => [null, $trueToken],
-                'in_array' => [null, null, $trueToken],
-                'mb_detect_encoding' => [null, [new Token([T_STRING, 'mb_detect_order']), new Token('('), new Token(')')], $trueToken],
-            ];
+            $map = array(
+                'array_keys' => array(null, null, $trueToken),
+                'array_search' => array(null, null, $trueToken),
+                'base64_decode' => array(null, $trueToken),
+                'in_array' => array(null, null, $trueToken),
+                'mb_detect_encoding' => array(null, array(new Token(array(T_STRING, 'mb_detect_order')), new Token('('), new Token(')')), $trueToken),
+            );
         }
 
         for ($index = $tokens->count() - 1; 0 <= $index; --$index) {
@@ -77,19 +77,18 @@ final class StrictParamFixer extends AbstractFixer
 
             $previousIndex = $tokens->getPrevMeaningfulToken($index);
             if (null !== $previousIndex && $tokens[$previousIndex]->isGivenKind(CT::T_FUNCTION_IMPORT)) {
-                continue;
+                return;
             }
 
-            $lowercaseContent = strtolower($token->getContent());
-            if ($token->isGivenKind(T_STRING) && isset($map[$lowercaseContent])) {
-                $this->fixFunction($tokens, $index, $map[$lowercaseContent]);
+            if ($token->isGivenKind(T_STRING) && isset($map[$token->getContent()])) {
+                $this->fixFunction($tokens, $index, $map[$token->getContent()]);
             }
         }
     }
 
     private function fixFunction(Tokens $tokens, $functionIndex, array $functionParams)
     {
-        $startBraceIndex = $tokens->getNextTokenOfKind($functionIndex, ['(']);
+        $startBraceIndex = $tokens->getNextTokenOfKind($functionIndex, array('('));
         $endBraceIndex = $tokens->findBlockEnd(Tokens::BLOCK_TYPE_PARENTHESIS_BRACE, $startBraceIndex);
         $commaCounter = 0;
         $sawParameter = false;
@@ -120,14 +119,14 @@ final class StrictParamFixer extends AbstractFixer
             }
         }
 
-        $functionParamsQuantity = \count($functionParams);
+        $functionParamsQuantity = count($functionParams);
         $paramsQuantity = ($sawParameter ? 1 : 0) + $commaCounter;
 
         if ($paramsQuantity === $functionParamsQuantity) {
             return;
         }
 
-        $tokensToInsert = [];
+        $tokensToInsert = array();
         for ($i = $paramsQuantity; $i < $functionParamsQuantity; ++$i) {
             // function call do not have all params that are required to set useStrict flag, exit from method!
             if (!$functionParams[$i]) {
@@ -135,9 +134,9 @@ final class StrictParamFixer extends AbstractFixer
             }
 
             $tokensToInsert[] = new Token(',');
-            $tokensToInsert[] = new Token([T_WHITESPACE, ' ']);
+            $tokensToInsert[] = new Token(array(T_WHITESPACE, ' '));
 
-            if (!\is_array($functionParams[$i])) {
+            if (!is_array($functionParams[$i])) {
                 $tokensToInsert[] = clone $functionParams[$i];
 
                 continue;

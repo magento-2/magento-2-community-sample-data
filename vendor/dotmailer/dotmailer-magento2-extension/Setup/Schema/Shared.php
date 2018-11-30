@@ -3,7 +3,6 @@
 namespace Dotdigitalgroup\Email\Setup\Schema;
 
 use \Magento\Framework\Setup\SchemaSetupInterface;
-use Dotdigitalgroup\Email\Setup\Schema;
 
 class Shared
 {
@@ -127,19 +126,19 @@ class Shared
     private function addIndexKeyForAbandonedCarts($installer, $abandonedCartTable)
     {
         return $abandonedCartTable->addIndex(
-            $installer->getIdxName(Schema::EMAIL_ABANDONED_CART_TABLE, ['quote_id']),
+            $installer->getIdxName('email_abandoned_cart', ['quote_id']),
             ['quote_id']
         )
             ->addIndex(
-                $installer->getIdxName(Schema::EMAIL_ABANDONED_CART_TABLE, ['store_id']),
+                $installer->getIdxName('email_abandoned_cart', ['store_id']),
                 ['store_id']
             )
             ->addIndex(
-                $installer->getIdxName(Schema::EMAIL_ABANDONED_CART_TABLE, ['customer_id']),
+                $installer->getIdxName('email_abandoned_cart', ['customer_id']),
                 ['customer_id']
             )
             ->addIndex(
-                $installer->getIdxName(Schema::EMAIL_ABANDONED_CART_TABLE, ['email']),
+                $installer->getIdxName('email_abandoned_cart', ['email']),
                 ['email']
             );
     }
@@ -226,9 +225,9 @@ class Shared
     private function addKeyForConsentTable($installer, $emailContactConsentTable)
     {
         return $emailContactConsentTable->addForeignKey(
-            $installer->getFkName(Schema::EMAIL_CONTACT_CONSENT_TABLE, 'email_contact_id', Schema::EMAIL_CONTACT_TABLE, 'email_contact_id'),
+            $installer->getFkName('email_contact_consent', 'email_contact_id', 'email_contact', 'email_contact_id'),
             'email_contact_id',
-            $installer->getTable(Schema::EMAIL_CONTACT_TABLE),
+            $installer->getTable('email_contact'),
             'email_contact_id',
             \Magento\Framework\DB\Ddl\Table::ACTION_CASCADE
         );
@@ -242,7 +241,7 @@ class Shared
     private function addIndexToConsentTable($installer, $table)
     {
         return $table->addIndex(
-            $installer->getIdxName($installer->getTable(Schema::EMAIL_CONTACT_CONSENT_TABLE), ['email_contact_id']),
+            $installer->getIdxName($installer->getTable('email_contact_consent'), ['email_contact_id']),
             ['email_contact_id']
         );
     }

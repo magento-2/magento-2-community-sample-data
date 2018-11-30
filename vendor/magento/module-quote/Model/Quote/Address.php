@@ -206,7 +206,7 @@ class Address extends \Magento\Customer\Model\Address\AbstractAddress implements
 
     /**
      * @var \Magento\Quote\Model\Quote\Address\RateFactory
-     * @since 101.0.0
+     * @since 100.2.0
      */
     protected $_addressRateFactory;
 
@@ -1002,6 +1002,7 @@ class Address extends \Magento\Customer\Model\Address\AbstractAddress implements
         /**
          * Store and website identifiers specified from StoreManager
          */
+        $request->setQuoteStoreId($this->getQuote()->getStoreId());
         $request->setStoreId($this->storeManager->getStore()->getId());
         $request->setWebsiteId($this->storeManager->getWebsite()->getId());
         $request->setFreeShipping($this->getFreeShipping());

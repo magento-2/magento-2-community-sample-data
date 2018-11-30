@@ -9,7 +9,6 @@ namespace Magento\Framework\Indexer;
  * Indexer(s) configuration
  *
  * @api
- * @since 100.0.2
  */
 interface ConfigInterface
 {

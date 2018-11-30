@@ -178,7 +178,7 @@ class Mode
     }
 
     /**
-     * Enable Default mode.
+     * Enable Default mode
      *
      * @return void
      */

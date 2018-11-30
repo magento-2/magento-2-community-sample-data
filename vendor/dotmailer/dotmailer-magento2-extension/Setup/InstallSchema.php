@@ -69,7 +69,7 @@ class InstallSchema implements InstallSchemaInterface
      */
     private function createContactTable($installer)
     {
-        $tableName = $installer->getTable(Schema::EMAIL_CONTACT_TABLE);
+        $tableName = $installer->getTable('email_contact');
         $this->dropTableIfExists($installer, $tableName);
 
         $contactTable = $installer->getConnection()->newTable($tableName);
@@ -78,7 +78,7 @@ class InstallSchema implements InstallSchemaInterface
 
         $contactTable->addForeignKey(
             $installer->getFkName(
-                Schema::EMAIL_CONTACT_TABLE,
+                'email_contact',
                 'website_id',
                 'store_website',
                 'website_id'
@@ -198,47 +198,47 @@ class InstallSchema implements InstallSchemaInterface
     private function addIndexesToContactTable($installer, $contactTable)
     {
         return $contactTable->addIndex(
-            $installer->getIdxName(Schema::EMAIL_CONTACT_TABLE, ['email_contact_id']),
+            $installer->getIdxName('email_contact', ['email_contact_id']),
             ['email_contact_id']
         )
             ->addIndex(
-                $installer->getIdxName(Schema::EMAIL_CONTACT_TABLE, ['is_guest']),
+                $installer->getIdxName('email_contact', ['is_guest']),
                 ['is_guest']
             )
             ->addIndex(
-                $installer->getIdxName(Schema::EMAIL_CONTACT_TABLE, ['customer_id']),
+                $installer->getIdxName('email_contact', ['customer_id']),
                 ['customer_id']
             )
             ->addIndex(
-                $installer->getIdxName(Schema::EMAIL_CONTACT_TABLE, ['website_id']),
+                $installer->getIdxName('email_contact', ['website_id']),
                 ['website_id']
             )
             ->addIndex(
-                $installer->getIdxName(Schema::EMAIL_CONTACT_TABLE, ['is_subscriber']),
+                $installer->getIdxName('email_contact', ['is_subscriber']),
                 ['is_subscriber']
             )
             ->addIndex(
-                $installer->getIdxName(Schema::EMAIL_CONTACT_TABLE, ['subscriber_status']),
+                $installer->getIdxName('email_contact', ['subscriber_status']),
                 ['subscriber_status']
             )
             ->addIndex(
-                $installer->getIdxName(Schema::EMAIL_CONTACT_TABLE, ['email_imported']),
+                $installer->getIdxName('email_contact', ['email_imported']),
                 ['email_imported']
             )
             ->addIndex(
-                $installer->getIdxName(Schema::EMAIL_CONTACT_TABLE, ['subscriber_imported']),
+                $installer->getIdxName('email_contact', ['subscriber_imported']),
                 ['subscriber_imported']
             )
             ->addIndex(
-                $installer->getIdxName(Schema::EMAIL_CONTACT_TABLE, ['suppressed']),
+                $installer->getIdxName('email_contact', ['suppressed']),
                 ['suppressed']
             )
             ->addIndex(
-                $installer->getIdxName(Schema::EMAIL_CONTACT_TABLE, ['email']),
+                $installer->getIdxName('email_contact', ['email']),
                 ['email']
             )
             ->addIndex(
-                $installer->getIdxName(Schema::EMAIL_CONTACT_TABLE, ['contact_id']),
+                $installer->getIdxName('email_contact', ['contact_id']),
                 ['contact_id']
             );
     }
@@ -250,7 +250,7 @@ class InstallSchema implements InstallSchemaInterface
      */
     private function createOrderTable($installer)
     {
-        $tableName = $installer->getTable(Schema::EMAIL_ORDER_TABLE);
+        $tableName = $installer->getTable('email_order');
         $this->dropTableIfExists($installer, $tableName);
 
         $orderTable = $installer->getConnection()->newTable($tableName);
@@ -258,7 +258,7 @@ class InstallSchema implements InstallSchemaInterface
         $orderTable = $this->addIndexesToOrderTable($installer, $orderTable);
         $orderTable->addForeignKey(
             $installer->getFkName(
-                $installer->getTable(Schema::EMAIL_ORDER_TABLE),
+                $installer->getTable('email_order'),
                 'store_id',
                 'store',
                 'store_id'
@@ -272,7 +272,7 @@ class InstallSchema implements InstallSchemaInterface
 
         $orderTable->addForeignKey(
             $installer->getFkName(
-                $installer->getTable(Schema::EMAIL_ORDER_TABLE),
+                $installer->getTable('email_order'),
                 'order_id',
                 'sales_order',
                 'entity_id'
@@ -373,49 +373,49 @@ class InstallSchema implements InstallSchemaInterface
     {
         return $orderTable->addIndex(
             $installer->getIdxName(
-                $installer->getTable(Schema::EMAIL_ORDER_TABLE),
+                $installer->getTable('email_order'),
                 ['store_id']
             ),
             ['store_id']
         )
         ->addIndex(
             $installer->getIdxName(
-                $installer->getTable(Schema::EMAIL_ORDER_TABLE),
+                $installer->getTable('email_order'),
                 ['quote_id']
             ),
             ['quote_id']
         )
         ->addIndex(
             $installer->getIdxName(
-                $installer->getTable(Schema::EMAIL_ORDER_TABLE),
+                $installer->getTable('email_order'),
                 ['email_imported']
             ),
             ['email_imported']
         )
         ->addIndex(
             $installer->getIdxName(
-                $installer->getTable(Schema::EMAIL_ORDER_TABLE),
+                $installer->getTable('email_order'),
                 ['order_status']
             ),
             ['order_status']
         )
         ->addIndex(
             $installer->getIdxName(
-                $installer->getTable(Schema::EMAIL_ORDER_TABLE),
+                $installer->getTable('email_order'),
                 ['modified']
             ),
             ['modified']
         )
         ->addIndex(
             $installer->getIdxName(
-                $installer->getTable(Schema::EMAIL_ORDER_TABLE),
+                $installer->getTable('email_order'),
                 ['updated_at']
             ),
             ['updated_at']
         )
         ->addIndex(
             $installer->getIdxName(
-                $installer->getTable(Schema::EMAIL_ORDER_TABLE),
+                $installer->getTable('email_order'),
                 ['created_at']
             ),
             ['created_at']
@@ -429,7 +429,7 @@ class InstallSchema implements InstallSchemaInterface
      */
     private function createCampaignTable($installer)
     {
-        $tableName = $installer->getTable(Schema::EMAIL_CAMPAIGN_TABLE);
+        $tableName = $installer->getTable('email_campaign');
         $this->dropTableIfExists($installer, $tableName);
 
         $campaignTable = $installer->getConnection()->newTable($tableName);
@@ -437,7 +437,7 @@ class InstallSchema implements InstallSchemaInterface
         $campaignTable = $this->addIndexesToCampaignTable($installer, $campaignTable);
         $campaignTable->addForeignKey(
             $installer->getFkName(
-                $installer->getTable(Schema::EMAIL_CAMPAIGN_TABLE),
+                $installer->getTable('email_campaign'),
                 'store_id',
                 'core/store',
                 'store_id'
@@ -581,84 +581,84 @@ class InstallSchema implements InstallSchemaInterface
     {
         return $campaignTable->addIndex(
             $installer->getIdxName(
-                $installer->getTable(Schema::EMAIL_CAMPAIGN_TABLE),
+                $installer->getTable('email_campaign'),
                 ['store_id']
             ),
             ['store_id']
         )
         ->addIndex(
             $installer->getIdxName(
-                $installer->getTable(Schema::EMAIL_CAMPAIGN_TABLE),
+                $installer->getTable('email_campaign'),
                 ['campaign_id']
             ),
             ['campaign_id']
         )
         ->addIndex(
             $installer->getIdxName(
-                $installer->getTable(Schema::EMAIL_CAMPAIGN_TABLE),
+                $installer->getTable('email_campaign'),
                 ['email']
             ),
             ['email']
         )
         ->addIndex(
             $installer->getIdxName(
-                $installer->getTable(Schema::EMAIL_CAMPAIGN_TABLE),
+                $installer->getTable('email_campaign'),
                 ['send_id']
             ),
             ['send_id']
         )
         ->addIndex(
             $installer->getIdxName(
-                $installer->getTable(Schema::EMAIL_CAMPAIGN_TABLE),
+                $installer->getTable('email_campaign'),
                 ['send_status']
             ),
             ['send_status']
         )
         ->addIndex(
             $installer->getIdxName(
-                $installer->getTable(Schema::EMAIL_CAMPAIGN_TABLE),
+                $installer->getTable('email_campaign'),
                 ['created_at']
             ),
             ['created_at']
         )
         ->addIndex(
             $installer->getIdxName(
-                $installer->getTable(Schema::EMAIL_CAMPAIGN_TABLE),
+                $installer->getTable('email_campaign'),
                 ['updated_at']
             ),
             ['updated_at']
         )
         ->addIndex(
             $installer->getIdxName(
-                $installer->getTable(Schema::EMAIL_CAMPAIGN_TABLE),
+                $installer->getTable('email_campaign'),
                 ['sent_at']
             ),
             ['sent_at']
         )
         ->addIndex(
             $installer->getIdxName(
-                $installer->getTable(Schema::EMAIL_CAMPAIGN_TABLE),
+                $installer->getTable('email_campaign'),
                 ['event_name']
             ),
             ['event_name']
         )
         ->addIndex(
             $installer->getIdxName(
-                $installer->getTable(Schema::EMAIL_CAMPAIGN_TABLE),
+                $installer->getTable('email_campaign'),
                 ['message']
             ),
             ['message']
         )
         ->addIndex(
             $installer->getIdxName(
-                $installer->getTable(Schema::EMAIL_CAMPAIGN_TABLE),
+                $installer->getTable('email_campaign'),
                 ['quote_id']
             ),
             ['quote_id']
         )
         ->addIndex(
             $installer->getIdxName(
-                $installer->getTable(Schema::EMAIL_CAMPAIGN_TABLE),
+                $installer->getTable('email_campaign'),
                 ['customer_id']
             ),
             ['customer_id']
@@ -672,7 +672,7 @@ class InstallSchema implements InstallSchemaInterface
      */
     private function createReviewTable($installer)
     {
-        $tableName = $installer->getTable(Schema::EMAIL_REVIEW_TABLE);
+        $tableName = $installer->getTable('email_review');
         $this->dropTableIfExists($installer, $tableName);
 
         $reviewTable = $installer->getConnection()->newTable($tableName);
@@ -753,42 +753,42 @@ class InstallSchema implements InstallSchemaInterface
     {
         return $reviewTable->addIndex(
             $installer->getIdxName(
-                $installer->getTable(Schema::EMAIL_REVIEW_TABLE),
+                $installer->getTable('email_review'),
                 ['review_id']
             ),
             ['review_id']
         )
         ->addIndex(
             $installer->getIdxName(
-                $installer->getTable(Schema::EMAIL_REVIEW_TABLE),
+                $installer->getTable('email_review'),
                 ['customer_id']
             ),
             ['customer_id']
         )
         ->addIndex(
             $installer->getIdxName(
-                $installer->getTable(Schema::EMAIL_REVIEW_TABLE),
+                $installer->getTable('email_review'),
                 ['store_id']
             ),
             ['store_id']
         )
         ->addIndex(
             $installer->getIdxName(
-                $installer->getTable(Schema::EMAIL_REVIEW_TABLE),
+                $installer->getTable('email_review'),
                 ['review_imported']
             ),
             ['review_imported']
         )
         ->addIndex(
             $installer->getIdxName(
-                $installer->getTable(Schema::EMAIL_REVIEW_TABLE),
+                $installer->getTable('email_review'),
                 ['created_at']
             ),
             ['created_at']
         )
         ->addIndex(
             $installer->getIdxName(
-                $installer->getTable(Schema::EMAIL_REVIEW_TABLE),
+                $installer->getTable('email_review'),
                 ['updated_at']
             ),
             ['updated_at']
@@ -802,20 +802,20 @@ class InstallSchema implements InstallSchemaInterface
      */
     private function createWishlistTable($installer)
     {
-        $tableName = $installer->getTable(Schema::EMAIL_WISHLIST_TABLE);
+        $tableName = $installer->getTable('email_wishlist');
         $this->dropTableIfExists($installer, $tableName);
 
         $wishlistTable = $installer->getConnection()->newTable($tableName);
         $wishlistTable = $this->addColumnsToWishlistTable($wishlistTable);
         $wishlistTable = $this->addIndexesToWishlistTable($installer, $wishlistTable);
         $wishlistTable->addForeignKey(
-            $installer->getFkName(Schema::EMAIL_WISHLIST_TABLE, 'customer_id', 'customer_entity', 'entity_id'),
+            $installer->getFkName('email_wishlist', 'customer_id', 'customer_entity', 'entity_id'),
             'customer_id',
             $installer->getTable('customer_entity'),
             'entity_id',
             \Magento\Framework\DB\Ddl\Table::ACTION_CASCADE
         )->addForeignKey(
-            $installer->getFkName(Schema::EMAIL_WISHLIST_TABLE, 'wishlist_id', 'wishlist', 'wishlist_id'),
+            $installer->getFkName('email_wishlist', 'wishlist_id', 'wishlist', 'wishlist_id'),
             'wishlist_id',
             $installer->getTable('wishlist'),
             'wishlist_id',
@@ -912,56 +912,56 @@ class InstallSchema implements InstallSchemaInterface
     {
         return $wishlistTable->addIndex(
             $installer->getIdxName(
-                $installer->getTable(Schema::EMAIL_WISHLIST_TABLE),
+                $installer->getTable('email_wishlist'),
                 ['wishlist_id']
             ),
             ['wishlist_id']
         )
         ->addIndex(
             $installer->getIdxName(
-                $installer->getTable(Schema::EMAIL_WISHLIST_TABLE),
+                $installer->getTable('email_wishlist'),
                 ['item_count']
             ),
             ['item_count']
         )
         ->addIndex(
             $installer->getIdxName(
-                $installer->getTable(Schema::EMAIL_WISHLIST_TABLE),
+                $installer->getTable('email_wishlist'),
                 ['customer_id']
             ),
             ['customer_id']
         )
         ->addIndex(
             $installer->getIdxName(
-                $installer->getTable(Schema::EMAIL_WISHLIST_TABLE),
+                $installer->getTable('email_wishlist'),
                 ['wishlist_modified']
             ),
             ['wishlist_modified']
         )
         ->addIndex(
             $installer->getIdxName(
-                $installer->getTable(Schema::EMAIL_WISHLIST_TABLE),
+                $installer->getTable('email_wishlist'),
                 ['wishlist_imported']
             ),
             ['wishlist_imported']
         )
         ->addIndex(
             $installer->getIdxName(
-                $installer->getTable(Schema::EMAIL_WISHLIST_TABLE),
+                $installer->getTable('email_wishlist'),
                 ['created_at']
             ),
             ['created_at']
         )
         ->addIndex(
             $installer->getIdxName(
-                $installer->getTable(Schema::EMAIL_WISHLIST_TABLE),
+                $installer->getTable('email_wishlist'),
                 ['updated_at']
             ),
             ['updated_at']
         )
         ->addIndex(
             $installer->getIdxName(
-                $installer->getTable(Schema::EMAIL_WISHLIST_TABLE),
+                $installer->getTable('email_wishlist'),
                 ['store_id']
             ),
             ['store_id']
@@ -975,7 +975,7 @@ class InstallSchema implements InstallSchemaInterface
      */
     private function createCatalogTable($installer)
     {
-        $tableName = $installer->getTable(Schema::EMAIL_CATALOG_TABLE);
+        $tableName = $installer->getTable('email_catalog');
         $this->dropTableIfExists($installer, $tableName);
 
         $catalogTable = $installer->getConnection()->newTable($tableName);
@@ -983,7 +983,7 @@ class InstallSchema implements InstallSchemaInterface
         $catalogTable = $this->addIndexesToCatalogTable($installer, $catalogTable);
         $catalogTable->addForeignKey(
             $installer->getFkName(
-                Schema::EMAIL_CATALOG_TABLE,
+                'email_catalog',
                 'product_id',
                 'catalog_product_entity',
                 'entity_id'
@@ -1062,35 +1062,35 @@ class InstallSchema implements InstallSchemaInterface
     {
         return $catalogTable->addIndex(
             $installer->getIdxName(
-                $installer->getTable(Schema::EMAIL_CATALOG_TABLE),
+                $installer->getTable('email_catalog'),
                 ['product_id']
             ),
             ['product_id']
         )
         ->addIndex(
             $installer->getIdxName(
-                $installer->getTable(Schema::EMAIL_CATALOG_TABLE),
+                $installer->getTable('email_catalog'),
                 ['imported']
             ),
             ['imported']
         )
         ->addIndex(
             $installer->getIdxName(
-                $installer->getTable(Schema::EMAIL_CATALOG_TABLE),
+                $installer->getTable('email_catalog'),
                 ['modified']
             ),
             ['modified']
         )
         ->addIndex(
             $installer->getIdxName(
-                $installer->getTable(Schema::EMAIL_CATALOG_TABLE),
+                $installer->getTable('email_catalog'),
                 ['created_at']
             ),
             ['created_at']
         )
         ->addIndex(
             $installer->getIdxName(
-                $installer->getTable(Schema::EMAIL_CATALOG_TABLE),
+                $installer->getTable('email_catalog'),
                 ['updated_at']
             ),
             ['updated_at']
@@ -1104,7 +1104,7 @@ class InstallSchema implements InstallSchemaInterface
      */
     private function createRuleTable($installer)
     {
-        $tableName = $installer->getTable(Schema::EMAIL_RULES_TABLE);
+        $tableName = $installer->getTable('email_rules');
         $this->dropTableIfExists($installer, $tableName);
 
         $ruleTable = $installer->getConnection()->newTable($tableName);
@@ -1196,7 +1196,7 @@ class InstallSchema implements InstallSchemaInterface
      */
     private function createImporterTable($installer)
     {
-        $tableName = $installer->getTable(Schema::EMAIL_IMPORTER_TABLE);
+        $tableName = $installer->getTable('email_importer');
         $this->dropTableIfExists($installer, $tableName);
 
         $importerTable = $installer->getConnection()->newTable($tableName);
@@ -1319,63 +1319,63 @@ class InstallSchema implements InstallSchemaInterface
     {
         return $importerTable->addIndex(
             $installer->getIdxName(
-                $installer->getTable(Schema::EMAIL_IMPORTER_TABLE),
+                $installer->getTable('email_importer'),
                 ['import_type']
             ),
             ['import_type']
         )
         ->addIndex(
             $installer->getIdxName(
-                $installer->getTable(Schema::EMAIL_IMPORTER_TABLE),
+                $installer->getTable('email_importer'),
                 ['website_id']
             ),
             ['website_id']
         )
         ->addIndex(
             $installer->getIdxName(
-                $installer->getTable(Schema::EMAIL_IMPORTER_TABLE),
+                $installer->getTable('email_importer'),
                 ['import_status']
             ),
             ['import_status']
         )
         ->addIndex(
             $installer->getIdxName(
-                $installer->getTable(Schema::EMAIL_IMPORTER_TABLE),
+                $installer->getTable('email_importer'),
                 ['import_mode']
             ),
             ['import_mode']
         )
         ->addIndex(
             $installer->getIdxName(
-                $installer->getTable(Schema::EMAIL_IMPORTER_TABLE),
+                $installer->getTable('email_importer'),
                 ['created_at']
             ),
             ['created_at']
         )
         ->addIndex(
             $installer->getIdxName(
-                $installer->getTable(Schema::EMAIL_IMPORTER_TABLE),
+                $installer->getTable('email_importer'),
                 ['updated_at']
             ),
             ['updated_at']
         )
         ->addIndex(
             $installer->getIdxName(
-                $installer->getTable(Schema::EMAIL_IMPORTER_TABLE),
+                $installer->getTable('email_importer'),
                 ['import_id']
             ),
             ['import_id']
         )
         ->addIndex(
             $installer->getIdxName(
-                $installer->getTable(Schema::EMAIL_IMPORTER_TABLE),
+                $installer->getTable('email_importer'),
                 ['import_started']
             ),
             ['import_started']
         )
         ->addIndex(
             $installer->getIdxName(
-                $installer->getTable(Schema::EMAIL_IMPORTER_TABLE),
+                $installer->getTable('email_importer'),
                 ['import_finished']
             ),
             ['import_finished']
@@ -1389,7 +1389,7 @@ class InstallSchema implements InstallSchemaInterface
      */
     private function createAutomationTable($installer)
     {
-        $tableName = $installer->getTable(Schema::EMAIL_AUTOMATION_TABLE);
+        $tableName = $installer->getTable('email_automation');
         $this->dropTableIfExists($installer, $tableName);
 
         $automationTable = $installer->getConnection()->newTable($tableName);
@@ -1498,56 +1498,56 @@ class InstallSchema implements InstallSchemaInterface
     {
         return $automationTable->addIndex(
             $installer->getIdxName(
-                $installer->getTable(Schema::EMAIL_AUTOMATION_TABLE),
+                $installer->getTable('email_automation'),
                 ['automation_type']
             ),
             ['automation_type']
         )
         ->addIndex(
             $installer->getIdxName(
-                $installer->getTable(Schema::EMAIL_AUTOMATION_TABLE),
+                $installer->getTable('email_automation'),
                 ['enrolment_status']
             ),
             ['enrolment_status']
         )
         ->addIndex(
             $installer->getIdxName(
-                $installer->getTable(Schema::EMAIL_AUTOMATION_TABLE),
+                $installer->getTable('email_automation'),
                 ['type_id']
             ),
             ['type_id']
         )
         ->addIndex(
             $installer->getIdxName(
-                $installer->getTable(Schema::EMAIL_AUTOMATION_TABLE),
+                $installer->getTable('email_automation'),
                 ['email']
             ),
             ['email']
         )
         ->addIndex(
             $installer->getIdxName(
-                $installer->getTable(Schema::EMAIL_AUTOMATION_TABLE),
+                $installer->getTable('email_automation'),
                 ['program_id']
             ),
             ['program_id']
         )
         ->addIndex(
             $installer->getIdxName(
-                $installer->getTable(Schema::EMAIL_AUTOMATION_TABLE),
+                $installer->getTable('email_automation'),
                 ['created_at']
             ),
             ['created_at']
         )
         ->addIndex(
             $installer->getIdxName(
-                $installer->getTable(Schema::EMAIL_AUTOMATION_TABLE),
+                $installer->getTable('email_automation'),
                 ['updated_at']
             ),
             ['updated_at']
         )
         ->addIndex(
             $installer->getIdxName(
-                $installer->getTable(Schema::EMAIL_AUTOMATION_TABLE),
+                $installer->getTable('email_automation'),
                 ['website_id']
             ),
             ['website_id']
@@ -1579,7 +1579,7 @@ class InstallSchema implements InstallSchemaInterface
      */
     private function createAbandonedCartTable($installer)
     {
-        $tableName = $installer->getTable(Schema::EMAIL_ABANDONED_CART_TABLE);
+        $tableName = $installer->getTable('email_abandoned_cart');
         $this->dropTableIfExists($installer, $tableName);
         $this->shared->createAbandonedCartTable($installer, $tableName);
     }
@@ -1602,7 +1602,7 @@ class InstallSchema implements InstallSchemaInterface
      */
     private function createConsentTable($installer)
     {
-        $tableName = $installer->getTable(Schema::EMAIL_CONTACT_CONSENT_TABLE);
+        $tableName = $installer->getTable('email_contact_consent');
         $this->dropTableIfExists($installer, $tableName);
         $this->shared->createConsentTable($installer, $tableName);
     }
@@ -1612,7 +1612,7 @@ class InstallSchema implements InstallSchemaInterface
      */
     private function createFailedAuth($installer)
     {
-        $tableName = $installer->getTable(Schema::EMAIL_FAILED_AUTH_TABLE);
+        $tableName = $installer->getTable('email_failed_auth');
         $this->dropTableIfExists($installer, $tableName);
         $this->shared->createFailedAuthTable($installer, $tableName);
     }

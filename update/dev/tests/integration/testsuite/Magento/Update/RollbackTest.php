@@ -5,7 +5,7 @@
  */
 namespace Magento\Update;
 
-class RollbackTest extends \PHPUnit\Framework\TestCase
+class RollbackTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\Update\Rollback
@@ -61,9 +61,7 @@ class RollbackTest extends \PHPUnit\Framework\TestCase
 
         $this->backupFileName = $this->backupPath . '/../' . uniqid() . '_code.tar';
         $this->backupFile = new \PharData($this->backupFileName);
-        $this->backupInfo = $this->getMockBuilder(\Magento\Update\Backup\BackupInfo::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->backupInfo = $this->getMock('Magento\Update\Backup\BackupInfo', [], [], '', false);
         $this->rollBack = new \Magento\Update\Rollback($this->backupPath, $this->archivedDir, null, $this->backupInfo);
     }
 

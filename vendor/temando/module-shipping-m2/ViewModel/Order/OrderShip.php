@@ -13,27 +13,24 @@ use Magento\Framework\View\Element\Block\ArgumentInterface;
 use Magento\Sales\Api\Data\OrderInterface;
 use Magento\Store\Model\ScopeInterface;
 use Psr\Log\LoggerInterface;
-use Temando\Shipping\Model\Pickup\PickupLoader;
 use Temando\Shipping\Model\ResourceModel\Repository\OrderCollectionPointRepositoryInterface;
 use Temando\Shipping\Model\ResourceModel\Repository\OrderRepositoryInterface;
 use Temando\Shipping\Model\Shipment\ShipmentProviderInterface;
 use Temando\Shipping\ViewModel\CoreApiInterface;
 use Temando\Shipping\ViewModel\DataProvider\CoreApiAccess;
 use Temando\Shipping\ViewModel\DataProvider\CoreApiAccessInterface;
-use Temando\Shipping\ViewModel\DataProvider\DeliveryType;
 use Temando\Shipping\ViewModel\DataProvider\ShippingApiAccess;
 use Temando\Shipping\ViewModel\DataProvider\ShippingApiAccessInterface;
 use Temando\Shipping\ViewModel\OrderShipInterface;
-use Temando\Shipping\ViewModel\Pickup\PickupItems;
 use Temando\Shipping\ViewModel\ShippingApiInterface;
 
 /**
  * View model for order ship JS component.
  *
- * @package Temando\Shipping\ViewModel
- * @author  Christoph Aßmann <christoph.assmann@netresearch.de>
- * @license https://opensource.org/licenses/osl-3.0.php Open Software License (OSL 3.0)
- * @link    https://www.temando.com/
+ * @package  Temando\Shipping\ViewModel
+ * @author   Christoph Aßmann <christoph.assmann@netresearch.de>
+ * @license  http://opensource.org/licenses/osl-3.0.php Open Software License (OSL 3.0)
+ * @link     http://www.temando.com/
  */
 class OrderShip implements ArgumentInterface, CoreApiInterface, OrderShipInterface, ShippingApiInterface
 {
@@ -63,11 +60,6 @@ class OrderShip implements ArgumentInterface, CoreApiInterface, OrderShipInterfa
     private $serializer;
 
     /**
-     * @var DeliveryType
-     */
-    private $deliveryType;
-
-    /**
      * @var OrderRepositoryInterface
      */
     private $orderRepository;
@@ -83,16 +75,6 @@ class OrderShip implements ArgumentInterface, CoreApiInterface, OrderShipInterfa
     private $collectionPointRepository;
 
     /**
-     * @var PickupLoader
-     */
-    private $pickupLoader;
-
-    /**
-     * @var PickupItems
-     */
-    private $pickupItems;
-
-    /**
      * @var LoggerInterface
      */
     private $logger;
@@ -104,12 +86,9 @@ class OrderShip implements ArgumentInterface, CoreApiInterface, OrderShipInterfa
      * @param UrlInterface $urlBuilder
      * @param ScopeConfigInterface $scopeConfig
      * @param Json $serializer
-     * @param DeliveryType $deliveryType
      * @param OrderRepositoryInterface $orderRepository
      * @param ShipmentProviderInterface $shipmentProvider
      * @param OrderCollectionPointRepositoryInterface $collectionPointRepository
-     * @param PickupLoader $pickupLoader
-     * @param PickupItems $pickupItems
      * @param LoggerInterface $logger
      */
     public function __construct(
@@ -118,12 +97,9 @@ class OrderShip implements ArgumentInterface, CoreApiInterface, OrderShipInterfa
         UrlInterface $urlBuilder,
         ScopeConfigInterface $scopeConfig,
         Json $serializer,
-        DeliveryType $deliveryType,
         OrderRepositoryInterface $orderRepository,
         ShipmentProviderInterface $shipmentProvider,
         OrderCollectionPointRepositoryInterface $collectionPointRepository,
-        PickupLoader $pickupLoader,
-        PickupItems $pickupItems,
         LoggerInterface $logger
     ) {
         $this->coreApiAccess = $coreApiAccess;
@@ -131,12 +107,9 @@ class OrderShip implements ArgumentInterface, CoreApiInterface, OrderShipInterfa
         $this->urlBuilder = $urlBuilder;
         $this->scopeConfig = $scopeConfig;
         $this->serializer = $serializer;
-        $this->deliveryType = $deliveryType;
         $this->orderRepository = $orderRepository;
         $this->shipmentProvider = $shipmentProvider;
         $this->collectionPointRepository = $collectionPointRepository;
-        $this->pickupLoader = $pickupLoader;
-        $this->pickupItems = $pickupItems;
         $this->logger = $logger;
     }
 
@@ -223,28 +196,6 @@ class OrderShip implements ArgumentInterface, CoreApiInterface, OrderShipInterfa
     }
 
     /**
-     * Determine the quantity to be excluded from shipments, e.g. due to them
-     * being already prepared for store pickup.
-     *
-     * @param string $itemSku
-     * @return int
-     */
-    private function getReservedQty(string $itemSku): int
-    {
-        $order = $this->getOrder();
-
-        if (!$this->deliveryType->isPickupOrder($order)) {
-            return 0;
-        }
-
-        $orderId = (int)$order->getEntityId();
-        $pickups = $this->pickupLoader->load($orderId);
-        $this->pickupLoader->register($pickups, $orderId);
-
-        return $this->pickupItems->getQtyPrepared($itemSku);
-    }
-
-    /**
      * @return CoreApiAccessInterface
      */
     public function getCoreApiAccess(): CoreApiAccessInterface
@@ -290,10 +241,7 @@ class OrderShip implements ArgumentInterface, CoreApiInterface, OrderShipInterfa
         foreach ($order->getAllItems() as $orderItem) {
             if (!$orderItem->getIsVirtual() && !$orderItem->getParentItem()) {
                 // skip virtual and child items
-                $qtyShipped = $orderItem->getQtyShipped() + $this->getReservedQty($orderItem->getSku());
-
                 $orderItems[$orderItem->getId()] = $orderItem->toArray($this->getOrderItemProperties());
-                $orderItems[$orderItem->getId()]['qty_shipped'] = number_format($qtyShipped, 3);
             }
         }
 

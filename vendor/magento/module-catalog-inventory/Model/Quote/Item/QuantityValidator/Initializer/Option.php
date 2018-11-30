@@ -10,7 +10,7 @@ use Magento\CatalogInventory\Api\StockStateInterface;
 use Magento\CatalogInventory\Model\Quote\Item\QuantityValidator\QuoteItemQtyList;
 
 /**
- * Quote item option initializer.
+ * Class for initialize quote item options.
  */
 class Option
 {

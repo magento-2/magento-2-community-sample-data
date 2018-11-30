@@ -6,6 +6,7 @@
 
 namespace Magento\Sales\Test\Constraint;
 
+use Magento\Sales\Test\Page\Adminhtml\OrderIndex;
 use Magento\Sales\Test\Page\Adminhtml\SalesOrderView;
 use Magento\Mtf\Constraint\AbstractConstraint;
 
@@ -17,17 +18,20 @@ class AssertInvoiceStatusInOrdersGrid extends AbstractConstraint
     /**
      * Assert invoice status on order page in Admin.
      *
+     * @param OrderIndex $salesOrder
      * @param SalesOrderView $salesOrderView
      * @param string $invoiceStatus
      * @param string $orderId
      * @return void
      */
     public function processAssert(
+        OrderIndex $salesOrder,
         SalesOrderView $salesOrderView,
         $invoiceStatus,
         $orderId
     ) {
-        $salesOrderView->open(['order_id' => $orderId]);
+        $salesOrder->open();
+        $salesOrder->getSalesOrderGrid()->searchAndOpen(['id' => $orderId]);
         $salesOrderView->getOrderForm()->openTab('invoices');
         /** @var \Magento\Sales\Test\Block\Adminhtml\Order\View\Tab\Invoices\Grid $grid */
         $grid = $salesOrderView->getOrderForm()->getTab('invoices')->getGridBlock();
@@ -35,7 +39,7 @@ class AssertInvoiceStatusInOrdersGrid extends AbstractConstraint
             'order_id' => $orderId,
             'status' => $invoiceStatus,
         ];
-        \PHPUnit\Framework\Assert::assertTrue(
+        \PHPUnit_Framework_Assert::assertTrue(
             $grid->isRowVisible($filter),
             'Invoice status is incorrect.'
         );

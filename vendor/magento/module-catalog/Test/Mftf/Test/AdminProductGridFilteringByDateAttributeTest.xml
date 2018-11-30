@@ -7,15 +7,13 @@
 -->
 
 <tests xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-       xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/testSchema.xsd">
+       xsi:noNamespaceSchemaLocation="../../../../../../../dev/tests/acceptance/vendor/magento/magento2-functional-testing-framework/src/Magento/FunctionalTestingFramework/Test/etc/testSchema.xsd">
     <test name="AdminProductGridFilteringByDateAttributeTest">
         <annotations>
-            <features value="Catalog"/>
-            <stories value="Filter products"/>
-            <title value="Verify Set Product as new Filter input on Product Grid doesn't getreset to currentDate"/>
+            <title value="Verify Set Product as new Filter input on Product Grid doesn't reset to currentDate"/>
             <description value="Data input in the new from date filter field should not change"/>
             <severity value="MAJOR"/>
-            <testCaseId value="MAGETWO-92019"/>
+            <testCaseId value="MAGETWO-92228"/>
             <group value="product"/>
         </annotations>
         <before>
@@ -28,10 +26,10 @@
         </after>
         <amOnPage url="{{AdminProductAttributeGridPage.url}}" stepKey="navigateToProductAttribute"/>
         <waitForPageLoad stepKey="wait1"/>
-        <click selector="{{AdminProductAttributeGridSection.ResetFilter}}" stepKey="resetFiltersOnGrid"/>
-        <fillField selector="{{AdminProductAttributeGridSection.GridFilterFrontEndLabel}}" userInput="Set Product as New from Date" stepKey="setAttributeLabel"/>
-        <click selector="{{AdminProductAttributeGridSection.Search}}" stepKey="searchForAttributeFromGrid"/>
-        <click selector="{{AdminProductAttributeGridSection.FirstRow}}" stepKey="clickOnAttributeRow"/>
+        <click selector="{{AdminProductAttributeGridSection.resetFilter}}" stepKey="resetFiltersOnGrid"/>
+        <fillField selector="{{AdminProductAttributeGridSection.gridFilterFrontEndLabel}}" userInput="Set Product as New from Date" stepKey="setAttributeLabel"/>
+        <click selector="{{AdminProductAttributeGridSection.search}}" stepKey="searchForAttributeFromGrid"/>
+        <click selector="{{AdminProductAttributeGridSection.firstRow}}" stepKey="clickOnAttributeRow"/>
         <waitForPageLoad stepKey="wait2"/>
         <click selector="{{AttributePropertiesSection.AdvancedProperties}}" stepKey="openAdvancedPropertiesTab"/>
         <selectOption selector="#is_filterable_in_grid" userInput="Yes" stepKey="isFilterableInGrid"/>
@@ -56,5 +54,5 @@
         <dontSeeElement selector="{{AdminProductGridSection.columnHeader('Set Product as New from Date')}}" stepKey="dontSeeNewFromDateColumn"/>
         <click selector="{{AdminProductGridFilterSection.columnsDropdown}}" stepKey="closeColumnsDropdown2"/>
         <click selector="{{AdminProductGridFilterSection.clearAll}}" stepKey="clearGridFilters"/>
-        </test>
-        </tests>
+    </test>
+</tests>

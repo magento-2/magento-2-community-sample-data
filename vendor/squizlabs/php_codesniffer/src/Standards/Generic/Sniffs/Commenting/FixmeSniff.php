@@ -35,7 +35,7 @@ class FixmeSniff implements Sniff
      */
     public function register()
     {
-        return array_diff(Tokens::$commentTokens, Tokens::$phpcsCommentTokens);
+        return Tokens::$commentTokens;
 
     }//end register()
 

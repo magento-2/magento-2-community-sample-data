@@ -255,7 +255,7 @@ class IndexBuilderTest extends \PHPUnit\Framework\TestCase
             ->method('getBackend')
             ->will($this->returnValue($backendModelMock));
 
-        $iterator = [$this->product];
+        $iterator = new \ArrayIterator([$this->product]);
         $this->productLoader->expects($this->once())
             ->method('getProducts')
             ->willReturn($iterator);

@@ -50,6 +50,7 @@ class TierPriceTest extends \PHPUnit\Framework\TestCase
 
     /**
      * @param $groupId
+     *
      * @return \Magento\CatalogImportExport\Model\Import\Product\Validator\TierPrice
      */
     protected function processInit($groupId)

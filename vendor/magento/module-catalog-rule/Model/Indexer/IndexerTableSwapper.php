@@ -3,7 +3,6 @@
  * Copyright © Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
-declare(strict_types=1);
 
 namespace Magento\CatalogRule\Model\Indexer;
 
@@ -40,6 +39,7 @@ class IndexerTableSwapper implements IndexerTableSwapperInterface
      * @param string $originalTableName
      *
      * @return string Created table name.
+     * @throws \Throwable
      */
     private function createTemporaryTable(string $originalTableName): string
     {
@@ -75,7 +75,8 @@ class IndexerTableSwapper implements IndexerTableSwapperInterface
     {
         $originalTable = $this->resourceConnection->getTableName($originalTable);
         if (!array_key_exists($originalTable, $this->temporaryTables)) {
-            $this->temporaryTables[$originalTable] = $this->createTemporaryTable($originalTable);
+            $this->temporaryTables[$originalTable]
+                = $this->createTemporaryTable($originalTable);
         }
 
         return $this->temporaryTables[$originalTable];
@@ -101,11 +102,11 @@ class IndexerTableSwapper implements IndexerTableSwapperInterface
             $temporaryTableName = $this->getWorkingTableName($tableName);
             $toRename[] = [
                 'oldName' => $tableName,
-                'newName' => $temporaryOriginalName,
+                'newName' => $temporaryOriginalName
             ];
             $toRename[] = [
                 'oldName' => $temporaryTableName,
-                'newName' => $tableName,
+                'newName' => $tableName
             ];
             $toDrop[] = $temporaryOriginalName;
             $temporaryTablesRenamed[] = $tableName;

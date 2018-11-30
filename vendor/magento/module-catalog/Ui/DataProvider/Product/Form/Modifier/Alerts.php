@@ -54,6 +54,7 @@ class Alerts extends AbstractModifier
 
     /**
      * {@inheritdoc}
+     * @since 101.0.0
      */
     public function modifyData(array $data)
     {
@@ -62,6 +63,7 @@ class Alerts extends AbstractModifier
 
     /**
      * {@inheritdoc}
+     * @since 101.0.0
      */
     public function modifyMeta(array $meta)
     {

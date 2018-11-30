@@ -4,65 +4,43 @@
  */
 namespace Temando\Shipping\Model\CollectionPoint;
 
-use Magento\Framework\EntityManager\HydratorInterface;
 use Magento\Framework\Exception\CouldNotDeleteException;
 use Magento\Framework\Exception\CouldNotSaveException;
-use Temando\Shipping\Api\CollectionPoint\GuestCartCollectionPointManagementInterface as LegacyManagementInterface;
-use Temando\Shipping\Api\Data\CollectionPoint\QuoteCollectionPointInterfaceFactory as LegacyCollectionPointFactory;
-use Temando\Shipping\Api\Data\CollectionPoint\SearchRequestInterfaceFactory as LegacySearchRequestFactory;
-use Temando\Shipping\Api\Delivery\GuestCartCollectionPointManagementInterface;
+use Magento\Quote\Model\GuestCart\GuestShippingAddressManagementInterface;
+use Temando\Shipping\Api\CollectionPoint\GuestCartCollectionPointManagementInterface;
 
 /**
  * Manage Collection Point Searches
  *
- * @deprecated since 1.4.0
- * @see \Temando\Shipping\Model\Delivery\GuestCartCollectionPointManagement
- *
- * @package Temando\Shipping\Model
- * @author  Benjamin Heuer <benjamin.heuer@netresearch.de>
- * @author  Christoph Aßmann <christoph.assmann@netresearch.de>
- * @license https://opensource.org/licenses/osl-3.0.php Open Software License (OSL 3.0)
- * @link    https://www.temando.com/
+ * @package  Temando\Shipping\Model
+ * @author   Benjamin Heuer <benjamin.heuer@netresearch.de>
+ * @author   Christoph Aßmann <christoph.assmann@netresearch.de>
+ * @license  http://opensource.org/licenses/osl-3.0.php Open Software License (OSL 3.0)
+ * @link     http://www.temando.com/
  */
-class GuestCartCollectionPointManagement implements LegacyManagementInterface
+class GuestCartCollectionPointManagement implements GuestCartCollectionPointManagementInterface
 {
     /**
-     * @var HydratorInterface
+     * @var GuestShippingAddressManagementInterface
      */
-    private $hydrator;
+    private $addressManagement;
 
     /**
-     * @var LegacySearchRequestFactory
-     */
-    private $searchRequestFactory;
-
-    /**
-     * @var LegacyCollectionPointFactory
-     */
-    private $collectionPointFactory;
-
-    /**
-     * @var GuestCartCollectionPointManagementInterface
+     * @var CollectionPointManagement
      */
     private $collectionPointManagement;
 
     /**
      * GuestCartCollectionPointManagement constructor.
      *
-     * @param HydratorInterface $hydrator
-     * @param LegacySearchRequestFactory $searchRequestFactory
-     * @param LegacyCollectionPointFactory $collectionPointFactory
-     * @param GuestCartCollectionPointManagementInterface $collectionPointManagement
+     * @param GuestShippingAddressManagementInterface $addressManagement
+     * @param CollectionPointManagement $collectionPointManagement
      */
     public function __construct(
-        HydratorInterface $hydrator,
-        LegacySearchRequestFactory $searchRequestFactory,
-        LegacyCollectionPointFactory $collectionPointFactory,
-        GuestCartCollectionPointManagementInterface $collectionPointManagement
+        GuestShippingAddressManagementInterface $addressManagement,
+        CollectionPointManagement $collectionPointManagement
     ) {
-        $this->hydrator = $hydrator;
-        $this->searchRequestFactory = $searchRequestFactory;
-        $this->collectionPointFactory = $collectionPointFactory;
+        $this->addressManagement = $addressManagement;
         $this->collectionPointManagement = $collectionPointManagement;
     }
 
@@ -75,13 +53,9 @@ class GuestCartCollectionPointManagement implements LegacyManagementInterface
      */
     public function saveSearchRequest($cartId, $countryId, $postcode)
     {
-        $legacySearchRequest = $this->searchRequestFactory->create();
+        $shippingAddress = $this->addressManagement->get($cartId);
 
-        $searchRequest = $this->collectionPointManagement->saveSearchRequest($cartId, $countryId, $postcode);
-        $searchRequestData = $this->hydrator->extract($searchRequest);
-        $this->hydrator->hydrate($legacySearchRequest, $searchRequestData);
-
-        return $legacySearchRequest;
+        return $this->collectionPointManagement->saveSearchRequest($shippingAddress->getId(), $countryId, $postcode);
     }
 
     /**
@@ -91,7 +65,9 @@ class GuestCartCollectionPointManagement implements LegacyManagementInterface
      */
     public function deleteSearchRequest($cartId)
     {
-        return $this->collectionPointManagement->deleteSearchRequest($cartId);
+        $shippingAddress = $this->addressManagement->get($cartId);
+
+        return $this->collectionPointManagement->deleteSearchRequest($shippingAddress->getId());
     }
 
     /**
@@ -100,19 +76,9 @@ class GuestCartCollectionPointManagement implements LegacyManagementInterface
      */
     public function getCollectionPoints($cartId)
     {
-        $legacyCollectionPoints = [];
+        $shippingAddress = $this->addressManagement->get($cartId);
 
-        $collectionPoints =  $this->collectionPointManagement->getCollectionPoints($cartId);
-
-        foreach ($collectionPoints as $collectionPoint) {
-            $legacyCollectionPoint = $this->collectionPointFactory->create();
-            $collectionPointData = $this->hydrator->extract($collectionPoint);
-            $this->hydrator->hydrate($legacyCollectionPoint, $collectionPointData);
-
-            $legacyCollectionPoints[]= $legacyCollectionPoint;
-        }
-
-        return $legacyCollectionPoints;
+        return $this->collectionPointManagement->getCollectionPoints($shippingAddress->getId());
     }
 
     /**
@@ -123,6 +89,8 @@ class GuestCartCollectionPointManagement implements LegacyManagementInterface
      */
     public function selectCollectionPoint($cartId, $entityId)
     {
-        return $this->collectionPointManagement->selectCollectionPoint($cartId, $entityId);
+        $shippingAddress = $this->addressManagement->get($cartId);
+
+        return $this->collectionPointManagement->selectCollectionPoint($shippingAddress->getId(), $entityId);
     }
 }

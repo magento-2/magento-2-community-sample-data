@@ -7,7 +7,7 @@ namespace Temando\Shipping\Rest\Adapter;
 
 use Temando\Shipping\Rest\Exception\AdapterException;
 use Temando\Shipping\Rest\Request\ItemRequestInterface;
-use Temando\Shipping\Rest\Response\DataObject\Batch;
+use Temando\Shipping\Rest\Response\GetBatch;
 
 /**
  * The Temando Batch API interface defines the supported subset of operations
@@ -23,7 +23,7 @@ interface BatchApiInterface
     /**
      * @param ItemRequestInterface $request
      *
-     * @return Batch
+     * @return GetBatch
      * @throws AdapterException
      */
     public function getBatch(ItemRequestInterface $request);

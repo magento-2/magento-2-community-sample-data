@@ -7,17 +7,16 @@ define(
         'mage/storage',
         'amazonPaymentConfig',
         'uiRegistry',
-        'Amazon_Login/js/view/login-button'
+        'Amazon_Login/js/view/login-button',
     ],
-    function (
-        $,
+    function ($,
         Component,
         ko,
         amazonStorage,
         storage,
         amazonPaymentConfig,
         registry,
-        loginButton
+        loginButton,
     ) {
         'use strict';
 
@@ -28,15 +27,17 @@ define(
                 defaults: {
                     template: 'Amazon_Payment/payment/amazonlogin'
                 },
+
                 getCode: function () {
                     return 'amazonlogin';
                 },
                 isActive: function () {
                     return true;
                 },
+
                 isPwaVisible: function () {
                     return amazonStorage.isPwaVisible && amazonStorage.isAmazonEnabled;
-                }
+                },
             }
         );
     }

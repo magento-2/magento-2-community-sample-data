@@ -40,20 +40,4 @@ class ClonedDependencyTest extends TestCase
     {
         $this->assertNotSame(self::$dependency, $dependency);
     }
-
-    /**
-     * @depends !shallowClone testOne
-     */
-    public function testFive($dependency)
-    {
-        $this->assertSame(self::$dependency, $dependency);
-    }
-
-    /**
-     * @depends shallowClone testOne
-     */
-    public function testSix($dependency)
-    {
-        $this->assertNotSame(self::$dependency, $dependency);
-    }
 }

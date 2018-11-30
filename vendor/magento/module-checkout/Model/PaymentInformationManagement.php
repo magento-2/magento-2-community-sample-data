@@ -3,7 +3,6 @@
  * Copyright © Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
-
 namespace Magento\Checkout\Model;
 
 use Magento\Framework\Exception\CouldNotSaveException;
@@ -15,7 +14,7 @@ class PaymentInformationManagement implements \Magento\Checkout\Api\PaymentInfor
 {
     /**
      * @var \Magento\Quote\Api\BillingAddressManagementInterface
-     * @deprecated 100.1.0 This call was substituted to eliminate extra quote::save call
+     * @deprecated 100.2.0 This call was substituted to eliminate extra quote::save call
      */
     protected $billingAddressManagement;
 
@@ -90,7 +89,7 @@ class PaymentInformationManagement implements \Magento\Checkout\Api\PaymentInfor
         } catch (\Exception $e) {
             $this->getLogger()->critical($e);
             throw new CouldNotSaveException(
-                __('A server error stopped your order from being placed. Please try to place your order again.'),
+                __('An error occurred on the server. Please try to place the order again.'),
                 $e
             );
         }
@@ -140,7 +139,7 @@ class PaymentInformationManagement implements \Magento\Checkout\Api\PaymentInfor
      * Get logger instance
      *
      * @return \Psr\Log\LoggerInterface
-     * @deprecated 100.1.8
+     * @deprecated 100.2.0
      */
     private function getLogger()
     {

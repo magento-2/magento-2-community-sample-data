@@ -4,13 +4,13 @@
  */
 namespace Temando\Shipping\Rest;
 
-use Magento\Backend\Model\Session as BackendSession;
+use Magento\Backend\Model\Session;
 use Magento\Framework\Exception\SessionException;
 use Magento\Framework\Session\SessionManagerInterface;
 use Magento\Framework\Session\Storage;
 use Magento\TestFramework\Helper\Bootstrap;
 use Temando\Shipping\Rest\Exception\AdapterException;
-use Temando\Shipping\Rest\Response\DataObject\Session;
+use Temando\Shipping\Rest\Response\Type\SessionResponseType;
 
 /**
  * Temando Session Handling Test
@@ -23,7 +23,7 @@ use Temando\Shipping\Rest\Response\DataObject\Session;
 class AuthServiceTest extends \PHPUnit\Framework\TestCase
 {
     /**
-     * @var BackendSession|\PHPUnit_Framework_MockObject_MockObject
+     * @var Session|\PHPUnit_Framework_MockObject_MockObject
      */
     private $storageMock;
 
@@ -69,10 +69,10 @@ class AuthServiceTest extends \PHPUnit\Framework\TestCase
         $newSessionToken = 'foo';
         $newSessionTokenExpiry = '2038';
 
-        $newSessionResponseAttributes = new \Temando\Shipping\Rest\Response\Fields\SessionAttributes();
+        $newSessionResponseAttributes = new \Temando\Shipping\Rest\Response\Type\Session\Attributes();
         $newSessionResponseAttributes->setSessionToken($newSessionToken);
         $newSessionResponseAttributes->setExpiry($newSessionTokenExpiry);
-        $newSessionResponse = new Session();
+        $newSessionResponse = new SessionResponseType();
         $newSessionResponse->setAttributes($newSessionResponseAttributes);
 
         $this->storageMock->expects($this->once())
@@ -163,10 +163,10 @@ class AuthServiceTest extends \PHPUnit\Framework\TestCase
         $newSessionToken = 'foo';
         $newSessionTokenExpiry = '2038';
 
-        $newSessionResponseAttributes = new \Temando\Shipping\Rest\Response\Fields\SessionAttributes();
+        $newSessionResponseAttributes = new \Temando\Shipping\Rest\Response\Type\Session\Attributes();
         $newSessionResponseAttributes->setSessionToken($newSessionToken);
         $newSessionResponseAttributes->setExpiry($newSessionTokenExpiry);
-        $newSessionResponse = new Session();
+        $newSessionResponse = new SessionResponseType();
         $newSessionResponse->setAttributes($newSessionResponseAttributes);
 
         $this->storageMock->expects($this->once())

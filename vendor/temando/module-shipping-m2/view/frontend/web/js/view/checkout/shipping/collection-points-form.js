@@ -18,7 +18,7 @@ define([
             return selectedCollectionPoint();
         } else {
             var selected = collectionPoints.getCollectionPoints().find(function (element) {
-                return element.selected;
+                return element.selected === "1";
             });
 
             return selected ? selected.entity_id : false;
@@ -61,7 +61,6 @@ define([
 
         onCollectionPointSelect: function (value) {
             selectSearchResult(value);
-            collectionPoints.selectCollectionPoint(value);
         },
 
         getCollectionPoints: function () {

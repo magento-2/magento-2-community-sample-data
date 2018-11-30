@@ -139,8 +139,11 @@ class Viewfile extends \Magento\Customer\Controller\Adminhtml\Index
         $directory = $filesystem->getDirectoryRead(DirectoryList::MEDIA);
         $fileName = CustomerMetadataInterface::ENTITY_TYPE_CUSTOMER . '/' . ltrim($file, '/');
         $path = $directory->getAbsolutePath($fileName);
-        if (mb_strpos($path, '..') !== false || (!$directory->isFile($fileName)
-            && !$this->_objectManager->get(\Magento\MediaStorage\Helper\File\Storage::class)->processStorageFile($path))
+        if (mb_strpos($path, '..') !== false
+            || (!$directory->isFile($fileName)
+                && !$this->_objectManager->get(
+                    \Magento\MediaStorage\Helper\File\Storage::class
+                )->processStorageFile($path))
         ) {
             throw new NotFoundException(__('Page not found.'));
         }
@@ -192,23 +195,22 @@ class Viewfile extends \Magento\Customer\Controller\Adminhtml\Index
      */
     private function getFileParams()
     {
-        $file = null;
-        $plain = false;
         if ($this->getRequest()->getParam('file')) {
             // download file
             $file = $this->urlDecoder->decode(
                 $this->getRequest()->getParam('file')
             );
+
+            return [$file, false];
         } elseif ($this->getRequest()->getParam('image')) {
             // show plain image
             $file = $this->urlDecoder->decode(
                 $this->getRequest()->getParam('image')
             );
-            $plain = true;
+
+            return [$file, true];
         } else {
             throw new NotFoundException(__('Page not found.'));
         }
-
-        return [$file, $plain];
     }
 }

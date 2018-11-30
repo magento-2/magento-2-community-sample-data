@@ -12,6 +12,8 @@
 namespace Symfony\Component\Console\Command;
 
 use Symfony\Component\Console\Application;
+use Symfony\Component\Console\Descriptor\TextDescriptor;
+use Symfony\Component\Console\Descriptor\XmlDescriptor;
 use Symfony\Component\Console\Exception\ExceptionInterface;
 use Symfony\Component\Console\Exception\InvalidArgumentException;
 use Symfony\Component\Console\Exception\LogicException;
@@ -20,6 +22,7 @@ use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputDefinition;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
+use Symfony\Component\Console\Output\BufferedOutput;
 use Symfony\Component\Console\Output\OutputInterface;
 
 /**
@@ -29,17 +32,11 @@ use Symfony\Component\Console\Output\OutputInterface;
  */
 class Command
 {
-    /**
-     * @var string|null The default command name
-     */
-    protected static $defaultName;
-
     private $application;
     private $name;
     private $processTitle;
     private $aliases = array();
     private $definition;
-    private $hidden = false;
     private $help;
     private $description;
     private $ignoreValidationErrors = false;
@@ -51,30 +48,23 @@ class Command
     private $helperSet;
 
     /**
-     * @return string|null The default command name or null when no default name is set
-     */
-    public static function getDefaultName()
-    {
-        $class = \get_called_class();
-        $r = new \ReflectionProperty($class, 'defaultName');
-
-        return $class === $r->class ? static::$defaultName : null;
-    }
-
-    /**
      * @param string|null $name The name of the command; passing null means it must be set in configure()
      *
      * @throws LogicException When the command name is empty
      */
-    public function __construct(string $name = null)
+    public function __construct($name = null)
     {
         $this->definition = new InputDefinition();
 
-        if (null !== $name || null !== $name = static::getDefaultName()) {
+        if (null !== $name) {
             $this->setName($name);
         }
 
         $this->configure();
+
+        if (!$this->name) {
+            throw new LogicException(sprintf('The command defined in "%s" cannot have an empty name.', \get_class($this)));
+        }
     }
 
     /**
@@ -272,12 +262,24 @@ class Command
      *
      * @see execute()
      */
-    public function setCode(callable $code)
+    public function setCode($code)
     {
-        if ($code instanceof \Closure) {
+        if (!\is_callable($code)) {
+            throw new InvalidArgumentException('Invalid callable provided to Command::setCode.');
+        }
+
+        if (\PHP_VERSION_ID >= 50400 && $code instanceof \Closure) {
             $r = new \ReflectionFunction($code);
             if (null === $r->getClosureThis()) {
-                $code = \Closure::bind($code, $this);
+                if (\PHP_VERSION_ID < 70000) {
+                    // Bug in PHP5: https://bugs.php.net/bug.php?id=64761
+                    // This means that we cannot bind static closures and therefore we must
+                    // ignore any errors here.  There is no way to test if the closure is
+                    // bindable.
+                    $code = @\Closure::bind($code, $this);
+                } else {
+                    $code = \Closure::bind($code, $this);
+                }
             }
         }
 
@@ -343,7 +345,7 @@ class Command
     }
 
     /**
-     * Gets the InputDefinition to be used to create representations of this Command.
+     * Gets the InputDefinition to be used to create XML and Text representations of this Command.
      *
      * Can be overridden to provide the original command representation when it would otherwise
      * be changed by merging with the application InputDefinition.
@@ -379,11 +381,11 @@ class Command
     /**
      * Adds an option.
      *
-     * @param string                        $name        The option name
-     * @param string|array                  $shortcut    The shortcuts, can be null, a string of shortcuts delimited by | or an array of shortcuts
-     * @param int|null                      $mode        The option mode: One of the VALUE_* constants
-     * @param string                        $description A description text
-     * @param string|string[]|int|bool|null $default     The default value (must be null for self::VALUE_NONE)
+     * @param string                    $name        The option name
+     * @param string|array              $shortcut    The shortcuts, can be null, a string of shortcuts delimited by | or an array of shortcuts
+     * @param int|null                  $mode        The option mode: One of the VALUE_* constants
+     * @param string                    $description A description text
+     * @param string|string[]|bool|null $default     The default value (must be null for self::VALUE_NONE)
      *
      * @throws InvalidArgumentException If option mode is invalid or incompatible
      *
@@ -446,26 +448,6 @@ class Command
     public function getName()
     {
         return $this->name;
-    }
-
-    /**
-     * @param bool $hidden Whether or not the command should be hidden from the list of commands
-     *
-     * @return Command The current instance
-     */
-    public function setHidden($hidden)
-    {
-        $this->hidden = (bool) $hidden;
-
-        return $this;
-    }
-
-    /**
-     * @return bool whether the command should be publicly shown or not
-     */
-    public function isHidden()
-    {
-        return $this->hidden;
     }
 
     /**
@@ -638,13 +620,58 @@ class Command
     }
 
     /**
+     * Returns a text representation of the command.
+     *
+     * @return string A string representing the command
+     *
+     * @deprecated since version 2.3, to be removed in 3.0.
+     */
+    public function asText()
+    {
+        @trigger_error('The '.__METHOD__.' method is deprecated since Symfony 2.3 and will be removed in 3.0.', E_USER_DEPRECATED);
+
+        $descriptor = new TextDescriptor();
+        $output = new BufferedOutput(BufferedOutput::VERBOSITY_NORMAL, true);
+        $descriptor->describe($output, $this, array('raw_output' => true));
+
+        return $output->fetch();
+    }
+
+    /**
+     * Returns an XML representation of the command.
+     *
+     * @param bool $asDom Whether to return a DOM or an XML string
+     *
+     * @return string|\DOMDocument An XML string representing the command
+     *
+     * @deprecated since version 2.3, to be removed in 3.0.
+     */
+    public function asXml($asDom = false)
+    {
+        @trigger_error('The '.__METHOD__.' method is deprecated since Symfony 2.3 and will be removed in 3.0.', E_USER_DEPRECATED);
+
+        $descriptor = new XmlDescriptor();
+
+        if ($asDom) {
+            return $descriptor->getCommandDocument($this);
+        }
+
+        $output = new BufferedOutput();
+        $descriptor->describe($output, $this);
+
+        return $output->fetch();
+    }
+
+    /**
      * Validates a command name.
      *
      * It must be non-empty and parts can optionally be separated by ":".
      *
+     * @param string $name
+     *
      * @throws InvalidArgumentException When the name is invalid
      */
-    private function validateName(string $name)
+    private function validateName($name)
     {
         if (!preg_match('/^[^\:]++(\:[^\:]++)*$/', $name)) {
             throw new InvalidArgumentException(sprintf('Command name "%s" is invalid.', $name));

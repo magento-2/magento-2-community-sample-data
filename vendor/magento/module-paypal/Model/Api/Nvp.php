@@ -4,6 +4,8 @@
  * See COPYING.txt for license details.
  */
 
+// @codingStandardsIgnoreFile
+
 namespace Magento\Paypal\Model\Api;
 
 use Magento\Payment\Model\Cart;
@@ -1461,7 +1463,7 @@ class Nvp extends \Magento\Paypal\Model\Api\AbstractApi
      *
      * @param array $data
      * @return void
-     * @deprecated 100.2.4 typo in method name
+     * @deprecated 100.2.2 typo in method name
      * @see _exportAddresses
      */
     protected function _exportAddressses($data)

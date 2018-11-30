@@ -8,8 +8,7 @@ use Temando\Shipping\Model\Shipment\PackageInterface;
 use Temando\Shipping\Model\Shipment\PackageInterfaceFactory;
 use Temando\Shipping\Model\Shipment\PackageItemInterface;
 use Temando\Shipping\Model\Shipment\PackageItemInterfaceFactory;
-use Temando\Shipping\Rest\Response\Fields\Generic\Item;
-use Temando\Shipping\Rest\Response\Fields\Generic\Package;
+use Temando\Shipping\Rest\Response\Type\Generic\Package;
 
 /**
  * Map API data to application data object
@@ -45,7 +44,7 @@ class PackageResponseMapper
     }
 
     /**
-     * @param Item[] $apiPackageItems
+     * @param \Temando\Shipping\Rest\Response\Type\Generic\Item[] $apiPackageItems
      * @return PackageItemInterface[]
      */
     public function mapItems(array $apiPackageItems)

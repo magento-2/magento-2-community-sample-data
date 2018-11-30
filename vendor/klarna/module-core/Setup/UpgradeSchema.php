@@ -28,7 +28,6 @@ class UpgradeSchema implements UpgradeSchemaInterface
      * @param SchemaSetupInterface   $setup
      * @param ModuleContextInterface $context
      * @return void
-     * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
      */
     public function upgrade(SchemaSetupInterface $setup, ModuleContextInterface $context)
     {
@@ -89,68 +88,6 @@ class UpgradeSchema implements UpgradeSchemaInterface
                     ]
                 );
         }
-        if (version_compare($context->getVersion(), '4.5.3', '<')) {
-            $table = $installer->getTable('klarna_core_order');
-            $index_list = $installer->getConnection()->getIndexList($table);
-            $index_name = $installer->getIdxName($table, 'is_acknowledged');
-            if (!isset($index_list[$index_name])) {
-                $installer->getConnection()->addIndex($table, $index_name, 'is_acknowledged');
-            }
-        }
-        if (version_compare($context->getVersion(), '4.5.4', '<')) {
-            $this->removeFKConstraintFromOrderTable(
-                $installer,
-                'klarna_core_order',
-                'order_id',
-                'sales_order',
-                'entity_id'
-            );
-            $this->removeFKConstraintFromOrderTable(
-                $installer,
-                'klarna_kco_order',
-                'order_id',
-                'sales_order',
-                'entity_id'
-            );
-        }
         $installer->endSetup();
-    }
-
-    /**
-     * Remove FK constraint from `klarna_core_order` table
-     *
-     * @param SchemaSetupInterface $installer
-     * @param string               $myTable
-     * @param string               $myColumn
-     * @param string               $foriegnTable
-     * @param string               $foriegnColumn
-     */
-    private function removeFKConstraintFromOrderTable(
-        SchemaSetupInterface $installer,
-        $myTable,
-        $myColumn,
-        $foriegnTable,
-        $foriegnColumn
-    ) {
-        $targetTable = $installer->getTable('klarna_core_order');
-        $foreignKeyConstraints = $installer->getConnection()->getForeignKeys($targetTable);
-        $targetConstraintName = $installer->getConnection()->getForeignKeyName(
-            $installer->getTable($myTable),
-            $myColumn,
-            $installer->getTable($foriegnTable),
-            $foriegnColumn
-        );
-
-        if (isset($foreignKeyConstraints[$targetConstraintName])) {
-            $installer->getConnection()->dropForeignKey(
-                $installer->getTable('klarna_core_order'),
-                $installer->getFkName(
-                    $installer->getTable($myTable),
-                    $myColumn,
-                    $installer->getTable($foriegnTable),
-                    $foriegnColumn
-                )
-            );
-        }
     }
 }

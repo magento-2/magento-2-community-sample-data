@@ -78,13 +78,13 @@ class SaveHandler implements ExtensionInterface
     }
 
     /**
-     * Save only newly created attributes for configurable product.
+     * Save only newly created attributes for configurable product
      *
      * @param ProductInterface $product
      * @param array $attributes
      * @return array
      */
-    private function saveConfigurableProductAttributes(ProductInterface $product, array $attributes): array
+    private function saveConfigurableProductAttributes(ProductInterface $product, array $attributes)
     {
         $ids = [];
         $existingAttributeIds = [];
@@ -100,17 +100,16 @@ class SaveHandler implements ExtensionInterface
                 $ids[] = $this->optionRepository->save($product->getSku(), $attribute);
             }
         }
-
         return $ids;
     }
 
     /**
-     * Remove product attributes which no longer used.
+     * Remove product attributes which no longer used
      *
      * @param ProductInterface $product
      * @return void
      */
-    private function deleteConfigurableProductAttributes(ProductInterface $product): void
+    private function deleteConfigurableProductAttributes(ProductInterface $product)
     {
         $newAttributeIds = [];
         foreach ($product->getExtensionAttributes()->getConfigurableProductOptions() as $option) {
@@ -126,18 +125,19 @@ class SaveHandler implements ExtensionInterface
     }
 
     /**
-     * Check if existing option is changed.
+     * Check if existing option is changed
      *
      * @param OptionInterface $option
      * @param Attribute $attribute
      * @return bool
      */
-    private function isOptionChanged(OptionInterface $option, Attribute $attribute): bool
+    private function isOptionChanged(OptionInterface $option, Attribute $attribute)
     {
-        if ($option->getLabel() == $attribute->getLabel() && $option->getPosition() == $attribute->getPosition()) {
+        if ($option->getLabel() == $attribute->getLabel()
+            && $option->getPosition() == $attribute->getPosition()
+        ) {
             return false;
         }
-
         return true;
     }
 }

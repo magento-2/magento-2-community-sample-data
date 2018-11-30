@@ -115,5 +115,3 @@ function foo()
 <?php /* translators: My sites label */ ?>
 <?php /* translators: My sites label */?>
 <?php /* translators: My sites label */      ?>
-
-<?php echo 'oops'; // phpcs:ignore Standard.Category.Sniff -- reason. ?>

@@ -58,15 +58,13 @@ class ShipmentTest extends \PHPUnit\Framework\TestCase
             ->getInfoBlock($payment);
         $payment->setBlockMock($paymentInfoBlock);
 
-        $items = [];
-        foreach ($order->getItems() as $item) {
-            $items[$item->getId()] = $item->getQtyOrdered();
-        }
-        /** @var \Magento\Sales\Model\Order\Shipment $shipment */
-        $shipment = $this->objectManager->get(ShipmentFactory::class)->create($order, $items);
+        /** @var ShipmentInterface $shipment */
+        $shipment = $this->objectManager->create(ShipmentInterface::class);
+        $shipment->setOrder($order);
 
         $packages = [['1'], ['2']];
 
+        $shipment->addItem($this->objectManager->create(ShipmentItemInterface::class));
         $shipment->setPackages($packages);
         $saved = $this->shipmentRepository->save($shipment);
         self::assertEquals($packages, $saved->getPackages());
@@ -79,20 +77,19 @@ class ShipmentTest extends \PHPUnit\Framework\TestCase
     {
         $order = $this->getOrder('100000001');
 
+        /** @var ShipmentInterface $shipment */
+        $shipment = $this->objectManager->create(ShipmentInterface::class);
+
         /** @var ShipmentTrackInterface $track */
         $track = $this->objectManager->create(ShipmentTrackInterface::class);
         $track->setNumber('Test Number')
             ->setTitle('Test Title')
             ->setCarrierCode('Test CODE');
 
-        $items = [];
-        foreach ($order->getItems() as $item) {
-            $items[$item->getId()] = $item->getQtyOrdered();
-        }
-        /** @var \Magento\Sales\Model\Order\Shipment $shipment */
-        $shipment = $this->objectManager->get(ShipmentFactory::class)->create($order, $items);
-        $shipment->addTrack($track);
-        $shipment->save();
+        $shipment->setOrder($order)
+            ->addItem($this->objectManager->create(ShipmentItemInterface::class))
+            ->addTrack($track);
+
         $saved = $this->shipmentRepository->save($shipment);
         self::assertNotEmpty($saved->getTracks());
     }

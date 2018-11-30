@@ -34,10 +34,10 @@ final class JsonReporter implements ReporterInterface
      */
     public function generate(ReportSummary $reportSummary)
     {
-        $jFiles = [];
+        $jFiles = array();
 
         foreach ($reportSummary->getChanged() as $file => $fixResult) {
-            $jfile = ['name' => $file];
+            $jfile = array('name' => $file);
 
             if ($reportSummary->shouldAddAppliedFixers()) {
                 $jfile['appliedFixers'] = $fixResult['appliedFixers'];
@@ -50,14 +50,14 @@ final class JsonReporter implements ReporterInterface
             $jFiles[] = $jfile;
         }
 
-        $json = [
+        $json = array(
             'files' => $jFiles,
-        ];
+        );
 
         if (null !== $reportSummary->getTime()) {
-            $json['time'] = [
+            $json['time'] = array(
                 'total' => round($reportSummary->getTime() / 1000, 3),
-            ];
+            );
         }
 
         if (null !== $reportSummary->getMemory()) {

@@ -70,6 +70,43 @@
                             <config_path>checkout/klarna_kp_design/color_details</config_path>
                             <comment>Example: #0072CC</comment>
                         </field>
+                        <field id="color_button" translate="label" type="text" showInDefault="1" showInWebsite="1"
+                               showInStore="1">
+                            <label>Button color</label>
+                            <config_path>checkout/klarna_kp_design/color_button</config_path>
+                            <comment>Example: #0072CC</comment>
+                        </field>
+                        <field id="color_button_text" translate="label" type="text" showInDefault="1" showInWebsite="1"
+                               showInStore="1">
+                            <label>Button text color</label>
+                            <config_path>checkout/klarna_kp_design/color_button_text</config_path>
+                            <comment>Example: #0072CC</comment>
+                        </field>
+                        <field id="color_checkbox" translate="label" type="text" showInDefault="1" showInWebsite="1"
+                               showInStore="1">
+                            <label>Checkbox color</label>
+                            <config_path>checkout/klarna_kp_design/color_checkbox</config_path>
+                            <comment>Example: #0072CC</comment>
+                        </field>
+                        <field id="color_checkbox_checkmark" translate="label" type="text" showInDefault="1"
+                               showInWebsite="1"
+                               showInStore="1">
+                            <label>Checkbox check mark color</label>
+                            <config_path>checkout/klarna_kp_design/color_checkbox_checkmark</config_path>
+                            <comment>Example: #0072CC</comment>
+                        </field>
+                        <field id="color_header" translate="label" type="text" showInDefault="1" showInWebsite="1"
+                               showInStore="1">
+                            <label>Header color</label>
+                            <config_path>checkout/klarna_kp_design/color_header</config_path>
+                            <comment>Example: #0072CC</comment>
+                        </field>
+                        <field id="color_link" translate="label" type="text" showInDefault="1" showInWebsite="1"
+                               showInStore="1">
+                            <label>Link color</label>
+                            <config_path>checkout/klarna_kp_design/color_link</config_path>
+                            <comment>Example: #0072CC</comment>
+                        </field>
                         <field id="color_border" translate="label" type="text" showInDefault="1" showInWebsite="1"
                                showInStore="1">
                             <label>Border color</label>
@@ -87,6 +124,13 @@
                                showInStore="1">
                             <label>Text color</label>
                             <config_path>checkout/klarna_kp_design/color_text</config_path>
+                            <comment>Example: #0072CC</comment>
+                        </field>
+                        <field id="color_text_secondary" translate="label" type="text" showInDefault="1"
+                               showInWebsite="1"
+                               showInStore="1">
+                            <label>Secondary text color</label>
+                            <config_path>checkout/klarna_kp_design/color_text_secondary</config_path>
                             <comment>Example: #0072CC</comment>
                         </field>
                         <field id="radius_border" translate="label" type="text" showInDefault="1" showInWebsite="1"

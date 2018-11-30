@@ -17,7 +17,6 @@ use PhpCsFixer\Fixer\FixerInterface;
 use PhpCsFixer\Linter\CachingLinter;
 use PhpCsFixer\Linter\Linter;
 use PhpCsFixer\Linter\LinterInterface;
-use PhpCsFixer\Tests\Test\Assert\AssertTokensTrait;
 use PhpCsFixer\Tests\TestCase;
 use PhpCsFixer\Tokenizer\Token;
 use PhpCsFixer\Tokenizer\Tokens;
@@ -30,8 +29,6 @@ use Prophecy\Argument;
  */
 abstract class AbstractFixerTestCase extends TestCase
 {
-    use AssertTokensTrait;
-
     /**
      * @var LinterInterface
      */
@@ -48,11 +45,6 @@ abstract class AbstractFixerTestCase extends TestCase
 
         $this->linter = $this->getLinter();
         $this->fixer = $this->createFixer();
-
-        // @todo remove at 3.0 together with env var itself
-        if (getenv('PHP_CS_FIXER_TEST_USE_LEGACY_TOKENIZER')) {
-            Tokens::setLegacyMode(true);
-        }
     }
 
     protected function tearDown()
@@ -61,9 +53,6 @@ abstract class AbstractFixerTestCase extends TestCase
 
         $this->linter = null;
         $this->fixer = null;
-
-        // @todo remove at 3.0
-        Tokens::setLegacyMode(false);
     }
 
     /**
@@ -71,7 +60,7 @@ abstract class AbstractFixerTestCase extends TestCase
      */
     protected function createFixer()
     {
-        $fixerClassName = preg_replace('/^(PhpCsFixer)\\\\Tests(\\\\.+)Test$/', '$1$2', static::class);
+        $fixerClassName = preg_replace('/^(PhpCsFixer)\\\\Tests(\\\\.+)Test$/', '$1$2', get_called_class());
 
         return new $fixerClassName();
     }
@@ -83,7 +72,7 @@ abstract class AbstractFixerTestCase extends TestCase
      */
     protected function getTestFile($filename = __FILE__)
     {
-        static $files = [];
+        static $files = array();
 
         if (!isset($files[$filename])) {
             $files[$filename] = new \SplFileInfo($filename);
@@ -138,8 +127,8 @@ abstract class AbstractFixerTestCase extends TestCase
             $tokens->clearEmptyTokens();
 
             $this->assertSame(
-                \count($tokens),
-                \count(array_unique(array_map(static function (Token $token) {
+                count($tokens),
+                count(array_unique(array_map(function (Token $token) {
                     return spl_object_hash($token);
                 }, $tokens->toArray()))),
                 'Token items inside Tokens collection must be unique.'
@@ -182,6 +171,27 @@ abstract class AbstractFixerTestCase extends TestCase
         }
     }
 
+    private function assertTokens(Tokens $expectedTokens, Tokens $inputTokens)
+    {
+        foreach ($expectedTokens as $index => $expectedToken) {
+            $option = array('JSON_PRETTY_PRINT');
+            $inputToken = $inputTokens[$index];
+
+            $this->assertTrue(
+                $expectedToken->equals($inputToken),
+                sprintf("The token at index %d must be:\n%s,\ngot:\n%s.", $index, $expectedToken->toJson($option), $inputToken->toJson($option))
+            );
+
+            $expectedTokenKind = $expectedToken->isArray() ? $expectedToken->getId() : $expectedToken->getContent();
+            $this->assertTrue(
+                $inputTokens->isTokenKindFound($expectedTokenKind),
+                sprintf('The token kind %s must be found in fixed tokens collection.', $expectedTokenKind)
+            );
+        }
+
+        $this->assertSame($expectedTokens->count(), $inputTokens->count(), 'Both collections must have the same length.');
+    }
+
     /**
      * @return LinterInterface
      */
@@ -191,10 +201,10 @@ abstract class AbstractFixerTestCase extends TestCase
 
         if (null === $linter) {
             if (getenv('SKIP_LINT_TEST_CASES')) {
-                $linterProphecy = $this->prophesize(\PhpCsFixer\Linter\LinterInterface::class);
+                $linterProphecy = $this->prophesize('PhpCsFixer\Linter\LinterInterface');
                 $linterProphecy
                     ->lintSource(Argument::type('string'))
-                    ->willReturn($this->prophesize(\PhpCsFixer\Linter\LintingResultInterface::class)->reveal());
+                    ->willReturn($this->prophesize('PhpCsFixer\Linter\LintingResultInterface')->reveal());
 
                 $linter = $linterProphecy->reveal();
             } else {
@@ -212,11 +222,11 @@ abstract class AbstractFixerTestCase extends TestCase
      */
     private static function createIsIdenticalStringConstraint($expected)
     {
-        $candidates = array_filter([
+        $candidates = array_filter(array(
             'PhpCsFixer\PhpunitConstraintIsIdenticalString\Constraint\IsIdenticalString',
             'PHPUnit\Framework\Constraint\IsIdentical',
             'PHPUnit_Framework_Constraint_IsIdentical',
-        ], function ($className) { return class_exists($className); });
+        ), function ($className) { return class_exists($className); });
 
         if (empty($candidates)) {
             throw new \RuntimeException('PHPUnit not installed?!');

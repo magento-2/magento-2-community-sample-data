@@ -4,6 +4,8 @@
  * See COPYING.txt for license details.
  */
 
+// @codingStandardsIgnoreFile
+
 namespace Magento\Multishipping\Helper;
 
 /**
@@ -11,19 +13,16 @@ namespace Magento\Multishipping\Helper;
  */
 class Data extends \Magento\Framework\App\Helper\AbstractHelper
 {
-    /*
+    /**#@+
      * Xml paths for multishipping checkout
-     *
      **/
     const XML_PATH_CHECKOUT_MULTIPLE_AVAILABLE = 'multishipping/options/checkout_multiple';
 
     const XML_PATH_CHECKOUT_MULTIPLE_MAXIMUM_QUANTITY = 'multishipping/options/checkout_multiple_maximum_qty';
 
-    /**
-     * Checkout session
-     *
-     * @var \Magento\Checkout\Model\Session
-     */
+    /**#@-*/
+
+    /**#@-*/
     protected $checkoutSession;
 
     /**
@@ -57,10 +56,7 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper
      */
     public function getMaximumQty()
     {
-        return (int)$this->scopeConfig->getValue(
-            self::XML_PATH_CHECKOUT_MULTIPLE_MAXIMUM_QUANTITY,
-            \Magento\Store\Model\ScopeInterface::SCOPE_STORE
-        );
+        return (int)$this->scopeConfig->getValue(self::XML_PATH_CHECKOUT_MULTIPLE_MAXIMUM_QUANTITY, \Magento\Store\Model\ScopeInterface::SCOPE_STORE);
     }
 
     /**
@@ -72,10 +68,7 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper
     public function isMultishippingCheckoutAvailable()
     {
         $quote = $this->getQuote();
-        $isMultiShipping = $this->scopeConfig->isSetFlag(
-            self::XML_PATH_CHECKOUT_MULTIPLE_AVAILABLE,
-            \Magento\Store\Model\ScopeInterface::SCOPE_STORE
-        );
+        $isMultiShipping = $this->scopeConfig->isSetFlag(self::XML_PATH_CHECKOUT_MULTIPLE_AVAILABLE, \Magento\Store\Model\ScopeInterface::SCOPE_STORE);
         if (!$quote || !$quote->hasItems()) {
             return $isMultiShipping;
         }

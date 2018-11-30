@@ -86,7 +86,7 @@ class Widget
     /**
      * @return \Magento\Framework\Math\Random
      *
-     * @deprecated 100.0.10
+     * @deprecated 100.1.0
      */
     private function getMathRandom()
     {
@@ -125,7 +125,7 @@ class Widget
      * @param string $type Widget type
      * @return null|\Magento\Framework\Simplexml\Element
      *
-     * @deprecated 101.0.0
+     * @deprecated 100.2.0
      */
     public function getConfigAsXml($type)
     {
@@ -299,7 +299,6 @@ class Widget
     public function getWidgetDeclaration($type, $params = [], $asIs = true)
     {
         $directive = '{{widget type="' . $type . '"';
-        $widget = $this->getConfigAsObject($type);
 
         foreach ($params as $name => $value) {
             // Retrieve default option value if pre-configured
@@ -309,6 +308,7 @@ class Widget
             } elseif (is_array($value)) {
                 $value = implode(',', $value);
             } elseif (trim($value) == '') {
+                $widget = $this->getConfigAsObject($type);
                 $parameters = $widget->getParameters();
                 if (isset($parameters[$name]) && is_object($parameters[$name])) {
                     $value = $parameters[$name]->getValue();
@@ -320,9 +320,6 @@ class Widget
         }
 
         $directive .= $this->getWidgetPageVarName($params);
-
-        $directive .= sprintf(' type_name="%s"', $widget['name']);
-
         $directive .= '}}';
 
         if ($asIs) {
@@ -376,7 +373,7 @@ class Widget
                 return $asset->getUrl();
             }
         }
-        return $this->assetRepo->getUrl('Magento_Widget::placeholder.png');
+        return $this->assetRepo->getUrl('Magento_Widget::placeholder.gif');
     }
 
     /**

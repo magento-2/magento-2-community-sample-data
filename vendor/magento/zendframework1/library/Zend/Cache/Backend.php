@@ -76,7 +76,7 @@ class Zend_Cache_Backend
     public function setDirectives($directives)
     {
         if (!is_array($directives)) Zend_Cache::throwException('Directives parameter must be an array');
-        foreach ($directives as $name => $value) {
+        while (list($name, $value) = each($directives)) {
             if (!is_string($name)) {
                 Zend_Cache::throwException("Incorrect option name : $name");
             }

@@ -10,26 +10,25 @@ use Magento\Framework\Api\ObjectFactory;
 use Magento\Framework\Exception\LocalizedException;
 use Magento\Quote\Model\Quote\Address\RateRequest;
 use Magento\Sales\Model\Order;
-use Temando\Shipping\Api\Data\Delivery\CollectionPointSearchRequestInterface;
-use Temando\Shipping\Api\Data\Delivery\PickupLocationSearchRequestInterface;
-use Temando\Shipping\Api\Data\Delivery\QuoteCollectionPointInterface;
-use Temando\Shipping\Api\Data\Delivery\QuotePickupLocationInterface;
-use Temando\Shipping\Model\Checkout\RateRequest\Extractor;
+use Temando\Shipping\Api\Data\CollectionPoint\QuoteCollectionPointInterface;
+use Temando\Shipping\Api\Data\CollectionPoint\SearchRequestInterface;
+use Temando\Shipping\Model\Config\ModuleConfigInterface;
 use Temando\Shipping\Model\Order\CheckoutFieldContainerInterface;
 use Temando\Shipping\Model\Order\CheckoutFieldContainerInterfaceBuilder;
 use Temando\Shipping\Model\Order\OrderBillingInterfaceBuilder;
 use Temando\Shipping\Model\Order\OrderItemInterfaceBuilder;
 use Temando\Shipping\Model\Order\OrderRecipientInterfaceBuilder;
+use Temando\Shipping\Model\Shipping\RateRequest\Extractor;
 
 /**
  * Temando Order Interface Builder
  *
  * Create an entity to be shared between shipping module and Temando platform.
  *
- * @package Temando\Shipping\Model
- * @author  Christoph Aßmann <christoph.assmann@netresearch.de>
- * @license https://opensource.org/licenses/osl-3.0.php Open Software License (OSL 3.0)
- * @link    https://www.temando.com/
+ * @package  Temando\Shipping\Model
+ * @author   Christoph Aßmann <christoph.assmann@netresearch.de>
+ * @license  http://opensource.org/licenses/osl-3.0.php Open Software License (OSL 3.0)
+ * @link     http://www.temando.com/
  */
 class OrderInterfaceBuilder extends AbstractSimpleObjectBuilder
 {
@@ -59,6 +58,11 @@ class OrderInterfaceBuilder extends AbstractSimpleObjectBuilder
     private $checkoutFieldContainerBuilder;
 
     /**
+     * @var ModuleConfigInterface
+     */
+    private $config;
+
+    /**
      * OrderInterfaceBuilder constructor.
      * @param ObjectFactory $objectFactory
      * @param Extractor $rateRequestExtractor
@@ -66,6 +70,7 @@ class OrderInterfaceBuilder extends AbstractSimpleObjectBuilder
      * @param OrderRecipientInterfaceBuilder $recipientBuilder
      * @param OrderItemInterfaceBuilder $orderItemBuilder
      * @param CheckoutFieldContainerInterfaceBuilder $checkoutFieldContainerBuilder
+     * @param ModuleConfigInterface $moduleConfig
      */
     public function __construct(
         ObjectFactory $objectFactory,
@@ -73,13 +78,15 @@ class OrderInterfaceBuilder extends AbstractSimpleObjectBuilder
         OrderBillingInterfaceBuilder $billingBuilder,
         OrderRecipientInterfaceBuilder $recipientBuilder,
         OrderItemInterfaceBuilder $orderItemBuilder,
-        CheckoutFieldContainerInterfaceBuilder $checkoutFieldContainerBuilder
+        CheckoutFieldContainerInterfaceBuilder $checkoutFieldContainerBuilder,
+        ModuleConfigInterface $moduleConfig
     ) {
         $this->rateRequestExtractor = $rateRequestExtractor;
         $this->billingBuilder = $billingBuilder;
         $this->recipientBuilder = $recipientBuilder;
         $this->orderItemBuilder = $orderItemBuilder;
         $this->checkoutFieldContainerBuilder = $checkoutFieldContainerBuilder;
+        $this->config = $moduleConfig;
 
         parent::__construct($objectFactory);
     }
@@ -241,10 +248,10 @@ class OrderInterfaceBuilder extends AbstractSimpleObjectBuilder
     }
 
     /**
-     * @param CollectionPointSearchRequestInterface $searchRequest
+     * @param SearchRequestInterface $searchRequest
      * @return void
      */
-    public function setCollectionPointSearchRequest(CollectionPointSearchRequestInterface $searchRequest)
+    public function setCollectionPointSearchRequest(SearchRequestInterface $searchRequest)
     {
         $this->_set(OrderInterface::COLLECTION_POINT_SEARCH_REQUEST, $searchRequest);
     }
@@ -256,22 +263,5 @@ class OrderInterfaceBuilder extends AbstractSimpleObjectBuilder
     public function setCollectionPoint(QuoteCollectionPointInterface $collectionPoint)
     {
         $this->_set(OrderInterface::COLLECTION_POINT, $collectionPoint);
-    }
-
-    /**
-     * @param PickupLocationSearchRequestInterface $isPickupLocationSearchRequest
-     */
-    public function setPickupLocationSearchRequest(PickupLocationSearchRequestInterface $isPickupLocationSearchRequest)
-    {
-        $this->_set(OrderInterface::PICKUP_LOCATION_SEARCH_REQUEST, $isPickupLocationSearchRequest);
-    }
-
-    /**
-     * @param QuotePickupLocationInterface $pickupLocation
-     * @return void
-     */
-    public function setPickupLocation(QuotePickupLocationInterface $pickupLocation)
-    {
-        $this->_set(OrderInterface::PICKUP_LOCATION, $pickupLocation);
     }
 }

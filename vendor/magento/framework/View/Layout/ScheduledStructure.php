@@ -9,7 +9,6 @@ namespace Magento\Framework\View\Layout;
  * Layout structure model
  *
  * @api
- * @since 100.0.2
  */
 class ScheduledStructure
 {
@@ -490,7 +489,7 @@ class ScheduledStructure
      * Reformat 'Layout scheduled structure' to array.
      *
      * @return array
-     * @since 101.0.0
+     * @since 100.2.0
      */
     public function __toArray()
     {
@@ -507,7 +506,7 @@ class ScheduledStructure
      *
      * @param array $data
      * @return void
-     * @since 101.0.0
+     * @since 100.2.0
      */
     public function populateWithArray(array $data)
     {

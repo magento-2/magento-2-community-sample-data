@@ -62,7 +62,7 @@ class Annotation
      *
      * @var string[]
      */
-    private static $tags = [
+    private static $tags = array(
         'method',
         'param',
         'property',
@@ -72,7 +72,7 @@ class Annotation
         'throws',
         'type',
         'var',
-    ];
+    );
 
     /**
      * The lines that make up the annotation.
@@ -193,7 +193,7 @@ class Annotation
     public function getTypes()
     {
         if (null === $this->types) {
-            $this->types = [];
+            $this->types = array();
 
             $content = $this->getTypesContent();
 
@@ -205,7 +205,7 @@ class Annotation
                 );
 
                 $this->types[] = $matches['type'];
-                $content = substr($content, \strlen($matches['type']) + 1);
+                $content = substr($content, strlen($matches['type']) + 1);
             }
         }
 
@@ -227,22 +227,6 @@ class Annotation
     }
 
     /**
-     * Get the normalized types associated with this annotation, so they can easily be compared.
-     *
-     * @return string[]
-     */
-    public function getNormalizedTypes()
-    {
-        $normalized = array_map(static function ($type) {
-            return strtolower($type);
-        }, $this->getTypes());
-
-        sort($normalized);
-
-        return $normalized;
-    }
-
-    /**
      * Remove this annotation by removing all its lines.
      */
     public function remove()
@@ -261,12 +245,12 @@ class Annotation
      */
     public function getContent()
     {
-        return implode('', $this->lines);
+        return implode($this->lines);
     }
 
     public function supportTypes()
     {
-        return \in_array($this->getTag()->getName(), self::$tags, true);
+        return in_array($this->getTag()->getName(), self::$tags, true);
     }
 
     /**

@@ -3,102 +3,85 @@
  * Copyright © Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
-
 declare(strict_types=1);
 
 namespace Magento\SalesRule\Test\Unit\Model\Quote;
 
-use Magento\SalesRule\Model\Quote\ChildrenValidationLocator;
-use Magento\Quote\Model\Quote\Item\AbstractItem as QuoteItem;
-use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
 use Magento\Catalog\Model\Product;
+use Magento\Quote\Model\Quote\Item\AbstractItem as QuoteItem;
+use Magento\SalesRule\Api\Data\CouponGenerationSpecInterfaceFactory;
+use Magento\SalesRule\Model\Quote\ChildrenValidationLocator;
 
 /**
- * Test for Magento\SalesRule\Model\Quote\ChildrenValidationLocator
+ * @covers \Magento\SalesRule\Model\Quote\ChildrenValidationLocator
  */
 class ChildrenValidationLocatorTest extends \PHPUnit\Framework\TestCase
 {
     /**
-     * @var array
-     */
-    private $productTypeChildrenValidationMap;
-
-    /**
-     * @var ObjectManager
-     */
-    private $objectManager;
-
-    /**
+     * Testable Object
+     *
      * @var ChildrenValidationLocator
      */
-    private $model;
+    private $childrenValidationLocator;
 
     /**
      * @var QuoteItem|\PHPUnit_Framework_MockObject_MockObject
      */
-    private $quoteItemMock;
+    private $itemMock;
 
     /**
      * @var Product|\PHPUnit_Framework_MockObject_MockObject
      */
     private $productMock;
 
-    protected function setUp()
-    {
-        $this->objectManager = new ObjectManager($this);
-
-        $this->productTypeChildrenValidationMap = [
-            'type1' => true,
-            'type2' => false,
-        ];
-
-        $this->quoteItemMock = $this->getMockBuilder(QuoteItem::class)
-            ->disableOriginalConstructor()
-            ->setMethods(['getProduct'])
-            ->getMockForAbstractClass();
-
-        $this->productMock = $this->getMockBuilder(Product::class)
-            ->disableOriginalConstructor()
-            ->setMethods(['getTypeId'])
-            ->getMock();
-
-        $this->model = $this->objectManager->getObject(
-            ChildrenValidationLocator::class,
-            [
-                'productTypeChildrenValidationMap' => $this->productTypeChildrenValidationMap,
-            ]
-        );
-    }
+    /**
+     * @var array
+     */
+    private $productTypeChildrenValidationMap = [
+        'simple' => false,
+        'bundle' => true,
+    ];
 
     /**
-     * @dataProvider productTypeDataProvider
-     * @param string $type
-     * @param bool $expected
+     * Set Up
      *
      * @return void
      */
-    public function testIsChildrenValidationRequired(string $type, bool $expected): void
+    protected function setUp()
     {
-        $this->quoteItemMock->expects($this->once())
-            ->method('getProduct')
-            ->willReturn($this->productMock);
+        $this->itemMock = $this->createMock(QuoteItem::class);
+        $this->productMock = $this->createMock(Product::class);
+        $this->childrenValidationLocator = new ChildrenValidationLocator($this->productTypeChildrenValidationMap);
+    }
 
-        $this->productMock->expects($this->once())
-            ->method('getTypeId')
-            ->willReturn($type);
-
-        $this->assertEquals($this->model->isChildrenValidationRequired($this->quoteItemMock), $expected);
+    /**
+     * Test isChildrenValidationRequired method
+     *
+     * @dataProvider childrenValidationDataProvider
+     *
+     * @param string $typeId
+     * @param bool $isValidationRequired
+     *
+     * @return void
+     */
+    public function testIsChildrenValidationRequired($typeId, $isValidationRequired)
+    {
+        $this->productMock->expects($this->once())->method('getTypeId')->willReturn($typeId);
+        $this->itemMock->expects($this->once())->method('getProduct')->willReturn($this->productMock);
+        $actual = $this->childrenValidationLocator->isChildrenValidationRequired($this->itemMock);
+        $expected = $isValidationRequired;
+        self::assertEquals($expected, $actual);
     }
 
     /**
      * @return array
      */
-    public function productTypeDataProvider(): array
+    public function childrenValidationDataProvider()
     {
         return [
-            ['type1', true],
-            ['type2', false],
-            ['type3', true],
+            ['simple', $this->productTypeChildrenValidationMap['simple']],
+            ['bundle', $this->productTypeChildrenValidationMap['bundle']],
+            ['configurable', true],
         ];
     }
 }

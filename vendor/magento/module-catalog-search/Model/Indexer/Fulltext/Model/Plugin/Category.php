@@ -31,12 +31,12 @@ class Category
     /**
      * Mark fulltext indexer as invalid post-deletion of category.
      *
-     * @param Resource $subjectCategory
-     * @param Resource $resultCategory
+     * @param  Resource $subjectCategory
+     * @param  Resource $resultCategory
      * @return Resource
      * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      */
-    public function afterDelete(Resource $subjectCategory, Resource $resultCategory) : Resource
+    public function afterDelete(Resource $subjectCategory, Resource $resultCategory): Resource
     {
         $this->fulltextIndexerProcessor->markIndexerAsInvalid();
 

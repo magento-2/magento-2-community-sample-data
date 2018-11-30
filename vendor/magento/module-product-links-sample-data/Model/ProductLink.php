@@ -5,9 +5,6 @@
  */
 namespace Magento\ProductLinksSampleData\Model;
 
-use Magento\Catalog\Api\Data\ProductLinkInterfaceFactory;
-use Magento\Catalog\Api\ProductLinkRepositoryInterface;
-use Magento\Catalog\Model\ProductFactory;
 use Magento\Framework\Setup\SampleData\Context as SampleDataContext;
 
 /**
@@ -26,37 +23,29 @@ class ProductLink
     protected $csvReader;
 
     /**
-     * @var ProductFactory
+     * @var \Magento\Catalog\Model\ProductFactory
      */
     protected $productFactory;
 
     /**
-     * @var ProductLinkInterfaceFactory
+     * @var \Magento\Catalog\Model\Product\Initialization\Helper\ProductLinks
      */
-    private $productLinkFactory;
-
-    /**
-     * @var ProductLinkRepositoryInterface
-     */
-    private $productLinkRepository;
+    protected $linksInitializer;
 
     /**
      * @param SampleDataContext $sampleDataContext
-     * @param ProductFactory $productFactory
-     * @param ProductLinkInterfaceFactory $productLinkFactory
-     * @param ProductLinkRepositoryInterface $productLinkRepository
+     * @param \Magento\Catalog\Model\ProductFactory $productFactory
+     * @param \Magento\Catalog\Model\Product\Initialization\Helper\ProductLinks $linksInitializer
      */
     public function __construct(
         SampleDataContext $sampleDataContext,
-        ProductFactory $productFactory,
-        ProductLinkInterfaceFactory $productLinkFactory,
-        ProductLinkRepositoryInterface $productLinkRepository
+        \Magento\Catalog\Model\ProductFactory $productFactory,
+        \Magento\Catalog\Model\Product\Initialization\Helper\ProductLinks $linksInitializer
     ) {
         $this->fixtureManager = $sampleDataContext->getFixtureManager();
         $this->csvReader = $sampleDataContext->getCsvReader();
         $this->productFactory = $productFactory;
-        $this->productLinkFactory = $productLinkFactory;
-        $this->productLinkRepository = $productLinkRepository;
+        $this->linksInitializer = $linksInitializer;
     }
 
     /**
@@ -85,33 +74,22 @@ class ProductLink
                     foreach ($row as $key => $value) {
                         $data[$header[$key]] = $value;
                     }
-
+                    $row = $data;
+                    /** @var \Magento\Catalog\Model\Product $product */
                     $product = $this->productFactory->create();
-                    $productId = $product->getIdBySku($data['sku']);
+                    $productId = $product->getIdBySku($row['sku']);
                     if (!$productId) {
                         continue;
                     }
                     $product->setId($productId);
-                    $product->setSku($data['sku']);
-                    $links = $this->productLinkRepository->getList($product);
-                    $linkedSkusByType = array_fill_keys(array_keys($linkTypes), []);
-                    foreach ($links as $link) {
-                        $linkedSkusByType[$link->getLinkType()][] = $link->getLinkedProductSku();
-                    }
-
-                    foreach (explode("\n", $data['linked_sku']) as $linkedProductSku) {
+                    $links = [$linkType => []];
+                    foreach (explode("\n", $row['linked_sku']) as $linkedProductSku) {
                         $linkedProductId = $product->getIdBySku($linkedProductSku);
-                        if (!$linkedProductId || in_array($linkedProductSku, $linkedSkusByType[$linkType])) {
-                            continue;
+                        if ($linkedProductId) {
+                            $links[$linkType][$linkedProductId] = [];
                         }
-
-                        $productLink = $this->productLinkFactory->create();
-                        $productLink->setSku($data['sku'])
-                            ->setLinkedProductSku($linkedProductSku)
-                            ->setLinkType($linkType);
-                        $links[] = $productLink;
                     }
-                    $product->setProductLinks($links);
+                    $this->linksInitializer->initializeLinks($product, $links);
                     $product->getLinkInstance()->saveProductRelations($product);
                 }
             }

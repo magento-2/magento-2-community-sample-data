@@ -7,24 +7,22 @@
 
 namespace Magento\Catalog\Controller\Adminhtml\Product\Attribute;
 
-use Magento\Framework\App\Action\HttpPostActionInterface as HttpPostActionInterface;
 use Magento\Backend\App\Action\Context;
 use Magento\Backend\Model\View\Result\Redirect;
-use Magento\Catalog\Api\Data\ProductAttributeInterface;
 use Magento\Catalog\Controller\Adminhtml\Product\Attribute;
-use Magento\Catalog\Helper\Product;
-use Magento\Catalog\Model\Product\Attribute\Frontend\Inputtype\Presentation;
-use Magento\Framework\Serialize\Serializer\FormData;
 use Magento\Catalog\Model\Product\AttributeSet\BuildFactory;
+use Magento\Catalog\Helper\Product;
+use Magento\Catalog\Api\Data\ProductAttributeInterface;
 use Magento\Catalog\Model\ResourceModel\Eav\AttributeFactory;
+use Magento\Eav\Model\Entity\Attribute\Set;
 use Magento\Eav\Model\Adminhtml\System\Config\Source\Inputtype\Validator;
 use Magento\Eav\Model\Adminhtml\System\Config\Source\Inputtype\ValidatorFactory;
-use Magento\Eav\Model\Entity\Attribute\Set;
 use Magento\Eav\Model\ResourceModel\Entity\Attribute\Group\CollectionFactory;
 use Magento\Framework\App\ObjectManager;
+use Magento\Framework\Serialize\Serializer\FormData;
 use Magento\Framework\Cache\FrontendInterface;
-use Magento\Framework\Controller\Result\Json;
 use Magento\Framework\Controller\ResultFactory;
+use Magento\Framework\Controller\Result\Json;
 use Magento\Framework\Exception\AlreadyExistsException;
 use Magento\Framework\Exception\LocalizedException;
 use Magento\Framework\Filter\FilterManager;
@@ -33,11 +31,9 @@ use Magento\Framework\View\LayoutFactory;
 use Magento\Framework\View\Result\PageFactory;
 
 /**
- * Product attribute save controller.
- *
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  */
-class Save extends Attribute implements HttpPostActionInterface
+class Save extends Attribute
 {
     /**
      * @var BuildFactory
@@ -75,12 +71,7 @@ class Save extends Attribute implements HttpPostActionInterface
     private $layoutFactory;
 
     /**
-     * @var Presentation
-     */
-    private $presentation;
-
-    /**
-     * @var FormData|null
+     * @var FormData
      */
     private $formDataSerializer;
 
@@ -88,15 +79,14 @@ class Save extends Attribute implements HttpPostActionInterface
      * @param Context $context
      * @param FrontendInterface $attributeLabelCache
      * @param Registry $coreRegistry
-     * @param PageFactory $resultPageFactory
      * @param BuildFactory $buildFactory
+     * @param PageFactory $resultPageFactory
      * @param AttributeFactory $attributeFactory
      * @param ValidatorFactory $validatorFactory
      * @param CollectionFactory $groupCollectionFactory
      * @param FilterManager $filterManager
      * @param Product $productHelper
      * @param LayoutFactory $layoutFactory
-     * @param Presentation|null $presentation
      * @param FormData|null $formDataSerializer
      * @SuppressWarnings(PHPMD.ExcessiveParameterList)
      */
@@ -112,7 +102,6 @@ class Save extends Attribute implements HttpPostActionInterface
         FilterManager $filterManager,
         Product $productHelper,
         LayoutFactory $layoutFactory,
-        Presentation $presentation = null,
         FormData $formDataSerializer = null
     ) {
         parent::__construct($context, $attributeLabelCache, $coreRegistry, $resultPageFactory);
@@ -123,29 +112,27 @@ class Save extends Attribute implements HttpPostActionInterface
         $this->validatorFactory = $validatorFactory;
         $this->groupCollectionFactory = $groupCollectionFactory;
         $this->layoutFactory = $layoutFactory;
-        $this->presentation = $presentation ?: ObjectManager::getInstance()->get(Presentation::class);
-        $this->formDataSerializer = $formDataSerializer
-            ?: ObjectManager::getInstance()->get(FormData::class);
+        $this->formDataSerializer = $formDataSerializer ?? ObjectManager::getInstance()->get(FormData::class);
     }
 
     /**
      * @inheritdoc
      *
-     * @return Redirect
      * @SuppressWarnings(PHPMD.CyclomaticComplexity)
      * @SuppressWarnings(PHPMD.NPathComplexity)
      * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
-     * @throws \Zend_Validate_Exception
      */
     public function execute()
     {
         try {
-            $optionData = $this->formDataSerializer
-                ->unserialize($this->getRequest()->getParam('serialized_options', '[]'));
+            $optionData = $this->formDataSerializer->unserialize(
+                $this->getRequest()->getParam('serialized_options', '[]')
+            );
         } catch (\InvalidArgumentException $e) {
             $message = __("The attribute couldn't be saved due to an error. Verify your information and try again. "
                 . "If the error persists, please try again later.");
             $this->messageManager->addErrorMessage($message);
+
             return $this->returnResult('catalog/*/edit', ['_current' => true], ['error' => true]);
         }
 
@@ -173,6 +160,7 @@ class Save extends Attribute implements HttpPostActionInterface
                 } catch (AlreadyExistsException $alreadyExists) {
                     $this->messageManager->addErrorMessage(__('An attribute set named \'%1\' already exists.', $name));
                     $this->_session->setAttributeData($data);
+
                     return $this->returnResult('catalog/*/edit', ['_current' => true], ['error' => true]);
                 } catch (LocalizedException $e) {
                     $this->messageManager->addErrorMessage($e->getMessage());
@@ -207,6 +195,7 @@ class Save extends Attribute implements HttpPostActionInterface
                             $attributeCode
                         )
                     );
+
                     return $this->returnResult(
                         'catalog/*/edit',
                         ['attribute_id' => $attributeId, '_current' => true],
@@ -224,6 +213,7 @@ class Save extends Attribute implements HttpPostActionInterface
                     foreach ($inputType->getMessages() as $message) {
                         $this->messageManager->addErrorMessage($message);
                     }
+
                     return $this->returnResult(
                         'catalog/*/edit',
                         ['attribute_id' => $attributeId, '_current' => true],
@@ -232,17 +222,17 @@ class Save extends Attribute implements HttpPostActionInterface
                 }
             }
 
-            $data = $this->presentation->convertPresentationDataToInputType($data);
-
             if ($attributeId) {
                 if (!$model->getId()) {
                     $this->messageManager->addErrorMessage(__('This attribute no longer exists.'));
+
                     return $this->returnResult('catalog/*/', [], ['error' => true]);
                 }
                 // entity type check
                 if ($model->getEntityTypeId() != $this->_entityTypeId) {
                     $this->messageManager->addErrorMessage(__('We can\'t update the attribute.'));
                     $this->_session->setAttributeData($data);
+
                     return $this->returnResult('catalog/*/', [], ['error' => true]);
                 }
 
@@ -323,6 +313,7 @@ class Save extends Attribute implements HttpPostActionInterface
                     if ($attributeSet !== null) {
                         $requestParams['new_attribute_set_id'] = $attributeSet->getId();
                     }
+
                     return $this->returnResult('catalog/product/addAttribute', $requestParams, ['error' => false]);
                 } elseif ($this->getRequest()->getParam('back', false)) {
                     return $this->returnResult(
@@ -331,10 +322,12 @@ class Save extends Attribute implements HttpPostActionInterface
                         ['error' => false]
                     );
                 }
+
                 return $this->returnResult('catalog/*/', [], ['error' => false]);
             } catch (\Exception $e) {
                 $this->messageManager->addErrorMessage($e->getMessage());
                 $this->_session->setAttributeData($data);
+
                 return $this->returnResult(
                     'catalog/*/edit',
                     ['attribute_id' => $attributeId, '_current' => true],
@@ -342,6 +335,7 @@ class Save extends Attribute implements HttpPostActionInterface
                 );
             }
         }
+
         return $this->returnResult('catalog/*/', [], ['error' => true]);
     }
 
@@ -361,8 +355,10 @@ class Save extends Attribute implements HttpPostActionInterface
 
             $response['messages'] = [$layout->getMessagesBlock()->getGroupedHtml()];
             $response['params'] = $params;
+
             return $this->resultFactory->create(ResultFactory::TYPE_JSON)->setData($response);
         }
+
         return $this->resultFactory->create(ResultFactory::TYPE_REDIRECT)->setPath($path, $params);
     }
 

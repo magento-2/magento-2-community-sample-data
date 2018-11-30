@@ -4,9 +4,8 @@
 
 define([
     'ko',
-    'Temando_Shipping/js/model/collection-points',
-    'Temando_Shipping/js/model/pickup-locations'
-], function (ko, collectionPoints, pickupLocations) {
+    'Temando_Shipping/js/model/collection-points'
+], function (ko, collectionPoints) {
     'use strict';
 
 
@@ -14,13 +13,7 @@ define([
     var selected = ko.pureComputed({
         read: function() {
             if (userValue() === '') {
-                if (collectionPoints.getSearchRequest()) {
-                   return  'toCollectionPoint';
-                }
-                if (pickupLocations.getSearchRequest()) {
-                    return  'clickAndCollect';
-                }
-                return 'toAddress';
+                return collectionPoints.getSearchRequest() ? 'toCollectionPoint' : 'toAddress';
             } else {
                 return userValue();
             }
@@ -34,10 +27,6 @@ define([
     });
     var toAddressSelected = ko.computed(function () {
         return (selected() === 'toAddress');
-    });
-
-    var clickAndCollectSelected = ko.computed(function () {
-        return (selected() === 'clickAndCollect');
     });
 
     return {

@@ -60,7 +60,6 @@ class Config
         'platform' => array(),
         'archive-format' => 'tar',
         'archive-dir' => '.',
-        'htaccess-protect' => true,
         // valid keys without defaults (auth config stuff):
         // bitbucket-oauth
         // github-oauth
@@ -72,7 +71,7 @@ class Config
     public static $defaultRepositories = array(
         'packagist.org' => array(
             'type' => 'composer',
-            'url' => 'https?://repo.packagist.org',
+            'url' => 'https?://packagist.org',
             'allow_ssl_downgrade' => true,
         ),
     );
@@ -216,7 +215,6 @@ class Config
             case 'cache-vcs-dir':
             case 'cafile':
             case 'capath':
-            case 'htaccess-protect':
                 // convert foo-bar to COMPOSER_FOO_BAR and check if it exists since it overrides the local config
                 $env = 'COMPOSER_' . strtoupper(strtr($key, '-', '_'));
 
@@ -245,11 +243,9 @@ class Config
                         case 'g':
                             $size *= 1024;
                             // intentional fallthrough
-                            // no break
                         case 'm':
                             $size *= 1024;
                             // intentional fallthrough
-                            // no break
                         case 'k':
                             $size *= 1024;
                             break;

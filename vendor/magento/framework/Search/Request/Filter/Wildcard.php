@@ -11,7 +11,6 @@ use Magento\Framework\Search\Request\FilterInterface;
 /**
  * Wildcard Filter
  * @api
- * @since 100.0.2
  */
 class Wildcard extends AbstractKeyValuePair implements FilterInterface
 {

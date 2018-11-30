@@ -1,35 +1,4 @@
 
-5.0.0 / 2018-11-12
-==================
-
-  * Artificially increment major version to stop code from updating on 2.2.4/2.2.5
-
-4.5.6 / 2018-10-22
-==================
-
-  * PPI-582 Removed the check for a virtual quote.
-  * PPI-580 Force billing and shipping address to have same email address
-
-4.5.5 / 2018-10-17
-==================
-
-  * PPI-581 Fix DB upgrade script for table prefixes
-
-4.5.4 / 2018-10-09
-==================
-
-  * PPI-557 Fix issue with running under Magento Commerce with split DB
-  * PPI-573 Fix issue with fixed product tax
-
-4.5.3 / 2018-09-27
-==================
-
-  * PI-471 Fix customer VAT calculation on shipping
-  * PI-473 Add shipping line to API even when shipping costs are 0
-  * PI-488 Add index to klarna_core_order table for is_acknowledged
-  * PPI-557 Fix checkout doesn't work after enabling Klarna
-  * PPI-561 Fix composer requirements after 2.3.0 change
-
 4.5.2 / 2018-08-31
 ==================
 

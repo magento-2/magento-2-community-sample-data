@@ -175,6 +175,7 @@ class RefundOrderInventoryObserverTest extends \PHPUnit\Framework\TestCase
 
     /**
      * @param $productId
+     *
      * @return \PHPUnit_Framework_MockObject_MockObject
      */
     private function getCreditMemoItem($productId)

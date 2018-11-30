@@ -11,12 +11,11 @@ use Magento\Customer\Test\Block\Form\Login;
 use Magento\Customer\Ui\Component\Listing\AttributeRepository;
 use Magento\Customer\Api\Data\CustomerInterface;
 use Magento\Customer\Api\CustomerRepositoryInterface;
-use Magento\Framework\App\Action\HttpPostActionInterface;
 
 /**
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  */
-class InlineEdit extends \Magento\Backend\App\Action implements HttpPostActionInterface
+class InlineEdit extends \Magento\Backend\App\Action
 {
     /**
      * Authorization level of a basic admin session
@@ -140,7 +139,7 @@ class InlineEdit extends \Magento\Backend\App\Action implements HttpPostActionIn
      * Receive entity(customer|customer_address) data from request
      *
      * @param array $data
-     * @param mixed $isCustomerData
+     * @param null $isCustomerData
      * @return array
      */
     protected function getData(array $data, $isCustomerData = null)

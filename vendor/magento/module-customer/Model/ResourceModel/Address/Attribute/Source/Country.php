@@ -45,9 +45,11 @@ class Country extends \Magento\Eav\Model\Entity\Attribute\Source\Table
     }
 
     /**
-     * @inheritdoc
+     * Retrieve all options
+     *
+     * @return array
      */
-    public function getAllOptions($withEmpty = true, $defaultValues = false)
+    public function getAllOptions()
     {
         if (!$this->_options) {
             $this->_options = $this->_createCountriesCollection()->loadByStore(
@@ -67,7 +69,7 @@ class Country extends \Magento\Eav\Model\Entity\Attribute\Source\Table
 
     /**
      * Retrieve Store Manager
-     * @deprecated 101.0.0
+     * @deprecated 100.2.0
      * @return StoreManagerInterface
      */
     private function getStoreManager()

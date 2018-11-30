@@ -1,6 +1,6 @@
 <?php
 /*
- * This file is part of sebastian/comparator.
+ * This file is part of the Comparator package.
  *
  * (c) Sebastian Bergmann <sebastian@phpunit.de>
  *
@@ -14,16 +14,12 @@ use PHPUnit\Framework\TestCase;
 
 /**
  * @coversDefaultClass SebastianBergmann\Comparator\Factory
- *
- * @uses SebastianBergmann\Comparator\Comparator
- * @uses SebastianBergmann\Comparator\Factory
- * @uses SebastianBergmann\Comparator\ComparisonFailure
  */
 class FactoryTest extends TestCase
 {
     public function instanceProvider()
     {
-        $tmpfile = \tmpfile();
+        $tmpfile = tmpfile();
 
         return [
             [null, null, 'SebastianBergmann\\Comparator\\ScalarComparator'],
@@ -116,11 +112,5 @@ class FactoryTest extends TestCase
         $actual   = $factory->getComparatorFor($a, $b);
 
         $this->assertInstanceOf($expected, $actual);
-    }
-
-    public function testIsSingleton()
-    {
-        $f = Factory::getInstance();
-        $this->assertSame($f, Factory::getInstance());
     }
 }

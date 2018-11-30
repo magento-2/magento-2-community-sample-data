@@ -17,10 +17,10 @@ use Temando\Shipping\Model\Shipping\Carrier;
 /**
  * Load Temando order id and the shipping experience as selected during checkout.
  *
- * @package Temando\Shipping\Plugin
- * @author  Christoph Aßmann <christoph.assmann@netresearch.de>
- * @license https://opensource.org/licenses/osl-3.0.php Open Software License (OSL 3.0)
- * @link    https://www.temando.com/
+ * @package  Temando\Shipping\Plugin
+ * @author   Christoph Aßmann <christoph.assmann@netresearch.de>
+ * @license  http://opensource.org/licenses/osl-3.0.php Open Software License (OSL 3.0)
+ * @link     http://www.temando.com/
  */
 class ShippingBuilderPlugin
 {
@@ -65,7 +65,7 @@ class ShippingBuilderPlugin
 
     /**
      * For Temando shipments, add the shipping experience information
-     * (as selected during checkout) to the shipment.
+     * (as selected during checkout) to to the shipment.
      *
      * @param ShippingBuilder $shippingBuilder
      * @param ShippingInterface $shipping
@@ -94,10 +94,6 @@ class ShippingBuilderPlugin
 
         /** @var \Magento\Sales\Model\Order\Address $orderAddress */
         $orderAddress = $shipping->getAddress();
-        if (!$orderAddress) {
-            return $shipping;
-        }
-
         $order = $orderAddress->getOrder();
         $shippingExperience = $this->shippingExperienceFactory->create([
             ShippingExperienceInterface::LABEL => $order->getShippingDescription(),

@@ -390,13 +390,13 @@ class Url extends \Magento\Framework\DataObject implements \Magento\Framework\Ur
     {
         if ($this->_request->isSecure()) {
             if ($this->getRouteParamsResolver()->hasData('secure')) {
-                return (bool) $this->getRouteParamsResolver()->getData('secure');
+                return (bool)$this->getRouteParamsResolver()->getData('secure');
             }
             return true;
         }
 
         if ($this->getRouteParamsResolver()->hasData('secure_is_forced')) {
-            return (bool) $this->getRouteParamsResolver()->getData('secure');
+            return (bool)$this->getRouteParamsResolver()->getData('secure');
         }
 
         if (!$this->_getScope()->isUrlSecure()) {
@@ -1024,7 +1024,7 @@ class Url extends \Magento\Framework\DataObject implements \Magento\Framework\Ur
      *
      * @param string $value
      * @return string
-     * @deprecated 101.0.0
+     * @deprecated 100.2.0
      */
     public function escape($value)
     {
@@ -1176,7 +1176,7 @@ class Url extends \Magento\Framework\DataObject implements \Magento\Framework\Ur
      * Gets URL modifier.
      *
      * @return \Magento\Framework\Url\ModifierInterface
-     * @deprecated 101.0.0
+     * @deprecated 100.1.0
      */
     private function getUrlModifier()
     {
@@ -1193,7 +1193,7 @@ class Url extends \Magento\Framework\DataObject implements \Magento\Framework\Ur
      * Get escaper
      *
      * @return Escaper
-     * @deprecated 101.0.0
+     * @deprecated 100.2.0
      */
     private function getEscaper()
     {

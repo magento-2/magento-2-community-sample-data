@@ -126,25 +126,18 @@ class ArtifactRepository extends ArrayRepository implements ConfigurableReposito
     private function getComposerInformation(\SplFileInfo $file)
     {
         $zip = new \ZipArchive();
-        if ($zip->open($file->getPathname()) !== true) {
-            return false;
-        }
+        $zip->open($file->getPathname());
 
         if (0 == $zip->numFiles) {
-            $zip->close();
-
             return false;
         }
 
         $foundFileIndex = $this->locateFile($zip, 'composer.json');
         if (false === $foundFileIndex) {
-            $zip->close();
-
             return false;
         }
 
         $configurationFileName = $zip->getNameIndex($foundFileIndex);
-        $zip->close();
 
         $composerFile = "zip://{$file->getPathname()}#$configurationFileName";
         $json = file_get_contents($composerFile);

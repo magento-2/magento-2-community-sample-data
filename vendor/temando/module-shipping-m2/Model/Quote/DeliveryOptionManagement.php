@@ -5,9 +5,8 @@
 namespace Temando\Shipping\Model\Quote;
 
 use Magento\Framework\Exception\CouldNotDeleteException;
-use Magento\Framework\Exception\CouldNotSaveException;
-use Temando\Shipping\Model\Delivery\CollectionPointManagement;
-use Temando\Shipping\Model\Delivery\PickupLocationManagement;
+use Magento\Framework\Exception\LocalizedException;
+use Temando\Shipping\Model\CollectionPoint\CollectionPointManagement;
 use Temando\Shipping\Model\ResourceModel\Repository\AddressRepositoryInterface;
 
 /**
@@ -15,30 +14,13 @@ use Temando\Shipping\Model\ResourceModel\Repository\AddressRepositoryInterface;
  *
  * @package Temando\Shipping\Model
  * @author  Sebastian Ertner <sebastian.ertner@netresearch.de>
- * @license https://opensource.org/licenses/osl-3.0.php Open Software License (OSL 3.0)
- * @link    https://www.temando.com/
+ * @license http://opensource.org/licenses/osl-3.0.php Open Software License (OSL 3.0)
+ * @link    http://www.temando.com/
  */
 class DeliveryOptionManagement
 {
-    /**
-     * Ship to regular address
-     */
-    const DELIVERY_OPTION_ADDRESS = 'toAddress';
-
-    /**
-     * Ship to collection point
-     */
-    const DELIVERY_OPTION_COLLECTION_POINT = 'toCollectionPoint';
-
-    /**
-     * Collect at pickup location (Click & Collect)
-     */
-    const DELIVERY_OPTION_PICKUP = 'clickAndCollect';
-
-    /**
-     * Shipping does not apply, e.g. virtual orders
-     */
-    const DELIVERY_OPTION_NONE = 'noShipping';
+    const DELIVERY_OPTION_TO_ADDRESS = 'toAddress';
+    const DELIVERY_OPTION_TO_COLLECTION_POINT = 'toCollectionPoint';
 
     /**
      * @var AddressRepositoryInterface
@@ -51,59 +33,71 @@ class DeliveryOptionManagement
     private $collectionPointManagement;
 
     /**
-     * @var PickupLocationManagement
-     */
-    private $pickupLocationManagement;
-
-    /**
      * DeliveryOptionManagement constructor.
      *
      * @param AddressRepositoryInterface $addressRepository
      * @param CollectionPointManagement $collectionPointManagement
-     * @param PickupLocationManagement $pickupLocationManagement
      */
     public function __construct(
         AddressRepositoryInterface $addressRepository,
-        CollectionPointManagement $collectionPointManagement,
-        PickupLocationManagement $pickupLocationManagement
+        CollectionPointManagement $collectionPointManagement
     ) {
         $this->addressRepository = $addressRepository;
         $this->collectionPointManagement = $collectionPointManagement;
-        $this->pickupLocationManagement = $pickupLocationManagement;
     }
 
     /**
-     * Perform actions when a consumer changes the delivery option.
-     * - Clean up previously selected option
-     * - Set current option pending (i.e. option chosen, no details selected yet)
-     *
+     * Clean up previously selected option.
      *
      * @param int $shippingAddressId
      * @param string $selectedOption
-     *
      * @return void
      * @throws CouldNotDeleteException
-     * @throws CouldNotSaveException
+     */
+    private function cleanUpPreviousOption($shippingAddressId, $selectedOption)
+    {
+        switch ($selectedOption) {
+            case self::DELIVERY_OPTION_TO_ADDRESS:
+                $this->collectionPointManagement->deleteSearchRequest($shippingAddressId);
+                break;
+            case self::DELIVERY_OPTION_TO_COLLECTION_POINT:
+                $this->addressRepository->deleteByShippingAddressId($shippingAddressId);
+                break;
+        }
+    }
+
+    /**
+     * Indicate a collection point search as pending. That is, the delivery
+     * option was chosen but no collection point search was triggered yet.
+     *
+     * @param int $shippingAddressId
+     * @param string $selectedOption
+     * @return void
+     * @throws CouldNotDeleteException
+     */
+    private function setOptionPending($shippingAddressId, $selectedOption)
+    {
+        if ($selectedOption !== self::DELIVERY_OPTION_TO_COLLECTION_POINT) {
+            return;
+        }
+
+        $this->collectionPointManagement->saveSearchRequest($shippingAddressId, '', '', true);
+    }
+
+    /**
+     * Perform actions when the selected delivery option changed.
+     *
+     * @param int $shippingAddressId
+     * @param string $selectedOption
+     * @throws LocalizedException
      */
     public function selectOption($shippingAddressId, $selectedOption)
     {
-        switch ($selectedOption) {
-            case self::DELIVERY_OPTION_ADDRESS:
-                $this->collectionPointManagement->deleteSearchRequest($shippingAddressId);
-                $this->pickupLocationManagement->deleteSearchRequest($shippingAddressId);
-                break;
-
-            case self::DELIVERY_OPTION_COLLECTION_POINT:
-                $this->addressRepository->deleteByShippingAddressId($shippingAddressId);
-                $this->pickupLocationManagement->deleteSearchRequest($shippingAddressId);
-                $this->collectionPointManagement->saveSearchRequest($shippingAddressId, '', '', true);
-                break;
-
-            case self::DELIVERY_OPTION_PICKUP:
-                $this->addressRepository->deleteByShippingAddressId($shippingAddressId);
-                $this->collectionPointManagement->deleteSearchRequest($shippingAddressId);
-                $this->pickupLocationManagement->saveSearchRequest($shippingAddressId, true);
-                break;
+        try {
+            $this->cleanUpPreviousOption($shippingAddressId, $selectedOption);
+            $this->setOptionPending($shippingAddressId, $selectedOption);
+        } catch (CouldNotDeleteException $exception) {
+            throw new LocalizedException(__('Delivery option processing failed.'));
         }
     }
 }

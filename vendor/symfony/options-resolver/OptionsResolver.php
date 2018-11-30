@@ -827,7 +827,14 @@ class OptionsResolver implements Options
         return $value;
     }
 
-    private function verifyTypes(string $type, $value, array &$invalidTypes): bool
+    /**
+     * @param string $type
+     * @param mixed  $value
+     * @param array  &$invalidTypes
+     *
+     * @return bool
+     */
+    private function verifyTypes($type, $value, array &$invalidTypes)
     {
         if (\is_array($value) && '[]' === substr($type, -2)) {
             return $this->verifyArrayType($type, $value, $invalidTypes);
@@ -844,7 +851,10 @@ class OptionsResolver implements Options
         return false;
     }
 
-    private function verifyArrayType(string $type, array $value, array &$invalidTypes, int $level = 0): bool
+    /**
+     * @return bool
+     */
+    private function verifyArrayType($type, array $value, array &$invalidTypes, $level = 0)
     {
         $type = substr($type, 0, -2);
 
@@ -949,13 +959,16 @@ class OptionsResolver implements Options
      * parameters should usually not be included in messages aimed at
      * non-technical people.
      *
-     * @param mixed $value The value to return the type of
+     * @param mixed  $value The value to return the type of
+     * @param string $type
+     *
+     * @return string The type of the value
      */
-    private function formatTypeOf($value, ?string $type): string
+    private function formatTypeOf($value, $type)
     {
         $suffix = '';
 
-        if (null !== $type && '[]' === substr($type, -2)) {
+        if ('[]' === substr($type, -2)) {
             $suffix = '[]';
             $type = substr($type, 0, -2);
             while ('[]' === substr($type, -2)) {
@@ -988,8 +1001,10 @@ class OptionsResolver implements Options
      * in double quotes (").
      *
      * @param mixed $value The value to format as string
+     *
+     * @return string The string representation of the passed value
      */
-    private function formatValue($value): string
+    private function formatValue($value)
     {
         if (\is_object($value)) {
             return \get_class($value);
@@ -1028,9 +1043,13 @@ class OptionsResolver implements Options
      * Each of the values is converted to a string using
      * {@link formatValue()}. The values are then concatenated with commas.
      *
+     * @param array $values A list of values
+     *
+     * @return string The string representation of the value list
+     *
      * @see formatValue()
      */
-    private function formatValues(array $values): string
+    private function formatValues(array $values)
     {
         foreach ($values as $key => $value) {
             $values[$key] = $this->formatValue($value);
@@ -1039,7 +1058,7 @@ class OptionsResolver implements Options
         return implode(', ', $values);
     }
 
-    private static function isValueValidType(string $type, $value): bool
+    private static function isValueValidType($type, $value)
     {
         return (\function_exists($isFunction = 'is_'.$type) && $isFunction($value)) || $value instanceof $type;
     }

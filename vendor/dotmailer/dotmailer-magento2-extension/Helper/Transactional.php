@@ -2,8 +2,6 @@
 
 namespace Dotdigitalgroup\Email\Helper;
 
-use Zend\Mail\Transport\SmtpOptions;
-
 /**
  * Transactional emails configuration data values.
  */
@@ -155,28 +153,6 @@ class Transactional extends \Magento\Framework\App\Helper\AbstractHelper
         }
 
         return $config;
-    }
-
-    /**
-     * @param int $storeId
-     *
-     * @return SmtpOptions
-     */
-    public function getSmtpOptions($storeId)
-    {
-        return new SmtpOptions(
-            [
-                'host' => $this->getSmtpHost($storeId),
-                'port' => $this->getSmtpPort($storeId),
-                'connection_class' => 'login',
-                'connection_config' =>
-                [
-                    'username' => $this->getSmtpUsername($storeId),
-                    'password' => $this->getSmtpPassword($storeId),
-                    'ssl' => 'tls'
-                ]
-            ]
-        );
     }
 
     /**

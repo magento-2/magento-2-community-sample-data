@@ -42,7 +42,7 @@ class CollectionProvider
     public function getCollection(\Magento\Catalog\Model\Product $product, $type)
     {
         if (!isset($this->providers[$type])) {
-            throw new NoSuchEntityException(__("The collection provider isn't registered."));
+            throw new NoSuchEntityException(__('Collection provider is not registered'));
         }
 
         $products = $this->providers[$type]->getLinkedProducts($product);

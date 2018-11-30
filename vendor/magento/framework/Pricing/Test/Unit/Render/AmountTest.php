@@ -281,6 +281,7 @@ class AmountTest extends \PHPUnit\Framework\TestCase
      * @param array $data
      * @param string $html
      * @param string $code
+     *
      * @return \PHPUnit_Framework_MockObject_MockObject
      */
     protected function getAdjustmentRenderMock($data = [], $html = '', $code = 'adjustment_code')

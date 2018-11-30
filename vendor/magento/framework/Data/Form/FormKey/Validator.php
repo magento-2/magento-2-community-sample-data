@@ -9,7 +9,6 @@ use Magento\Framework\Encryption\Helper\Security;
 
 /**
  * @api
- * @since 100.0.2
  */
 class Validator
 {

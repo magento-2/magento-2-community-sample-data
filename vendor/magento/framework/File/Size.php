@@ -11,7 +11,6 @@ namespace Magento\Framework\File;
 
 /**
  * @api
- * @since 100.0.2
  */
 class Size
 {
@@ -57,7 +56,7 @@ class Size
      * @param int $mode
      * @return float
      */
-    public function getMaxFileSizeInMb($precision = 0, $mode = \PHP_ROUND_HALF_DOWN)
+    public function getMaxFileSizeInMb($precision = 0, $mode = PHP_ROUND_HALF_DOWN)
     {
         return $this->getFileSizeInMb($this->getMaxFileSize(), $precision, $mode);
     }
@@ -70,7 +69,7 @@ class Size
      * @param int $mode
      * @return float
      */
-    public function getFileSizeInMb($fileSize, $precision = 0, $mode = \PHP_ROUND_HALF_DOWN)
+    public function getFileSizeInMb($fileSize, $precision = 0, $mode = PHP_ROUND_HALF_DOWN)
     {
         return round($fileSize / (1024 * 1024), $precision, $mode);
     }

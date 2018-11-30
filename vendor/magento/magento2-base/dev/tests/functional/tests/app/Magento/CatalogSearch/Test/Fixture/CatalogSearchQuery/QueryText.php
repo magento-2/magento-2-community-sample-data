@@ -70,7 +70,7 @@ class QueryText extends DataSource
 
                 $products[] = $product;
             } elseif ($this->data === null) {
-                $this->data = (string)$productData;
+                $this->data = strval($productData);
             }
         }
 

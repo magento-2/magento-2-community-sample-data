@@ -203,8 +203,7 @@ class Zend_Mail_Protocol_Smtp extends Zend_Mail_Protocol_Abstract
         if ($this->_secure == 'tls') {
             $this->_send('STARTTLS');
             $this->_expect(220, 180);
-            // TODO: Add STREAM_CRYPTO_METHOD_TLSv1_3_CLIENT in the future when it is supported by PHP
-            if (!stream_socket_enable_crypto($this->_socket, true, STREAM_CRYPTO_METHOD_TLSv1_2_CLIENT)) {
+            if (!stream_socket_enable_crypto($this->_socket, true, STREAM_CRYPTO_METHOD_TLS_CLIENT)) {
                 /**
                  * @see Zend_Mail_Protocol_Exception
                  */

@@ -9,7 +9,7 @@ use Magento\Framework\Exception\AlreadyExistsException;
 
 /**
  * @api
- * @since 101.0.0
+ * @since 100.2.0
  */
 class AttributeGroupAlreadyExistsException extends AlreadyExistsException
 {

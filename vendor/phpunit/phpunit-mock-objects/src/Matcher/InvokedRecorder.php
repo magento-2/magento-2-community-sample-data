@@ -7,9 +7,6 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-namespace PHPUnit\Framework\MockObject\Matcher;
-
-use PHPUnit\Framework\MockObject\Invocation as BaseInvocation;
 
 /**
  * Records invocations and provides convenience methods for checking them later
@@ -17,23 +14,23 @@ use PHPUnit\Framework\MockObject\Invocation as BaseInvocation;
  * This abstract class can be implemented by matchers which needs to check the
  * number of times an invocation has occurred.
  */
-abstract class InvokedRecorder implements Invocation
+abstract class PHPUnit_Framework_MockObject_Matcher_InvokedRecorder implements PHPUnit_Framework_MockObject_Matcher_Invocation
 {
     /**
-     * @var BaseInvocation[]
+     * @var PHPUnit_Framework_MockObject_Invocation[]
      */
-    private $invocations = [];
+    protected $invocations = [];
 
     /**
      * @return int
      */
     public function getInvocationCount()
     {
-        return \count($this->invocations);
+        return count($this->invocations);
     }
 
     /**
-     * @return BaseInvocation[]
+     * @return PHPUnit_Framework_MockObject_Invocation[]
      */
     public function getInvocations()
     {
@@ -45,23 +42,23 @@ abstract class InvokedRecorder implements Invocation
      */
     public function hasBeenInvoked()
     {
-        return \count($this->invocations) > 0;
+        return count($this->invocations) > 0;
     }
 
     /**
-     * @param BaseInvocation $invocation
+     * @param PHPUnit_Framework_MockObject_Invocation $invocation
      */
-    public function invoked(BaseInvocation $invocation)
+    public function invoked(PHPUnit_Framework_MockObject_Invocation $invocation)
     {
         $this->invocations[] = $invocation;
     }
 
     /**
-     * @param BaseInvocation $invocation
+     * @param PHPUnit_Framework_MockObject_Invocation $invocation
      *
      * @return bool
      */
-    public function matches(BaseInvocation $invocation)
+    public function matches(PHPUnit_Framework_MockObject_Invocation $invocation)
     {
         return true;
     }

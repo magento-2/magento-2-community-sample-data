@@ -14,23 +14,21 @@ class ResponseTest extends \PHPUnit\Framework\TestCase
 {
     /**
      * test for \Magento\MediaStorage\Model\File\Storage\Response::sendResponse()
-     *
-     * @return void
      */
-    public function testSendResponse(): void
+    public function testSendResponse()
     {
         $expectedHeaders = [
             [
                 'field_name' => 'X-Content-Type-Options',
-                'field_value' => 'nosniff',
+                'field_value' => 'nosniff'
             ],
             [
                 'field_name' => 'X-XSS-Protection',
-                'field_value' => '1; mode=block',
+                'field_value' => '1; mode=block'
             ],
             [
                 'field_name' => 'X-Frame-Options',
-                'field_value' => 'SAMEORIGIN',
+                'field_value' => 'SAMEORIGIN'
             ],
         ];
         $filePath = realpath(__DIR__ . '/../../../_files/test_file.html');
@@ -50,7 +48,7 @@ class ResponseTest extends \PHPUnit\Framework\TestCase
         foreach ($frameworkResponse->getHeaders() as $responseHeader) {
             $actualHeaders[] = [
                 'field_name' => $responseHeader->getFieldName(),
-                'field_value' => $responseHeader->getFieldValue(),
+                'field_value' => $responseHeader->getFieldValue()
             ];
         }
         foreach ($expectedHeaders as $expected) {

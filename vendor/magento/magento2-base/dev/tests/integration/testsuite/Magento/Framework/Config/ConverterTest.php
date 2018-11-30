@@ -1,4 +1,4 @@
-<?php declare(strict_types=1);
+<?php
 /**
  * Copyright © Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
@@ -6,11 +6,18 @@
 
 namespace Magento\Framework\Config;
 
+use Magento\Framework\ObjectManagerInterface;
+
 /**
  * Tests Magento\Framework\Config\Convert
  */
 class ConverterTest extends \PHPUnit\Framework\TestCase
 {
+    /**
+     * @var ObjectManagerInterface
+     */
+    private $objectManager;
+
     /**
      * @var Converter
      */
@@ -42,10 +49,10 @@ class ConverterTest extends \PHPUnit\Framework\TestCase
      */
     public function parseVarElementDataProvider()
     {
+        // @codingStandardsIgnoreStart
         $sourceString = <<<'XML'
 <?xml version="1.0"?>
-<view xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
-xsi:noNamespaceSchemaLocation="urn:magento:framework:Config/etc/view.xsd">
+<view xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:Config/etc/view.xsd">
     <vars module="Magento_Test">    
         <var name="str">some string</var>  
         <var name="int-1">1</var>        
@@ -55,6 +62,7 @@ xsi:noNamespaceSchemaLocation="urn:magento:framework:Config/etc/view.xsd">
     </vars>
  </view>
 XML;
+        // @codingStandardsIgnoreEnd
         $expectedResult = [
             'vars' => [
                 'Magento_Test' => [
@@ -80,7 +88,7 @@ XML;
      */
     protected function setUp()
     {
-        $this->converter = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()
-              ->create(\Magento\Framework\Config\Converter::class);
+        $this->objectManager = \Magento\TestFramework\Helper\Bootstrap::getObjectManager();
+        $this->converter = $this->objectManager->get(Converter::class);
     }
 }

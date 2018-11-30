@@ -14,38 +14,36 @@
         }
     ],
     "require": {
-        "php": "^5.6 || >=7.0 <7.3",
+        "php": "^5.3.6 || >=7.0 <7.3",
         "ext-json": "*",
         "ext-tokenizer": "*",
         "composer/semver": "^1.4",
-        "composer/xdebug-handler": "^1.2",
+        "composer/xdebug-handler": "^1.0",
         "doctrine/annotations": "^1.2",
-        "php-cs-fixer/diff": "^1.3",
-        "symfony/console": "^3.4.17 || ^4.1.6",
-        "symfony/event-dispatcher": "^3.0 || ^4.0",
-        "symfony/filesystem": "^3.0 || ^4.0",
-        "symfony/finder": "^3.0 || ^4.0",
-        "symfony/options-resolver": "^3.0 || ^4.0",
+        "sebastian/diff": "^1.4",
+        "symfony/console": "^2.4 || ^3.0 || ^4.0",
+        "symfony/event-dispatcher": "^2.1 || ^3.0 || ^4.0",
+        "symfony/filesystem": "^2.4 || ^3.0 || ^4.0",
+        "symfony/finder": "^2.2 || ^3.0 || ^4.0",
+        "symfony/options-resolver": "^2.6 || ^3.0 || ^4.0",
+        "symfony/polyfill-php54": "^1.0",
+        "symfony/polyfill-php55": "^1.3",
         "symfony/polyfill-php70": "^1.0",
         "symfony/polyfill-php72": "^1.4",
-        "symfony/process": "^3.0 || ^4.0",
-        "symfony/stopwatch": "^3.0 || ^4.0"
+        "symfony/process": "^2.3 || ^3.0 || ^4.0",
+        "symfony/stopwatch": "^2.5 || ^3.0 || ^4.0"
     },
     "conflict": {
-        "hhvm": "*"
+        "hhvm": "<3.18"
     },
     "require-dev": {
-        "johnkary/phpunit-speedtrap": "^1.1 || ^2.0 || ^3.0",
+        "johnkary/phpunit-speedtrap": "^1.0.1 || ^2.0 || ^3.0",
         "justinrainbow/json-schema": "^5.0",
         "keradus/cli-executor": "^1.1",
         "mikey179/vfsStream": "^1.6",
-        "php-coveralls/php-coveralls": "^2.1",
-        "php-cs-fixer/accessible-object": "^1.0",
-        "php-cs-fixer/phpunit-constraint-isidenticalstring": "^1.0.1",
-        "php-cs-fixer/phpunit-constraint-xmlmatchesxsd": "^1.0.1",
-        "phpunit/phpunit": "^5.7.27 || ^6.5.8 || ^7.1",
-        "phpunitgoodpractices/traits": "^1.5.1",
-        "symfony/phpunit-bridge": "^4.0"
+        "php-coveralls/php-coveralls": "^1.0.2",
+        "phpunit/phpunit": "^4.8.35 || ^5.4.3",
+        "symfony/phpunit-bridge": "^3.2.2 || ^4.0"
     },
     "suggest": {
         "ext-mbstring": "For handling non-UTF8 characters in cache signature.",
@@ -64,7 +62,6 @@
             "tests/Test/AbstractFixerTestCase.php",
             "tests/Test/AbstractIntegrationCaseFactory.php",
             "tests/Test/AbstractIntegrationTestCase.php",
-            "tests/Test/Assert/AssertTokensTrait.php",
             "tests/Test/IntegrationCase.php",
             "tests/Test/IntegrationCaseFactory.php",
             "tests/Test/IntegrationCaseFactoryInterface.php",

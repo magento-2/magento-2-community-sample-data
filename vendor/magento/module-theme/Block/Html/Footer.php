@@ -127,7 +127,6 @@ class Footer extends \Magento\Framework\View\Element\Template implements \Magent
      * Get block cache life time
      *
      * @return int
-     * @since 100.2.4
      */
     protected function getCacheLifetime()
     {

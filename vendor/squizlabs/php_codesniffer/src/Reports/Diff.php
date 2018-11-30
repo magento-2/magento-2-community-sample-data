@@ -10,6 +10,7 @@
 namespace PHP_CodeSniffer\Reports;
 
 use PHP_CodeSniffer\Files\File;
+use PHP_CodeSniffer\Util;
 
 class Diff implements Report
 {

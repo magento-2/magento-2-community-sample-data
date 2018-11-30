@@ -10,7 +10,6 @@ namespace Magento\Framework\App;
  * System cache model interface
  *
  * @api
- * @since 100.0.2
  */
 interface CacheInterface
 {

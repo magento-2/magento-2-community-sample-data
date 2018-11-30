@@ -161,7 +161,7 @@ class Zend_Validate_File_Upload extends Zend_Validate_Abstract
      */
     public function isValid($value, $file = null)
     {
-        $this->_messages = [];
+        $this->_messages = null;
         if (array_key_exists($value, $this->_files)) {
             $files[$value] = $this->_files[$value];
         } else {
@@ -223,7 +223,11 @@ class Zend_Validate_File_Upload extends Zend_Validate_Abstract
             }
         }
 
-        return empty($this->_messages);
+        if (count($this->_messages) > 0) {
+            return false;
+        } else {
+            return true;
+        }
     }
 
     /**

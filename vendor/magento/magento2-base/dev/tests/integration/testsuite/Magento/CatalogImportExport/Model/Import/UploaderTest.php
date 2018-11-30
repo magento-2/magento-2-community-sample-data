@@ -4,15 +4,13 @@
  * See COPYING.txt for license details.
  */
 
-declare(strict_types=1);
-
 namespace Magento\CatalogImportExport\Model\Import;
 
 use Magento\Framework\App\Bootstrap;
 use Magento\Framework\App\Filesystem\DirectoryList;
 
 /**
- * Tests for the \Magento\CatalogImportExport\Model\Import\Uploader class.
+ * Tests for the \Magento\CatalogImportExport\Model\Import\Uploader class
  */
 class UploaderTest extends \Magento\TestFramework\Indexer\TestCase
 {
@@ -48,23 +46,16 @@ class UploaderTest extends \Magento\TestFramework\Indexer\TestCase
         $mediaPath = $appParams[DirectoryList::MEDIA][DirectoryList::PATH];
         $this->directory = $filesystem->getDirectoryWrite(DirectoryList::ROOT);
         $tmpDir = $this->directory->getRelativePath($mediaPath . '/import');
-        if (!$this->directory->create($tmpDir)) {
-            throw new \RuntimeException('Failed to create temporary directory');
-        }
-        if (!$this->uploader->setTmpDir($tmpDir)) {
-            throw new \RuntimeException(
-                'Failed to set temporary directory for files.'
-            );
-        }
+        $this->directory->create($tmpDir);
+        $this->uploader->setTmpDir($tmpDir);
 
         parent::setUp();
     }
 
     /**
      * @magentoAppIsolation enabled
-     * @return void
      */
-    public function testMoveWithValidFile(): void
+    public function testMoveWithValidFile()
     {
         $fileName = 'magento_additional_image_one.jpg';
         $filePath = $this->directory->getAbsolutePath($this->uploader->getTmpDir() . '/' . $fileName);
@@ -75,16 +66,26 @@ class UploaderTest extends \Magento\TestFramework\Indexer\TestCase
 
     /**
      * @magentoAppIsolation enabled
-     * @return void
      * @expectedException \Exception
-     * @expectedExceptionMessage Disallowed file type
      */
-    public function testMoveWithInvalidFile(): void
+    public function testMoveWithInvalidFile()
     {
         $fileName = 'media_import_image.php';
         $filePath = $this->directory->getAbsolutePath($this->uploader->getTmpDir() . '/' . $fileName);
         copy(__DIR__ . '/_files/' . $fileName, $filePath);
         $this->uploader->move($fileName);
         $this->assertFalse($this->directory->isExist($this->uploader->getTmpDir() . '/' . $fileName));
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public static function tearDownAfterClass()
+    {
+        $filesystem = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()
+            ->get(\Magento\Framework\Filesystem::class);
+        /** @var \Magento\Framework\Filesystem\Directory\WriteInterface $directory */
+        $directory = $filesystem->getDirectoryWrite(DirectoryList::MEDIA);
+        $directory->delete('import');
     }
 }

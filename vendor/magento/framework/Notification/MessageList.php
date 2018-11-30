@@ -11,7 +11,6 @@ namespace Magento\Framework\Notification;
  *
  * Class MessageList
  * @api
- * @since 100.0.2
  */
 class MessageList
 {

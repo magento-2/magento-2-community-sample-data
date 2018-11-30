@@ -9,7 +9,6 @@ namespace Magento\Framework\Cache;
  * Interface of a cache frontend - an ultimate publicly available interface to an actual cache storage
  *
  * @api
- * @since 100.0.2
  */
 interface FrontendInterface
 {

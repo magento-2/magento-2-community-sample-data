@@ -461,7 +461,7 @@ class Full extends \Magento\Catalog\Model\Indexer\Product\Price\AbstractAction
     }
 
     /**
-     * @deprecated 102.0.6
+     * @deprecated
      *
      * @inheritdoc
      */

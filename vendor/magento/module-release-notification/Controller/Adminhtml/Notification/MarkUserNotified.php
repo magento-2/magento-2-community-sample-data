@@ -14,7 +14,7 @@ use Magento\Framework\App\ProductMetadataInterface;
 use Psr\Log\LoggerInterface;
 
 /**
- * Controller to record that the current admin user has seen the release notification content
+ * Class MarkUserNotified
  */
 class MarkUserNotified extends Action
 {

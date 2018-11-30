@@ -8,7 +8,7 @@ declare(strict_types=1);
 namespace Magento\Ui\Model;
 
 /**
- * Class AuthorizationMock
+ * Check current user permission on resource and privilege.
  */
 class AuthorizationMock extends \Magento\Framework\Authorization
 {

@@ -20,7 +20,6 @@ namespace Magento\Framework\View\Element;
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  *
  * @api
- * @since 100.0.2
  */
 class Context implements \Magento\Framework\ObjectManager\ContextInterface
 {

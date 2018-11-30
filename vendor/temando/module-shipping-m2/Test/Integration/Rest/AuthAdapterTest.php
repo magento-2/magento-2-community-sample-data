@@ -10,8 +10,9 @@ use Temando\Shipping\Rest\Adapter as RestAdapter;
 use Temando\Shipping\Rest\Request\AuthRequestInterface;
 use Temando\Shipping\Rest\Request\ItemRequestInterface;
 use Temando\Shipping\Rest\Request\ListRequestInterface;
-use Temando\Shipping\Rest\Response\DataObject\Session;
+use Temando\Shipping\Rest\Response\Type\SessionResponseType;
 use Temando\Shipping\Test\Integration\Provider\RestResponseProvider;
+use Temando\Shipping\Webservice\Exception\HttpResponseException;
 use Temando\Shipping\Webservice\HttpClient;
 use Temando\Shipping\Webservice\HttpClientInterfaceFactory;
 
@@ -102,7 +103,7 @@ class AuthAdapterTest extends \PHPUnit\Framework\TestCase
         ]);
         $session = $adapter->startSession($request);
 
-        $this->assertInstanceOf(Session::class, $session);
+        $this->assertInstanceOf(SessionResponseType::class, $session);
         $this->assertNotEmpty($session->getAttributes()->getSessionToken());
         $this->assertNotEmpty($session->getAttributes()->getExpiry());
     }

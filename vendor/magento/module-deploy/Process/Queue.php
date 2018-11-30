@@ -182,6 +182,8 @@ class Queue
      * @param array $packages
      * @param array $packageJob
      * @return void
+     *
+     * @SuppressWarnings(PHPMD.CyclomaticComplexity)
      */
     private function assertAndExecute($name, array & $packages, array $packageJob)
     {
@@ -205,25 +207,13 @@ class Queue
                 }
             }
         }
-        $this->executePackage($package, $name, $packages, $dependenciesNotFinished);
-    }
 
-    /**
-     * @param Package $package
-     * @param string $name
-     * @param array $packages
-     * @param bool $dependenciesNotFinished
-     * @return void
-     */
-    private function executePackage(
-        Package $package,
-        string $name,
-        array &$packages,
-        bool $dependenciesNotFinished
-    ) {
         if (!$dependenciesNotFinished
             && !$this->isDeployed($package)
-            && ($this->maxProcesses < 2 || (count($this->inProgress) < $this->maxProcesses))
+            && (
+                $this->maxProcesses < 2
+                || (count($this->inProgress) < $this->maxProcesses)
+            )
         ) {
             unset($packages[$name]);
             $this->execute($package);

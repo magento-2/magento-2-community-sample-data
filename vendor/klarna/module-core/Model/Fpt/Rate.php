@@ -54,7 +54,7 @@ class Rate
                 continue;
             }
 
-            $totalTax += $item->getWeeeTaxAppliedRowAmount();
+            $totalTax += $item->getWeeeTaxAppliedAmount();
 
             $weee = json_decode($item->getWeeeTaxApplied(), true);
             foreach ($weee as $tax) {

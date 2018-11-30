@@ -8,7 +8,7 @@ namespace Magento\Analytics\Model\Connector\Http\Client;
 use Magento\Analytics\Model\Connector\Http\ConverterInterface;
 use Psr\Log\LoggerInterface;
 use Magento\Framework\HTTP\Adapter\CurlFactory;
-use Magento\Framework\HTTP\ResponseFactory;
+use Magento\Analytics\Model\Connector\Http\ResponseFactory;
 
 /**
  * A CURL HTTP client.

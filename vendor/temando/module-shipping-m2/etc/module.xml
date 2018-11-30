@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
 <config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:Module/etc/module.xsd">
-    <module name="Temando_Shipping" setup_version="1.4.0">
+    <module name="Temando_Shipping" setup_version="1.2.1">
         <sequence>
             <module name="Magento_Backend"/>
             <module name="Magento_Catalog"/>
@@ -12,7 +12,6 @@
             <module name="Magento_Integration"/>
             <module name="Magento_Multishipping"/>
             <module name="Magento_Quote"/>
-            <module name="Magento_Rma"/>
             <module name="Magento_Sales"/>
             <module name="Magento_Shipping"/>
             <module name="Magento_Store"/>

@@ -60,7 +60,7 @@ class ReadHandler implements AttributeInterface
      * @param string $entityType
      * @return \Magento\Eav\Api\Data\AttributeInterface[]
      * @throws \Exception if for unknown entity type
-     * @deprecated 101.0.5 Not used anymore
+     * @deprecated Not used anymore
      * @see ReadHandler::getEntityAttributes
      */
     protected function getAttributes($entityType)

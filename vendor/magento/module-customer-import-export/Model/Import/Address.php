@@ -5,13 +5,12 @@
  */
 namespace Magento\CustomerImportExport\Model\Import;
 
-use Magento\Customer\Model\ResourceModel\Address\Attribute\Source\CountryWithWebsites as CountryWithWebsitesSource;
+use Magento\Customer\Model\ResourceModel\Address\Attribute\Source as Sources;
 use Magento\Eav\Model\Entity\Attribute\AbstractAttribute;
 use Magento\Framework\App\ObjectManager;
 use Magento\ImportExport\Model\Import\ErrorProcessing\ProcessingErrorAggregatorInterface;
 use Magento\Store\Model\Store;
 use Magento\CustomerImportExport\Model\ResourceModel\Import\Address\Storage as AddressStorage;
-use Magento\ImportExport\Model\Import\AbstractSource;
 
 /**
  * Customer address import
@@ -169,6 +168,11 @@ class Address extends AbstractCustomer
     protected $_attributeCollection;
 
     /**
+     * @deprecated
+     */
+    protected $_addressCollection;
+
+    /**
      * Store imported row primary keys
      *
      * @var array
@@ -222,7 +226,12 @@ class Address extends AbstractCustomer
     protected $postcodeValidator;
 
     /**
-     * @var CountryWithWebsitesSource
+     * @deprecated
+     */
+    protected $_addresses = [];
+
+    /**
+     * @var Sources\CountryWithWebsites
      */
     private $countryWithWebsites;
 
@@ -252,11 +261,12 @@ class Address extends AbstractCustomer
      * @param \Magento\Customer\Model\AddressFactory $addressFactory
      * @param \Magento\Directory\Model\ResourceModel\Region\CollectionFactory $regionColFactory
      * @param \Magento\Customer\Model\CustomerFactory $customerFactory
+     * @param \Magento\Customer\Model\ResourceModel\Address\CollectionFactory $addressColFactory
      * @param \Magento\Customer\Model\ResourceModel\Address\Attribute\CollectionFactory $attributesFactory
      * @param \Magento\Framework\Stdlib\DateTime $dateTime
      * @param \Magento\Customer\Model\Address\Validator\Postcode $postcodeValidator
      * @param array $data
-     * @param CountryWithWebsitesSource|null $countryWithWebsites
+     * @param Sources\CountryWithWebsites|null $countryWithWebsites
      * @param AddressStorage|null $addressStorage
      *
      * @SuppressWarnings(PHPMD.NPathComplexity)
@@ -276,11 +286,12 @@ class Address extends AbstractCustomer
         \Magento\Customer\Model\AddressFactory $addressFactory,
         \Magento\Directory\Model\ResourceModel\Region\CollectionFactory $regionColFactory,
         \Magento\Customer\Model\CustomerFactory $customerFactory,
+        \Magento\Customer\Model\ResourceModel\Address\CollectionFactory $addressColFactory,
         \Magento\Customer\Model\ResourceModel\Address\Attribute\CollectionFactory $attributesFactory,
         \Magento\Framework\Stdlib\DateTime $dateTime,
         \Magento\Customer\Model\Address\Validator\Postcode $postcodeValidator,
         array $data = [],
-        CountryWithWebsitesSource $countryWithWebsites = null,
+        Sources\CountryWithWebsites $countryWithWebsites = null,
         AddressStorage $addressStorage = null
     ) {
         $this->_customerFactory = $customerFactory;
@@ -289,8 +300,9 @@ class Address extends AbstractCustomer
         $this->_resourceHelper = $resourceHelper;
         $this->dateTime = $dateTime;
         $this->postcodeValidator = $postcodeValidator;
-        $this->countryWithWebsites = $countryWithWebsites ?:
-            ObjectManager::getInstance()->get(CountryWithWebsitesSource::class);
+        $this->countryWithWebsites = $countryWithWebsites ?
+            $countryWithWebsites
+            : ObjectManager::getInstance()->get(Sources\CountryWithWebsites::class);
 
         if (!isset($data['attribute_collection'])) {
             /** @var $attributeCollection \Magento\Customer\Model\ResourceModel\Address\Attribute\Collection */
@@ -312,6 +324,9 @@ class Address extends AbstractCustomer
             $data
         );
 
+        $this->_addressCollection = isset(
+            $data['address_collection']
+        ) ? $data['address_collection'] : $addressColFactory->create();
         $this->_entityTable = isset(
             $data['entity_table']
         ) ? $data['entity_table'] : $addressFactory->create()->getResource()->getEntityTable();
@@ -379,7 +394,7 @@ class Address extends AbstractCustomer
      *
      * @return array Adjusted data in the same format.
      */
-    private function adjustAttributeDataForWebsite(array $attributeData, int $websiteId): array
+    private function adjustAttributeDataForWebsite(array $attributeData, $websiteId)
     {
         if ($attributeData['code'] === 'country_id') {
             $attributeOptions = $this->optionsByWebsite[$attributeData['code']];
@@ -389,6 +404,27 @@ class Address extends AbstractCustomer
         }
 
         return $attributeData;
+    }
+
+    /**
+     * @return $this
+     *
+     * @deprecated
+     */
+    protected function _initAddresses()
+    {
+        /** @var $address \Magento\Customer\Model\Address */
+        foreach ($this->_addressCollection as $address) {
+            $customerId = $address->getParentId();
+            if (!isset($this->_addresses[$customerId])) {
+                $this->_addresses[$customerId] = [];
+            }
+            $addressId = $address->getId();
+            if (!in_array($addressId, $this->_addresses[$customerId])) {
+                $this->_addresses[$customerId][] = $addressId;
+            }
+        }
+        return $this;
     }
 
     /**
@@ -444,22 +480,23 @@ class Address extends AbstractCustomer
      * to perform mass validation/import efficiently.
      * Also loading existing addresses for requested customers.
      *
-     * @param array|AbstractSource $rows Each row must contain data from columns email
+     * @param array $rows Each row must contain data from columns email
      * and website code.
      *
      * @return void
      */
-    public function prepareCustomerData($rows): void
+    public function prepareCustomerData($rows)
     {
         $customersPresent = [];
         foreach ($rows as $rowData) {
-            $email = $rowData[static::COLUMN_EMAIL] ?? null;
+            $email = isset($rowData[static::COLUMN_EMAIL])
+                ? $rowData[static::COLUMN_EMAIL] : null;
             $websiteId = isset($rowData[static::COLUMN_WEBSITE])
                 ? $this->getWebsiteId($rowData[static::COLUMN_WEBSITE]) : false;
             if ($email && $websiteId !== false) {
                 $customersPresent[] = [
                     'email' => $email,
-                    'website_id' => $websiteId,
+                    'website_id' => $websiteId
                 ];
             }
         }
@@ -578,7 +615,7 @@ class Address extends AbstractCustomer
      * @SuppressWarnings(PHPMD.CyclomaticComplexity)
      * @SuppressWarnings(PHPMD.NPathComplexity)
      */
-    protected function _prepareDataForUpdate(array $rowData):array
+    protected function _prepareDataForUpdate(array $rowData)
     {
         $multiSeparator = $this->getMultipleValueSeparator();
         $email = strtolower($rowData[self::COLUMN_EMAIL]);
@@ -906,7 +943,7 @@ class Address extends AbstractCustomer
                 if (!strlen($addressId)) {
                     $this->addRowError(self::ERROR_ADDRESS_ID_IS_EMPTY, $rowNumber);
                 } elseif (!$this->addressStorage->doesExist(
-                    (string)$addressId,
+                    $addressId,
                     (string)$customerId
                 )) {
                     $this->addRowError(self::ERROR_ADDRESS_NOT_FOUND, $rowNumber);

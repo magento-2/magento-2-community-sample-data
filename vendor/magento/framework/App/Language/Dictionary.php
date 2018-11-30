@@ -13,7 +13,6 @@ use Magento\Framework\Filesystem\Directory\ReadFactory;
  * A service for reading language package dictionaries
  *
  * @api
- * @since 100.0.2
  */
 class Dictionary
 {
@@ -86,7 +85,7 @@ class Dictionary
                 } catch (\Magento\Framework\Config\Dom\ValidationException $e) {
                     throw new \Magento\Framework\Exception\LocalizedException(
                         new \Magento\Framework\Phrase(
-                            'The XML in file "%1" is invalid:' . "\n%2\nVerify the XML and try again.",
+                            "Invalid XML in file %1:\n%2",
                             [$path . '/language.xml', $e->getMessage()]
                         ),
                         $e

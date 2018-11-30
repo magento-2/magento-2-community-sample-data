@@ -23,8 +23,6 @@ use Magento\Catalog\Model\Product\Configuration\Item\ItemResolverInterface;
  * @method \Magento\Checkout\Block\Cart\Item\Renderer setProductName(string)
  * @method \Magento\Checkout\Block\Cart\Item\Renderer setDeleteUrl(string)
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
- * @SuppressWarnings(PHPMD.ExcessiveClassComplexity)
- * @since 100.0.2
  */
 class Renderer extends \Magento\Framework\View\Element\Template implements
     \Magento\Framework\DataObject\IdentityInterface
@@ -95,7 +93,9 @@ class Renderer extends \Magento\Framework\View\Element\Template implements
      */
     private $messageInterpretationStrategy;
 
-    /** @var ItemResolverInterface */
+    /**
+     * @var ItemResolverInterface
+     */
     private $itemResolver;
 
     /**
@@ -621,6 +621,9 @@ class Renderer extends \Magento\Framework\View\Element\Template implements
      */
     public function getImage($product, $imageId, $attributes = [])
     {
-        return $this->imageBuilder->create($product, $imageId, $attributes);
+        return $this->imageBuilder->setProduct($product)
+            ->setImageId($imageId)
+            ->setAttributes($attributes)
+            ->create();
     }
 }

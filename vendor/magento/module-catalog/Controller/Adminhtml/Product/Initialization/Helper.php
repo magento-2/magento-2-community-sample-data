@@ -104,7 +104,7 @@ class Helper
      * @param \Magento\Backend\Helper\Js $jsHelper
      * @param \Magento\Framework\Stdlib\DateTime\Filter\Date $dateFilter
      * @param CustomOptionFactory|null $customOptionFactory
-     * @param ProductLinkFactory|null $productLinkFactory
+     * @param ProductLinkFactory |null $productLinkFactory
      * @param ProductRepositoryInterface|null $productRepository
      * @param LinkTypeProvider|null $linkTypeProvider
      * @param AttributeFilter|null $attributeFilter
@@ -366,7 +366,7 @@ class Helper
 
     /**
      * @return LinkResolver
-     * @deprecated 102.0.0
+     * @deprecated 101.0.0
      */
     private function getLinkResolver()
     {
@@ -378,7 +378,7 @@ class Helper
 
     /**
      * @return \Magento\Framework\Stdlib\DateTime\Filter\DateTime
-     * @deprecated 102.0.0
+     * @deprecated 101.0.0
      */
     private function getDateTimeFilter()
     {

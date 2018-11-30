@@ -162,19 +162,19 @@ class DesignThemeTest extends \PHPUnit\Framework\TestCase
                         ],
                     ],
                 ],
+            ],
+            [
                 [
-                    [
-                        'websites' => [
-                            'base' => [
-                                'design' => ['theme' => ['theme_id' => '']],
-                            ],
+                    'websites' => [
+                        'base' => [
+                            'design' => ['theme' => ['theme_id' => '']],
                         ],
                     ],
-                    [
-                        'websites' => [
-                            'base' => [
-                                'design' => ['theme' => ['theme_id' => '']],
-                            ],
+                ],
+                [
+                    'websites' => [
+                        'base' => [
+                            'design' => ['theme' => ['theme_id' => '']],
                         ],
                     ],
                 ],

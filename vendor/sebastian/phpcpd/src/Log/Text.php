@@ -11,8 +11,18 @@
 namespace SebastianBergmann\PHPCPD\Log;
 
 use SebastianBergmann\PHPCPD\CodeCloneMap;
+use SebastianBergmann\PHPCPD\CodeClone;
 use Symfony\Component\Console\Output\OutputInterface;
 
+/**
+ * A ResultPrinter for the TextUI.
+ *
+ * @author    Sebastian Bergmann <sebastian@phpunit.de>
+ * @copyright Sebastian Bergmann <sebastian@phpunit.de>
+ * @license   http://www.opensource.org/licenses/BSD-3-Clause  The BSD 3-Clause License
+ * @link      http://github.com/sebastianbergmann/phpcpd/tree
+ * @since     Class available since Release 2.0.0
+ */
 class Text
 {
     /**
@@ -23,46 +33,55 @@ class Text
      */
     public function printResult(OutputInterface $output, CodeCloneMap $clones)
     {
-        $verbose = $output->getVerbosity() > OutputInterface::VERBOSITY_NORMAL;
+        $numClones = count($clones);
+        $verbose   = $output->getVerbosity() > OutputInterface::VERBOSITY_NORMAL;
 
-        if (\count($clones) > 0) {
+        if ($numClones > 0) {
+            $buffer = '';
+            $files  = array();
+            $lines  = 0;
+
+            foreach ($clones as $clone) {
+                foreach ($clone->getFiles() as $file) {
+                    $filename = $file->getName();
+
+                    if (!isset($files[$filename])) {
+                        $files[$filename] = true;
+                    }
+                }
+
+                $lines  += $clone->getSize() * (count($clone->getFiles()) - 1);
+                $buffer .= "\n  -";
+
+                foreach ($clone->getFiles() as $file) {
+                    $buffer .= sprintf(
+                        "\t%s:%d-%d\n ",
+                        $file->getName(),
+                        $file->getStartLine(),
+                        $file->getStartLine() + $clone->getSize()
+                    );
+                }
+
+                if ($verbose) {
+                    $buffer .= "\n" . $clone->getLines('      ');
+                }
+            }
+
             $output->write(
-                \sprintf(
-                    'Found %d clones with %d duplicated lines in %d files:' . PHP_EOL . PHP_EOL,
-                    \count($clones),
-                    $clones->getNumberOfDuplicatedLines(),
-                    $clones->getNumberOfFilesWithClones()
+                sprintf(
+                    "Found %d exact clones with %d duplicated lines in %d files:\n%s",
+                    $numClones,
+                    $lines,
+                    count($files),
+                    $buffer
                 )
             );
         }
 
-        foreach ($clones as $clone) {
-            $firstOccurrence = true;
-
-            foreach ($clone->getFiles() as $file) {
-                $output->writeln(
-                    \sprintf(
-                        '  %s%s:%d-%d',
-                        $firstOccurrence ? '- ' : '  ',
-                        $file->getName(),
-                        $file->getStartLine(),
-                        $file->getStartLine() + $clone->getSize()
-                    )
-                );
-
-                $firstOccurrence = false;
-            }
-
-            if ($verbose) {
-                $output->write(PHP_EOL . $clone->getLines('    '));
-            }
-
-            $output->writeln('');
-        }
-
         $output->write(
-            \sprintf(
-                "%s duplicated lines out of %d total lines of code.\n\n",
+            sprintf(
+                "%s%s duplicated lines out of %d total lines of code.\n\n",
+                $numClones > 0 ? "\n" : '',
                 $clones->getPercentage(),
                 $clones->getNumLines()
             )

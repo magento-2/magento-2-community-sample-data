@@ -3,8 +3,6 @@
  * Copyright © Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
-declare(strict_types=1);
-
 namespace Magento\Ups\Test\Unit\Model;
 
 use PHPUnit_Framework_MockObject_MockObject as MockObject;
@@ -32,8 +30,6 @@ use Magento\CatalogInventory\Model\StockRegistry;
 use Magento\Framework\Locale\FormatInterface;
 use Magento\Ups\Helper\Config;
 use Magento\Quote\Model\Quote\Address\RateRequest;
-use Magento\Framework\HTTP\ClientFactory;
-use Magento\Framework\HTTP\ClientInterface;
 
 /**
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
@@ -65,11 +61,6 @@ class CarrierCollectRatesOptionsTest extends \PHPUnit\Framework\TestCase
      * @var int;
      */
     private $include_taxes;
-
-    /**
-     * @var ClientInterface|MockObject
-     */
-    private $httpClient;
 
     /**
      * set up test environment
@@ -121,14 +112,6 @@ class CarrierCollectRatesOptionsTest extends \PHPUnit\Framework\TestCase
         $rateFactoryMock->expects($this->any())
             ->method('create')
             ->willReturn($rateResultMock);
-
-        $httpClientFactory = $this->getMockBuilder(ClientFactory::class)
-            ->disableOriginalConstructor()
-            ->setMethods(['create'])
-            ->getMock();
-        $this->httpClient = $this->getMockForAbstractClass(ClientInterface::class);
-        $httpClientFactory->method('create')
-            ->willReturn($this->httpClient);
 
         $priceInterfaceMock = $this->getMockBuilder(PriceCurrencyInterface::class)
             ->disableOriginalConstructor()
@@ -244,7 +227,7 @@ class CarrierCollectRatesOptionsTest extends \PHPUnit\Framework\TestCase
                     'stockRegistry' => $stockRegistryMock,
                     'localeFormat' => $formatInterfaceMock,
                     'configHelper' => $configHelperMock,
-                    'httpClientFactory' => $httpClientFactory,
+                    'httpClientFactory' => $this->createMock(\Magento\Framework\HTTP\ClientFactory::class),
                     'data' => [],
                 ]
             )

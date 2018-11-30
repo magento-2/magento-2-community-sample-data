@@ -3,7 +3,6 @@
  * Copyright © Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
-
 namespace Magento\Ui\Model;
 
 use ArrayObject;
@@ -23,7 +22,7 @@ use Magento\Framework\App\ObjectManager;
 
 /**
  * Class Manager
- * @deprecated 101.0.0
+ * @deprecated 100.2.0
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  */
 class Manager implements ManagerInterface
@@ -166,10 +165,7 @@ class Manager implements ManagerInterface
     {
         if ($name === null || $this->hasData($name)) {
             throw new LocalizedException(
-                new \Magento\Framework\Phrase(
-                    'The "%1" UI component element name is invalid. Verify the name and try again.',
-                    [$name]
-                )
+                new \Magento\Framework\Phrase("Invalid UI Component element name: '%1'", [$name])
             );
         }
         $this->componentsPool = $this->arrayObjectFactory->create();

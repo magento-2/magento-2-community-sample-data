@@ -3,7 +3,6 @@
 namespace Dotdigitalgroup\Email\Model;
 
 use Dotdigitalgroup\Email\Model\ResourceModel\Campaign\Collection as CampaignCollection;
-use Dotdigitalgroup\Email\Setup\Schema;
 use Magento\Framework\App\ResourceConnection;
 use Magento\TestFramework\ObjectManager;
 
@@ -70,7 +69,7 @@ class CampaignORMTest extends \PHPUnit\Framework\TestCase
     {
         /** @var ResourceConnection $resource */
         $resource = ObjectManager::getInstance()->get(ResourceConnection::class);
-        $tableName = $resource->getTableName(Schema::EMAIL_CAMPAIGN_TABLE);
+        $tableName = $resource->getTableName('email_campaign');
         $this->assertTrue($resource->getConnection('default')->isTableExists($tableName));
     }
 

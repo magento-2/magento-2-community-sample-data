@@ -9,10 +9,10 @@ namespace Temando\Shipping\Model;
  *
  * An order entity at the Temando platform.
  *
- * @package Temando\Shipping\Model
- * @author  Christoph Aßmann <christoph.assmann@netresearch.de>
- * @license https://opensource.org/licenses/osl-3.0.php Open Software License (OSL 3.0)
- * @link    https://www.temando.com/
+ * @package  Temando\Shipping\Model
+ * @author   Christoph Aßmann <christoph.assmann@netresearch.de>
+ * @license  http://opensource.org/licenses/osl-3.0.php Open Software License (OSL 3.0)
+ * @link     http://www.temando.com/
  */
 interface OrderInterface
 {
@@ -46,9 +46,6 @@ interface OrderInterface
 
     const COLLECTION_POINT = 'collection_point';
     const COLLECTION_POINT_SEARCH_REQUEST = 'collection_point_search_request';
-
-    const PICKUP_LOCATION = 'pickup_location';
-    const PICKUP_LOCATION_SEARCH_REQUEST = 'pickup_location_search_request';
 
     const SELECTED_EXPERIENCE_CODE = 'experience_code';
     const SELECTED_EXPERIENCE_CURRENCY = 'experience_currency';
@@ -127,24 +124,14 @@ interface OrderInterface
     public function getCheckoutFields();
 
     /**
-     * @return \Temando\Shipping\Api\Data\Delivery\CollectionPointSearchRequestInterface|null
-     */
-    public function getCollectionPointSearchRequest();
-
-    /**
-     * @return \Temando\Shipping\Api\Data\Delivery\QuoteCollectionPointInterface|null
+     * @return \Temando\Shipping\Api\Data\CollectionPoint\QuoteCollectionPointInterface
      */
     public function getCollectionPoint();
 
     /**
-     * @return \Temando\Shipping\Api\Data\Delivery\PickupLocationSearchRequestInterface|null
+     * @return \Temando\Shipping\Api\Data\CollectionPoint\SearchRequestInterface
      */
-    public function getPickupLocationSearchRequest();
-
-    /**
-     * @return \Temando\Shipping\Api\Data\Delivery\QuotePickupLocationInterface|null
-     */
-    public function getPickupLocation();
+    public function getCollectionPointSearchRequest();
 
     /**
      * @return string

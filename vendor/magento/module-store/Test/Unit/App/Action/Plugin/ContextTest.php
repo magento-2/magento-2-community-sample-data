@@ -52,7 +52,7 @@ class ContextTest extends \PHPUnit\Framework\TestCase
     /**
      * @var \Magento\Store\Model\Store|\PHPUnit_Framework_MockObject_MockObject
      */
-    protected $storeMock;
+    protected $store;
 
     /**
      * @var \Magento\Store\Model\Store|\PHPUnit_Framework_MockObject_MockObject
@@ -62,7 +62,7 @@ class ContextTest extends \PHPUnit\Framework\TestCase
     /**
      * @var \Magento\Store\Model\Website|\PHPUnit_Framework_MockObject_MockObject
      */
-    protected $websiteMock;
+    protected $website;
 
     /**
      * @var AbstractAction|\PHPUnit_Framework_MockObject_MockObject
@@ -87,9 +87,9 @@ class ContextTest extends \PHPUnit\Framework\TestCase
             ->willReturn(null);
         $this->storeManager = $this->createMock(\Magento\Store\Model\StoreManagerInterface::class);
         $this->storeCookieManager = $this->createMock(\Magento\Store\Api\StoreCookieManagerInterface::class);
-        $this->storeMock = $this->createMock(\Magento\Store\Model\Store::class);
+        $this->store = $this->createMock(\Magento\Store\Model\Store::class);
         $this->currentStoreMock = $this->createMock(\Magento\Store\Model\Store::class);
-        $this->websiteMock = $this->createPartialMock(
+        $this->website = $this->createPartialMock(
             \Magento\Store\Model\Website::class,
             ['getDefaultStore', '__wakeup']
         );
@@ -104,34 +104,32 @@ class ContextTest extends \PHPUnit\Framework\TestCase
                 'session' => $this->sessionMock,
                 'httpContext' => $this->httpContextMock,
                 'storeManager' => $this->storeManager,
-                'storeCookieManager' => $this->storeCookieManager,
+                'storeCookieManager' => $this->storeCookieManager
             ]
         );
 
-        $this->storeManager->method('getDefaultStoreView')
-            ->willReturn($this->storeMock);
         $this->storeCookieManager->expects($this->once())
             ->method('getStoreCodeFromCookie')
-            ->willReturn('storeCookie');
+            ->will($this->returnValue('storeCookie'));
         $this->currentStoreMock->expects($this->any())
             ->method('getDefaultCurrencyCode')
-            ->willReturn(self::CURRENCY_CURRENT_STORE);
+            ->will($this->returnValue(self::CURRENCY_CURRENT_STORE));
     }
 
     public function testBeforeDispatchCurrencyFromSession()
     {
         $this->storeManager->expects($this->once())
             ->method('getWebsite')
-            ->willReturn($this->websiteMock);
-        $this->websiteMock->expects($this->once())
+            ->will($this->returnValue($this->website));
+        $this->website->expects($this->once())
             ->method('getDefaultStore')
-            ->willReturn($this->storeMock);
+            ->will($this->returnValue($this->store));
 
-        $this->storeMock->expects($this->once())
+        $this->store->expects($this->once())
             ->method('getDefaultCurrencyCode')
-            ->willReturn(self::CURRENCY_DEFAULT);
+            ->will($this->returnValue(self::CURRENCY_DEFAULT));
 
-        $this->storeMock->expects($this->once())
+        $this->store->expects($this->once())
             ->method('getCode')
             ->willReturn('default');
         $this->currentStoreMock->expects($this->once())
@@ -141,7 +139,7 @@ class ContextTest extends \PHPUnit\Framework\TestCase
         $this->requestMock->expects($this->once())
             ->method('getParam')
             ->with($this->equalTo('___store'))
-            ->willReturn('default');
+            ->will($this->returnValue('default'));
 
         $this->storeManager->method('getStore')
             ->with('default')
@@ -149,7 +147,7 @@ class ContextTest extends \PHPUnit\Framework\TestCase
 
         $this->sessionMock->expects($this->any())
             ->method('getCurrencyCode')
-            ->willReturn(self::CURRENCY_SESSION);
+            ->will($this->returnValue(self::CURRENCY_SESSION));
 
         $this->httpContextMock->expects($this->at(1))
             ->method('setValue')
@@ -173,41 +171,39 @@ class ContextTest extends \PHPUnit\Framework\TestCase
         );
     }
 
-    public function testDispatchCurrentStoreCurrency()
+    public function testDispatchCurrentStoreAndCurrency()
     {
-        $this->storeManager->expects($this->once())
-            ->method('getWebsite')
-            ->willReturn($this->websiteMock);
-        $this->websiteMock->expects($this->once())
-            ->method('getDefaultStore')
-            ->willReturn($this->storeMock);
+        $defaultStoreCode = 'default_store';
+        $customStoreCode = 'custom_store';
 
-        $this->storeMock->expects($this->once())
-            ->method('getDefaultCurrencyCode')
+        $this->storeManager->method('getWebsite')
+            ->willReturn($this->website);
+        $this->website->method('getDefaultStore')
+            ->willReturn($this->store);
+
+        $this->store->method('getDefaultCurrencyCode')
             ->willReturn(self::CURRENCY_DEFAULT);
 
-        $this->storeMock->expects($this->once())
-            ->method('getCode')
-            ->willReturn('default');
-        $this->currentStoreMock->expects($this->once())
-            ->method('getCode')
-            ->willReturn('custom_store');
+        $this->store->method('getCode')
+            ->willReturn($defaultStoreCode);
+        $this->currentStoreMock->method('getCode')
+            ->willReturn($customStoreCode);
 
         $this->requestMock->expects($this->once())
             ->method('getParam')
             ->with($this->equalTo('___store'))
-            ->willReturn('default');
+            ->willReturn($defaultStoreCode);
 
         $this->storeManager->method('getStore')
-            ->with('default')
+            ->with($defaultStoreCode)
             ->willReturn($this->currentStoreMock);
 
         $this->httpContextMock->expects($this->at(1))
             ->method('setValue')
             ->with(
                 StoreManagerInterface::CONTEXT_STORE,
-                'custom_store',
-                'default'
+                $customStoreCode,
+                $defaultStoreCode
             );
         // Make sure that current currency is taken from current store
         //if no value is provided in session.
@@ -229,16 +225,16 @@ class ContextTest extends \PHPUnit\Framework\TestCase
     {
         $this->storeManager->expects($this->once())
             ->method('getWebsite')
-            ->willReturn($this->websiteMock);
-        $this->websiteMock->expects($this->once())
+            ->will($this->returnValue($this->website));
+        $this->website->expects($this->once())
             ->method('getDefaultStore')
-            ->willReturn($this->storeMock);
+            ->will($this->returnValue($this->store));
 
-        $this->storeMock->expects($this->once())
+        $this->store->expects($this->once())
             ->method('getDefaultCurrencyCode')
-            ->willReturn(self::CURRENCY_DEFAULT);
+            ->will($this->returnValue(self::CURRENCY_DEFAULT));
 
-        $this->storeMock->expects($this->once())
+        $this->store->expects($this->once())
             ->method('getCode')
             ->willReturn('default');
         $this->currentStoreMock->expects($this->once())
@@ -254,7 +250,7 @@ class ContextTest extends \PHPUnit\Framework\TestCase
         $this->requestMock->expects($this->once())
             ->method('getParam')
             ->with($this->equalTo('___store'))
-            ->willReturn($store);
+            ->will($this->returnValue($store));
 
         $this->storeManager->expects($this->once())
             ->method('getStore')
@@ -291,15 +287,15 @@ class ContextTest extends \PHPUnit\Framework\TestCase
     {
         $this->storeManager->expects($this->once())
             ->method('getWebsite')
-            ->willReturn($this->websiteMock);
-        $this->websiteMock->expects($this->once())
+            ->will($this->returnValue($this->website));
+        $this->website->expects($this->once())
             ->method('getDefaultStore')
-            ->willReturn($this->storeMock);
-        $this->storeMock->expects($this->exactly(2))
+            ->will($this->returnValue($this->store));
+        $this->store->expects($this->exactly(2))
             ->method('getDefaultCurrencyCode')
-            ->willReturn(self::CURRENCY_DEFAULT);
+            ->will($this->returnValue(self::CURRENCY_DEFAULT));
 
-        $this->storeMock->expects($this->exactly(2))
+        $this->store->expects($this->exactly(2))
             ->method('getCode')
             ->willReturn('default');
         $this->currentStoreMock->expects($this->never())
@@ -315,11 +311,11 @@ class ContextTest extends \PHPUnit\Framework\TestCase
         $this->requestMock->expects($this->once())
             ->method('getParam')
             ->with($this->equalTo('___store'))
-            ->willReturn($store);
+            ->will($this->returnValue($store));
         $this->storeManager->expects($this->once())
             ->method('getStore')
             ->with()
-            ->willReturn($this->storeMock);
+            ->willReturn($this->store);
         $this->plugin->beforeDispatch(
             $this->subjectMock,
             $this->requestMock
@@ -327,7 +323,6 @@ class ContextTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * @return void
      * @expectedException \Magento\Framework\Exception\NotFoundException
      */
     public function testDispatchNonExistingStore()
@@ -344,18 +339,18 @@ class ContextTest extends \PHPUnit\Framework\TestCase
         $this->storeManager->expects($this->at(1))
             ->method('getStore')
             ->with()
-            ->willReturn($this->storeMock);
+            ->willReturn($this->store);
         $this->storeManager->expects($this->once())
             ->method('getWebsite')
-            ->willReturn($this->websiteMock);
-        $this->websiteMock->expects($this->once())
+            ->will($this->returnValue($this->website));
+        $this->website->expects($this->once())
             ->method('getDefaultStore')
-            ->willReturn($this->storeMock);
-        $this->storeMock->expects($this->exactly(2))
+            ->will($this->returnValue($this->store));
+        $this->store->expects($this->exactly(2))
             ->method('getDefaultCurrencyCode')
-            ->willReturn(self::CURRENCY_DEFAULT);
+            ->will($this->returnValue(self::CURRENCY_DEFAULT));
 
-        $this->storeMock->expects($this->exactly(2))
+        $this->store->expects($this->exactly(2))
             ->method('getCode')
             ->willReturn('default');
         $this->currentStoreMock->expects($this->never())

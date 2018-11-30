@@ -76,6 +76,7 @@ angular.module('install', ['ngStorage'])
             $scope.isInProgress = true;
             progress.post(data, function (response) {
                 response = response.data;
+
                 $scope.isInProgress = false;
 
                 if (response.success) {

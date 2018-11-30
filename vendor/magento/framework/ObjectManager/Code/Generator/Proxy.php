@@ -160,20 +160,12 @@ class Proxy extends \Magento\Framework\Code\Generator\EntityAbstract
             $parameters[] = $this->_getMethodParameterInfo($parameter);
         }
 
-        $returnType = $method->getReturnType();
-        $returnTypeValue = $returnType
-            ? ($returnType->allowsNull() ? '?' : '') .$returnType->getName()
-            : null;
         $methodInfo = [
             'name' => $method->getName(),
             'parameters' => $parameters,
-            'body' => $this->_getMethodBody(
-                $method->getName(),
-                $parameterNames,
-                $returnTypeValue === 'void'
-            ),
+            'body' => $this->_getMethodBody($method->getName(), $parameterNames),
             'docblock' => ['shortDescription' => '{@inheritdoc}'],
-            'returntype' => $returnTypeValue,
+            'returnType' => $method->getReturnType(),
         ];
 
         return $methodInfo;
@@ -222,22 +214,16 @@ class Proxy extends \Magento\Framework\Code\Generator\EntityAbstract
      *
      * @param string $name
      * @param array $parameters
-     * @param bool $withoutReturn
      * @return string
      */
-    protected function _getMethodBody(
-        $name,
-        array $parameters = [],
-        bool $withoutReturn = false
-    ) {
+    protected function _getMethodBody($name, array $parameters = [])
+    {
         if (count($parameters) == 0) {
             $methodCall = sprintf('%s()', $name);
         } else {
             $methodCall = sprintf('%s(%s)', $name, implode(', ', $parameters));
         }
-
-        return ($withoutReturn ? '' : 'return ')
-            .'$this->_getSubject()->' . $methodCall . ';';
+        return 'return $this->_getSubject()->' . $methodCall . ';';
     }
 
     /**

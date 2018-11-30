@@ -9,12 +9,7 @@ use Magento\Framework\App\ResourceConnection;
 use Magento\Framework\DB\Adapter\AdapterInterface;
 
 /**
- * MySQL search condition manager
- *
  * @api
- * @deprecated
- * @see \Magento\ElasticSearch
- * @since 100.0.2
  */
 class ConditionManager
 {
@@ -35,8 +30,6 @@ class ConditionManager
     }
 
     /**
-     * Wrap query with parentheses.
-     *
      * @param string $query
      * @return string
      */
@@ -48,8 +41,6 @@ class ConditionManager
     }
 
     /**
-     * Combine multiple queries.
-     *
      * @param string[] $queries
      * @param string $unionOperator
      * @return string
@@ -63,8 +54,6 @@ class ConditionManager
     }
 
     /**
-     * Generate query condition.
-     *
      * @param string $field
      * @param string $operator
      * @param mixed $value

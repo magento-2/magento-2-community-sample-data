@@ -65,10 +65,13 @@ class ArrayLoader implements LoaderInterface
         }
 
         if (isset($config['bin'])) {
-            foreach ((array) $config['bin'] as $key => $bin) {
+            if (!is_array($config['bin'])) {
+                throw new \UnexpectedValueException('Package '.$config['name'].'\'s bin key should be an array, '.gettype($config['bin']).' given.');
+            }
+            foreach ($config['bin'] as $key => $bin) {
                 $config['bin'][$key] = ltrim($bin, '/');
             }
-            $package->setBinaries((array) $config['bin']);
+            $package->setBinaries($config['bin']);
         }
 
         if (isset($config['installation-source'])) {

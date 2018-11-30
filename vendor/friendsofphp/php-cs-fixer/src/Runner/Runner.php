@@ -114,7 +114,7 @@ final class Runner
      */
     public function fix()
     {
-        $changed = [];
+        $changed = array();
 
         $finder = $this->finder;
         $finderIterator = $finder instanceof \IteratorAggregate ? $finder->getIterator() : $finder;
@@ -165,16 +165,13 @@ final class Runner
         }
 
         $old = FileReader::createSingleton()->read($file->getRealPath());
-
-        Tokens::setLegacyMode(false);
-
         $tokens = Tokens::fromCode($old);
         $oldHash = $tokens->getCodeHash();
 
         $newHash = $oldHash;
         $new = $old;
 
-        $appliedFixers = [];
+        $appliedFixers = array();
 
         try {
             foreach ($this->fixers as $fixer) {
@@ -226,11 +223,6 @@ final class Runner
         // work of other and both of them will mark collection as changed.
         // Therefore we need to check if code hashes changed.
         if ($oldHash !== $newHash) {
-            $fixInfo = [
-                'appliedFixers' => $appliedFixers,
-                'diff' => $this->differ->diff($old, $new),
-            ];
-
             try {
                 $this->linter->lintSource($new)->check();
             } catch (LintingException $e) {
@@ -239,7 +231,7 @@ final class Runner
                     new FixerFileProcessedEvent(FixerFileProcessedEvent::STATUS_LINT)
                 );
 
-                $this->errorsManager->report(new Error(Error::TYPE_LINT, $name, $e, $fixInfo['appliedFixers'], $fixInfo['diff']));
+                $this->errorsManager->report(new Error(Error::TYPE_LINT, $name, $e));
 
                 return;
             }
@@ -256,6 +248,11 @@ final class Runner
                     );
                 }
             }
+
+            $fixInfo = array(
+                'appliedFixers' => $appliedFixers,
+                'diff' => $this->differ->diff($old, $new),
+            );
         }
 
         $this->cacheManager->setFile($name, $new);

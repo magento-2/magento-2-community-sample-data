@@ -14,7 +14,6 @@ use Magento\Framework\Pricing\Price\PriceInterface;
  * Price amount renderer interface
  *
  * @api
- * @since 100.0.2
  */
 interface AmountRenderInterface
 {

@@ -9,7 +9,7 @@ use Magento\Framework\DataObject;
 /**
  * Temando Dispatch Shipment
  *
- * @deprecated since 1.3.0
+ * @deprecated
  * @see \Temando\Shipping\Model\Shipment\ShipmentError
  *
  * @package Temando\Shipping\Model

@@ -13,10 +13,10 @@ use Temando\Shipping\Model\Shipment\ShipmentErrorInterface;
 use Temando\Shipping\Model\Shipment\ShipmentErrorInterfaceFactory;
 use Temando\Shipping\Model\Shipment\ShipmentSummaryInterface;
 use Temando\Shipping\Model\Shipment\ShipmentSummaryInterfaceFactory;
-use Temando\Shipping\Rest\Response\DataObject\Batch;
-use Temando\Shipping\Rest\Response\DataObject\Shipment;
-use Temando\Shipping\Rest\Response\Fields\Batch\Shipment as ShipmentReference;
-use Temando\Shipping\Rest\Response\Fields\LocationAttributes;
+use Temando\Shipping\Rest\Response\GetBatch;
+use Temando\Shipping\Rest\Response\Type\Batch\Attributes\Shipment;
+use Temando\Shipping\Rest\Response\Type\Generic\Location;
+use Temando\Shipping\Rest\Response\Type\ShipmentResponseType;
 
 /**
  * Map API data to application data object
@@ -39,12 +39,12 @@ class BatchResponseMapper
     /**
      * @var ShipmentSummaryInterfaceFactory
      */
-    private $shipmentFactory;
+    private $shipmentSummaryFactory;
 
     /**
      * @var ShipmentErrorInterfaceFactory
      */
-    private $errorFactory;
+    private $shipmentErrorFactory;
 
     /**
      * @var OrderAddressInterfaceFactory
@@ -59,32 +59,32 @@ class BatchResponseMapper
     /**
      * DispatchResponseMapper constructor.
      *
-     * @param BatchInterfaceFactory $batchFactory
-     * @param ShipmentSummaryInterfaceFactory $shipmentFactory
-     * @param ShipmentErrorInterfaceFactory $errorFactory
-     * @param OrderAddressInterfaceFactory $addressFactory
-     * @param Renderer $addressRenderer
+     * @param BatchInterfaceFactory           $batchFactory
+     * @param ShipmentSummaryInterfaceFactory $shipmentSummaryFactory
+     * @param ShipmentErrorInterfaceFactory   $shipmentErrorFactory
+     * @param OrderAddressInterfaceFactory    $addressFactory
+     * @param Renderer                        $addressRenderer
      */
     public function __construct(
         BatchInterfaceFactory $batchFactory,
-        ShipmentSummaryInterfaceFactory $shipmentFactory,
-        ShipmentErrorInterfaceFactory $errorFactory,
+        ShipmentSummaryInterfaceFactory $shipmentSummaryFactory,
+        ShipmentErrorInterfaceFactory $shipmentErrorFactory,
         OrderAddressInterfaceFactory $addressFactory,
         Renderer $addressRenderer
     ) {
-        $this->batchFactory = $batchFactory;
-        $this->shipmentFactory = $shipmentFactory;
-        $this->errorFactory = $errorFactory;
-        $this->addressFactory = $addressFactory;
-        $this->addressRenderer = $addressRenderer;
+        $this->batchFactory           = $batchFactory;
+        $this->shipmentSummaryFactory = $shipmentSummaryFactory;
+        $this->shipmentErrorFactory   = $shipmentErrorFactory;
+        $this->addressFactory         = $addressFactory;
+        $this->addressRenderer        = $addressRenderer;
     }
 
     /**
-     * @param LocationAttributes $location
+     * @param Location $location
      *
      * @return string
      */
-    private function getFormattedDestinationAddress(LocationAttributes $location)
+    private function getFormattedDestinationAddress(Location $location)
     {
         $addressData = [
             'region'     => $location->getAddress()->getAdministrativeArea(),
@@ -102,81 +102,82 @@ class BatchResponseMapper
     }
 
     /**
-     * @param ShipmentReference $apiShipmentReference
-     * @param Shipment $apiShipment
+     * @param Shipment               $apiShipment
+     * @param ShipmentResponseType[] $includedShipments
      *
      * @return ShipmentSummaryInterface
      */
-    private function mapShipment(ShipmentReference $apiShipmentReference, Shipment $apiShipment)
+    private function mapShipment(Shipment $apiShipment, array $includedShipments)
     {
         $errors = [];
-        foreach ($apiShipmentReference->getErrors() as $apiError) {
-            $errors[]= $this->errorFactory->create(['data' => [
-                ShipmentErrorInterface::TITLE => $apiError->getTitle(),
-                ShipmentErrorInterface::DETAIL => $apiError->getDetail(),
-            ]]);
+        $currentErrors = $apiShipment->getErrors() ? $apiShipment->getErrors() : [];
+        foreach ($currentErrors as $apiError) {
+            $errors[] = $this->shipmentErrorFactory->create(['data' =>
+                    [
+                        ShipmentErrorInterface::TITLE  => $apiError->getTitle(),
+                        ShipmentErrorInterface::DETAIL => $apiError->getDetail(),
+                    ]
+            ]);
         }
 
-        $destination = $apiShipment->getAttributes()->getDestination();
-        // fixme(nr): this is wrong! mappers do not prepare for display. pass on full location instead
-        $address = $this->getFormattedDestinationAddress($destination);
-        $recipientName = [
-            $destination->getContact()->getPersonFirstName(),
-            $destination->getContact()->getPersonLastName(),
-        ];
-
-        // fixme(nr): fatal error, shipment.order is not a required field
-        $shipment = $this->shipmentFactory->create(['data' => [
-            ShipmentSummaryInterface::ORDER_ID => $apiShipment->getAttributes()->getOrder()->getReference(),
-            ShipmentSummaryInterface::SHIPMENT_ID => $apiShipment->getId(),
-            ShipmentSummaryInterface::STATUS => $apiShipment->getAttributes()->getStatus(),
-            ShipmentSummaryInterface::ERRORS => $errors,
-            ShipmentSummaryInterface::RECIPIENT_ADDRESS => $address,
-            ShipmentSummaryInterface::RECIPIENT_NAME => implode(' ', $recipientName),
-        ]]);
+        $shipmentAttributes = $includedShipments[$apiShipment->getId()]->getAttributes();
+        $recipientData      = $shipmentAttributes->getDestination();
+        $shipment = $this->shipmentSummaryFactory->create(['data' =>
+            [
+                ShipmentSummaryInterface::ORDER_ID => $shipmentAttributes->getOrder()->getReference(),
+                ShipmentSummaryInterface::SHIPMENT_ID => $apiShipment->getId(),
+                ShipmentSummaryInterface::STATUS => $shipmentAttributes->getStatus(),
+                ShipmentSummaryInterface::ERRORS => $errors,
+                ShipmentSummaryInterface::RECIPIENT_ADDRESS => $this->getFormattedDestinationAddress($recipientData),
+                ShipmentSummaryInterface::RECIPIENT_NAME => $recipientData->getContact()->getPersonFirstName() . ' '
+                    . $recipientData->getContact()->getPersonLastName(),
+            ]
+        ]);
 
         return $shipment;
     }
 
     /**
-     * @param Batch $apiBatch
+     * @param GetBatch $apiBatch
      *
      * @return BatchInterface
      */
-    public function map(Batch $apiBatch)
+    public function map(GetBatch $apiBatch)
     {
-        $batchId = $apiBatch->getId();
-        $status = $apiBatch->getAttributes()->getStatus();
-        $createdAtDate = $apiBatch->getAttributes()->getCreatedAt();
-        $updatedAtDate = $apiBatch->getAttributes()->getModifiedAt();
-        $failedShipments = [];
-        $includedShipments = [];
-        $documentation = $apiBatch->getAttributes()->getDocumentation();
-
-        $shipments = [];
-        foreach ($apiBatch->getShipments() as $shipment) {
-            $shipments[$shipment->getId()] = $shipment;
+        $batch                  = $apiBatch->getData();
+        $batchIncludedShipments = [];
+        /** @var ShipmentResponseType $includedShipment */
+        foreach ($apiBatch->getIncluded() as $includedShipment) {
+            $batchIncludedShipments[$includedShipment->getId()] = $includedShipment;
         }
 
-        // split shipments into failed and successfully created
-        foreach ($apiBatch->getAttributes()->getShipments() as $shipmentReference) {
-            $mappedShipment = $this->mapShipment($shipmentReference, $shipments[$shipmentReference->getId()]);
-            if ($shipmentReference->getStatus() === 'error') {
-                $failedShipments[$shipmentReference->getId()] = $mappedShipment;
+        $batchId         = $batch->getId();
+        $status          = $batch->getAttributes()->getStatus();
+        $createdAtDate   = $batch->getAttributes()->getCreatedAt();
+        $updatedAtDate   = $batch->getAttributes()->getModifiedAt();
+        $failedShipments = $includedShipments = [];
+        $documentation   = $batch->getAttributes()->getDocumentation();
+
+        // split shipments into failed and successfully booked
+        foreach ($batch->getAttributes()->getShipments() as $apiShipment) {
+            if ($apiShipment->getStatus() === 'error') {
+                $failedShipments[$apiShipment->getId()] = $this->mapShipment($apiShipment, $batchIncludedShipments);
             } else {
-                $includedShipments[$shipmentReference->getId()] = $mappedShipment;
+                $includedShipments[$apiShipment->getId()] = $this->mapShipment($apiShipment, $batchIncludedShipments);
             }
         }
 
-        $batch = $this->batchFactory->create(['data' => [
-            BatchInterface::BATCH_ID => $batchId,
-            BatchInterface::STATUS => $status,
-            BatchInterface::CREATED_AT_DATE => $createdAtDate,
-            BatchInterface::UPDATED_AT_DATE => $updatedAtDate,
-            BatchInterface::INCLUDED_SHIPMENTS => $includedShipments,
-            BatchInterface::FAILED_SHIPMENTS => $failedShipments,
-            BatchInterface::DOCUMENTATION => $documentation,
-        ]]);
+        $batch = $this->batchFactory->create(['data' =>
+            [
+                BatchInterface::BATCH_ID => $batchId,
+                BatchInterface::STATUS => $status,
+                BatchInterface::CREATED_AT_DATE => $createdAtDate,
+                BatchInterface::UPDATED_AT_DATE => $updatedAtDate,
+                BatchInterface::INCLUDED_SHIPMENTS => $includedShipments,
+                BatchInterface::FAILED_SHIPMENTS => $failedShipments,
+                BatchInterface::DOCUMENTATION => $documentation,
+            ]
+        ]);
 
         return $batch;
     }

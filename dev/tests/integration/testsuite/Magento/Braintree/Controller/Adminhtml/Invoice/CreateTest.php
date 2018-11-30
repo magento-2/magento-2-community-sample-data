@@ -61,12 +61,11 @@ class CreateTest extends AbstractBackendController
      * Checks a case when non default Merchant Account ID should be send to Braintree
      * during creation second partial invoice.
      *
-     * @return void
      * @magentoConfigFixture default_store payment/braintree/merchant_account_id Magneto
      * @magentoConfigFixture current_store payment/braintree/merchant_account_id USA_Merchant
      * @magentoDataFixture Magento/Braintree/Fixtures/partial_invoice.php
      */
-    public function testCreatePartialInvoiceWithNonDefaultMerchantAccount(): void
+    public function testCreatePartialInvoiceWithNonDefaultMerchantAccount()
     {
         $order = $this->getOrder('100000002');
 
@@ -130,9 +129,8 @@ class CreateTest extends AbstractBackendController
      * Prepares POST request for invoice creation.
      *
      * @param string $uri
-     * @return void
      */
-    private function prepareRequest(string $uri): void
+    private function prepareRequest(string $uri)
     {
         /** @var FormKey $formKey */
         $formKey = $this->_objectManager->get(FormKey::class);

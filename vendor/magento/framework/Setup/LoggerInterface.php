@@ -10,7 +10,6 @@ namespace Magento\Framework\Setup;
  * Interface to Log Message in Setup
  *
  * @api
- * @since 100.0.2
  */
 interface LoggerInterface
 {

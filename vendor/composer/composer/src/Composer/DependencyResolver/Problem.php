@@ -12,8 +12,6 @@
 
 namespace Composer\DependencyResolver;
 
-use Composer\Package\CompletePackageInterface;
-
 /**
  * Represents a problem detected while solving dependencies
  *
@@ -92,17 +90,8 @@ class Problem
 
                 // handle php/hhvm
                 if ($job['packageName'] === 'php' || $job['packageName'] === 'php-64bit' || $job['packageName'] === 'hhvm') {
-                    $version = phpversion();
                     $available = $this->pool->whatProvides($job['packageName']);
-
-                    if (count($available)) {
-                        $firstAvailable = reset($available);
-                        $version = $firstAvailable->getPrettyVersion();
-                        $extra = $firstAvailable->getExtra();
-                        if ($firstAvailable instanceof CompletePackageInterface && isset($extra['config.platform']) && $extra['config.platform'] === true) {
-                            $version .= '; ' . $firstAvailable->getDescription();
-                        }
-                    }
+                    $version = count($available) ? $available[0]->getPrettyVersion() : phpversion();
 
                     $msg = "\n    - This package requires ".$job['packageName'].$this->constraintToText($job['constraint']).' but ';
 
@@ -119,10 +108,6 @@ class Problem
 
                 // handle php extensions
                 if (0 === stripos($job['packageName'], 'ext-')) {
-                    if (false !== strpos($job['packageName'], ' ')) {
-                        return "\n    - The requested PHP extension ".$job['packageName'].' should be required as '.str_replace(' ', '-', $job['packageName']).'.';
-                    }
-
                     $ext = substr($job['packageName'], 4);
                     $error = extension_loaded($ext) ? 'has the wrong version ('.(phpversion($ext) ?: '0').') installed' : 'is missing from your system';
 
@@ -248,6 +233,6 @@ class Problem
      */
     protected function constraintToText($constraint)
     {
-        return $constraint ? ' '.$constraint->getPrettyString() : '';
+        return ($constraint) ? ' '.$constraint->getPrettyString() : '';
     }
 }

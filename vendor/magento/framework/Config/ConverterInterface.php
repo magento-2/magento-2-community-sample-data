@@ -9,7 +9,6 @@ namespace Magento\Framework\Config;
  * Config DOM-to-array converter interface.
  *
  * @api
- * @since 100.0.2
  */
 interface ConverterInterface
 {

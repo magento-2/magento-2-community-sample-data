@@ -432,7 +432,6 @@ define([
 
             $(this.element).off('mouseenter mouseleave');
             this._on({
-
                 /**
                  * @param {jQuery.Event} event
                  */
@@ -482,9 +481,7 @@ define([
         _toggleDesktopMode: function () {
             var categoryParent, html;
 
-            $(this.element).off('click mousedown mouseenter mouseleave');
             this._on({
-
                 /**
                  * Prevent focus from sticking to links inside menu after clicking
                  * them (focus should always stay on UL during navigation).

@@ -103,7 +103,7 @@ class MediaGalleryProcessor
     /**
      * Save product media gallery.
      *
-     * @param array $mediaGalleryData
+     * @param $mediaGalleryData
      * @return void
      */
     public function saveMediaGallery(array $mediaGalleryData)
@@ -153,36 +153,13 @@ class MediaGalleryProcessor
      */
     public function updateMediaGalleryLabels(array $labels)
     {
-        $this->updateMediaGalleryField($labels, 'label');
-    }
-
-    /**
-     * Update 'disabled' field for media gallery entity
-     *
-     * @param array $images
-     * @return void
-     */
-    public function updateMediaGalleryVisibility(array $images)
-    {
-        $this->updateMediaGalleryField($images, 'disabled');
-    }
-
-    /**
-     * Update value for requested field in media gallery entities
-     *
-     * @param array $data
-     * @param string $field
-     * @return void
-     */
-    private function updateMediaGalleryField(array $data, $field)
-    {
         $insertData = [];
-        foreach ($data as $datum) {
-            $imageData = $datum['imageData'];
+        foreach ($labels as $label) {
+            $imageData = $label['imageData'];
 
-            if ($imageData[$field] === null) {
+            if ($imageData['label'] === null) {
                 $insertData[] = [
-                    $field => $datum[$field],
+                    'label' => $label['label'],
                     $this->getProductEntityLinkField() => $imageData[$this->getProductEntityLinkField()],
                     'value_id' => $imageData['value_id'],
                     'store_id' => Store::DEFAULT_STORE_ID,
@@ -191,7 +168,7 @@ class MediaGalleryProcessor
                 $this->connection->update(
                     $this->mediaGalleryValueTableName,
                     [
-                        $field => $datum[$field],
+                        'label' => $label['label'],
                     ],
                     [
                         $this->getProductEntityLinkField() . ' = ?' => $imageData[$this->getProductEntityLinkField()],
@@ -247,7 +224,6 @@ class MediaGalleryProcessor
             ),
             [
                 'label' => 'mgv.label',
-                'disabled' => 'mgv.disabled',
             ]
         )->joinInner(
             ['pe' => $this->productEntityTableName],
@@ -287,7 +263,7 @@ class MediaGalleryProcessor
     /**
      * Save media gallery data per store.
      *
-     * @param int $storeId
+     * @param $storeId
      * @param array $mediaGalleryData
      * @param array $newMediaValues
      * @param array $valueToProductId
@@ -363,8 +339,6 @@ class MediaGalleryProcessor
     }
 
     /**
-     * Get resource.
-     *
      * @return \Magento\CatalogImportExport\Model\Import\Proxy\Product\ResourceModel
      */
     private function getResource()

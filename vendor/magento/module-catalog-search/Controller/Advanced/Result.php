@@ -6,16 +6,11 @@
  */
 namespace Magento\CatalogSearch\Controller\Advanced;
 
-use Magento\Framework\App\Action\HttpGetActionInterface;
 use Magento\CatalogSearch\Model\Advanced as ModelAdvanced;
 use Magento\Framework\App\Action\Context;
-use Magento\Framework\App\Action\HttpPostActionInterface;
 use Magento\Framework\UrlFactory;
 
-/**
- * Advanced search result.
- */
-class Result extends \Magento\Framework\App\Action\Action implements HttpGetActionInterface, HttpPostActionInterface
+class Result extends \Magento\Framework\App\Action\Action
 {
     /**
      * Url factory
@@ -49,7 +44,7 @@ class Result extends \Magento\Framework\App\Action\Action implements HttpGetActi
     }
 
     /**
-     * @inheritdoc
+     * @return \Magento\Framework\Controller\Result\Redirect
      */
     public function execute()
     {

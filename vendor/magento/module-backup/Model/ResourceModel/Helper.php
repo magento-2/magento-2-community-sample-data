@@ -339,13 +339,12 @@ class Helper extends \Magento\Framework\DB\Helper
     }
 
     /**
-     * Get create script for triggers.
+     * Get create script for triggers
      *
      * @param string $tableName
      * @param boolean $addDropIfExists
      * @param boolean $stripDefiner
      * @return string
-     * @since 100.2.3
      */
     public function getTableTriggersSql($tableName, $addDropIfExists = false, $stripDefiner = true)
     {

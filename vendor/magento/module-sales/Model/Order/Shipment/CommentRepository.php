@@ -20,6 +20,8 @@ use Magento\Sales\Api\ShipmentRepositoryInterface;
 use Psr\Log\LoggerInterface;
 
 /**
+ * Class CommentRepository
+ *
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  */
 class CommentRepository implements ShipmentCommentRepositoryInterface
@@ -137,9 +139,8 @@ class CommentRepository implements ShipmentCommentRepositoryInterface
             $shipment = $this->shipmentRepository->get($entity->getParentId());
             $this->shipmentCommentSender->send($shipment, $entity->getIsCustomerNotified(), $entity->getComment());
         } catch (\Exception $exception) {
-            $this->logger->critical($exception);
+            $this->logger->warning('Something went wrong while sending email.');
         }
-
         return $entity;
     }
 }

@@ -37,11 +37,6 @@ class RuleProductsSelectBuilderTest extends \PHPUnit\Framework\TestCase
     private $resourceMock;
 
     /**
-     * @var ActiveTableSwitcher|\PHPUnit_Framework_MockObject_MockObject
-     */
-    private $activeTableSwitcherMock;
-
-    /**
      * @var \Magento\Eav\Model\Config|\PHPUnit_Framework_MockObject_MockObject
      */
     private $eavConfigMock;
@@ -63,7 +58,9 @@ class RuleProductsSelectBuilderTest extends \PHPUnit\Framework\TestCase
         $this->resourceMock = $this->getMockBuilder(\Magento\Framework\App\ResourceConnection::class)
             ->disableOriginalConstructor()
             ->getMock();
-        $this->activeTableSwitcherMock = $this->getMockBuilder(ActiveTableSwitcher::class)
+        /** @var ActiveTableSwitcher|\PHPUnit_Framework_MockObject_MockObject $activeTableSwitcherMock */
+        $activeTableSwitcherMock =
+            $this->getMockBuilder(ActiveTableSwitcher::class)
                 ->disableOriginalConstructor()
                 ->getMock();
         $this->eavConfigMock = $this->getMockBuilder(\Magento\Eav\Model\Config::class)
@@ -81,7 +78,7 @@ class RuleProductsSelectBuilderTest extends \PHPUnit\Framework\TestCase
             $this->eavConfigMock,
             $this->storeManagerMock,
             $this->metadataPoolMock,
-            $this->activeTableSwitcherMock,
+            $activeTableSwitcherMock,
             $this->tableSwapperMock
         );
     }

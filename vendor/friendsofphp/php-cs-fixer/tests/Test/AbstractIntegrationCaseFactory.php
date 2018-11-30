@@ -47,13 +47,13 @@ abstract class AbstractIntegrationCaseFactory implements IntegrationCaseFactoryI
             }
 
             $match = array_merge(
-                [
+                array(
                     'config' => null,
                     'settings' => null,
                     'requirements' => null,
                     'expect' => null,
                     'input' => null,
-                ],
+                ),
                 $match
             );
 
@@ -86,22 +86,22 @@ abstract class AbstractIntegrationCaseFactory implements IntegrationCaseFactoryI
      */
     protected function determineConfig(SplFileInfo $file, $config)
     {
-        $parsed = $this->parseJson($config, [
+        $parsed = $this->parseJson($config, array(
             'indent' => '    ',
             'lineEnding' => "\n",
-        ]);
+        ));
 
-        if (!\is_string($parsed['indent'])) {
+        if (!is_string($parsed['indent'])) {
             throw new \InvalidArgumentException(sprintf(
                 'Expected string value for "indent", got "%s".',
-                \is_object($parsed['indent']) ? \get_class($parsed['indent']) : \gettype($parsed['indent']).'#'.$parsed['indent']
+                is_object($parsed['indent']) ? get_class($parsed['indent']) : gettype($parsed['indent']).'#'.$parsed['indent']
             ));
         }
 
-        if (!\is_string($parsed['lineEnding'])) {
+        if (!is_string($parsed['lineEnding'])) {
             throw new \InvalidArgumentException(sprintf(
                 'Expected string value for "lineEnding", got "%s".',
-                \is_object($parsed['lineEnding']) ? \get_class($parsed['lineEnding']) : \gettype($parsed['lineEnding']).'#'.$parsed['lineEnding']
+                is_object($parsed['lineEnding']) ? get_class($parsed['lineEnding']) : gettype($parsed['lineEnding']).'#'.$parsed['lineEnding']
             ));
         }
 
@@ -118,14 +118,22 @@ abstract class AbstractIntegrationCaseFactory implements IntegrationCaseFactoryI
      */
     protected function determineRequirements(SplFileInfo $file, $config)
     {
-        $parsed = $this->parseJson($config, [
-            'php' => \PHP_VERSION_ID,
-        ]);
+        $parsed = $this->parseJson($config, array(
+            'hhvm' => true,
+            'php' => PHP_VERSION_ID,
+        ));
 
-        if (!\is_int($parsed['php'])) {
+        if (!is_int($parsed['php']) || $parsed['php'] < 50306) {
             throw new \InvalidArgumentException(sprintf(
-                'Expected int value like 50509 for "php", got "%s".',
-                \is_object($parsed['php']) ? \get_class($parsed['php']) : \gettype($parsed['php']).'#'.$parsed['php']
+                'Expected int >= 50306 value for "php", got "%s".',
+                is_object($parsed['php']) ? get_class($parsed['php']) : gettype($parsed['php']).'#'.$parsed['php']
+            ));
+        }
+
+        if (!is_bool($parsed['hhvm'])) {
+            throw new \InvalidArgumentException(sprintf(
+                'Expected bool value for "hhvm", got "%s".',
+                is_object($parsed['hhvm']) ? get_class($parsed['hhvm']) : gettype($parsed['hhvm']).'#'.$parsed['hhvm']
             ));
         }
 
@@ -168,14 +176,14 @@ abstract class AbstractIntegrationCaseFactory implements IntegrationCaseFactoryI
      */
     protected function determineSettings(SplFileInfo $file, $config)
     {
-        $parsed = $this->parseJson($config, [
+        $parsed = $this->parseJson($config, array(
             'checkPriority' => true,
-        ]);
+        ));
 
-        if (!\is_bool($parsed['checkPriority'])) {
+        if (!is_bool($parsed['checkPriority'])) {
             throw new \InvalidArgumentException(sprintf(
                 'Expected bool value for "checkPriority", got "%s".',
-                \is_object($parsed['checkPriority']) ? \get_class($parsed['checkPriority']) : \gettype($parsed['checkPriority']).'#'.$parsed['checkPriority']
+                is_object($parsed['checkPriority']) ? get_class($parsed['checkPriority']) : gettype($parsed['checkPriority']).'#'.$parsed['checkPriority']
             ));
         }
 
@@ -239,7 +247,7 @@ abstract class AbstractIntegrationCaseFactory implements IntegrationCaseFactoryI
     {
         // content is optional if template is provided
         if (!$encoded && null !== $template) {
-            $decoded = [];
+            $decoded = array();
         } else {
             $decoded = json_decode($encoded, true);
 

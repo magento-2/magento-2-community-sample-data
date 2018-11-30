@@ -32,7 +32,7 @@ final class NoEmptyCommentFixer extends AbstractFixer
      */
     public function getPriority()
     {
-        // should be run after PhpdocToCommentFixer and before NoExtraBlankLinesFixer, NoTrailingWhitespaceFixer and NoWhitespaceInBlankLineFixer.
+        // should be run after PhpdocToCommentFixer and before NoExtraConsecutiveBlankLinesFixer, NoTrailingWhitespaceFixer and NoWhitespaceInBlankLineFixer.
         return 2;
     }
 
@@ -43,7 +43,7 @@ final class NoEmptyCommentFixer extends AbstractFixer
     {
         return new FixerDefinition(
             'There should not be any empty comments.',
-            [new CodeSample("<?php\n//\n#\n/* */\n")]
+            array(new CodeSample("<?php\n//\n#\n/* */\n"))
         );
     }
 
@@ -60,7 +60,7 @@ final class NoEmptyCommentFixer extends AbstractFixer
      */
     protected function applyFix(\SplFileInfo $file, Tokens $tokens)
     {
-        for ($index = 1, $count = \count($tokens); $index < $count; ++$index) {
+        for ($index = 1, $count = count($tokens); $index < $count; ++$index) {
             if (!$tokens[$index]->isGivenKind(T_COMMENT)) {
                 continue;
             }
@@ -89,7 +89,7 @@ final class NoEmptyCommentFixer extends AbstractFixer
         $commentType = $this->getCommentType($tokens[$index]->getContent());
         $empty = $this->isEmptyComment($tokens[$index]->getContent());
         $start = $index;
-        $count = \count($tokens);
+        $count = count($tokens);
         ++$index;
 
         for (; $index < $count; ++$index) {
@@ -110,7 +110,7 @@ final class NoEmptyCommentFixer extends AbstractFixer
             }
         }
 
-        return [$start, $index - 1, $empty];
+        return array($start, $index - 1, $empty);
     }
 
     /**
@@ -155,11 +155,11 @@ final class NoEmptyCommentFixer extends AbstractFixer
      */
     private function isEmptyComment($content)
     {
-        static $mapper = [
+        static $mapper = array(
             self::TYPE_HASH => '|^#\s*$|', // single line comment starting with '#'
             self::TYPE_SLASH_ASTERISK => '|^/\*\s*\*/$|', // comment starting with '/*' and ending with '*/' (but not a PHPDoc)
             self::TYPE_DOUBLE_SLASH => '|^//\s*$|', // single line comment starting with '//'
-        ];
+        );
 
         $type = $this->getCommentType($content);
 

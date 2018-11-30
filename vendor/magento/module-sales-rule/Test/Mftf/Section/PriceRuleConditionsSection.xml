@@ -1,10 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
 <!--
  /**
   * Copyright © Magento, Inc. All rights reserved.
   * See COPYING.txt for license details.
   */
 -->
-<sections xsi:noNamespaceSchemaLocation="urn:magento:mftf:Page/etc/SectionObject.xsd" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+
+<sections xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="../../../../../../../dev/tests/acceptance/vendor/magento/magento2-functional-testing-framework/src/Magento/FunctionalTestingFramework/Page/etc/SectionObject.xsd">
     <section name="PriceRuleConditionsSection">
         <element name="conditionsTab" type="text" selector="//div[@data-index='conditions']//span[contains(.,'Conditions')][1]"/>
         <element name="createNewRule" type="text" selector="span.rule-param.rule-param-new-child"/>
@@ -16,9 +19,5 @@
         <element name="treeRoot" type="text" selector=".x-tree-root-ct.x-tree-lines"/>
         <element name="lastTreeNode" type="text" selector=".x-tree-root-ct.x-tree-lines > div > li > ul > li:last-child div img.x-tree-elbow-end-plus"/>
         <element name="subcategory4level" type="text" selector=".x-tree-root-ct.x-tree-lines > div > li > ul > li > ul > li > ul > li > ul > li > div img.x-tree-elbow-end-plus"/>
-
-        <element name="ruleParamLink" type="button" selector="//*[@id='conditions__{{var1}}__children']/li[{{var2}}]/span[{{var3}}]/a" parameterized="true"/>
-        <element name="operatorByIndex" type="input" selector="#conditions__{{var1}}--{{var2}}__operator" parameterized="true"/>
-        <element name="valueByIndex" type="input" selector="#conditions__{{var1}}--{{var2}}__value" parameterized="true"/>
     </section>
 </sections>

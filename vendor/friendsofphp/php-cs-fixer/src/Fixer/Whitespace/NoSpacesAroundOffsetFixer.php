@@ -34,11 +34,11 @@ final class NoSpacesAroundOffsetFixer extends AbstractFixer implements Configura
     {
         return new FixerDefinition(
             'There MUST NOT be spaces around offset braces.',
-            [
-                new CodeSample("<?php\n\$sample = \$b [ 'a' ] [ 'b' ];\n"),
-                new CodeSample("<?php\n\$sample = \$b [ 'a' ] [ 'b' ];\n", ['positions' => ['inside']]),
-                new CodeSample("<?php\n\$sample = \$b [ 'a' ] [ 'b' ];\n", ['positions' => ['outside']]),
-            ]
+            array(
+                new CodeSample("<?php\n\$sample = \$b [ 'a' ] [ 'b' ];"),
+                new CodeSample("<?php\n\$sample = \$b [ 'a' ] [ 'b' ];", array('positions' => array('inside'))),
+                new CodeSample("<?php\n\$sample = \$b [ 'a' ] [ 'b' ];", array('positions' => array('outside'))),
+            )
         );
     }
 
@@ -47,7 +47,7 @@ final class NoSpacesAroundOffsetFixer extends AbstractFixer implements Configura
      */
     public function isCandidate(Tokens $tokens)
     {
-        return $tokens->isAnyTokenKindsFound(['[', CT::T_ARRAY_INDEX_CURLY_BRACE_OPEN]);
+        return $tokens->isAnyTokenKindsFound(array('[', CT::T_ARRAY_INDEX_CURLY_BRACE_OPEN));
     }
 
     /**
@@ -56,11 +56,11 @@ final class NoSpacesAroundOffsetFixer extends AbstractFixer implements Configura
     protected function applyFix(\SplFileInfo $file, Tokens $tokens)
     {
         foreach ($tokens as $index => $token) {
-            if (!$token->equalsAny(['[', [CT::T_ARRAY_INDEX_CURLY_BRACE_OPEN]])) {
+            if (!$token->equalsAny(array('[', array(CT::T_ARRAY_INDEX_CURLY_BRACE_OPEN)))) {
                 continue;
             }
 
-            if (\in_array('inside', $this->configuration['positions'], true)) {
+            if (in_array('inside', $this->configuration['positions'], true)) {
                 if ($token->equals('[')) {
                     $endIndex = $tokens->findBlockEnd(Tokens::BLOCK_TYPE_INDEX_SQUARE_BRACE, $index);
                 } else {
@@ -78,7 +78,7 @@ final class NoSpacesAroundOffsetFixer extends AbstractFixer implements Configura
                 }
             }
 
-            if (\in_array('outside', $this->configuration['positions'], true)) {
+            if (in_array('outside', $this->configuration['positions'], true)) {
                 $prevNonWhitespaceIndex = $tokens->getPrevNonWhitespace($index);
                 if ($tokens[$prevNonWhitespaceIndex]->isComment()) {
                     continue;
@@ -94,14 +94,16 @@ final class NoSpacesAroundOffsetFixer extends AbstractFixer implements Configura
      */
     protected function createConfigurationDefinition()
     {
-        $values = ['inside', 'outside'];
+        $values = array('inside', 'outside');
 
-        return new FixerConfigurationResolverRootless('positions', [
-            (new FixerOptionBuilder('positions', 'Whether spacing should be fixed inside and/or outside the offset braces.'))
-                ->setAllowedTypes(['array'])
-                ->setAllowedValues([new AllowedValueSubset($values)])
-                ->setDefault($values)
-                ->getOption(),
-        ], $this->getName());
+        $positions = new FixerOptionBuilder('positions', 'Whether spacing should be fixed inside and/or outside the offset braces.');
+        $positions = $positions
+            ->setAllowedTypes(array('array'))
+            ->setAllowedValues(array(new AllowedValueSubset($values)))
+            ->setDefault($values)
+            ->getOption()
+        ;
+
+        return new FixerConfigurationResolverRootless('positions', array($positions));
     }
 }

@@ -106,12 +106,6 @@ class a
         $_sheet,
         $_FieldParser,
         $_key;
-
-    private
-        $varN = true,
-        $varO = array( 'a', 'b' ),
-        $varP = 'string',
-        $varQ = 123;
 }
 
 var_dump($http_response_header);
@@ -122,14 +116,4 @@ trait MyTrait
 {
     public $_varName = 'hello';
     private $_varName = 'hello';
-}
-
-class TestClass
-{
-    /**
-     * Comment goes here.
-     *
-     * @var array
-     */
-    private static $_foo = [];
 }

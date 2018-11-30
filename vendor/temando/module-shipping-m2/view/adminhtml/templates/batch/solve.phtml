@@ -7,8 +7,10 @@
 <?php
 /** @var \Magento\Backend\Block\Template $block */
 /** @var \Temando\Shipping\ViewModel\Batch\BatchDetails $viewModel */
+/** @var \Temando\Shipping\ViewModel\Order\OrderDetails $orderViewModel */
 /** @var \Temando\Shipping\ViewModel\Account\Support $supportViewModel */
 $viewModel = $block->getData('viewModel');
+$orderViewModel = $block->getData('orderViewModel');
 $supportViewModel = $block->getData('supportViewModel');
 
 /** @var \Temando\Shipping\Model\Batch $batch */
@@ -49,19 +51,20 @@ $batch = $viewModel->getBatch();
             <tbody>
             <?php foreach ($failedShipments as $failedShipment) : ?>
                 <tr class="data-row">
-                    <td><?= $block->escapeHtml($failedShipment->getOrderId()) ?></td>
-                    <td><?= $block->escapeHtml($failedShipment->getRecipientName()) ?></td>
-                    <td><?= /* @noEscape */ $failedShipment->getRecipientAddress() ?></td>
+                    <td><?= $block->escapeHtml($failedShipment->getData('order_id')) ?></td>
+                    <td><?= $block->escapeHtml($failedShipment->getData('recipient_name')) ?></td>
+                    <td><?= /* @noEscape */ $failedShipment->getData('recipient_address') ?></td>
                     <td>
-                        <?php foreach ($failedShipment->getErrors() as $error) : ?>
+                        <?php $errors = $failedShipment->hasData('errors') ? $failedShipment->getData('errors') : []; ?>
+                        <?php foreach ($errors as $error) : ?>
                             <p>
-                                <strong><?= $block->escapeHtml($error->getTitle()) ?></strong><br>
-                                <?= $block->escapeHtml($error->getDetail()) ?>
+                                <strong><?= $block->escapeHtml($error->getData('title')) ?></strong><br>
+                                <?= $block->escapeHtml($error->getData('detail')) ?>
                             </p>
                         <?php endforeach; ?>
                     </td>
                     <td>
-                        <?php $orderUrl = $viewModel->getOrderViewUrl($failedShipment->getOrderId()) ?>
+                        <?php $orderUrl = $orderViewModel->getViewActionUrl($failedShipment->getOrderId()) ?>
                         <a href="<?= $block->escapeUrl($orderUrl) ?>"><?= $block->escapeHtml(__('View Order')) ?></a>
                     </td>
                 </tr>

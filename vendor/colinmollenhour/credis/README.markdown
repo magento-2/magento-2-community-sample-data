@@ -1,5 +1,3 @@
-[![Build Status](https://travis-ci.org/colinmollenhour/credis.svg?branch=master)](https://travis-ci.org/colinmollenhour/credis)
-
 # Credis
 
 Credis is a lightweight interface to the [Redis](http://redis.io/) key-value store which wraps the [phpredis](https://github.com/nicolasff/phpredis)

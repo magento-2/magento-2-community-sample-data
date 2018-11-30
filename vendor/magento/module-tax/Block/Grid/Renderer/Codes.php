@@ -18,8 +18,12 @@ class Codes extends \Magento\Backend\Block\Widget\Grid\Column\Renderer\AbstractR
      */
     public function render(\Magento\Framework\DataObject $row)
     {
-        $ratesCodes = $row->getTaxRatesCodes();
-
-        return $ratesCodes && is_array($ratesCodes) ? $this->escapeHtml(implode(', ', $ratesCodes)) : '';
+        /** @var string[]|null $ratesCodes */
+        $ratesCodes = $row['tax_rates_codes'];
+        if ($ratesCodes) {
+            return $this->escapeHtml(implode(', ', $ratesCodes));
+        } else {
+            return '';
+        }
     }
 }

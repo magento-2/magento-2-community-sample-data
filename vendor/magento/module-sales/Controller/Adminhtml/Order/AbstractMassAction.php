@@ -14,7 +14,7 @@ use Magento\Ui\Component\MassAction\Filter;
 
 /**
  * Class AbstractMassStatus
- * @deprecated 101.0.0
+ * @deprecated 100.2.0
  * Never extend from this action. Implement mass-action logic in the "execute" method of your controller.
  */
 abstract class AbstractMassAction extends \Magento\Backend\App\Action
@@ -61,7 +61,7 @@ abstract class AbstractMassAction extends \Magento\Backend\App\Action
             $collection = $this->filter->getCollection($this->collectionFactory->create());
             return $this->massAction($collection);
         } catch (\Exception $e) {
-            $this->messageManager->addErrorMessage($e->getMessage());
+            $this->messageManager->addError($e->getMessage());
             /** @var \Magento\Backend\Model\View\Result\Redirect $resultRedirect */
             $resultRedirect = $this->resultFactory->create(ResultFactory::TYPE_REDIRECT);
             return $resultRedirect->setPath($this->redirectUrl);

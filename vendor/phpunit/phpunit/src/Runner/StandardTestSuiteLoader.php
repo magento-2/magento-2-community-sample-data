@@ -55,7 +55,6 @@ class StandardTestSuiteLoader implements TestSuiteLoader
                 if (\substr($loadedClass, $offset) === $suiteClassName &&
                     $class->getFileName() == $filename) {
                     $suiteClassName = $loadedClass;
-
                     break;
                 }
             }

@@ -39,14 +39,6 @@
              parent="Temando_Shipping::shipping"
              action="temando/configuration_packaging/index"
         />
-        <add id="Temando_Shipping::pickups"
-             title="Pickups"
-             module="Temando_Shipping"
-             sortOrder="30"
-             resource="Temando_Shipping::pickups"
-             parent="Magento_Sales::sales_operation"
-             action="temando/pickup/index"
-        />
         <add id="Temando_Shipping::dispatches"
              title="Dispatches"
              module="Temando_Shipping"

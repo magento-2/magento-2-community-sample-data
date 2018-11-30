@@ -10,7 +10,7 @@
 namespace PHPUnit\Framework\Constraint;
 
 use PHPUnit\Framework\ExpectationFailedException;
-use SebastianBergmann\Comparator\ComparisonFailure;
+use SebastianBergmann;
 
 /**
  * Constraint that asserts that one value is identical to another.
@@ -81,7 +81,7 @@ class IsIdentical extends Constraint
 
             // if both values are strings, make sure a diff is generated
             if (\is_string($this->value) && \is_string($other)) {
-                $f = new ComparisonFailure(
+                $f = new SebastianBergmann\Comparator\ComparisonFailure(
                     $this->value,
                     $other,
                     \sprintf("'%s'", $this->value),

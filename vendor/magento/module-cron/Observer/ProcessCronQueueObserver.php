@@ -12,13 +12,11 @@ namespace Magento\Cron\Observer;
 use Magento\Framework\App\State;
 use Magento\Framework\Console\Cli;
 use Magento\Framework\Event\ObserverInterface;
-use Magento\Cron\Model\Schedule;
+use \Magento\Cron\Model\Schedule;
 use Magento\Framework\Profiler\Driver\Standard\Stat;
 use Magento\Framework\Profiler\Driver\Standard\StatFactory;
 
 /**
- * The observer for processing cron jobs.
- *
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  */
 class ProcessCronQueueObserver implements ObserverInterface
@@ -156,9 +154,8 @@ class ProcessCronQueueObserver implements ObserverInterface
      * @param \Magento\Framework\Stdlib\DateTime\DateTime $dateTime
      * @param \Magento\Framework\Process\PhpExecutableFinderFactory $phpExecutableFinderFactory
      * @param \Psr\Log\LoggerInterface $logger
-     * @param State $state
+     * @param \Magento\Framework\App\State $state
      * @param StatFactory $statFactory
-     * @param \Magento\Framework\Lock\LockManagerInterface $lockManager
      * @SuppressWarnings(PHPMD.ExcessiveParameterList)
      */
     public function __construct(
@@ -381,9 +378,8 @@ class ProcessCronQueueObserver implements ObserverInterface
     }
 
     /**
-     * Return job collection from data base with status 'pending'.
+     * Return job collection from data base with status 'pending'
      *
-     * @param string $groupId
      * @return \Magento\Cron\Model\ResourceModel\Schedule\Collection
      */
     private function getPendingSchedules($groupId)
@@ -468,8 +464,8 @@ class ProcessCronQueueObserver implements ObserverInterface
     /**
      * Clean expired jobs
      *
-     * @param string $groupId
-     * @param int $currentTime
+     * @param $groupId
+     * @param $currentTime
      * @return void
      */
     private function cleanupJobs($groupId, $currentTime)
@@ -520,8 +516,6 @@ class ProcessCronQueueObserver implements ObserverInterface
     }
 
     /**
-     * Get config of schedule.
-     *
      * @param array $jobConfig
      * @return mixed
      */
@@ -536,8 +530,6 @@ class ProcessCronQueueObserver implements ObserverInterface
     }
 
     /**
-     * Save a schedule of cron job.
-     *
      * @param string $jobCode
      * @param string $cronExpression
      * @param int $timeInterval
@@ -570,8 +562,6 @@ class ProcessCronQueueObserver implements ObserverInterface
     }
 
     /**
-     * Create a schedule of cron job.
-     *
      * @param string $jobCode
      * @param string $cronExpression
      * @param int $time
@@ -590,8 +580,6 @@ class ProcessCronQueueObserver implements ObserverInterface
     }
 
     /**
-     * Get time interval for scheduling.
-     *
      * @param string $groupId
      * @return int
      */
@@ -604,9 +592,8 @@ class ProcessCronQueueObserver implements ObserverInterface
     }
 
     /**
-     * Clean up scheduled jobs that are disabled in the configuration.
-     *
-     * This can happen when you turn off a cron job in the config and flush the cache.
+     * Clean up scheduled jobs that are disabled in the configuration
+     * This can happen when you turn off a cron job in the config and flush the cache
      *
      * @param string $groupId
      * @return void
@@ -637,8 +624,6 @@ class ProcessCronQueueObserver implements ObserverInterface
     }
 
     /**
-     * Get cron expression of cron job.
-     *
      * @param array $jobConfig
      * @return null|string
      */
@@ -658,9 +643,8 @@ class ProcessCronQueueObserver implements ObserverInterface
     }
 
     /**
-     * Clean up scheduled jobs that do not match their cron expression anymore.
-     *
-     * This can happen when you change the cron expression and flush the cache.
+     * Clean up scheduled jobs that do not match their cron expression anymore
+     * This can happen when you change the cron expression and flush the cache
      *
      * @return $this
      */
@@ -679,10 +663,9 @@ class ProcessCronQueueObserver implements ObserverInterface
     }
 
     /**
-     * Get CronGroup Configuration Value.
+     * Get CronGroup Configuration Value
      *
-     * @param string $groupId
-     * @param string $path
+     * @param $groupId
      * @return int
      */
     private function getCronGroupConfigurationValue($groupId, $path)
@@ -694,9 +677,9 @@ class ProcessCronQueueObserver implements ObserverInterface
     }
 
     /**
-     * Is Group In Filter.
+     * Is Group In Filter
      *
-     * @param string $groupId
+     * @param $groupId
      * @return bool
      */
     private function isGroupInFilter($groupId): bool
@@ -706,11 +689,11 @@ class ProcessCronQueueObserver implements ObserverInterface
     }
 
     /**
-     * Process pending jobs.
+     * Process pending jobs
      *
-     * @param string $groupId
-     * @param array $jobsRoot
-     * @param int $currentTime
+     * @param $groupId
+     * @param $jobsRoot
+     * @param $currentTime
      */
     private function processPendingJobs($groupId, $jobsRoot, $currentTime)
     {
@@ -747,8 +730,6 @@ class ProcessCronQueueObserver implements ObserverInterface
     }
 
     /**
-     * Process error messages.
-     *
      * @param Schedule $schedule
      * @param \Exception $exception
      * @return void

@@ -13,6 +13,7 @@ class WithOptional
 
     /**
      * WithOptional constructor.
+     *
      * @param \Magento\Test\Di\DiParent|null $parent
      * @param \Magento\Test\Di\Child|null $child
      */

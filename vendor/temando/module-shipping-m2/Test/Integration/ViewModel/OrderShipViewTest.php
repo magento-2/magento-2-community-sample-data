@@ -357,7 +357,7 @@ class OrderShipViewTest extends \PHPUnit\Framework\TestCase
             ->disableOriginalConstructor()
             ->getMock();
         $shipmentMock
-            ->expects($this->any())
+            ->expects($this->once())
             ->method('getOrder')
             ->willReturn($order);
 

@@ -9,7 +9,6 @@ namespace Magento\Customer\Controller\Adminhtml\Index;
 
 use Magento\Backend\Model\Session;
 use Magento\Customer\Api\CustomerRepositoryInterface;
-use Magento\Framework\App\Request\Http as HttpRequest;
 use Magento\Customer\Api\Data\CustomerInterface;
 use Magento\Framework\Message\MessageInterface;
 use Magento\TestFramework\Helper\Bootstrap;
@@ -32,20 +31,12 @@ class MassAssignGroupTest extends AbstractBackendController
      */
     protected $customerRepository;
 
-    /**
-     * @inheritDoc
-     *
-     * @throws \Magento\Framework\Exception\AuthenticationException
-     */
     protected function setUp()
     {
         parent::setUp();
         $this->customerRepository = Bootstrap::getObjectManager()->get(CustomerRepositoryInterface::class);
     }
 
-    /**
-     * @inheritDoc
-     */
     protected function tearDown()
     {
         /**
@@ -72,14 +63,18 @@ class MassAssignGroupTest extends AbstractBackendController
         $customer = $this->customerRepository->get($customerEmail);
         $this->assertEquals(1, $customer->getGroupId());
 
+        /** @var \Magento\Framework\Data\Form\FormKey $formKey */
+        $formKey = $this->_objectManager->get(\Magento\Framework\Data\Form\FormKey::class);
+
         $params = [
             'group' => 0,
             'namespace' => 'customer_listing',
-            'selected' => [$customer->getId()]
+            'selected' => [$customer->getId()],
+            'form_key' => $formKey->getFormKey()
         ];
 
-        $this->getRequest()->setParams($params)
-            ->setMethod(HttpRequest::METHOD_POST);
+        $this->getRequest()->setParams($params);
+        $this->getRequest()->setMethod('POST');
         $this->dispatch('backend/customer/index/massAssignGroup');
         $this->assertSessionMessages(
             self::equalTo(['A total of 1 record(s) were updated.']),
@@ -106,15 +101,18 @@ class MassAssignGroupTest extends AbstractBackendController
             $this->assertEquals(1, $customer->getGroupId());
             $ids[] = $customer->getId();
         }
+        /** @var \Magento\Framework\Data\Form\FormKey $formKey */
+        $formKey = $this->_objectManager->get(\Magento\Framework\Data\Form\FormKey::class);
 
         $params = [
             'group' => 0,
             'namespace' => 'customer_listing',
             'selected' => $ids,
+            'form_key' => $formKey->getFormKey()
         ];
 
-        $this->getRequest()->setParams($params)
-            ->setMethod(HttpRequest::METHOD_POST);
+        $this->getRequest()->setParams($params);
+        $this->getRequest()->setMethod('POST');
         $this->dispatch('backend/customer/index/massAssignGroup');
         $this->assertSessionMessages(
             self::equalTo(['A total of 5 record(s) were updated.']),
@@ -135,12 +133,20 @@ class MassAssignGroupTest extends AbstractBackendController
      */
     public function testMassAssignGroupActionNoCustomerIds()
     {
-        $params = ['group'=> 0,'namespace'=> 'customer_listing',
+        /** @var \Magento\Framework\Data\Form\FormKey $formKey */
+        $formKey = $this->_objectManager->get(\Magento\Framework\Data\Form\FormKey::class);
+
+        $params = [
+            'group' => 0,
+            'namespace' => 'customer_listing',
+            'form_key' => $formKey->getFormKey()
         ];
-        $this->getRequest()->setParams($params)->setMethod(HttpRequest::METHOD_POST);
+
+        $this->getRequest()->setParams($params);
+        $this->getRequest()->setMethod('POST');
         $this->dispatch('backend/customer/index/massAssignGroup');
         $this->assertSessionMessages(
-            $this->equalTo(['An item needs to be selected. Select and try again.']),
+            $this->equalTo(['Please select item(s).']),
             MessageInterface::TYPE_ERROR
         );
     }

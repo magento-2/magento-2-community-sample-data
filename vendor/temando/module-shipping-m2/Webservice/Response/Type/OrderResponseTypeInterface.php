@@ -7,11 +7,10 @@ namespace Temando\Shipping\Webservice\Response\Type;
 /**
  * Temando Order Save Result Interface
  *
- * @package Temando\Shipping\Webservice
- * @author  Christoph Aßmann <christoph.assmann@netresearch.de>
- * @author  Sebastian Ertner <sebastian.ertner@netresearch.de>
- * @license https://opensource.org/licenses/osl-3.0.php Open Software License (OSL 3.0)
- * @link    https://www.temando.com/
+ * @package  Temando\Shipping\Webservice
+ * @author   Christoph Aßmann <christoph.assmann@netresearch.de>
+ * @license  http://opensource.org/licenses/osl-3.0.php Open Software License (OSL 3.0)
+ * @link     http://www.temando.com/
  */
 interface OrderResponseTypeInterface
 {
@@ -20,7 +19,6 @@ interface OrderResponseTypeInterface
     const ERRORS = 'errors';
     const SHIPMENTS = 'shipments';
     const COLLECTION_POINTS = 'collection_points';
-    const PICKUP_LOCATIONS = 'pickup_locations';
 
     /**
      * @return string
@@ -43,12 +41,7 @@ interface OrderResponseTypeInterface
     public function getShipments();
 
     /**
-     * @return \Temando\Shipping\Api\Data\Delivery\QuoteCollectionPointInterface[]
+     * @return \Temando\Shipping\Api\Data\CollectionPoint\QuoteCollectionPointInterface[]
      */
     public function getCollectionPoints();
-
-    /**
-     * @return \Temando\Shipping\Api\Data\Delivery\QuotePickupLocationInterface[]
-     */
-    public function getPickupLocations();
 }

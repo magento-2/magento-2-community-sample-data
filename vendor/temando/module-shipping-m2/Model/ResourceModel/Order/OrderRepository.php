@@ -22,11 +22,11 @@ use Temando\Shipping\Webservice\Response\Type\OrderResponseTypeInterface;
 /**
  * Temando Order Repository
  *
- * @package Temando\Shipping\Model
- * @author  Christoph Aßmann <christoph.assmann@netresearch.de>
- * @author  Sebastian Ertner <sebastian.ertner@netresearch.de>
- * @license https://opensource.org/licenses/osl-3.0.php Open Software License (OSL 3.0)
- * @link    https://www.temando.com/
+ * @package  Temando\Shipping\Model
+ * @author   Christoph Aßmann <christoph.assmann@netresearch.de>
+ * @author   Sebastian Ertner <sebastian.ertner@netresearch.de>
+ * @license  http://opensource.org/licenses/osl-3.0.php Open Software License (OSL 3.0)
+ * @link     http://www.temando.com/
  */
 class OrderRepository implements OrderRepositoryInterface
 {
@@ -112,13 +112,11 @@ class OrderRepository implements OrderRepositoryInterface
     }
 
     /**
-     * Create a regular order at the platform for QUOTING or MANIFESTATION.
-     *
      * @param OrderRequestTypeInterface $orderType
      * @return OrderResponseTypeInterface
      * @throws CouldNotSaveException
      */
-    private function createOrder(OrderRequestTypeInterface $orderType)
+    private function create(OrderRequestTypeInterface $orderType)
     {
         $orderRequest = $this->requestFactory->create([
             'order' => $orderType,
@@ -134,31 +132,6 @@ class OrderRepository implements OrderRepositoryInterface
     }
 
     /**
-     * Create a pickup order at the platform for QUOTING or MANIFESTATION.
-     *
-     * @param OrderRequestTypeInterface $orderType
-     * @return OrderResponseTypeInterface
-     * @throws CouldNotSaveException
-     */
-    private function createPickupOrder(OrderRequestTypeInterface $orderType)
-    {
-        $orderRequest = $this->requestFactory->create([
-            'order' => $orderType,
-        ]);
-
-        try {
-            $quotedOrder = $this->apiAdapter->createPickupOrder($orderRequest);
-        } catch (AdapterException $e) {
-            throw new CouldNotSaveException(__('Unable to get quotes.'), $e);
-        }
-
-        return $this->orderResponseMapper->mapPickupLocations($quotedOrder);
-    }
-
-    /**
-     * Create a collection point order at the platform for QUOTING.
-     * Response includes applicable collection points for that order.
-     *
      * @param OrderRequestTypeInterface $orderType
      * @return OrderResponseTypeInterface
      * @throws CouldNotSaveException
@@ -179,9 +152,6 @@ class OrderRepository implements OrderRepositoryInterface
     }
 
     /**
-     * Create a regular or collection point order at the platform for MANIFESTATION.
-     * In addition to a regular manifestation, the response includes allocated shipments.
-     *
      * @param OrderRequestTypeInterface $orderType
      * @return OrderResponseTypeInterface
      * @throws CouldNotSaveException
@@ -202,8 +172,6 @@ class OrderRepository implements OrderRepositoryInterface
     }
 
     /**
-     * Update a manifested order at the platform.
-     *
      * @param OrderRequestTypeInterface $orderType
      * @return OrderResponseTypeInterface
      * @throws CouldNotSaveException
@@ -212,6 +180,7 @@ class OrderRepository implements OrderRepositoryInterface
     {
         $orderRequest = $this->requestFactory->create([
             'order' => $orderType,
+            'orderId' => $orderType->getId(),
         ]);
 
         try {
@@ -240,17 +209,13 @@ class OrderRepository implements OrderRepositoryInterface
                 break;
             case OrderActionLocator::ACTION_QUALIFY:
             case OrderActionLocator::ACTION_PERSIST:
-                $orderResponse = $this->createOrder($orderType);
-                break;
-            case OrderActionLocator::ACTION_QUALIFY_PICKUP:
-            case OrderActionLocator::ACTION_PERSIST_PICKUP:
-                $orderResponse = $this->createPickupOrder($orderType);
-                break;
-            case OrderActionLocator::ACTION_QUALIFY_COLLECTION_POINTS:
-                $orderResponse = $this->quoteCollectionPoints($orderType);
+                $orderResponse = $this->create($orderType);
                 break;
             case OrderActionLocator::ACTION_ALLOCATE:
                 $orderResponse = $this->allocate($orderType);
+                break;
+            case OrderActionLocator::ACTION_QUOTE_COLLECTION_POINTS:
+                $orderResponse = $this->quoteCollectionPoints($orderType);
                 break;
             case OrderActionLocator::ACTION_UPDATE:
                 $orderResponse = $this->update($orderType);

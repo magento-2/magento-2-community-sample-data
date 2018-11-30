@@ -63,9 +63,9 @@ class ConfiguredPrice extends FinalPrice implements ConfiguredPriceInterface
     }
 
     /**
-     * Get value of configured options.
+     * Get value of configured options
      *
-     * @deprecated 102.0.4 ConfiguredOptions::getItemOptionsValue is used instead
+     * @deprecated ConfiguredOptions::getItemOptionsValue is used instead
      * @return float
      */
     protected function getOptionsValue(): float
@@ -88,19 +88,17 @@ class ConfiguredPrice extends FinalPrice implements ConfiguredPriceInterface
                 }
             }
         }
-
         return $value;
     }
 
     /**
-     * Price value of product with configured options.
+     * Price value of product with configured options
      *
      * @return bool|float
      */
     public function getValue()
     {
         $basePrice = parent::getValue();
-
         return $this->item
             ? $basePrice + $this->configuredOptions->getItemOptionsValue($basePrice, $this->item)
             : $basePrice;

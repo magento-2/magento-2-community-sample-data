@@ -68,7 +68,7 @@ class PreProcessor implements PreProcessorInterface
         $this->dataProvider = $dataProvider;
         $this->areaList = $areaList;
         $this->translate = $translate;
-        $this->viewDesign = $viewDesign ?? ObjectManager::getInstance()->get(DesignInterface::class);
+        $this->viewDesign = $viewDesign ?: ObjectManager::getInstance()->get(DesignInterface::class);
     }
 
     /**
@@ -76,6 +76,7 @@ class PreProcessor implements PreProcessorInterface
      *
      * @param Chain $chain
      * @return void
+     * @throws \Exception
      */
     public function process(Chain $chain)
     {
@@ -90,12 +91,14 @@ class PreProcessor implements PreProcessorInterface
                 $areaCode = $context->getAreaCode();
 
                 $this->viewDesign->setDesignTheme($themePath, $areaCode);
+
+                $this->translate
+                    ->setLocale($context->getLocale())
+                    ->loadData($areaCode);
             }
 
             $area = $this->areaList->getArea($areaCode);
             $area->load(\Magento\Framework\App\Area::PART_TRANSLATE);
-
-            $this->translate->setLocale($context->getLocale())->loadData($areaCode, true);
 
             $chain->setContent(json_encode($this->dataProvider->getData($themePath)));
             $chain->setContentType('json');

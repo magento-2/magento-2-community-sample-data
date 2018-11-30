@@ -64,28 +64,16 @@ class JsonDescriptor extends Descriptor
     protected function describeApplication(Application $application, array $options = array())
     {
         $describedNamespace = isset($options['namespace']) ? $options['namespace'] : null;
-        $description = new ApplicationDescription($application, $describedNamespace, true);
+        $description = new ApplicationDescription($application, $describedNamespace);
         $commands = array();
 
         foreach ($description->getCommands() as $command) {
             $commands[] = $this->getCommandData($command);
         }
 
-        $data = array();
-        if ('UNKNOWN' !== $application->getName()) {
-            $data['application']['name'] = $application->getName();
-            if ('UNKNOWN' !== $application->getVersion()) {
-                $data['application']['version'] = $application->getVersion();
-            }
-        }
-
-        $data['commands'] = $commands;
-
-        if ($describedNamespace) {
-            $data['namespace'] = $describedNamespace;
-        } else {
-            $data['namespaces'] = array_values($description->getNamespaces());
-        }
+        $data = $describedNamespace
+            ? array('commands' => $commands, 'namespace' => $describedNamespace)
+            : array('commands' => $commands, 'namespaces' => array_values($description->getNamespaces()));
 
         $this->writeData($data, $options);
     }
@@ -162,7 +150,6 @@ class JsonDescriptor extends Descriptor
             'description' => $command->getDescription(),
             'help' => $command->getProcessedHelp(),
             'definition' => $this->getInputDefinitionData($command->getNativeDefinition()),
-            'hidden' => $command->isHidden(),
         );
     }
 }

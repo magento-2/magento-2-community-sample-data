@@ -11,7 +11,6 @@ namespace Magento\Framework\View\Element;
  * Used to present information to user
  *
  * @api
- * @since 100.0.2
  */
 interface BlockInterface
 {

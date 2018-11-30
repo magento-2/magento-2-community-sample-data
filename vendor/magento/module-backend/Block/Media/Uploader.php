@@ -9,7 +9,7 @@ namespace Magento\Backend\Block\Media;
 
 use Magento\Framework\App\ObjectManager;
 use Magento\Framework\Serialize\Serializer\Json;
-use Magento\Framework\Image\Adapter\UploadConfigInterface;
+use Magento\Framework\Image\Adapter\ConfigInterface;
 
 /**
  * Adminhtml media library uploader
@@ -39,7 +39,7 @@ class Uploader extends \Magento\Backend\Block\Widget
     private $jsonEncoder;
 
     /**
-     * @var UploadConfigInterface
+     * @var ConfigInterface
      */
     private $imageConfig;
 
@@ -48,25 +48,23 @@ class Uploader extends \Magento\Backend\Block\Widget
      * @param \Magento\Framework\File\Size $fileSize
      * @param array $data
      * @param Json $jsonEncoder
-     * @param UploadConfigInterface $imageConfig
+     * @param ConfigInterface $imageConfig
      */
     public function __construct(
         \Magento\Backend\Block\Template\Context $context,
         \Magento\Framework\File\Size $fileSize,
         array $data = [],
         Json $jsonEncoder = null,
-        UploadConfigInterface $imageConfig = null
+        ConfigInterface $imageConfig = null
     ) {
         $this->_fileSizeService = $fileSize;
         $this->jsonEncoder = $jsonEncoder ?: ObjectManager::getInstance()->get(Json::class);
-        $this->imageConfig = $imageConfig ?: ObjectManager::getInstance()->get(UploadConfigInterface::class);
+        $this->imageConfig = $imageConfig ?: ObjectManager::getInstance()->get(ConfigInterface::class);
 
         parent::__construct($context, $data);
     }
 
     /**
-     * Initialize block.
-     *
      * @return void
      */
     protected function _construct()
@@ -105,7 +103,7 @@ class Uploader extends \Magento\Backend\Block\Widget
     }
 
     /**
-     * Get Image Upload Maximum Width Config.
+     * Get Image Upload Maximum Width Config
      *
      * @return int
      */
@@ -115,7 +113,7 @@ class Uploader extends \Magento\Backend\Block\Widget
     }
 
     /**
-     * Get Image Upload Maximum Height Config.
+     * Get Image Upload Maximum Height Config
      *
      * @return int
      */

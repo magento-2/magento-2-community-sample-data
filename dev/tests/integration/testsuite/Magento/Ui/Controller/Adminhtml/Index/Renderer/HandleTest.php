@@ -11,19 +11,21 @@ use Magento\TestFramework\Helper\Bootstrap;
 use Magento\Framework\AuthorizationInterface;
 
 /**
+ * Test for \Magento\Ui\Controller\Adminhtml\Index\Render\Handle.
+ *
  * @magentoAppArea adminhtml
  */
 class HandleTest extends \Magento\TestFramework\TestCase\AbstractBackendController
 {
     /**
-     * @magentoDataFixture  Magento/Customer/_files/customer.php
+     * @magentoDataFixture Magento/Customer/_files/customer.php
      */
     public function testExecuteWhenUserDoesNotHavePermission()
     {
         Bootstrap::getObjectManager()->configure([
             'preferences' => [
-                AuthorizationInterface::class => \Magento\Ui\Model\AuthorizationMock::class
-            ]
+                AuthorizationInterface::class => \Magento\Ui\Model\AuthorizationMock::class,
+            ],
         ]);
         $this->getRequest()->setParam('handle', 'customer_index_index');
         $this->getRequest()->setParam('namespace', 'customer_listing');
@@ -36,7 +38,7 @@ class HandleTest extends \Magento\TestFramework\TestCase\AbstractBackendControll
     }
 
     /**
-     * @magentoDataFixture  Magento/Customer/_files/customer.php
+     * @magentoDataFixture Magento/Customer/_files/customer.php
      */
     public function testExecuteWhenUserHasPermission()
     {

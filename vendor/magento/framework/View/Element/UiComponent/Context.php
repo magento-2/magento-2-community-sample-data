@@ -90,11 +90,6 @@ class Context implements ContextInterface
     protected $processor;
 
     /**
-     * @var UiComponentFactory
-     */
-    protected $uiComponentFactory;
-
-    /**
      * @param PageLayoutInterface $pageLayout
      * @param RequestInterface $request
      * @param ButtonProviderFactory $buttonProviderFactory

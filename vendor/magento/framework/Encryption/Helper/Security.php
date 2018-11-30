@@ -12,7 +12,6 @@ use Zend\Crypt\Utils;
  * Class implements compareString from Zend\Crypt
  *
  * @api
- * @since 100.0.2
  */
 class Security
 {

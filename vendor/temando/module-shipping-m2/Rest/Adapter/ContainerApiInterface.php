@@ -5,10 +5,10 @@
 
 namespace Temando\Shipping\Rest\Adapter;
 
-use Temando\Shipping\Rest\Exception\AdapterException;
 use Temando\Shipping\Rest\Request\ItemRequestInterface;
 use Temando\Shipping\Rest\Request\ListRequestInterface;
-use Temando\Shipping\Rest\Response\DataObject\Container;
+use Temando\Shipping\Rest\Response\Type\ContainerResponseType;
+use Temando\Shipping\Rest\Exception\AdapterException;
 
 /**
  * The Temando Container API interface defines the supported subset of operations
@@ -24,7 +24,7 @@ interface ContainerApiInterface
     /**
      * @param ListRequestInterface $request
      *
-     * @return Container[]
+     * @return ContainerResponseType[]
      * @throws AdapterException
      */
     public function getContainers(ListRequestInterface $request);

@@ -10,6 +10,8 @@ use Magento\Analytics\ReportXml\QueryFactory;
 use Magento\Framework\Api\SearchCriteriaInterface;
 
 /**
+ * Class ReportValidator
+ *
  * Validates report definitions by doing query to storage with limit 0
  */
 class ReportValidator

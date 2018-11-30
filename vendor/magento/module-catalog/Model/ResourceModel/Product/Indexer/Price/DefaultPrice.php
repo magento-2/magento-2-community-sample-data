@@ -17,7 +17,7 @@ use Magento\Framework\Indexer\DimensionalIndexerInterface;
  * @author      Magento Core Team <core@magentocommerce.com>
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  * @since 100.0.2
- * @deprecated 102.0.6 Not used anymore for price indexation. Class left for backward compatibility
+ * @deprecated Not used anymore for price indexation. Class left for backward compatibility
  * @see DimensionalIndexerInterface
  */
 class DefaultPrice extends AbstractIndexer implements PriceInterface
@@ -237,7 +237,7 @@ class DefaultPrice extends AbstractIndexer implements PriceInterface
      * Prepare final price temporary index table
      *
      * @return $this
-     * @deprecated 102.0.5
+     * @deprecated
      * @see prepareFinalPriceTable()
      */
     protected function _prepareDefaultFinalPriceTable()
@@ -547,7 +547,7 @@ class DefaultPrice extends AbstractIndexer implements PriceInterface
      * @param IndexTableStructure $finalPriceTable
      * @return void
      */
-    private function modifyPriceIndex(IndexTableStructure $finalPriceTable) : void
+    private function modifyPriceIndex(IndexTableStructure $finalPriceTable)
     {
         foreach ($this->priceModifiers as $priceModifier) {
             $priceModifier->modifyPrice($finalPriceTable);
@@ -862,11 +862,6 @@ class DefaultPrice extends AbstractIndexer implements PriceInterface
         );
     }
 
-    /**
-     * @param string $tableAlias
-     * @param \Zend_Db_Expr $priceExpression
-     * @return \Zend_Db_Expr
-     */
     private function getTierPriceExpressionForTable($tableAlias, \Zend_Db_Expr $priceExpression)
     {
         return $this->getConnection()->getCheckSql(

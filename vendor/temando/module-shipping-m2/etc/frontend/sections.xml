@@ -4,4 +4,10 @@
     <action name="checkout/onepage/saveOrder">
         <section name="checkout-fields"/>
     </action>
+    <action name="rest/*/V1/guest-carts/*/collection-point/select">
+        <section name="collection-point-result"/>
+    </action>
+    <action name="rest/*/V1/carts/mine/collection-point/select">
+        <section name="collection-point-result"/>
+    </action>
 </config>

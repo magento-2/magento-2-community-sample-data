@@ -163,7 +163,7 @@ class Product extends AbstractResource
     /**
      * Product Category table name getter
      *
-     * @deprecated 102.0.0
+     * @deprecated 101.1.0
      * @return string
      */
     public function getProductCategoryTable()
@@ -187,7 +187,7 @@ class Product extends AbstractResource
     /**
      * Retrieve product website identifiers
      *
-     * @deprecated 102.0.0
+     * @deprecated 101.1.0
      * @param \Magento\Catalog\Model\Product|int $product
      * @return array
      */
@@ -304,7 +304,7 @@ class Product extends AbstractResource
     /**
      * Save product website relations
      *
-     * @deprecated 102.0.0
+     * @deprecated 101.1.0
      * @param \Magento\Catalog\Model\Product $product
      * @return $this
      */
@@ -333,7 +333,7 @@ class Product extends AbstractResource
      * @param \Magento\Framework\DataObject $object
      * @return $this
      * @SuppressWarnings(PHPMD.UnusedFormalParameter)
-     * @deprecated 102.0.0
+     * @deprecated 101.1.0
      */
     protected function _saveCategories(\Magento\Framework\DataObject $object)
     {
@@ -534,27 +534,9 @@ class Product extends AbstractResource
 
         $result = [];
         foreach ($this->getConnection()->fetchAll($select) as $row) {
-            $result[$this->getResultKey($row['sku'], $productSkuList)] = $row['entity_id'];
+            $result[$row['sku']] = $row['entity_id'];
         }
         return $result;
-    }
-
-    /**
-     * Return correct key for result array in getProductIdsBySku
-     * Allows for different case sku to be passed in search array
-     * with original cased sku to be passed back in result array
-     *
-     * @param string $sku
-     * @param array $productSkuList
-     * @return string
-     */
-    private function getResultKey(string $sku, array $productSkuList): string
-    {
-        $key = array_search(strtolower($sku), array_map('strtolower', $productSkuList));
-        if ($key !== false) {
-            $sku = $productSkuList[$key];
-        }
-        return $sku;
     }
 
     /**
@@ -687,7 +669,7 @@ class Product extends AbstractResource
     }
 
     /**
-     * @deprecated 102.0.0
+     * @deprecated 101.1.0
      * @return ProductWebsiteLink
      */
     private function getProductWebsiteLink()
@@ -696,7 +678,7 @@ class Product extends AbstractResource
     }
 
     /**
-     * @deprecated 102.0.0
+     * @deprecated 101.1.0
      * @return \Magento\Catalog\Model\ResourceModel\Product\CategoryLink
      */
     private function getProductCategoryLink()
@@ -713,7 +695,7 @@ class Product extends AbstractResource
      * Store id is required to correctly identify attribute value we are working with.
      *
      * {@inheritdoc}
-     * @since 102.0.0
+     * @since 101.1.0
      */
     protected function getAttributeRow($entity, $object, $attribute)
     {

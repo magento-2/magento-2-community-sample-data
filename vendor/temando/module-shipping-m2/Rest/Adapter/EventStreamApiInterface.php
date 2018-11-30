@@ -7,10 +7,10 @@ namespace Temando\Shipping\Rest\Adapter;
 
 use Temando\Shipping\Rest\Exception\AdapterException;
 use Temando\Shipping\Rest\Request\ItemRequestInterface;
-use Temando\Shipping\Rest\Request\StreamCreateRequestInterface;
 use Temando\Shipping\Rest\Request\StreamEventItemRequestInterface;
 use Temando\Shipping\Rest\Request\StreamEventListRequestInterface;
-use Temando\Shipping\Rest\Response\DataObject\StreamEvent;
+use Temando\Shipping\Rest\Request\StreamCreateRequestInterface;
+use Temando\Shipping\Rest\Response\Type\StreamEventResponseType;
 
 /**
  * Temando API Adapter Event Stream Part
@@ -41,7 +41,7 @@ interface EventStreamApiInterface
     /**
      * @param StreamEventListRequestInterface $request
      *
-     * @return StreamEvent[]
+     * @return StreamEventResponseType[]
      * @throws AdapterException
      */
     public function getStreamEvents(StreamEventListRequestInterface $request);

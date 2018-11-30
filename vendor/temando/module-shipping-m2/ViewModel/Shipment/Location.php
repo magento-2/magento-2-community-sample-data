@@ -5,11 +5,11 @@
 namespace Temando\Shipping\ViewModel\Shipment;
 
 use Magento\Framework\View\Element\Block\ArgumentInterface;
-use Temando\Shipping\Model\Location\OrderAddressFactory;
+use Magento\Sales\Api\Data\OrderAddressInterfaceFactory;
+use Magento\Sales\Model\Order\Address\Renderer as AddressRenderer;
 use Temando\Shipping\Model\ResourceModel\Rma\RmaAccess;
 use Temando\Shipping\Model\Shipment\CapabilityInterface;
 use Temando\Shipping\Model\Shipment\ShipmentProviderInterface;
-use Temando\Shipping\ViewModel\DataProvider\OrderAddress as AddressRenderer;
 
 /**
  * View model for shipment locations.
@@ -32,7 +32,7 @@ class Location implements ArgumentInterface
     private $rmaAccess;
 
     /**
-     * @var OrderAddressFactory
+     * @var OrderAddressInterfaceFactory
      */
     private $addressFactory;
 
@@ -45,13 +45,13 @@ class Location implements ArgumentInterface
      * Location constructor.
      * @param ShipmentProviderInterface $shipmentProvider
      * @param RmaAccess $rmaAccess
-     * @param OrderAddressFactory $addressFactory
+     * @param OrderAddressInterfaceFactory $addressFactory
      * @param AddressRenderer $addressRenderer
      */
     public function __construct(
         ShipmentProviderInterface $shipmentProvider,
         RmaAccess $rmaAccess,
-        OrderAddressFactory $addressFactory,
+        OrderAddressInterfaceFactory $addressFactory,
         AddressRenderer $addressRenderer
     ) {
         $this->shipmentProvider = $shipmentProvider;
@@ -87,6 +87,18 @@ class Location implements ArgumentInterface
     }
 
     /**
+     * @param string[] $addressData
+     * @return string
+     */
+    private function getFormattedAddress(array $addressData)
+    {
+        /** @var \Magento\Sales\Model\Order\Address $address */
+        $address = $this->addressFactory->create(['data' => $addressData]);
+        $formattedAddress = $this->addressRenderer->format($address, 'html');
+        return (string) $formattedAddress;
+    }
+
+    /**
      * @return string
      */
     public function getShipFromAddressHtml()
@@ -98,8 +110,20 @@ class Location implements ArgumentInterface
         }
 
         $originLocation = $shipment->getOriginLocation();
-        $address = $this->addressFactory->createFromShipmentLocation($originLocation);
-        return $this->addressRenderer->getFormattedAddress($address);
+        $addressData = [
+            'region'     => $originLocation->getRegionCode(),
+            'postcode'   => $originLocation->getPostalCode(),
+            'lastname'   => $originLocation->getPersonLastName(),
+            'street'     => $originLocation->getStreet(),
+            'city'       => $originLocation->getCity(),
+            'email'      => $originLocation->getEmail(),
+            'telephone'  => $originLocation->getPhoneNumber(),
+            'country_id' => $originLocation->getCountryCode(),
+            'firstname'  => $originLocation->getPersonFirstName(),
+            'company'    => $originLocation->getCompany()
+        ];
+
+        return $this->getFormattedAddress($addressData);
     }
 
     /**
@@ -114,8 +138,20 @@ class Location implements ArgumentInterface
         }
 
         $destinationLocation = $shipment->getDestinationLocation();
-        $address = $this->addressFactory->createFromShipmentLocation($destinationLocation);
-        return $this->addressRenderer->getFormattedAddress($address);
+        $addressData = [
+            'region'     => $destinationLocation->getRegionCode(),
+            'postcode'   => $destinationLocation->getPostalCode(),
+            'lastname'   => $destinationLocation->getPersonLastName(),
+            'street'     => $destinationLocation->getStreet(),
+            'city'       => $destinationLocation->getCity(),
+            'email'      => $destinationLocation->getEmail(),
+            'telephone'  => $destinationLocation->getPhoneNumber(),
+            'country_id' => $destinationLocation->getCountryCode(),
+            'firstname'  => $destinationLocation->getPersonFirstName(),
+            'company'    => $destinationLocation->getCompany()
+        ];
+
+        return $this->getFormattedAddress($addressData);
     }
 
     /**
@@ -141,8 +177,20 @@ class Location implements ArgumentInterface
             return '';
         }
 
-        $address = $this->addressFactory->createFromShipmentLocation($finalRecipientLocation);
-        return $this->addressRenderer->getFormattedAddress($address);
+        $addressData = [
+            'region'     => $finalRecipientLocation->getRegionCode(),
+            'postcode'   => $finalRecipientLocation->getPostalCode(),
+            'lastname'   => $finalRecipientLocation->getPersonLastName(),
+            'street'     => $finalRecipientLocation->getStreet(),
+            'city'       => $finalRecipientLocation->getCity(),
+            'email'      => $finalRecipientLocation->getEmail(),
+            'telephone'  => $finalRecipientLocation->getPhoneNumber(),
+            'country_id' => $finalRecipientLocation->getCountryCode(),
+            'firstname'  => $finalRecipientLocation->getPersonFirstName(),
+            'company'    => $finalRecipientLocation->getCompany()
+        ];
+
+        return $this->getFormattedAddress($addressData);
     }
 
     /**
@@ -156,8 +204,20 @@ class Location implements ArgumentInterface
         }
 
         $originLocation = $this->rmaAccess->getCurrentRmaShipment()->getOriginLocation();
-        $address = $this->addressFactory->createFromShipmentLocation($originLocation);
-        return $this->addressRenderer->getFormattedAddress($address);
+        $addressData = [
+            'firstname'  => $originLocation->getPersonFirstName(),
+            'lastname'   => $originLocation->getPersonLastName(),
+            'company'    => $originLocation->getCompany(),
+            'street'     => $originLocation->getStreet(),
+            'region'     => $originLocation->getRegionCode(),
+            'city'       => $originLocation->getCity(),
+            'postcode'   => $originLocation->getPostalCode(),
+            'country_id' => $originLocation->getCountryCode(),
+            'email'      => $originLocation->getEmail(),
+            'telephone'  => $originLocation->getPhoneNumber()
+        ];
+
+        return $this->getFormattedAddress($addressData);
     }
 
     /**
@@ -171,8 +231,20 @@ class Location implements ArgumentInterface
         }
 
         $destinationLocation = $this->rmaAccess->getCurrentRmaShipment()->getDestinationLocation();
-        $address = $this->addressFactory->createFromShipmentLocation($destinationLocation);
-        return $this->addressRenderer->getFormattedAddress($address);
+        $addressData = [
+            'firstname'  => $destinationLocation->getPersonFirstName(),
+            'lastname'   => $destinationLocation->getPersonLastName(),
+            'company'    => $destinationLocation->getCompany(),
+            'street'     => $destinationLocation->getStreet(),
+            'region'     => $destinationLocation->getRegionCode(),
+            'city'       => $destinationLocation->getCity(),
+            'postcode'   => $destinationLocation->getPostalCode(),
+            'country_id' => $destinationLocation->getCountryCode(),
+            'email'      => $destinationLocation->getEmail(),
+            'telephone'  => $destinationLocation->getPhoneNumber()
+        ];
+
+        return $this->getFormattedAddress($addressData);
     }
 
     /**

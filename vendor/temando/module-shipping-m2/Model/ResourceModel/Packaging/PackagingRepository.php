@@ -9,21 +9,20 @@ use Psr\Log\LoggerInterface;
 use Temando\Shipping\Model\PackagingInterface;
 use Temando\Shipping\Model\ResourceModel\Repository\PackagingRepositoryInterface;
 use Temando\Shipping\Rest\Adapter\ContainerApiInterface;
-use Temando\Shipping\Rest\EntityMapper\PackagingResponseMapper;
 use Temando\Shipping\Rest\Exception\AdapterException;
+use Temando\Shipping\Rest\EntityMapper\PackagingResponseMapper;
 use Temando\Shipping\Rest\Request\ItemRequestInterfaceFactory;
 use Temando\Shipping\Rest\Request\ListRequestInterfaceFactory;
-use Temando\Shipping\Rest\Response\DataObject\Container;
-use Temando\Shipping\Webservice\Pagination\PaginationFactory;
+use Temando\Shipping\Rest\Response\Type\ContainerResponseType;
 
 /**
  * Temando Packaging Repository
  *
- * @package Temando\Shipping\Model
- * @author  Sebastian Ertner <sebastian.ertner@netresearch.de>
- * @author  Christoph Aßmann <christoph.assmann@netresearch.de>
- * @license https://opensource.org/licenses/osl-3.0.php Open Software License (OSL 3.0)
- * @link    https://www.temando.com/
+ * @package  Temando\Shipping\Model
+ * @author   Sebastian Ertner <sebastian.ertner@netresearch.de>
+ * @author   Christoph Aßmann <christoph.assmann@netresearch.de>
+ * @license  http://opensource.org/licenses/osl-3.0.php Open Software License (OSL 3.0)
+ * @link     http://www.temando.com/
  */
 class PackagingRepository implements PackagingRepositoryInterface
 {
@@ -31,11 +30,6 @@ class PackagingRepository implements PackagingRepositoryInterface
      * @var ContainerApiInterface
      */
     private $apiAdapter;
-
-    /**
-     * @var PaginationFactory
-     */
-    private $paginationFactory;
 
     /**
      * @var ListRequestInterfaceFactory
@@ -58,9 +52,8 @@ class PackagingRepository implements PackagingRepositoryInterface
     private $logger;
 
     /**
-     * PackagingRepository constructor.
+     * CarrierRepository constructor.
      * @param ContainerApiInterface $apiAdapter
-     * @param PaginationFactory $paginationFactory
      * @param ListRequestInterfaceFactory $listRequestFactory
      * @param ItemRequestInterfaceFactory $itemRequestFactory
      * @param PackagingResponseMapper $packagingMapper
@@ -68,14 +61,12 @@ class PackagingRepository implements PackagingRepositoryInterface
      */
     public function __construct(
         ContainerApiInterface $apiAdapter,
-        PaginationFactory $paginationFactory,
         ListRequestInterfaceFactory $listRequestFactory,
         ItemRequestInterfaceFactory $itemRequestFactory,
         PackagingResponseMapper $packagingMapper,
         LoggerInterface $logger
     ) {
         $this->apiAdapter = $apiAdapter;
-        $this->paginationFactory = $paginationFactory;
         $this->listRequestFactory = $listRequestFactory;
         $this->itemRequestFactory = $itemRequestFactory;
         $this->packagingMapper = $packagingMapper;
@@ -90,17 +81,12 @@ class PackagingRepository implements PackagingRepositoryInterface
     public function getList($offset = null, $limit = null)
     {
         try {
-            $pagination = $this->paginationFactory->create([
+            $request = $this->listRequestFactory->create([
                 'offset' => $offset,
                 'limit' => $limit,
             ]);
-
-            $request = $this->listRequestFactory->create([
-                'pagination' => $pagination,
-            ]);
-
             $apiContainers = $this->apiAdapter->getContainers($request);
-            $containers = array_map(function (Container $apiContainer) {
+            $containers = array_map(function (ContainerResponseType $apiContainer) {
                 return $this->packagingMapper->map($apiContainer);
             }, $apiContainers);
         } catch (AdapterException $e) {

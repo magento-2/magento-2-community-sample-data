@@ -48,9 +48,6 @@ class RemoveUnusedDefinitionsPass implements RepeatablePassInterface
                 $referencingAliases = array();
                 $sourceIds = array();
                 foreach ($edges as $edge) {
-                    if ($edge->isWeak()) {
-                        continue;
-                    }
                     $node = $edge->getSourceNode();
                     $sourceIds[] = $node->getId();
 
@@ -58,19 +55,18 @@ class RemoveUnusedDefinitionsPass implements RepeatablePassInterface
                         $referencingAliases[] = $node->getValue();
                     }
                 }
-                $isReferenced = (\count(array_unique($sourceIds)) - \count($referencingAliases)) > 0;
+                $isReferenced = (count(array_unique($sourceIds)) - count($referencingAliases)) > 0;
             } else {
                 $referencingAliases = array();
                 $isReferenced = false;
             }
 
-            if (1 === \count($referencingAliases) && false === $isReferenced) {
+            if (1 === count($referencingAliases) && false === $isReferenced) {
                 $container->setDefinition((string) reset($referencingAliases), $definition);
-                $definition->setPublic(!$definition->isPrivate());
-                $definition->setPrivate(reset($referencingAliases)->isPrivate());
+                $definition->setPublic(true);
                 $container->removeDefinition($id);
                 $container->log($this, sprintf('Removed service "%s"; reason: replaces alias %s.', $id, reset($referencingAliases)));
-            } elseif (0 === \count($referencingAliases) && false === $isReferenced) {
+            } elseif (0 === count($referencingAliases) && false === $isReferenced) {
                 $container->removeDefinition($id);
                 $container->resolveEnvPlaceholders(serialize($definition));
                 $container->log($this, sprintf('Removed service "%s"; reason: unused.', $id));

@@ -5,12 +5,10 @@
  * Copyright © Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
-
 namespace Magento\Framework\App;
 
 /**
  * @api
- * @since 100.0.2
  */
 class ActionFactory
 {
@@ -37,9 +35,7 @@ class ActionFactory
     public function create($actionName)
     {
         if (!is_subclass_of($actionName, \Magento\Framework\App\ActionInterface::class)) {
-            throw new \InvalidArgumentException(
-                'The action name provided is invalid. Verify the action name and try again.'
-            );
+            throw new \InvalidArgumentException('Invalid action name provided');
         }
         return $this->_objectManager->create($actionName);
     }

@@ -10,7 +10,6 @@ use Magento\Framework\App\ObjectManager;
 
 /**
  * @api
- * @since 100.0.2
  */
 class ImageProvider
 {
@@ -26,8 +25,10 @@ class ImageProvider
      */
     protected $itemPool;
 
-    /** @var \Magento\Checkout\CustomerData\DefaultItem */
-    protected $customerDataItem;
+    /**
+     * @var \Magento\Checkout\CustomerData\DefaultItem
+     */
+    private $customerDataItem;
 
     /**
      * @param \Magento\Quote\Api\CartItemRepositoryInterface $itemRepository
@@ -58,6 +59,7 @@ class ImageProvider
             $allData = $this->customerDataItem->getItemData($cartItem);
             $itemData[$cartItem->getItemId()] = $allData['product_image'];
         }
+
         return $itemData;
     }
 }

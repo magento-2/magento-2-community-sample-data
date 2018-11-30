@@ -7,17 +7,14 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-namespace PHPUnit\Framework\MockObject\Matcher;
 
-use PHPUnit\Framework\MockObject\Invocation as BaseInvocation;
-use PHPUnit\Framework\MockObject\Verifiable;
 use PHPUnit\Framework\SelfDescribing;
 
 /**
  * Interface for classes which matches an invocation based on its
  * method name, argument, order or call count.
  */
-interface Invocation extends SelfDescribing, Verifiable
+interface PHPUnit_Framework_MockObject_Matcher_Invocation extends SelfDescribing, PHPUnit_Framework_MockObject_Verifiable
 {
     /**
      * Registers the invocation $invocation in the object as being invoked.
@@ -30,20 +27,20 @@ interface Invocation extends SelfDescribing, Verifiable
      *
      * If the matcher is a stub it will also have a return value.
      *
-     * @param BaseInvocation $invocation Object containing information on a mocked or stubbed method which was invoked
+     * @param PHPUnit_Framework_MockObject_Invocation $invocation Object containing information on a mocked or stubbed method which was invoked
      *
      * @return mixed
      */
-    public function invoked(BaseInvocation $invocation);
+    public function invoked(PHPUnit_Framework_MockObject_Invocation $invocation);
 
     /**
      * Checks if the invocation $invocation matches the current rules. If it does
      * the matcher will get the invoked() method called which should check if an
      * expectation is met.
      *
-     * @param BaseInvocation $invocation Object containing information on a mocked or stubbed method which was invoked
+     * @param PHPUnit_Framework_MockObject_Invocation $invocation Object containing information on a mocked or stubbed method which was invoked
      *
      * @return bool
      */
-    public function matches(BaseInvocation $invocation);
+    public function matches(PHPUnit_Framework_MockObject_Invocation $invocation);
 }

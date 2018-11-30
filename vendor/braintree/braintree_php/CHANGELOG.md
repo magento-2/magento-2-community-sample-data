@@ -1,37 +1,3 @@
-## 3.35.0
-* Add subscription charged unsuccessfully sample webhook to webhook testing gateway
-* Add `processor_response_code` and `processor_response_text` to authorization adjustments subfield in transaction response.
-* Fix issue where result objects could not be printed with `echo` (thanks @cmeon)
-* Add Samsung Pay support
-
-## 3.34.0
-* Allow payee ID to be passed in options params for transaction create
-* Add `merchant_id` to `ConnectedMerchantStatusTransitioned` and `ConnectedMerchantPayPalStatusChanged` Auth webhooks
-* Fix webhook testing sample xml for dispute webhooks to include `amount-won` and `amount-disputed` (closes #225)
-
-## 3.33.0
-* Fix WebhookTestingGateway to use local configuration
-* Add Disbursement type field and methods
-
-## 3.32.0
-* Add support for US Bank Account verifications API
-
-## 3.31.0
-* Fix issue where webhook verification would fail due to missing global public key configuration value
-* Fix issue where webhook testing did not work on instantiated gateway
-* Add support for VCR compelling evidence dispute representment
-
-## 3.30.0
-* Add `oauthAccessRevocation` to `WebhookNotification`s
-* Add support for `profileId` in Transaction#create options for VenmoAccounts
-* Add support for dispute search by `customerId`, `disbursementDate`, and `effectiveDate`
-* Make `CustomerGateway::find` backward compatible
-* Remove `sepaMandateType` and `sepaMandateAcceptanceLocation` params from `ClientTokenGateway`
-
-## 3.29.0
-* Add support for `association_filter_id` in `Customer#find`
-* Add support for setting `timeout` and `acceptGzipEncoding` values on construction of `Configuration` instances
-
 ## 3.28.0
 * Add support for Level 3 summary parameters: `shippingAmount`, `discountAmount`, and `shipsFromPostalCode`
 * Add support for `tax_amount` field on transaction `line_items`
@@ -40,7 +6,6 @@
 * Deprecate `TRANSACTION_LINE_ITEM_UNIT_TAX_AMOUNT_MUST_BE_GREATER_THAN_ZERO` error in favor of `TRANSACTION_LINE_ITEM_UNIT_TAX_AMOUNT_CANNOT_BE_NEGATIVE`.
 * Deprecate `Braintree\Transaction\LineItem` in favor of `Braintree\TransactionLineItem`.
 * Add `findAll` static method to `TransactionLineItem` class
-* Add support for `profile_id` in Transaction#create options for VenmoAccounts
 
 ## 3.27.0
 * Add support for Level 3 summary parameters: `shippingAmount`, `discountAmount`, and `shipsFromPostalCode`

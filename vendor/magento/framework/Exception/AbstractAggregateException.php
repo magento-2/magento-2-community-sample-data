@@ -10,9 +10,8 @@ use Magento\Framework\Phrase;
 
 /**
  * @api
- * @since 100.0.2
  */
-abstract class AbstractAggregateException extends LocalizedException implements AggregateExceptionInterface
+abstract class AbstractAggregateException extends LocalizedException
 {
     /**
      * The array of errors that have been added via the addError() method
@@ -82,7 +81,6 @@ abstract class AbstractAggregateException extends LocalizedException implements 
     /**
      * @param LocalizedException $exception
      * @return $this
-     * @since 101.0.6
      */
     public function addException(LocalizedException $exception)
     {
@@ -102,7 +100,9 @@ abstract class AbstractAggregateException extends LocalizedException implements 
     }
 
     /**
-     * @inheritdoc
+     * Get the array of LocalizedException objects. Get an empty array if no errors were added.
+     *
+     * @return \Magento\Framework\Exception\LocalizedException[]
      */
     public function getErrors()
     {

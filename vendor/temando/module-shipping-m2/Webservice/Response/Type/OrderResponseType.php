@@ -9,10 +9,10 @@ use Magento\Framework\DataObject;
 /**
  * Temando Order Save Result
  *
- * @package Temando\Shipping\Webservice
- * @author  Christoph Aßmann <christoph.assmann@netresearch.de>
- * @license https://opensource.org/licenses/osl-3.0.php Open Software License (OSL 3.0)
- * @link    https://www.temando.com/
+ * @package  Temando\Shipping\Webservice
+ * @author   Christoph Aßmann <christoph.assmann@netresearch.de>
+ * @license  http://opensource.org/licenses/osl-3.0.php Open Software License (OSL 3.0)
+ * @link     http://www.temando.com/
  */
 class OrderResponseType extends DataObject implements OrderResponseTypeInterface
 {
@@ -49,18 +49,10 @@ class OrderResponseType extends DataObject implements OrderResponseTypeInterface
     }
 
     /**
-     * @return \Temando\Shipping\Api\Data\Delivery\QuoteCollectionPointInterface[]
+     * @return \Temando\Shipping\Api\Data\CollectionPoint\QuoteCollectionPointInterface[]
      */
     public function getCollectionPoints()
     {
         return $this->getData(self::COLLECTION_POINTS);
-    }
-
-    /**
-     * @return \Temando\Shipping\Api\Data\Delivery\QuotePickupLocationInterface[]
-     */
-    public function getPickupLocations()
-    {
-        return $this->getData(self::PICKUP_LOCATIONS);
     }
 }

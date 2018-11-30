@@ -563,8 +563,8 @@ class ConfigurableTest extends \Magento\ImportExport\Test\Unit\Model\Import\Abst
             '_type' => 'configurable',
             '_product_websites' => 'website_1',
         ];
-        // Checking that variations' field names are case-insensitive with this
-        // product.
+        //Checking that variations' field names are case-insensitive with this
+        //product.
         $caseInsensitiveSKU = 'configurableskuI22CaseInsensitive';
         $caseInsensitiveProduct = [
             'sku' => $caseInsensitiveSKU,
@@ -592,7 +592,7 @@ class ConfigurableTest extends \Magento\ImportExport\Test\Unit\Model\Import\Abst
         $this->setPropertyValue($this->configurable, '_attributes', [
             $badProduct[\Magento\CatalogImportExport\Model\Import\Product::COL_ATTR_SET] => [],
         ]);
-        // Avoiding errors about attributes not being super
+        //Avoiding errors about attributes not being super
         $this->setPropertyValue(
             $this->configurable,
             '_superAttributes',

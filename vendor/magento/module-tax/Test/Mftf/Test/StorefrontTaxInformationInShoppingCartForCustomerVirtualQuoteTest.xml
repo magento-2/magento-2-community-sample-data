@@ -7,15 +7,14 @@
 -->
 
 <tests xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-       xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/testSchema.xsd">
+       xsi:noNamespaceSchemaLocation="../../../../../../../dev/tests/acceptance/vendor/magento/magento2-functional-testing-framework/src/Magento/FunctionalTestingFramework/Test/etc/testSchema.xsd">
     <test name="StorefrontTaxInformationInShoppingCartForCustomerVirtualQuoteTest">
         <annotations>
-            <features value="Tax"/>
-            <stories value="Shopping cart taxes"/>
+            <features value="Tax information in shopping cart for Customer with default addresses (virtual quote)"/>
             <title value="Tax information are updating/recalculating on fly in shopping cart for Customer with default addresses (virtual quote)"/>
             <description value="Tax information are updating/recalculating on fly in shopping cart for Customer with default addresses (virtual quote)"/>
             <severity value="CRITICAL"/>
-            <testCaseId value="MAGETWO-41933"/>
+            <testCaseId value="MAGETWO-78956"/>
             <group value="checkout"/>
             <group value="tax"/>
         </annotations>
@@ -35,7 +34,7 @@
                 <field key="price">40.00</field>
             </createData>
             <!-- Customer is created with default addresses: -->
-            <createData entity="Simple_US_Customer_NY" stepKey="createCustomer"/>
+            <createData entity="Simple_US_NY_Customer" stepKey="createCustomer"/>
         </before>
         <after>
             <deleteData createDataKey="createTaxRule" stepKey="deleteTaxRule"/>
@@ -46,8 +45,8 @@
         </after>
         <!--  Test Steps  -->
         <!--  Step 1: Go to Storefront as logged in Customer  -->
-        <actionGroup ref="LoginToStorefrontActionGroup" stepKey="customerLogin">
-            <argument name="Customer" value="$$createCustomer$$" />
+        <actionGroup ref="CustomerLoginOnStorefront" stepKey="customerLogin">
+            <argument name="customer" value="$$createCustomer$$" />
         </actionGroup>
         <!--  Step 2: Add virtual product to shopping cart -->
         <amOnPage url="{{StorefrontProductPage.url($$createVirtualProduct.name$$)}}" stepKey="amOnStorefrontVirtualProductPage"/>
@@ -57,24 +56,24 @@
             <argument name="productCount" value="1"/>
         </actionGroup>
         <!--  Step 3: Go to Shopping Cart -->
-        <actionGroup ref="clickViewAndEditCartFromMiniCart" stepKey="goToShoppingCartFromMinicart"/>
+        <actionGroup ref="StorefrontViewAndEditCartFromMiniCartActionGroup" stepKey="goToShoppingCartFromMinicart"/>
         <!--  Step 4: Open Estimate Shipping and Tax section -->
         <conditionalClick  selector="{{CheckoutCartSummarySection.estimateShippingAndTax}}" dependentSelector="{{CheckoutCartSummarySection.country}}" visible="false" stepKey="expandEstimateShippingandTax" />
         <see selector="{{CheckoutCartSummarySection.country}}" userInput="$$createCustomer.country_id$$" stepKey="checkCustomerCountry" />
-        <see selector="{{CheckoutCartSummarySection.stateProvince}}" userInput="$$createCustomer.state$$" stepKey="checkCustomerRegion" />
+        <see selector="{{CheckoutCartSummarySection.region}}" userInput="$$createCustomer.state$$" stepKey="checkCustomerRegion" />
         <see selector="{{CheckoutCartSummarySection.postcode}}" userInput="$$createCustomer.postcode$$" stepKey="checkCustomerPostcode" />
         <scrollTo selector="{{CheckoutCartSummarySection.taxSummary}}" stepKey="scrollToTaxSummary" />
         <click selector="{{CheckoutCartSummarySection.taxSummary}}" stepKey="expandTaxSummary"/>
         <see selector="{{CheckoutCartSummarySection.rate}}" userInput="US-NY-*-Rate 1 (8.375%)" stepKey="checkRateNY" />
         <!--  Step 5: Change Data -->
         <selectOption selector="{{CheckoutCartSummarySection.country}}" userInput="Switzerland" stepKey="selectSwitzerlandCountry"/>
-        <selectOption selector="{{CheckoutCartSummarySection.stateProvince}}" userInput="Aargau" stepKey="selectAargauRegion"/>
+        <selectOption selector="{{CheckoutCartSummarySection.region}}" userInput="Aargau" stepKey="selectAargauRegion"/>
         <fillField selector="{{CheckoutCartSummarySection.postcode}}" userInput="1234" stepKey="inputPostCode"/>
         <scrollTo selector="{{CheckoutCartSummarySection.taxAmount}}" stepKey="scrollToTaxSummary2" />
         <see selector="{{CheckoutCartSummarySection.taxAmount}}" userInput="$0.00" stepKey="checkTaxAmount" />
         <!--  Step 6: Change Data -->
         <selectOption selector="{{CheckoutCartSummarySection.country}}" userInput="United States" stepKey="selectUnitedStatesCountry"/>
-        <selectOption selector="{{CheckoutCartSummarySection.stateProvince}}" userInput="California" stepKey="selectCaliforniaRegion"/>
+        <selectOption selector="{{CheckoutCartSummarySection.region}}" userInput="California" stepKey="selectCaliforniaRegion"/>
         <fillField selector="{{CheckoutCartSummarySection.postcode}}" userInput="90230" stepKey="inputPostCode2"/>
         <scrollTo selector="{{CheckoutCartSummarySection.taxSummary}}" stepKey="scrollToTaxSummary3" />
         <click selector="{{CheckoutCartSummarySection.taxSummary}}" stepKey="taxSummary2"/>

@@ -12,7 +12,6 @@ use Magento\Store\Model\Store;
  * Interface for detecting customer option to make instant purchase in a store.
  *
  * @api
- * @since 100.2.0
  */
 interface InstantPurchaseInterface
 {
@@ -22,7 +21,6 @@ interface InstantPurchaseInterface
      * @param Store $store
      * @param Customer $customer
      * @return InstantPurchaseOption
-     * @since 100.2.0
      */
     public function getOption(
         Store $store,

@@ -69,32 +69,27 @@ class DisputeGateway
      * Adds file evidence to a dispute, given a dispute ID and a document ID
      *
      * @param string $disputeId
-     * @param string $documentIdOrRequest
+     * @param string $documentId
      */
-    public function addFileEvidence($disputeId, $documentIdOrRequest)
+    public function addFileEvidence($disputeId, $documentId)
     {
-        $request = is_array($documentIdOrRequest) ? $documentIdOrRequest : ['documentId' => $documentIdOrRequest];
-
         if (trim($disputeId) == "") {
             throw new Exception\NotFound('dispute with id "' . $disputeId . '" not found');
         }
 
-        if (trim($request['documentId']) == "") {
-            throw new Exception\NotFound('document with id "' . $request['documentId'] . '" not found');
+        if (trim($documentId) == "") {
+            throw new Exception\NotFound('document with id "' . $documentId . '" not found');
         }
 
         try {
-            if (array_key_exists('category', $request)) {
-                if (trim($request['category']) == "") {
-                    throw new InvalidArgumentException('category cannot be blank');
-                }
+            if (trim($disputeId) == "") {
+                throw new Exception\NotFound();
             }
 
-            $request['document_upload_id'] = $request['documentId'];
-            unset($request['documentId']);
-
             $path = $this->_config->merchantPath() . '/disputes/' . $disputeId . '/evidence';
-            $response = $this->_http->post($path, ['evidence' => $request]);
+            $response = $this->_http->post($path, [
+                'document_upload_id' => $documentId
+            ]);
 
             if (isset($response['apiErrorResponse'])) {
                 return new Result\Error($response['apiErrorResponse']);
@@ -132,14 +127,10 @@ class DisputeGateway
             }
 
             if (array_key_exists('tag', $request)) {
-                $evidence['category'] = $request['tag'];
-            }
-
-            if (array_key_exists('category', $request)) {
-                if (trim($request['category']) == "") {
-                    throw new InvalidArgumentException('category cannot be blank');
+                if (trim($request['tag']) == "") {
+                    throw new InvalidArgumentException('tag cannot be blank');
                 }
-                $evidence['category'] = $request['category'];
+                $evidence['category'] = $request['tag'];
             }
 
             if (array_key_exists('sequenceNumber', $request)) {

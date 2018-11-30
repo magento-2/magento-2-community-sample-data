@@ -96,7 +96,9 @@ class PerforceDownloader extends VcsDownloader
      */
     protected function getCommitLogs($fromReference, $toReference, $path)
     {
-        return $this->perforce->getCommitLogs($fromReference, $toReference);
+        $commitLogs = $this->perforce->getCommitLogs($fromReference, $toReference);
+
+        return $commitLogs;
     }
 
     public function setPerforce($perforce)

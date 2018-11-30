@@ -3,12 +3,10 @@
  * Copyright © Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
-declare(strict_types=1);
-
 namespace Magento\Framework\App\Test\Unit\Filesystem;
 
 /**
- * Unit tests for the \Magento\Framework\App\Filesystem\DirectoryResolver class.
+ * Unit tests for the \Magento\Framework\App\Filesystem\DirectoryResolver class
  */
 class DirectoryResolverTest extends \PHPUnit\Framework\TestCase
 {
@@ -50,9 +48,8 @@ class DirectoryResolverTest extends \PHPUnit\Framework\TestCase
      * @dataProvider validatePathDataProvider
      * @param string $path
      * @param bool $expectedResult
-     * @return void
      */
-    public function testValidatePath(string $path, bool $expectedResult): void
+    public function testValidatePath($path, $expectedResult)
     {
         $rootPath = '/path/root';
         $directoryConfig = 'directory_config';
@@ -79,7 +76,7 @@ class DirectoryResolverTest extends \PHPUnit\Framework\TestCase
     {
         return [
             ['/path/root/for/validation', true],
-            ['/path/invalid/for/validation', false],
+            ['/path/invalid/for/validation', false]
         ];
     }
 }

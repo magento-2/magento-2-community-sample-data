@@ -11,7 +11,6 @@ namespace Magento\Framework\Component;
  * @author Josh Di Fabio <joshdifabio@gmail.com>
  *
  * @api
- * @since 100.0.2
  */
 class ComponentRegistrar implements ComponentRegistrarInterface
 {
@@ -22,7 +21,6 @@ class ComponentRegistrar implements ComponentRegistrarInterface
     const LIBRARY = 'library';
     const THEME = 'theme';
     const LANGUAGE = 'language';
-    const SETUP = 'setup';
     /**#@- */
 
     /**#@- */
@@ -31,7 +29,6 @@ class ComponentRegistrar implements ComponentRegistrarInterface
         self::LIBRARY => [],
         self::LANGUAGE => [],
         self::THEME => [],
-        self::SETUP => []
     ];
 
     /**

@@ -31,7 +31,7 @@ final class MagicConstantCasingFixer extends AbstractFixer
     {
         return new FixerDefinition(
             'Magic constants should be referred to using the correct casing.',
-            [new CodeSample("<?php\necho __dir__;\n")]
+            array(new CodeSample("<?php\necho __dir__;"))
         );
     }
 
@@ -53,7 +53,7 @@ final class MagicConstantCasingFixer extends AbstractFixer
 
         foreach ($tokens as $index => $token) {
             if ($token->isGivenKind($magicConstantTokens)) {
-                $tokens[$index] = new Token([$token->getId(), $magicConstants[$token->getId()]]);
+                $tokens[$index] = new Token(array($token->getId(), $magicConstants[$token->getId()]));
             }
         }
     }
@@ -66,7 +66,7 @@ final class MagicConstantCasingFixer extends AbstractFixer
         static $magicConstants = null;
 
         if (null === $magicConstants) {
-            $magicConstants = [
+            $magicConstants = array(
                 T_LINE => '__LINE__',
                 T_FILE => '__FILE__',
                 T_DIR => '__DIR__',
@@ -75,8 +75,11 @@ final class MagicConstantCasingFixer extends AbstractFixer
                 T_METHOD_C => '__METHOD__',
                 T_NS_C => '__NAMESPACE__',
                 CT::T_CLASS_CONSTANT => 'class',
-                T_TRAIT_C => '__TRAIT__',
-            ];
+            );
+
+            if (defined('T_TRAIT_C')) {
+                $magicConstants[T_TRAIT_C] = '__TRAIT__';
+            }
         }
 
         return $magicConstants;

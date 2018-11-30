@@ -6,7 +6,6 @@
 
 namespace Magento\Swatches\Test\Unit\Helper;
 
-use Magento\Catalog\Model\Product\Image\UrlBuilder;
 use Magento\Catalog\Model\ResourceModel\Eav\Attribute;
 use Magento\Framework\EntityManager\MetadataPool;
 use Magento\Swatches\Model\ResourceModel\Swatch\Collection;
@@ -61,15 +60,13 @@ class DataTest extends \PHPUnit\Framework\TestCase
      */
     private $swatchAttributesProvider;
 
-    /**
-     * @var  \PHPUnit_Framework_MockObject_MockObject|\Magento\Catalog\Model\Product\Image\UrlBuilder
-     */
-    private $imageUrlBuilderMock;
-
     protected function setUp()
     {
         $this->objectManager = new \Magento\Framework\TestFramework\Unit\Helper\ObjectManager($this);
         $this->imageHelperMock = $this->createMock(\Magento\Catalog\Helper\Image::class);
+        $this->imageHelperMock->expects($this->any())
+            ->method('init')
+            ->willReturn($this->imageHelperMock);
         $this->productCollectionFactoryMock = $this->createPartialMock(
             \Magento\Catalog\Model\ResourceModel\Product\CollectionFactory::class,
             ['create']
@@ -123,10 +120,6 @@ class DataTest extends \PHPUnit\Framework\TestCase
         $this->swatchAttributesProvider = $this->getMockBuilder(SwatchAttributesProvider::class)
             ->disableOriginalConstructor()
             ->getMock();
-        $this->imageUrlBuilderMock = $this->getMockBuilder(\Magento\Catalog\Model\Product\Image\UrlBuilder::class)
-            ->disableOriginalConstructor()
-            ->setMethods(['getUrl'])
-            ->getMock();
 
         $this->swatchHelperObject = $this->objectManager->getObject(
             \Magento\Swatches\Helper\Data::class,
@@ -136,7 +129,7 @@ class DataTest extends \PHPUnit\Framework\TestCase
                 'productRepository' => $this->productRepoMock,
                 'storeManager' => $this->storeManagerMock,
                 'swatchCollectionFactory' => $this->swatchCollectionFactoryMock,
-                'imageUrlBuilder' => $this->imageUrlBuilderMock,
+                'imageHelper' => $this->imageHelperMock,
                 'serializer' => $serializer,
                 'swatchAttributesProvider' => $this->swatchAttributesProvider,
             ]
@@ -263,7 +256,7 @@ class DataTest extends \PHPUnit\Framework\TestCase
                     'swatch_image' => '/m/a/magento.png', //important
                 ],
                 \Magento\Catalog\Model\Product::class,
-                ['color' => 31],
+                ['color' => 31]
             ],
             [
                 [
@@ -272,7 +265,7 @@ class DataTest extends \PHPUnit\Framework\TestCase
                     'thumbnail' => '/m/a/magento.png',
                 ],
                 false,
-                ['size' => 31],
+                ['size' => 31]
             ],
         ];
     }
@@ -329,7 +322,7 @@ class DataTest extends \PHPUnit\Framework\TestCase
                     'swatch_image' => '/m/a/magento.png',
                 ],
                 \Magento\Catalog\Model\Product::class,
-                ['color' => 31],
+                ['color' => 31]
             ],
             [
                 [
@@ -338,7 +331,7 @@ class DataTest extends \PHPUnit\Framework\TestCase
                     'swatch_image' => '/m/a/magento.png',
                 ],
                 false,
-                ['size' => 31],
+                ['size' => 31]
             ],
         ];
     }
@@ -381,17 +374,35 @@ class DataTest extends \PHPUnit\Framework\TestCase
                 ->willReturn(++$id);
 
             $mediaGalleryEntries[] = $mediaGalleryEntryMock;
-            $mediaUrls[] = [$mediaFile, 'product_swatch_image_large', 'http://full_path_to_image' . $mediaFile];
-            $mediaUrls[] = [$mediaFile, 'product_swatch_image_medium' ,'http://full_path_to_image' . $mediaFile];
-            $mediaUrls[] = [$mediaFile, 'product_swatch_image_small','http://full_path_to_image' . $mediaFile];
+            $mediaUrls[] = ['http://full_path_to_image' . $mediaFile]; //large
+            $mediaUrls[] = ['http://full_path_to_image' . $mediaFile]; //medium
+            $mediaUrls[] = ['http://full_path_to_image' . $mediaFile]; //small
         }
-
         $this->productMock->expects($this->once())
             ->method('getMediaGalleryEntries')
             ->willReturn($mediaGalleryEntries);
 
         if ($mediaGallery) {
-            $this->imageUrlBuilderMock->expects($this->any())
+            $this->imageHelperMock->expects($this->atLeastOnce())
+                ->method('init')
+                ->willReturnMap([
+                    [$this->productMock, 'product_page_image_large', [], $this->imageHelperMock],
+                    [$this->productMock, 'product_page_image_medium', [], $this->imageHelperMock],
+                    [$this->productMock, 'product_page_image_small', [], $this->imageHelperMock],
+                ]);
+            $this->imageHelperMock->expects($this->any())
+                ->method('setImageFile')
+                ->willReturnSelf();
+            $this->imageHelperMock->expects($this->any())
+                ->method('constrainOnly')
+                ->willReturnSelf();
+            $this->imageHelperMock->expects($this->any())
+                ->method('keepAspectRatio')
+                ->willReturnSelf();
+            $this->imageHelperMock->expects($this->any())
+                ->method('keepFrame')
+                ->willReturnSelf();
+            $this->imageHelperMock->expects($this->any())
                 ->method('getUrl')
                 ->willReturnMap($mediaUrls);
         }
@@ -419,7 +430,7 @@ class DataTest extends \PHPUnit\Framework\TestCase
                     'thumbnail' => '/m/a/magento3.png',
                     'swatch_image' => '/m/a/magento4.png',
                 ],
-                '/m/a/magento1.png',
+                '/m/a/magento1.png'
             ],
             [
                 [
@@ -427,7 +438,7 @@ class DataTest extends \PHPUnit\Framework\TestCase
                     'thumbnail' => '/m/a/magento5.png',
                     'swatch_image' => '/m/a/magento6.png',
                 ],
-                '/m/a/magento4.png',
+                '/m/a/magento4.png'
             ],
             [
                 [],
@@ -463,6 +474,14 @@ class DataTest extends \PHPUnit\Framework\TestCase
                 ->disableOriginalConstructor()
                 ->setMethods(['hasData', 'getMediaGalleryEntries'])
                 ->getMock();
+
+           /* $simpleProduct = $this->getMock(
+                \Magento\Catalog\Model\Product::class,
+                ['hasData', 'getMediaGalleryEntries'],
+                [],
+                '',
+                false
+            );*/
             $simpleProduct->setData($attributes);
 
             $mediaGalleryEntries = [];

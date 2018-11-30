@@ -19,7 +19,6 @@ use Magento\Framework\Code\GeneratedFiles;
  *
  * @api
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
- * @since 100.0.2
  */
 class ObjectManagerFactory
 {
@@ -261,7 +260,7 @@ class ObjectManagerFactory
                     new \Magento\Framework\Filesystem\Directory\WriteFactory($driverPool)
                 ),
                 new \Magento\Framework\Config\FileIteratorFactory(
-                    new \Magento\Framework\Filesystem\File\ReadFactory($driverPool)
+                    new \Magento\Framework\Filesystem\File\ReadFactory(new \Magento\Framework\Filesystem\DriverPool())
                 )
             );
             $schemaLocator = new \Magento\Framework\ObjectManager\Config\SchemaLocator();
@@ -292,7 +291,7 @@ class ObjectManagerFactory
      * @param \Magento\Framework\ObjectManager\Config\Config $diConfig
      * @param \Magento\Framework\ObjectManager\DefinitionInterface $definitions
      * @return \Magento\Framework\Interception\PluginList\PluginList
-     * @deprecated 101.0.0
+     * @deprecated 100.2.0
      * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      */
     protected function _createPluginList(

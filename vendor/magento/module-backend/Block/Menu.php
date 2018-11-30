@@ -4,17 +4,19 @@
  * See COPYING.txt for license details.
  */
 
+// @codingStandardsIgnoreFile
+
 namespace Magento\Backend\Block;
 
 /**
  * Backend menu block
  *
- * @method $this setAdditionalCacheKeyInfo(array $cacheKeyInfo)
+ * @api
+ * @method \Magento\Backend\Block\Menu setAdditionalCacheKeyInfo(array $cacheKeyInfo)
  * @method array getAdditionalCacheKeyInfo()
+ * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  * @api
  * @since 100.0.2
- *
- * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  */
 class Menu extends \Magento\Backend\Block\Template
 {
@@ -75,12 +77,7 @@ class Menu extends \Magento\Backend\Block\Template
     private $anchorRenderer;
 
     /**
-     * @var \Magento\Framework\App\Route\ConfigInterface
-     */
-    private $routeConfig;
-
-    /**
-     * @param \Magento\Backend\Block\Template\Context $context
+     * @param Template\Context $context
      * @param \Magento\Backend\Model\UrlInterface $url
      * @param \Magento\Backend\Model\Menu\Filter\IteratorFactory $iteratorFactory
      * @param \Magento\Backend\Model\Auth\Session $authSession
@@ -89,9 +86,6 @@ class Menu extends \Magento\Backend\Block\Template
      * @param array $data
      * @param MenuItemChecker|null $menuItemChecker
      * @param AnchorRenderer|null $anchorRenderer
-     * @param \Magento\Framework\App\Route\ConfigInterface|null $routeConfig
-     *
-     * @SuppressWarnings(PHPMD.ExcessiveParameterList)
      */
     public function __construct(
         \Magento\Backend\Block\Template\Context $context,
@@ -102,8 +96,7 @@ class Menu extends \Magento\Backend\Block\Template
         \Magento\Framework\Locale\ResolverInterface $localeResolver,
         array $data = [],
         MenuItemChecker $menuItemChecker = null,
-        AnchorRenderer $anchorRenderer = null,
-        \Magento\Framework\App\Route\ConfigInterface $routeConfig = null
+        AnchorRenderer $anchorRenderer = null
     ) {
         $this->_url = $url;
         $this->_iteratorFactory = $iteratorFactory;
@@ -112,9 +105,6 @@ class Menu extends \Magento\Backend\Block\Template
         $this->_localeResolver = $localeResolver;
         $this->menuItemChecker =  $menuItemChecker;
         $this->anchorRenderer = $anchorRenderer;
-        $this->routeConfig = $routeConfig ?:
-            \Magento\Framework\App\ObjectManager::getInstance()
-                ->get(\Magento\Framework\App\Route\ConfigInterface::class);
         parent::__construct($context, $data);
     }
 
@@ -142,15 +132,12 @@ class Menu extends \Magento\Backend\Block\Template
 
     /**
      * Render menu item mouse events
-     *
      * @param \Magento\Backend\Model\Menu\Item $menuItem
      * @return string
      */
     protected function _renderMouseEvent($menuItem)
     {
-        return $menuItem->hasChildren()
-            ? 'onmouseover="Element.addClassName(this,\'over\')" onmouseout="Element.removeClassName(this,\'over\')"'
-            : '';
+        return $menuItem->hasChildren() ? 'onmouseover="Element.addClassName(this,\'over\')" onmouseout="Element.removeClassName(this,\'over\')"' : '';
     }
 
     /**
@@ -216,9 +203,8 @@ class Menu extends \Magento\Backend\Block\Template
      */
     protected function _callbackSecretKey($match)
     {
-        $routeId = $this->routeConfig->getRouteByFrontName($match[1]);
         return \Magento\Backend\Model\UrlInterface::SECRET_KEY_PARAM_NAME . '/' . $this->_url->getSecretKey(
-            $routeId ?: $match[1],
+            $match[1],
             $match[2],
             $match[3]
         );
@@ -356,7 +342,7 @@ class Menu extends \Magento\Backend\Block\Template
      * @param \Magento\Backend\Model\Menu\Item $menuItem
      * @param int $level
      * @param int $limit
-     * @param int|null $id
+     * @param $id int
      * @return string HTML code
      */
     protected function _addSubMenu($menuItem, $level, $limit, $id = null)
@@ -366,7 +352,7 @@ class Menu extends \Magento\Backend\Block\Template
             return $output;
         }
         $output .= '<div class="submenu"' . ($level == 0 && isset($id) ? ' aria-labelledby="' . $id . '"' : '') . '>';
-        $colStops = [];
+        $colStops = null;
         if ($level == 0 && $limit) {
             $colStops = $this->_columnBrake($menuItem->getChildren(), $limit);
             $output .= '<strong class="submenu-title">' . $this->_getAnchorLabel($menuItem) . '</strong>';
@@ -401,11 +387,7 @@ class Menu extends \Magento\Backend\Block\Template
             $itemName = substr($menuId, strrpos($menuId, '::') + 2);
             $itemClass = str_replace('_', '-', strtolower($itemName));
 
-            if (is_array($colBrakes)
-                && count($colBrakes)
-                && $colBrakes[$itemPosition]['colbrake']
-                && $itemPosition != 1
-            ) {
+            if (count($colBrakes) && $colBrakes[$itemPosition]['colbrake'] && $itemPosition != 1) {
                 $output .= '</ul></li><li class="column"><ul role="menu">';
             }
 
@@ -419,7 +401,7 @@ class Menu extends \Magento\Backend\Block\Template
             $itemPosition++;
         }
 
-        if (is_array($colBrakes) && count($colBrakes) && $limit) {
+        if (count($colBrakes) && $limit) {
             $output = '<li class="column"><ul role="menu">' . $output . '</ul></li>';
         }
 

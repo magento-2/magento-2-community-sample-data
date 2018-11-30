@@ -63,19 +63,6 @@ class UpgradeSchema implements UpgradeSchemaInterface
                         ]
                     );
             }
-        }
-
-        if (version_compare($context->getVersion(), '5.5.3', '<')) {
-            $installer->getConnection()->dropForeignKey(
-                $setup->getTable('klarna_payments_quote'),
-                $setup->getFkName(
-                    'klarna_payments_quote',
-                    'quote_id',
-                    'quote',
-                    'entity_id'
-                )
-            );
-        }
-        $installer->endSetup();
+        }        $installer->endSetup();
     }
 }

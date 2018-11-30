@@ -10,7 +10,6 @@ namespace Magento\Framework\Api;
  * Interface for custom attribute value.
  *
  * @api
- * @since 100.0.2
  */
 interface AttributeInterface
 {

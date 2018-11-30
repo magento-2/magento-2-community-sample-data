@@ -6,7 +6,6 @@ namespace Temando\Shipping\Model\ResourceModel\Batch;
 
 use Magento\Sales\Api\Data\OrderInterface;
 use Magento\Sales\Model\ResourceModel\Order\Collection;
-use Temando\Shipping\Setup\SetupSchema;
 
 /**
  * Temando Batch Order Collection
@@ -39,17 +38,11 @@ class OrderCollection extends Collection
     public function addCanShipFilter()
     {
         $orderItemTable = $this->getTable('sales_order_item');
-        $pickupLocationTable = $this->getTable(SetupSchema::TABLE_ORDER_PICKUP_LOCATION);
 
         $select = $this->getSelect();
         $select->join(
             ['order_item' => $orderItemTable],
             'main_table.entity_id = order_item.order_id',
-            []
-        );
-        $select->joinLeft(
-            ['pickup_location' => $pickupLocationTable],
-            'main_table.shipping_address_id = pickup_location.recipient_address_id',
             []
         );
 
@@ -79,7 +72,6 @@ class OrderCollection extends Collection
 
         $select->group(['main_table.entity_id']);
         $select->having('qty_to_ship > 0 AND locked = 0');
-        $select->where('pickup_location.pickup_location_id IS NULL');
     }
 
     /**

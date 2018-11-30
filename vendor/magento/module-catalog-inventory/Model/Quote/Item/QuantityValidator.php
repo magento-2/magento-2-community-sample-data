@@ -5,7 +5,6 @@
  * Copyright © Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
-
 namespace Magento\CatalogInventory\Model\Quote\Item;
 
 use Magento\CatalogInventory\Api\Data\StockItemInterface;
@@ -20,15 +19,9 @@ use Magento\Framework\Exception\LocalizedException;
 use Magento\Quote\Model\Quote\Item;
 
 /**
- * Quote item quantity validator.
- *
  * @api
  * @since 100.0.2
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
- *
- * @deprecated 2.3.0 Replaced with Multi Source Inventory
- * @link https://devdocs.magento.com/guides/v2.3/inventory/index.html
- * @link https://devdocs.magento.com/guides/v2.3/inventory/catalog-inventory-replacements.html
  */
 class QuantityValidator
 {
@@ -76,6 +69,7 @@ class QuantityValidator
      *
      * @param \Magento\Framework\DataObject $result
      * @param Item $quoteItem
+     * @param bool $removeError
      * @return void
      */
     private function addErrorInfoToQuote($result, $quoteItem)
@@ -121,7 +115,7 @@ class QuantityValidator
         /* @var \Magento\CatalogInventory\Model\Stock\Item $stockItem */
         $stockItem = $this->stockRegistry->getStockItem($product->getId(), $product->getStore()->getWebsiteId());
         if (!$stockItem instanceof StockItemInterface) {
-            throw new LocalizedException(__('The Product stock item is invalid. Verify the stock item and try again.'));
+            throw new LocalizedException(__('The stock item for Product is not valid.'));
         }
 
         if (($options = $quoteItem->getQtyOptions()) && $qty > 0) {
@@ -184,9 +178,9 @@ class QuantityValidator
             if ($stockStatus) {
                 $this->checkOptionsQtyIncrements($quoteItem, $options);
             }
-
             // variable to keep track if we have previously encountered an error in one of the options
             $removeError = true;
+
             foreach ($options as $option) {
                 $result = $option->getStockStateResult();
                 if ($result->getHasError()) {
@@ -218,7 +212,7 @@ class QuantityValidator
      * @param array $options
      * @return void
      */
-    private function checkOptionsQtyIncrements(Item $quoteItem, array $options): void
+    private function checkOptionsQtyIncrements(Item $quoteItem, array $options)
     {
         $removeErrors = true;
         foreach ($options as $option) {
@@ -241,10 +235,7 @@ class QuantityValidator
 
         if ($removeErrors) {
             // Delete error from item and its quote, if it was set due to qty problems
-            $this->_removeErrorsFromQuoteAndItem(
-                $quoteItem,
-                Data::ERROR_QTY_INCREMENTS
-            );
+            $this->_removeErrorsFromQuoteAndItem($quoteItem, Data::ERROR_QTY_INCREMENTS);
         }
     }
 

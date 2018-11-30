@@ -10,12 +10,17 @@ namespace Dotdigitalgroup\Email\Model\Apiconnector;
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  * @SuppressWarnings(PHPMD.ExcessiveClassComplexity)
  */
-class Customer extends ContactData
+class Customer
 {
     /**
      * @var \Magento\Customer\Model\Customer
      */
-    public $model;
+    public $customer;
+
+    /**
+     * @var object
+     */
+    public $customerData;
 
     /**
      * @var \Magento\Review\Model\ResourceModel\Review\CollectionFactory
@@ -74,22 +79,38 @@ class Customer extends ContactData
         ];
 
     /**
-     * @var |Magento|Sales\Model\ResourceModel\Order
-     */
-    private $resourceOrder;
-
-    /**
-     * @var \Magento\Sales\Model\OrderFactory
-     */
-    private $orderFactory;
-
-    /**
      * @var \Magento\Customer\Model\ResourceModel\Group
      */
     private $groupResource;
 
     /**
+     * @var \Magento\Catalog\Model\ResourceModel\Category
+     */
+    private $categoryResource;
+
+    /**
+     * @var \Magento\Catalog\Model\ResourceModel\Product
+     */
+    private $productResource;
+
+    /**
+     * @var \Magento\Store\Model\StoreManagerInterface
+     */
+    private $store;
+
+    /**
+     * @var \Magento\Framework\Stdlib\DateTime
+     */
+    private $dateTime;
+
+    /**
+     * @var \Magento\Eav\Model\ConfigFactory
+     */
+    private $eavConfigFactory;
+
+    /**
      * Customer constructor.
+     *
      * @param \Magento\Catalog\Model\ResourceModel\Product $productResource
      * @param \Magento\Catalog\Model\ResourceModel\Category $categoryResource
      * @param \Magento\Customer\Model\ResourceModel\Group $groupResource
@@ -102,44 +123,51 @@ class Customer extends ContactData
      * @param \Magento\Newsletter\Model\SubscriberFactory $subscriberFactory
      * @param \Magento\Catalog\Api\Data\CategoryInterfaceFactory $categoryFactory
      * @param \Magento\Catalog\Api\Data\ProductInterfaceFactory $productFactory
-     * @param \Magento\Sales\Model\OrderFactory $orderFactory
-     * @param \Magento\Sales\Model\ResourceModel\Order $resourceOrder
      * @param \Magento\Eav\Model\ConfigFactory $eavConfigFactory
-     * @param \Dotdigitalgroup\Email\Helper\Config $configHelper
+     *
+     * @SuppressWarnings(PHPMD.ExcessiveParameterList)
      */
     public function __construct(
         \Magento\Catalog\Model\ResourceModel\Product $productResource,
         \Magento\Catalog\Model\ResourceModel\Category $categoryResource,
         \Magento\Customer\Model\ResourceModel\Group $groupResource,
         \Magento\Store\Model\StoreManagerInterface $storeManager,
+        \Magento\Framework\Stdlib\DateTime $dateTime,
         \Magento\Review\Model\ResourceModel\Review\CollectionFactory $reviewCollectionFactory,
         \Magento\Sales\Model\ResourceModel\Order\CollectionFactory $collectionFactory,
+        \Dotdigitalgroup\Email\Helper\Data $helper,
         \Magento\Customer\Model\GroupFactory $groupFactory,
         \Magento\Newsletter\Model\SubscriberFactory $subscriberFactory,
         \Magento\Catalog\Api\Data\CategoryInterfaceFactory $categoryFactory,
         \Magento\Catalog\Api\Data\ProductInterfaceFactory $productFactory,
-        \Magento\Sales\Model\OrderFactory $orderFactory,
-        \Magento\Sales\Model\ResourceModel\Order $resourceOrder,
-        \Magento\Eav\Model\ConfigFactory $eavConfigFactory,
-        \Dotdigitalgroup\Email\Helper\Config $configHelper
+        \Magento\Eav\Model\ConfigFactory $eavConfigFactory
     ) {
+        $this->dateTime          = $dateTime;
+        $this->helper            = $helper;
+        $this->store             = $storeManager;
         $this->reviewCollection  = $reviewCollectionFactory;
         $this->orderCollection   = $collectionFactory;
         $this->groupFactory      = $groupFactory;
         $this->subscriberFactory = $subscriberFactory;
+        $this->categoryFactory   = $categoryFactory;
+        $this->productFactory    = $productFactory;
         $this->groupResource     = $groupResource;
+        $this->categoryResource  = $categoryResource;
+        $this->productResource   = $productResource;
+        $this->productResource   = $productResource;
+        $this->eavConfigFactory  = $eavConfigFactory;
+    }
 
-        parent::__construct(
-            $storeManager,
-            $productFactory,
-            $productResource,
-            $orderFactory,
-            $resourceOrder,
-            $categoryFactory,
-            $categoryResource,
-            $eavConfigFactory,
-            $configHelper
-        );
+    /**
+     * Set single key value data.
+     *
+     * @param string|int|boolean $data
+     *
+     * @return null
+     */
+    public function setData($data)
+    {
+        $this->customerData[] = $data;
     }
 
     /**
@@ -150,11 +178,26 @@ class Customer extends ContactData
      * @return $this
      *
      */
-    public function setContactData($customer)
+    public function setCustomerData($customer)
     {
-        $this->model = $customer;
+        $this->customer = $customer;
         $this->setReviewCollection();
-        parent::setContactData($customer);
+        $mappingHash = array_keys($this->getMappingHash());
+
+        foreach ($mappingHash as $key) {
+            /*
+             * call user function based on the attribute mapped.
+             */
+            $function = 'get';
+            $exploded = explode('_', $key);
+            foreach ($exploded as $one) {
+                $function .= ucfirst($one);
+            }
+            $value = call_user_func(
+                ['self', $function]
+            );
+            $this->customerData[$key] = $value;
+        }
 
         return $this;
     }
@@ -166,7 +209,7 @@ class Customer extends ContactData
      */
     public function setEmail($email)
     {
-        $this->contactData['email'] = $email;
+        $this->customerData['email'] = $email;
     }
 
     /**
@@ -176,7 +219,7 @@ class Customer extends ContactData
      */
     public function setEmailType($emailType)
     {
-        $this->contactData['email_type'] = $emailType;
+        $this->customerData['email_type'] = $emailType;
     }
 
     /**
@@ -186,7 +229,7 @@ class Customer extends ContactData
      */
     public function setReviewCollection()
     {
-        $customerId = $this->model->getId();
+        $customerId = $this->customer->getId();
         $collection = $this->reviewCollection->create()
             ->addCustomerFilter($customerId)
             ->setOrder('review_id', 'DESC');
@@ -231,7 +274,7 @@ class Customer extends ContactData
      */
     public function getCustomerId()
     {
-        return $this->model->getId();
+        return $this->customer->getId();
     }
 
     /**
@@ -241,7 +284,7 @@ class Customer extends ContactData
      */
     public function getFirstname()
     {
-        return $this->model->getFirstname();
+        return $this->customer->getFirstname();
     }
 
     /**
@@ -251,7 +294,7 @@ class Customer extends ContactData
      */
     public function getLastname()
     {
-        return $this->model->getLastname();
+        return $this->customer->getLastname();
     }
 
     /**
@@ -261,7 +304,7 @@ class Customer extends ContactData
      */
     public function getDob()
     {
-        return $this->model->getDob();
+        return $this->customer->getDob();
     }
 
     /**
@@ -271,7 +314,7 @@ class Customer extends ContactData
      */
     public function getGender()
     {
-        return $this->getCustomerGender();
+        return $this->_getCustomerGender();
     }
 
     /**
@@ -281,7 +324,7 @@ class Customer extends ContactData
      */
     public function getPrefix()
     {
-        return $this->model->getPrefix();
+        return $this->customer->getPrefix();
     }
 
     /**
@@ -291,7 +334,27 @@ class Customer extends ContactData
      */
     public function getSuffix()
     {
-        return $this->model->getSuffix();
+        return $this->customer->getSuffix();
+    }
+
+    /**
+     * Get website name.
+     *
+     * @return string
+     */
+    public function getWebsiteName()
+    {
+        return $this->_getWebsiteName();
+    }
+
+    /**
+     * Get store name.
+     *
+     * @return null|string
+     */
+    public function getStoreName()
+    {
+        return $this->_getStoreName();
     }
 
     /**
@@ -301,7 +364,7 @@ class Customer extends ContactData
      */
     public function getCreatedAt()
     {
-        return $this->model->getCreatedAt();
+        return $this->customer->getCreatedAt();
     }
 
     /**
@@ -311,7 +374,17 @@ class Customer extends ContactData
      */
     public function getLastLoggedDate()
     {
-        return $this->model->getLastLoggedDate();
+        return $this->customer->getLastLoggedDate();
+    }
+
+    /**
+     * Get cutomer group.
+     *
+     * @return string
+     */
+    public function getCustomerGroup()
+    {
+        return $this->_getCustomerGroup();
     }
 
     /**
@@ -321,7 +394,7 @@ class Customer extends ContactData
      */
     public function getBillingAddress1()
     {
-        return $this->getStreet($this->model->getBillingStreet(), 1);
+        return $this->_getStreet($this->customer->getBillingStreet(), 1);
     }
 
     /**
@@ -331,7 +404,7 @@ class Customer extends ContactData
      */
     public function getBillingAddress2()
     {
-        return $this->getStreet($this->model->getBillingStreet(), 2);
+        return $this->_getStreet($this->customer->getBillingStreet(), 2);
     }
 
     /**
@@ -341,7 +414,7 @@ class Customer extends ContactData
      */
     public function getBillingCity()
     {
-        return $this->model->getBillingCity();
+        return $this->customer->getBillingCity();
     }
 
     /**
@@ -351,7 +424,7 @@ class Customer extends ContactData
      */
     public function getBillingCountry()
     {
-        return $this->model->getBillingCountryCode();
+        return $this->customer->getBillingCountryCode();
     }
 
     /**
@@ -361,7 +434,7 @@ class Customer extends ContactData
      */
     public function getBillingState()
     {
-        return $this->model->getBillingRegion();
+        return $this->customer->getBillingRegion();
     }
 
     /**
@@ -371,17 +444,17 @@ class Customer extends ContactData
      */
     public function getBillingPostcode()
     {
-        return $this->model->getBillingPostcode();
+        return $this->customer->getBillingPostcode();
     }
 
     /**
      * Get billing phone.
      *
-     * @return string
+     * @return strngi
      */
     public function getBillingTelephone()
     {
-        return $this->model->getBillingTelephone();
+        return $this->customer->getBillingTelephone();
     }
 
     /**
@@ -391,7 +464,7 @@ class Customer extends ContactData
      */
     public function getDeliveryAddress1()
     {
-        return $this->getStreet($this->model->getShippingStreet(), 1);
+        return $this->_getStreet($this->customer->getShippingStreet(), 1);
     }
 
     /**
@@ -401,7 +474,7 @@ class Customer extends ContactData
      */
     public function getDeliveryAddress2()
     {
-        return $this->getStreet($this->model->getShippingStreet(), 2);
+        return $this->_getStreet($this->customer->getShippingStreet(), 2);
     }
 
     /**
@@ -411,7 +484,7 @@ class Customer extends ContactData
      */
     public function getDeliveryCity()
     {
-        return $this->model->getShippingCity();
+        return $this->customer->getShippingCity();
     }
 
     /**
@@ -421,7 +494,7 @@ class Customer extends ContactData
      */
     public function getDeliveryCountry()
     {
-        return $this->model->getShippingCountryCode();
+        return $this->customer->getShippingCountryCode();
     }
 
     /**
@@ -431,7 +504,7 @@ class Customer extends ContactData
      */
     public function getDeliveryState()
     {
-        return $this->model->getShippingRegion();
+        return $this->customer->getShippingRegion();
     }
 
     /**
@@ -441,7 +514,7 @@ class Customer extends ContactData
      */
     public function getDeliveryPostcode()
     {
-        return $this->model->getShippingPostcode();
+        return $this->customer->getShippingPostcode();
     }
 
     /**
@@ -451,7 +524,57 @@ class Customer extends ContactData
      */
     public function getDeliveryTelephone()
     {
-        return $this->model->getShippingTelephone();
+        return $this->customer->getShippingTelephone();
+    }
+
+    /**
+     * Get numbser of orders.
+     *
+     * @return int
+     */
+    public function getNumberOfOrders()
+    {
+        return $this->customer->getNumberOfOrders();
+    }
+
+    /**
+     * Get average order value.
+     *
+     * @return float
+     */
+    public function getAverageOrderValue()
+    {
+        return $this->customer->getAverageOrderValue();
+    }
+
+    /**
+     * Get total spend.
+     *
+     * @return float
+     */
+    public function getTotalSpend()
+    {
+        return $this->customer->getTotalSpend();
+    }
+
+    /**
+     * Get last order date.
+     *
+     * @return string
+     */
+    public function getLastOrderDate()
+    {
+        return $this->customer->getLastOrderDate();
+    }
+
+    /**
+     * Get last order id.
+     *
+     * @return int
+     */
+    public function getLastOrderId()
+    {
+        return $this->customer->getLastOrderId();
     }
 
     /**
@@ -461,17 +584,27 @@ class Customer extends ContactData
      */
     public function getLastQuoteId()
     {
-        return $this->model->getLastQuoteId();
+        return $this->customer->getLastQuoteId();
     }
 
     /**
-     * Get customer title.
+     * Get cutomer id.
+     *
+     * @return int
+     */
+    public function getId()
+    {
+        return $this->customer->getId();
+    }
+
+    /**
+     * Get customer string.
      *
      * @return string
      */
     public function getTitle()
     {
-        return $this->model->getPrefix();
+        return $this->customer->getPrefix();
     }
 
     /**
@@ -483,7 +616,7 @@ class Customer extends ContactData
     {
         //filter by customer id
         $customerOrders = $this->orderCollection->create()
-            ->addAttributeToFilter('customer_id', $this->model->getId());
+            ->addAttributeToFilter('customer_id', $this->customer->getId());
 
         $totalRefunded = 0;
         //calculate total refunded
@@ -496,15 +629,27 @@ class Customer extends ContactData
     }
 
     /**
+     * export to CSV.
+     *
+     * @return array
+     */
+    public function toCSVArray()
+    {
+        $result = $this->customerData;
+
+        return array_values($result);
+    }
+
+    /**
      * customer gender.
      *
      * @return bool|string
      */
-    public function getCustomerGender()
+    public function _getCustomerGender()
     {
-        $genderId = $this->model->getGender();
+        $genderId = $this->customer->getGender();
         if (is_numeric($genderId)) {
-            $gender = $this->model->getAttribute('gender')
+            $gender = $this->customer->getAttribute('gender')
                 ->getSource()->getOptionText($genderId);
 
             return $gender;
@@ -518,7 +663,7 @@ class Customer extends ContactData
      * @param int $line
      * @return void
      */
-    public function getStreet($street, $line)
+    public function _getStreet($street, $line)
     {
         $street = explode("\n", $street);
         if (isset($street[$line - 1])) {
@@ -531,9 +676,58 @@ class Customer extends ContactData
     /**
      * @return string
      */
-    public function getCustomerGroup()
+    public function _getWebsiteName()
     {
-        $groupId = $this->model->getGroupId();
+        $websiteId = $this->customer->getWebsiteId();
+        $website = $this->store->getWebsite($websiteId);
+        if ($website) {
+            return $website->getName();
+        }
+
+        return '';
+    }
+
+    /**
+     * @return string
+     */
+    public function _getStoreName()
+    {
+        $storeId = $this->customer->getStoreId();
+        $store = $this->store->getStore($storeId);
+
+        if ($store) {
+            return $store->getName();
+        }
+
+        return '';
+    }
+
+    /**
+     * @param array $mapping_hash
+     *
+     * @return $this
+     */
+    public function setMappingHash($mapping_hash)
+    {
+        $this->mappingHash = $mapping_hash;
+
+        return $this;
+    }
+
+    /**
+     * @return array
+     */
+    public function getMappingHash()
+    {
+        return $this->mappingHash;
+    }
+
+    /**
+     * @return string
+     */
+    public function _getCustomerGroup()
+    {
+        $groupId = $this->customer->getGroupId();
         $groupModel = $this->groupFactory->create();
         $this->groupResource->load($groupModel, $groupId);
         if ($groupModel) {
@@ -544,6 +738,34 @@ class Customer extends ContactData
     }
 
     /**
+     * mapping hash value.
+     *
+     * @param mixed $value
+     *
+     * @return $this
+     */
+    public function setMappigHash($value)
+    {
+        $this->mappingHash = $value;
+
+        return $this;
+    }
+
+    /**
+     * @param string $string
+     * @return void
+     */
+    public function cleanString($string)
+    {
+        $cleanedString = preg_replace('/[^0-9]/', '', $string);
+        if ($cleanedString != '') {
+            return (int)number_format($cleanedString, 0, '.', '');
+        }
+
+        return 0;
+    }
+
+    /**
      * Subscriber status for Customer.
      *
      * @return boolean|string
@@ -551,7 +773,7 @@ class Customer extends ContactData
     public function getSubscriberStatus()
     {
         $subscriberModel = $this->subscriberFactory->create()
-            ->loadByCustomerId($this->model->getId());
+            ->loadByCustomerId($this->customer->getId());
 
         if ($subscriberModel->getCustomerId()) {
             return $this->subscriberStatus[$subscriberModel->getSubscriberStatus()];
@@ -561,13 +783,193 @@ class Customer extends ContactData
     }
 
     /**
+     * Get most purchased category.
+     *
+     * @return string
+     */
+    public function getMostPurCategory()
+    {
+        $categoryId = $this->customer->getMostCategoryId();
+        return $this->getCategoryValue($categoryId);
+    }
+
+    /**
+     * Get most purchased brand.
+     *
+     * @return string
+     */
+    public function getMostPurBrand()
+    {
+        $optionId = $this->customer->getMostBrand();
+
+        //attribute mapped from the config
+        $attributeCode = $this->helper->getWebsiteConfig(
+            \Dotdigitalgroup\Email\Helper\Config::XML_PATH_CONNECTOR_SYNC_DATA_FIELDS_BRAND_ATTRIBUTE,
+            $this->customer->getWebsiteId()
+        );
+
+        //if the id and attribute found
+        if ($optionId && $attributeCode) {
+            $attribute = $this->eavConfigFactory->create()
+                ->getAttribute(\Magento\Catalog\Model\Product::ENTITY, $attributeCode);
+
+            $value = $attribute->setStoreId($this->customer->getStoreId())
+                ->getSource()
+                ->getOptionText($optionId);
+
+            //check for brand text
+            if ($value) {
+                return $value;
+            }
+        }
+
+        return '';
+    }
+
+    /**
+     * Get most frequent day of purchase.
+     *
+     * @return string
+     */
+    public function getMostFreqPurDay()
+    {
+        $day = $this->customer->getWeekDay();
+        if ($day) {
+            return $day;
+        }
+
+        return '';
+    }
+
+    /**
+     * Get most frequent month of purchase.
+     *
+     * @return string
+     */
+    public function getMostFreqPurMon()
+    {
+        $month = $this->customer->getMonthDay();
+        if ($month) {
+            return $month;
+        }
+
+        return '';
+    }
+
+    /**
+     * Get first purchased category.
+     *
+     * @return string
+     */
+    public function getFirstCategoryPur()
+    {
+        $categoryId = $this->customer->getFirstCategoryId();
+        return $this->getCategoryValue($categoryId);
+    }
+
+    /**
+     * Get last purchased category.
+     *
+     * @return string
+     */
+    public function getLastCategoryPur()
+    {
+        $categoryId = $this->customer->getLastCategoryId();
+
+        return $this->getCategoryValue($categoryId);
+    }
+
+    /**
+     * @param int $categoryId
+     * @return string
+     */
+    private function getCategoryValue($categoryId)
+    {
+        if ($categoryId) {
+            $category = $this->categoryFactory->create()
+                ->setStoreId($this->customer->getStoreId());
+            $this->categoryResource->load($category, $categoryId);
+            return $category->getName();
+        }
+
+        return '';
+    }
+
+    /**
+     * Get first purchased brand.
+     *
+     * @return string
+     */
+    public function getFirstBrandPur()
+    {
+        $id = $this->customer->getProductIdForFirstBrand();
+        return $this->getBrandValue($id);
+    }
+
+    /**
+     * Get last purchased brand.
+     *
+     * @return string
+     */
+    public function getLastBrandPur()
+    {
+        $id = $this->customer->getProductIdForLastBrand();
+
+        return $this->getBrandValue($id);
+    }
+
+    /**
+     * @param int $id
+     * @return string
+     */
+    private function getBrandValue($id)
+    {
+        //attribute mapped from the config
+        $attributeCode = $this->helper->getWebsiteConfig(
+            \Dotdigitalgroup\Email\Helper\Config::XML_PATH_CONNECTOR_SYNC_DATA_FIELDS_BRAND_ATTRIBUTE,
+            $this->customer->getWebsiteId()
+        );
+        $storeId = $this->customer->getStoreId();
+
+        //if the id and attribute found
+        if ($id && $attributeCode) {
+            $product = $this->productFactory->create();
+            $product = $product->setStoreId($storeId);
+            $this->productResource->load($product, $id);
+
+            $value = $product->getResource()
+                ->getAttribute($attributeCode)
+                ->setStoreId($storeId)
+                ->getSource()
+                ->getOptionText($product->getData($attributeCode));
+
+            //check for brand text
+            if ($value) {
+                return $value;
+            }
+        }
+
+        return '';
+    }
+
+    /**
+     * Get last increment id.
+     *
+     * @return int
+     */
+    public function getLastIncrementId()
+    {
+        return $this->customer->getLastIncrementId();
+    }
+
+    /**
      * Get billing company name.
      *
      * @return string
      */
     public function getBillingCompany()
     {
-        return $this->model->getBillingCompany();
+        return $this->customer->getBillingCompany();
     }
     
     /**
@@ -577,7 +979,7 @@ class Customer extends ContactData
      */
     public function getDeliveryCompany()
     {
-        return $this->model->getShippingCompany();
+        return $this->customer->getShippingCompany();
     }
 
     /**
@@ -587,6 +989,6 @@ class Customer extends ContactData
      */
     public function __call($method, $args)
     {
-        return call_user_func_array([$this->model, $method], $args);
+        return call_user_func_array([$this->customer, $method], $args);
     }
 }

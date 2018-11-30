@@ -17,10 +17,10 @@ use Temando\Shipping\Model\Shipping\Carrier;
 /**
  * AddRmaToolbarButtonPlugin
  *
- * @package Temando\Shipping\Plugin
- * @author  Christoph Aßmann <christoph.assmann@netresearch.de>
- * @license https://opensource.org/licenses/osl-3.0.php Open Software License (OSL 3.0)
- * @link    https://www.temando.com/
+ * @package  Temando\Shipping\Plugin
+ * @author   Christoph Aßmann <christoph.assmann@netresearch.de>
+ * @license  http://opensource.org/licenses/osl-3.0.php Open Software License (OSL 3.0)
+ * @link     http://www.temando.com/
  */
 class AddRmaToolbarButtonPlugin
 {

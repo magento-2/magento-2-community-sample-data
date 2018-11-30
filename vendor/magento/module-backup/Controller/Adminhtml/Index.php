@@ -73,7 +73,7 @@ abstract class Index extends \Magento\Backend\App\Action
         \Magento\Framework\App\Response\Http\FileFactory $fileFactory,
         \Magento\Backup\Model\BackupFactory $backupModelFactory,
         \Magento\Framework\App\MaintenanceMode $maintenanceMode,
-        ?Helper $helper = null
+        Helper $helper = null
     ) {
         $this->_coreRegistry = $coreRegistry;
         $this->_backupFactory = $backupFactory;

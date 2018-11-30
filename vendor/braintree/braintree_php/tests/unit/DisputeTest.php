@@ -29,18 +29,16 @@ class DisputeTest extends Setup
             'reason' => 'fraud',
             'reasonCode' => '83',
             'reasonDescription' => 'Reason code 83 description',
-            'receivedDate' => DateTime::createFromFormat('Ymd-His', '20130410-000410'),
+            'receivedDate' => DateTime::createFromFormat('Ymd', '20130410'),
             'referenceNumber' => '123456',
-            'replyByDate' => DateTime::createFromFormat('Ymd-His', '20130417-0000417'),
+            'replyByDate' => DateTime::createFromFormat('Ymd', '20130417'),
             'status' => 'open',
             'updatedAt' => DateTime::createFromFormat('Ymd-His', '20130410-105039'),
             'evidence' => [[
-                'category' => NULL,
                 'comment' => NULL,
                 'createdAt' => DateTime::createFromFormat('Ymd-His', '20130411-105039'),
                 'id' => 'evidence1',
                 'sentToProcessorAt' => NULL,
-                'sequenceNumber' => NULL,
                 'url' => 'url_of_file_evidence',
             ],[
                 'comment' => 'text evidence',
@@ -76,14 +74,14 @@ class DisputeTest extends Setup
             'currencyIsoCode' => 'USD',
             'status' => 'open',
             'amount' => '100.00',
-            'receivedDate' => DateTime::createFromFormat('Ymd-His', '20130410-000410'),
-            'replyByDate' => DateTime::createFromFormat('Ymd-His', '20130421-000421'),
+            'receivedDate' => DateTime::createFromFormat('Ymd', '20130410'),
+            'replyByDate' => DateTime::createFromFormat('Ymd', '20130410'),
             'reason' => 'fraud',
             'transactionIds' => [
                 'asdf', 'qwer'
             ],
-            'dateOpened' => DateTime::createFromFormat('Ymd-His', '20130410-000410'),
-            'dateWon' =>DateTime::createFromFormat('Ymd-His', '20130422-000422'),
+            'dateOpened' => DateTime::createFromFormat('Ymd', '20130401'),
+            'dateWon' =>DateTime::createFromFormat('Ymd', '20130402'),
             'kind' => 'chargeback'
         ];
 
@@ -97,8 +95,8 @@ class DisputeTest extends Setup
         $this->assertEquals(Braintree\Dispute::Open, $dispute->status);
         $this->assertEquals('transaction_id', $dispute->transactionDetails->id);
         $this->assertEquals('100.00', $dispute->transactionDetails->amount);
-        $this->assertEquals(DateTime::createFromFormat('Ymd-His', '20130410-000410'), $dispute->dateOpened);
-        $this->assertEquals(DateTime::createFromFormat('Ymd-His', '20130422-000422'), $dispute->dateWon);
+        $this->assertEquals(DateTime::createFromFormat('Ymd', '20130401'), $dispute->dateOpened);
+        $this->assertEquals(DateTime::createFromFormat('Ymd', '20130402'), $dispute->dateWon);
         $this->assertEquals(Braintree\Dispute::CHARGEBACK, $dispute->kind);
     }
 
@@ -136,10 +134,8 @@ class DisputeTest extends Setup
         $this->assertEquals(DateTime::createFromFormat('Ymd-His', '20130410-105039'), $dispute->updatedAt);
         $this->assertNull($dispute->evidence[0]->comment);
         $this->assertEquals(DateTime::createFromFormat('Ymd-His', '20130411-105039'), $dispute->evidence[0]->createdAt);
-        $this->assertNull($dispute->evidence[0]->category);
         $this->assertEquals('evidence1', $dispute->evidence[0]->id);
         $this->assertNull($dispute->evidence[0]->sentToProcessorAt);
-        $this->assertNull($dispute->evidence[0]->sequenceNumber);
         $this->assertEquals('url_of_file_evidence', $dispute->evidence[0]->url);
         $this->assertEquals('text evidence', $dispute->evidence[1]->comment);
         $this->assertEquals(DateTime::createFromFormat('Ymd-His', '20130411-105039'), $dispute->evidence[1]->createdAt);
@@ -235,7 +231,7 @@ class DisputeTest extends Setup
         Braintree\Dispute::addTextEvidence("disputeId",
             [
                 'content' => ' ',
-                'category' => 'CARRIER_NAME',
+                'tag' => 'CARRIER_NAME',
                 'sequenceNumber' => '0',
             ]
         );
@@ -248,20 +244,20 @@ class DisputeTest extends Setup
         Braintree\Dispute::addTextEvidence("disputeId",
             [
                 'content' => null,
-                'category' => 'CARRIER_NAME',
+                'tag' => 'CARRIER_NAME',
                 'sequenceNumber' => '0',
             ]
         );
     }
 
-	public function testAddTextEvidenceBlankRequestCategoryRaisesValueException()
+	public function testAddTextEvidenceBlankRequestTagRaisesValueException()
     {
-        $this->setExpectedException('InvalidArgumentException', 'category cannot be blank');
+        $this->setExpectedException('InvalidArgumentException', 'tag cannot be blank');
 
         Braintree\Dispute::addTextEvidence("disputeId",
             [
                 'content' => 'UPS',
-                'category' => '',
+                'tag' => '',
                 'sequenceNumber' => '0',
             ]
         );
@@ -274,7 +270,7 @@ class DisputeTest extends Setup
         Braintree\Dispute::addTextEvidence("disputeId",
             [
                 'content' => 'UPS',
-                'category' => 'CARRIER_NAME',
+                'tag' => 'CARRIER_NAME',
                 'sequenceNumber' => '',
             ]
         );
@@ -287,7 +283,7 @@ class DisputeTest extends Setup
         Braintree\Dispute::addTextEvidence("disputeId",
             [
                 'content' => 'UPS',
-                'category' => 'CARRIER_NAME',
+                'tag' => 'CARRIER_NAME',
                 'sequenceNumber' => '4.5',
             ]
         );
@@ -300,74 +296,38 @@ class DisputeTest extends Setup
         Braintree\Dispute::addTextEvidence("disputeId",
             [
                 'content' => 'UPS',
-                'category' => 'CARRIER_NAME',
+                'tag' => 'CARRIER_NAME',
                 'sequenceNumber' => 'Blah',
             ]
         );
     }
 
-    public function testAddFileEvidenceEmptyIdRaisesNotFoundException()
+	public function testAddFileEvidenceEmptyIdRaisesNotFoundException()
     {
         $this->setExpectedException('Braintree\Exception\NotFound', 'dispute with id " " not found');
 
         Braintree\Dispute::addFileEvidence(" ", 1);
     }
 
-    public function testAddFileEvidenceNullIdRaisesNotFoundException()
+	public function testAddFileEvidenceNullIdRaisesNotFoundException()
     {
         $this->setExpectedException('Braintree\Exception\NotFound', 'dispute with id "" not found');
 
         Braintree\Dispute::addFileEvidence(null, 1);
     }
 
-    public function testAddFileEvidenceEmptyEvidenceRaisesValueException()
+	public function testAddFileEvidenceEmptyEvidenceRaisesValueException()
     {
         $this->setExpectedException('Braintree\Exception\NotFound', 'document with id " " not found');
 
         Braintree\Dispute::addFileEvidence("disputeId", " ");
     }
 
-    public function testAddFileEvidenceNullEvidenceRaisesValueException()
+	public function testAddFileEvidenceNullEvidenceRaisesValueException()
     {
         $this->setExpectedException('Braintree\Exception\NotFound', 'document with id "" not found');
 
         Braintree\Dispute::addFileEvidence("disputeId", null);
-    }
-
-    public function testAddFileEvidenceBlankRequestContentRaisesValueException()
-    {
-        $this->setExpectedException('Braintree\Exception\NotFound', 'document with id " " not found');
-
-        Braintree\Dispute::addFileEvidence("disputeId",
-            [
-                'documentId' => ' ',
-                'category' => 'GENERAL',
-            ]
-        );
-    }
-
-    public function testAddFileEvidenceNullRequestContentRaisesValueException()
-    {
-        $this->setExpectedException('Braintree\Exception\NotFound', 'document with id "" not found');
-
-        Braintree\Dispute::addFileEvidence("disputeId",
-            [
-                'documentId' => null,
-                'category' => 'GENERAL',
-            ]
-        );
-    }
-
-    public function testAddFileEvidenceBlankRequestCategoryRaisesValueException()
-    {
-        $this->setExpectedException('InvalidArgumentException', 'category cannot be blank');
-
-        Braintree\Dispute::addFileEvidence("disputeId",
-            [
-                'documentId' => '123',
-                'category' => '',
-            ]
-        );
     }
 
 	public function testFinalizeNullRaisesNotFoundException()

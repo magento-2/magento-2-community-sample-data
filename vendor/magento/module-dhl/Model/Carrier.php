@@ -232,7 +232,7 @@ class Carrier extends \Magento\Dhl\Model\AbstractDhl implements \Magento\Shippin
      * @param \Magento\Framework\Stdlib\DateTime $dateTime
      * @param \Magento\Framework\HTTP\ZendClientFactory $httpClientFactory
      * @param array $data
-     * @param \Magento\Dhl\Model\Validator\XmlValidator $xmlValidator
+     * @param \Magento\Dhl\Model\Validator\XmlValidatorFactory $xmlValidatorFactory
      * @SuppressWarnings(PHPMD.ExcessiveParameterList)
      */
     public function __construct(
@@ -1263,7 +1263,7 @@ class Carrier extends \Magento\Dhl\Model\AbstractDhl implements \Magento\Shippin
      *
      * @param \Magento\Framework\DataObject $request
      * @return $this|\Magento\Framework\DataObject|boolean
-     * @deprecated 100.2.3
+     * @deprecated
      */
     public function proccessAdditionalValidation(\Magento\Framework\DataObject $request)
     {

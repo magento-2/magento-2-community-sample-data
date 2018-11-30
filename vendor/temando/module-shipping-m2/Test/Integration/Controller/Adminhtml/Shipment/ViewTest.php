@@ -6,7 +6,7 @@ namespace Temando\Shipping\Controller\Adminhtml\Shipment;
 
 use Magento\TestFramework\Helper\Bootstrap;
 use Magento\TestFramework\TestCase\AbstractBackendController;
-use Temando\Shipping\Model\ResourceModel\Shipment\ShipmentReferenceRepository;
+use Temando\Shipping\Model\ResourceModel\Shipment\ShipmentRepository;
 use Temando\Shipping\Test\Integration\Fixture\ShippedOrderFixture;
 
 /**
@@ -29,9 +29,9 @@ class ViewTest extends AbstractBackendController
     protected $uri = 'backend/temando/shipment/view';
 
     /**
-     * @var ShipmentReferenceRepository
+     * @var ShipmentRepository
      */
-    private $shipmentReferenceRepository;
+    private $shipmentRepository;
 
     /**
      * delegate fixtures creation to separate class.
@@ -53,7 +53,7 @@ class ViewTest extends AbstractBackendController
     {
         parent::setUp();
 
-        $this->shipmentReferenceRepository = Bootstrap::getObjectManager()->get(ShipmentReferenceRepository::class);
+        $this->shipmentRepository = Bootstrap::getObjectManager()->get(ShipmentRepository::class);
     }
 
     /**
@@ -83,7 +83,7 @@ class ViewTest extends AbstractBackendController
         $shipmentReferenceData = ShippedOrderFixture::getShipmentReferenceData();
         $extShipmentId = $shipmentReferenceData['id'];
 
-        $shipmentReference = $this->shipmentReferenceRepository->getByExtShipmentId($extShipmentId);
+        $shipmentReference = $this->shipmentRepository->getReferenceByExtShipmentId($extShipmentId);
         $shipmentId = $shipmentReference->getShipmentId();
 
         // existing external shipment id

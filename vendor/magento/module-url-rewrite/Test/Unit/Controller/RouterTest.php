@@ -28,7 +28,7 @@ class RouterTest extends \PHPUnit\Framework\TestCase
     /** @var \Magento\Store\Model\StoreManagerInterface|\PHPUnit_Framework_MockObject_MockObject */
     protected $storeManager;
 
-    /** @var \Magento\Store\Model\Store|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var Store|\PHPUnit_Framework_MockObject_MockObject */
     protected $store;
 
     /** @var \Magento\Framework\App\ResponseInterface|\PHPUnit_Framework_MockObject_MockObject */
@@ -40,9 +40,6 @@ class RouterTest extends \PHPUnit\Framework\TestCase
     /** @var \Magento\UrlRewrite\Model\UrlFinderInterface|\PHPUnit_Framework_MockObject_MockObject */
     protected $urlFinder;
 
-    /**
-     * @return void
-     */
     protected function setUp()
     {
         $this->actionFactory = $this->createMock(\Magento\Framework\App\ActionFactory::class);
@@ -71,9 +68,6 @@ class RouterTest extends \PHPUnit\Framework\TestCase
         );
     }
 
-    /**
-     * @return void
-     */
     public function testNoRewriteExist()
     {
         $this->urlFinder->expects($this->any())->method('findOneByData')->will($this->returnValue(null));
@@ -83,9 +77,6 @@ class RouterTest extends \PHPUnit\Framework\TestCase
         $this->assertNull($this->router->match($this->request));
     }
 
-    /**
-     * @return void
-     */
     public function testRewriteAfterStoreSwitcher()
     {
         $initialRequestPath = 'request-path';
@@ -95,6 +86,7 @@ class RouterTest extends \PHPUnit\Framework\TestCase
         $currentStoreId = 'current-store-id';
         $rewriteEntityType = 'entity-type';
         $rewriteEntityId = 42;
+
         $this->request
             ->expects($this->any())
             ->method('getParam')
@@ -104,6 +96,7 @@ class RouterTest extends \PHPUnit\Framework\TestCase
             ->expects($this->any())
             ->method('getPathInfo')
             ->willReturn($initialRequestPath);
+
         $oldStore = $this->getMockBuilder(Store::class)
             ->disableOriginalConstructor()
             ->getMock();
@@ -114,10 +107,12 @@ class RouterTest extends \PHPUnit\Framework\TestCase
             ->expects($this->any())
             ->method('getId')
             ->willReturn($currentStoreId);
+
         $this->storeManager
             ->expects($this->any())
             ->method('getStore')
             ->willReturnMap([[$oldStoreAlias, $oldStore], [null, $this->store]]);
+
         $oldUrlRewrite = $this->getMockBuilder(UrlRewrite::class)
             ->disableOriginalConstructor()
             ->getMock();
@@ -136,6 +131,7 @@ class RouterTest extends \PHPUnit\Framework\TestCase
         $urlRewrite->expects($this->any())
             ->method('getRequestPath')
             ->willReturn($newRequestPath);
+
         $this->urlFinder
             ->expects($this->any())
             ->method('findOneByData')
@@ -148,16 +144,15 @@ class RouterTest extends \PHPUnit\Framework\TestCase
                     $urlRewrite,
                 ]
             ]);
+
         $this->actionFactory
             ->expects($this->once())
             ->method('create')
             ->with(Forward::class);
+
         $this->router->match($this->request);
     }
 
-    /**
-     * @return void
-     */
     public function testNoRewriteAfterStoreSwitcherWhenNoOldRewrite()
     {
         $this->request->expects($this->any())->method('getPathInfo')->will($this->returnValue('request-path'));
@@ -180,9 +175,6 @@ class RouterTest extends \PHPUnit\Framework\TestCase
         $this->assertNull($this->router->match($this->request));
     }
 
-    /**
-     * @return void
-     */
     public function testNoRewriteAfterStoreSwitcherWhenOldRewriteEqualsToNewOne()
     {
         $this->request->expects($this->any())->method('getPathInfo')->will($this->returnValue('request-path'));
@@ -223,9 +215,6 @@ class RouterTest extends \PHPUnit\Framework\TestCase
         $this->assertNull($this->router->match($this->request));
     }
 
-    /**
-     * @return void
-     */
     public function testMatchWithRedirect()
     {
         $this->storeManager->expects($this->any())->method('getStore')->will($this->returnValue($this->store));
@@ -245,9 +234,6 @@ class RouterTest extends \PHPUnit\Framework\TestCase
         $this->router->match($this->request);
     }
 
-    /**
-     * @return void
-     */
     public function testMatchWithCustomInternalRedirect()
     {
         $this->storeManager->expects($this->any())->method('getStore')->will($this->returnValue($this->store));
@@ -299,9 +285,6 @@ class RouterTest extends \PHPUnit\Framework\TestCase
         ];
     }
 
-    /**
-     * @return void
-     */
     public function testMatch()
     {
         $this->storeManager->expects($this->any())->method('getStore')->will($this->returnValue($this->store));

@@ -7,38 +7,30 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-namespace PHPUnit\Framework\MockObject\Stub;
-
-use PHPUnit\Framework\MockObject\Invocation;
-use PHPUnit\Framework\MockObject\Stub;
 
 /**
  * Stubs a method by returning a value from a map.
  */
-class ReturnValueMap implements Stub
+class PHPUnit_Framework_MockObject_Stub_ReturnValueMap implements PHPUnit_Framework_MockObject_Stub
 {
-    /**
-     * @var array
-     */
-    private $valueMap;
+    protected $valueMap;
 
     public function __construct(array $valueMap)
     {
         $this->valueMap = $valueMap;
     }
 
-    public function invoke(Invocation $invocation)
+    public function invoke(PHPUnit_Framework_MockObject_Invocation $invocation)
     {
-        $parameterCount = \count($invocation->getParameters());
+        $parameterCount = count($invocation->parameters);
 
         foreach ($this->valueMap as $map) {
-            if (!\is_array($map) || $parameterCount !== (\count($map) - 1)) {
+            if (!is_array($map) || $parameterCount != count($map) - 1) {
                 continue;
             }
 
-            $return = \array_pop($map);
-
-            if ($invocation->getParameters() === $map) {
+            $return = array_pop($map);
+            if ($invocation->parameters === $map) {
                 return $return;
             }
         }

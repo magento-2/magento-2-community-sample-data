@@ -3,8 +3,6 @@
  * Copyright © Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
-declare(strict_types=1);
-
 namespace Magento\CatalogSearch\Model\Indexer;
 
 use Magento\Catalog\Model\Product;
@@ -15,6 +13,7 @@ use Magento\TestFramework\Helper\Bootstrap;
 /**
  * @magentoDbIsolation disabled
  * @magentoDataFixture Magento/CatalogSearch/_files/indexer_fulltext.php
+ * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  */
 class FulltextTest extends \PHPUnit\Framework\TestCase
 {
@@ -27,6 +26,11 @@ class FulltextTest extends \PHPUnit\Framework\TestCase
      * @var \Magento\CatalogSearch\Model\ResourceModel\Engine
      */
     protected $engine;
+
+    /**
+     * @var \Magento\CatalogSearch\Model\ResourceModel\Fulltext
+     */
+    protected $resourceFulltext;
 
     /**
      * @var \Magento\CatalogSearch\Model\Fulltext
@@ -78,6 +82,10 @@ class FulltextTest extends \PHPUnit\Framework\TestCase
 
         $this->engine = Bootstrap::getObjectManager()->get(
             \Magento\CatalogSearch\Model\ResourceModel\Engine::class
+        );
+
+        $this->resourceFulltext = Bootstrap::getObjectManager()->get(
+            \Magento\CatalogSearch\Model\ResourceModel\Fulltext::class
         );
 
         $this->queryFactory = Bootstrap::getObjectManager()->get(
@@ -186,7 +194,6 @@ class FulltextTest extends \PHPUnit\Framework\TestCase
      * Such behavior should enforce parent product to be deleted from the index as its latest child become unavailable
      * and the configurable cannot be sold anymore.
      *
-     * @return void
      * @magentoAppArea adminhtml
      * @magentoDataFixture Magento/CatalogSearch/_files/product_configurable_with_single_child.php
      */
@@ -213,11 +220,12 @@ class FulltextTest extends \PHPUnit\Framework\TestCase
      * Search the text and return result collection
      *
      * @param string $text
-     * @param array|null $visibilityFilter
+     * @param null|array $visibilityFilter
      * @return Product[]
      */
-    protected function search(string $text, $visibilityFilter = null): array
+    protected function search($text, $visibilityFilter = null)
     {
+        $this->resourceFulltext->resetSearchResults();
         $query = $this->queryFactory->get();
         $query->unsetData();
         $query->setQueryText($text);
@@ -230,7 +238,6 @@ class FulltextTest extends \PHPUnit\Framework\TestCase
             ]
         );
         $collection->addSearchFilter($text);
-
         if (null !== $visibilityFilter) {
             $collection->setVisibility($visibilityFilter);
         }
@@ -245,9 +252,9 @@ class FulltextTest extends \PHPUnit\Framework\TestCase
      * Return product by SKU
      *
      * @param string $sku
-     * @return Product|bool
+     * @return Product
      */
-    protected function getProductBySku(string $sku)
+    protected function getProductBySku($sku)
     {
         /** @var Product $product */
         $product = Bootstrap::getObjectManager()->get(

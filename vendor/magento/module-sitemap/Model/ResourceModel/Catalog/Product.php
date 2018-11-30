@@ -5,7 +5,6 @@
  */
 namespace Magento\Sitemap\Model\ResourceModel\Catalog;
 
-use Magento\Catalog\Model\Product\Image\UrlBuilder;
 use Magento\CatalogUrlRewrite\Model\ProductUrlRewriteGenerator;
 use Magento\Store\Model\Store;
 use Magento\Framework\App\ObjectManager;
@@ -91,12 +90,7 @@ class Product extends \Magento\Framework\Model\ResourceModel\Db\AbstractDb
      * @var \Magento\Catalog\Helper\Image
      */
     private $catalogImageHelper;
-
-    /**
-     * @var UrlBuilder
-     */
-    private $imageUrlBuilder;
-
+    
     /**
      * Scope Config
      *
@@ -118,7 +112,6 @@ class Product extends \Magento\Framework\Model\ResourceModel\Db\AbstractDb
      * @param \Magento\Catalog\Model\Product $productModel
      * @param \Magento\Catalog\Helper\Image $catalogImageHelper
      * @param \Magento\Framework\App\Config\ScopeConfigInterface|null $scopeConfig
-     * @param UrlBuilder $urlBuilder
      * @SuppressWarnings(PHPMD.ExcessiveParameterList)
      */
     public function __construct(
@@ -134,8 +127,7 @@ class Product extends \Magento\Framework\Model\ResourceModel\Db\AbstractDb
         $connectionName = null,
         \Magento\Catalog\Model\Product $productModel = null,
         \Magento\Catalog\Helper\Image $catalogImageHelper = null,
-        \Magento\Framework\App\Config\ScopeConfigInterface $scopeConfig = null,
-        UrlBuilder $urlBuilder = null
+        \Magento\Framework\App\Config\ScopeConfigInterface $scopeConfig = null
     ) {
         $this->_productResource = $productResource;
         $this->_storeManager = $storeManager;
@@ -146,13 +138,10 @@ class Product extends \Magento\Framework\Model\ResourceModel\Db\AbstractDb
         $this->_mediaConfig = $mediaConfig;
         $this->_sitemapData = $sitemapData;
         $this->productModel = $productModel ?: ObjectManager::getInstance()->get(\Magento\Catalog\Model\Product::class);
-        $this->catalogImageHelper = $catalogImageHelper;
-        $this->imageUrlBuilder = $urlBuilder ?? ObjectManager::getInstance()->get(UrlBuilder::class);
         $this->catalogImageHelper = $catalogImageHelper ?: ObjectManager::getInstance()
             ->get(\Magento\Catalog\Helper\Image::class);
         $this->scopeConfig = $scopeConfig ?: ObjectManager::getInstance()
             ->get(\Magento\Framework\App\Config\ScopeConfigInterface::class);
-
         parent::__construct($context, $connectionName);
     }
 
@@ -245,13 +234,13 @@ class Product extends \Magento\Framework\Model\ResourceModel\Db\AbstractDb
                 []
             );
             // Store scope attribute value
-            $columnValue = $this->getConnection()->getIfNullSql('t2_'  . $attributeCode . '.value', $columnValue);
+            $columnValue = $this->getConnection()->getIfNullSql('t2_' . $attributeCode . '.value', $columnValue);
         }
 
         // Add attribute value to result set if needed
         if (isset($column)) {
             $this->_select->columns([
-               $column => $columnValue
+                $column => $columnValue
             ]);
         }
     }
@@ -327,6 +316,7 @@ class Product extends \Magento\Framework\Model\ResourceModel\Db\AbstractDb
         $imageIncludePolicy = $this->_sitemapData->getProductImageIncludePolicy($store->getId());
         if (\Magento\Sitemap\Model\Source\Product\Image\IncludeImage::INCLUDE_NONE != $imageIncludePolicy) {
             $this->_joinAttribute($store->getId(), 'name', 'name');
+
             if (\Magento\Sitemap\Model\Source\Product\Image\IncludeImage::INCLUDE_ALL == $imageIncludePolicy) {
                 $this->_joinAttribute($store->getId(), 'thumbnail', 'thumbnail');
             } elseif (\Magento\Sitemap\Model\Source\Product\Image\IncludeImage::INCLUDE_BASE == $imageIncludePolicy) {
@@ -456,7 +446,6 @@ class Product extends \Magento\Framework\Model\ResourceModel\Db\AbstractDb
      *
      * @param \Magento\Framework\DB\Select $select
      * @return \Magento\Framework\DB\Select
-     * @since 100.2.1
      */
     public function prepareSelectStatement(\Magento\Framework\DB\Select $select)
     {
@@ -464,14 +453,20 @@ class Product extends \Magento\Framework\Model\ResourceModel\Db\AbstractDb
     }
 
     /**
-     * Get product image URL from image filename
+     * Get product image URL from image filename and path
      *
      * @param string $image
      * @return string
      */
     private function getProductImageUrl($image)
     {
-        return $this->imageUrlBuilder->getUrl($image, 'product_page_image_large');
+        $productObject = $this->productModel;
+        $imgUrl = $this->catalogImageHelper
+            ->init($productObject, 'product_page_image_large')
+            ->setImageFile($image)
+            ->getUrl();
+
+        return $imgUrl;
     }
 
     /**

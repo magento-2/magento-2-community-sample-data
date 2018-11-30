@@ -9,7 +9,6 @@ namespace Magento\Framework\Message;
  * Abstract message model
  *
  * @api
- * @since 100.0.2
  */
 abstract class AbstractMessage implements MessageInterface
 {

@@ -1,8 +1,10 @@
 <?php
 /**
+ *
  * Copyright © Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
+
 declare(strict_types=1);
 
 namespace Magento\Customer\Model\Delegation;
@@ -88,8 +90,10 @@ class Storage
      *
      * @return void
      */
-    public function storeNewOperation(CustomerInterface $customer, array $delegatedData): void
-    {
+    public function storeNewOperation(
+        CustomerInterface $customer,
+        array $delegatedData
+    ) {
         /** @var Customer $customer */
         $customerData = $customer->__toArray();
         $addressesData = [];
@@ -103,7 +107,7 @@ class Storage
         $this->session->setDelegatedNewCustomerData([
             'customer' => $customerData,
             'addresses' => $addressesData,
-            'delegated_data' => $delegatedData,
+            'delegated_data' => $delegatedData
         ]);
     }
 
@@ -120,7 +124,7 @@ class Storage
             $this->logger->error($exception);
             $serialized = null;
         }
-        if ($serialized === null) {
+        if (!$serialized) {
             return null;
         }
 
@@ -145,7 +149,7 @@ class Storage
             'customer' => $this->customerFactory->create(
                 ['data' => $customerData]
             ),
-            'additionalData' => $serialized['delegated_data'],
+            'additionalData' => $serialized['delegated_data']
         ]);
     }
 }

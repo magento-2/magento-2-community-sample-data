@@ -46,19 +46,6 @@ define([
         emailCheckTimeout: 0,
 
         /**
-         * Initializes regular properties of instance.
-         *
-         * @returns {Object} Chainable.
-         */
-        initConfig: function () {
-            this._super();
-
-            this.isPasswordVisible = this.resolveInitialPasswordVisibility();
-
-            return this;
-        },
-
-        /**
          * Initializes observable properties of instance
          *
          * @returns {Object} Chainable.
@@ -66,6 +53,15 @@ define([
         initObservable: function () {
             this._super()
                 .observe(['email', 'emailFocused', 'isLoading', 'isPasswordVisible']);
+
+            return this;
+        },
+
+        /** @inheritdoc */
+        initConfig: function () {
+            this._super();
+
+            this.isPasswordVisible = this.resolveInitialPasswordVisibility();
 
             return this;
         },

@@ -20,7 +20,7 @@ use Magento\Framework\Setup\BackupRollbackFactory;
 class ThemeUninstallCommandTest extends \PHPUnit\Framework\TestCase
 {
     /**
-     * @var \Magento\Framework\App\MaintenanceMode|\PHPUnit_Framework_MockObject_MockObject
+     * @var \Magento\Framework\App\Console\MaintenanceMode|\PHPUnit_Framework_MockObject_MockObject
      */
     private $maintenanceMode;
 
@@ -57,7 +57,7 @@ class ThemeUninstallCommandTest extends \PHPUnit\Framework\TestCase
     /**
      * Theme Validator
      *
-     * @var \Magento\Theme\Model\ThemeValidator|\PHPUnit_Framework_MockObject_MockObject
+     * @var ThemeValidator|\PHPUnit_Framework_MockObject_MockObject
      */
     private $themeValidator;
 

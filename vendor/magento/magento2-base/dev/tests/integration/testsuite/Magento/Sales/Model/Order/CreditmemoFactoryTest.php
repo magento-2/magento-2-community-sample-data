@@ -12,7 +12,6 @@ use Magento\Sales\Model\Order;
 use Magento\TestFramework\Helper\Bootstrap;
 
 /**
- * Test for CreditmemoFactory class.
  * @magentoDbIsolation enabled
  */
 class CreditmemoFactoryTest extends \PHPUnit\Framework\TestCase
@@ -33,7 +32,7 @@ class CreditmemoFactoryTest extends \PHPUnit\Framework\TestCase
     private $creditmemoFactory;
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     protected function setUp()
     {
@@ -60,7 +59,7 @@ class CreditmemoFactoryTest extends \PHPUnit\Framework\TestCase
     /**
      * @return array
      */
-    public function createByOrderDataProvider(): array
+    public function createByOrderDataProvider()
     {
         return [
             [
@@ -68,9 +67,9 @@ class CreditmemoFactoryTest extends \PHPUnit\Framework\TestCase
                     'qtys' => [
                         self::ORDER_ITEM_ID_PLACEHOLDER . '2' => 2,
                         self::ORDER_ITEM_ID_PLACEHOLDER . '3' => 10,
-                    ],
+                    ]
                 ],
-                'expectedQty' => 12,
+                'expectedQty' => 12
             ],
             [
                 'creditmemoData' => [
@@ -78,10 +77,10 @@ class CreditmemoFactoryTest extends \PHPUnit\Framework\TestCase
                         self::ORDER_ITEM_ID_PLACEHOLDER . '1' => 2,
                         self::ORDER_ITEM_ID_PLACEHOLDER . '2' => 2,
                         self::ORDER_ITEM_ID_PLACEHOLDER . '3' => 10,
-                    ],
+                    ]
                 ],
-                'expectedQty' => 14,
-            ],
+                'expectedQty' => 14
+            ]
         ];
     }
 
@@ -89,8 +88,6 @@ class CreditmemoFactoryTest extends \PHPUnit\Framework\TestCase
      * Checks a case when creditmemo created from the invoice.
      *
      * @magentoDataFixture Magento/Sales/_files/invoice_with_bundle.php
-     *
-     * @return void
      */
     public function testCreateByInvoice()
     {
@@ -106,7 +103,7 @@ class CreditmemoFactoryTest extends \PHPUnit\Framework\TestCase
      * @param array $creditmemoData
      * @return array
      */
-    private function prepareCreditMemoData(Order $order, array $creditmemoData): array
+    private function prepareCreditMemoData(Order $order, array $creditmemoData)
     {
         $result = [];
         $orderItems = $order->getAllItems();
@@ -140,7 +137,6 @@ class CreditmemoFactoryTest extends \PHPUnit\Framework\TestCase
         /** @var Order $order */
         $order = $this->objectManager->create(Order::class);
         $order->loadByIncrementId($incrementId);
-
         return $order;
     }
 
@@ -160,7 +156,6 @@ class CreditmemoFactoryTest extends \PHPUnit\Framework\TestCase
         /** @var InvoiceRepositoryInterface $repository */
         $repository = $this->objectManager->get(InvoiceRepositoryInterface::class);
         $items = $repository->getList($searchCriteria)->getItems();
-
         return array_pop($items);
     }
 }

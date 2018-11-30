@@ -74,7 +74,7 @@ class Successful extends Instance
    {
        $objects = [];
        foreach ($this->_returnObjectNames as $returnObjectName) {
-           array_push($objects, $returnObjectName);
+           array_push($objects, $this->$returnObjectName);
        }
        return __CLASS__ . '[' . implode(', ', $objects) . ']';
    }

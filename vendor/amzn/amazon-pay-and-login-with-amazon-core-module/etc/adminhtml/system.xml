@@ -1,20 +1,4 @@
 <?xml version="1.0"?>
-<!--
-/**
- * Copyright 2016 Amazon.com, Inc. or its affiliates. All Rights Reserved.
- *
- * Licensed under the Apache License, Version 2.0 (the "License").
- * You may not use this file except in compliance with the License.
- * A copy of the License is located at
- *
- *  http://aws.amazon.com/apache2.0
- *
- * or in the "license" file accompanying this file. This file is distributed
- * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
- * express or implied. See the License for the specific language governing
- * permissions and limitations under the License.
- */
--->
 <config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Config:etc/system_file.xsd">
     <system>
         <section id="payment">
@@ -130,17 +114,17 @@
                             <config_path>payment/amazon_payment/button_size</config_path>
                         </field>
                         <field id="pwa_pp_button_is_visible" translate="label" type="select" sortOrder="70" showInDefault="1" showInWebsite="1" showInStore="1">
-                            <label>Show Amazon Pay button on product page</label>
+                            <label>Amazon Pay button on Product Page</label>
                             <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
                             <config_path>payment/amazon_payment/pwa_pp_button_is_visible</config_path>
                         </field>
                         <field id="minicart_button_is_visible" translate="label comment" type="select" sortOrder="80" showInDefault="1" showInWebsite="1" showInStore="1">
-                            <label>Show Amazon Pay button in minicart</label>
+                            <label>Amazon Pay button in minicart</label>
                             <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
                             <config_path>payment/amazon_payment/minicart_button_is_visible</config_path>
                         </field>
                         <field id="amazonloggin" translate="label comment" type="select" sortOrder="80" showInDefault="1" showInWebsite="1" showInStore="1">
-                            <label>Show Amazon Pay in payment methods</label>
+                            <label>Display Amazon Pay Method</label>
                             <comment><![CDATA[If enabled, Amazon Pay is presented as an option in the list of available payment methods during the final step of checkout.]]></comment>
                             <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
                             <config_path>payment/amazonlogin/active</config_path>

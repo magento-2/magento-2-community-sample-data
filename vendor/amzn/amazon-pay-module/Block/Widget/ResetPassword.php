@@ -14,9 +14,6 @@ use Magento\Framework\UrlFactory;
 use Magento\Customer\Model\Session;
 use Amazon\Login\Api\CustomerLinkRepositoryInterface;
 
-/**
- * @api
- */
 class ResetPassword extends Template
 {
 

@@ -10,7 +10,6 @@ use Magento\Framework\Api\Search\SearchCriteriaInterface;
 
 /**
  * @api
- * @since 100.0.2
  */
 class SearchCriteria extends BaseSearchCriteria implements SearchCriteriaInterface
 {

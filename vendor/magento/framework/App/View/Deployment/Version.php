@@ -109,7 +109,7 @@ class Version
      * Get logger
      *
      * @return LoggerInterface
-     * @deprecated 101.0.0
+     * @deprecated 100.2.0
      */
     private function getLogger()
     {

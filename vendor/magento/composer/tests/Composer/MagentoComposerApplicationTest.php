@@ -9,7 +9,7 @@ use Magento\Composer\MagentoComposerApplication;
 use Magento\Composer\ConsoleArrayInputFactory;
 use Symfony\Component\Console\Output\BufferedOutput;
 
-class MagentoComposerApplicationTest extends \PHPUnit\Framework\TestCase
+class MagentoComposerApplicationTest extends PHPUnit_Framework_TestCase
 {
     /**
      * @var MagentoComposerApplication
@@ -33,9 +33,20 @@ class MagentoComposerApplicationTest extends \PHPUnit\Framework\TestCase
 
     protected function setUp()
     {
-        $this->composerApplication = $this->createMock(\Composer\Console\Application::class);
-        $this->inputFactory = $this->createMock(\Magento\Composer\ConsoleArrayInputFactory::class);
-        $this->consoleOutput = $this->createMock(\Symfony\Component\Console\Output\BufferedOutput::class);
+        $this->composerApplication = $this->getMock(
+            'Composer\Console\Application',
+            [
+                'resetComposer',
+                'create',
+                'run'
+            ],
+            [],
+            '',
+            false,
+            false
+        );
+        $this->inputFactory = $this->getMock('Magento\Composer\ConsoleArrayInputFactory', [], [], '', false);
+        $this->consoleOutput = $this->getMock('Symfony\Component\Console\Output\BufferedOutput', [], [], '', false);
 
         $this->application = new MagentoComposerApplication(
             'path1',

@@ -4,8 +4,6 @@
  * See COPYING.txt for license details.
  */
 
-declare(strict_types=1);
-
 namespace Magento\PageCache\Test\Unit\Model\System\Config\Backend;
 
 use Magento\PageCache\Model\System\Config\Backend\AccessList;

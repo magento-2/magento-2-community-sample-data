@@ -29,24 +29,29 @@ class PhpProcess extends Process
      * @param string|null $cwd     The working directory or null to use the working dir of the current PHP process
      * @param array|null  $env     The environment variables or null to use the same environment as the current PHP process
      * @param int         $timeout The timeout in seconds
+     * @param array       $options An array of options for proc_open
      */
-    public function __construct(string $script, string $cwd = null, array $env = null, int $timeout = 60)
+    public function __construct($script, $cwd = null, array $env = null, $timeout = 60, array $options = array())
     {
         $executableFinder = new PhpExecutableFinder();
-        if (false === $php = $executableFinder->find(false)) {
+        if (false === $php = $executableFinder->find()) {
             $php = null;
-        } else {
-            $php = array_merge(array($php), $executableFinder->findArguments());
         }
         if ('phpdbg' === \PHP_SAPI) {
             $file = tempnam(sys_get_temp_dir(), 'dbg');
             file_put_contents($file, $script);
             register_shutdown_function('unlink', $file);
-            $php[] = $file;
+            $php .= ' '.ProcessUtils::escapeArgument($file);
             $script = null;
         }
+        if ('\\' !== \DIRECTORY_SEPARATOR && null !== $php) {
+            // exec is mandatory to deal with sending a signal to the process
+            // see https://github.com/symfony/symfony/issues/5030 about prepending
+            // command with exec
+            $php = 'exec '.$php;
+        }
 
-        parent::__construct($php, $cwd, $env, $script, $timeout);
+        parent::__construct($php, $cwd, $env, $script, $timeout, $options);
     }
 
     /**
@@ -60,12 +65,12 @@ class PhpProcess extends Process
     /**
      * {@inheritdoc}
      */
-    public function start(callable $callback = null, array $env = array())
+    public function start($callback = null)
     {
         if (null === $this->getCommandLine()) {
             throw new RuntimeException('Unable to find the PHP executable.');
         }
 
-        parent::start($callback, $env);
+        parent::start($callback);
     }
 }

@@ -50,7 +50,7 @@ class FixerIo extends AbstractImport
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function fetchRates()
     {
@@ -69,7 +69,7 @@ class FixerIo extends AbstractImport
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     protected function _convert($currencyFrom, $currencyTo)
     {
@@ -83,7 +83,7 @@ class FixerIo extends AbstractImport
      * @param array $currenciesTo
      * @return array
      */
-    private function convertBatch(array $data, string $currencyFrom, array $currenciesTo): array
+    private function convertBatch($data, $currencyFrom, $currenciesTo)
     {
         $accessKey = $this->scopeConfig->getValue('currency/fixerio/api_key', ScopeInterface::SCOPE_STORE);
         if (empty($accessKey)) {
@@ -135,7 +135,7 @@ class FixerIo extends AbstractImport
      * @param int $retry
      * @return array
      */
-    private function getServiceResponse(string $url, int $retry = 0): array
+    private function getServiceResponse($url, $retry = 0)
     {
         /** @var \Magento\Framework\HTTP\ZendClient $httpClient */
         $httpClient = $this->httpClientFactory->create();

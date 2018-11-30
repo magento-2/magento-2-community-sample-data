@@ -68,11 +68,11 @@ final class SelfUpdateCommand extends Command
     {
         $this
             ->setName(self::COMMAND_NAME)
-            ->setAliases(['selfupdate'])
+            ->setAliases(array('selfupdate'))
             ->setDefinition(
-                [
+                array(
                     new InputOption('--force', '-f', InputOption::VALUE_NONE, 'Force update to next major version if available.'),
-                ]
+                )
             )
             ->setDescription('Update php-cs-fixer.phar to the latest stable version.')
             ->setHelp(
@@ -149,7 +149,7 @@ EOT
             return 1;
         }
 
-        $tempFilename = \dirname($localFilename).'/'.basename($localFilename, '.phar').'-tmp.phar';
+        $tempFilename = dirname($localFilename).'/'.basename($localFilename, '.phar').'-tmp.phar';
         $remoteFilename = $this->toolInfo->getPharDownloadUri($remoteTag);
 
         if (false === @copy($remoteFilename, $tempFilename)) {

@@ -20,11 +20,11 @@ use Magento\Framework\View\Element\UiComponent\DataProvider\Document;
 /**
  * Temando API Resource Collection
  *
- * @package Temando\Shipping\Model
- * @author  Christoph Aßmann <christoph.assmann@netresearch.de>
- * @author  Sebastian Ertner <sebastian.ertner@netresearch.de>
- * @license https://opensource.org/licenses/osl-3.0.php Open Software License (OSL 3.0)
- * @link    https://www.temando.com/
+ * @package  Temando\Shipping\Model
+ * @author   Christoph Aßmann <christoph.assmann@netresearch.de>
+ * @author   Sebastian Ertner <sebastian.ertner@netresearch.de>
+ * @license  http://opensource.org/licenses/osl-3.0.php Open Software License (OSL 3.0)
+ * @link     http://www.temando.com/
  */
 abstract class Collection extends DataCollection implements SearchResultInterface
 {
@@ -166,10 +166,10 @@ abstract class Collection extends DataCollection implements SearchResultInterfac
 
         try {
             // load list from webservice
-            array_walk($this->filters, function (Filter $filter) {
-                $this->searchCriteriaBuilder->addFilters([$filter]);
-            });
-            $data = $this->fetchData($this->searchCriteriaBuilder->create());
+            $searchCriteria = $this->searchCriteriaBuilder
+                ->addFilters($this->filters)
+                ->create();
+            $data = $this->fetchData($searchCriteria);
 
             // shift response items to document class
             foreach ($data as $apiItem) {

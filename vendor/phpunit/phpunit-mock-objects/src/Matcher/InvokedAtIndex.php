@@ -7,10 +7,8 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-namespace PHPUnit\Framework\MockObject\Matcher;
 
 use PHPUnit\Framework\ExpectationFailedException;
-use PHPUnit\Framework\MockObject\Invocation as BaseInvocation;
 
 /**
  * Invocation matcher which checks if a method was invoked at a certain index.
@@ -22,17 +20,17 @@ use PHPUnit\Framework\MockObject\Invocation as BaseInvocation;
  *
  * If the index is never reached it will throw an exception in index.
  */
-class InvokedAtIndex implements Invocation
+class PHPUnit_Framework_MockObject_Matcher_InvokedAtIndex implements PHPUnit_Framework_MockObject_Matcher_Invocation
 {
     /**
      * @var int
      */
-    private $sequenceIndex;
+    protected $sequenceIndex;
 
     /**
      * @var int
      */
-    private $currentIndex = -1;
+    protected $currentIndex = -1;
 
     /**
      * @param int $sequenceIndex
@@ -51,11 +49,11 @@ class InvokedAtIndex implements Invocation
     }
 
     /**
-     * @param BaseInvocation $invocation
+     * @param PHPUnit_Framework_MockObject_Invocation $invocation
      *
      * @return bool
      */
-    public function matches(BaseInvocation $invocation)
+    public function matches(PHPUnit_Framework_MockObject_Invocation $invocation)
     {
         $this->currentIndex++;
 
@@ -63,9 +61,9 @@ class InvokedAtIndex implements Invocation
     }
 
     /**
-     * @param BaseInvocation $invocation
+     * @param PHPUnit_Framework_MockObject_Invocation $invocation
      */
-    public function invoked(BaseInvocation $invocation)
+    public function invoked(PHPUnit_Framework_MockObject_Invocation $invocation)
     {
     }
 
@@ -79,7 +77,7 @@ class InvokedAtIndex implements Invocation
     {
         if ($this->currentIndex < $this->sequenceIndex) {
             throw new ExpectationFailedException(
-                \sprintf(
+                sprintf(
                     'The expected invocation at index %s was never reached.',
                     $this->sequenceIndex
                 )

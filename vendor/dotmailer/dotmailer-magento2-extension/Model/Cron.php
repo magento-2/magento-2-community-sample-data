@@ -2,8 +2,6 @@
 
 namespace Dotdigitalgroup\Email\Model;
 
-use Dotdigitalgroup\Email\Setup\Schema;
-
 /**
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  */
@@ -329,9 +327,9 @@ class Cron
 
         //Clean tables
         $tables = [
-            'automation' => Schema::EMAIL_AUTOMATION_TABLE,
-            'importer' => Schema::EMAIL_IMPORTER_TABLE,
-            'campaign' => Schema::EMAIL_CAMPAIGN_TABLE,
+            'automation' => 'email_automation',
+            'importer' => 'email_importer',
+            'campaign' => 'email_campaign',
         ];
         $message = 'Cleaning cron job result :';
 

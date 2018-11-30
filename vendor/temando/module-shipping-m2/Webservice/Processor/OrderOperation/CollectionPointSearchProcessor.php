@@ -6,13 +6,12 @@ namespace Temando\Shipping\Webservice\Processor\OrderOperation;
 
 use Magento\Framework\Exception\CouldNotSaveException;
 use Magento\Quote\Model\Quote\Address\RateRequest;
-use Temando\Shipping\Api\Data\Delivery\CollectionPointSearchResultInterfaceFactory;
-use Temando\Shipping\Api\Data\Delivery\QuoteCollectionPointInterface;
+use Temando\Shipping\Api\Data\CollectionPoint\CollectionPointSearchResultInterfaceFactory;
+use Temando\Shipping\Api\Data\CollectionPoint\QuoteCollectionPointInterface;
 use Temando\Shipping\Api\Data\Order\ShippingExperienceInterface;
-use Temando\Shipping\Model\Checkout\RateRequest\Extractor;
-use Temando\Shipping\Model\Delivery\QuoteCollectionPoint;
+use Temando\Shipping\Model\CollectionPoint\QuoteCollectionPoint;
 use Temando\Shipping\Model\OrderInterface;
-use Temando\Shipping\Model\ResourceModel\Delivery\CollectionPointSearchResult;
+use Temando\Shipping\Model\ResourceModel\CollectionPoint\CollectionPointSearchResult;
 use Temando\Shipping\Webservice\Response\Type\OrderResponseTypeInterface;
 
 /**
@@ -22,23 +21,23 @@ use Temando\Shipping\Webservice\Response\Type\OrderResponseTypeInterface;
  *
  * @package Temando\Shipping\Webservice
  * @author  Christoph Aßmann <christoph.assmann@netresearch.de>
- * @license https://opensource.org/licenses/osl-3.0.php Open Software License (OSL 3.0)
- * @link    https://www.temando.com/
+ * @license http://opensource.org/licenses/osl-3.0.php Open Software License (OSL 3.0)
+ * @link    http://www.temando.com/
  */
 class CollectionPointSearchProcessor implements RatesProcessorInterface
 {
     /**
      * @var CollectionPointSearchResultInterfaceFactory
      */
-    private $searchResultFactory;
+    private $collectionPointSearchResultFactory;
 
     /**
      * CollectionPointSearchProcessor constructor.
-     * @param CollectionPointSearchResultInterfaceFactory $searchResultFactory
+     * @param CollectionPointSearchResultInterfaceFactory $collectionPointSearchResultFactory
      */
-    public function __construct(CollectionPointSearchResultInterfaceFactory $searchResultFactory)
+    public function __construct(CollectionPointSearchResultInterfaceFactory $collectionPointSearchResultFactory)
     {
-        $this->searchResultFactory = $searchResultFactory;
+        $this->collectionPointSearchResultFactory = $collectionPointSearchResultFactory;
     }
 
     /**
@@ -56,39 +55,24 @@ class CollectionPointSearchProcessor implements RatesProcessorInterface
         OrderResponseTypeInterface $responseType
     ) {
         $searchRequest = $requestType->getCollectionPointSearchRequest();
-        $collectionPoint = $requestType->getCollectionPoint();
-
-        if ($searchRequest === null) {
-            // no search, no collection points to persist
-            return [];
-        }
-
-        if ($searchRequest->isPending()) {
-            // no search parameters submitted yet, no collection points to persist
-            return [];
-        }
-
-        if ($collectionPoint && $collectionPoint->getCollectionPointId()) {
-            // delivery location was selected, no need to update collection points
-            return [];
-        }
+        $shippingAddressId = $searchRequest->getShippingAddressId();
+        $isPending = $searchRequest->isPending();
 
         // persist collection points for a given search request
-        $shippingAddressId = $searchRequest->getShippingAddressId();
-        $collectionPoints = (array) $responseType->getCollectionPoints();
+        if ($shippingAddressId && !$isPending) {
+            $collectionPoints = (array) $responseType->getCollectionPoints();
 
-        /** @var QuoteCollectionPoint $collectionPoint */
-        foreach ($collectionPoints as $collectionPoint) {
-            $collectionPoint->setData(QuoteCollectionPointInterface::RECIPIENT_ADDRESS_ID, $shippingAddressId);
+            /** @var QuoteCollectionPoint $collectionPoint */
+            foreach ($collectionPoints as $collectionPoint) {
+                $collectionPoint->setData(QuoteCollectionPointInterface::RECIPIENT_ADDRESS_ID, $shippingAddressId);
+            }
+
+            /** @var CollectionPointSearchResult $collection */
+            $collection = $this->collectionPointSearchResultFactory->create();
+            $collection->addFilter(QuoteCollectionPointInterface::RECIPIENT_ADDRESS_ID, $shippingAddressId);
+            $collection->setItems($collectionPoints);
+            $collection->save();
         }
-
-        /** @var CollectionPointSearchResult $collection */
-        $collection = $this->searchResultFactory->create();
-        $collection->addFilter(QuoteCollectionPointInterface::RECIPIENT_ADDRESS_ID, $shippingAddressId);
-        $collection->walk('delete');
-
-        $collection->setItems($collectionPoints);
-        $collection->save();
 
         return [];
     }

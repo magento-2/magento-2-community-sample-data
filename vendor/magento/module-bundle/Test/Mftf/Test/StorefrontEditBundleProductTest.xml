@@ -7,7 +7,7 @@
 -->
 
 <tests xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-        xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/testSchema.xsd">
+       xsi:noNamespaceSchemaLocation="../../../../../../../dev/tests/acceptance/vendor/magento/magento2-functional-testing-framework/src/Magento/FunctionalTestingFramework/Test/etc/testSchema.xsd">
     <test name="StorefrontEditBundleProductTest">
         <annotations>
             <features value="Bundle"/>
@@ -15,16 +15,18 @@
             <title value="Customer should be able to change chosen options for Bundle Product when clicking Edit button in Shopping Cart page"/>
             <description value="Customer should be able to change chosen options for Bundle Product when clicking Edit button in Shopping Cart page"/>
             <severity value="MAJOR"/>
-            <testCaseId value="MC-290"/>
-            <group value="Bundle"/>
+            <testCaseId value="MAGETWO-77523"/>
+            <group value="bundle"/>
         </annotations>
         <before>
             <actionGroup ref="LoginAsAdmin" stepKey="loginAsAdmin"/>
-            <createData entity="SimpleProduct2" stepKey="simpleProduct1"/>
-            <createData entity="SimpleProduct2" stepKey="simpleProduct2"/>
+            <createData entity="DefaultTaxConfig" stepKey="defaultTaxConfiguration"/>
+            <createData entity="WeeeConfigDisable" stepKey="disableFPT"/>
+            <createData entity="SimpleProduct3" stepKey="simpleProduct1"/>
+            <createData entity="SimpleProduct3" stepKey="simpleProduct2"/>
         </before>
         <after>
-            <amOnPage url="{{AdminLogoutPage.url}}" stepKey="amOnLogoutPage"/>
+            <actionGroup ref="logout" stepKey="logoutFromAdmin"/>
             <deleteData createDataKey="simpleProduct1" stepKey="deleteSimpleProduct1"/>
             <deleteData createDataKey="simpleProduct2" stepKey="deleteSimpleProduct2"/>
         </after>
@@ -42,7 +44,7 @@
 
         <!-- Add two bundle items -->
         <conditionalClick selector="{{AdminProductFormBundleSection.bundleItemsToggle}}" dependentSelector="{{AdminProductFormBundleSection.bundleItemsToggle}}" visible="false" stepKey="conditionallyOpenSectionBundleItems"/>
-        <scrollTo stepKey="scrollToBundleItems" selector="{{AdminProductFormBundleSection.bundledItems}}"/>
+        <scrollTo selector="{{AdminProductFormBundleSection.bundledItems}}" stepKey="scrollToBundleItems"/>
         <click selector="{{AdminProductFormBundleSection.addOption}}" stepKey="clickAddOption3"/>
         <waitForElementVisible selector="{{AdminProductFormBundleSection.bundleOptionXTitle('0')}}" stepKey="waitForBundleOptions"/>
         <fillField selector="{{AdminProductFormBundleSection.bundleOptionXTitle('0')}}" userInput="{{BundleProduct.optionTitle1}}" stepKey="fillOptionTitle"/>
@@ -53,71 +55,71 @@
         <actionGroup ref="filterProductGridBySku" stepKey="filterBundleProductOptions">
             <argument name="product" value="$$simpleProduct1$$"/>
         </actionGroup>
-        <checkOption selector="{{AdminAddProductsToOptionPanel.firstCheckbox}}" stepKey="selectFirstGridRow"/>
+        <checkOption selector="{{AdminAddProductsToOptionPanelSection.firstCheckbox}}" stepKey="selectFirstGridRow"/>
         <actionGroup ref="filterProductGridBySku" stepKey="filterBundleProductOptions2">
             <argument name="product" value="$$simpleProduct2$$"/>
         </actionGroup>
-        <checkOption selector="{{AdminAddProductsToOptionPanel.firstCheckbox}}" stepKey="selectFirstGridRow2"/>
-        <click selector="{{AdminAddProductsToOptionPanel.addSelectedProducts}}" stepKey="clickAddSelectedBundleProducts"/>
+        <checkOption selector="{{AdminAddProductsToOptionPanelSection.firstCheckbox}}" stepKey="selectFirstGridRow2"/>
+        <click selector="{{AdminAddProductsToOptionPanelSection.addSelectedProducts}}" stepKey="clickAddSelectedBundleProducts"/>
         <fillField selector="{{AdminProductFormBundleSection.bundleOptionXProductYQuantity('0', '0')}}" userInput="{{BundleProduct.defaultQuantity}}" stepKey="fillProductDefaultQty1"/>
         <fillField selector="{{AdminProductFormBundleSection.bundleOptionXProductYQuantity('0', '1')}}" userInput="{{BundleProduct.defaultQuantity}}" stepKey="fillProductDefaultQty2"/>
 
-        <click stepKey="saveProductBundle" selector="{{AdminProductFormActionSection.saveButton}}"/>
-        <see stepKey="assertSuccess" selector="{{AdminProductMessagesSection.successMessage}}" userInput="You saved the product."/>
+        <click selector="{{AdminProductFormActionSection.saveButton}}" stepKey="saveProductBundle"/>
+        <see selector="{{AdminProductMessagesSection.successMessage}}" userInput="You saved the product." stepKey="assertSuccess"/>
 
         <!-- Go to the storefront bundled product page -->
         <amOnPage url="/{{BundleProduct.urlKey}}.html" stepKey="visitStoreFrontBundle"/>
         <waitForPageLoad stepKey="waitForStorefront"/>
-        <click stepKey="customizeAndAddToCart" selector="{{StorefrontBundledSection.addToCart}}"/>
+        <click selector="{{StorefrontBundledSection.addToCart}}"  stepKey="customizeAndAddToCart"/>
         <waitForPageLoad stepKey="waitCustomizableOptionsPopUp"/>
 
         <!-- add two products to the shopping cart, each with one different option -->
-        <click stepKey="selectFirstBundleOption" selector="{{StorefrontBundledSection.nthBundledOption('1','1')}}"/>
+        <click selector="{{StorefrontBundledSection.bundleOption('1','1')}}"  stepKey="selectFirstBundleOption"/>
         <waitForPageLoad stepKey="waitForPriceUpdate"/>
-        <see stepKey="seeSinglePrice" selector="{{StorefrontBundledSection.configuredPrice}}" userInput="1,230.00"/>
-        <click stepKey="addFirstItemToCart" selector="{{StorefrontBundledSection.addToCartConfigured}}"/>
+        <see selector="{{StorefrontBundledSection.configuredPrice}}" userInput="1,230.00"  stepKey="seeSinglePrice"/>
+        <click selector="{{StorefrontBundledSection.addToCartConfigured}}" stepKey="addFirstItemToCart"/>
         <waitForPageLoad stepKey="waitForElementAdded"/>
 
-        <click stepKey="unselectFirstBundleOption" selector="{{StorefrontBundledSection.nthBundledOption('1','1')}}"/>
-        <click stepKey="selectSecondBundleOption" selector="{{StorefrontBundledSection.nthBundledOption('1','2')}}"/>
+        <click selector="{{StorefrontBundledSection.bundleOption('1','1')}}" stepKey="unselectFirstBundleOption"/>
+        <click selector="{{StorefrontBundledSection.bundleOption('1','2')}}" stepKey="selectSecondBundleOption"/>
         <waitForPageLoad stepKey="waitForPriceUpdate2"/>
-        <see stepKey="seeSinglePrice2" selector="{{StorefrontBundledSection.configuredPrice}}" userInput="1,230.00"/>
-        <click stepKey="addSecondItemToCart" selector="{{StorefrontBundledSection.addToCartConfigured}}"/>
+        <see selector="{{StorefrontBundledSection.configuredPrice}}" userInput="1,230.00" stepKey="seeSinglePrice2"/>
+        <click selector="{{StorefrontBundledSection.addToCartConfigured}}" stepKey="addSecondItemToCart"/>
         <waitForPageLoad stepKey="waitForElementAdded2"/>
 
         <!-- Go to the shopping cart page and edit the first product -->
-        <amOnPage url="/checkout/cart/" stepKey="onPageShoppingCart"/>
+        <amOnPage url="{{CheckoutCartPage.url}}" stepKey="onPageShoppingCart"/>
         <waitForPageLoad stepKey="waitForCartPageLoad"/>
-        <waitForElementVisible stepKey="waitForInfoDropdown" selector="{{CheckoutCartSummarySection.total}}"/>
+        <waitForElementVisible selector="{{CheckoutCartSummarySection.total}}" stepKey="waitForInfoDropdown"/>
         <waitForPageLoad stepKey="waitForCartPageLoad3"/>
         <grabTextFrom selector="{{CheckoutCartSummarySection.total}}" stepKey="grabTotalBefore"/>
-        <click stepKey="clickEdit" selector="{{CheckoutCartProductSection.nthEditButton('1')}}"/>
+        <click selector="{{CheckoutCartProductSection.editItemParametersButton('1')}}" stepKey="clickEdit"/>
         <waitForPageLoad stepKey="waitForStorefront2"/>
 
         <!-- Choose both of the options on the storefront -->
-        <click stepKey="selectFirstBundleOption2" selector="{{StorefrontBundledSection.nthBundledOption('1','1')}}"/>
-        <click stepKey="selectSecondBundleOption2" selector="{{StorefrontBundledSection.nthBundledOption('1','2')}}"/>
+        <click selector="{{StorefrontBundledSection.bundleOption('1','1')}}" stepKey="selectFirstBundleOption2"/>
+        <click selector="{{StorefrontBundledSection.bundleOption('1','2')}}" stepKey="selectSecondBundleOption2"/>
 
         <waitForPageLoad stepKey="waitForPriceUpdate3"/>
-        <see stepKey="seeDoublePrice" selector="{{StorefrontBundledSection.configuredPrice}}" userInput="2,460.00"/>
+        <see selector="{{StorefrontBundledSection.configuredPrice}}" userInput="2,460.00" stepKey="seeDoublePrice"/>
 
-        <click stepKey="addFirstItemToCart2" selector="{{StorefrontBundledSection.updateCart}}"/>
+        <click selector="{{StorefrontBundledSection.updateCart}}" stepKey="addFirstItemToCart2"/>
         <waitForPageLoad stepKey="waitForElementAdded3"/>
 
         <!-- Go to the shopping cart page -->
-        <amOnPage url="/checkout/cart/" stepKey="onPageShoppingCart2"/>
+        <amOnPage url="{{CheckoutCartPage.url}}" stepKey="onPageShoppingCart2"/>
         <waitForPageLoad stepKey="waitForCartPageLoad2"/>
 
         <!-- Assert that the options are both there and the proce no longer matches -->
-        <see stepKey="assertBothOptions" selector="{{CheckoutCartProductSection.nthItemOption('2')}}" userInput="$$simpleProduct1.sku$$"/>
-        <see stepKey="assertBothOptions2" selector="{{CheckoutCartProductSection.nthItemOption('2')}}" userInput="$$simpleProduct2.sku$$"/>
-        <waitForElementVisible stepKey="waitForInfoDropdown2" selector="{{CheckoutCartSummarySection.total}}"/>
+        <see selector="{{CheckoutCartProductSection.itemOptionsBlock('2')}}" userInput="$$simpleProduct1.sku$$" stepKey="assertBothOptions"/>
+        <see selector="{{CheckoutCartProductSection.itemOptionsBlock('2')}}" userInput="$$simpleProduct2.sku$$" stepKey="assertBothOptions2"/>
+        <waitForElementVisible selector="{{CheckoutCartSummarySection.total}}" stepKey="waitForInfoDropdown2"/>
         <waitForPageLoad stepKey="waitForCartPageLoad4"/>
         <grabTextFrom selector="{{CheckoutCartSummarySection.total}}" stepKey="grabTotalAfter"/>
-        <assertNotEquals expected="{$grabTotalBefore}" expectedType="string" actual="{$grabTotalAfter}" actualType="string"  stepKey="assertNotEquals"/>
+        <assertNotEquals expected="{$grabTotalBefore}" expectedType="string" actual="{$grabTotalAfter}" actualType="string" stepKey="assertNotEquals"/>
 
         <!-- Delete the bundled product -->
-        <actionGroup stepKey="deleteBundle" ref="deleteProductUsingProductGrid">
+        <actionGroup ref="deleteProductUsingProductGrid" stepKey="deleteBundle">
             <argument name="product" value="BundleProduct"/>
         </actionGroup>
     </test>

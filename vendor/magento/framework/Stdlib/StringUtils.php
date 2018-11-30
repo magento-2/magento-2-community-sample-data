@@ -9,7 +9,6 @@ namespace Magento\Framework\Stdlib;
  * Magento methods to work with string
  *
  * @api
- * @since 100.0.2
  */
 class StringUtils
 {

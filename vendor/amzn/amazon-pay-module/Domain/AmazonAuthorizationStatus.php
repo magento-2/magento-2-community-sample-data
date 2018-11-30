@@ -29,4 +29,7 @@ class AmazonAuthorizationStatus extends AbstractAmazonStatus
     const REASON_MAX_CAPTURES_PROCESSED = 'MaxCapturesProcessed';
     const REASON_SELLER_CLOSED = 'SellerClosed';
     const REASON_EXPIRED_UNUSED = 'ExpiredUnused';
+
+    const CODE_HARD_DECLINE = 4273;
+    const CODE_SOFT_DECLINE = 7638;
 }

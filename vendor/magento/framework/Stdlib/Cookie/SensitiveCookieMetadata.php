@@ -15,7 +15,6 @@ use Magento\Framework\App\RequestInterface;
  * as path and domain are only data to be exposed by SensitiveCookieMetadata
  *
  * @api
- * @since 100.0.2
  */
 class SensitiveCookieMetadata extends CookieMetadata
 {

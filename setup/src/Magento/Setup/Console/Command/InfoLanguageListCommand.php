@@ -6,10 +6,8 @@
 
 namespace Magento\Setup\Console\Command;
 
-use Magento\Framework\App\ObjectManager;
 use Magento\Framework\Setup\Lists;
 use Symfony\Component\Console\Command\Command;
-use Symfony\Component\Console\Helper\TableFactory;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
@@ -26,18 +24,11 @@ class InfoLanguageListCommand extends Command
     private $lists;
 
     /**
-     * @var TableFactory
-     */
-    private $tableHelperFactory;
-
-    /**
      * @param Lists $lists
-     * @param TableFactory $tableHelperFactory
      */
-    public function __construct(Lists $lists, TableFactory $tableHelperFactory = null)
+    public function __construct(Lists $lists)
     {
         $this->lists = $lists;
-        $this->tableHelperFactory = $tableHelperFactory ?: ObjectManager::getInstance()->create(TableFactory::class);
         parent::__construct();
     }
 
@@ -57,14 +48,14 @@ class InfoLanguageListCommand extends Command
      */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        $tableHelper = $this->tableHelperFactory->create(['output' => $output]);
-        $tableHelper->setHeaders(['Language', 'Code']);
+        $table = $this->getHelperSet()->get('table');
+        $table->setHeaders(['Language', 'Code']);
 
         foreach ($this->lists->getLocaleList() as $key => $locale) {
-            $tableHelper->addRow([$locale, $key]);
+            $table->addRow([$locale, $key]);
         }
 
-        $tableHelper->render();
+        $table->render($output);
         return \Magento\Framework\Console\Cli::RETURN_SUCCESS;
     }
 }

@@ -19,7 +19,7 @@ class ValidationMessage
 
     /**
      * @var \Magento\Framework\Locale\CurrencyInterface
-     * @deprecated 101.0.3 since 101.0.0
+     * @deprecated since 101.0.0
      */
     private $currency;
 

@@ -54,7 +54,7 @@ class SignifydLogin extends Form
      *
      * @return void
      */
-    private function closeNotification(): void
+    private function closeNotification()
     {
         $notification = $this->browser->find($this->notificationCloseButton);
         if ($notification->isVisible()) {

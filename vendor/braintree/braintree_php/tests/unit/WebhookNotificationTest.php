@@ -234,17 +234,18 @@ class WebhookNotificationTest extends Setup
 
     public function testAllowsParsingUsingGateway()
     {
+        Braintree\Configuration::reset();
+        $sampleNotification = Braintree\WebhookTesting::sampleNotification(
+            Braintree\WebhookNotification::CHECK,
+            "my_id"
+        );
+
         $gateway = new Braintree\Gateway([
             'privateKey' => 'integration_private_key',
             'publicKey' => 'integration_public_key',
             'merchantId' => 'integration_merchant_id',
             'environment' => 'development'
         ]);
-
-        $sampleNotification = $gateway->webhookTesting()->sampleNotification(
-            Braintree\WebhookNotification::CHECK,
-            "my_id"
-        );
 
         $webhookNotification = $gateway->webhookNotification()->parse(
             $sampleNotification['bt_signature'],
@@ -289,29 +290,6 @@ class WebhookNotificationTest extends Setup
 
         $transaction = $webhookNotification->subscription->transactions[0];
         $this->assertEquals('submitted_for_settlement', $transaction->status);
-        $this->assertEquals('49.99', $transaction->amount);
-    }
-
-    public function testBuildsASampleNotificationForASubscriptionChargedUnsuccessfullyWebhook()
-    {
-        $sampleNotification = Braintree\WebhookTesting::sampleNotification(
-            Braintree\WebhookNotification::SUBSCRIPTION_CHARGED_UNSUCCESSFULLY,
-            "my_id"
-        );
-
-        $webhookNotification = Braintree\WebhookNotification::parse(
-            $sampleNotification['bt_signature'],
-            $sampleNotification['bt_payload']
-        );
-
-        $this->assertEquals(Braintree\WebhookNotification::SUBSCRIPTION_CHARGED_UNSUCCESSFULLY, $webhookNotification->kind);
-        $this->assertEquals("my_id", $webhookNotification->subscription->id);
-        $this->assertEquals(new DateTime('2016-03-21'), $webhookNotification->subscription->billingPeriodStartDate);
-        $this->assertEquals(new DateTime('2017-03-31'), $webhookNotification->subscription->billingPeriodEndDate);
-        $this->assertEquals(1, count($webhookNotification->subscription->transactions));
-
-        $transaction = $webhookNotification->subscription->transactions[0];
-        $this->assertEquals('failed', $transaction->status);
         $this->assertEquals('49.99', $transaction->amount);
     }
 
@@ -579,36 +557,21 @@ class WebhookNotificationTest extends Setup
         $this->assertEquals("abc123", $webhookNotification->partnerMerchant->partnerMerchantId);
     }
 
-    public function testBuildsASampleNotificationForOAuthAccessRevokedWebhook()
-    {
-        $sampleNotification = Braintree\WebhookTesting::sampleNotification(
-            Braintree\WebhookNotification::OAUTH_ACCESS_REVOKED,
-            'my_id'
-        );
-
-        $webhookNotification = Braintree\WebhookNotification::parse(
-            $sampleNotification['bt_signature'],
-            $sampleNotification['bt_payload']
-        );
-
-        $this->assertEquals(Braintree\WebhookNotification::OAUTH_ACCESS_REVOKED, $webhookNotification->kind);
-        $this->assertEquals('my_id', $webhookNotification->oauthAccessRevocation->merchantId);
-        $this->assertEquals("oauth_application_client_id", $webhookNotification->oauthAccessRevocation->oauthApplicationClientId);
-    }
-
     public function testBuildsASampleNotificationForConnectedMerchantStatusTransitionedWebhook()
     {
+        Braintree\Configuration::reset();
+
+        $sampleNotification = Braintree\WebhookTesting::sampleNotification(
+            Braintree\WebhookNotification::CONNECTED_MERCHANT_STATUS_TRANSITIONED,
+            "my_id"
+        );
+
         $gateway = new Braintree\Gateway([
             'privateKey' => 'integration_private_key',
             'publicKey' => 'integration_public_key',
             'merchantId' => 'integration_merchant_id',
             'environment' => 'development'
         ]);
-
-        $sampleNotification = $gateway->webhookTesting()->sampleNotification(
-            Braintree\WebhookNotification::CONNECTED_MERCHANT_STATUS_TRANSITIONED,
-            "my_id"
-        );
 
         $webhookNotification = $gateway->webhookNotification()->parse(
             $sampleNotification['bt_signature'],
@@ -617,7 +580,6 @@ class WebhookNotificationTest extends Setup
 
         $this->assertEquals(Braintree\WebhookNotification::CONNECTED_MERCHANT_STATUS_TRANSITIONED, $webhookNotification->kind);
         $this->assertEquals("my_id", $webhookNotification->connectedMerchantStatusTransitioned->merchantPublicId);
-        $this->assertEquals("my_id", $webhookNotification->connectedMerchantStatusTransitioned->merchantId);
         $this->assertEquals("new_status", $webhookNotification->connectedMerchantStatusTransitioned->status);
         $this->assertEquals("oauth_application_client_id", $webhookNotification->connectedMerchantStatusTransitioned->oauthApplicationClientId);
     }
@@ -636,7 +598,6 @@ class WebhookNotificationTest extends Setup
 
         $this->assertEquals(Braintree\WebhookNotification::CONNECTED_MERCHANT_PAYPAL_STATUS_CHANGED, $webhookNotification->kind);
         $this->assertEquals("my_id", $webhookNotification->connectedMerchantPayPalStatusChanged->merchantPublicId);
-        $this->assertEquals("my_id", $webhookNotification->connectedMerchantPayPalStatusChanged->merchantId);
         $this->assertEquals("link", $webhookNotification->connectedMerchantPayPalStatusChanged->action);
         $this->assertEquals("oauth_application_client_id", $webhookNotification->connectedMerchantPayPalStatusChanged->oauthApplicationClientId);
     }

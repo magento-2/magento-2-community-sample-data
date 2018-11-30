@@ -1304,23 +1304,7 @@ abstract class Zend_Db_Table_Abstract
         $whereList = array();
         $numberTerms = 0;
         foreach ($args as $keyPosition => $keyValues) {
-            /**
-             * PHP 7.2 PATCH -->
-             */
-            if (is_array($keyValues) || $keyValues instanceof \Countable) {
-                $keyValuesCount = count($keyValues);
-            } else {
-                if (null == $keyValues) {
-                    $keyValuesCount = 0;
-                } else {
-                    $keyValuesCount = 1;
-                }
-            }
-            #$keyValuesCount = count($keyValues);
-            /**
-             * PHP 7.2 PATCH <--
-             */
-            
+            $keyValuesCount = count($keyValues);
             // Coerce the values to an array.
             // Don't simply typecast to array, because the values
             // might be Zend_Db_Expr objects.

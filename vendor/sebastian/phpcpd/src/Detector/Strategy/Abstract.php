@@ -12,36 +12,45 @@ namespace SebastianBergmann\PHPCPD\Detector\Strategy;
 
 use SebastianBergmann\PHPCPD\CodeCloneMap;
 
+/**
+ * Abstract base class for strategies to detect code clones.
+ *
+ * @author    Sebastian Bergmann <sebastian@phpunit.de>
+ * @copyright Sebastian Bergmann <sebastian@phpunit.de>
+ * @license   http://www.opensource.org/licenses/BSD-3-Clause  The BSD 3-Clause License
+ * @link      http://github.com/sebastianbergmann/phpcpd/tree
+ * @since     Class available since Release 1.4.0
+ */
 abstract class AbstractStrategy
 {
     /**
-     * @var int[] List of tokens to ignore
+     * @var integer[] List of tokens to ignore
      */
-    protected $tokensIgnoreList = [
-      T_INLINE_HTML        => true,
-      T_COMMENT            => true,
-      T_DOC_COMMENT        => true,
-      T_OPEN_TAG           => true,
+    protected $tokensIgnoreList = array(
+      T_INLINE_HTML => true,
+      T_COMMENT => true,
+      T_DOC_COMMENT => true,
+      T_OPEN_TAG => true,
       T_OPEN_TAG_WITH_ECHO => true,
-      T_CLOSE_TAG          => true,
-      T_WHITESPACE         => true,
-      T_USE                => true,
-      T_NS_SEPARATOR       => true
-    ];
+      T_CLOSE_TAG => true,
+      T_WHITESPACE => true,
+      T_USE => true,
+      T_NS_SEPARATOR => true
+    );
 
     /**
      * @var string[]
      */
-    protected $hashes = [];
+    protected $hashes = array();
 
     /**
      * Copy & Paste Detection (CPD).
      *
      * @param string       $file
-     * @param int          $minLines
-     * @param int          $minTokens
+     * @param integer      $minLines
+     * @param integer      $minTokens
      * @param CodeCloneMap $result
-     * @param bool         $fuzzy
+     * @param boolean      $fuzzy
      */
     abstract public function processFile($file, $minLines, $minTokens, CodeCloneMap $result, $fuzzy = false);
 }

@@ -86,8 +86,7 @@ class Grouped implements DimensionalIndexerInterface
 
     /**
      * {@inheritdoc}
-     * @param array $dimensions
-     * @param \Traversable $entityIds
+     *
      * @throws \Exception
      */
     public function executeByDimensions(array $dimensions, \Traversable $entityIds)

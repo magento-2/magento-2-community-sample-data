@@ -2,8 +2,6 @@
 
 namespace Dotdigitalgroup\Email\Model\ResourceModel;
 
-use Dotdigitalgroup\Email\Setup\Schema;
-
 class Campaign extends \Magento\Framework\Model\ResourceModel\Db\AbstractDb
 {
     /**
@@ -42,7 +40,7 @@ class Campaign extends \Magento\Framework\Model\ResourceModel\Db\AbstractDb
      */
     public function _construct()
     {
-        $this->_init(Schema::EMAIL_CAMPAIGN_TABLE, 'id');
+        $this->_init('email_campaign', 'id');
     }
 
     /**

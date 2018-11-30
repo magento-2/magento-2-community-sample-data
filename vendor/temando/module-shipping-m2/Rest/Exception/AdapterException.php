@@ -4,16 +4,16 @@
  */
 namespace Temando\Shipping\Rest\Exception;
 
-use Temando\Shipping\Rest\Response\Document\Errors;
-use Temando\Shipping\Rest\Response\DataObject\Error;
+use Temando\Shipping\Rest\Response\Errors;
+use Temando\Shipping\Rest\Response\Type\ErrorResponseType;
 
 /**
  * Temando REST Adapter Exception – parsed Http Exception
  *
- * @package Temando\Shipping\Rest
- * @author  Christoph Aßmann <christoph.assmann@netresearch.de>
- * @license https://opensource.org/licenses/osl-3.0.php Open Software License (OSL 3.0)
- * @link    https://www.temando.com/
+ * @package  Temando\Shipping\Rest
+ * @author   Christoph Aßmann <christoph.assmann@netresearch.de>
+ * @license  http://opensource.org/licenses/osl-3.0.php Open Software License (OSL 3.0)
+ * @link     http://www.temando.com/
  */
 class AdapterException extends RestException
 {
@@ -35,9 +35,13 @@ class AdapterException extends RestException
      */
     public static function errorResponse(Errors $errors, \Exception $cause = null)
     {
-        $messages = array_map(function (Error $error) {
-            return sprintf('%s: %s', $error->getCode(), $error->getTitle());
-        }, $errors->getErrors());
+        $messages = [];
+
+        if ($errors->getErrors() !== null) {
+            $messages = array_map(function (ErrorResponseType $error) {
+                return sprintf('%s: %s', $error->getCode(), $error->getTitle());
+            }, $errors->getErrors());
+        }
 
         $messages = implode(', ', $messages);
 

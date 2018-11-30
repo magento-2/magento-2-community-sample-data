@@ -31,10 +31,14 @@ class ClassDeclarationUnitTest extends AbstractSniffUnitTest
             return [];
         }
 
-        return [
-            2 => 1,
-            3 => 2,
-        ];
+        if (PHP_VERSION_ID >= 50300) {
+            return [
+                2 => 1,
+                3 => 2,
+            ];
+        } else {
+            return [3 => 1];
+        }
 
     }//end getErrorList()
 

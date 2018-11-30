@@ -1,6 +1,6 @@
 <?php
 /*
- * This file is part of sebastian/comparator.
+ * This file is part of the Comparator package.
  *
  * (c) Sebastian Bergmann <sebastian@phpunit.de>
  *
@@ -14,16 +14,9 @@ use PHPUnit\Framework\TestCase;
 
 /**
  * @coversDefaultClass SebastianBergmann\Comparator\ArrayComparator
- *
- * @uses SebastianBergmann\Comparator\Comparator
- * @uses SebastianBergmann\Comparator\Factory
- * @uses SebastianBergmann\Comparator\ComparisonFailure
  */
 class ArrayComparatorTest extends TestCase
 {
-    /**
-     * @var ArrayComparator
-     */
     private $comparator;
 
     protected function setUp()

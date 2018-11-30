@@ -18,12 +18,12 @@ use Temando\Shipping\Model\Shipment\ShipmentItemInterface;
 use Temando\Shipping\Model\Shipment\ShipmentItemInterfaceFactory;
 use Temando\Shipping\Model\ShipmentInterface;
 use Temando\Shipping\Model\ShipmentInterfaceFactory;
-use Temando\Shipping\Rest\Response\DataObject\Shipment;
-use Temando\Shipping\Rest\Response\Fields\Generic\Documentation;
-use Temando\Shipping\Rest\Response\Fields\Generic\Item;
-use Temando\Shipping\Rest\Response\Fields\Generic\Package;
-use Temando\Shipping\Rest\Response\Fields\LocationAttributes;
-use Temando\Shipping\Rest\Response\Fields\Shipment\Fulfill;
+use Temando\Shipping\Rest\Response\Type\Generic\Documentation;
+use Temando\Shipping\Rest\Response\Type\Generic\Item;
+use Temando\Shipping\Rest\Response\Type\Generic\Location;
+use Temando\Shipping\Rest\Response\Type\Generic\Package;
+use Temando\Shipping\Rest\Response\Type\Shipment\Attributes\Fulfill;
+use Temando\Shipping\Rest\Response\Type\ShipmentResponseType;
 
 /**
  * Map API data to application data object
@@ -108,14 +108,13 @@ class ShipmentResponseMapper
     }
 
     /**
-     * @param LocationAttributes $apiLocation
+     * @param Location $apiLocation
      * @return LocationInterface
      */
-    private function mapLocation(LocationAttributes $apiLocation)
+    private function mapLocation(Location $apiLocation)
     {
         $contact = $apiLocation->getContact();
         $location = $this->locationFactory->create(['data' => [
-            LocationInterface::NAME => '',
             LocationInterface::COMPANY => $contact ? $contact->getOrganisationName() : '',
             LocationInterface::PERSON_FIRST_NAME => $contact ? $contact->getPersonFirstName() : '',
             LocationInterface::PERSON_LAST_NAME => $contact ? $contact->getPersonLastName() : '',
@@ -126,7 +125,7 @@ class ShipmentResponseMapper
             LocationInterface::POSTAL_CODE => $apiLocation->getAddress()->getPostalCode(),
             LocationInterface::REGION_CODE => $apiLocation->getAddress()->getAdministrativeArea(),
             LocationInterface::COUNTRY_CODE => $apiLocation->getAddress()->getCountryCode(),
-            LocationInterface::TYPE => $apiLocation->getType(),
+            LocationInterface::TYPE => $apiLocation->getAddress()->getType(),
         ]]);
 
         return $location;
@@ -163,10 +162,10 @@ class ShipmentResponseMapper
     }
 
     /**
-     * @param Shipment $apiShipment
+     * @param ShipmentResponseType $apiShipment
      * @return DocumentationInterface[]
      */
-    private function mapDocumentation(Shipment $apiShipment)
+    private function mapDocumentation(ShipmentResponseType $apiShipment)
     {
         // collect documentation from shipment and packages
         $apiDocs = $apiShipment->getAttributes()->getDocumentation();
@@ -215,11 +214,11 @@ class ShipmentResponseMapper
     }
 
     /**
-     * @param Shipment $apiShipment
+     * @param ShipmentResponseType | null $apiShipment
      *
      * @return ExportDeclarationInterface
      */
-    private function mapExportDeclaration(Shipment $apiShipment)
+    private function mapExportDeclaration(ShipmentResponseType $apiShipment)
     {
         $apiDeclaration = $apiShipment->getAttributes()->getExportDeclaration();
         if (!$apiDeclaration) {
@@ -331,10 +330,10 @@ class ShipmentResponseMapper
     }
 
     /**
-     * @param Shipment $apiShipment
+     * @param ShipmentResponseType $apiShipment
      * @return ShipmentInterface
      */
-    public function map(Shipment $apiShipment)
+    public function map(ShipmentResponseType $apiShipment)
     {
         $shipmentId          = $apiShipment->getId();
         $shipmentOrderId     = $apiShipment->getAttributes()->getOrderId();

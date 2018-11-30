@@ -8,7 +8,6 @@ namespace Magento\Checkout\Api;
 /**
  * Interface for quote totals calculation
  * @api
- * @since 100.0.2
  */
 interface TotalsInformationManagementInterface
 {

@@ -27,11 +27,11 @@ final class GithubClient implements GithubClientInterface
         $result = @file_get_contents(
             $url,
             false,
-            stream_context_create([
-                'http' => [
+            stream_context_create(array(
+                'http' => array(
                     'header' => 'User-Agent: FriendsOfPHP/PHP-CS-Fixer',
-                ],
-            ])
+                ),
+            ))
         );
 
         if (false === $result) {

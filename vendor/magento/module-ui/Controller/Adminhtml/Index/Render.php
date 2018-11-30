@@ -5,27 +5,16 @@
  */
 namespace Magento\Ui\Controller\Adminhtml\Index;
 
-use Magento\Backend\App\Action\Context;
 use Magento\Ui\Controller\Adminhtml\AbstractAction;
-use Magento\Framework\View\Element\UiComponentFactory;
 use Magento\Framework\View\Element\UiComponentInterface;
-use Magento\Ui\Model\UiComponentTypeResolver;
+use Magento\Backend\App\Action\Context;
+use Magento\Framework\View\Element\UiComponentFactory;
 use Psr\Log\LoggerInterface;
 use Magento\Framework\Escaper;
 use Magento\Framework\Controller\Result\JsonFactory;
 
-/**
- * Render a component.
- *
- * @SuppressWarnings(PHPMD.AllPurposeAction)
- */
 class Render extends AbstractAction
 {
-    /**
-     * @var \Magento\Ui\Model\UiComponentTypeResolver
-     */
-    private $contentTypeResolver;
-
     /**
      * @var JsonFactory
      */
@@ -44,7 +33,6 @@ class Render extends AbstractAction
     /**
      * @param Context $context
      * @param UiComponentFactory $factory
-     * @param UiComponentTypeResolver $contentTypeResolver
      * @param JsonFactory|null $resultJsonFactory
      * @param Escaper|null $escaper
      * @param LoggerInterface|null $logger
@@ -52,13 +40,11 @@ class Render extends AbstractAction
     public function __construct(
         Context $context,
         UiComponentFactory $factory,
-        UiComponentTypeResolver $contentTypeResolver,
         JsonFactory $resultJsonFactory = null,
         Escaper $escaper = null,
         LoggerInterface $logger = null
     ) {
         parent::__construct($context, $factory);
-        $this->contentTypeResolver = $contentTypeResolver;
         $this->resultJsonFactory = $resultJsonFactory ?: \Magento\Framework\App\ObjectManager::getInstance()
             ->get(\Magento\Framework\Controller\Result\JsonFactory::class);
         $this->escaper = $escaper ?: \Magento\Framework\App\ObjectManager::getInstance()
@@ -68,24 +54,27 @@ class Render extends AbstractAction
     }
 
     /**
-     * @inheritdoc
+     * Action for AJAX request.
+     *
+     * @return void|\Magento\Framework\Controller\ResultInterface
      */
     public function execute()
     {
         if ($this->_request->getParam('namespace') === null) {
             $this->_redirect('admin/noroute');
-
             return;
         }
 
         try {
-            $component = $this->factory->create($this->getRequest()->getParam('namespace'));
+            $component = $this->factory->create($this->_request->getParam('namespace'));
             if ($this->validateAclResource($component->getContext()->getDataProvider()->getConfigData())) {
                 $this->prepareComponent($component);
-                $this->getResponse()->appendBody((string)$component->render());
 
-                $contentType = $this->contentTypeResolver->resolve($component->getContext());
-                $this->getResponse()->setHeader('Content-Type', $contentType, true);
+                if ($component->getContext()->getAcceptType() === 'json') {
+                    $this->_response->setHeader('Content-Type', 'application/json');
+                }
+
+                $this->_response->appendBody((string) $component->render());
             }
         } catch (\Magento\Framework\Exception\LocalizedException $e) {
             $this->logger->critical($e);
@@ -100,7 +89,6 @@ class Render extends AbstractAction
                 \Zend\Http\AbstractMessage::VERSION_11,
                 'Bad Request'
             );
-
             return $resultJson->setData($result);
         } catch (\Exception $e) {
             $this->logger->critical($e);
@@ -115,13 +103,12 @@ class Render extends AbstractAction
                 \Zend\Http\AbstractMessage::VERSION_11,
                 'Bad Request'
             );
-
             return $resultJson->setData($result);
         }
     }
 
     /**
-     * Call prepare method in the component UI
+     * Call prepare method in the component UI.
      *
      * @param UiComponentInterface $component
      * @return void
@@ -136,7 +123,7 @@ class Render extends AbstractAction
     }
 
     /**
-     * Optionally validate ACL resource of components with a DataSource/DataProvider
+     * Optionally validate ACL resource of components with a DataSource/DataProvider.
      *
      * @param mixed $dataProviderConfigData
      * @return bool

@@ -3,18 +3,15 @@
  * Copyright © Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
-declare(strict_types=1);
 
 namespace Magento\Swatches\Model;
 
 use Magento\Eav\Api\Data\AttributeInterface;
 use Magento\Framework\Serialize\Serializer\Json;
 
-/**
- * Class contains swatch attribute helper methods.
- */
 class SwatchAttributeType
 {
+
     /**
      * @var Json
      */
@@ -28,10 +25,11 @@ class SwatchAttributeType
     private $eavAttributeAdditionalDataKeys = [
         Swatch::SWATCH_INPUT_TYPE_KEY,
         'update_product_preview_image',
-        'use_product_image_for_swatch',
+        'use_product_image_for_swatch'
     ];
 
     /**
+     * SwatchAttributeType constructor.
      * @param Json $serializer
      */
     public function __construct(Json $serializer)
@@ -40,49 +38,39 @@ class SwatchAttributeType
     }
 
     /**
-     * Checks if attribute is Textual Swatch.
-     *
      * @param AttributeInterface $productAttribute
      * @return bool
      */
-    public function isTextSwatch(AttributeInterface $productAttribute): bool
+    public function isTextSwatch(AttributeInterface $productAttribute)
     {
         $this->populateAdditionalDataEavAttribute($productAttribute);
-
         return $productAttribute->getData(Swatch::SWATCH_INPUT_TYPE_KEY) === Swatch::SWATCH_INPUT_TYPE_TEXT;
     }
 
     /**
-     * Checks if attribute is Visual Swatch.
-     *
      * @param AttributeInterface $productAttribute
      * @return bool
      */
-    public function isVisualSwatch(AttributeInterface $productAttribute): bool
+    public function isVisualSwatch(AttributeInterface $productAttribute)
     {
         $this->populateAdditionalDataEavAttribute($productAttribute);
-
         return $productAttribute->getData(Swatch::SWATCH_INPUT_TYPE_KEY) === Swatch::SWATCH_INPUT_TYPE_VISUAL;
     }
 
     /**
-     * Checks if an attribute is Swatch.
-     *
      * @param AttributeInterface $productAttribute
      * @return bool
      */
-    public function isSwatchAttribute(AttributeInterface $productAttribute): bool
+    public function isSwatchAttribute(AttributeInterface $productAttribute)
     {
         return $this->isTextSwatch($productAttribute) || $this->isVisualSwatch($productAttribute);
     }
 
     /**
-     * Unserializes attribute additional data and sets it to attribute object.
-     *
      * @param AttributeInterface $attribute
      * @return void
      */
-    private function populateAdditionalDataEavAttribute(AttributeInterface $attribute): void
+    private function populateAdditionalDataEavAttribute(AttributeInterface $attribute)
     {
         if (!$attribute->hasData(Swatch::SWATCH_INPUT_TYPE_KEY)) {
             $serializedAdditionalData = $attribute->getData('additional_data');

@@ -7,7 +7,6 @@ namespace Magento\Framework\Search\Request;
 
 /**
  * @api
- * @since 100.0.2
  */
 class Binder
 {

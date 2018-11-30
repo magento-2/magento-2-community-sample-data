@@ -35,6 +35,15 @@ class DispatchRepositoryTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
+     * Delegate provisioning of test data to separate class
+     * @return string[]
+     */
+    public function getCompletionsResponseDataProvider()
+    {
+        return RestResponseProvider::getCompletionsResponseDataProvider();
+    }
+
+    /**
      * Set valid session token
      */
     protected function setUp()
@@ -53,6 +62,39 @@ class DispatchRepositoryTest extends \PHPUnit\Framework\TestCase
         $adminSession->unsetData(AuthenticationInterface::DATA_KEY_SESSION_TOKEN_EXPIRY);
 
         parent::tearDown();
+    }
+
+    /**
+     * @test
+     */
+    public function apiListingAccessFails()
+    {
+        $testAdapter = new \Zend\Http\Client\Adapter\Test();
+        $testAdapter->setNextRequestWillFail(true);
+
+        $zendClient = new \Zend\Http\Client();
+        $zendClient->setAdapter($testAdapter);
+
+        $httpClient = Bootstrap::getObjectManager()->create(\Temando\Shipping\Webservice\HttpClient::class, [
+            'client' => $zendClient,
+        ]);
+
+        $clientFactoryMock = $this->getMockBuilder(HttpClientInterfaceFactory::class)
+            ->disableOriginalConstructor()
+            ->setMethods(['create'])
+            ->getMock();
+        $clientFactoryMock
+            ->expects($this->any())
+            ->method('create')
+            ->willReturn($httpClient);
+        Bootstrap::getObjectManager()->addSharedInstance($clientFactoryMock, HttpClientInterfaceFactory::class);
+
+        /** @var DispatchRepositoryInterface $dispatchRepository */
+        $dispatchRepository = Bootstrap::getObjectManager()->get(DispatchRepositoryInterface::class);
+        $items = $dispatchRepository->getList();
+
+        $this->assertInternalType('array', $items);
+        $this->assertCount(0, $items);
     }
 
     /**
@@ -86,6 +128,46 @@ class DispatchRepositoryTest extends \PHPUnit\Framework\TestCase
         /** @var DispatchRepositoryInterface $dispatchRepository */
         $dispatchRepository = Bootstrap::getObjectManager()->get(DispatchRepositoryInterface::class);
         $dispatchRepository->getById('foo');
+    }
+
+    /**
+     * @test
+     * @magentoConfigFixture default/carriers/temando/session_endpoint https://auth.temando.io/v1/
+     * @magentoConfigFixture default/carriers/temando/sovereign_endpoint https://foo.temando.io/v1/
+     */
+    public function apiListingReturnsError()
+    {
+        $responseBody = '{"message":"Internal server error"}';
+        $testResponse = new \Zend\Http\Response();
+        $testResponse->setStatusCode(\Zend\Http\Response::STATUS_CODE_500);
+        $testResponse->setContent($responseBody);
+
+        $testAdapter = new \Zend\Http\Client\Adapter\Test();
+        $testAdapter->setResponse($testResponse);
+
+        $zendClient = new \Zend\Http\Client();
+        $zendClient->setAdapter($testAdapter);
+
+        $httpClient = Bootstrap::getObjectManager()->create(\Temando\Shipping\Webservice\HttpClient::class, [
+            'client' => $zendClient,
+        ]);
+
+        $clientFactoryMock = $this->getMockBuilder(HttpClientInterfaceFactory::class)
+            ->disableOriginalConstructor()
+            ->setMethods(['create'])
+            ->getMock();
+        $clientFactoryMock
+            ->expects($this->any())
+            ->method('create')
+            ->willReturn($httpClient);
+        Bootstrap::getObjectManager()->addSharedInstance($clientFactoryMock, HttpClientInterfaceFactory::class);
+
+        /** @var DispatchRepositoryInterface $dispatchRepository */
+        $dispatchRepository = Bootstrap::getObjectManager()->get(DispatchRepositoryInterface::class);
+        $items = $dispatchRepository->getList();
+
+        $this->assertInternalType('array', $items);
+        $this->assertCount(0, $items);
     }
 
     /**
@@ -130,6 +212,46 @@ class DispatchRepositoryTest extends \PHPUnit\Framework\TestCase
      * @test
      * @magentoConfigFixture default/carriers/temando/session_endpoint https://auth.temando.io/v1/
      * @magentoConfigFixture default/carriers/temando/sovereign_endpoint https://foo.temando.io/v1/
+     */
+    public function apiListingReturnsEmptyResult()
+    {
+        $responseBody = '{"data":[]}';
+        $testResponse = new \Zend\Http\Response();
+        $testResponse->setStatusCode(\Zend\Http\Response::STATUS_CODE_200);
+        $testResponse->setContent($responseBody);
+
+        $testAdapter = new \Zend\Http\Client\Adapter\Test();
+        $testAdapter->setResponse($testResponse);
+
+        $zendClient = new \Zend\Http\Client();
+        $zendClient->setAdapter($testAdapter);
+
+        $httpClient = Bootstrap::getObjectManager()->create(\Temando\Shipping\Webservice\HttpClient::class, [
+            'client' => $zendClient,
+        ]);
+
+        $clientFactoryMock = $this->getMockBuilder(HttpClientInterfaceFactory::class)
+            ->disableOriginalConstructor()
+            ->setMethods(['create'])
+            ->getMock();
+        $clientFactoryMock
+            ->expects($this->any())
+            ->method('create')
+            ->willReturn($httpClient);
+        Bootstrap::getObjectManager()->addSharedInstance($clientFactoryMock, HttpClientInterfaceFactory::class);
+
+        /** @var DispatchRepositoryInterface $dispatchRepository */
+        $dispatchRepository = Bootstrap::getObjectManager()->get(DispatchRepositoryInterface::class);
+        $items = $dispatchRepository->getList();
+
+        $this->assertInternalType('array', $items);
+        $this->assertCount(0, $items);
+    }
+
+    /**
+     * @test
+     * @magentoConfigFixture default/carriers/temando/session_endpoint https://auth.temando.io/v1/
+     * @magentoConfigFixture default/carriers/temando/sovereign_endpoint https://foo.temando.io/v1/
      * @expectedException \Magento\Framework\Exception\NoSuchEntityException
      */
     public function apiItemReturnsEmptyResult()
@@ -162,6 +284,48 @@ class DispatchRepositoryTest extends \PHPUnit\Framework\TestCase
         /** @var DispatchRepositoryInterface $dispatchRepository */
         $dispatchRepository = Bootstrap::getObjectManager()->get(DispatchRepositoryInterface::class);
         $dispatchRepository->getById('foo');
+    }
+
+    /**
+     * @test
+     * @dataProvider getCompletionsResponseDataProvider
+     * @magentoConfigFixture default/carriers/temando/session_endpoint https://auth.temando.io/v1/
+     * @magentoConfigFixture default/carriers/temando/sovereign_endpoint https://foo.temando.io/v1/
+     * @param string $responseBody
+     */
+    public function getList($responseBody)
+    {
+        $testResponse = new \Zend\Http\Response();
+        $testResponse->setStatusCode(\Zend\Http\Response::STATUS_CODE_200);
+        $testResponse->setContent($responseBody);
+
+        $testAdapter = new \Zend\Http\Client\Adapter\Test();
+        $testAdapter->setResponse($testResponse);
+
+        $zendClient = new \Zend\Http\Client();
+        $zendClient->setAdapter($testAdapter);
+
+        $httpClient = Bootstrap::getObjectManager()->create(\Temando\Shipping\Webservice\HttpClient::class, [
+            'client' => $zendClient,
+        ]);
+
+        $clientFactoryMock = $this->getMockBuilder(HttpClientInterfaceFactory::class)
+            ->disableOriginalConstructor()
+            ->setMethods(['create'])
+            ->getMock();
+        $clientFactoryMock
+            ->expects($this->any())
+            ->method('create')
+            ->willReturn($httpClient);
+        Bootstrap::getObjectManager()->addSharedInstance($clientFactoryMock, HttpClientInterfaceFactory::class);
+
+        /** @var DispatchRepositoryInterface $dispatchRepository */
+        $dispatchRepository = Bootstrap::getObjectManager()->get(DispatchRepositoryInterface::class);
+        $items = $dispatchRepository->getList();
+
+        $this->assertInternalType('array', $items);
+        $this->assertCount(3, $items);
+        $this->assertContainsOnly(DispatchInterface::class, $items);
     }
 
     /**

@@ -12,7 +12,7 @@ class Grid extends \Magento\Backend\Block\Widget\Grid\Extended
 {
     /**
      * @var \Magento\CheckoutAgreements\Model\ResourceModel\Agreement\CollectionFactory
-     * @deprecated 100.2.2
+     * @deprecated
      */
     protected $_collectionFactory;
 

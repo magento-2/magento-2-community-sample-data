@@ -13,7 +13,6 @@ use Magento\Framework\App\ObjectManager;
  *
  * @SuppressWarnings(PHPMD.NumberOfChildren)
  * @api
- * @since 100.0.2
  */
 class Data implements \Magento\Framework\Config\DataInterface
 {

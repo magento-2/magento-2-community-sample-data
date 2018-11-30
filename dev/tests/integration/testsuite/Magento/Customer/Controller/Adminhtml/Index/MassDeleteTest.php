@@ -13,7 +13,6 @@ use Magento\Customer\Api\Data\CustomerInterface;
 use PHPUnit\Framework\Constraint\Constraint;
 use Magento\Framework\Message\MessageInterface;
 use Magento\TestFramework\Helper\Bootstrap;
-use Magento\Framework\App\Request\Http as HttpRequest;
 use Magento\TestFramework\TestCase\AbstractBackendController;
 
 /**
@@ -33,20 +32,12 @@ class MassDeleteTest extends AbstractBackendController
      */
     private $baseControllerUrl = 'http://localhost/index.php/backend/customer/index/index';
 
-    /**
-     * @inheritDoc
-     *
-     * @throws \Magento\Framework\Exception\AuthenticationException
-     */
     protected function setUp()
     {
         parent::setUp();
         $this->customerRepository = Bootstrap::getObjectManager()->get(CustomerRepositoryInterface::class);
     }
 
-    /**
-     * @inheritDoc
-     */
     protected function tearDown()
     {
         /**
@@ -110,12 +101,17 @@ class MassDeleteTest extends AbstractBackendController
      */
     private function massDeleteAssertions($ids, Constraint $constraint, $messageType)
     {
+        /** @var \Magento\Framework\Data\Form\FormKey $formKey */
+        $formKey = $this->_objectManager->get(\Magento\Framework\Data\Form\FormKey::class);
+
         $requestData = [
             'selected' => $ids,
             'namespace' => 'customer_listing',
+            'form_key' => $formKey->getFormKey()
         ];
 
-        $this->getRequest()->setParams($requestData)->setMethod(HttpRequest::METHOD_POST);
+        $this->getRequest()->setParams($requestData);
+        $this->getRequest()->setMethod('POST');
         $this->dispatch('backend/customer/index/massDelete');
         $this->assertSessionMessages(
             $constraint,
@@ -134,7 +130,7 @@ class MassDeleteTest extends AbstractBackendController
         return [
             [
                 'ids' => [],
-                'constraint' => self::equalTo(['An item needs to be selected. Select and try again.']),
+                'constraint' => self::equalTo(['Please select item(s).']),
                 'messageType' => MessageInterface::TYPE_ERROR,
             ],
             [
@@ -144,7 +140,7 @@ class MassDeleteTest extends AbstractBackendController
             ],
             [
                 'ids' => null,
-                'constraint' => self::equalTo(['An item needs to be selected. Select and try again.']),
+                'constraint' => self::equalTo(['Please select item(s).']),
                 'messageType' => MessageInterface::TYPE_ERROR,
             ]
         ];

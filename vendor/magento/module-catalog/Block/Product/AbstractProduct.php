@@ -8,7 +8,7 @@ namespace Magento\Catalog\Block\Product;
 /**
  * Class AbstractProduct
  * @api
- * @deprecated 102.0.0
+ * @deprecated 101.1.0
  * @SuppressWarnings(PHPMD.NumberOfChildren)
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  * @since 100.0.2
@@ -99,7 +99,7 @@ class AbstractProduct extends \Magento\Framework\View\Element\Template
 
     /**
      * @var ImageBuilder
-     * @since 102.0.0
+     * @since 101.1.0
      */
     protected $imageBuilder;
 
@@ -510,6 +510,9 @@ class AbstractProduct extends \Magento\Framework\View\Element\Template
      */
     public function getImage($product, $imageId, $attributes = [])
     {
-        return $this->imageBuilder->create($product, $imageId, $attributes);
+        return $this->imageBuilder->setProduct($product)
+            ->setImageId($imageId)
+            ->setAttributes($attributes)
+            ->create();
     }
 }

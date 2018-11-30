@@ -21,39 +21,36 @@ class Container extends \Symfony\Component\DependencyInjection\Dump\AbstractCont
     private $parameters;
     private $targetDirs = array();
 
-    /**
-     * @internal but protected for BC on cache:clear
-     */
-    protected $privates = array();
-
     public function __construct()
     {
-        $this->services = $this->privates = array();
+        $this->services = array();
 
         $this->aliases = array();
     }
 
-    public function reset()
-    {
-        $this->privates = array();
-        parent::reset();
-    }
-
+    /**
+     * {@inheritdoc}
+     */
     public function compile()
     {
         throw new LogicException('You cannot compile a dumped container that was already compiled.');
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function isCompiled()
     {
         return true;
     }
 
-    public function getRemovedIds()
+    /**
+     * {@inheritdoc}
+     */
+    public function isFrozen()
     {
-        return array(
-            'Psr\\Container\\ContainerInterface' => true,
-            'Symfony\\Component\\DependencyInjection\\ContainerInterface' => true,
-        );
+        @trigger_error(sprintf('The %s() method is deprecated since Symfony 3.3 and will be removed in 4.0. Use the isCompiled() method instead.', __METHOD__), E_USER_DEPRECATED);
+
+        return true;
     }
 }

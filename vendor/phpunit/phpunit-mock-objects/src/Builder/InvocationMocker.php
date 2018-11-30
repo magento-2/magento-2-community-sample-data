@@ -7,14 +7,6 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-namespace PHPUnit\Framework\MockObject\Builder;
-
-use PHPUnit\Framework\Constraint\Constraint;
-use PHPUnit\Framework\MockObject\Matcher;
-use PHPUnit\Framework\MockObject\Matcher\Invocation;
-use PHPUnit\Framework\MockObject\RuntimeException;
-use PHPUnit\Framework\MockObject\Stub;
-use PHPUnit\Framework\MockObject\Stub\MatcherCollection;
 
 /**
  * Builder for mocked or stubbed invocations.
@@ -22,19 +14,19 @@ use PHPUnit\Framework\MockObject\Stub\MatcherCollection;
  * Provides methods for building expectations without having to resort to
  * instantiating the various matchers manually. These methods also form a
  * more natural way of reading the expectation. This class should be together
- * with the test case PHPUnit\Framework\MockObject\TestCase.
+ * with the test case PHPUnit_Framework_MockObject_TestCase.
  */
-class InvocationMocker implements MethodNameMatch
+class PHPUnit_Framework_MockObject_Builder_InvocationMocker implements PHPUnit_Framework_MockObject_Builder_MethodNameMatch
 {
     /**
-     * @var MatcherCollection
+     * @var PHPUnit_Framework_MockObject_Stub_MatcherCollection
      */
-    private $collection;
+    protected $collection;
 
     /**
-     * @var Matcher
+     * @var PHPUnit_Framework_MockObject_Matcher
      */
-    private $matcher;
+    protected $matcher;
 
     /**
      * @var string[]
@@ -42,14 +34,16 @@ class InvocationMocker implements MethodNameMatch
     private $configurableMethods = [];
 
     /**
-     * @param MatcherCollection $collection
-     * @param Invocation        $invocationMatcher
-     * @param array             $configurableMethods
+     * @param PHPUnit_Framework_MockObject_Stub_MatcherCollection $collection
+     * @param PHPUnit_Framework_MockObject_Matcher_Invocation     $invocationMatcher
+     * @param array                                               $configurableMethods
      */
-    public function __construct(MatcherCollection $collection, Invocation $invocationMatcher, array $configurableMethods)
+    public function __construct(PHPUnit_Framework_MockObject_Stub_MatcherCollection $collection, PHPUnit_Framework_MockObject_Matcher_Invocation $invocationMatcher, array $configurableMethods)
     {
         $this->collection = $collection;
-        $this->matcher    = new Matcher($invocationMatcher);
+        $this->matcher    = new PHPUnit_Framework_MockObject_Matcher(
+            $invocationMatcher
+        );
 
         $this->collection->addMatcher($this->matcher);
 
@@ -57,7 +51,7 @@ class InvocationMocker implements MethodNameMatch
     }
 
     /**
-     * @return Matcher
+     * @return PHPUnit_Framework_MockObject_Matcher
      */
     public function getMatcher()
     {
@@ -67,7 +61,7 @@ class InvocationMocker implements MethodNameMatch
     /**
      * @param mixed $id
      *
-     * @return InvocationMocker
+     * @return PHPUnit_Framework_MockObject_Builder_InvocationMocker
      */
     public function id($id)
     {
@@ -77,13 +71,13 @@ class InvocationMocker implements MethodNameMatch
     }
 
     /**
-     * @param Stub $stub
+     * @param PHPUnit_Framework_MockObject_Stub $stub
      *
-     * @return InvocationMocker
+     * @return PHPUnit_Framework_MockObject_Builder_InvocationMocker
      */
-    public function will(Stub $stub)
+    public function will(PHPUnit_Framework_MockObject_Stub $stub)
     {
-        $this->matcher->setStub($stub);
+        $this->matcher->stub = $stub;
 
         return $this;
     }
@@ -92,17 +86,15 @@ class InvocationMocker implements MethodNameMatch
      * @param mixed $value
      * @param mixed $nextValues, ...
      *
-     * @return InvocationMocker
+     * @return PHPUnit_Framework_MockObject_Builder_InvocationMocker
      */
     public function willReturn($value, ...$nextValues)
     {
-        if (\count($nextValues) === 0) {
-            $stub = new Stub\ReturnStub($value);
-        } else {
-            $stub = new Stub\ConsecutiveCalls(
-                \array_merge([$value], $nextValues)
+        $stub = count($nextValues) === 0 ?
+            new PHPUnit_Framework_MockObject_Stub_Return($value) :
+            new PHPUnit_Framework_MockObject_Stub_ConsecutiveCalls(
+               array_merge([$value], $nextValues)
             );
-        }
 
         return $this->will($stub);
     }
@@ -110,11 +102,11 @@ class InvocationMocker implements MethodNameMatch
     /**
      * @param mixed $reference
      *
-     * @return InvocationMocker
+     * @return PHPUnit_Framework_MockObject_Builder_InvocationMocker
      */
     public function willReturnReference(&$reference)
     {
-        $stub = new Stub\ReturnReference($reference);
+        $stub = new PHPUnit_Framework_MockObject_Stub_ReturnReference($reference);
 
         return $this->will($stub);
     }
@@ -122,11 +114,13 @@ class InvocationMocker implements MethodNameMatch
     /**
      * @param array $valueMap
      *
-     * @return InvocationMocker
+     * @return PHPUnit_Framework_MockObject_Builder_InvocationMocker
      */
     public function willReturnMap(array $valueMap)
     {
-        $stub = new Stub\ReturnValueMap($valueMap);
+        $stub = new PHPUnit_Framework_MockObject_Stub_ReturnValueMap(
+            $valueMap
+        );
 
         return $this->will($stub);
     }
@@ -134,11 +128,13 @@ class InvocationMocker implements MethodNameMatch
     /**
      * @param mixed $argumentIndex
      *
-     * @return InvocationMocker
+     * @return PHPUnit_Framework_MockObject_Builder_InvocationMocker
      */
     public function willReturnArgument($argumentIndex)
     {
-        $stub = new Stub\ReturnArgument($argumentIndex);
+        $stub = new PHPUnit_Framework_MockObject_Stub_ReturnArgument(
+            $argumentIndex
+        );
 
         return $this->will($stub);
     }
@@ -146,21 +142,23 @@ class InvocationMocker implements MethodNameMatch
     /**
      * @param callable $callback
      *
-     * @return InvocationMocker
+     * @return PHPUnit_Framework_MockObject_Builder_InvocationMocker
      */
     public function willReturnCallback($callback)
     {
-        $stub = new Stub\ReturnCallback($callback);
+        $stub = new PHPUnit_Framework_MockObject_Stub_ReturnCallback(
+            $callback
+        );
 
         return $this->will($stub);
     }
 
     /**
-     * @return InvocationMocker
+     * @return PHPUnit_Framework_MockObject_Builder_InvocationMocker
      */
     public function willReturnSelf()
     {
-        $stub = new Stub\ReturnSelf;
+        $stub = new PHPUnit_Framework_MockObject_Stub_ReturnSelf;
 
         return $this->will($stub);
     }
@@ -168,23 +166,23 @@ class InvocationMocker implements MethodNameMatch
     /**
      * @param mixed $values, ...
      *
-     * @return InvocationMocker
+     * @return PHPUnit_Framework_MockObject_Builder_InvocationMocker
      */
     public function willReturnOnConsecutiveCalls(...$values)
     {
-        $stub = new Stub\ConsecutiveCalls($values);
+        $stub = new PHPUnit_Framework_MockObject_Stub_ConsecutiveCalls($values);
 
         return $this->will($stub);
     }
 
     /**
-     * @param \Exception $exception
+     * @param Exception $exception
      *
-     * @return InvocationMocker
+     * @return PHPUnit_Framework_MockObject_Builder_InvocationMocker
      */
-    public function willThrowException(\Exception $exception)
+    public function willThrowException(Exception $exception)
     {
-        $stub = new Stub\Exception($exception);
+        $stub = new PHPUnit_Framework_MockObject_Stub_Exception($exception);
 
         return $this->will($stub);
     }
@@ -192,86 +190,11 @@ class InvocationMocker implements MethodNameMatch
     /**
      * @param mixed $id
      *
-     * @return InvocationMocker
+     * @return PHPUnit_Framework_MockObject_Builder_InvocationMocker
      */
     public function after($id)
     {
-        $this->matcher->setAfterMatchBuilderId($id);
-
-        return $this;
-    }
-
-    /**
-     * @param array ...$arguments
-     *
-     * @return InvocationMocker
-     *
-     * @throws RuntimeException
-     */
-    public function with(...$arguments)
-    {
-        $this->canDefineParameters();
-
-        $this->matcher->setParametersMatcher(new Matcher\Parameters($arguments));
-
-        return $this;
-    }
-
-    /**
-     * @param array ...$arguments
-     *
-     * @return InvocationMocker
-     *
-     * @throws RuntimeException
-     */
-    public function withConsecutive(...$arguments)
-    {
-        $this->canDefineParameters();
-
-        $this->matcher->setParametersMatcher(new Matcher\ConsecutiveParameters($arguments));
-
-        return $this;
-    }
-
-    /**
-     * @return InvocationMocker
-     *
-     * @throws RuntimeException
-     */
-    public function withAnyParameters()
-    {
-        $this->canDefineParameters();
-
-        $this->matcher->setParametersMatcher(new Matcher\AnyParameters);
-
-        return $this;
-    }
-
-    /**
-     * @param Constraint|string $constraint
-     *
-     * @return InvocationMocker
-     *
-     * @throws RuntimeException
-     */
-    public function method($constraint)
-    {
-        if ($this->matcher->hasMethodNameMatcher()) {
-            throw new RuntimeException(
-                'Method name matcher is already defined, cannot redefine'
-            );
-        }
-
-        if (\is_string($constraint) && !\in_array(\strtolower($constraint), $this->configurableMethods)) {
-            throw new RuntimeException(
-                \sprintf(
-                    'Trying to configure method "%s" which cannot be configured because it does not exist, has not been specified, is final, or is static',
-                    $constraint
-                )
-            );
-        }
-
-        $this->matcher->setMethodNameMatcher(new Matcher\MethodName($constraint));
+        $this->matcher->afterMatchBuilderId = $id;
 
         return $this;
     }
@@ -279,21 +202,88 @@ class InvocationMocker implements MethodNameMatch
     /**
      * Validate that a parameters matcher can be defined, throw exceptions otherwise.
      *
-     * @throws RuntimeException
+     * @throws PHPUnit_Framework_MockObject_RuntimeException
      */
     private function canDefineParameters()
     {
-        if (!$this->matcher->hasMethodNameMatcher()) {
-            throw new RuntimeException(
+        if ($this->matcher->methodNameMatcher === null) {
+            throw new PHPUnit_Framework_MockObject_RuntimeException(
                 'Method name matcher is not defined, cannot define parameter ' .
                 'matcher without one'
             );
         }
 
-        if ($this->matcher->hasParametersMatcher()) {
-            throw new RuntimeException(
+        if ($this->matcher->parametersMatcher !== null) {
+            throw new PHPUnit_Framework_MockObject_RuntimeException(
                 'Parameter matcher is already defined, cannot redefine'
             );
         }
+    }
+
+    /**
+     * @param array ...$arguments
+     *
+     * @return PHPUnit_Framework_MockObject_Builder_InvocationMocker
+     */
+    public function with(...$arguments)
+    {
+        $this->canDefineParameters();
+
+        $this->matcher->parametersMatcher = new PHPUnit_Framework_MockObject_Matcher_Parameters($arguments);
+
+        return $this;
+    }
+
+    /**
+     * @param array ...$arguments
+     *
+     * @return PHPUnit_Framework_MockObject_Builder_InvocationMocker
+     */
+    public function withConsecutive(...$arguments)
+    {
+        $this->canDefineParameters();
+
+        $this->matcher->parametersMatcher = new PHPUnit_Framework_MockObject_Matcher_ConsecutiveParameters($arguments);
+
+        return $this;
+    }
+
+    /**
+     * @return PHPUnit_Framework_MockObject_Builder_InvocationMocker
+     */
+    public function withAnyParameters()
+    {
+        $this->canDefineParameters();
+
+        $this->matcher->parametersMatcher = new PHPUnit_Framework_MockObject_Matcher_AnyParameters;
+
+        return $this;
+    }
+
+    /**
+     * @param PHPUnit_Framework_Constraint|string $constraint
+     *
+     * @return PHPUnit_Framework_MockObject_Builder_InvocationMocker
+     */
+    public function method($constraint)
+    {
+        if ($this->matcher->methodNameMatcher !== null) {
+            throw new PHPUnit_Framework_MockObject_RuntimeException(
+                'Method name matcher is already defined, cannot redefine'
+            );
+        }
+
+        if (is_string($constraint) && !in_array(strtolower($constraint), $this->configurableMethods)) {
+            throw new PHPUnit_Framework_MockObject_RuntimeException(
+                sprintf(
+                    'Trying to configure method "%s" which cannot be configured because it does not exist, has not been specified, is final, or is static',
+                    $constraint
+                )
+            );
+        }
+
+        $this->matcher->methodNameMatcher = new PHPUnit_Framework_MockObject_Matcher_MethodName($constraint);
+
+        return $this;
     }
 }

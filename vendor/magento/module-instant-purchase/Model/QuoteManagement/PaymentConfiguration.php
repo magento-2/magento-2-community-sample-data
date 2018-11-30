@@ -15,7 +15,6 @@ use Magento\Vault\Model\Ui\VaultConfigProvider;
  * Configure payment method for quote.
  *
  * @api May be used for pluginization.
- * @since 100.2.0
  */
 class PaymentConfiguration
 {
@@ -43,7 +42,6 @@ class PaymentConfiguration
      * @param PaymentTokenInterface $paymentToken
      * @return Quote
      * @throws LocalizedException if payment method can not be configured for a quote.
-     * @since 100.2.0
      */
     public function configurePayment(
         Quote $quote,

@@ -9,7 +9,6 @@ namespace Magento\Framework\Config;
  * Config validation state interface.
  *
  * @api
- * @since 100.0.2
  */
 interface ValidationStateInterface
 {

@@ -12,7 +12,6 @@ use Magento\Framework\View\Element\Message\InterpretationStrategyInterface;
  * Shopping cart validation messages block
  *
  * @api
- * @since 100.0.2
  */
 class ValidationMessages extends \Magento\Framework\View\Element\Messages
 {
@@ -85,7 +84,7 @@ class ValidationMessages extends \Magento\Framework\View\Element\Messages
     protected function validateMinimumAmount()
     {
         if (!$this->cartHelper->getQuote()->validateMinimumAmount()) {
-            $this->messageManager->addNoticeMessage($this->getMinimumAmountErrorMessage()->getMessage());
+            $this->messageManager->addNotice($this->getMinimumAmountErrorMessage()->getMessage());
         }
     }
 

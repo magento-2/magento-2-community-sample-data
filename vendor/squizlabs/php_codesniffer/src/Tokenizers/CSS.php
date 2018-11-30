@@ -358,6 +358,7 @@ class CSS extends PHP
                     $finalTokens[($stackPtr + 1)]['content'] = '-'.$finalTokens[($stackPtr + 1)]['content'];
                     unset($finalTokens[$stackPtr]);
                 }//end if
+
                 break;
             case T_COLON:
                 // Only interested in colons that are defining styles.
@@ -390,7 +391,7 @@ class CSS extends PHP
 
                     // Needs to be in the format "url(" for it to be a URL.
                     if ($finalTokens[$x]['code'] !== T_OPEN_PARENTHESIS) {
-                        continue 2;
+                        continue;
                     }
 
                     // Make sure the content isn't empty.
@@ -401,7 +402,7 @@ class CSS extends PHP
                     }
 
                     if ($finalTokens[$y]['code'] === T_CLOSE_PARENTHESIS) {
-                        continue 2;
+                        continue;
                     }
 
                     if (PHP_CODESNIFFER_VERBOSITY > 1) {
@@ -471,6 +472,7 @@ class CSS extends PHP
                         unset($finalTokens[$stackPtr]);
                     }
                 }//end if
+
                 break;
             case T_ASPERAND:
                 $asperandStart = true;

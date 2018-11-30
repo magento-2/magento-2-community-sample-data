@@ -13,18 +13,10 @@ define([
     'jquery',
     'mage/template',
     'Magento_Ui/js/modal/alert',
-    'Magento_Ui/js/form/element/file-uploader',
     'mage/translate',
     'jquery/file-uploader'
-], function ($, mageTemplate, alert, FileUploader) {
+], function ($, mageTemplate, alert) {
     'use strict';
-
-    var fileUploader = new FileUploader({
-        dataScope: '',
-        isMultipleFiles: true
-    });
-
-    fileUploader.initUploader();
 
     $.widget('mage.mediaUploader', {
 
@@ -87,9 +79,10 @@ define([
                     if (data.result && !data.result.error) {
                         self.element.trigger('addItem', data.result);
                     } else {
-                        fileUploader.aggregateError(data.files[0].name, data.result.error);
+                        alert({
+                            content: $.mage.__('We don\'t recognize or support this file extension type.')
+                        });
                     }
-
                     self.element.find('#' + data.fileId).remove();
                 },
 
@@ -115,18 +108,17 @@ define([
                         .delay(2000)
                         .hide('highlight')
                         .remove();
-                },
-
-                stop: fileUploader.uploaderConfig.stop
+                }
             });
 
             this.element.find('input[type=file]').fileupload('option', {
                 process: [{
                     action: 'load',
-                    fileTypes: /^image\/(gif|jpeg|png)$/,
-                    maxFileSize: this.options.maxFileSize
+                    fileTypes: /^image\/(gif|jpeg|png)$/
                 }, {
-                    action: 'resize'
+                    action: 'resize',
+                    maxWidth: this.options.maxWidth,
+                    maxHeight: this.options.maxHeight
                 }, {
                     action: 'save'
                 }]

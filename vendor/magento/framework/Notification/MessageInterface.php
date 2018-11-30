@@ -14,7 +14,6 @@ namespace Magento\Framework\Notification;
  * Interface MessageInterface
  *
  * @api
- * @since 100.0.2
  */
 interface MessageInterface
 {

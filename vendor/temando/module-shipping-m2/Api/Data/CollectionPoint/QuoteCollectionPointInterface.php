@@ -8,9 +8,6 @@ namespace Temando\Shipping\Api\Data\CollectionPoint;
  * Temando Quote Collection Point Interface – Checkout/Quoting
  *
  * @api
- * @deprecated since 1.4.0
- * @see \Temando\Shipping\Api\Data\Delivery\QuoteCollectionPointInterface
- *
  * @package Temando\Shipping\Api
  * @author  Christoph Aßmann <christoph.assmann@netresearch.de>
  * @license http://opensource.org/licenses/osl-3.0.php Open Software License (OSL 3.0)

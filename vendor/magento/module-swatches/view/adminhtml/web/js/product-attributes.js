@@ -208,7 +208,6 @@ define([
                             break;
 
                         case 'textarea':
-                        case 'texteditor':
                             defaultValueTextareaVisibility = true;
                             break;
 
@@ -461,7 +460,6 @@ define([
 
                 tableBody = optionContainer.detach();
             });
-
             editForm.on('afterValidate.error highlight.validate', function () {
                 if (activePanel.hasClass(activePanelClass)) {
                     activePanel.find('table').append(tableBody);

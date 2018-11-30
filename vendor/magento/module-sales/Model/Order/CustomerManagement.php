@@ -27,17 +27,17 @@ class CustomerManagement implements \Magento\Sales\Api\OrderCustomerManagementIn
     protected $accountManagement;
 
     /**
-     * @deprecated 101.0.4
+     * @deprecated
      */
     protected $customerFactory;
 
     /**
-     * @deprecated 101.0.4
+     * @deprecated
      */
     protected $addressFactory;
 
     /**
-     * @deprecated 101.0.4
+     * @deprecated
      */
     protected $regionFactory;
 
@@ -47,7 +47,7 @@ class CustomerManagement implements \Magento\Sales\Api\OrderCustomerManagementIn
     protected $orderRepository;
 
     /**
-     * @deprecated 101.0.4
+     * @deprecated
      */
     protected $objectCopyService;
 

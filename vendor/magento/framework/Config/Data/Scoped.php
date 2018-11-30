@@ -11,7 +11,6 @@ use Magento\Framework\App\ObjectManager;
 /**
  * Provides scoped configuration
  * @api
- * @since 100.0.2
  */
 class Scoped extends \Magento\Framework\Config\Data
 {

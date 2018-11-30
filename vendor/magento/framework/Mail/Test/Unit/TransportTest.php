@@ -8,16 +8,47 @@ namespace Magento\Framework\Mail\Test\Unit;
 class TransportTest extends \PHPUnit\Framework\TestCase
 {
     /**
+     * @var \PHPUnit\Framework_MockObject
+     */
+    protected $messageMock;
+
+    /**
+     * @var \Magento\Framework\Mail\Transport
+     */
+    protected $transport;
+
+    protected function setUp()
+    {
+        $this->messageMock = $this->createMock(\Magento\Framework\Mail\Message::class);
+        $this->transport = new \Magento\Framework\Mail\Transport($this->messageMock);
+    }
+
+    /**
+     * @expectedException \InvalidArgumentException
+     * @expectedExceptionMessage The message should be an instance of \Zend_Mail
+     */
+    public function testTransportWithIncorrectMessageObject()
+    {
+        $this->messageMock = $this->createMock(\Magento\Framework\Mail\MessageInterface::class);
+        $this->transport = new \Magento\Framework\Mail\Transport($this->messageMock);
+    }
+
+    /**
      * @covers \Magento\Framework\Mail\Transport::sendMessage
      * @expectedException \Magento\Framework\Exception\MailException
-     * @expectedExceptionMessage Invalid email; contains no at least one of "To", "Cc", and "Bcc" header
+     * @expectedExceptionMessage No body specified
      */
     public function testSendMessageBrokenMessage()
     {
-        $transport = new \Magento\Framework\Mail\Transport(
-            new \Magento\Framework\Mail\Message()
-        );
+        $this->messageMock->expects($this->any())
+            ->method('getParts')
+            ->will($this->returnValue(['a', 'b']));
 
-        $transport->sendMessage();
+        $this->transport->sendMessage();
+    }
+
+    public function testGetMessage()
+    {
+        $this->assertSame($this->messageMock, $this->transport->getMessage());
     }
 }

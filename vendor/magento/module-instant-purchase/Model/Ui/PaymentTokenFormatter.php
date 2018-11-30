@@ -12,7 +12,6 @@ use Magento\Vault\Api\Data\PaymentTokenInterface;
  * Payment token string presentation.
  *
  * @api May be used for pluginization.
- * @since 100.2.0
  */
 class PaymentTokenFormatter
 {
@@ -35,7 +34,6 @@ class PaymentTokenFormatter
      *
      * @param PaymentTokenInterface $paymentToken
      * @return string
-     * @since 100.2.0
      */
     public function format(PaymentTokenInterface $paymentToken): string
     {

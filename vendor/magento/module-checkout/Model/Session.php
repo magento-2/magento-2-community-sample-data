@@ -12,7 +12,6 @@ use Magento\Quote\Model\QuoteIdMaskFactory;
 /**
  * @api
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
- * @since 100.0.2
  */
 class Session extends \Magento\Framework\Session\SessionManager
 {

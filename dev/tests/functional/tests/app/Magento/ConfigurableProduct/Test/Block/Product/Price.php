@@ -3,14 +3,15 @@
  * Copyright © Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
-declare(strict_types=1);
 
 namespace Magento\ConfigurableProduct\Test\Block\Product;
 
+use Magento\Mtf\Client\Locator;
 use Magento\Mtf\Client\Element\SimpleElement;
 
 /**
- * This class is used to access the price related information of a configurable product from the storefront.
+ * This class is used to access the price related information
+ * of a configurable product from the storefront.
  */
 class Price extends \Magento\Catalog\Test\Block\Product\Price
 {
@@ -19,7 +20,7 @@ class Price extends \Magento\Catalog\Test\Block\Product\Price
      *
      * @var string
      */
-    private $priceLabel = '.normal-price .price-label';
+    protected $priceLabel = '.normal-price .price-label';
 
     /**
      * Mapping for different types of Price.
@@ -28,12 +29,12 @@ class Price extends \Magento\Catalog\Test\Block\Product\Price
      */
     protected $mapTypePrices = [
         'special_price' => [
-            'selector' => '.normal-price .price',
-        ],
+            'selector' => '.normal-price .price'
+        ]
     ];
 
     /**
-     * This method returns the price label represented by the block.
+     * This method returns the price represented by the block.
      *
      * @return SimpleElement
      */

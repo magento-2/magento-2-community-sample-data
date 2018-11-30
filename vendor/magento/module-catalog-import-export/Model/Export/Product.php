@@ -5,8 +5,6 @@
  */
 namespace Magento\CatalogImportExport\Model\Export;
 
-use Magento\Catalog\Model\ResourceModel\Product\Option\Collection;
-use Magento\CatalogImportExport\Model\Import\Product\CategoryProcessor;
 use Magento\ImportExport\Model\Import;
 use \Magento\Store\Model\Store;
 use \Magento\CatalogImportExport\Model\Import\Product as ImportProduct;
@@ -204,7 +202,7 @@ class Product extends \Magento\ImportExport\Model\Export\Entity\AbstractEntity
     protected $_itemFactory;
 
     /**
-     * @var Collection
+     * @var \Magento\Catalog\Model\ResourceModel\Product\Option\Collection
      */
     protected $_optionColFactory;
 
@@ -441,12 +439,11 @@ class Product extends \Magento\ImportExport\Model\Export\Entity\AbstractEntity
             if ($pathSize > 1) {
                 $path = [];
                 for ($i = 1; $i < $pathSize; $i++) {
-                    $name = $collection->getItemById($structure[$i])->getName();
-                    $path[] = $this->quoteCategoryDelimiter($name);
+                    $path[] = $collection->getItemById($structure[$i])->getName();
                 }
                 $this->_rootCategories[$category->getId()] = array_shift($path);
                 if ($pathSize > 2) {
-                    $this->_categories[$category->getId()] = implode(CategoryProcessor::DELIMITER_CATEGORY, $path);
+                    $this->_categories[$category->getId()] = implode('/', $path);
                 }
             }
         }
@@ -540,7 +537,7 @@ class Product extends \Magento\ImportExport\Model\Export\Entity\AbstractEntity
                 'mgv.label',
                 'mgv.position',
                 'mgv.disabled',
-                'mgv.store_id',
+                'mgv.store_id'
             ]
         )->where(
             "mgvte.{$this->getProductEntityLinkField()} IN (?)",
@@ -925,7 +922,6 @@ class Product extends \Magento\ImportExport\Model\Export\Entity\AbstractEntity
      *
      * @return array Keys are product IDs, values arrays with keys as store IDs
      *               and values as store-specific versions of Product entity.
-     * @since 100.2.1
      */
     protected function loadCollection(): array
     {
@@ -937,8 +933,8 @@ class Product extends \Magento\ImportExport\Model\Export\Entity\AbstractEntity
             foreach ($collection as $itemId => $item) {
                 $data[$itemId][$storeId] = $item;
             }
+            $collection->clear();
         }
-        $collection->clear();
 
         return $data;
     }
@@ -955,11 +951,11 @@ class Product extends \Magento\ImportExport\Model\Export\Entity\AbstractEntity
         $data = [];
         $items = $this->loadCollection();
 
-        /**
-         * @var int $itemId
-         * @var ProductEntity[] $itemByStore
-         */
         foreach ($items as $itemId => $itemByStore) {
+            /**
+             * @var int           $itemId
+             * @var ProductEntity $item
+             */
             foreach ($this->_storeIdToCode as $storeId => $storeCode) {
                 $item = $itemByStore[$storeId];
                 $additionalAttributes = [];
@@ -1108,7 +1104,7 @@ class Product extends \Magento\ImportExport\Model\Export\Entity\AbstractEntity
      * @param \Magento\Catalog\Model\Product $item
      * @param int $storeId
      * @return bool
-     * @deprecated 100.2.3
+     * @deprecated
      */
     protected function hasMultiselectData($item, $storeId)
     {
@@ -1183,7 +1179,6 @@ class Product extends \Magento\ImportExport\Model\Export\Entity\AbstractEntity
         unset($dataRow[self::COL_STORE]);
         unset($dataRow[self::COL_ATTR_SET]);
         unset($dataRow[self::COL_TYPE]);
-
         if (Store::DEFAULT_STORE_ID == $storeId) {
             $this->updateDataWithCategoryColumns($dataRow, $multiRawData['rowCategories'], $productId);
             if (!empty($multiRawData['rowWebsites'][$productId])) {
@@ -1284,7 +1279,7 @@ class Product extends \Magento\ImportExport\Model\Export\Entity\AbstractEntity
         $dataRow[self::COL_SKU] = $sku;
         $dataRow[self::COL_ATTR_SET] = $attributeSet;
         $dataRow[self::COL_TYPE] = $type;
-        
+
         return $dataRow;
     }
 
@@ -1368,13 +1363,19 @@ class Product extends \Magento\ImportExport\Model\Export\Entity\AbstractEntity
 
         foreach (array_keys($this->_storeIdToCode) as $storeId) {
             $options = $this->_optionColFactory->create();
-            /* @var Collection $options*/
-            $options->reset()
-                ->addOrder('sort_order', Collection::SORT_ORDER_ASC)
-                ->addTitleToResult($storeId)
-                ->addPriceToResult($storeId)
-                ->addProductToFilter($productIds)
-                ->addValuesToResult($storeId);
+            /* @var \Magento\Catalog\Model\ResourceModel\Product\Option\Collection $options*/
+            $options->reset()->addOrder(
+                'sort_order',
+                \Magento\Catalog\Model\ResourceModel\Product\Option\Collection::SORT_ORDER_ASC
+            )->addTitleToResult(
+                $storeId
+            )->addPriceToResult(
+                $storeId
+            )->addProductToFilter(
+                $productIds
+            )->addValuesToResult(
+                $storeId
+            );
 
             foreach ($options as $option) {
                 $row = [];
@@ -1523,20 +1524,5 @@ class Product extends \Magento\ImportExport\Model\Export\Entity\AbstractEntity
                 ->getLinkField();
         }
         return $this->productEntityLinkField;
-    }
-
-    /**
-     * Quoting category delimiter character in string.
-     *
-     * @param string $string
-     * @return string
-     */
-    private function quoteCategoryDelimiter($string)
-    {
-        return str_replace(
-            CategoryProcessor::DELIMITER_CATEGORY,
-            '\\' . CategoryProcessor::DELIMITER_CATEGORY,
-            $string
-        );
     }
 }

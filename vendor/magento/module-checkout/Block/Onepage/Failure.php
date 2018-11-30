@@ -7,7 +7,6 @@ namespace Magento\Checkout\Block\Onepage;
 
 /**
  * @api
- * @since 100.0.2
  */
 class Failure extends \Magento\Framework\View\Element\Template
 {

@@ -29,21 +29,23 @@ final class Transformers
      *
      * @var TransformerInterface[]
      */
-    private $items = [];
+    private $items = array();
 
     /**
-     * Register built in Transformers.
+     * Constructor. Register built in Transformers.
      */
     private function __construct()
     {
         $this->registerBuiltInTransformers();
 
-        usort($this->items, static function (TransformerInterface $a, TransformerInterface $b) {
+        usort($this->items, function (TransformerInterface $a, TransformerInterface $b) {
             return Utils::cmpInt($b->getPriority(), $a->getPriority());
         });
     }
 
     /**
+     * Create Transformers instance.
+     *
      * @return Transformers
      */
     public static function create()
@@ -76,7 +78,7 @@ final class Transformers
      */
     private function registerTransformer(TransformerInterface $transformer)
     {
-        if (\PHP_VERSION_ID >= $transformer->getRequiredPhpVersionId()) {
+        if (PHP_VERSION_ID >= $transformer->getRequiredPhpVersionId()) {
             $this->items[] = $transformer;
         }
     }

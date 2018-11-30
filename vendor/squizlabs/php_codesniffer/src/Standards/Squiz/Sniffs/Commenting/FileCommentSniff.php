@@ -49,6 +49,8 @@ class FileCommentSniff implements Sniff
      */
     public function process(File $phpcsFile, $stackPtr)
     {
+        $this->currentFile = $phpcsFile;
+
         $tokens       = $phpcsFile->getTokens();
         $commentStart = $phpcsFile->findNext(T_WHITESPACE, ($stackPtr + 1), null, true);
 
@@ -59,14 +61,6 @@ class FileCommentSniff implements Sniff
         } else if ($commentStart === false || $tokens[$commentStart]['code'] !== T_DOC_COMMENT_OPEN_TAG) {
             $phpcsFile->addError('Missing file doc comment', $stackPtr, 'Missing');
             $phpcsFile->recordMetric($stackPtr, 'File has doc comment', 'no');
-            return ($phpcsFile->numTokens + 1);
-        }
-
-        if (isset($tokens[$commentStart]['comment_closer']) === false
-            || ($tokens[$tokens[$commentStart]['comment_closer']]['content'] === ''
-            && $tokens[$commentStart]['comment_closer'] === ($phpcsFile->numTokens - 1))
-        ) {
-            // Don't process an unfinished file comment during live coding.
             return ($phpcsFile->numTokens + 1);
         }
 

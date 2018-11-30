@@ -11,9 +11,6 @@ use Magento\Framework\Exception\CouldNotSaveException;
  * Process Collection Point Search (Guest Checkout)
  *
  * @api
- * @deprecated since 1.4.0
- * @see \Temando\Shipping\Api\Delivery\GuestCartCollectionPointManagementInterface
- *
  * @package Temando\Shipping\Api
  * @author  Benjamin Heuer <benjamin.heuer@netresearch.de>
  * @author  Christoph Aßmann <christoph.assmann@netresearch.de>

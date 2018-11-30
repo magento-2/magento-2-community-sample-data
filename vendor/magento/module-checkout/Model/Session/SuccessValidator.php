@@ -9,7 +9,6 @@ namespace Magento\Checkout\Model\Session;
  * Test if checkout session valid for success action
  *
  * @api
- * @since 100.0.2
  */
 class SuccessValidator
 {

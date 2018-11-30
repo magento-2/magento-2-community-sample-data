@@ -1,10 +1,8 @@
-<?php
+<?php declare(strict_types=1);
 /**
  * Copyright © Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
-declare(strict_types=1);
-
 namespace Magento\Paypal\Model\Payflow\Service\Request;
 
 use Magento\Framework\Api\SearchCriteriaBuilder;
@@ -22,8 +20,6 @@ use PHPUnit_Framework_MockObject_MockObject as MockObject;
 
 /**
  * @magentoAppIsolation enabled
- * @magentoDbIsolation disabled
- * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  */
 class SecureTokenTest extends TestCase
 {
@@ -72,7 +68,7 @@ class SecureTokenTest extends TestCase
         $this->service = $this->objectManager->create(
             SecureToken::class,
             [
-                'mathRandom' => $this->mathRandom,
+                'mathRandom' => $this->mathRandom
             ]
         );
     }
@@ -90,10 +86,10 @@ class SecureTokenTest extends TestCase
      *
      * @magentoDataFixture Magento/Paypal/_files/quote_payflowpro.php
      * @magentoDataFixture Magento/Paypal/Fixtures/default_payment_configuration.php
+     * @magentoDbIsolation disabled
      * @magentoAppArea adminhtml
-     * @return void
      */
-    public function testRequestToken(): void
+    public function testRequestToken()
     {
         $quote = $this->getQuote('100000015');
         $quote->setStoreId(null);
@@ -105,10 +101,10 @@ class SecureTokenTest extends TestCase
      *
      * @magentoDataFixture Magento/Paypal/_files/quote_payflowpro.php
      * @magentoDataFixture Magento/Paypal/Fixtures/store_payment_configuration.php
+     * @magentoDbIsolation disabled
      * @magentoAppArea adminhtml
-     * @return void
      */
-    public function testRequestTokenWithStoreConfiguration(): void
+    public function testRequestTokenWithStoreConfiguration()
     {
         $quote = $this->getQuote('100000015');
         $store = $this->getStore('test');
@@ -121,10 +117,10 @@ class SecureTokenTest extends TestCase
      *
      * @magentoDataFixture Magento/Paypal/_files/quote_payflowpro.php
      * @magentoDataFixture Magento/Paypal/Fixtures/website_payment_configuration.php
+     * @magentoDbIsolation disabled
      * @magentoAppArea adminhtml
-     * @return void
      */
-    public function testRequestTokenWithWebsiteConfiguration(): void
+    public function testRequestTokenWithWebsiteConfiguration()
     {
         $quote = $this->getQuote('100000015');
         $store = $this->getStore('fixture_second_store');
@@ -140,15 +136,9 @@ class SecureTokenTest extends TestCase
      * @param string $expVendor
      * @param string $expUser
      * @param string $expPwd
-     * @return void
      */
-    private function execute(
-        Quote $quote,
-        string $expPartner,
-        string $expVendor,
-        string $expUser,
-        string $expPwd
-    ): void {
+    private function execute(Quote $quote, string $expPartner, string $expVendor, string $expUser, string $expPwd)
+    {
         $secureTokenId = '31f2a7c8d257c70b1c9eb9051b90e0';
         $token = '80IgSbabyj0CtBDWHZZeQN3';
 
@@ -185,9 +175,8 @@ class SecureTokenTest extends TestCase
      * @param string $expected
      * @param string $actual
      * @param string $property
-     * @return void
      */
-    private function performAssertion(string $expected, string $actual, string $property): void
+    private function performAssertion(string $expected, string $actual, string $property)
     {
         self::assertEquals($expected, $actual, "$property should match.");
     }

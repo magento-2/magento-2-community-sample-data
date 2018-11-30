@@ -104,8 +104,8 @@ angular.module('select-version', ['ngStorage'])
                 $scope.updateComponents.no = false;
                 if (!$scope.componentsProcessed && !$scope.componentsProcessError) {
                     $scope.componentsReadyForNext = false;
-                    $http.get('index.php/other-components-grid/components', {'responseType': 'json'}).
-                        then(function successCallback(resp) {
+                    $http.get('index.php/other-components-grid/components', {'responseType': 'json'})
+                        .then(function successCallback(resp) {
                             var data = resp.data;
 
                             if (data.responseType != 'error') {

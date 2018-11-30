@@ -43,7 +43,7 @@ main.controller('navigationController',
                 $http.post('index.php/session/prolong').then(
                     function successCallback() {},
                     function errorCallback() {}
-                );
+                )
             },
             25000
         );
@@ -116,7 +116,6 @@ main.controller('navigationController',
         isLoadedStates: false,
         load: function () {
             var self = this;
-
             return $http.get('index.php/navigation').then(function successCallback(resp) {
                 var data = resp.data,
                     currentState = $location.path().replace('/', ''),
@@ -191,7 +190,7 @@ main.controller('navigationController',
                             $localStorage.isMarketplaceAuthorized = $rootScope.isMarketplaceAuthorized = false;
                             context.success();
                         }
-                    });
+                    }, function errorCallback() {});
             },
             checkAuth: function(context) {
                 return $http.post('index.php/marketplace/check-auth', [])
@@ -212,8 +211,8 @@ main.controller('navigationController',
                     });
             },
             openAuthDialog: function(scope) {
-                return $http.get('index.php/marketplace/popup-auth').then(function successCallback(resp) {
-                    var data = resp.data;
+                return $http.get('index.php/marketplace/popup-auth').then(function successCallback(response) {
+                    var data = response.data;
 
                     scope.isHiddenSpinner = true;
                     ngDialog.open({
@@ -245,7 +244,7 @@ main.controller('navigationController',
                         context.error(resp.data);
                     });
             }
-        };
+    };
     }]
 )
 .service('titleService', ['$localStorage', '$rootScope',

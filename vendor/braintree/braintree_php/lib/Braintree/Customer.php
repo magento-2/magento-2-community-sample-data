@@ -24,7 +24,6 @@ namespace Braintree;
  * @property-read array  $venmoAccounts
  * @property-read array  $visaCheckoutCards
  * @property-read array  $masterpassCards
- * @property-read array  $samsungPayCards
  * @property-read array  $coinbaseAccounts
  * @property-read array  $customFields custom fields passed with the request
  * @property-read string $email
@@ -103,9 +102,9 @@ class Customer extends Base
      * @param string $id customer id
      * @return Customer
      */
-    public static function find($id, $associationFilterId = null)
+    public static function find($id)
     {
-        return Configuration::gateway()->customer()->find($id, $associationFilterId);
+        return Configuration::gateway()->customer()->find($id);
     }
 
     /**
@@ -314,14 +313,6 @@ class Customer extends Base
         }
         $this->_set('masterpassCards', $masterpassCardArray);
 
-        $samsungPayCardArray = [];
-        if (isset($customerAttribs['samsungPayCards'])) {
-            foreach ($customerAttribs['samsungPayCards'] AS $samsungPayCard) {
-                $samsungPayCardArray[] = SamsungPayCard::factory($samsungPayCard);
-            }
-        }
-        $this->_set('samsungPayCards', $samsungPayCardArray);
-
         $usBankAccountArray = array();
         if (isset($customerAttribs['usBankAccounts'])) {
             foreach ($customerAttribs['usBankAccounts'] AS $usBankAccount) {
@@ -340,7 +331,6 @@ class Customer extends Base
             $this->venmoAccounts,
             $this->visaCheckoutCards,
             $this->masterpassCards,
-            $this->samsungPayCards,
             $this->usBankAccounts
         ));
     }

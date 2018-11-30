@@ -32,7 +32,7 @@ class DevTestsRunCommand extends Command
     /**
      * command name
      */
-    const COMMAND_NAME = 'dev:tests:run';
+    const COMMAND_NAME                      = 'dev:tests:run';
 
     /**
      * Maps types (from user input) to phpunit test names
@@ -70,6 +70,7 @@ class DevTestsRunCommand extends Command
             'Additional arguments for PHPUnit. Example: "-c\'--filter=MyTest\'" (no spaces)',
             ''
         );
+
         parent::configure();
     }
 

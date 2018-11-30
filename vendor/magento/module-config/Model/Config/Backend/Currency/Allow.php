@@ -81,7 +81,7 @@ class Allow extends AbstractCurrency
 
     /**
      * @inheritdoc
-     * @since 101.0.0
+     * @since 100.2.0
      */
     protected function _getAllowedCurrencies()
     {

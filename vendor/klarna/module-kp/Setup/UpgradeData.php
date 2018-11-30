@@ -81,32 +81,6 @@ class UpgradeData implements UpgradeDataInterface
                     );
             }
         }
-        if (version_compare($context->getVersion(), '5.5.4', '<')) {
-            $this->clearDesignConfig($installer);
-        }
         $installer->endSetup();
-    }
-
-
-    /**
-     * clear unused kp design config settings
-     *
-     * @param ModuleDataSetupInterface $installer
-     */
-    private function clearDesignConfig(ModuleDataSetupInterface $installer)
-    {
-        $configPaths = [
-            'checkout/klarna_kp_design/color_button',
-            'checkout/klarna_kp_design/color_button_text',
-            'checkout/klarna_kp_design/color_checkbox',
-            'checkout/klarna_kp_design/color_checkbox_checkmark',
-            'checkout/klarna_kp_design/color_header',
-            'checkout/klarna_kp_design/color_link',
-            'checkout/klarna_kp_design/color_text_secondary'
-        ];
-
-        $configTable = $installer->getTable('core_config_data');
-        $keys = '\'' . implode('\',\'', $configPaths) . '\'';
-        $installer->getConnection()->delete($configTable, "`path` in ({$keys})");
     }
 }

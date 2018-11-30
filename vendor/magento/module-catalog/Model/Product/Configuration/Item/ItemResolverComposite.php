@@ -15,10 +15,14 @@ use Magento\Framework\App\ObjectManager;
  */
 class ItemResolverComposite implements ItemResolverInterface
 {
-    /** @var string[] */
+    /**
+     * @var string[]
+     */
     private $itemResolvers = [];
 
-    /** @var ItemResolverInterface[] */
+    /**
+     * @var ItemResolverInterface[]
+     */
     private $itemResolversInstances = [];
 
     /**
@@ -32,9 +36,10 @@ class ItemResolverComposite implements ItemResolverInterface
     /**
      * {@inheritdoc}
      */
-    public function getFinalProduct(ItemInterface $item) : ProductInterface
+    public function getFinalProduct(ItemInterface $item): ProductInterface
     {
         $finalProduct = $item->getProduct();
+
         foreach ($this->itemResolvers as $resolver) {
             $resolvedProduct = $this->getItemResolverInstance($resolver)->getFinalProduct($item);
             if ($resolvedProduct !== $finalProduct) {
@@ -42,6 +47,7 @@ class ItemResolverComposite implements ItemResolverInterface
                 break;
             }
         }
+
         return $finalProduct;
     }
 
@@ -51,11 +57,12 @@ class ItemResolverComposite implements ItemResolverInterface
      * @param string $className
      * @return ItemResolverInterface
      */
-    private function getItemResolverInstance(string $className) : ItemResolverInterface
+    private function getItemResolverInstance(string $className): ItemResolverInterface
     {
         if (!isset($this->itemResolversInstances[$className])) {
             $this->itemResolversInstances[$className] = ObjectManager::getInstance()->get($className);
         }
+
         return $this->itemResolversInstances[$className];
     }
 }

@@ -38,7 +38,7 @@ class RequireCommand extends InitCommand
             ->setName('require')
             ->setDescription('Adds required packages to your composer.json and installs them.')
             ->setDefinition(array(
-                new InputArgument('packages', InputArgument::IS_ARRAY | InputArgument::OPTIONAL, 'Optional package name can also include a version constraint, e.g. foo/bar or foo/bar:1.0.0 or foo/bar=1.0.0 or "foo/bar 1.0.0"'),
+                new InputArgument('packages', InputArgument::IS_ARRAY | InputArgument::OPTIONAL, 'Required package name optionally including a version constraint, e.g. foo/bar or foo/bar:1.0.0 or foo/bar=1.0.0 or "foo/bar 1.0.0"'),
                 new InputOption('dev', null, InputOption::VALUE_NONE, 'Add requirement to require-dev.'),
                 new InputOption('prefer-source', null, InputOption::VALUE_NONE, 'Forces installation from package sources when possible, including VCS information.'),
                 new InputOption('prefer-dist', null, InputOption::VALUE_NONE, 'Forces installation from package dist even for dev versions.'),
@@ -47,8 +47,7 @@ class RequireCommand extends InitCommand
                 new InputOption('no-update', null, InputOption::VALUE_NONE, 'Disables the automatic update of the dependencies.'),
                 new InputOption('no-scripts', null, InputOption::VALUE_NONE, 'Skips the execution of all scripts defined in composer.json file.'),
                 new InputOption('update-no-dev', null, InputOption::VALUE_NONE, 'Run the dependency update with the --no-dev option.'),
-                new InputOption('update-with-dependencies', null, InputOption::VALUE_NONE, 'Allows inherited dependencies to be updated, except those that are root requirements.'),
-                new InputOption('update-with-all-dependencies', null, InputOption::VALUE_NONE, 'Allows all inherited dependencies to be updated, including those that are root requirements.'),
+                new InputOption('update-with-dependencies', null, InputOption::VALUE_NONE, 'Allows inherited dependencies to be updated with explicit dependencies.'),
                 new InputOption('ignore-platform-reqs', null, InputOption::VALUE_NONE, 'Ignore platform requirements (php & ext- packages).'),
                 new InputOption('prefer-stable', null, InputOption::VALUE_NONE, 'Prefer stable versions of dependencies.'),
                 new InputOption('prefer-lowest', null, InputOption::VALUE_NONE, 'Prefer lowest versions of dependencies.'),
@@ -57,12 +56,8 @@ class RequireCommand extends InitCommand
                 new InputOption('classmap-authoritative', 'a', InputOption::VALUE_NONE, 'Autoload classes from the classmap only. Implicitly enables `--optimize-autoloader`.'),
                 new InputOption('apcu-autoloader', null, InputOption::VALUE_NONE, 'Use APCu to cache found/not-found classes.'),
             ))
-            ->setHelp(
-                <<<EOT
+            ->setHelp(<<<EOT
 The require command adds required packages to your composer.json and installs them.
-
-If you do not specify a package, composer will prompt you to search for a package, and given results, provide a list of 
-matches to require.
 
 If you do not specify a version constraint, composer will choose a suitable one based on the available package versions.
 
@@ -79,7 +74,7 @@ EOT
         $io = $this->getIO();
 
         $newlyCreated = !file_exists($file);
-        if ($newlyCreated && !file_put_contents($file, "{\n}\n")) {
+        if (!file_exists($file) && !file_put_contents($file, "{\n}\n")) {
             $io->writeError('<error>'.$file.' could not be created.</error>');
 
             return 1;
@@ -118,7 +113,7 @@ EOT
             $preferredStability = $composer->getPackage()->getMinimumStability();
         }
 
-        $phpVersion = $this->repos->findPackage('php', '*')->getPrettyVersion();
+        $phpVersion = $this->repos->findPackage('php', '*')->getVersion();
         $requirements = $this->determineRequirements($input, $output, $input->getArgument('packages'), $phpVersion, $preferredStability);
 
         $requireKey = $input->getOption('dev') ? 'require-dev' : 'require';
@@ -174,14 +169,18 @@ EOT
             ->setApcuAutoloader($apcu)
             ->setUpdate(true)
             ->setUpdateWhitelist(array_keys($requirements))
-            ->setWhitelistTransitiveDependencies($input->getOption('update-with-dependencies'))
-            ->setWhitelistAllDependencies($input->getOption('update-with-all-dependencies'))
+            ->setWhitelistDependencies($input->getOption('update-with-dependencies'))
             ->setIgnorePlatformRequirements($input->getOption('ignore-platform-reqs'))
             ->setPreferStable($input->getOption('prefer-stable'))
             ->setPreferLowest($input->getOption('prefer-lowest'))
         ;
 
-        $status = $install->run();
+        $exception = null;
+        try {
+            $status = $install->run();
+        } catch (\Exception $exception) {
+            $status = 1;
+        }
         if ($status !== 0) {
             if ($newlyCreated) {
                 $io->writeError("\n".'<error>Installation failed, deleting '.$file.'.</error>');
@@ -190,6 +189,9 @@ EOT
                 $io->writeError("\n".'<error>Installation failed, reverting '.$file.' to its original content.</error>');
                 file_put_contents($json->getPath(), $composerBackup);
             }
+        }
+        if ($exception) {
+            throw $exception;
         }
 
         return $status;

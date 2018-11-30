@@ -9,7 +9,6 @@ namespace Magento\Framework;
  * ACL. Can be queried for relations between roles and resources.
  *
  * @api
- * @since 100.0.2
  */
 class Acl extends \Zend_Acl
 {

@@ -11,8 +11,9 @@ namespace Temando\Shipping\Model\ResourceModel\Repository;
  * shipping labels and other documentation. A reference to the external shipment
  * is stored locally.
  *
- * This interface can be used to retrieve shipment details and tracking
- * information from the Temando platform.
+ * This public interface can be used to retrieve shipment details and tracking
+ * information from the Temando platform as well as creating/reading/updating
+ * the local reference.
  *
  * @package Temando\Shipping\Model
  * @author  Christoph Aßmann <christoph.assmann@netresearch.de>
@@ -47,4 +48,77 @@ interface ShipmentRepositoryInterface
      * @throws \Magento\Framework\Exception\LocalizedException
      */
     public function getTrackingByNumber($trackingNumber);
+
+    /**
+     * Load local track info.
+     *
+     * @param string $trackingNumber
+     * @param string $carrierCode
+     * @return \Magento\Sales\Api\Data\ShipmentTrackInterface
+     * @throws \Magento\Framework\Exception\LocalizedException
+     */
+    public function getShipmentTrack($trackingNumber, $carrierCode);
+
+    /**
+     * Save local reference to external shipment entity.
+     *
+     * @param \Temando\Shipping\Api\Data\Shipment\ShipmentReferenceInterface $shipment
+     * @return \Temando\Shipping\Api\Data\Shipment\ShipmentReferenceInterface
+     * @throws \Magento\Framework\Exception\LocalizedException
+     */
+    public function saveReference(\Temando\Shipping\Api\Data\Shipment\ShipmentReferenceInterface $shipment);
+
+    /**
+     * Load local reference to external shipment entity.
+     *
+     * @param int $entityId
+     * @return \Temando\Shipping\Api\Data\Shipment\ShipmentReferenceInterface
+     * @throws \Magento\Framework\Exception\LocalizedException
+     */
+    public function getReferenceById($entityId);
+
+    /**
+     * Load local reference to external shipment entity by Magento shipment ID.
+     *
+     * @param int $shipmentId
+     * @return \Temando\Shipping\Api\Data\Shipment\ShipmentReferenceInterface
+     * @throws \Magento\Framework\Exception\LocalizedException
+     */
+    public function getReferenceByShipmentId($shipmentId);
+
+    /**
+     * Load local reference to external shipment entity by Temando shipment ID.
+     *
+     * @param string $extShipmentId
+     * @return \Temando\Shipping\Api\Data\Shipment\ShipmentReferenceInterface
+     * @throws \Magento\Framework\Exception\LocalizedException
+     */
+    public function getReferenceByExtShipmentId($extShipmentId);
+
+    /**
+     * Load local reference to external shipment entity by Temando return shipment ID.
+     *
+     * @param string $extShipmentId
+     *
+     * @return \Temando\Shipping\Api\Data\Shipment\ShipmentReferenceInterface
+     * @throws \Magento\Framework\Exception\LocalizedException
+     */
+    public function getReferenceByExtReturnShipmentId($extShipmentId);
+
+    /**
+     * Load local reference to external shipment entity by tracking number.
+     *
+     * @param string $trackingNumber
+     * @return \Temando\Shipping\Api\Data\Shipment\ShipmentReferenceInterface
+     * @throws \Magento\Framework\Exception\LocalizedException
+     */
+    public function getReferenceByTrackingNumber($trackingNumber);
+
+    /**
+     * List shipment references that match specified search criteria.
+     *
+     * @param \Magento\Framework\Api\SearchCriteriaInterface $searchCriteria
+     * @return \Temando\Shipping\Model\ResourceModel\Shipment\ShipmentReferenceCollection
+     */
+    public function getList(\Magento\Framework\Api\SearchCriteriaInterface $searchCriteria);
 }

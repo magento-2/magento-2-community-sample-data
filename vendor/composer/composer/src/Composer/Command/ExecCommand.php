@@ -26,7 +26,7 @@ class ExecCommand extends BaseCommand
     {
         $this
             ->setName('exec')
-            ->setDescription('Executes a vendored binary/script.')
+            ->setDescription('Execute a vendored binary/script.')
             ->setDefinition(array(
                 new InputOption('list', 'l', InputOption::VALUE_NONE),
                 new InputArgument('binary', InputArgument::OPTIONAL, 'The binary to run, e.g. phpunit'),
@@ -53,8 +53,7 @@ class ExecCommand extends BaseCommand
                 throw new \RuntimeException("No binaries found in composer.json or in bin-dir ($binDir)");
             }
 
-            $this->getIO()->write(
-                <<<EOT
+            $this->getIO()->write(<<<EOT
 <comment>Available binaries:</comment>
 EOT
             );
@@ -67,8 +66,7 @@ EOT
 
                 $previousBin = $bin;
                 $bin = basename($bin);
-                $this->getIO()->write(
-                    <<<EOT
+                $this->getIO()->write(<<<EOT
 <info>- $bin</info>
 EOT
                 );

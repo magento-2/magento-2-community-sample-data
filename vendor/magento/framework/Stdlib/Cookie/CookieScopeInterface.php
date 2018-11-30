@@ -8,7 +8,6 @@ namespace Magento\Framework\Stdlib\Cookie;
 /**
  * CookieScope is used to store default scope metadata.
  * @api
- * @since 100.0.2
  */
 interface CookieScopeInterface
 {

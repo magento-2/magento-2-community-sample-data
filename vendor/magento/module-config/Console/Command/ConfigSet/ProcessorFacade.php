@@ -24,7 +24,7 @@ use Magento\Framework\App\Config;
  * @see ConfigSetCommand
  *
  * @api
- * @since 101.0.0
+ * @since 100.2.0
  */
 class ProcessorFacade
 {
@@ -99,8 +99,8 @@ class ProcessorFacade
      * @param boolean $lock The lock flag
      * @return string Processor response message
      * @throws ValidatorException If some validation is wrong
-     * @since 101.0.0
-     * @deprecated 101.0.4
+     * @since 100.2.0
+     * @deprecated
      * @see processWithLockTarget()
      */
     public function process($path, $value, $scope, $scopeCode, $lock)
@@ -119,7 +119,6 @@ class ProcessorFacade
      * @param string $lockTarget
      * @return string Processor response message
      * @throws ValidatorException If some validation is wrong
-     * @since 101.0.4
      */
     public function processWithLockTarget(
         $path,
@@ -142,8 +141,7 @@ class ProcessorFacade
                     ? $this->configSetProcessorFactory->create(ConfigSetProcessorFactory::TYPE_LOCK_ENV)
                     : $this->configSetProcessorFactory->create(ConfigSetProcessorFactory::TYPE_LOCK_CONFIG)
                 )
-                : $this->configSetProcessorFactory->create(ConfigSetProcessorFactory::TYPE_DEFAULT)
-            ;
+                : $this->configSetProcessorFactory->create(ConfigSetProcessorFactory::TYPE_DEFAULT);
 
         $message =
             $lock

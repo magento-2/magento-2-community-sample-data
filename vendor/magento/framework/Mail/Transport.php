@@ -1,48 +1,44 @@
 <?php
 /**
+ * Mail Transport
  * Copyright © Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Framework\Mail;
 
-use Magento\Framework\Exception\MailException;
-use Magento\Framework\Phrase;
-use Zend\Mail\Message as ZendMessage;
-use Zend\Mail\Transport\Sendmail;
-
-class Transport implements \Magento\Framework\Mail\TransportInterface
+class Transport extends \Zend_Mail_Transport_Sendmail implements \Magento\Framework\Mail\TransportInterface
 {
     /**
-     * @var Sendmail
+     * @var \Magento\Framework\Mail\MessageInterface
      */
-    private $zendTransport;
-
-    /**
-     * @var MessageInterface
-     */
-    private $message;
+    protected $_message;
 
     /**
      * @param MessageInterface $message
-     * @param null|string|array|\Traversable $parameters
+     * @param null $parameters
+     * @throws \InvalidArgumentException
      */
-    public function __construct(MessageInterface $message, $parameters = null)
+    public function __construct(\Magento\Framework\Mail\MessageInterface $message, $parameters = null)
     {
-        $this->zendTransport = new Sendmail($parameters);
-        $this->message = $message;
+        if (!$message instanceof \Zend_Mail) {
+            throw new \InvalidArgumentException('The message should be an instance of \Zend_Mail');
+        }
+        parent::__construct($parameters);
+        $this->_message = $message;
     }
 
     /**
-     * @inheritdoc
+     * Send a mail using this transport
+     *
+     * @return void
+     * @throws \Magento\Framework\Exception\MailException
      */
     public function sendMessage()
     {
         try {
-            $this->zendTransport->send(
-                ZendMessage::fromString($this->message->getRawMessage())
-            );
+            parent::send($this->_message);
         } catch (\Exception $e) {
-            throw new MailException(new Phrase($e->getMessage()), $e);
+            throw new \Magento\Framework\Exception\MailException(new \Magento\Framework\Phrase($e->getMessage()), $e);
         }
     }
 
@@ -51,6 +47,6 @@ class Transport implements \Magento\Framework\Mail\TransportInterface
      */
     public function getMessage()
     {
-        return $this->message;
+        return $this->_message;
     }
 }

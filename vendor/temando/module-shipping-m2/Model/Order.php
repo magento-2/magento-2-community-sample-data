@@ -12,10 +12,10 @@ use Magento\Framework\DataObject;
  * This model contains a subset of data that is used in the shipping module.
  * It does not contain all data as available in its platform representation.
  *
- * @package Temando\Shipping\Model
- * @author  Christoph Aßmann <christoph.assmann@netresearch.de>
- * @license https://opensource.org/licenses/osl-3.0.php Open Software License (OSL 3.0)
- * @link    https://www.temando.com/
+ * @package  Temando\Shipping\Model
+ * @author   Christoph Aßmann <christoph.assmann@netresearch.de>
+ * @license  http://opensource.org/licenses/osl-3.0.php Open Software License (OSL 3.0)
+ * @link     http://www.temando.com/
  */
 class Order extends DataObject implements OrderInterface
 {
@@ -132,15 +132,7 @@ class Order extends DataObject implements OrderInterface
     }
 
     /**
-     * @return \Temando\Shipping\Api\Data\Delivery\CollectionPointSearchRequestInterface|null
-     */
-    public function getCollectionPointSearchRequest()
-    {
-        return $this->getData(OrderInterface::COLLECTION_POINT_SEARCH_REQUEST);
-    }
-
-    /**
-     * @return \Temando\Shipping\Api\Data\Delivery\QuoteCollectionPointInterface|null
+     * @return \Temando\Shipping\Api\Data\CollectionPoint\QuoteCollectionPointInterface
      */
     public function getCollectionPoint()
     {
@@ -148,19 +140,11 @@ class Order extends DataObject implements OrderInterface
     }
 
     /**
-     * @return \Temando\Shipping\Api\Data\Delivery\PickupLocationSearchRequestInterface|null
+     * @return \Temando\Shipping\Api\Data\CollectionPoint\SearchRequestInterface
      */
-    public function getPickupLocationSearchRequest()
+    public function getCollectionPointSearchRequest()
     {
-        return $this->getData(OrderInterface::PICKUP_LOCATION_SEARCH_REQUEST);
-    }
-
-    /**
-     * @return \Temando\Shipping\Api\Data\Delivery\QuotePickupLocationInterface|null
-     */
-    public function getPickupLocation()
-    {
-        return $this->getData(OrderInterface::PICKUP_LOCATION);
+        return $this->getData(OrderInterface::COLLECTION_POINT_SEARCH_REQUEST);
     }
 
     /**

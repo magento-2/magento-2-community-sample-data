@@ -6,11 +6,9 @@
  */
 namespace Magento\Widget\Controller\Adminhtml\Widget;
 
-use Magento\Framework\App\Action\HttpGetActionInterface;
-use Magento\Framework\App\Action\HttpPostActionInterface as HttpPostActionInterface;
 use Magento\Framework\App\ObjectManager;
 
-class LoadOptions extends \Magento\Backend\App\Action implements HttpGetActionInterface, HttpPostActionInterface
+class LoadOptions extends \Magento\Backend\App\Action
 {
     /**
      * Authorization level of a basic admin session
@@ -60,7 +58,7 @@ class LoadOptions extends \Magento\Backend\App\Action implements HttpGetActionIn
 
     /**
      * @return \Magento\Widget\Helper\Conditions
-     * @deprecated 101.0.0
+     * @deprecated 100.1.4
      */
     private function getConditionsHelper()
     {

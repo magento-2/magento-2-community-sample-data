@@ -7,7 +7,7 @@ $baseDir = dirname($vendorDir);
 
 return array(
     'Zend_' => array($vendorDir . '/magento/zendframework1/library'),
-    'Yandex' => array($vendorDir . '/allure-framework/allure-codeception/src', $vendorDir . '/allure-framework/allure-php-api/src', $vendorDir . '/allure-framework/allure-php-api/test'),
+    'Yandex' => array($vendorDir . '/allure-framework/allure-php-api/src', $vendorDir . '/allure-framework/allure-php-api/test', $vendorDir . '/allure-framework/allure-codeception/src'),
     'Prophecy\\' => array($vendorDir . '/phpspec/prophecy/src'),
     'PhpOption\\' => array($vendorDir . '/phpoption/phpoption/src'),
     'PhpCollection' => array($vendorDir . '/phpcollection/phpcollection/src'),
@@ -29,6 +29,5 @@ return array(
     'Cm\\RedisSession\\' => array($vendorDir . '/colinmollenhour/php-redis-session-abstract/src'),
     'Braintree' => array($vendorDir . '/braintree/braintree_php/lib'),
     'Behat\\Gherkin' => array($vendorDir . '/behat/gherkin/src'),
-    'BaconQrCode' => array($vendorDir . '/bacon/bacon-qr-code/src'),
     '' => array($baseDir . '/app/code', $baseDir . '/generated/code'),
 );

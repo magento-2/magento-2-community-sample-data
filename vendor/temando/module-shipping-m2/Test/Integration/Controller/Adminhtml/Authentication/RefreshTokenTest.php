@@ -129,7 +129,7 @@ class RefreshTokenTest extends AbstractBackendController
      */
     public function refreshTokenRequestFailure()
     {
-        $this->expectExceptionMessage('required');
+        $this->expectExceptionMessage('accountId is a required field');
 
         /** @var \Zend\Http\Headers $headers */
         $headers = $this->getRequest()->getHeaders();

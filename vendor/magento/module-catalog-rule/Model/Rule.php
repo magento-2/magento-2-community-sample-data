@@ -19,12 +19,13 @@ use Magento\CatalogRule\Model\Rule\Condition\CombineFactory;
 use Magento\Customer\Model\Session;
 use Magento\Framework\Api\AttributeValueFactory;
 use Magento\Framework\Api\ExtensionAttributesFactory;
-use Magento\Framework\App\Cache\TypeListInterface;
 use Magento\Framework\App\ObjectManager;
+use Magento\Framework\DataObject\IdentityInterface;
+use Magento\CatalogRule\Model\ResourceModel\Product\ConditionsToCollectionApplier;
+use Magento\Framework\App\Cache\TypeListInterface;
+use Magento\Framework\DataObject;
 use Magento\Framework\Data\Collection\AbstractDb;
 use Magento\Framework\Data\FormFactory;
-use Magento\Framework\DataObject;
-use Magento\Framework\DataObject\IdentityInterface;
 use Magento\Framework\Model\Context;
 use Magento\Framework\Model\ResourceModel\AbstractResource;
 use Magento\Framework\Model\ResourceModel\Iterator;
@@ -33,7 +34,6 @@ use Magento\Framework\Serialize\Serializer\Json;
 use Magento\Framework\Stdlib\DateTime;
 use Magento\Framework\Stdlib\DateTime\TimezoneInterface;
 use Magento\Store\Model\StoreManagerInterface;
-use Magento\CatalogRule\Model\ResourceModel\Product\ConditionsToCollectionApplier;
 
 /**
  * Catalog Rule data model
@@ -163,7 +163,7 @@ class Rule extends \Magento\Rule\Model\AbstractModel implements RuleInterface, I
     /**
      * @var ConditionsToCollectionApplier
      */
-    private $conditionsToCollectionApplier;
+    protected $conditionsToCollectionApplier;
 
     /**
      * @var array
@@ -200,9 +200,8 @@ class Rule extends \Magento\Rule\Model\AbstractModel implements RuleInterface, I
      * @param ExtensionAttributesFactory|null $extensionFactory
      * @param AttributeValueFactory|null $customAttributeFactory
      * @param \Magento\Framework\Serialize\Serializer\Json $serializer
-     * @param \Magento\CatalogRule\Model\ResourceModel\RuleResourceModel|null $ruleResourceModel
      * @param ConditionsToCollectionApplier $conditionsToCollectionApplier
-     *
+     * @param RuleResourceModel|null $ruleResourceModel
      * @SuppressWarnings(PHPMD.ExcessiveParameterList)
      */
     public function __construct(
@@ -228,8 +227,8 @@ class Rule extends \Magento\Rule\Model\AbstractModel implements RuleInterface, I
         ExtensionAttributesFactory $extensionFactory = null,
         AttributeValueFactory $customAttributeFactory = null,
         Json $serializer = null,
-        RuleResourceModel $ruleResourceModel = null,
-        ConditionsToCollectionApplier $conditionsToCollectionApplier = null
+        ConditionsToCollectionApplier $conditionsToCollectionApplier = null,
+        RuleResourceModel $ruleResourceModel = null
     ) {
         $this->_productCollectionFactory = $productCollectionFactory;
         $this->_storeManager = $storeManager;
@@ -244,7 +243,6 @@ class Rule extends \Magento\Rule\Model\AbstractModel implements RuleInterface, I
         $this->dateTime = $dateTime;
         $this->_ruleProductProcessor = $ruleProductProcessor;
         $this->ruleResourceModel = $ruleResourceModel ?: ObjectManager::getInstance()->get(RuleResourceModel::class);
-
         $this->conditionsToCollectionApplier = $conditionsToCollectionApplier
             ?? ObjectManager::getInstance()->get(ConditionsToCollectionApplier::class);
 
@@ -373,8 +371,6 @@ class Rule extends \Magento\Rule\Model\AbstractModel implements RuleInterface, I
     }
 
     /**
-     * Check if we can use mapping for rule conditions
-     *
      * @return bool
      */
     private function canPreMapProducts()
@@ -609,7 +605,10 @@ class Rule extends \Magento\Rule\Model\AbstractModel implements RuleInterface, I
         $productIds = $this->_productIds ? array_keys(array_filter($this->_productIds, function (array $data) {
             return array_filter($data);
         })) : [];
-        $this->_ruleProductProcessor->reindexList($productIds);
+
+        if (!empty($productIds)) {
+            $this->_ruleProductProcessor->reindexList($productIds);
+        }
     }
 
     /**
@@ -840,7 +839,7 @@ class Rule extends \Magento\Rule\Model\AbstractModel implements RuleInterface, I
     /**
      * {@inheritdoc}
      *
-     * @return \Magento\CatalogRule\Api\Data\RuleExtensionInterface|null
+     * @return RuleExtensionInterface|null
      */
     public function getExtensionAttributes()
     {
@@ -850,7 +849,7 @@ class Rule extends \Magento\Rule\Model\AbstractModel implements RuleInterface, I
     /**
      * {@inheritdoc}
      *
-     * @param \Magento\CatalogRule\Api\Data\RuleExtensionInterface $extensionAttributes
+     * @param RuleExtensionInterface $extensionAttributes
      * @return $this
      */
     public function setExtensionAttributes(RuleExtensionInterface $extensionAttributes)

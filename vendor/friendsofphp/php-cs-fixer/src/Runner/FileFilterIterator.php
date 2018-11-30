@@ -38,7 +38,7 @@ final class FileFilterIterator extends \FilterIterator
     /**
      * @var array<string,bool>
      */
-    private $visitedElements = [];
+    private $visitedElements = array();
 
     public function __construct(
         \Iterator $iterator,
@@ -58,7 +58,7 @@ final class FileFilterIterator extends \FilterIterator
             throw new \RuntimeException(
                 sprintf(
                     'Expected instance of "\SplFileInfo", got "%s".',
-                    \is_object($file) ? \get_class($file) : \gettype($file)
+                    is_object($file) ? get_class($file) : gettype($file)
                 )
             );
         }
@@ -90,6 +90,8 @@ final class FileFilterIterator extends \FilterIterator
         if (
             // empty file
             '' === $content
+            // file uses __halt_compiler() on ~5.3.6 due to broken implementation of token_get_all
+            || (PHP_VERSION_ID >= 50306 && PHP_VERSION_ID < 50400 && false !== stripos($content, '__halt_compiler()'))
             // file that does not need fixing due to cache
             || !$this->cacheManager->needFixing($file->getPathname(), $content)
         ) {

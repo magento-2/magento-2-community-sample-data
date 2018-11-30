@@ -6,7 +6,7 @@ namespace Temando\Shipping\Rest\EntityMapper;
 
 use Temando\Shipping\Model\PackagingInterface;
 use Temando\Shipping\Model\PackagingInterfaceFactory;
-use Temando\Shipping\Rest\Response\DataObject\Container;
+use Temando\Shipping\Rest\Response\Type\ContainerResponseType;
 
 /**
  * Map API data to application data object
@@ -34,10 +34,10 @@ class PackagingResponseMapper
     }
 
     /**
-     * @param Container $apiContainer
+     * @param ContainerResponseType $apiContainer
      * @return PackagingInterface
      */
-    public function map(Container $apiContainer)
+    public function map(ContainerResponseType $apiContainer)
     {
         $innerDimensions = $apiContainer->getAttributes()->getInnerDimensions();
         $tareWeight      = $apiContainer->getAttributes()->getTareWeight();

@@ -167,7 +167,7 @@ class FileList implements \Iterator, \Countable
      *
      * @return void
      */
-    public function rewind()
+    function rewind()
     {
         reset($this->files);
 
@@ -179,7 +179,7 @@ class FileList implements \Iterator, \Countable
      *
      * @return \PHP_CodeSniffer\Files\File
      */
-    public function current()
+    function current()
     {
         $path = key($this->files);
         if ($this->files[$path] === null) {
@@ -196,7 +196,7 @@ class FileList implements \Iterator, \Countable
      *
      * @return void
      */
-    public function key()
+    function key()
     {
         return key($this->files);
 
@@ -208,7 +208,7 @@ class FileList implements \Iterator, \Countable
      *
      * @return void
      */
-    public function next()
+    function next()
     {
         next($this->files);
 
@@ -220,7 +220,7 @@ class FileList implements \Iterator, \Countable
      *
      * @return boolean
      */
-    public function valid()
+    function valid()
     {
         if (current($this->files) === false) {
             return false;
@@ -236,7 +236,7 @@ class FileList implements \Iterator, \Countable
      *
      * @return integer
      */
-    public function count()
+    function count()
     {
         return $this->numFiles;
 

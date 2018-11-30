@@ -13,9 +13,8 @@ use Magento\Framework\Registry;
 use Magento\Framework\App\ObjectManager;
 use Magento\Framework\DataObject;
 use Magento\Framework\Exception\LocalizedException;
-use Magento\Framework\App\Action\HttpPostActionInterface;
 
-class Save extends Agreement implements HttpPostActionInterface
+class Save extends Agreement
 {
     /**
      * @var AgreementFactory

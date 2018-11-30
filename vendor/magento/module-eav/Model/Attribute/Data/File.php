@@ -120,7 +120,7 @@ class File extends \Magento\Eav\Model\Attribute\Data\AbstractData
     }
 
     /**
-     * Validate file by attribute validate rules and return array of errors
+     * Validate file by attribute validate rules and return array of errors.
      *
      * @param array $value
      * @return string[]
@@ -180,7 +180,7 @@ class File extends \Magento\Eav\Model\Attribute\Data\AbstractData
             $fileData = [
                 'size' => filesize($dir . $value),
                 'name' => $value,
-                'tmp_name' => $dir . $value
+                'tmp_name' => $dir . $value,
             ];
         }
 
@@ -284,7 +284,7 @@ class File extends \Magento\Eav\Model\Attribute\Data\AbstractData
     }
 
     /**
-     * Return formatted attribute value from entity model
+     * Return formated attribute value from entity model
      *
      * @param string $format
      * @return string|array

@@ -124,6 +124,7 @@ class IndexStructureTest extends \PHPUnit\Framework\TestCase
      * @param $callNumber
      * @param $tableName
      * @param $isTableExist
+     *
      * @return mixed
      */
     private function mockDropTable($callNumber, $tableName, $isTableExist)
@@ -144,6 +145,7 @@ class IndexStructureTest extends \PHPUnit\Framework\TestCase
     /**
      * @param $callNumber
      * @param $tableName
+     *
      * @return mixed
      */
     private function mockFulltextTable($callNumber, $tableName)

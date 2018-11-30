@@ -23,7 +23,7 @@ class Filter
      * @param \Throwable $e
      * @param bool       $asString
      *
-     * @return string|string[]
+     * @return string
      */
     public static function getFilteredStacktrace($e, $asString = true)
     {

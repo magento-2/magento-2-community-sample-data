@@ -1,6 +1,6 @@
 <?php
 /*
- * This file is part of sebastian/comparator.
+ * This file is part of the Comparator package.
  *
  * (c) Sebastian Bergmann <sebastian@phpunit.de>
  *
@@ -10,15 +10,11 @@
 
 namespace SebastianBergmann\Comparator;
 
-use PHPUnit\Framework\TestCase;
 use stdClass;
+use PHPUnit\Framework\TestCase;
 
 /**
  * @coversDefaultClass SebastianBergmann\Comparator\TypeComparator
- *
- * @uses SebastianBergmann\Comparator\Comparator
- * @uses SebastianBergmann\Comparator\Factory
- * @uses SebastianBergmann\Comparator\ComparisonFailure
  */
 class TypeComparatorTest extends TestCase
 {

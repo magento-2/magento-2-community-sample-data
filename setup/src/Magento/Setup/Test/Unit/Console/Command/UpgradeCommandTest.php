@@ -75,19 +75,14 @@ class UpgradeCommandTest extends \PHPUnit\Framework\TestCase
 
     /**
      * @dataProvider executeDataProvider
-     * @param array $options
-     * @param string $deployMode
-     * @param string $expectedString
-     * @param array $expectedOptions
      */
-    public function testExecute($options, $deployMode, $expectedString, $expectedOptions)
+    public function testExecute($options, $deployMode, $expectedString = '')
     {
         $this->appStateMock->method('getMode')->willReturn($deployMode);
         $this->installerMock->expects($this->at(0))
             ->method('updateModulesSequence');
-        $this->installerMock->expects($this->once())
-            ->method('installSchema')
-            ->with($expectedOptions);
+        $this->installerMock->expects($this->at(1))
+            ->method('installSchema');
         $this->installerMock->expects($this->at(2))
             ->method('installDataFixtures');
 
@@ -102,64 +97,25 @@ class UpgradeCommandTest extends \PHPUnit\Framework\TestCase
     {
         return [
             [
-                'options' => [
-                    '--magento-init-params' => '',
-                    '--convert-old-scripts' => false,
-                ],
+                'options' => [],
                 'deployMode' => \Magento\Framework\App\State::MODE_PRODUCTION,
                 'expectedString' => 'Please re-run Magento compile command. Use the command "setup:di:compile"'
-                    . PHP_EOL,
-                'expectedOptions' => [
-                    'keep-generated' => false,
-                    'convert-old-scripts' => false,
-                    'safe-mode' => false,
-                    'data-restore' => false,
-                    'dry-run' => false,
-                    'magento-init-params' => '',
-                ]
+                    . PHP_EOL
             ],
             [
-                'options' => [
-                    '--magento-init-params' => '',
-                    '--convert-old-scripts' => false,
-                    '--keep-generated' => true,
-                ],
+                'options' => ['--keep-generated' => true],
                 'deployMode' => \Magento\Framework\App\State::MODE_PRODUCTION,
-                'expectedString' => '',
-                'expectedOptions' => [
-                    'keep-generated' => true,
-                    'convert-old-scripts' => false,
-                    'safe-mode' => false,
-                    'data-restore' => false,
-                    'dry-run' => false,
-                    'magento-init-params' => '',
-                ]
+                'expectedString' => ''
             ],
             [
-                'options' => ['--magento-init-params' => '', '--convert-old-scripts' => false],
+                'options' => [],
                 'deployMode' => \Magento\Framework\App\State::MODE_DEVELOPER,
-                'expectedString' => '',
-                'expectedOptions' => [
-                    'keep-generated' => false,
-                    'convert-old-scripts' => false,
-                    'safe-mode' => false,
-                    'data-restore' => false,
-                    'dry-run' => false,
-                    'magento-init-params' => '',
-                ]
+                'expectedString' => ''
             ],
             [
-                'options' => ['--magento-init-params' => '', '--convert-old-scripts' => false],
+                'options' => [],
                 'deployMode' => \Magento\Framework\App\State::MODE_DEFAULT,
-                'expectedString' => '',
-                'expectedOptions' => [
-                    'keep-generated' => false,
-                    'convert-old-scripts' => false,
-                    'safe-mode' => false,
-                    'data-restore' => false,
-                    'dry-run' => false,
-                    'magento-init-params' => '',
-                ]
+                'expectedString' => ''
             ],
         ];
     }

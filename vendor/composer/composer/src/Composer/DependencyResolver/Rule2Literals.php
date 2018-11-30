@@ -50,7 +50,9 @@ class Rule2Literals extends Rule
 
     public function getHash()
     {
-        return $this->literal1.','.$this->literal2;
+        $data = unpack('ihash', md5($this->literal1.','.$this->literal2, true));
+
+        return $data['hash'];
     }
 
     /**
@@ -63,19 +65,6 @@ class Rule2Literals extends Rule
      */
     public function equals(Rule $rule)
     {
-        // specialized fast-case
-        if ($rule instanceof self) {
-            if ($this->literal1 !== $rule->literal1) {
-                return false;
-            }
-
-            if ($this->literal2 !== $rule->literal2) {
-                return false;
-            }
-
-            return true;
-        }
-
         $literals = $rule->getLiterals();
         if (2 != count($literals)) {
             return false;
@@ -104,7 +93,7 @@ class Rule2Literals extends Rule
      */
     public function __toString()
     {
-        $result = $this->isDisabled() ? 'disabled(' : '(';
+        $result = ($this->isDisabled()) ? 'disabled(' : '(';
 
         $result .= $this->literal1 . '|' . $this->literal2 . ')';
 

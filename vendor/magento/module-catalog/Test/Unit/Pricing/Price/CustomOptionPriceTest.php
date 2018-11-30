@@ -79,6 +79,7 @@ class CustomOptionPriceTest extends \PHPUnit\Framework\TestCase
 
     /**
      * @param array $optionsData
+     *
      * @return array
      */
     protected function setupOptions(array $optionsData)
@@ -111,6 +112,7 @@ class CustomOptionPriceTest extends \PHPUnit\Framework\TestCase
 
     /**
      * @param $optionsData
+     *
      * @return array
      */
     protected function setupSingleValueOptions($optionsData)

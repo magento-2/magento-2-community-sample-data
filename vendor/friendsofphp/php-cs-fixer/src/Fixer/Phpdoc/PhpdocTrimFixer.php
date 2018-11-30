@@ -31,7 +31,7 @@ final class PhpdocTrimFixer extends AbstractFixer
     {
         return new FixerDefinition(
             'PHPDoc should start and end with content, excluding the very first and last line of the docblocks.',
-            [new CodeSample('<?php
+            array(new CodeSample('<?php
 /**
  *
  * Foo must be final class.
@@ -39,7 +39,7 @@ final class PhpdocTrimFixer extends AbstractFixer
  *
  */
 final class Foo {}
-')]
+'))
         );
     }
 
@@ -49,7 +49,7 @@ final class Foo {}
     public function getPriority()
     {
         /*
-         * Should be run after all phpdoc fixers that add or remove tags, or
+         * Should be run after all PHPDoc fixers that add or remove tags, or
          * alter descriptions. This is so that they don't leave behind blank
          * lines this fixer would have otherwise cleaned up.
          */
@@ -79,7 +79,7 @@ final class Foo {}
             // we need re-parse the docblock after fixing the start before
             // fixing the end in order for the lines to be correctly indexed
             $content = $this->fixEnd($content);
-            $tokens[$index] = new Token([T_DOC_COMMENT, $content]);
+            $tokens[$index] = new Token(array(T_DOC_COMMENT, $content));
         }
     }
 

@@ -159,6 +159,7 @@ class LinksTest extends \PHPUnit\Framework\TestCase
     /**
      * @param $linkPrice
      * @param $linkId
+     *
      * @return \PHPUnit_Framework_MockObject_MockObject
      */
     protected function getLinkMock($linkPrice, $linkId)

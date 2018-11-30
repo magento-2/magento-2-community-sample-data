@@ -31,14 +31,6 @@ interface RestClientInterface
     public function put($uri, $rawBody, array $headers);
 
     /**
-     * @param string $uri
-     * @param string $rawBody
-     * @param string[] $headers
-     * @return string
-     */
-    public function patch($uri, $rawBody, array $headers);
-
-    /**
      * @param string   $uri
      * @param string[] $queryParams
      * @param string[] $headers

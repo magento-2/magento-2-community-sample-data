@@ -5,12 +5,11 @@
  */
 namespace Magento\UrlRewrite\Controller;
 
-use Magento\Framework\App\RequestInterface;
+use Magento\Framework\App\Request\Http as HttpRequest;
+use Magento\Framework\App\Response\Http as HttpResponse;
 use Magento\UrlRewrite\Controller\Adminhtml\Url\Rewrite;
 use Magento\UrlRewrite\Model\UrlFinderInterface;
 use Magento\UrlRewrite\Service\V1\Data\UrlRewrite;
-use Magento\Framework\App\Request\Http as HttpRequest;
-use Magento\Framework\App\Response\Http as HttpResponse;
 use Magento\Framework\UrlInterface;
 use Magento\Framework\App\Action\Redirect;
 use Magento\Framework\App\ActionInterface;
@@ -38,7 +37,7 @@ class Router implements \Magento\Framework\App\RouterInterface
     protected $storeManager;
 
     /**
-     * @var HttpResponse
+     * @var \Magento\Framework\App\ResponseInterface|HttpResponse
      */
     protected $response;
 
@@ -69,19 +68,17 @@ class Router implements \Magento\Framework\App\RouterInterface
     }
 
     /**
-     * Match corresponding URL Rewrite and modify request.
+     * Match corresponding URL Rewrite and modify request
      *
-     * @param RequestInterface|HttpRequest $request
-     *
+     * @param \Magento\Framework\App\RequestInterface|HttpRequest $request
      * @return ActionInterface|null
      */
-    public function match(RequestInterface $request)
+    public function match(\Magento\Framework\App\RequestInterface $request)
     {
         $rewrite = $this->getRewrite(
             $request->getPathInfo(),
             $this->storeManager->getStore()->getId()
         );
-
         if ($rewrite === null) {
             //No rewrite rule matching current URl found, continuing with
             //processing of this URL.
@@ -104,9 +101,8 @@ class Router implements \Magento\Framework\App\RouterInterface
     }
 
     /**
-     * @param RequestInterface $request
+     * @param \Magento\Framework\App\RequestInterface $request
      * @param UrlRewrite $rewrite
-     *
      * @return ActionInterface|null
      */
     protected function processRedirect($request, $rewrite)
@@ -121,7 +117,7 @@ class Router implements \Magento\Framework\App\RouterInterface
     }
 
     /**
-     * @param RequestInterface|HttpRequest $request
+     * @param \Magento\Framework\App\RequestInterface|HttpRequest $request
      * @param string $url
      * @param int $code
      * @return ActionInterface

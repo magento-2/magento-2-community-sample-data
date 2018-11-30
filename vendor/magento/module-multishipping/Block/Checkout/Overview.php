@@ -319,7 +319,7 @@ class Overview extends \Magento\Sales\Block\Items\AbstractItems
     }
 
     /**
-     * @deprecated 100.2.3
+     * @deprecated
      * typo in method name, see getBillingAddressTotals()
      * @return mixed
      */
@@ -330,7 +330,6 @@ class Overview extends \Magento\Sales\Block\Items\AbstractItems
 
     /**
      * @return mixed
-     * @since 100.2.3
      */
     public function getBillingAddressTotals()
     {

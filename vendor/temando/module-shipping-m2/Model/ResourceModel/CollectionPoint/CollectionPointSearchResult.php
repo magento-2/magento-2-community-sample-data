@@ -5,27 +5,52 @@
 namespace Temando\Shipping\Model\ResourceModel\CollectionPoint;
 
 use Magento\Framework\Api\SearchCriteriaInterface;
-use Magento\Framework\Data\Collection;
+use Magento\Framework\DataObject;
+use Magento\Framework\Exception\CouldNotSaveException;
+use Magento\Framework\Model\ResourceModel\Db\Collection\AbstractCollection;
 use Temando\Shipping\Api\Data\CollectionPoint\CollectionPointSearchResultInterface;
 use Temando\Shipping\Api\Data\CollectionPoint\QuoteCollectionPointInterface;
+use Temando\Shipping\Model\CollectionPoint\QuoteCollectionPoint;
+use Temando\Shipping\Model\ResourceModel\CollectionPoint\QuoteCollectionPoint as CollectionPointResource;
 
 /**
  * Collection point collection
  *
- * @deprecated since 1.4.0
- * @see \Temando\Shipping\Model\ResourceModel\Delivery\CollectionPointSearchResult
- *
- * @package Temando\Shipping\Model
- * @author  Christoph Aßmann <christoph.assmann@netresearch.de>
- * @license https://opensource.org/licenses/osl-3.0.php Open Software License (OSL 3.0)
- * @link    https://www.temando.com/
+ * @package  Temando\Shipping\Model
+ * @author   Christoph Aßmann <christoph.assmann@netresearch.de>
+ * @license  http://opensource.org/licenses/osl-3.0.php Open Software License (OSL 3.0)
+ * @link     http://www.temando.com/
  */
-class CollectionPointSearchResult extends Collection implements CollectionPointSearchResultInterface
+class CollectionPointSearchResult extends AbstractCollection implements CollectionPointSearchResultInterface
 {
     /**
      * @var \Magento\Framework\Api\SearchCriteriaInterface
      */
     private $searchCriteria;
+
+    /**
+     * Event prefix
+     *
+     * @var string
+     */
+    protected $_eventPrefix = 'temando_collection_point_collection';
+
+    /**
+     * Event object
+     *
+     * @var string
+     */
+    protected $_eventObject = 'collection_point_collection';
+
+    /**
+     * Init collection and determine table names
+     *
+     * @return void
+     */
+    protected function _construct()
+    {
+        $this->_init(QuoteCollectionPoint::class, CollectionPointResource::class);
+    }
 
     /**
      * Get search criteria.
@@ -87,5 +112,22 @@ class CollectionPointSearchResult extends Collection implements CollectionPointS
             $this->addItem($item);
         }
         return $this;
+    }
+
+    /**
+     * Unserialize opening_hours in each item
+     *
+     * @return $this
+     */
+    protected function _afterLoad()
+    {
+        /** @var QuoteCollectionPointInterface $item */
+        foreach ($this->_items as $item) {
+            if (is_string($item->getOpeningHours())) {
+                $this->getResource()->unserializeFields($item);
+            }
+        }
+
+        return parent::_afterLoad();
     }
 }

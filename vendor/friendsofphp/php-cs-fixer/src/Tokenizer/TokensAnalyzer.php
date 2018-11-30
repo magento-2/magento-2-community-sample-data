@@ -45,9 +45,9 @@ final class TokensAnalyzer
     public function getClassyElements()
     {
         $this->tokens->rewind();
-        $elements = [];
+        $elements = array();
 
-        for ($index = 1, $count = \count($this->tokens) - 2; $index < $count; ++$index) {
+        for ($index = 1, $count = count($this->tokens) - 2; $index < $count; ++$index) {
             if ($this->tokens[$index]->isClassy()) {
                 list($index, $newElements) = $this->findClassyElements($index);
                 $elements += $newElements;
@@ -72,14 +72,14 @@ final class TokensAnalyzer
 
         $tokens->rewind();
 
-        $uses = [];
+        $uses = array();
         $namespaceIndex = 0;
 
         for ($index = 0, $limit = $tokens->count(); $index < $limit; ++$index) {
             $token = $tokens[$index];
 
             if ($token->isGivenKind(T_NAMESPACE)) {
-                $nextTokenIndex = $tokens->getNextTokenOfKind($index, [';', '{']);
+                $nextTokenIndex = $tokens->getNextTokenOfKind($index, array(';', '{'));
                 $nextToken = $tokens[$nextTokenIndex];
 
                 if ($nextToken->equals('{')) {
@@ -114,7 +114,7 @@ final class TokensAnalyzer
      */
     public function isArray($index)
     {
-        return $this->tokens[$index]->isGivenKind([T_ARRAY, CT::T_ARRAY_SQUARE_BRACE_OPEN]);
+        return $this->tokens[$index]->isGivenKind(array(T_ARRAY, CT::T_ARRAY_SQUARE_BRACE_OPEN));
     }
 
     /**
@@ -189,12 +189,12 @@ final class TokensAnalyzer
             throw new \LogicException(sprintf('No T_FUNCTION at given index %d, got %s.', $index, $token->getName()));
         }
 
-        $attributes = [
+        $attributes = array(
             'visibility' => null,
             'static' => false,
             'abstract' => false,
             'final' => false,
-        ];
+        );
 
         for ($i = $index; $i >= 0; --$i) {
             $tokenIndex = $tokens->getPrevMeaningfulToken($i);
@@ -202,19 +202,19 @@ final class TokensAnalyzer
             $i = $tokenIndex;
             $token = $tokens[$tokenIndex];
 
-            if ($token->isGivenKind(T_STATIC)) {
+            if ($token->isGivenKind(array(T_STATIC))) {
                 $attributes['static'] = true;
 
                 continue;
             }
 
-            if ($token->isGivenKind(T_FINAL)) {
+            if ($token->isGivenKind(array(T_FINAL))) {
                 $attributes['final'] = true;
 
                 continue;
             }
 
-            if ($token->isGivenKind(T_ABSTRACT)) {
+            if ($token->isGivenKind(array(T_ABSTRACT))) {
                 $attributes['abstract'] = true;
 
                 continue;
@@ -222,19 +222,19 @@ final class TokensAnalyzer
 
             // visibility
 
-            if ($token->isGivenKind(T_PRIVATE)) {
+            if ($token->isGivenKind(array(T_PRIVATE))) {
                 $attributes['visibility'] = T_PRIVATE;
 
                 continue;
             }
 
-            if ($token->isGivenKind(T_PROTECTED)) {
+            if ($token->isGivenKind(array(T_PROTECTED))) {
                 $attributes['visibility'] = T_PROTECTED;
 
                 continue;
             }
 
-            if ($token->isGivenKind(T_PUBLIC)) {
+            if ($token->isGivenKind(array(T_PUBLIC))) {
                 $attributes['visibility'] = T_PUBLIC;
 
                 continue;
@@ -280,96 +280,23 @@ final class TokensAnalyzer
      */
     public function isLambda($index)
     {
-        if (!$this->tokens[$index]->isGivenKind(T_FUNCTION)) {
-            throw new \LogicException(sprintf('No T_FUNCTION at given index %d, got %s.', $index, $this->tokens[$index]->getName()));
+        $tokens = $this->tokens;
+        $token = $tokens[$index];
+
+        if (!$token->isGivenKind(T_FUNCTION)) {
+            throw new \LogicException(sprintf('No T_FUNCTION at given index %d, got %s.', $index, $token->getName()));
         }
 
-        $startParenthesisIndex = $this->tokens->getNextMeaningfulToken($index);
-        $startParenthesisToken = $this->tokens[$startParenthesisIndex];
+        $startParenthesisIndex = $tokens->getNextMeaningfulToken($index);
+        $startParenthesisToken = $tokens[$startParenthesisIndex];
 
         // skip & for `function & () {}` syntax
         if ($startParenthesisToken->isGivenKind(CT::T_RETURN_REF)) {
-            $startParenthesisIndex = $this->tokens->getNextMeaningfulToken($startParenthesisIndex);
-            $startParenthesisToken = $this->tokens[$startParenthesisIndex];
+            $startParenthesisIndex = $tokens->getNextMeaningfulToken($startParenthesisIndex);
+            $startParenthesisToken = $tokens[$startParenthesisIndex];
         }
 
         return $startParenthesisToken->equals('(');
-    }
-
-    /**
-     * Check if the T_STRING under given index is a constant invocation.
-     *
-     * @param int $index
-     *
-     * @return bool
-     */
-    public function isConstantInvocation($index)
-    {
-        if (!$this->tokens[$index]->isGivenKind(T_STRING)) {
-            throw new \LogicException(sprintf('No T_STRING at given index %d, got %s.', $index, $this->tokens[$index]->getName()));
-        }
-
-        $nextIndex = $this->tokens->getNextMeaningfulToken($index);
-
-        if (
-            $this->tokens[$nextIndex]->equalsAny(['(', '{']) ||
-            $this->tokens[$nextIndex]->isGivenKind([T_AS, T_DOUBLE_COLON, T_ELLIPSIS, T_NS_SEPARATOR, CT::T_RETURN_REF, CT::T_TYPE_ALTERNATION, T_VARIABLE])
-        ) {
-            return false;
-        }
-
-        $prevIndex = $this->tokens->getPrevMeaningfulToken($index);
-
-        if ($this->tokens[$prevIndex]->isGivenKind([T_AS, T_CLASS, T_CONST, T_DOUBLE_COLON, T_FUNCTION, T_GOTO, CT::T_GROUP_IMPORT_BRACE_OPEN, T_INTERFACE, T_OBJECT_OPERATOR, T_TRAIT])) {
-            return false;
-        }
-
-        while ($this->tokens[$prevIndex]->isGivenKind([CT::T_NAMESPACE_OPERATOR, T_NS_SEPARATOR, T_STRING])) {
-            $prevIndex = $this->tokens->getPrevMeaningfulToken($prevIndex);
-        }
-
-        if ($this->tokens[$prevIndex]->isGivenKind([CT::T_CONST_IMPORT, T_EXTENDS, CT::T_FUNCTION_IMPORT, T_IMPLEMENTS, T_INSTANCEOF, T_INSTEADOF, T_NAMESPACE, T_NEW, T_USE, CT::T_USE_TRAIT])) {
-            return false;
-        }
-
-        // `FOO & $bar` could be:
-        //   - function reference parameter: function baz(Foo & $bar) {}
-        //   - bit operator: $x = FOO & $bar;
-        if ($this->tokens[$nextIndex]->equals('&') && $this->tokens[$this->tokens->getNextMeaningfulToken($nextIndex)]->isGivenKind(T_VARIABLE)) {
-            $checkIndex = $this->tokens->getPrevTokenOfKind($prevIndex, [';', '{', '}', [T_FUNCTION], [T_OPEN_TAG], [T_OPEN_TAG_WITH_ECHO]]);
-
-            if ($this->tokens[$checkIndex]->isGivenKind(T_FUNCTION)) {
-                return false;
-            }
-        }
-
-        // check for `implements`/`use` list
-        if ($this->tokens[$prevIndex]->equals(',')) {
-            $checkIndex = $prevIndex;
-            while ($this->tokens[$checkIndex]->equalsAny([',', [T_AS], [CT::T_NAMESPACE_OPERATOR], [T_NS_SEPARATOR], [T_STRING]])) {
-                $checkIndex = $this->tokens->getPrevMeaningfulToken($checkIndex);
-            }
-
-            if ($this->tokens[$checkIndex]->isGivenKind([CT::T_GROUP_IMPORT_BRACE_OPEN, T_IMPLEMENTS, CT::T_USE_TRAIT])) {
-                return false;
-            }
-        }
-
-        // check for array in double quoted string: `"..$foo[bar].."`
-        if ($this->tokens[$prevIndex]->equals('[') && $this->tokens[$nextIndex]->equals(']')) {
-            $checkToken = $this->tokens[$this->tokens->getNextMeaningfulToken($nextIndex)];
-
-            if ($checkToken->equals('"') || $checkToken->isGivenKind([T_CURLY_OPEN, T_DOLLAR_OPEN_CURLY_BRACES, T_ENCAPSED_AND_WHITESPACE, T_VARIABLE])) {
-                return false;
-            }
-        }
-
-        // check for goto label
-        if ($this->tokens[$nextIndex]->equals(':') && $this->tokens[$prevIndex]->equalsAny([';', '}', [T_OPEN_TAG], [T_OPEN_TAG_WITH_ECHO]])) {
-            return false;
-        }
-
-        return true;
     }
 
     /**
@@ -381,18 +308,18 @@ final class TokensAnalyzer
      */
     public function isUnarySuccessorOperator($index)
     {
-        static $allowedPrevToken = [
+        static $allowedPrevToken = array(
             ']',
-            [T_STRING],
-            [T_VARIABLE],
-            [CT::T_DYNAMIC_PROP_BRACE_CLOSE],
-            [CT::T_DYNAMIC_VAR_BRACE_CLOSE],
-        ];
+            array(T_STRING),
+            array(T_VARIABLE),
+            array(CT::T_DYNAMIC_PROP_BRACE_CLOSE),
+            array(CT::T_DYNAMIC_VAR_BRACE_CLOSE),
+        );
 
         $tokens = $this->tokens;
         $token = $tokens[$index];
 
-        if (!$token->isGivenKind([T_INC, T_DEC])) {
+        if (!$token->isGivenKind(array(T_INC, T_DEC))) {
             return false;
         }
 
@@ -410,42 +337,47 @@ final class TokensAnalyzer
      */
     public function isUnaryPredecessorOperator($index)
     {
-        static $potentialSuccessorOperator = [T_INC, T_DEC];
+        static $potentialSuccessorOperator = array(T_INC, T_DEC);
 
-        static $potentialBinaryOperator = ['+', '-', '&', [CT::T_RETURN_REF]];
+        static $potentialBinaryOperator = array('+', '-', '&', array(CT::T_RETURN_REF));
 
         static $otherOperators;
         if (null === $otherOperators) {
-            $otherOperators = ['!', '~', '@', [T_ELLIPSIS]];
+            $otherOperators = array('!', '~', '@');
+            if (defined('T_ELLIPSIS')) {
+                $otherOperators[] = array(T_ELLIPSIS);
+            }
         }
 
         static $disallowedPrevTokens;
         if (null === $disallowedPrevTokens) {
-            $disallowedPrevTokens = [
+            $disallowedPrevTokens = array(
                 ']',
                 '}',
                 ')',
                 '"',
                 '`',
-                [CT::T_ARRAY_SQUARE_BRACE_CLOSE],
-                [CT::T_DYNAMIC_PROP_BRACE_CLOSE],
-                [CT::T_DYNAMIC_VAR_BRACE_CLOSE],
-                [T_CLASS_C],
-                [T_CONSTANT_ENCAPSED_STRING],
-                [T_DEC],
-                [T_DIR],
-                [T_DNUMBER],
-                [T_FILE],
-                [T_FUNC_C],
-                [T_INC],
-                [T_LINE],
-                [T_LNUMBER],
-                [T_METHOD_C],
-                [T_NS_C],
-                [T_STRING],
-                [T_TRAIT_C],
-                [T_VARIABLE],
-            ];
+                array(CT::T_ARRAY_SQUARE_BRACE_CLOSE),
+                array(CT::T_DYNAMIC_PROP_BRACE_CLOSE),
+                array(CT::T_DYNAMIC_VAR_BRACE_CLOSE),
+                array(T_CLASS_C),
+                array(T_CONSTANT_ENCAPSED_STRING),
+                array(T_DEC),
+                array(T_DIR),
+                array(T_DNUMBER),
+                array(T_FILE),
+                array(T_FUNC_C),
+                array(T_INC),
+                array(T_LINE),
+                array(T_LNUMBER),
+                array(T_METHOD_C),
+                array(T_NS_C),
+                array(T_STRING),
+                array(T_VARIABLE),
+            );
+            if (defined('T_TRAIT_C')) {
+                $disallowedPrevTokens[] = array(T_TRAIT_C);
+            }
         }
 
         $tokens = $this->tokens;
@@ -473,14 +405,14 @@ final class TokensAnalyzer
             return false;
         }
 
-        static $searchTokens = [
+        static $searchTokens = array(
             ';',
             '{',
             '}',
-            [T_FUNCTION],
-            [T_OPEN_TAG],
-            [T_OPEN_TAG_WITH_ECHO],
-        ];
+            array(T_FUNCTION),
+            array(T_OPEN_TAG),
+            array(T_OPEN_TAG_WITH_ECHO),
+        );
         $prevToken = $tokens[$tokens->getPrevTokenOfKind($index, $searchTokens)];
 
         return $prevToken->isGivenKind(T_FUNCTION);
@@ -495,7 +427,7 @@ final class TokensAnalyzer
      */
     public function isBinaryOperator($index)
     {
-        static $nonArrayOperators = [
+        static $nonArrayOperators = array(
             '=' => true,
             '*' => true,
             '/' => true,
@@ -504,17 +436,17 @@ final class TokensAnalyzer
             '>' => true,
             '|' => true,
             '^' => true,
-        ];
+        );
 
-        static $potentialUnaryNonArrayOperators = [
+        static $potentialUnaryNonArrayOperators = array(
             '+' => true,
             '-' => true,
             '&' => true,
-        ];
+        );
 
         static $arrayOperators;
         if (null === $arrayOperators) {
-            $arrayOperators = [
+            $arrayOperators = array(
                 T_AND_EQUAL => true,            // &=
                 T_BOOLEAN_AND => true,          // &&
                 T_BOOLEAN_OR => true,           // ||
@@ -535,21 +467,24 @@ final class TokensAnalyzer
                 T_MUL_EQUAL => true,            // *=
                 T_OR_EQUAL => true,             // |=
                 T_PLUS_EQUAL => true,           // +=
-                T_POW => true,                  // **
-                T_POW_EQUAL => true,            // **=
                 T_SL => true,                   // <<
                 T_SL_EQUAL => true,             // <<=
                 T_SR => true,                   // >>
                 T_SR_EQUAL => true,             // >>=
                 T_XOR_EQUAL => true,            // ^=
                 CT::T_TYPE_ALTERNATION => true, // |
-            ];
+            );
 
-            if (\defined('T_SPACESHIP')) {
+            if (defined('T_POW')) {
+                $arrayOperators[T_POW] = true;       // **
+                $arrayOperators[T_POW_EQUAL] = true; // **=
+            }
+
+            if (defined('T_SPACESHIP')) {
                 $arrayOperators[T_SPACESHIP] = true; // <=>
             }
 
-            if (\defined('T_COALESCE')) {
+            if (defined('T_COALESCE')) {
                 $arrayOperators[T_COALESCE] = true;  // ??
             }
         }
@@ -612,13 +547,12 @@ final class TokensAnalyzer
      */
     private function findClassyElements($index)
     {
-        $elements = [];
+        $elements = array();
         $curlyBracesLevel = 0;
         $bracesLevel = 0;
-        $classIndex = $index;
         ++$index; // skip the classy index itself
 
-        for ($count = \count($this->tokens); $index < $count; ++$index) {
+        for ($count = count($this->tokens); $index < $count; ++$index) {
             $token = $this->tokens[$index];
 
             if ($token->isGivenKind(T_ENCAPSED_AND_WHITESPACE)) {
@@ -665,30 +599,18 @@ final class TokensAnalyzer
             }
 
             if (0 === $bracesLevel && $token->isGivenKind(T_VARIABLE)) {
-                $elements[$index] = [
-                    'token' => $token,
-                    'type' => 'property',
-                    'classIndex' => $classIndex,
-                ];
+                $elements[$index] = array('token' => $token, 'type' => 'property');
 
                 continue;
             }
 
             if ($token->isGivenKind(T_FUNCTION)) {
-                $elements[$index] = [
-                    'token' => $token,
-                    'type' => 'method',
-                    'classIndex' => $classIndex,
-                ];
+                $elements[$index] = array('token' => $token, 'type' => 'method');
             } elseif ($token->isGivenKind(T_CONST)) {
-                $elements[$index] = [
-                    'token' => $token,
-                    'type' => 'const',
-                    'classIndex' => $classIndex,
-                ];
+                $elements[$index] = array('token' => $token, 'type' => 'const');
             }
         }
 
-        return [$index, $elements];
+        return array($index, $elements);
     }
 }

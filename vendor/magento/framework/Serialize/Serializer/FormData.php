@@ -8,6 +8,8 @@ declare(strict_types=1);
 
 namespace Magento\Framework\Serialize\Serializer;
 
+use Magento\Framework\Serialize\Serializer\Json;
+
 /**
  * Class for processing of serialized form data.
  */

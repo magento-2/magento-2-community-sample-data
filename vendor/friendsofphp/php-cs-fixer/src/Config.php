@@ -22,7 +22,7 @@ use PhpCsFixer\Fixer\FixerInterface;
 class Config implements ConfigInterface
 {
     private $cacheFile = '.php_cs.cache';
-    private $customFixers = [];
+    private $customFixers = array();
     private $finder;
     private $format = 'txt';
     private $hideProgress = false;
@@ -31,7 +31,7 @@ class Config implements ConfigInterface
     private $lineEnding = "\n";
     private $name;
     private $phpExecutable;
-    private $rules = ['@PSR2' => true];
+    private $rules = array('@PSR2' => true);
     private $usingCache = true;
 
     public function __construct($name = 'default')
@@ -152,10 +152,10 @@ class Config implements ConfigInterface
      */
     public function registerCustomFixers($fixers)
     {
-        if (false === \is_array($fixers) && false === $fixers instanceof \Traversable) {
+        if (false === is_array($fixers) && false === $fixers instanceof \Traversable) {
             throw new \InvalidArgumentException(sprintf(
                 'Argument must be an array or a Traversable, got "%s".',
-                \is_object($fixers) ? \get_class($fixers) : \gettype($fixers)
+                is_object($fixers) ? get_class($fixers) : gettype($fixers)
             ));
         }
 
@@ -181,10 +181,10 @@ class Config implements ConfigInterface
      */
     public function setFinder($finder)
     {
-        if (false === \is_array($finder) && false === $finder instanceof \Traversable) {
+        if (false === is_array($finder) && false === $finder instanceof \Traversable) {
             throw new \InvalidArgumentException(sprintf(
                 'Argument must be an array or a Traversable, got "%s".',
-                \is_object($finder) ? \get_class($finder) : \gettype($finder)
+                is_object($finder) ? get_class($finder) : gettype($finder)
             ));
         }
 

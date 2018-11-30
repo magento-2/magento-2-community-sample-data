@@ -7,12 +7,10 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-namespace PHPUnit\Framework\MockObject\Matcher;
 
 use PHPUnit\Framework\Constraint\Constraint;
 use PHPUnit\Framework\Constraint\IsEqual;
 use PHPUnit\Framework\ExpectationFailedException;
-use PHPUnit\Framework\MockObject\Invocation as BaseInvocation;
 
 /**
  * Invocation matcher which looks for sets of specific parameters in the invocations.
@@ -24,7 +22,7 @@ use PHPUnit\Framework\MockObject\Invocation as BaseInvocation;
  * It takes a list of match groups and and increases a call index after each invocation.
  * So the first invocation uses the first group of constraints, the second the next and so on.
  */
-class ConsecutiveParameters extends StatelessInvocation
+class PHPUnit_Framework_MockObject_Matcher_ConsecutiveParameters extends PHPUnit_Framework_MockObject_Matcher_StatelessInvocation
 {
     /**
      * @var array
@@ -38,8 +36,6 @@ class ConsecutiveParameters extends StatelessInvocation
 
     /**
      * @param array $parameterGroups
-     *
-     * @throws \PHPUnit\Framework\Exception
      */
     public function __construct(array $parameterGroups)
     {
@@ -59,20 +55,20 @@ class ConsecutiveParameters extends StatelessInvocation
      */
     public function toString()
     {
-        return 'with consecutive parameters';
+        $text = 'with consecutive parameters';
+
+        return $text;
     }
 
     /**
-     * @param BaseInvocation $invocation
+     * @param PHPUnit_Framework_MockObject_Invocation $invocation
      *
      * @return bool
-     *
-     * @throws \PHPUnit\Framework\ExpectationFailedException
      */
-    public function matches(BaseInvocation $invocation)
+    public function matches(PHPUnit_Framework_MockObject_Invocation $invocation)
     {
         $this->invocations[] = $invocation;
-        $callIndex           = \count($this->invocations) - 1;
+        $callIndex           = count($this->invocations) - 1;
 
         $this->verifyInvocation($invocation, $callIndex);
 
@@ -89,12 +85,12 @@ class ConsecutiveParameters extends StatelessInvocation
     /**
      * Verify a single invocation
      *
-     * @param BaseInvocation $invocation
-     * @param int            $callIndex
+     * @param PHPUnit_Framework_MockObject_Invocation $invocation
+     * @param int                                     $callIndex
      *
      * @throws ExpectationFailedException
      */
-    private function verifyInvocation(BaseInvocation $invocation, $callIndex)
+    private function verifyInvocation(PHPUnit_Framework_MockObject_Invocation $invocation, $callIndex)
     {
         if (isset($this->parameterGroups[$callIndex])) {
             $parameters = $this->parameterGroups[$callIndex];
@@ -109,9 +105,9 @@ class ConsecutiveParameters extends StatelessInvocation
             );
         }
 
-        if (\count($invocation->getParameters()) < \count($parameters)) {
+        if (count($invocation->parameters) < count($parameters)) {
             throw new ExpectationFailedException(
-                \sprintf(
+                sprintf(
                     'Parameter count for invocation %s is too low.',
                     $invocation->toString()
                 )
@@ -120,8 +116,8 @@ class ConsecutiveParameters extends StatelessInvocation
 
         foreach ($parameters as $i => $parameter) {
             $parameter->evaluate(
-                $invocation->getParameters()[$i],
-                \sprintf(
+                $invocation->parameters[$i],
+                sprintf(
                     'Parameter %s for invocation #%d %s does not match expected ' .
                     'value.',
                     $i,

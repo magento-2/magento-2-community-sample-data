@@ -129,7 +129,7 @@ define([
         },
 
         /**
-         * Prepare storages congfig.
+         * Prepare storages config.
          *
          * @returns {Object} Chainable.
          */
@@ -161,9 +161,7 @@ define([
          */
         initUpdateStorageDataListener: function () {
             _.each(this.storagesNamespace, function (name) {
-                if (this[name].data) {
-                    this[name].data.subscribe(this.updateDataHandler.bind(this, name));
-                }
+                this[name].data.subscribe(this.updateDataHandler.bind(this, name));
             }.bind(this));
         },
 

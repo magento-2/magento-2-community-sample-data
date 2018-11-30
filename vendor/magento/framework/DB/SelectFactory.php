@@ -32,6 +32,7 @@ class SelectFactory
     /**
      * @param SelectRenderer $selectRenderer
      * @param array $parts
+     * @since 100.1.0
      */
     public function __construct(
         SelectRenderer $selectRenderer,

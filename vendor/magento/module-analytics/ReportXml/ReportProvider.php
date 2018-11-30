@@ -9,6 +9,8 @@ namespace Magento\Analytics\ReportXml;
 use Magento\Framework\Api\SearchCriteria;
 
 /**
+ * Class ReportProvider
+ *
  * Providers for reports data
  */
 class ReportProvider

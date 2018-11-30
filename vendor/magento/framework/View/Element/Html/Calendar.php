@@ -13,7 +13,6 @@ use Magento\Framework\Locale\Bundle\DataBundle;
  * Prepares localization data for calendar
  *
  * @api
- * @since 100.0.2
  */
 class Calendar extends \Magento\Framework\View\Element\Template
 {

@@ -18,9 +18,10 @@ define([
             'Magento_Theme/js/model/breadcrumb-list': jasmine.createSpyObj(['push'])
         },
         defaultContext = require.s.contexts._,
+        menuSelector = '[data-action="navigation"] > ul',
         menuItem = $(
             '<li class="level0 category-item">' +
-            '<a href="http://localhost.com/cat1.html">Cat1</a>' +
+            '<a href="http://localhost.com/cat1.html" id="ui-id-3">Cat1</a>' +
             '</li>'
         )[0],
 
@@ -43,20 +44,12 @@ define([
         injector.require(
             [
                 'Magento_Catalog/js/product/breadcrumbs',
-                'Magento_Theme/js/view/breadcrumbs',
-                'jquery/ui'
+                'Magento_Theme/js/view/breadcrumbs'
             ], function (mixin, breadcrumb) {
                 widget = mixin(breadcrumb);
                 done();
             }
         );
-    });
-
-    afterEach(function () {
-        try {
-            injector.clean();
-            injector.remove();
-        } catch (e) {}
     });
 
     describe('Magento_Catalog/js/product/breadcrumbs', function () {
@@ -68,8 +61,8 @@ define([
 
         describe('Check Magento_Catalog/js/product/breadcrumbs methods', function () {
             beforeEach(function () {
-                menuContainer = $('<nav data-action="navigation"><ul></ul></nav>');
-                $('body').append(menuContainer);
+                menuContainer = $('<nav data-action="navigation"><ul></ul></nav>')[0];
+                $(document.body).append(menuContainer);
             });
 
             afterEach(function () {
@@ -93,7 +86,7 @@ define([
                 expect(widget).toEqual(jasmine.any(Function));
                 expect(widget.prototype._appendCatalogCrumbs).toBeDefined();
 
-                $('[data-action="navigation"] > ul').html(menuItem);
+                $(menuSelector).html(menuItem);
 
                 spyOn(widget.prototype, '_resolveCategoryCrumbs').and.returnValues([], [categoryCrumb]);
                 spyOn(widget.prototype, '_getProductCrumb');
@@ -177,7 +170,7 @@ define([
                 expect(widget).toEqual(jasmine.any(Function));
                 expect(widget.prototype._resolveCategoryMenuItem).toBeDefined();
 
-                $('[data-action="navigation"] > ul').html(menuItem);
+                $(menuSelector).html(menuItem);
 
                 spyOn(widget.prototype, '_resolveCategoryUrl').and.returnValue('http://localhost.com/cat1.html');
 
@@ -219,7 +212,7 @@ define([
                 expect(widget).toEqual(jasmine.any(Function));
                 expect(widget.prototype._resolveCategoryCrumbs).toBeDefined();
 
-                $('[data-action="navigation"] > ul').html(menuItem);
+                $(menuSelector).html(menuItem);
 
                 spyOn(widget.prototype, '_resolveCategoryUrl').and.returnValue('http://localhost.com/cat1.html');
 
@@ -254,7 +247,7 @@ define([
                     context,
                     getParentMenuHandler;
 
-                $('[data-action="navigation"] > ul').html(menuItems);
+                $(menuSelector).html(menuItems);
 
                 expect(widget).toBeDefined();
                 expect(widget).toEqual(jasmine.any(Function));

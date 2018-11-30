@@ -127,35 +127,14 @@ class DownloadTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * Tests download controller with different file names in request.
-     *
-     * @param string $requestFilename
-     * @param string $processedFilename
-     * @dataProvider executeDataProvider
+     * Tests execute()
      */
-    public function testExecute($requestFilename, $processedFilename)
+    public function testExecute()
     {
-        $this->request->method('getParam')
-            ->with('filename')
-            ->willReturn($requestFilename);
+        $this->reportHelper->expects($this->atLeastOnce())->method('importFileExists')->willReturn(true);
 
-        $this->reportHelper->method('importFileExists')
-            ->with($processedFilename)
-            ->willReturn(true);
         $this->resultRaw->expects($this->once())->method('setContents');
         $this->downloadController->execute();
-    }
-
-    /**
-     * @return array
-     */
-    public function executeDataProvider()
-    {
-        return [
-            'Normal file name' => ['filename.csv', 'filename.csv'],
-            'Relative file name' => ['../../../../../../../../etc/passwd', 'passwd'],
-            'Empty file name' => ['', ''],
-        ];
     }
 
     /**

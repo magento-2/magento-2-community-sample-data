@@ -290,12 +290,13 @@ class ResponseHeaderBag extends HeaderBag
             throw new \InvalidArgumentException('The filename and the fallback cannot contain the "/" and "\\" characters.');
         }
 
-        $params = array('filename' => $filenameFallback);
+        $output = sprintf('%s; filename="%s"', $disposition, str_replace('"', '\\"', $filenameFallback));
+
         if ($filename !== $filenameFallback) {
-            $params['filename*'] = "utf-8''".rawurlencode($filename);
+            $output .= sprintf("; filename*=utf-8''%s", rawurlencode($filename));
         }
 
-        return $disposition.'; '.HeaderUtils::toString($params, ';');
+        return $output;
     }
 
     /**

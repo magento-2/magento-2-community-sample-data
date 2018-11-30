@@ -17,7 +17,6 @@ namespace Magento\Framework\App\Area;
  * for areas with dynamic front names.
  *
  * @api
- * @since 100.0.2
  */
 interface FrontNameResolverInterface
 {

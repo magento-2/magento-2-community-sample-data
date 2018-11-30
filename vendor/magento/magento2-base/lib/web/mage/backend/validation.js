@@ -224,7 +224,6 @@
          * @protected
          */
         _onError: function () {
-            $(this.element[0]).trigger('afterValidate.error');
             $('body').trigger('processStop');
 
             if (this.options.errorUrl) {

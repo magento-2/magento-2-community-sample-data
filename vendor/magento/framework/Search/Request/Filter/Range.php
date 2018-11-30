@@ -11,7 +11,6 @@ use Magento\Framework\Search\Request\FilterInterface;
  * Range Filter
  * @SuppressWarnings(PHPMD.ShortVariable)
  * @api
- * @since 100.0.2
  */
 class Range implements FilterInterface
 {

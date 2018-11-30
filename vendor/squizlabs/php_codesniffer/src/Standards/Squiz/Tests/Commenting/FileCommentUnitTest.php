@@ -28,7 +28,7 @@ class FileCommentUnitTest extends AbstractSniffUnitTest
     public function getErrorList($testFile='FileCommentUnitTest.inc')
     {
         switch ($testFile) {
-        case 'FileCommentUnitTest.1.inc':
+        case 'FileCommentUnitTest.inc':
         case 'FileCommentUnitTest.js':
             return [
                 1  => 1,
@@ -43,7 +43,7 @@ class FileCommentUnitTest extends AbstractSniffUnitTest
             ];
         default:
             return [];
-        }//end switch
+        }
 
     }//end getErrorList()
 

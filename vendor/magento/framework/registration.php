@@ -4,9 +4,11 @@
  * See COPYING.txt for license details.
  */
 
-use \Magento\Framework\Component\ComponentRegistrar;
-
-ComponentRegistrar::register(ComponentRegistrar::LIBRARY, 'magento/framework', __DIR__);
+\Magento\Framework\Component\ComponentRegistrar::register(
+    \Magento\Framework\Component\ComponentRegistrar::LIBRARY,
+    'magento/framework',
+    __DIR__
+);
 
 if (!function_exists('__')) {
     require 'Phrase/__.php';

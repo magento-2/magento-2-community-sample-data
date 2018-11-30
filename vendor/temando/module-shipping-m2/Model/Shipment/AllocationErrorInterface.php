@@ -7,7 +7,7 @@ namespace Temando\Shipping\Model\Shipment;
 /**
  * Temando AllocationErrorInterface Interface.
  *
- * @deprecated since 1.3.0
+ * @deprecated
  * @see ShipmentErrorInterface
  *
  * @package Temando\Shipping\Model

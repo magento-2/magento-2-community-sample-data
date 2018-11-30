@@ -223,7 +223,9 @@ class JsonFile
             return $json;
         }
 
-        return JsonFormatter::format($json, $unescapeUnicode, $unescapeSlashes);
+        $result = JsonFormatter::format($json, $unescapeUnicode, $unescapeSlashes);
+
+        return $result;
     }
 
     /**
@@ -281,6 +283,7 @@ class JsonFile
      * @param  string                    $json
      * @param  string                    $file
      * @throws \UnexpectedValueException
+     * @throws JsonValidationException
      * @throws ParsingException
      * @return bool                      true on success
      */

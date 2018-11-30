@@ -8,7 +8,6 @@ namespace Magento\Framework\Search\Dynamic;
 
 /**
  * @api
- * @since 100.0.2
  */
 class EntityStorage
 {

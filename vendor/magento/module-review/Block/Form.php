@@ -5,7 +5,6 @@
  */
 namespace Magento\Review\Block;
 
-use Magento\Catalog\Model\Product;
 use Magento\Customer\Model\Context;
 use Magento\Customer\Model\Url;
 use Magento\Review\Model\ResourceModel\Rating\Collection as RatingCollection;
@@ -139,7 +138,7 @@ class Form extends \Magento\Framework\View\Element\Template
             );
         }
 
-        $this->setTemplate('Magento_Review::form.phtml');
+        $this->setTemplate('form.phtml');
     }
 
     /**

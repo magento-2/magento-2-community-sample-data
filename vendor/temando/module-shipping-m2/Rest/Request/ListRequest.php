@@ -4,40 +4,42 @@
  */
 namespace Temando\Shipping\Rest\Request;
 
-use Temando\Shipping\Webservice\Filter\CollectionFilterInterface;
-use Temando\Shipping\Webservice\Pagination\PaginationInterface;
-
 /**
  * Temando API Item Listing Operation
  *
  * @package  Temando\Shipping\Rest
  * @author   Christoph Aßmann <christoph.assmann@netresearch.de>
  * @author   Sebastian Ertner <sebastian.ertner@netresearch.de>
- * @license  https://opensource.org/licenses/osl-3.0.php Open Software License (OSL 3.0)
- * @link     https://www.temando.com/
+ * @license  http://opensource.org/licenses/osl-3.0.php Open Software License (OSL 3.0)
+ * @link     http://www.temando.com/
  */
 class ListRequest implements ListRequestInterface
 {
     /**
-     * @var PaginationInterface
+     * @var int
      */
-    private $pagination;
+    private $offset;
 
     /**
-     * @var CollectionFilterInterface
+     * @var int
+     */
+    private $limit;
+
+    /**
+     * @var string[]
      */
     private $filter;
 
     /**
-     * ListRequest constructor.
-     * @param PaginationInterface $pagination
-     * @param CollectionFilterInterface $filter
+     * GetList constructor.
+     * @param int $offset
+     * @param int $limit
+     * @param string[] $filter
      */
-    public function __construct(
-        PaginationInterface $pagination = null,
-        CollectionFilterInterface $filter = null
-    ) {
-        $this->pagination = $pagination;
+    public function __construct($offset, $limit, array $filter = [])
+    {
+        $this->limit  = $limit;
+        $this->offset = $offset;
         $this->filter = $filter;
     }
 
@@ -48,19 +50,15 @@ class ListRequest implements ListRequestInterface
      */
     public function getRequestParams()
     {
-        if ($this->pagination instanceof PaginationInterface) {
-            $pageParams = $this->pagination->getPageParams();
-        } else {
-            $pageParams = [];
+        $requestParams = [
+            'offset' => $this->offset,
+            'limit'  => $this->limit
+        ];
+
+        if (!empty($this->filter)) {
+            $requestParams['filter'] = $this->filter;
         }
 
-        if ($this->filter instanceof CollectionFilterInterface) {
-            $filterParams = $this->filter->getFilters();
-        } else {
-            $filterParams = [];
-        }
-
-        $requestParams = array_merge($pageParams, $filterParams);
         return $requestParams;
     }
 }

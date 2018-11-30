@@ -8,7 +8,6 @@ namespace Magento\Swatches\Block\Product\Renderer\Listing;
 use Magento\Catalog\Block\Product\Context;
 use Magento\Catalog\Helper\Product as CatalogProduct;
 use Magento\Catalog\Model\Product;
-use Magento\Catalog\Model\Product\Image\UrlBuilder;
 use Magento\ConfigurableProduct\Helper\Data;
 use Magento\ConfigurableProduct\Model\ConfigurableAttributeData;
 use Magento\Customer\Helper\Session\CurrentCustomer;
@@ -40,7 +39,6 @@ class Configurable extends \Magento\Swatches\Block\Product\Renderer\Configurable
     private $variationPrices;
 
     /**
-     * @SuppressWarnings(PHPMD.ExcessiveParameterList)
      * @param Context $context
      * @param ArrayUtils $arrayUtils
      * @param EncoderInterface $jsonEncoder
@@ -51,10 +49,11 @@ class Configurable extends \Magento\Swatches\Block\Product\Renderer\Configurable
      * @param ConfigurableAttributeData $configurableAttributeData
      * @param SwatchData $swatchHelper
      * @param Media $swatchMediaHelper
-     * @param array $data
-     * @param SwatchAttributesProvider|null $swatchAttributesProvider
+     * @param array $data other data
+     * @param SwatchAttributesProvider $swatchAttributesProvider
      * @param \Magento\Framework\Locale\Format|null $localeFormat
      * @param \Magento\ConfigurableProduct\Model\Product\Type\Configurable\Variations\Prices|null $variationPrices
+     * @SuppressWarnings(PHPMD.ExcessiveParameterList)
      */
     public function __construct(
         Context $context,
@@ -150,7 +149,6 @@ class Configurable extends \Magento\Swatches\Block\Product\Renderer\Configurable
      * Composes configuration for js price format
      *
      * @return string
-     * @since 100.2.3
      */
     public function getPriceFormatJson()
     {
@@ -161,7 +159,6 @@ class Configurable extends \Magento\Swatches\Block\Product\Renderer\Configurable
      * Composes configuration for js price
      *
      * @return string
-     * @since 100.2.3
      */
     public function getPricesJson()
     {

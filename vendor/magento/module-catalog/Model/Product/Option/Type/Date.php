@@ -3,7 +3,6 @@
  * Copyright © Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
-
 namespace Magento\Catalog\Model\Product\Option\Type;
 
 use Magento\Catalog\Api\Data\ProductCustomOptionInterface;
@@ -123,10 +122,7 @@ class Date extends \Magento\Catalog\Model\Product\Option\Type\DefaultType
                 );
             } else {
                 throw new \Magento\Framework\Exception\LocalizedException(
-                    __(
-                        "The product's required option(s) weren't entered. "
-                        . "Make sure the options are entered and try again."
-                    )
+                    __('Please specify product\'s required option(s).')
                 );
             }
         } else {

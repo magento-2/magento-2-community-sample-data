@@ -2,8 +2,6 @@
 
 namespace Dotdigitalgroup\Email\Model\ResourceModel;
 
-use Dotdigitalgroup\Email\Setup\Schema;
-
 class Wishlist extends \Magento\Framework\Model\ResourceModel\Db\AbstractDb
 {
     /**
@@ -23,7 +21,7 @@ class Wishlist extends \Magento\Framework\Model\ResourceModel\Db\AbstractDb
      */
     public function _construct()
     {
-        $this->_init(Schema::EMAIL_WISHLIST_TABLE, 'id');
+        $this->_init('email_wishlist', 'id');
     }
 
     /**
@@ -68,7 +66,7 @@ class Wishlist extends \Magento\Framework\Model\ResourceModel\Db\AbstractDb
             );
         }
         $num = $conn->update(
-            $this->getTable(Schema::EMAIL_WISHLIST_TABLE),
+            $this->getTable('email_wishlist'),
             [
                 'wishlist_imported' => new \Zend_Db_Expr('null'),
                 'wishlist_modified' => new \Zend_Db_Expr('null'),
@@ -134,7 +132,7 @@ class Wishlist extends \Magento\Framework\Model\ResourceModel\Db\AbstractDb
     {
         try {
             $coreResource = $this->getConnection();
-            $tableName = $this->getTable(Schema::EMAIL_WISHLIST_TABLE);
+            $tableName = $this->getTable('email_wishlist');
 
             //mark imported modified wishlists
             if ($modified) {

@@ -2,8 +2,6 @@
 
 namespace Dotdigitalgroup\Email\Model\ResourceModel;
 
-use Dotdigitalgroup\Email\Setup\Schema;
-
 class FailedAuth extends \Magento\Framework\Model\ResourceModel\Db\AbstractDb
 {
     /**
@@ -13,6 +11,6 @@ class FailedAuth extends \Magento\Framework\Model\ResourceModel\Db\AbstractDb
      */
     public function _construct()
     {
-        $this->_init(Schema::EMAIL_FAILED_AUTH_TABLE, 'id');
+        $this->_init('email_failed_auth', 'id');
     }
 }

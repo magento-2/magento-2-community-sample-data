@@ -3,8 +3,6 @@
  * Copyright © Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
-declare(strict_types=1);
-
 namespace Magento\Indexer\Model;
 
 /**
@@ -109,7 +107,7 @@ class ProcessManager
      *
      * @return bool
      */
-    private function isCanBeParalleled(): bool
+    private function isCanBeParalleled()
     {
         return function_exists('pcntl_fork');
     }
@@ -119,7 +117,7 @@ class ProcessManager
      *
      * @return bool
      */
-    private function isSetupMode(): bool
+    private function isSetupMode()
     {
         return $this->registry->registry('setup-mode-enabled') ?: false;
     }
@@ -130,7 +128,7 @@ class ProcessManager
      * @param callable $userFunction
      * @SuppressWarnings(PHPMD.ExitExpression)
      */
-    private function startChildProcess(callable $userFunction)
+    private function startChildProcess($userFunction)
     {
         $status = call_user_func($userFunction);
         $status = is_integer($status) ? $status : 0;
@@ -142,7 +140,7 @@ class ProcessManager
      *
      * @param int $threadNumber
      */
-    private function executeParentProcess(int &$threadNumber)
+    private function executeParentProcess(&$threadNumber)
     {
         $threadNumber++;
         if ($threadNumber >= $this->threadsCount) {

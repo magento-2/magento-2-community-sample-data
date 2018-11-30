@@ -78,7 +78,7 @@ class Product extends \Magento\Rule\Model\Condition\Product\AbstractProduct
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function loadAttributeOptions()
     {
@@ -107,9 +107,6 @@ class Product extends \Magento\Rule\Model\Condition\Product\AbstractProduct
 
     /**
      * {@inheritdoc}
-     *
-     * @param array &$attributes
-     * @return void
      */
     protected function _addSpecialAttributes(array &$attributes)
     {
@@ -128,7 +125,7 @@ class Product extends \Magento\Rule\Model\Condition\Product\AbstractProduct
         $attribute = $this->getAttributeObject();
 
         if ($collection->isEnabledFlat()) {
-            if ($attribute->isEnabledInFlat()) {
+            if ($this->isEnabledInFlat($attribute)) {
                 $alias = array_keys($collection->getSelect()->getPart('from'))[0];
                 $this->joinedAttributes[$attribute->getAttributeCode()] = $alias . '.' . $attribute->getAttributeCode();
             } else {
@@ -237,8 +234,6 @@ class Product extends \Magento\Rule\Model\Condition\Product\AbstractProduct
 
     /**
      * {@inheritdoc}
-     *
-     * @return string
      */
     public function getMappedSqlField()
     {
@@ -258,12 +253,20 @@ class Product extends \Magento\Rule\Model\Condition\Product\AbstractProduct
 
     /**
      * {@inheritdoc}
-     *
-     * @param \Magento\Catalog\Model\ResourceModel\Product\Collection $productCollection
-     * @return $this
      */
     public function collectValidatedAttributes($productCollection)
     {
         return $this->addToCollection($productCollection);
+    }
+
+    /**
+     * @param \Magento\Framework\DataObject $attribute
+     * @return bool
+     */
+    private function isEnabledInFlat(\Magento\Framework\DataObject $attribute): bool
+    {
+        return $attribute->getData('backend_type') === 'static'
+            || (int) $attribute->getData('used_in_product_listing') === 1
+            || (int) $attribute->getData('used_for_sort_by') === 1;
     }
 }

@@ -4,6 +4,7 @@
  */
 namespace Temando\Shipping\Rest\EntityMapper;
 
+use Temando\Shipping\Model\Dispatch\ErrorInterface;
 use Temando\Shipping\Model\Dispatch\ErrorInterfaceFactory;
 use Temando\Shipping\Model\Dispatch\PickupChargeInterface;
 use Temando\Shipping\Model\Dispatch\PickupChargeInterfaceFactory;
@@ -11,10 +12,9 @@ use Temando\Shipping\Model\Dispatch\ShipmentInterface;
 use Temando\Shipping\Model\Dispatch\ShipmentInterfaceFactory;
 use Temando\Shipping\Model\DispatchInterface;
 use Temando\Shipping\Model\DispatchInterfaceFactory;
-use Temando\Shipping\Model\Shipment\ShipmentErrorInterface;
-use Temando\Shipping\Rest\Response\DataObject\Completion;
-use Temando\Shipping\Rest\Response\Fields\Completion\Group\Charge;
-use Temando\Shipping\Rest\Response\Fields\Completion\Shipment;
+use Temando\Shipping\Rest\Response\Type\Completion\Attributes\Group\Charge;
+use Temando\Shipping\Rest\Response\Type\Completion\Attributes\Shipment;
+use Temando\Shipping\Rest\Response\Type\CompletionResponseType;
 
 /**
  * Map API data to application data object
@@ -83,8 +83,8 @@ class DispatchResponseMapper
         $errors = [];
         foreach ($apiShipment->getErrors() as $apiError) {
             $errors[]= $this->dispatchErrorFactory->create(['data' => [
-                ShipmentErrorInterface::TITLE => $apiError->getTitle(),
-                ShipmentErrorInterface::DETAIL => $apiError->getDetail(),
+                ErrorInterface::TITLE => $apiError->getTitle(),
+                ErrorInterface::DETAIL => $apiError->getDetail(),
             ]]);
         }
 
@@ -114,10 +114,10 @@ class DispatchResponseMapper
     }
 
     /**
-     * @param Completion $apiCompletion
+     * @param CompletionResponseType $apiCompletion
      * @return DispatchInterface
      */
-    public function map(Completion $apiCompletion)
+    public function map(CompletionResponseType $apiCompletion)
     {
         $dispatchId = $apiCompletion->getId();
         $status = $apiCompletion->getAttributes()->getStatus();

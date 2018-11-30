@@ -3,11 +3,11 @@
  * Copyright © Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
-
 namespace Magento\Framework\Filesystem\Directory;
 
 use Magento\Framework\Exception\FileSystemException;
 use Magento\Framework\Exception\ValidatorException;
+use Magento\Framework\Filesystem\File\WriteFactoryInterface;
 
 class Write extends Read implements WriteInterface
 {
@@ -32,7 +32,7 @@ class Write extends Read implements WriteInterface
         \Magento\Framework\Filesystem\DriverInterface $driver,
         $path,
         $createPermissions = null,
-        ?PathValidatorInterface $pathValidator = null
+        PathValidatorInterface $pathValidator = null
     ) {
         parent::__construct($fileFactory, $driver, $path, $pathValidator);
         if (null !== $createPermissions) {
@@ -53,7 +53,7 @@ class Write extends Read implements WriteInterface
             $path = (!$this->driver->isFile($path))
                 ? $this->getAbsolutePath($this->path, $path)
                 : $this->getAbsolutePath($path);
-            throw new FileSystemException(new \Magento\Framework\Phrase('The path "%1" is not writable.', [$path]));
+            throw new FileSystemException(new \Magento\Framework\Phrase('The path "%1" is not writable', [$path]));
         }
     }
 
@@ -70,7 +70,7 @@ class Write extends Read implements WriteInterface
         $absolutePath = $this->driver->getAbsolutePath($this->path, $path);
         if (!$this->driver->isFile($absolutePath)) {
             throw new FileSystemException(
-                new \Magento\Framework\Phrase('The "%1" file doesn\'t exist.', [$absolutePath])
+                new \Magento\Framework\Phrase('The file "%1" doesn\'t exist or not a file', [$absolutePath])
             );
         }
     }
@@ -90,6 +90,7 @@ class Write extends Read implements WriteInterface
         if ($this->driver->isDirectory($absolutePath)) {
             return true;
         }
+
         return $this->driver->createDirectory($absolutePath, $this->permissions);
     }
 
@@ -113,6 +114,7 @@ class Write extends Read implements WriteInterface
         }
         $absolutePath = $this->driver->getAbsolutePath($this->path, $path);
         $absoluteNewPath = $targetDirectory->getAbsolutePath($newPath);
+
         return $this->driver->rename($absolutePath, $absoluteNewPath, $targetDirectory->driver);
     }
 
@@ -185,6 +187,7 @@ class Write extends Read implements WriteInterface
         } else {
             $this->driver->deleteDirectory($absolutePath);
         }
+
         return true;
     }
 

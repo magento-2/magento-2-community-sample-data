@@ -9,8 +9,7 @@ use Magento\Backend\App\Action;
 use Magento\Backend\App\Action\Context;
 use Magento\Framework\Controller\ResultFactory;
 use Magento\Framework\Escaper;
-use Magento\Framework\Exception\LocalizedException;
-use Temando\Shipping\Model\ResourceModel\Repository\ShipmentReferenceRepositoryInterface;
+use Temando\Shipping\Model\ResourceModel\Repository\ShipmentRepositoryInterface;
 
 /**
  * Temando Redirect Shipment Page
@@ -28,9 +27,9 @@ class View extends Action
     const ADMIN_RESOURCE = 'Temando_Shipping::shipping';
 
     /**
-     * @var ShipmentReferenceRepositoryInterface
+     * @var ShipmentRepositoryInterface
      */
-    private $shipmentReferenceRepository;
+    private $shipmentRepository;
 
     /**
      * @var Escaper
@@ -40,18 +39,17 @@ class View extends Action
     /**
      * View constructor.
      *
-     * @param Context $context
-     * @param ShipmentReferenceRepositoryInterface $shipmentReferenceRepository
-     * @param Escaper $escaper
+     * @param Context                     $context
+     * @param ShipmentRepositoryInterface $shipmentRepository
+     * @param Escaper                     $escaper
      */
     public function __construct(
         Context $context,
-        ShipmentReferenceRepositoryInterface $shipmentReferenceRepository,
+        ShipmentRepositoryInterface $shipmentRepository,
         Escaper $escaper
     ) {
-        $this->shipmentReferenceRepository = $shipmentReferenceRepository;
-        $this->escaper = $escaper;
-
+        $this->shipmentRepository = $shipmentRepository;
+        $this->escaper            = $escaper;
         parent::__construct($context);
     }
 
@@ -66,9 +64,9 @@ class View extends Action
         $resultRedirect = $this->resultRedirectFactory->create();
 
         try {
-            $shipmentReference = $this->shipmentReferenceRepository->getByExtShipmentId($extShipmentId);
-            $resultRedirect->setPath('sales/shipment/view', ['shipment_id' => $shipmentReference->getShipmentId()]);
-        } catch (LocalizedException $exception) {
+            $shipmentId = $this->shipmentRepository->getReferenceByExtShipmentId($extShipmentId)->getShipmentId();
+            $resultRedirect->setPath('sales/shipment/view', ['shipment_id' => $shipmentId]);
+        } catch (\Magento\Framework\Exception\LocalizedException $exception) {
             $message = "Shipment '$extShipmentId' not found.";
             $this->messageManager->addExceptionMessage($exception, __($message));
 

@@ -28,7 +28,7 @@ abstract class AbstractConfig extends \Magento\Backend\App\AbstractAction
     protected $_configStructure;
 
     /**
-     * @deprecated 101.0.0
+     * @deprecated 100.2.0
      */
     protected $_sectionChecker;
 

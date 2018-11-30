@@ -5,6 +5,8 @@
  */
 
 // Copy images to tmp media path
+use Magento\Catalog\Api\ProductAttributeRepositoryInterface;
+use Magento\Catalog\Model\ResourceModel\Eav\Attribute;
 use Magento\Framework\App\Filesystem\DirectoryList;
 
 $objectManager = \Magento\TestFramework\Helper\Bootstrap::getObjectManager();
@@ -42,7 +44,7 @@ $product->setTypeId(
 )->setWebsiteIds(
     [1]
 )->setStockData(
-    ['qty' => 100, 'is_in_stock' => 1, 'manage_stock' => 1]
+    ['qty' => 100, 'is_in_stock' => 1]
 )->save();
 
 /** @var \Magento\Catalog\Api\Data\ProductLinkInterface $productLink */
@@ -199,3 +201,12 @@ $product->setTypeId(
 )->setRelatedLinkData(
     [$productLink]
 )->save();
+
+// Move "name" attribute of the product to the global scope
+$attributesRepository = $objectManager->create(ProductAttributeRepositoryInterface::class);
+$attributes = $product->getAttributes();
+
+if (isset($attributes['name'])) {
+    $attributes['name']->setScope(Attribute::SCOPE_GLOBAL_TEXT);
+    $attributesRepository->save($attributes['name']);
+}

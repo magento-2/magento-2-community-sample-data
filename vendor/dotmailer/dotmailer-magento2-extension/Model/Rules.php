@@ -6,35 +6,8 @@ use Dotdigitalgroup\Email\Model\Config\Json;
 
 class Rules extends \Magento\Framework\Model\AbstractModel
 {
-    /**
-     * Exclusion Rule for Abandoned Cart.
-     */
     const ABANDONED = 1;
-
-    /**
-     * Exclusion Rule for Product Review.
-     */
     const REVIEW = 2;
-
-    /**
-     * Condition combination all.
-     */
-    const COMBINATION_TYPE_ALL = 1;
-
-    /**
-     * Condition combination any.
-     */
-    const COMBINATION_TYPE_ANY = 2;
-
-    /**
-     * @var int
-     */
-    public $ruleType;
-
-    /**
-     * @var \Magento\Quote\Model\ResourceModel\Quote\CollectionFactory
-     */
-    private $quoteCollectionFactory;
 
     /**
      * @var ResourceModel\Rules
@@ -88,9 +61,9 @@ class Rules extends \Magento\Framework\Model\AbstractModel
 
     /**
      * Rules constructor.
+     *
      * @param \Magento\Framework\Model\Context $context
      * @param \Magento\Framework\Registry $registry
-     * @param \Magento\Quote\Model\ResourceModel\Quote\CollectionFactory $quoteCollectionFactory
      * @param Adminhtml\Source\Rules\Type $rulesType
      * @param \Magento\Eav\Model\Config $config
      * @param Json $serializer
@@ -102,7 +75,6 @@ class Rules extends \Magento\Framework\Model\AbstractModel
     public function __construct(
         \Magento\Framework\Model\Context $context,
         \Magento\Framework\Registry $registry,
-        \Magento\Quote\Model\ResourceModel\Quote\CollectionFactory $quoteCollectionFactory,
         \Dotdigitalgroup\Email\Model\Adminhtml\Source\Rules\Type $rulesType,
         \Magento\Eav\Model\Config $config,
         \Dotdigitalgroup\Email\Model\Config\Json $serializer,
@@ -115,7 +87,6 @@ class Rules extends \Magento\Framework\Model\AbstractModel
         $this->config       = $config;
         $this->rulesType    = $rulesType;
         $this->rulesResource = $rulesResource;
-        $this->quoteCollectionFactory = $quoteCollectionFactory;
         parent::__construct(
             $context,
             $registry,
@@ -211,7 +182,7 @@ class Rules extends \Magento\Framework\Model\AbstractModel
      * @param string $type
      * @param int $websiteId
      *
-     * @return array|\Dotdigitalgroup\Email\Model\Rules
+     * @return array|\Magento\Framework\DataObject
      */
     public function getActiveRuleForWebsite($type, $websiteId)
     {
@@ -232,45 +203,53 @@ class Rules extends \Magento\Framework\Model\AbstractModel
      */
     public function process($collection, $type, $websiteId)
     {
-        $this->ruleType = $type;
-        $emailRules = $this->getActiveRuleForWebsite($type, $websiteId);
-
-        //if no rule or condition then return the collection untouched
-        if (empty($emailRules)) {
+        $rule = $this->getActiveRuleForWebsite($type, $websiteId);
+        //if no rule then return the collection untouched
+        if (empty($rule)) {
             return $collection;
         }
-        $condition = $this->serializer->unserialize($emailRules->getConditions());
+
+        //if rule has no conditions then return the collection untouched
+        $condition = $this->serializer->unserialize($rule->getConditions());
+
         if (empty($condition)) {
             return $collection;
         }
 
-        //process rule on collection according to combination
-        $combination = $emailRules->getCombination();
         //join tables to collection according to type
         $collection = $this->rulesResource->joinTablesOnCollectionByType($collection, $type);
 
-        if ($combination == self::COMBINATION_TYPE_ALL) {
-            $collection = $this->processAndCombination($collection, $condition);
-        }
+        //process rule on collection according to combination
+        $combination = $rule->getCombination();
 
-        if ($combination == self::COMBINATION_TYPE_ANY) {
-            $collection = $this->processOrCombination($collection, $condition);
+        // ALL TRUE
+        if ($combination == 1) {
+            return $this->_processAndCombination(
+                $collection,
+                $condition,
+                $type
+            );
+        }
+        //ANY TRUE
+        if ($combination == 2) {
+            return $this->processOrCombination($collection, $condition, $type);
         }
 
         return $collection;
     }
 
     /**
-     * Process And combination on collection.
+     * process And combination on collection.
      *
      * @param \Magento\Sales\Model\ResourceModel\Order\Collection|
      * \Magento\Quote\Model\ResourceModel\Quote\Collectio $collection
      * @param array $conditions
+     * @param string $type
      *
      * @return \Magento\Sales\Model\ResourceModel\Order\Collection|
      * \Magento\Quote\Model\ResourceModel\Quote\Collection $collection
      */
-    public function processAndCombination($collection, $conditions)
+    public function _processAndCombination($collection, $conditions, $type)
     {
         foreach ($conditions as $condition) {
             $attribute = $condition['attribute'];
@@ -278,7 +257,7 @@ class Rules extends \Magento\Framework\Model\AbstractModel
             $value = $condition['cvalue'];
 
             //ignore condition if value is null or empty
-            if ($value == '' || $value == null) {
+            if ($value == '' or $value == null) {
                 continue;
             }
 
@@ -289,11 +268,13 @@ class Rules extends \Magento\Framework\Model\AbstractModel
             //set used to check later
             $this->used[] = $attribute;
 
-            //product review
-            if ($this->ruleType == self::REVIEW && isset($this->attributeMapForQuote[$attribute])) {
+            if ($type == self::REVIEW
+                && isset($this->attributeMapForQuote[$attribute])
+            ) {
                 $attribute = $this->attributeMapForOrder[$attribute];
-                //abandoned cart
-            } elseif ($this->ruleType == self::ABANDONED && isset($this->attributeMapForOrder[$attribute])) {
+            } elseif ($type == self::ABANDONED
+                && isset($this->attributeMapForOrder[$attribute])
+            ) {
                 $attribute = $this->attributeMapForQuote[$attribute];
             } else {
                 $this->productAttribute[] = $condition;
@@ -303,12 +284,12 @@ class Rules extends \Magento\Framework\Model\AbstractModel
             $collection = $this->processProcessAndCombinationCondition($collection, $cond, $value, $attribute);
         }
 
-        return $this->processProductAttributes($collection);
+        return $this->_processProductAttributes($collection);
     }
 
     /**
      * @param \Magento\Sales\Model\ResourceModel\Order\Collection|
-     * \Magento\Quote\Model\ResourceModel\Quote\Collection $collection
+     * \Magento\Quote\Model\ResourceModel\Quote\Collectio $collection
      * @param string $cond
      * @param string $value
      * @param string $attribute
@@ -319,9 +300,15 @@ class Rules extends \Magento\Framework\Model\AbstractModel
     {
         if ($cond == 'null') {
             if ($value == '1') {
-                $condition = ['notnull' => true];
+                $collection->addFieldToFilter(
+                    $attribute,
+                    ['notnull' => true]
+                );
             } elseif ($value == '0') {
-                $condition = [$cond => true];
+                $collection->addFieldToFilter(
+                    $attribute,
+                    [$cond => true]
+                );
             }
         } else {
             if ($cond == 'like' or $cond == 'nlike') {
@@ -329,18 +316,14 @@ class Rules extends \Magento\Framework\Model\AbstractModel
             }
             //condition with null values can't be filter using sting, inlude to filter null values
             $conditionMap[] = [$this->conditionMap[$cond] => $value];
-            if ($cond == 'eq' || $cond == 'neq') {
+            if ($cond == 'eq' or $cond == 'neq') {
                 $conditionMap[] = ['null' => true];
             }
 
-            $condition = $conditionMap;
-        }
-
-        //filter by quote attribute
-        if ($attribute == 'items_qty' && $this->ruleType == self::REVIEW) {
-            $collection = $this->filterCollectionByQuoteAttribute($collection, $attribute, $condition);
-        } else {
-            $collection->addFieldToFilter($attribute, $condition);
+            $collection->addFieldToFilter(
+                $attribute,
+                $conditionMap
+            );
         }
 
         return $collection;
@@ -360,7 +343,7 @@ class Rules extends \Magento\Framework\Model\AbstractModel
      * @SuppressWarnings(PHPMD.NPathComplexity)
      * @SuppressWarnings(PHPMD.CyclomaticComplexity)
      */
-    public function processOrCombination($collection, $conditions)
+    public function processOrCombination($collection, $conditions, $type)
     {
         $fieldsConditions = [];
         $multiFieldsConditions = [];
@@ -374,9 +357,13 @@ class Rules extends \Magento\Framework\Model\AbstractModel
                 continue;
             }
 
-            if ($this->ruleType == self::REVIEW && isset($this->attributeMapForQuote[$attribute])) {
+            if ($type == self::REVIEW
+                && isset($this->attributeMapForQuote[$attribute])
+            ) {
                 $attribute = $this->attributeMapForOrder[$attribute];
-            } elseif ($this->ruleType == self::ABANDONED && isset($this->attributeMapForOrder[$attribute])) {
+            } elseif ($type == self::ABANDONED
+                && isset($this->attributeMapForOrder[$attribute])
+            ) {
                 $attribute = $this->attributeMapForQuote[$attribute];
             } else {
                 $this->productAttribute[] = $condition;
@@ -414,7 +401,8 @@ class Rules extends \Magento\Framework\Model\AbstractModel
         }
         //all rules condition will be with or combination
         if (!empty($fieldsConditions)) {
-            $column = $cond = [];
+            $column = [];
+            $cond = [];
             foreach ($fieldsConditions as $key => $fieldsCondition) {
                 $column[] = (string)$key;
                 $cond[] = $fieldsCondition;
@@ -430,7 +418,7 @@ class Rules extends \Magento\Framework\Model\AbstractModel
                 $cond
             );
         }
-        return $this->processProductAttributes($collection);
+        return $this->_processProductAttributes($collection);
     }
 
     /**
@@ -442,10 +430,10 @@ class Rules extends \Magento\Framework\Model\AbstractModel
      * @return \Magento\Sales\Model\ResourceModel\Order\Collection|
      * \Magento\Quote\Model\ResourceModel\Quote\Collection $collection
      */
-    private function processProductAttributes($collection)
+    public function _processProductAttributes($collection)
     {
         //if no product attribute or collection empty return collection
-        if (empty($this->productAttribute) || !$collection->getSize()) {
+        if (empty($this->productAttribute) or !$collection->getSize()) {
             return $collection;
         }
 
@@ -603,26 +591,5 @@ class Rules extends \Magento\Framework\Model\AbstractModel
         );
 
         return array_keys($attributes);
-    }
-
-    /**
-     * @param \Magento\Sales\Model\ResourceModel\Order\Collection $collection
-     * @param string $attribute
-     * @param array $condition
-     * @return \Magento\Sales\Model\ResourceModel\Order\Collection
-     */
-    private function filterCollectionByQuoteAttribute($collection, $attribute, array $condition)
-    {
-        $originalCollection = clone $collection;
-        $quoteCollection = $this->quoteCollectionFactory->create();
-        $quoteIds = $originalCollection->getColumnValues('quote_id');
-        if ($quoteIds) {
-            $quoteCollection->addFieldToFilter('entity_id', ['in' => $quoteIds])
-                ->addFieldToFilter($attribute, $condition);
-            //no need for empty check - because should include the null result, it should work like exclusion filter!
-            $collection->addFieldToFilter('quote_id', ['in' => $quoteCollection->getAllIds()]);
-        }
-
-        return $collection;
     }
 }

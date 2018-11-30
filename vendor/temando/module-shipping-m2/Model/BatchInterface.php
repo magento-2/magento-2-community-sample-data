@@ -56,7 +56,7 @@ interface BatchInterface
     public function getFailedShipments();
 
     /**
-     * @return string
+     * @return \Temando\Shipping\Model\DocumentationInterface[]
      */
     public function getDocumentation();
 }

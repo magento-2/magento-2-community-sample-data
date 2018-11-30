@@ -13,7 +13,7 @@
     <extension_attributes for="Magento\Sales\Api\Data\ShippingInterface">
         <attribute code="ext_order_id" type="string" />
         <attribute code="shipping_experience" type="Temando\Shipping\Api\Data\Order\ShippingExperienceInterface" />
-        <attribute code="collection_point" type="Temando\Shipping\Api\Data\Delivery\OrderCollectionPointInterface" />
+        <attribute code="collection_point" type="Temando\Shipping\Api\Data\CollectionPoint\OrderCollectionPointInterface" />
     </extension_attributes>
     <!-- Additional attributes for the shipment view page -->
     <extension_attributes for="Magento\Sales\Api\Data\ShipmentInterface">

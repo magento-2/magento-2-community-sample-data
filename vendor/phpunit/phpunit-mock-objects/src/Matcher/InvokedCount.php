@@ -7,10 +7,8 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-namespace PHPUnit\Framework\MockObject\Matcher;
 
 use PHPUnit\Framework\ExpectationFailedException;
-use PHPUnit\Framework\MockObject\Invocation as BaseInvocation;
 
 /**
  * Invocation matcher which checks if a method has been invoked a certain amount
@@ -20,12 +18,12 @@ use PHPUnit\Framework\MockObject\Invocation as BaseInvocation;
  * If the number is less it will later be checked in verify() and also throw an
  * exception.
  */
-class InvokedCount extends InvokedRecorder
+class PHPUnit_Framework_MockObject_Matcher_InvokedCount extends PHPUnit_Framework_MockObject_Matcher_InvokedRecorder
 {
     /**
      * @var int
      */
-    private $expectedCount;
+    protected $expectedCount;
 
     /**
      * @param int $expectedCount
@@ -40,7 +38,7 @@ class InvokedCount extends InvokedRecorder
      */
     public function isNever()
     {
-        return $this->expectedCount === 0;
+        return $this->expectedCount == 0;
     }
 
     /**
@@ -52,11 +50,11 @@ class InvokedCount extends InvokedRecorder
     }
 
     /**
-     * @param BaseInvocation $invocation
+     * @param PHPUnit_Framework_MockObject_Invocation $invocation
      *
      * @throws ExpectationFailedException
      */
-    public function invoked(BaseInvocation $invocation)
+    public function invoked(PHPUnit_Framework_MockObject_Invocation $invocation)
     {
         parent::invoked($invocation);
 
@@ -66,21 +64,22 @@ class InvokedCount extends InvokedRecorder
             $message = $invocation->toString() . ' ';
 
             switch ($this->expectedCount) {
-                case 0:
+                case 0: {
                     $message .= 'was not expected to be called.';
+                }
+                break;
 
-                    break;
-
-                case 1:
+                case 1: {
                     $message .= 'was not expected to be called more than once.';
+                }
+                break;
 
-                    break;
-
-                default:
-                    $message .= \sprintf(
+                default: {
+                    $message .= sprintf(
                         'was not expected to be called more than %d times.',
                         $this->expectedCount
                     );
+                    }
             }
 
             throw new ExpectationFailedException($message);
@@ -99,7 +98,7 @@ class InvokedCount extends InvokedRecorder
 
         if ($count !== $this->expectedCount) {
             throw new ExpectationFailedException(
-                \sprintf(
+                sprintf(
                     'Method was expected to be called %d times, ' .
                     'actually called %d times.',
                     $this->expectedCount,

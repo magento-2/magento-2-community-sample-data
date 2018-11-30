@@ -3,8 +3,6 @@
  * Copyright © Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
-declare(strict_types=1);
-
 namespace Magento\NewRelicReporting\Plugin;
 
 use Magento\Framework\App\State;
@@ -13,9 +11,6 @@ use Magento\NewRelicReporting\Model\Config;
 use Magento\NewRelicReporting\Model\NewRelicWrapper;
 use Psr\Log\LoggerInterface;
 
-/**
- * Handles setting which, when enabled, reports frontend and adminhtml as separate apps to New Relic.
- */
 class StatePlugin
 {
     /**
@@ -36,7 +31,6 @@ class StatePlugin
     /**
      * @param Config $config
      * @param NewRelicWrapper $newRelicWrapper
-     * @param LoggerInterface $logger
      */
     public function __construct(
         Config $config,
@@ -52,33 +46,32 @@ class StatePlugin
      * Set separate appname
      *
      * @param State $subject
-     * @param mixed $result
-     * @return mixed
+     * @param null $result
+     * @return void
+     *
+     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      */
-    public function afterSetAreaCode(State $subject, $result)
+    public function afterSetAreaCode(State $state, $result)
     {
         if (!$this->shouldSetAppName()) {
             return $result;
         }
 
         try {
-            $this->newRelicWrapper->setAppName($this->appName($subject));
+            $this->newRelicWrapper->setAppName($this->appName($state));
         } catch (LocalizedException $e) {
             $this->logger->critical($e);
             return $result;
         }
-
-        return $result;
     }
 
     /**
-     * Format appName.
-     *
      * @param State $state
+     *
      * @return string
      * @throws LocalizedException
      */
-    private function appName(State $state): string
+    private function appName(State $state)
     {
         $code = $state->getAreaCode();
         $current = $this->config->getNewRelicAppName();
@@ -87,16 +80,22 @@ class StatePlugin
     }
 
     /**
-     * Check if app name should be set.
-     *
      * @return bool
      */
-    private function shouldSetAppName(): bool
+    private function shouldSetAppName()
     {
-        return (
-            $this->config->isSeparateApps() &&
-            $this->config->getNewRelicAppName() &&
-            $this->config->isNewRelicEnabled()
-        );
+        if (!$this->config->isNewRelicEnabled()) {
+            return false;
+        }
+
+        if (!$this->config->getNewRelicAppName()) {
+            return false;
+        }
+
+        if (!$this->config->isSeparateApps()) {
+            return false;
+        }
+
+        return true;
     }
 }

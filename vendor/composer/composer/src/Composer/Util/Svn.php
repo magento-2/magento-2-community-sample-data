@@ -64,11 +64,6 @@ class Svn
     protected $config;
 
     /**
-     * @var string|null
-     */
-    private static $version;
-
-    /**
      * @param string                   $url
      * @param \Composer\IO\IOInterface $io
      * @param Config                   $config
@@ -79,7 +74,7 @@ class Svn
         $this->url = $url;
         $this->io = $io;
         $this->config = $config;
-        $this->process = $process ?: new ProcessExecutor($io);
+        $this->process = $process ?: new ProcessExecutor;
     }
 
     public static function cleanEnv()
@@ -90,7 +85,7 @@ class Svn
     }
 
     /**
-     * Execute an SVN remote command and try to fix up the process with credentials
+     * Execute an SVN command and try to fix up the process with credentials
      * if necessary.
      *
      * @param string $command SVN command to run
@@ -107,32 +102,7 @@ class Svn
         // Ensure we are allowed to use this URL by config
         $this->config->prohibitUrlByConfig($url, $this->io);
 
-        return $this->executeWithAuthRetry($command, $cwd, $url, $path, $verbose);
-    }
-
-    /**
-     * Execute an SVN local command and try to fix up the process with credentials
-     * if necessary.
-     *
-     * @param string $command SVN command to run
-     * @param string $path    Path argument passed thru to the command
-     * @param string $cwd     Working directory
-     * @param bool   $verbose Output all output to the user
-     *
-     * @throws \RuntimeException
-     * @return string
-     */
-    public function executeLocal($command, $path, $cwd = null, $verbose = false)
-    {
-        // A local command has no remote url
-        return $this->executeWithAuthRetry($command, $cwd, '', $path, $verbose);
-    }
-
-    private function executeWithAuthRetry($svnCommand, $cwd, $url, $path, $verbose)
-    {
-        // Regenerate the command at each try, to use the newly user-provided credentials
-        $command = $this->getCommand($svnCommand, $url, $path);
-
+        $svnCommand = $this->getCommand($command, $url, $path);
         $output = null;
         $io = $this->io;
         $handler = function ($type, $buffer) use (&$output, $io, $verbose) {
@@ -147,7 +117,7 @@ class Svn
                 $io->writeError($buffer, false);
             }
         };
-        $status = $this->process->execute($command, $handler, $cwd);
+        $status = $this->process->execute($svnCommand, $handler, $cwd);
         if (0 === $status) {
             return $output;
         }
@@ -170,7 +140,7 @@ class Svn
         // try to authenticate if maximum quantity of tries not reached
         if ($this->qtyAuthTries++ < self::MAX_QTY_AUTH_TRIES) {
             // restart the process
-            return $this->executeWithAuthRetry($svnCommand, $cwd, $url, $path, $verbose);
+            return $this->execute($command, $url, $cwd, $path, $verbose);
         }
 
         throw new \RuntimeException(
@@ -223,8 +193,7 @@ class Svn
      */
     protected function getCommand($cmd, $url, $path = null)
     {
-        $cmd = sprintf(
-            '%s %s%s %s',
+        $cmd = sprintf('%s %s%s %s',
             $cmd,
             '--non-interactive ',
             $this->getCredentialString(),
@@ -359,23 +328,5 @@ class Svn
         }
 
         return $this->hasAuth = true;
-    }
-
-    /**
-     * Returns the version of the svn binary contained in PATH
-     *
-     * @return string|null
-     */
-    public function binaryVersion()
-    {
-        if (!self::$version) {
-            if (0 === $this->process->execute('svn --version', $output)) {
-                if (preg_match('{(\d+(?:\.\d+)+)}', $output, $match)) {
-                    self::$version = $match[1];
-                }
-            }
-        }
-
-        return self::$version;
     }
 }

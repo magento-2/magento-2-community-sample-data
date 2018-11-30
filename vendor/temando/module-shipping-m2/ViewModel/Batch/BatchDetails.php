@@ -4,21 +4,21 @@
  */
 namespace Temando\Shipping\ViewModel\Batch;
 
-use Magento\Directory\Model\RegionFactory;
 use Magento\Framework\DataObjectFactory;
 use Magento\Framework\Exception\LocalizedException;
+use Magento\Framework\Stdlib\DateTime\TimezoneInterfaceFactory;
 use Magento\Framework\View\Element\Block\ArgumentInterface;
 use Magento\Sales\Api\Data\OrderAddressInterfaceFactory;
 use Magento\Sales\Api\Data\ShipmentItemInterface;
+use Magento\Sales\Model\Order\Address;
+use Magento\Sales\Model\Order\Address\Renderer as AddressRenderer;
 use Magento\Sales\Model\Order\Shipment;
-use Temando\Shipping\Api\Data\Delivery\OrderCollectionPointInterface;
+use Temando\Shipping\Api\Data\CollectionPoint\OrderCollectionPointInterface;
 use Temando\Shipping\Model\BatchInterface;
 use Temando\Shipping\Model\BatchProviderInterface;
-use Temando\Shipping\Model\ResourceModel\Repository\OrderCollectionPointRepositoryInterface;
 use Temando\Shipping\ViewModel\DataProvider\BatchUrl;
-use Temando\Shipping\ViewModel\DataProvider\OrderAddress as AddressRenderer;
-use Temando\Shipping\ViewModel\DataProvider\OrderDate;
-use Temando\Shipping\ViewModel\DataProvider\OrderUrl;
+use Magento\Directory\Model\RegionFactory;
+use Temando\Shipping\Model\ResourceModel\Repository\OrderCollectionPointRepositoryInterface;
 
 /**
  * View model for batch details page.
@@ -36,19 +36,14 @@ class BatchDetails implements ArgumentInterface
     private $batchProvider;
 
     /**
-     * @var OrderDate
+     * @var TimezoneInterfaceFactory
      */
-    private $orderDate;
+    private $timezoneFactory;
 
     /**
      * @var BatchUrl
      */
     private $batchUrl;
-
-    /**
-     * @var OrderUrl
-     */
-    private $orderUrl;
 
     /**
      * @var DataObjectFactory
@@ -78,9 +73,8 @@ class BatchDetails implements ArgumentInterface
     /**
      * BatchDetails constructor.
      * @param BatchProviderInterface $batchProvider
-     * @param OrderDate $orderDate
+     * @param TimezoneInterfaceFactory $timezoneFactory
      * @param BatchUrl $batchUrl
-     * @param OrderUrl $orderUrl
      * @param DataObjectFactory $dataObjectFactory
      * @param AddressRenderer $addressRenderer
      * @param OrderAddressInterfaceFactory $orderAddressInterfaceFactory
@@ -89,9 +83,8 @@ class BatchDetails implements ArgumentInterface
      */
     public function __construct(
         BatchProviderInterface $batchProvider,
-        OrderDate $orderDate,
+        TimezoneInterfaceFactory $timezoneFactory,
         BatchUrl $batchUrl,
-        OrderUrl $orderUrl,
         DataObjectFactory $dataObjectFactory,
         AddressRenderer $addressRenderer,
         OrderAddressInterfaceFactory $orderAddressInterfaceFactory,
@@ -99,9 +92,8 @@ class BatchDetails implements ArgumentInterface
         RegionFactory $regionFactory
     ) {
         $this->batchProvider = $batchProvider;
-        $this->orderDate = $orderDate;
+        $this->timezoneFactory = $timezoneFactory;
         $this->batchUrl = $batchUrl;
-        $this->orderUrl = $orderUrl;
         $this->dataObjectFactory = $dataObjectFactory;
         $this->addressRenderer = $addressRenderer;
         $this->addressFactory = $orderAddressInterfaceFactory;
@@ -120,12 +112,20 @@ class BatchDetails implements ArgumentInterface
     }
 
     /**
+     * Obtain date. Parent method fails to convert date format returned from api.
+     *
+     * @see formatDate()
+     * @see Timezone::formatDateTime()
+     *
      * @param string $date
      * @return \DateTime
      */
-    public function getDate(string $date): \DateTime
+    public function getDate($date)
     {
-        return $this->orderDate->getDate($date);
+        $timezone = $this->timezoneFactory->create();
+        $localizedDate = $timezone->date(new \DateTime($date));
+
+        return $localizedDate;
     }
 
     /**
@@ -161,15 +161,6 @@ class BatchDetails implements ArgumentInterface
     }
 
     /**
-     * @param string $orderId
-     * @return string
-     */
-    public function getOrderViewUrl(string $orderId): string
-    {
-        return $this->orderUrl->getViewActionUrl(['order_id' => $orderId]);
-    }
-
-    /**
      * @param $extShipmentId
      * @return  \Magento\Sales\Api\Data\OrderInterface | null
      */
@@ -185,8 +176,6 @@ class BatchDetails implements ArgumentInterface
 
     /**
      * Returns ShipmentInfo based on extShipmentId.
-     *
-     * fixme(nr): replace by some proper piece of software
      *
      * @param string $extShipmentId
      * @return \Magento\Framework\DataObject
@@ -222,12 +211,11 @@ class BatchDetails implements ArgumentInterface
                     'country_id' => $collectionPoint->getCountry(),
 
                 ];
-                $shippingAddress = $this->addressFactory->create($addressData);
             } catch (LocalizedException $e) {
-                $shippingAddress = $shipment->getShippingAddress();
+                $addressData = $shipment->getShippingAddress()->getData();
             }
 
-            $formattedShippingAddress = $this->addressRenderer->getFormattedAddress($shippingAddress);
+            $formattedShippingAddress = $this->getFormattedAddress($addressData);
             $itemsInfo = $this->getItemsOrderedInfo($shipment->getItems());
             $info = [
                 'shipment_id' => $shipment->getId(),
@@ -254,5 +242,28 @@ class BatchDetails implements ArgumentInterface
         }
 
         return $info;
+    }
+
+    /**
+     * Returns string with formatted address
+     *
+     * @param string[] $addressData
+     * @return string
+     */
+    private function getFormattedAddress(array $addressData)
+    {
+        // reduce address attributes for display
+        $addressData = [
+            'company' => $addressData['company'],
+            'street' => $addressData['street'],
+            'region' => $addressData['region'],
+            'city' => $addressData['city'],
+            'postcode' => $addressData['postcode'],
+            'country_id' => $addressData['country_id']
+        ];
+
+        /** @var \Magento\Sales\Model\Order\Address $address */
+        $address = $this->addressFactory->create(['data' => $addressData]);
+        return $this->addressRenderer->format($address, 'html');
     }
 }

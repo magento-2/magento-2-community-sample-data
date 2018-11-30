@@ -6,13 +6,13 @@ namespace Temando\Shipping\Model\ResourceModel\Repository;
 
 use Magento\Framework\Exception\CouldNotSaveException;
 use Magento\Framework\Exception\NoSuchEntityException;
-use Temando\Shipping\Api\Data\Delivery\OrderCollectionPointInterface;
+use Temando\Shipping\Api\Data\CollectionPoint\OrderCollectionPointInterface;
 
 /**
- * @package Temando\Shipping\Model
- * @author  Christoph Aßmann <christoph.assmann@netresearch.de>
- * @license https://opensource.org/licenses/osl-3.0.php Open Software License (OSL 3.0)
- * @link    https://www.temando.com/
+ * @package  Temando\Shipping\Model
+ * @author   Christoph Aßmann <christoph.assmann@netresearch.de>
+ * @license  http://opensource.org/licenses/osl-3.0.php Open Software License (OSL 3.0)
+ * @link     http://www.temando.com/
  */
 interface OrderCollectionPointRepositoryInterface
 {

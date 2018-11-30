@@ -14,7 +14,7 @@ manager. It does however support a "global" project for convenience via the
 [global](03-cli.md#global) command.
 
 This idea is not new and Composer is strongly inspired by node's
-[npm](https://www.npmjs.com/) and ruby's [bundler](https://bundler.io/).
+[npm](https://npmjs.org/) and ruby's [bundler](http://bundler.io/).
 
 Suppose:
 
@@ -57,15 +57,16 @@ project, or globally as a system wide executable.
 
 #### Locally
 
-To install Composer locally, run the installer in your project directory. See 
-[the Download page](https://getcomposer.org/download/) for instructions.
+Installing Composer locally is a matter of just running the installer in your
+project directory. See [the Download page](https://getcomposer.org/download/)
+for instructions.
 
-The installer will check a few PHP settings and then download `composer.phar`
-to your working directory. This file is the Composer binary. It is a PHAR
-(PHP archive), which is an archive format for PHP which can be run on
+The installer will just check a few PHP settings and then download
+`composer.phar` to your working directory. This file is the Composer binary. It
+is a PHAR (PHP archive), which is an archive format for PHP which can be run on
 the command line, amongst other things.
 
-Now run `php composer.phar` in order to run Composer.
+Now just run `php composer.phar` in order to run Composer.
 
 You can install Composer to a specific directory by using the `--install-dir`
 option and additionally (re)name it as well using the `--filename` option. When
@@ -77,7 +78,7 @@ following parameters:
 php composer-setup.php --install-dir=bin --filename=composer
 ```
 
-Now run `php bin/composer` in order to run Composer.
+Now just run `php bin/composer` in order to run Composer.
 
 #### Globally
 
@@ -93,10 +94,6 @@ you can run this to move composer.phar to a directory that is in your path:
 mv composer.phar /usr/local/bin/composer
 ```
 
-If you like to install it only for your user and avoid requiring root permissions,
-you can use `~/.local/bin` instead which is available by default on some
-Linux distributions.
-
 > **Note:** If the above fails due to permissions, you may need to run it again
 > with sudo.
 
@@ -108,7 +105,7 @@ Linux distributions.
 > **Note:** For information on changing your PATH, please read the
 > [Wikipedia article](https://en.wikipedia.org/wiki/PATH_(variable)) and/or use Google.
 
-Now run `composer` in order to run Composer instead of `php composer.phar`.
+Now just run `composer` in order to run Composer instead of `php composer.phar`.
 
 ## Installation - Windows
 
@@ -118,7 +115,7 @@ This is the easiest way to get Composer set up on your machine.
 
 Download and run
 [Composer-Setup.exe](https://getcomposer.org/Composer-Setup.exe). It will
-install the latest Composer version and set up your PATH so that you can
+install the latest Composer version and set up your PATH so that you can just
 call `composer` from any directory in your command line.
 
 > **Note:** Close your current terminal. Test usage with a new terminal: This is
@@ -138,7 +135,7 @@ C:\bin>echo @php "%~dp0composer.phar" %*>composer.bat
 
 Add the directory to your PATH environment variable if it isn't already.
 For information on changing your PATH variable, please see
-[this article](https://www.computerhope.com/issues/ch000549.htm) and/or
+[this article](http://www.computerhope.com/issues/ch000549.htm) and/or
 use Google.
 
 Close your current terminal. Test usage with a new terminal:

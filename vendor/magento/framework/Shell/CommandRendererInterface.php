@@ -9,7 +9,6 @@ namespace Magento\Framework\Shell;
  * Shell command renderer
  *
  * @api
- * @since 100.0.2
  */
 interface CommandRendererInterface
 {

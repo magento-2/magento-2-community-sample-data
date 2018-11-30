@@ -13,8 +13,8 @@ use Magento\Sales\Model\Order\ShipmentRepository;
 use Magento\Sales\Model\OrderRepository;
 use Magento\TestFramework\Helper\Bootstrap;
 use Temando\Shipping\Api\Data\Shipment\ShipmentReferenceInterface;
-use Temando\Shipping\Model\ResourceModel\Shipment\ShipmentReferenceRepository;
 use Temando\Shipping\Model\Shipment\ShipmentReference;
+use Temando\Shipping\Model\ResourceModel\Shipment\ShipmentRepository as ShipmentReferenceRepository;
 
 /**
  * ShippedOrderFixture
@@ -295,7 +295,7 @@ final class ShippedOrderFixture
             ShipmentReferenceInterface::EXT_TRACKING_URL => self::$shipmentReferenceData['tracking_url'],
         ]]);
 
-        $shipmentReferenceRepository->save($shipmentReference);
+        $shipmentReferenceRepository->saveReference($shipmentReference);
 
         return $order;
     }

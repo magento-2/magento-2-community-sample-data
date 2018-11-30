@@ -80,7 +80,7 @@ class   CorrectClassDeclaration
 class CorrectClassDeclaration extends CorrectClassDeclaration2 implements ICorrectClassDeclaration
 {
 
-} // phpcs:enable Standard.Category.Sniff
+}//end class
 
 class File implements \Zend_Auth_Storage_Interface,\Zend_Auth_Storage,  \Zend_Foo
 {
@@ -93,17 +93,6 @@ interface MyInterface
 ?>
 
 <?php
-
-class MyClass2
-{
-    var $x;
-}
-
-
-/**
- * No error.
- */
-function example() {}
 
 class CorrectClassDeclaration
 {

@@ -97,9 +97,9 @@ class Category extends AbstractResource
      * @param \Magento\Framework\Event\ManagerInterface $eventManager
      * @param Category\TreeFactory $categoryTreeFactory
      * @param Category\CollectionFactory $categoryCollectionFactory
-     * @param Processor $indexerProcessor
      * @param array $data
      * @param \Magento\Framework\Serialize\Serializer\Json|null $serializer
+     * @param Processor|null $indexerProcessor
      */
     public function __construct(
         \Magento\Eav\Model\Entity\Context $context,
@@ -108,9 +108,9 @@ class Category extends AbstractResource
         \Magento\Framework\Event\ManagerInterface $eventManager,
         \Magento\Catalog\Model\ResourceModel\Category\TreeFactory $categoryTreeFactory,
         \Magento\Catalog\Model\ResourceModel\Category\CollectionFactory $categoryCollectionFactory,
-        Processor $indexerProcessor,
         $data = [],
-        \Magento\Framework\Serialize\Serializer\Json $serializer = null
+        \Magento\Framework\Serialize\Serializer\Json $serializer = null,
+        Processor $indexerProcessor = null
     ) {
         parent::__construct(
             $context,
@@ -122,9 +122,10 @@ class Category extends AbstractResource
         $this->_categoryCollectionFactory = $categoryCollectionFactory;
         $this->_eventManager = $eventManager;
         $this->connectionName  = 'catalog';
-        $this->indexerProcessor = $indexerProcessor;
         $this->serializer = $serializer ?: \Magento\Framework\App\ObjectManager::getInstance()
             ->get(\Magento\Framework\Serialize\Serializer\Json::class);
+        $this->indexerProcessor = $indexerProcessor ?: \Magento\Framework\App\ObjectManager::getInstance()
+            ->get(Processor::class);
     }
 
     /**
@@ -213,9 +214,10 @@ class Category extends AbstractResource
      * @param DataObject $object
      * @return $this
      */
-    protected function _afterDelete(DataObject $object)
+    protected function _afterDelete(DataObject $object): Category
     {
         $this->indexerProcessor->markIndexerAsInvalid();
+
         return parent::_afterDelete($object);
     }
 
@@ -490,7 +492,7 @@ class Category extends AbstractResource
     }
 
     /**
-     * Get children categories count
+     * Get chlden categories count
      *
      * @param int $categoryId
      * @return int

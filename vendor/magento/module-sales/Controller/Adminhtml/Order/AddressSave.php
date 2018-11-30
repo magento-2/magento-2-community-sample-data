@@ -4,7 +4,6 @@
  * Copyright © Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
-
 namespace Magento\Sales\Controller\Adminhtml\Order;
 
 use Magento\Backend\App\Action\Context;
@@ -42,7 +41,6 @@ class AddressSave extends Order
      * @var RegionFactory
      */
     private $regionFactory;
-
     /**
      * @param Context $context
      * @param Registry $coreRegistry
@@ -114,19 +112,19 @@ class AddressSave extends Order
                         'order_id' => $address->getParentId()
                     ]
                 );
-                $this->messageManager->addSuccessMessage(__('You updated the order address.'));
+                $this->messageManager->addSuccess(__('You updated the order address.'));
                 return $resultRedirect->setPath('sales/*/view', ['order_id' => $address->getParentId()]);
             } catch (LocalizedException $e) {
-                $this->messageManager->addErrorMessage($e->getMessage());
+                $this->messageManager->addError($e->getMessage());
             } catch (\Exception $e) {
-                $this->messageManager->addExceptionMessage($e, __('We can\'t update the order address right now.'));
+                $this->messageManager->addException($e, __('We can\'t update the order address right now.'));
             }
             return $resultRedirect->setPath('sales/*/address', ['address_id' => $address->getId()]);
         } else {
             return $resultRedirect->setPath('sales/*/');
         }
     }
-    
+
     /**
      * Update region data
      *

@@ -1,5 +1,5 @@
 <?php
-/* phpcs:ignoreFile */
+/* @codingStandardsIgnoreFile */
 
 /* testPassByReference */
 function passByReference(&$var) {}

@@ -24,13 +24,20 @@ class OrderRequest implements OrderRequestInterface
     private $order;
 
     /**
+     * @var string
+     */
+    private $orderId;
+
+    /**
      * OrderRequest constructor.
      *
      * @param OrderRequestTypeInterface $order
+     * @param string $orderId
      */
-    public function __construct(OrderRequestTypeInterface $order)
+    public function __construct(OrderRequestTypeInterface $order, $orderId = null)
     {
         $this->order = $order;
+        $this->orderId = $orderId;
     }
 
     /**
@@ -38,12 +45,12 @@ class OrderRequest implements OrderRequestInterface
      */
     public function getPathParams()
     {
-        if (!$this->order->getId()) {
+        if (!$this->orderId) {
             return [];
         }
 
         return [
-            $this->order->getId(),
+            $this->orderId,
         ];
     }
 
@@ -63,8 +70,6 @@ class OrderRequest implements OrderRequestInterface
         } elseif ($actionType === OrderApiInterface::ACTION_GET_COLLECTION_POINTS) {
             $requestParams['action'] = 'quoteCollectionPoints';
             $requestParams['experience'] = 'default';
-        } elseif ($actionType === OrderApiInterface::ACTION_CREATE_PICKUP_ORDER) {
-            $requestParams['action'] = 'orderQualificationClickAndCollect';
         } elseif ($actionType === OrderApiInterface::ACTION_ALLOCATE) {
             $requestParams['action'] = 'allocate';
             $requestParams['experience'] = $this->order->getSelectedExperienceCode();

@@ -27,7 +27,7 @@ final class Cache implements CacheInterface
     /**
      * @var array
      */
-    private $hashes = [];
+    private $hashes = array();
 
     public function __construct(SignatureInterface $signature)
     {
@@ -55,10 +55,10 @@ final class Cache implements CacheInterface
 
     public function set($file, $hash)
     {
-        if (!\is_int($hash)) {
+        if (!is_int($hash)) {
             throw new \InvalidArgumentException(sprintf(
                 'Value needs to be an integer, got "%s".',
-                \is_object($hash) ? \get_class($hash) : \gettype($hash)
+                is_object($hash) ? get_class($hash) : gettype($hash)
             ));
         }
 
@@ -72,12 +72,12 @@ final class Cache implements CacheInterface
 
     public function toJson()
     {
-        $json = json_encode([
+        $json = json_encode(array(
             'php' => $this->getSignature()->getPhpVersion(),
             'version' => $this->getSignature()->getFixerVersion(),
             'rules' => $this->getSignature()->getRules(),
             'hashes' => $this->hashes,
-        ]);
+        ));
 
         if (JSON_ERROR_NONE !== json_last_error()) {
             throw new \UnexpectedValueException(sprintf(
@@ -103,21 +103,21 @@ final class Cache implements CacheInterface
         if (null === $data && JSON_ERROR_NONE !== json_last_error()) {
             throw new \InvalidArgumentException(sprintf(
                 'Value needs to be a valid JSON string, got "%s", error: "%s".',
-                \is_object($json) ? \get_class($json) : \gettype($json),
+                is_object($json) ? get_class($json) : gettype($json),
                 json_last_error_msg()
             ));
         }
 
-        $requiredKeys = [
+        $requiredKeys = array(
             'php',
             'version',
             'rules',
             'hashes',
-        ];
+        );
 
         $missingKeys = array_diff_key(array_flip($requiredKeys), $data);
 
-        if (\count($missingKeys)) {
+        if (count($missingKeys)) {
             throw new \InvalidArgumentException(sprintf(
                 'JSON data is missing keys "%s"',
                 implode('", "', $missingKeys)

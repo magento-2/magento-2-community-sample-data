@@ -158,7 +158,8 @@ class ChannelRest10Reader extends BaseChannelReader
         $depthPath = '/r/' . strtolower($packageName) . '/deps.' . $version . '.txt';
         $content = $this->requestContent($baseUrl, $depthPath);
         $dependencyArray = unserialize($content);
+        $result = $dependencyReader->buildDependencyInfo($dependencyArray);
 
-        return $dependencyReader->buildDependencyInfo($dependencyArray);
+        return $result;
     }
 }

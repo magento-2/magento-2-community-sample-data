@@ -6,11 +6,15 @@
  */
 namespace Magento\Backend\Controller\Adminhtml\Noroute;
 
-/**
- * @SuppressWarnings(PHPMD.AllPurposeAction)
- */
 class Index extends \Magento\Backend\App\Action
 {
+    /**
+     * Array of actions which can be processed without secret key validation
+     *
+     * @var string[]
+     */
+    protected $_publicActions = ['index'];
+
     /**
      * @var \Magento\Framework\View\Result\PageFactory
      */
@@ -41,15 +45,5 @@ class Index extends \Magento\Backend\App\Action
         $resultPage->setHeader('Status', '404 File not found');
         $resultPage->addHandle('adminhtml_noroute');
         return $resultPage;
-    }
-
-    /**
-     * Error page should be public accessible. Do not check keys to avoid redirect loop
-     *
-     * @return bool
-     */
-    protected function _validateSecretKey()
-    {
-        return true;
     }
 }

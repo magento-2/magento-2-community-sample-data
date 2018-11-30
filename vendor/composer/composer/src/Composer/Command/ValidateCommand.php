@@ -44,10 +44,9 @@ class ValidateCommand extends BaseCommand
                 new InputOption('no-check-publish', null, InputOption::VALUE_NONE, 'Do not check for publish errors'),
                 new InputOption('with-dependencies', 'A', InputOption::VALUE_NONE, 'Also validate the composer.json of all installed dependencies'),
                 new InputOption('strict', null, InputOption::VALUE_NONE, 'Return a non-zero exit code for warnings as well as errors'),
-                new InputArgument('file', InputArgument::OPTIONAL, 'path to composer.json file'),
+                new InputArgument('file', InputArgument::OPTIONAL, 'path to composer.json file', './composer.json'),
             ))
-            ->setHelp(
-                <<<EOT
+            ->setHelp(<<<EOT
 The validate command validates a given composer.json and composer.lock
 
 Exit codes in case of errors are:
@@ -67,7 +66,7 @@ EOT
      */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        $file = $input->getArgument('file') ?: Factory::getComposerFile();
+        $file = $input->getArgument('file');
         $io = $this->getIO();
 
         if (!file_exists($file)) {
@@ -89,7 +88,7 @@ EOT
         list($errors, $publishErrors, $warnings) = $validator->validate($file, $checkAll);
 
         $lockErrors = array();
-        $composer = Factory::create($io, $file, $input->hasParameterOption('--no-plugins'));
+        $composer = Factory::create($io, $file);
         $locker = $composer->getLocker();
         if ($locker->isLocked() && !$locker->isFresh()) {
             $lockErrors[] = 'The lock file is not up to date with the latest changes in composer.json, it is recommended that you run `composer update`.';

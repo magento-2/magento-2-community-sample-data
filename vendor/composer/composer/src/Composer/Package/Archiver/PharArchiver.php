@@ -76,8 +76,7 @@ class PharArchiver implements ArchiverInterface
 
             return $target;
         } catch (\UnexpectedValueException $e) {
-            $message = sprintf(
-                "Could not create archive '%s' from '%s': %s",
+            $message = sprintf("Could not create archive '%s' from '%s': %s",
                 $target,
                 $sources,
                 $e->getMessage()

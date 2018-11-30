@@ -152,7 +152,7 @@ class CarrierTest extends \PHPUnit\Framework\TestCase
                 'rateFactory' => $rateFactory,
                 'xmlElFactory' => $xmlFactory,
                 'logger' => $this->logger,
-                'httpClientFactory' => $httpClientFactory,
+                'httpClientFactory' => $httpClientFactory
             ]
         );
     }
@@ -160,10 +160,10 @@ class CarrierTest extends \PHPUnit\Framework\TestCase
     /**
      * Callback function, emulates getValue function.
      *
-     * @param string $path
+     * @param $path
      * @return null|string
      */
-    public function scopeConfigGetValue(string $path)
+    public function scopeConfigGetValue($path)
     {
         $pathMap = [
             'carriers/ups/free_method' => 'free_method',
@@ -289,7 +289,7 @@ class CarrierTest extends \PHPUnit\Framework\TestCase
         $result = $refMethod->invoke($this->model, $data);
         $expectedXml = new \SimpleXMLElement($expected);
         $resultXml = new \SimpleXMLElement($result);
-        $this->assertEquals($expectedXml->asXML(), $resultXml->asXML());
+        self::assertEquals($expectedXml->asXML(), $resultXml->asXML());
     }
 
     /**
@@ -358,7 +358,7 @@ class CarrierTest extends \PHPUnit\Framework\TestCase
             'dest_country_id' => $countryCode,
         ]);
 
-        $this->country->expects($this->at(1))
+        $this->country->expects(self::at(1))
             ->method('load')
             ->with($countryCode)
             ->willReturnSelf();
@@ -384,8 +384,6 @@ class CarrierTest extends \PHPUnit\Framework\TestCase
 
     /**
      * Checks a case when UPS processes request to create shipment.
-     *
-     * @return void
      */
     public function testRequestToShipment()
     {
@@ -399,15 +397,15 @@ class CarrierTest extends \PHPUnit\Framework\TestCase
         $this->httpClient->method('getBody')
             ->willReturnOnConsecutiveCalls($shipmentResponse->asXML(), $acceptResponse->asXML());
 
-        $this->logger->expects($this->atLeastOnce())
+        $this->logger->expects(self::atLeastOnce())
             ->method('debug')
-            ->with($this->stringContains('<UserId>****</UserId>'));
+            ->with(self::stringContains('<UserId>****</UserId>'));
 
         $result = $this->model->requestToShipment($request);
-        $this->assertEmpty($result->getErrors());
+        self::assertEmpty($result->getErrors());
 
         $info = $result->getInfo()[0];
-        $this->assertEquals($trackingNumber, $info['tracking_number'], 'Tracking Number must match.');
+        self::assertEquals($trackingNumber, $info['tracking_number'], 'Tracking Number must match.');
     }
 
     /**
@@ -451,14 +449,14 @@ class CarrierTest extends \PHPUnit\Framework\TestCase
                     'weight_units' => 'POUND',
                     'weight' => '0.454000000001',
                     'customs_value' => '10.00',
-                    'container' => 'Small Express Box',
+                    'container' => 'Small Express Box'
                 ],
                 'items' => [
                     'item1' => [
                         'name' => 'item_name',
                     ],
                 ],
-            ],
+            ]
         ];
 
         return $packages;

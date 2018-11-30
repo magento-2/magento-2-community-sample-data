@@ -11,9 +11,6 @@ use Magento\Framework\Exception\CouldNotSaveException;
  * Process Collection Point Search
  *
  * @api
- * @deprecated since 1.4.0
- * @see \Temando\Shipping\Api\Delivery\CartCollectionPointManagementInterface
- *
  * @package Temando\Shipping\Api
  * @author  Benjamin Heuer <benjamin.heuer@netresearch.de>
  * @author  Christoph Aßmann <christoph.assmann@netresearch.de>

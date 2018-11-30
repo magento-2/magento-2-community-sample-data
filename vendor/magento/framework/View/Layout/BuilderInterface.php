@@ -11,7 +11,6 @@ use Magento\Framework\View\LayoutInterface;
  * Interface BuilderInterface
  *
  * @api
- * @since 100.0.2
  */
 interface BuilderInterface
 {

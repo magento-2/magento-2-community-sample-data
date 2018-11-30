@@ -4,6 +4,8 @@
  * See COPYING.txt for license details.
  */
 
+// @codingStandardsIgnoreFile
+
 namespace Magento\Catalog\Pricing\Price;
 
 use Magento\Catalog\Model\Product;
@@ -29,7 +31,7 @@ class TierPrice extends AbstractPrice implements TierPriceInterface, BasePricePr
 
     /**
      * @var Session
-     * @deprecated 102.0.0
+     * @deprecated 101.1.0
      */
     protected $customerSession;
 

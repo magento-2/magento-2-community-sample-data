@@ -4,22 +4,23 @@
  */
 namespace Temando\Shipping\Webservice;
 
+use Temando\Shipping\Api\Data\CollectionPoint\SearchRequestInterface;
 use Temando\Shipping\Model\OrderInterface;
 
 /**
  * Temando Order Action Locator
  *
- * @package Temando\Shipping\Webservice
- * @author  Christoph Aßmann <christoph.assmann@netresearch.de>
- * @license https://opensource.org/licenses/osl-3.0.php Open Software License (OSL 3.0)
- * @link    https://www.temando.com/
+ * @package  Temando\Shipping\Webservice
+ * @author   Christoph Aßmann <christoph.assmann@netresearch.de>
+ * @license  http://opensource.org/licenses/osl-3.0.php Open Software License (OSL 3.0)
+ * @link     http://www.temando.com/
  */
 class OrderActionLocator
 {
     /**
      * No API call
      */
-    const ACTION_NONE = 'none';
+    const ACTION_NONE= 'none';
 
     /**
      * Retrieve rates
@@ -27,24 +28,14 @@ class OrderActionLocator
     const ACTION_QUALIFY = 'qualify';
 
     /**
-     * Retrieve pickup locations with rates
-     */
-    const ACTION_QUALIFY_PICKUP = 'qualify_pickup';
-
-    /**
      * Retrieve collection points with rates
      */
-    const ACTION_QUALIFY_COLLECTION_POINTS = 'qualify_collection_points';
+    const ACTION_QUOTE_COLLECTION_POINTS = 'quote_collection_points';
 
     /**
      * Manifest order
      */
     const ACTION_PERSIST = 'persist';
-
-    /**
-     * Manifest pickup order
-     */
-    const ACTION_PERSIST_PICKUP = 'persist_pickup';
 
     /**
      * Manifest order and allocate to shipment(s)
@@ -69,20 +60,11 @@ class OrderActionLocator
     /**
      * Manifest new order at the platform, optionally with shipment allocation.
      *
-     * @param OrderInterface $order
+     * @param string $orderStatus
      * @return string
      */
-    private function getCreateOrderAction(OrderInterface $order)
+    private function getCreateOrderAction($orderStatus)
     {
-        $orderStatus = $order->getStatus();
-
-        $pickup = $order->getPickupLocation();
-        $isPickupOrder = !empty($pickup) && !empty($pickup->getPickupLocationId());
-
-        if ($isPickupOrder) {
-            return self::ACTION_PERSIST_PICKUP;
-        }
-
         // might be replaced by config setting in the future.
         $isOrderAllocationEnabled = true;
 
@@ -107,34 +89,24 @@ class OrderActionLocator
      */
     private function getQualifyOrderAction(OrderInterface $order)
     {
-        $isCollectionPointSelected = (bool) $order->getCollectionPoint();
-        $isPickupLocationSelected = (bool) $order->getPickupLocation();
-        if ($isCollectionPointSelected || $isPickupLocationSelected) {
-            // a delivery location was selected for quoting, rates already exist in database
-            return self::ACTION_NONE;
-        }
-
         $searchRequest = $order->getCollectionPointSearchRequest();
-        $isSearchPending = $searchRequest && $searchRequest->isPending();
-        if ($isSearchPending) {
-            // collection point search not triggered yet, no rates to display
+
+        // collection point delivery chosen, no search triggered yet
+        $isCollectionPointDeliveryOption = $searchRequest->isPending();
+        if ($isCollectionPointDeliveryOption) {
             return self::ACTION_NONE;
         }
 
-        $isSearchPerformed = $searchRequest && $searchRequest->getPostcode() && $searchRequest->getCountryId();
-        if ($isSearchPerformed) {
-            // collection point search triggered, request applicable locations
-            return self::ACTION_QUALIFY_COLLECTION_POINTS;
+        // collection point search request exists
+        $isCollectionPointSearch = ($searchRequest->getPostcode() && $searchRequest->getCountryId());
+
+        // a collection point was selected for quoting
+        $isCollectionPointQualify = (bool) $order->getCollectionPoint()->getCollectionPointId();
+
+        if (!$isCollectionPointQualify && $isCollectionPointSearch) {
+            return self::ACTION_QUOTE_COLLECTION_POINTS;
         }
 
-        $searchRequest = $order->getPickupLocationSearchRequest();
-        $isSearchPerformed = $searchRequest && $searchRequest->isActive();
-        if ($isSearchPerformed) {
-            // pickup location search triggered, request applicable locations
-            return self::ACTION_QUALIFY_PICKUP;
-        }
-
-        // regular address quoting
         return self::ACTION_QUALIFY;
     }
 
@@ -145,7 +117,6 @@ class OrderActionLocator
      * - Qualify
      * -- Get quotes for current cart
      * -- Get quotes for current cart, including possible collection points
-     * -- Get quotes for current cart, including possible pickup locations
      * - Create
      * -- Persist placed order at the platform
      * -- Persist placed order at the platform and allocate shipments
@@ -167,7 +138,8 @@ class OrderActionLocator
 
         if (!$platformOrderId && $salesOrderId) {
             // manifest, optionally with shipment allocation
-            return $this->getCreateOrderAction($order);
+            $orderStatus = $order->getStatus();
+            return $this->getCreateOrderAction($orderStatus);
         }
 
         if ($platformOrderId && $salesOrderId) {

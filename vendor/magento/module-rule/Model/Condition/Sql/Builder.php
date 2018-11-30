@@ -42,14 +42,6 @@ class Builder
     ];
 
     /**
-     * @var array
-     */
-    private $stringConditionOperatorMap = [
-        '{}' => ':field LIKE ?',
-        '!{}' => ':field NOT LIKE ?',
-    ];
-
-    /**
      * @var \Magento\Rule\Model\Condition\Sql\ExpressionFactory
      */
     protected $_expressionFactory;
@@ -118,7 +110,7 @@ class Builder
     protected function _joinTablesToCollection(
         AbstractCollection $collection,
         Combine $combine
-    ): Builder {
+    ) {
         foreach ($this->_getCombineTablesToJoin($combine) as $alias => $joinTable) {
             /** @var $condition AbstractCondition */
             $collection->getSelect()->joinLeft(
@@ -127,7 +119,6 @@ class Builder
                 isset($joinTable['columns']) ? $joinTable['columns'] : '*'
             );
         }
-
         return $this;
     }
 
@@ -141,11 +132,8 @@ class Builder
      * @throws \Magento\Framework\Exception\LocalizedException
      * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      */
-    protected function _getMappedSqlCondition(
-        AbstractCondition $condition,
-        string $value = '',
-        bool $isDefaultStoreUsed = true
-    ): string {
+    protected function _getMappedSqlCondition(AbstractCondition $condition, $value = '', $isDefaultStoreUsed = true)
+    {
         $argument = $condition->getMappedSqlField();
 
         // If rule hasn't valid argument - create negative expression to prevent incorrect rule behavior.
@@ -160,30 +148,18 @@ class Builder
         }
 
         $defaultValue = 0;
-        //operator 'contains {}' is mapped to 'IN()' query that cannot work with substrings
-        // adding mapping to 'LIKE %%'
-        if ($condition->getInputType() === 'string'
-            && in_array($conditionOperator, array_keys($this->stringConditionOperatorMap), true)
-        ) {
-            $sql = str_replace(
-                ':field',
-                $this->_connection->getIfNullSql($this->_connection->quoteIdentifier($argument), $defaultValue),
-                $this->stringConditionOperatorMap[$conditionOperator]
-            );
-            $bindValue = $condition->getBindArgumentValue();
-            $expression = $value . $this->_connection->quoteInto($sql, "%$bindValue%");
-        } else {
-            $sql = str_replace(
-                ':field',
-                $this->_connection->getIfNullSql($this->_connection->quoteIdentifier($argument), $defaultValue),
-                $this->_conditionOperatorMap[$conditionOperator]
-            );
-            $bindValue = $condition->getBindArgumentValue();
-            $expression = $value . $this->_connection->quoteInto($sql, $bindValue);
-        }
-        // values for multiselect attributes can be saved in comma-separated format
+        $sql = str_replace(
+            ':field',
+            $this->_connection->getIfNullSql($this->_connection->quoteIdentifier($argument), $defaultValue),
+            $this->_conditionOperatorMap[$conditionOperator]
+        );
+
+        $bindValue = $condition->getBindArgumentValue();
+        $expression = $value . $this->_connection->quoteInto($sql, $bindValue);
+
+        // values for multiselect attributes can be saved in comma separated format
         // below is a solution for matching such conditions with selected values
-        if (is_array($bindValue) && \in_array($conditionOperator, ['()', '{}'], true)) {
+        if (in_array($conditionOperator, ['()', '{}']) && is_array($bindValue)) {
             foreach ($bindValue as $item) {
                 $expression .= $this->_connection->quoteInto(
                     " OR (FIND_IN_SET (?, {$this->_connection->quoteIdentifier($argument)}) > 0)",
@@ -198,20 +174,14 @@ class Builder
     }
 
     /**
-     * Get mapped sql combination.
-     *
      * @param Combine $combine
      * @param string $value
      * @param bool $isDefaultStoreUsed
      * @return string
      * @SuppressWarnings(PHPMD.NPathComplexity)
-     * @throws \Magento\Framework\Exception\LocalizedException
      */
-    protected function _getMappedSqlCombination(
-        Combine $combine,
-        string $value = '',
-        bool $isDefaultStoreUsed = true
-    ): string {
+    protected function _getMappedSqlCombination(Combine $combine, $value = '', $isDefaultStoreUsed = true)
+    {
         $out = (!empty($value) ? $value : '');
         $value = ($combine->getValue() ? '' : ' NOT ');
         $getAggregator = $combine->getAggregator();
@@ -227,7 +197,6 @@ class Builder
             }
             $out .=  $out ? (' ' . $con) : '';
         }
-
         return $this->_expressionFactory->create(['expression' => $out]);
     }
 
@@ -241,7 +210,7 @@ class Builder
     public function attachConditionToCollection(
         AbstractCollection $collection,
         Combine $combine
-    ): void {
+    ) {
         $this->_connection = $collection->getResource()->getConnection();
         $this->_joinTablesToCollection($collection, $combine);
         $whereExpression = (string)$this->_getMappedSqlCombination($combine);

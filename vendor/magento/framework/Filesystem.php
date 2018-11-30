@@ -11,7 +11,6 @@ use Magento\Framework\Filesystem\DriverPool;
 
 /**
  * @api
- * @since 100.0.2
  */
 class Filesystem
 {
@@ -69,20 +68,6 @@ class Filesystem
             $this->readInstances[$code] = $this->readFactory->create($this->getDirPath($directoryCode), $driverCode);
         }
         return $this->readInstances[$code];
-    }
-
-    /**
-     * Create an instance of directory with read permissions by path.
-     *
-     * @param string $path
-     * @param string $driverCode
-     *
-     * @return \Magento\Framework\Filesystem\Directory\ReadInterface
-     *
-     */
-    public function getDirectoryReadByPath($path, $driverCode = DriverPool::FILE)
-    {
-        return $this->readFactory->create($path, $driverCode);
     }
 
     /**

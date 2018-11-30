@@ -54,7 +54,7 @@ class Printer
                     $this->out = \fsockopen($out[0], $out[1]);
                 } else {
                     if (\strpos($out, 'php://') === false && !\is_dir(\dirname($out))) {
-                        $this->createDirectory(\dirname($out));
+                        \mkdir(\dirname($out), 0777, true);
                     }
 
                     $this->out = \fopen($out, 'wt');
@@ -142,10 +142,5 @@ class Printer
         } else {
             throw InvalidArgumentHelper::factory(1, 'boolean');
         }
-    }
-
-    private function createDirectory(string $directory): bool
-    {
-        return !(!\is_dir($directory) && !@\mkdir($directory, 0777, true) && !\is_dir($directory));
     }
 }

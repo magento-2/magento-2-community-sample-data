@@ -20,10 +20,9 @@ class MultiselectTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * Verify that hidden input is present in multiselect.
+     * Verify that hidden input is present in multiselect
      *
      * @covers \Magento\Framework\Data\Form\Element\Multiselect::getElementHtml
-     * @return void
      */
     public function testHiddenFieldPresentInMultiSelect()
     {
@@ -40,9 +39,7 @@ class MultiselectTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * Verify that hidden input is present in multiselect when multiselect is disabled.
-     *
-     * @return void
+     * Verify that hidden input is present in multiselect and it allow indicate is multiselect is disabled.
      */
     public function testHiddenDisabledFieldPresentInMultiSelect()
     {
@@ -54,10 +51,9 @@ class MultiselectTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * Verify that hidden input is not present in multiselect when multiselect is not disabled.
+     * Verify that hidden input doesn't present in multiselect and it allow indicate is multiselect is disabled.
      *
      * @covers \Magento\Framework\Data\Form\Element\Multiselect::getElementHtml
-     * @return void
      */
     public function testHiddenDisabledFieldNotPresentInMultiSelect()
     {
@@ -69,9 +65,7 @@ class MultiselectTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * Verify that js element is added.
-     *
-     * @return void
+     * Verify that js element is added
      */
     public function testGetAfterElementJs()
     {

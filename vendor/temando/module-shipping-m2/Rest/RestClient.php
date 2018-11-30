@@ -14,11 +14,11 @@ use Temando\Shipping\Webservice\HttpClientInterfaceFactory;
 /**
  * Temando HTTP REST Client
  *
- * @package Temando\Shipping\Rest
- * @author  Christoph Aßmann <christoph.assmann@netresearch.de>
- * @author  Sebastian Ertner <sebastian.ertner@netresearch.de>
- * @license https://opensource.org/licenses/osl-3.0.php Open Software License (OSL 3.0)
- * @link    https://www.temando.com/
+ * @package  Temando\Shipping\Rest
+ * @author   Christoph Aßmann <christoph.assmann@netresearch.de>
+ * @author   Sebastian Ertner <sebastian.ertner@netresearch.de>
+ * @license  http://opensource.org/licenses/osl-3.0.php Open Software License (OSL 3.0)
+ * @link     http://www.temando.com/
  */
 class RestClient implements RestClientInterface
 {
@@ -83,36 +83,6 @@ class RestClient implements RestClientInterface
 
         try {
             $response = $httpClient->send(HttpClientInterface::METHOD_PUT);
-        } catch (HttpException $e) {
-            $errorCode = $e->getCode();
-            if ($errorCode < 500 && $errorCode >= 400) {
-                // handle client errors with parseable content
-                throw new RestClientErrorException($e->getMessage(), $e->getCode(), $e);
-            } else {
-                throw new RestResponseException($e->getMessage(), $e->getCode(), $e);
-            }
-        }
-
-        return $response;
-    }
-
-    /**
-     * @param string $uri
-     * @param string $rawBody
-     * @param string[] $headers
-     * @return string
-     * @throws RestException
-     */
-    public function patch($uri, $rawBody, array $headers)
-    {
-        $httpClient = $this->httpClientFactory->create();
-        $httpClient->setHeaders($headers);
-        $httpClient->setUri($uri);
-        $httpClient->setOptions(['trace' => 1, 'maxredirects' => 0, 'timeout' => 30, 'useragent' => 'M2']);
-        $httpClient->setRawBody($rawBody);
-
-        try {
-            $response = $httpClient->send(HttpClientInterface::METHOD_PATCH);
         } catch (HttpException $e) {
             $errorCode = $e->getCode();
             if ($errorCode < 500 && $errorCode >= 400) {

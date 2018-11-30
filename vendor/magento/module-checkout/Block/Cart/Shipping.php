@@ -8,7 +8,6 @@ namespace Magento\Checkout\Block\Cart;
 /**
  * @api
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
- * @since 100.0.2
  */
 class Shipping extends \Magento\Checkout\Block\Cart\AbstractCart
 {

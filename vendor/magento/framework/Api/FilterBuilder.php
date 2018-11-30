@@ -11,7 +11,6 @@ namespace Magento\Framework\Api;
  *
  * @api
  * @method Filter create()
- * @since 100.0.2
  */
 class FilterBuilder extends AbstractSimpleObjectBuilder
 {

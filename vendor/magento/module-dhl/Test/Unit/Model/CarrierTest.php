@@ -268,9 +268,9 @@ class CarrierTest extends \PHPUnit\Framework\TestCase
         $rawPostData = $reflectionClass->getProperty('raw_post_data');
         $rawPostData->setAccessible(true);
 
-        $this->logger->expects($this->once())
+        $this->logger->expects(self::once())
             ->method('debug')
-            ->with($this->stringContains('<SiteID>****</SiteID><Password>****</Password>'));
+            ->with(self::stringContains('<SiteID>****</SiteID><Password>****</Password>'));
 
         self::assertNotEmpty($this->model->collectRates($request)->getAllRates());
         self::assertContains('<Weight>18.223</Weight>', $rawPostData->getValue($this->httpClient));
@@ -334,7 +334,7 @@ class CarrierTest extends \PHPUnit\Framework\TestCase
                         'name' => 'item_name',
                     ],
                 ],
-            ],
+            ]
         ];
 
         $order = $this->getMockBuilder(Order::class)
@@ -373,7 +373,7 @@ class CarrierTest extends \PHPUnit\Framework\TestCase
             ->willReturn($shipment);
 
         $this->logger->method('debug')
-            ->with($this->stringContains('<SiteID>****</SiteID><Password>****</Password>'));
+            ->with(self::stringContains('<SiteID>****</SiteID><Password>****</Password>'));
 
         $result = $this->model->requestToShipment($this->request);
 
@@ -386,26 +386,7 @@ class CarrierTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * Data provider to testRequestToShipment
-     *
-     * @return array
-     */
-    public function requestToShipmentDataProvider()
-    {
-        return [
-            [
-                'GB'
-            ],
-            [
-                null
-            ]
-        ];
-    }
-
-    /**
      * Test that shipping label request for origin country from AP region doesn't contain restricted fields.
-     *
-     * @return void
      */
     public function testShippingLabelRequestForAsiaPacificRegion()
     {
@@ -437,7 +418,7 @@ class CarrierTest extends \PHPUnit\Framework\TestCase
                         'name' => 'item_name',
                     ],
                 ],
-            ],
+            ]
         ];
 
         $this->request->method('getPackages')->willReturn($packages);
@@ -473,7 +454,7 @@ class CarrierTest extends \PHPUnit\Framework\TestCase
             'RegisteredAccount is restricted field for AP region'
         );
     }
-    
+
     /**
      * @dataProvider dhlProductsDataProvider
      *
@@ -514,7 +495,7 @@ class CarrierTest extends \PHPUnit\Framework\TestCase
                     'S' => 'Same day',
                     'T' => 'Express 12:00',
                     'X' => 'Express envelope',
-                ],
+                ]
             ],
             'non-doc' => [
                 'docType' => Carrier::DHL_CONTENT_TYPE_NON_DOC,
@@ -532,8 +513,8 @@ class CarrierTest extends \PHPUnit\Framework\TestCase
                     'M' => 'Express 10:30',
                     'V' => 'Europack',
                     'Y' => 'Express 12:00',
-                ],
-            ],
+                ]
+            ]
         ];
     }
 
@@ -671,7 +652,7 @@ class CarrierTest extends \PHPUnit\Framework\TestCase
         $carrierHelper = $this->objectManager->getObject(
             CarrierHelper::class,
             [
-                'localeResolver' => $localeResolver,
+                'localeResolver' => $localeResolver
             ]
         );
 

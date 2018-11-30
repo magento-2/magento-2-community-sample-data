@@ -15,11 +15,14 @@ use PHPUnit_Framework_MockObject_MockObject as MockObject;
 use Magento\Braintree\Gateway\Config\Config;
 
 /**
- * Tests \Magento\Braintree\Gateway\Request\PaymentDataBuilder.
+ * Class PaymentDataBuilderTest
+ *
+ * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  */
 class PaymentDataBuilderTest extends \PHPUnit\Framework\TestCase
 {
     const PAYMENT_METHOD_NONCE = 'nonce';
+    const MERCHANT_ACCOUNT_ID = '245345';
 
     /**
      * @var PaymentDataBuilder
@@ -29,94 +32,63 @@ class PaymentDataBuilderTest extends \PHPUnit\Framework\TestCase
     /**
      * @var Payment|MockObject
      */
-    private $paymentMock;
+    private $payment;
 
     /**
-     * @var PaymentDataObjectInterface|MockObject
+     * @var MockObject
      */
-    private $paymentDOMock;
-
-    /**
-     * @var SubjectReader|MockObject
-     */
-    private $subjectReaderMock;
+    private $paymentDO;
 
     /**
      * @var OrderAdapterInterface|MockObject
      */
-    private $orderMock;
+    private $order;
 
-    /**
-     * @inheritdoc
-     */
     protected function setUp()
     {
-        $this->paymentDOMock = $this->createMock(PaymentDataObjectInterface::class);
-        $this->paymentMock = $this->getMockBuilder(Payment::class)
+        $this->paymentDO = $this->createMock(PaymentDataObjectInterface::class);
+        $this->payment = $this->getMockBuilder(Payment::class)
             ->disableOriginalConstructor()
             ->getMock();
-        $this->subjectReaderMock = $this->getMockBuilder(SubjectReader::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $this->orderMock = $this->createMock(OrderAdapterInterface::class);
+        $this->order = $this->createMock(OrderAdapterInterface::class);
 
-        /** @var Config $config */
         $config = $this->getMockBuilder(Config::class)
             ->disableOriginalConstructor()
             ->getMock();
 
-        $this->builder = new PaymentDataBuilder($config, $this->subjectReaderMock);
+        $this->builder = new PaymentDataBuilder($config, new SubjectReader());
     }
 
     /**
-     * @return void
      * @expectedException \InvalidArgumentException
      */
-    public function testBuildReadPaymentException(): void
+    public function testBuildReadPaymentException()
     {
         $buildSubject = [];
 
-        $this->subjectReaderMock->expects(self::once())
-            ->method('readPayment')
-            ->with($buildSubject)
-            ->willThrowException(new \InvalidArgumentException());
-
         $this->builder->build($buildSubject);
     }
 
     /**
-     * @return void
      * @expectedException \InvalidArgumentException
      */
-    public function testBuildReadAmountException(): void
+    public function testBuildReadAmountException()
     {
         $buildSubject = [
-            'payment' => $this->paymentDOMock,
-            'amount' => null,
+            'payment' => $this->paymentDO,
+            'amount' => null
         ];
-
-        $this->subjectReaderMock->expects(self::once())
-            ->method('readPayment')
-            ->with($buildSubject)
-            ->willReturn($this->paymentDOMock);
-        $this->subjectReaderMock->expects(self::once())
-            ->method('readAmount')
-            ->with($buildSubject)
-            ->willThrowException(new \InvalidArgumentException());
 
         $this->builder->build($buildSubject);
     }
 
-    /**
-     * @return void
-     */
-    public function testBuild(): void
+    public function testBuild()
     {
         $additionalData = [
             [
                 DataAssignObserver::PAYMENT_METHOD_NONCE,
-                self::PAYMENT_METHOD_NONCE,
-            ],
+                self::PAYMENT_METHOD_NONCE
+            ]
         ];
 
         $expectedResult = [
@@ -126,33 +98,21 @@ class PaymentDataBuilderTest extends \PHPUnit\Framework\TestCase
         ];
 
         $buildSubject = [
-            'payment' => $this->paymentDOMock,
-            'amount' => 10.00,
+            'payment' => $this->paymentDO,
+            'amount' => 10.00
         ];
 
-        $this->paymentMock->expects(self::exactly(count($additionalData)))
+        $this->payment->expects(self::exactly(count($additionalData)))
             ->method('getAdditionalInformation')
             ->willReturnMap($additionalData);
 
-        $this->paymentDOMock->expects(self::once())
-            ->method('getPayment')
-            ->willReturn($this->paymentMock);
+        $this->paymentDO->method('getPayment')
+            ->willReturn($this->payment);
 
-        $this->paymentDOMock->expects(self::once())
-            ->method('getOrder')
-            ->willReturn($this->orderMock);
+        $this->paymentDO->method('getOrder')
+            ->willReturn($this->order);
 
-        $this->subjectReaderMock->expects(self::once())
-            ->method('readPayment')
-            ->with($buildSubject)
-            ->willReturn($this->paymentDOMock);
-        $this->subjectReaderMock->expects(self::once())
-            ->method('readAmount')
-            ->with($buildSubject)
-            ->willReturn(10.00);
-
-        $this->orderMock->expects(self::once())
-            ->method('getOrderIncrementId')
+        $this->order->method('getOrderIncrementId')
             ->willReturn('000000101');
 
         self::assertEquals(

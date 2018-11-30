@@ -33,9 +33,6 @@ class FormatTest extends \PHPUnit\Framework\TestCase
      */
     protected $currency;
 
-    /**
-     * {@inheritDoc}
-     */
     protected function setUp()
     {
         $this->currency = $this->getMockBuilder(\Magento\Directory\Model\Currency::class)
@@ -56,7 +53,6 @@ class FormatTest extends \PHPUnit\Framework\TestCase
 
         /** @var \Magento\Directory\Model\CurrencyFactory|\PHPUnit_Framework_MockObject_MockObject $currencyFactory */
         $currencyFactory = $this->getMockBuilder(\Magento\Directory\Model\CurrencyFactory::class)
-            ->disableOriginalConstructor()
             ->getMock();
 
         $this->formatModel = new \Magento\Framework\Locale\Format(
@@ -67,11 +63,11 @@ class FormatTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * @param string $localeCode
-     * @param array $expectedResult
+     * @param $localeCode
+     * @param $expectedResult
      * @dataProvider getPriceFormatDataProvider
      */
-    public function testGetPriceFormat($localeCode, array $expectedResult): void
+    public function testGetPriceFormat($localeCode, $expectedResult)
     {
         $this->scope->expects($this->once())
             ->method('getCurrentCurrency')
@@ -83,10 +79,9 @@ class FormatTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     *
      * @return array
      */
-    public function getPriceFormatDataProvider(): array
+    public function getPriceFormatDataProvider()
     {
         return [
             ['en_US', ['decimalSymbol' => '.', 'groupSymbol' => ',']],
@@ -97,18 +92,16 @@ class FormatTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     *
-     * @param        mixed $value
-     * @param        float $expected
+     * @param float | null $expected
+     * @param string|float|int $value
      * @dataProvider provideNumbers
      */
-    public function testGetNumber($value, $expected): void
+    public function testGetNumber($value, $expected)
     {
         $this->assertEquals($expected, $this->formatModel->getNumber($value));
     }
 
     /**
-     *
      * @return array
      */
     public function provideNumbers(): array

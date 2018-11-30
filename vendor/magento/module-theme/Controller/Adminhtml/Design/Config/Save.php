@@ -3,11 +3,11 @@
  * Copyright © Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
+
 namespace Magento\Theme\Controller\Adminhtml\Design\Config;
 
 use Magento\Backend\App\Action;
 use Magento\Framework\App\Request\DataPersistorInterface;
-use Magento\Framework\Exception\NotFoundException;
 use Magento\Theme\Model\DesignConfigRepository;
 use Magento\Backend\App\Action\Context;
 use Magento\Framework\Exception\LocalizedException;
@@ -63,21 +63,18 @@ class Save extends Action
 
     /**
      * @return \Magento\Framework\Controller\Result\Redirect
-     *
-     * @throws NotFoundException
      */
     public function execute()
     {
-        if (!$this->getRequest()->isPost()) {
-            throw new NotFoundException(__('Page not found.'));
-        }
-
         $resultRedirect = $this->resultRedirectFactory->create();
         $scope = $this->getRequest()->getParam('scope');
         $scopeId = (int)$this->getRequest()->getParam('scope_id');
         $data = $this->getRequestData();
 
         try {
+            if (!$this->getRequest()->isPost()) {
+                throw new LocalizedException(__('Wrong request.'));
+            }
             $designConfigData = $this->configFactory->create($scope, $scopeId, $data);
             $this->designConfigRepository->save($designConfigData);
             $this->messageManager->addSuccessMessage(__('You saved the configuration.'));
@@ -120,7 +117,7 @@ class Save extends Action
             $this->getRequest()->getFiles()->toArray()
         );
         $data = array_filter($data, function ($param) {
-            return isset($param['error']) && $param['error'] > 0 ? false : true;
+            return !(isset($param['error']) && $param['error'] > 0);
         });
 
         /**

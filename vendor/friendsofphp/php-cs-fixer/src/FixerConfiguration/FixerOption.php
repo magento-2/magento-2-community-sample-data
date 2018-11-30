@@ -171,6 +171,10 @@ final class FixerOption implements FixerOptionInterface
      */
     private function unbind(\Closure $closure)
     {
+        if (PHP_VERSION_ID < 50400) {
+            return $closure;
+        }
+
         return $closure->bindTo(null);
     }
 }

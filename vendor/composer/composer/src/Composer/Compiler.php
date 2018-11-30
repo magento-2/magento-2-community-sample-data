@@ -105,7 +105,7 @@ class Compiler
         foreach ($finder as $file) {
             $this->addFile($phar, $file, false);
         }
-        $this->addFile($phar, new \SplFileInfo(__DIR__ . '/../../vendor/symfony/console/Resources/bin/hiddeninput.exe'), false);
+        $this->addFile($phar, new \SplFileInfo(__DIR__ . '/../../vendor/seld/cli-prompt/res/hiddeninput.exe'), false);
 
         $finder = new Finder();
         $finder->files()
@@ -117,11 +117,11 @@ class Compiler
             ->exclude('docs')
             ->in(__DIR__.'/../../vendor/symfony/')
             ->in(__DIR__.'/../../vendor/seld/jsonlint/')
+            ->in(__DIR__.'/../../vendor/seld/cli-prompt/')
             ->in(__DIR__.'/../../vendor/justinrainbow/json-schema/')
             ->in(__DIR__.'/../../vendor/composer/spdx-licenses/')
             ->in(__DIR__.'/../../vendor/composer/semver/')
             ->in(__DIR__.'/../../vendor/composer/ca-bundle/')
-            ->in(__DIR__.'/../../vendor/composer/xdebug-handler/')
             ->in(__DIR__.'/../../vendor/psr/')
             ->sort($finderSort)
         ;
@@ -164,24 +164,10 @@ class Compiler
         $util->save($pharFile, \Phar::SHA1);
     }
 
-    /**
-     * @param  \SplFileInfo $file
-     * @return string
-     */
-    private function getRelativeFilePath($file)
-    {
-        $realPath = $file->getRealPath();
-        $pathPrefix = dirname(dirname(__DIR__)).DIRECTORY_SEPARATOR;
-
-        $pos = strpos($realPath, $pathPrefix);
-        $relativePath = ($pos !== false) ? substr_replace($realPath, '', $pos, strlen($pathPrefix)) : $realPath;
-
-        return strtr($relativePath, '\\', '/');
-    }
-
     private function addFile($phar, $file, $strip = true)
     {
-        $path = $this->getRelativeFilePath($file);
+        $path = strtr(str_replace(dirname(dirname(__DIR__)).DIRECTORY_SEPARATOR, '', $file->getRealPath()), '\\', '/');
+
         $content = file_get_contents($file);
         if ($strip) {
             $content = $this->stripWhitespace($content);
@@ -255,7 +241,7 @@ class Compiler
  */
 
 // Avoid APC causing random fatal errors per https://github.com/composer/composer/issues/264
-if (extension_loaded('apc') && filter_var(ini_get('apc.enable_cli'), FILTER_VALIDATE_BOOLEAN) && filter_var(ini_get('apc.cache_by_default'), FILTER_VALIDATE_BOOLEAN)) {
+if (extension_loaded('apc') && ini_get('apc.enable_cli') && ini_get('apc.cache_by_default')) {
     if (version_compare(phpversion('apc'), '3.0.12', '>=')) {
         ini_set('apc.cache_by_default', 0);
     } else {

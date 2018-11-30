@@ -96,7 +96,6 @@ class SidResolver implements SidResolverInterface
         }
 
         $sidKey = null;
-
         $useSidOnFrontend = $this->getUseSessionInUrl();
         if ($useSidOnFrontend && $this->request->getQuery(
             $this->getSessionIdQueryParam($session),

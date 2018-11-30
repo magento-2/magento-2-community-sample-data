@@ -2,8 +2,6 @@
 
 namespace Dotdigitalgroup\Email\Model\ResourceModel;
 
-use Dotdigitalgroup\Email\Setup\Schema;
-
 class Order extends \Magento\Framework\Model\ResourceModel\Db\AbstractDb
 {
     /**
@@ -13,7 +11,7 @@ class Order extends \Magento\Framework\Model\ResourceModel\Db\AbstractDb
      */
     public function _construct()
     {
-        $this->_init(Schema::EMAIL_ORDER_TABLE, 'email_order_id');
+        $this->_init('email_order', 'email_order_id');
     }
 
     /**
@@ -41,7 +39,7 @@ class Order extends \Magento\Framework\Model\ResourceModel\Db\AbstractDb
             );
         }
         $num = $conn->update(
-            $this->getTable(Schema::EMAIL_ORDER_TABLE),
+            $this->getTable('email_order'),
             [
                 'email_imported' => new \Zend_Db_Expr('null'),
                 'modified' => new \Zend_Db_Expr('null'),
@@ -65,7 +63,7 @@ class Order extends \Magento\Framework\Model\ResourceModel\Db\AbstractDb
             return;
         }
         $connection = $this->getConnection();
-        $tableName = $this->getTable(Schema::EMAIL_ORDER_TABLE);
+        $tableName = $this->getTable('email_order');
         $connection->update(
             $tableName,
             [

@@ -92,10 +92,10 @@ class IndexerSetDimensionsModeCommandTest extends AbstractIndexerCommandCommonSe
     /**
      * Tests method \Magento\Indexer\Console\Command\IndexerDimensionsModeCommand::execute
      *
-     * @param string $indexerTitle
-     * @param string $previousMode
-     * @param string $command
-     * @param string $consoleOutput
+     * @param $indexerTitle
+     * @param $previousMode
+     * @param $command
+     * @param $consoleOutput
      * @dataProvider dimensionModesDataProvider
      * @return void
      */

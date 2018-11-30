@@ -3,8 +3,6 @@
  * Copyright © Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
-declare(strict_types=1);
-
 namespace Magento\Setup\Test\Block\SelectVersion;
 
 use Magento\Mtf\Block\Block;
@@ -12,9 +10,6 @@ use Magento\Mtf\Client\ElementInterface;
 use Magento\Mtf\Client\Locator;
 use Magento\Setup\Test\Block\SelectVersion\OtherComponentsGrid\Item;
 
-/**
- * Perform OtherComponentsGrid block.
- */
 class OtherComponentsGrid extends Block
 {
     /**
@@ -33,12 +28,9 @@ class OtherComponentsGrid extends Block
     private $selectedPackages = [];
 
     /**
-     * Set version of the packages.
-     *
-     * @param array $packages
-     * @return void
+     * @param $packages
      */
-    public function setVersions(array $packages) : void
+    public function setVersions(array $packages)
     {
         foreach ($packages as $package) {
             $selector = sprintf($this->itemComponent, $package['name']);
@@ -56,29 +48,24 @@ class OtherComponentsGrid extends Block
      *
      * @return array
      */
-    public function getSelectedPackages() : array
+    public function getSelectedPackages()
     {
         return $this->selectedPackages;
     }
 
     /**
-     * Set pager size.
-     *
      * @param int $count
-     * @return void
      */
-    public function setItemsPerPage(int $count) : void
+    public function setItemsPerPage($count)
     {
         $this->_rootElement->find($this->perPage, Locator::SELECTOR_CSS, 'select')->setValue($count);
     }
 
     /**
-     * Get component block.
-     *
      * @param ElementInterface $element
      * @return Item
      */
-    private function getComponentRow(ElementInterface $element) : Item
+    private function getComponentRow($element)
     {
         return $this->blockFactory->create(
             Item::class,

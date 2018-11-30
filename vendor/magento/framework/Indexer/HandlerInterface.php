@@ -9,7 +9,6 @@ use Magento\Framework\App\ResourceConnection\SourceProviderInterface;
 
 /**
  * @api Implement custom Handler
- * @since 100.0.2
  */
 interface HandlerInterface
 {

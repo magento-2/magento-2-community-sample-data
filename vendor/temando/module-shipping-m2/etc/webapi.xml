@@ -35,28 +35,28 @@
 
     <!-- Managing Search for Collection Points (Guest Checkout) -->
     <route method="PUT" url="/V1/guest-carts/:cartId/collection-point/search-request">
-        <service class="Temando\Shipping\Api\Delivery\GuestCartCollectionPointManagementInterface" method="saveSearchRequest"/>
+        <service class="Temando\Shipping\Api\CollectionPoint\GuestCartCollectionPointManagementInterface" method="saveSearchRequest"/>
         <resources>
             <resource ref="anonymous"/>
         </resources>
     </route>
 
     <route method="DELETE" url="/V1/guest-carts/:cartId/collection-point/search-request">
-        <service class="Temando\Shipping\Api\Delivery\GuestCartCollectionPointManagementInterface" method="deleteSearchRequest"/>
+        <service class="Temando\Shipping\Api\CollectionPoint\GuestCartCollectionPointManagementInterface" method="deleteSearchRequest"/>
         <resources>
             <resource ref="anonymous"/>
         </resources>
     </route>
 
     <route method="GET" url="/V1/guest-carts/:cartId/collection-point/search-result">
-        <service class="Temando\Shipping\Api\Delivery\GuestCartCollectionPointManagementInterface" method="getCollectionPoints"/>
+        <service class="Temando\Shipping\Api\CollectionPoint\GuestCartCollectionPointManagementInterface" method="getCollectionPoints"/>
         <resources>
             <resource ref="anonymous"/>
         </resources>
     </route>
 
     <route method="POST" url="/V1/guest-carts/:cartId/collection-point/select">
-        <service class="Temando\Shipping\Api\Delivery\GuestCartCollectionPointManagementInterface" method="selectCollectionPoint"/>
+        <service class="Temando\Shipping\Api\CollectionPoint\GuestCartCollectionPointManagementInterface" method="selectCollectionPoint"/>
         <resources>
             <resource ref="anonymous"/>
         </resources>
@@ -64,7 +64,7 @@
 
     <!-- Managing Search for Collection Points (Logged-In Checkout) -->
     <route method="PUT" url="/V1/carts/mine/collection-point/search-request">
-        <service class="Temando\Shipping\Api\Delivery\CartCollectionPointManagementInterface" method="saveSearchRequest"/>
+        <service class="Temando\Shipping\Api\CollectionPoint\CartCollectionPointManagementInterface" method="saveSearchRequest"/>
         <resources>
             <resource ref="self"/>
         </resources>
@@ -74,7 +74,7 @@
     </route>
 
     <route method="DELETE" url="/V1/carts/mine/collection-point/search-request">
-        <service class="Temando\Shipping\Api\Delivery\CartCollectionPointManagementInterface" method="deleteSearchRequest"/>
+        <service class="Temando\Shipping\Api\CollectionPoint\CartCollectionPointManagementInterface" method="deleteSearchRequest"/>
         <resources>
             <resource ref="self"/>
         </resources>
@@ -84,7 +84,7 @@
     </route>
 
     <route method="GET" url="/V1/carts/mine/collection-point/search-result">
-        <service class="Temando\Shipping\Api\Delivery\CartCollectionPointManagementInterface" method="getCollectionPoints"/>
+        <service class="Temando\Shipping\Api\CollectionPoint\CartCollectionPointManagementInterface" method="getCollectionPoints"/>
         <resources>
             <resource ref="self"/>
         </resources>
@@ -94,7 +94,7 @@
     </route>
 
     <route method="POST" url="/V1/carts/mine/collection-point/select">
-        <service class="Temando\Shipping\Api\Delivery\CartCollectionPointManagementInterface" method="selectCollectionPoint"/>
+        <service class="Temando\Shipping\Api\CollectionPoint\CartCollectionPointManagementInterface" method="selectCollectionPoint"/>
         <resources>
             <resource ref="self"/>
         </resources>
@@ -114,24 +114,6 @@
     <!-- Managing Service Fields in Checkout (Logged in customer) -->
     <route url="/V1/carts/mine/checkout-fields" method="POST">
         <service class="Temando\Shipping\Api\Quote\CartCheckoutFieldManagementInterface" method="saveCheckoutFields"/>
-        <resources>
-            <resource ref="self"/>
-        </resources>
-        <data>
-            <parameter name="cartId" force="true">%cart_id%</parameter>
-        </data>
-    </route>
-
-    <!-- Managing Pickup Locations in Checkout  -->
-    <route method="POST" url="/V1/guest-carts/:cartId/pickup-location/select">
-        <service class="Temando\Shipping\Api\Delivery\GuestCartPickupLocationManagementInterface" method="selectPickupLocation"/>
-        <resources>
-            <resource ref="anonymous"/>
-        </resources>
-    </route>
-
-    <route method="POST" url="/V1/carts/mine/pickup-location/select">
-        <service class="Temando\Shipping\Api\Delivery\CartPickupLocationManagementInterface" method="selectPickupLocation"/>
         <resources>
             <resource ref="self"/>
         </resources>

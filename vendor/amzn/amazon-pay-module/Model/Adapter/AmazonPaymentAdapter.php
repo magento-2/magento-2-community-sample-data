@@ -221,7 +221,7 @@ class AmazonPaymentAdapter
 
         /** if first synchronous attempt failed, on second attempt try an asynchronous attempt. */
         if ($authMode != 'synchronous' && $attempts) {
-            $authorizeData['transaction_timeout'] = 1440;
+            $authorizeData['transaction_timeout'] = 5;
         }
 
         $response['status'] = false;
@@ -256,13 +256,6 @@ class AmazonPaymentAdapter
                         $response['response_code'] = 'TransactionTimedOut';
                     } elseif (!in_array($authorizeResponse->getStatus()->getState(), self::SUCCESS_CODES)) {
                         $response['response_code'] = $authorizeResponse->getStatus()->getReasonCode();
-                        if ($authMode == 'synchronous' && $authorizeResponse->getStatus()->getReasonCode() == 'TransactionTimedOut') {
-                            $cancelData = [
-                                'store_id' => $storeId,
-                                'amazon_order_reference_id' => $data['amazon_order_reference_id']
-                            ];
-                            $this->clientFactory->create($storeId)->cancelOrderReference($cancelData);
-                        }
                     } else {
                         $response['status'] = true;
 

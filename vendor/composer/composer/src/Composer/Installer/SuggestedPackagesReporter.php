@@ -15,7 +15,6 @@ namespace Composer\Installer;
 use Composer\IO\IOInterface;
 use Composer\Package\PackageInterface;
 use Composer\Repository\RepositoryInterface;
-use Symfony\Component\Console\Formatter\OutputFormatter;
 
 /**
  * Add suggested packages from different places to output them in the end.
@@ -115,37 +114,13 @@ class SuggestedPackagesReporter
             }
 
             $this->io->writeError(sprintf(
-                '%s suggests installing %s%s',
+                '%s suggests installing %s (%s)',
                 $suggestion['source'],
-                $this->escapeOutput($suggestion['target']),
-                $this->escapeOutput('' !== $suggestion['reason'] ? ' ('.$suggestion['reason'].')' : '')
+                $suggestion['target'],
+                $suggestion['reason']
             ));
         }
 
         return $this;
-    }
-
-    /**
-     * @param  string $string
-     * @return string
-     */
-    private function escapeOutput($string)
-    {
-        return OutputFormatter::escape(
-            $this->removeControlCharacters($string)
-        );
-    }
-
-    /**
-     * @param  string $string
-     * @return string
-     */
-    private function removeControlCharacters($string)
-    {
-        return preg_replace(
-            '/[[:cntrl:]]/',
-            '',
-            str_replace("\n", ' ', $string)
-        );
     }
 }

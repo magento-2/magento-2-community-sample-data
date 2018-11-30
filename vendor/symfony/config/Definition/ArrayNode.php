@@ -92,7 +92,7 @@ class ArrayNode extends BaseNode implements PrototypeNodeInterface
     /**
      * Gets the xml remappings that should be performed.
      *
-     * @return array an array of the form array(array(string, string))
+     * @return array $remappings an array of the form array(array(string, string))
      */
     public function getXmlRemappings()
     {
@@ -292,10 +292,7 @@ class ArrayNode extends BaseNode implements PrototypeNodeInterface
         $normalized = array();
         foreach ($value as $name => $val) {
             if (isset($this->children[$name])) {
-                try {
-                    $normalized[$name] = $this->children[$name]->normalize($val);
-                } catch (UnsetKeyException $e) {
-                }
+                $normalized[$name] = $this->children[$name]->normalize($val);
                 unset($value[$name]);
             } elseif (!$this->removeExtraKeys) {
                 $normalized[$name] = $val;
@@ -379,13 +376,5 @@ class ArrayNode extends BaseNode implements PrototypeNodeInterface
         }
 
         return $leftSide;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    protected function allowPlaceholders(): bool
-    {
-        return false;
     }
 }

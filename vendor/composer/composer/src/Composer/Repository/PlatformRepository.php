@@ -12,19 +12,19 @@
 
 namespace Composer\Repository;
 
+use Composer\XdebugHandler;
 use Composer\Package\CompletePackage;
 use Composer\Package\PackageInterface;
 use Composer\Package\Version\VersionParser;
 use Composer\Plugin\PluginInterface;
 use Composer\Util\Silencer;
-use Composer\XdebugHandler\XdebugHandler;
 
 /**
  * @author Jordi Boggiano <j.boggiano@seld.be>
  */
 class PlatformRepository extends ArrayRepository
 {
-    const PLATFORM_PACKAGE_REGEX = '{^(?:php(?:-64bit|-ipv6|-zts|-debug)?|hhvm|(?:ext|lib)-[^/ ]+)$}i';
+    const PLATFORM_PACKAGE_REGEX = '{^(?:php(?:-64bit|-ipv6|-zts|-debug)?|hhvm|(?:ext|lib)-[^/]+)$}i';
 
     private $versionParser;
 
@@ -120,7 +120,7 @@ class PlatformRepository extends ArrayRepository
         }
 
         // Check for xdebug in a restarted process
-        if (!in_array('xdebug', $loadedExtensions, true) && ($prettyVersion = XdebugHandler::getSkippedVersion())) {
+        if (!in_array('xdebug', $loadedExtensions, true) && ($prettyVersion = strval(getenv(XdebugHandler::ENV_VERSION)))) {
             $this->addExtension('xdebug', $prettyVersion);
         }
 
@@ -236,12 +236,7 @@ class PlatformRepository extends ArrayRepository
         // Skip if overridden
         if (isset($this->overrides[$package->getName()])) {
             $overrider = $this->findPackage($package->getName(), '*');
-            if ($package->getVersion() === $overrider->getVersion()) {
-                $actualText = 'same as actual';
-            } else {
-                $actualText = 'actual: '.$package->getPrettyVersion();
-            }
-            $overrider->setDescription($overrider->getDescription().' ('.$actualText.')');
+            $overrider->setDescription($overrider->getDescription().' (actual: '.$package->getPrettyVersion().')');
 
             return;
         }
@@ -249,12 +244,7 @@ class PlatformRepository extends ArrayRepository
         // Skip if PHP is overridden and we are adding a php-* package
         if (isset($this->overrides['php']) && 0 === strpos($package->getName(), 'php-')) {
             $overrider = $this->addOverriddenPackage($this->overrides['php'], $package->getPrettyName());
-            if ($package->getVersion() === $overrider->getVersion()) {
-                $actualText = 'same as actual';
-            } else {
-                $actualText = 'actual: '.$package->getPrettyVersion();
-            }
-            $overrider->setDescription($overrider->getDescription().' ('.$actualText.')');
+            $overrider->setDescription($overrider->getDescription().' (actual: '.$package->getPrettyVersion().')');
 
             return;
         }

@@ -21,37 +21,27 @@ use Temando\Shipping\Rest\Request\RequestHeadersInterface;
 use Temando\Shipping\Rest\Request\StreamCreateRequestInterface;
 use Temando\Shipping\Rest\Request\StreamEventItemRequestInterface;
 use Temando\Shipping\Rest\Request\StreamEventListRequestInterface;
-use Temando\Shipping\Rest\Response\DataObject\Batch;
-use Temando\Shipping\Rest\Response\DataObject\CarrierConfiguration;
-use Temando\Shipping\Rest\Response\DataObject\CarrierIntegration;
-use Temando\Shipping\Rest\Response\DataObject\Completion;
-use Temando\Shipping\Rest\Response\DataObject\Container;
-use Temando\Shipping\Rest\Response\DataObject\Location;
-use Temando\Shipping\Rest\Response\DataObject\Shipment;
-use Temando\Shipping\Rest\Response\DataObject\StreamEvent;
-use Temando\Shipping\Rest\Response\DataObject\TrackingEvent;
-use Temando\Shipping\Rest\Response\Document\Errors;
-use Temando\Shipping\Rest\Response\Document\GetBatch;
-use Temando\Shipping\Rest\Response\Document\GetCarrierConfigurations;
-use Temando\Shipping\Rest\Response\Document\GetCarrierIntegrations;
-use Temando\Shipping\Rest\Response\Document\GetCompletion;
-use Temando\Shipping\Rest\Response\Document\GetCompletions;
-use Temando\Shipping\Rest\Response\Document\GetContainers;
-use Temando\Shipping\Rest\Response\Document\GetLocations;
-use Temando\Shipping\Rest\Response\Document\GetShipment;
-use Temando\Shipping\Rest\Response\Document\GetStreamEvents;
-use Temando\Shipping\Rest\Response\Document\GetTrackingEvents;
+use Temando\Shipping\Rest\Response\Errors;
+use Temando\Shipping\Rest\Response\GetBatch;
+use Temando\Shipping\Rest\Response\Type\CarrierConfigurationResponseType;
+use Temando\Shipping\Rest\Response\Type\CarrierIntegrationResponseType;
+use Temando\Shipping\Rest\Response\Type\CompletionResponseType;
+use Temando\Shipping\Rest\Response\Type\ContainerResponseType;
+use Temando\Shipping\Rest\Response\Type\LocationResponseType;
+use Temando\Shipping\Rest\Response\Type\ShipmentResponseType;
+use Temando\Shipping\Rest\Response\Type\StreamEventResponseType;
+use Temando\Shipping\Rest\Response\Type\TrackingEventResponseType;
 use Temando\Shipping\Rest\SchemaMapper\ParserInterface;
 use Temando\Shipping\Webservice\Config\WsConfigInterface;
 
 /**
  * Temando REST API Adapter
  *
- * @package Temando\Shipping\Rest
- * @author  Christoph Aßmann <christoph.assmann@netresearch.de>
- * @author  Sebastian Ertner <sebastian.ertner@netresearch.de>
- * @license https://opensource.org/licenses/osl-3.0.php Open Software License (OSL 3.0)
- * @link    https://www.temando.com/
+ * @package  Temando\Shipping\Rest
+ * @author   Christoph Aßmann <christoph.assmann@netresearch.de>
+ * @author   Sebastian Ertner <sebastian.ertner@netresearch.de>
+ * @license  http://opensource.org/licenses/osl-3.0.php Open Software License (OSL 3.0)
+ * @link     http://www.temando.com/
  */
 class Adapter implements
     BatchApiInterface,
@@ -132,7 +122,7 @@ class Adapter implements
 
     /**
      * @param ItemRequestInterface $request
-     * @return Batch
+     * @return GetBatch
      * @throws AdapterException
      */
     public function getBatch(ItemRequestInterface $request)
@@ -149,9 +139,7 @@ class Adapter implements
             $this->logger->log(LogLevel::DEBUG, $rawResponse);
 
             /** @var GetBatch $response */
-            $response = $this->responseParser->parse($rawResponse, GetBatch::class);
-            $batch = $response->getData();
-            $batch->setShipments($response->getIncluded());
+            $response = $this->responseParser->parse($rawResponse, Response\GetBatch::class);
         } catch (RestClientErrorException $e) {
             $this->logger->log(LogLevel::ERROR, $e->getMessage());
 
@@ -162,12 +150,12 @@ class Adapter implements
             throw AdapterException::create($e);
         }
 
-        return $batch;
+        return $response;
     }
 
     /**
      * @param ListRequestInterface $request
-     * @return CarrierConfiguration[]
+     * @return CarrierConfigurationResponseType[]
      * @throws AdapterException
      */
     public function getCarrierConfigurations(ListRequestInterface $request)
@@ -184,8 +172,8 @@ class Adapter implements
             $rawResponse = $this->restClient->get($uri, $queryParams, $headers);
             $this->logger->log(LogLevel::DEBUG, $rawResponse);
 
-            /** @var GetCarrierConfigurations $response */
-            $response = $this->responseParser->parse($rawResponse, GetCarrierConfigurations::class);
+            /** @var Response\GetCarrierConfigurations $response */
+            $response = $this->responseParser->parse($rawResponse, Response\GetCarrierConfigurations::class);
             $configurations = $response->getData();
         } catch (RestClientErrorException $e) {
             $this->logger->log(LogLevel::ERROR, $e->getMessage());
@@ -203,7 +191,7 @@ class Adapter implements
 
     /**
      * @param ListRequestInterface $request
-     * @return CarrierIntegration[]
+     * @return CarrierIntegrationResponseType[]
      * @throws AdapterException
      */
     public function getCarrierIntegrations(ListRequestInterface $request)
@@ -220,8 +208,8 @@ class Adapter implements
             $rawResponse = $this->restClient->get($uri, $queryParams, $headers);
             $this->logger->log(LogLevel::DEBUG, $rawResponse);
 
-            /** @var GetCarrierIntegrations $response */
-            $response = $this->responseParser->parse($rawResponse, GetCarrierIntegrations::class);
+            /** @var Response\GetCarrierIntegrations $response */
+            $response = $this->responseParser->parse($rawResponse, Response\GetCarrierIntegrations::class);
             $carriers = $response->getData();
         } catch (RestClientErrorException $e) {
             $this->logger->log(LogLevel::ERROR, $e->getMessage());
@@ -266,7 +254,7 @@ class Adapter implements
 
     /**
      * @param ListRequestInterface $request
-     * @return Location[]
+     * @return LocationResponseType[]
      * @throws AdapterException
      */
     public function getLocations(ListRequestInterface $request)
@@ -283,8 +271,8 @@ class Adapter implements
             $rawResponse = $this->restClient->get($uri, $queryParams, $headers);
             $this->logger->log(LogLevel::DEBUG, $rawResponse);
 
-            /** @var GetLocations $response */
-            $response = $this->responseParser->parse($rawResponse, GetLocations::class);
+            /** @var Response\GetLocations $response */
+            $response = $this->responseParser->parse($rawResponse, Response\GetLocations::class);
             $locations = $response->getData();
         } catch (RestClientErrorException $e) {
             $this->logger->log(LogLevel::ERROR, $e->getMessage());
@@ -330,7 +318,7 @@ class Adapter implements
 
     /**
      * @param ListRequestInterface $request
-     * @return Container[]
+     * @return ContainerResponseType[]
      * @throws AdapterException
      */
     public function getContainers(ListRequestInterface $request)
@@ -347,8 +335,8 @@ class Adapter implements
             $rawResponse = $this->restClient->get($uri, $queryParams, $headers);
             $this->logger->log(LogLevel::DEBUG, $rawResponse);
 
-            /** @var GetContainers $response */
-            $response = $this->responseParser->parse($rawResponse, GetContainers::class);
+            /** @var Response\GetContainers $response */
+            $response = $this->responseParser->parse($rawResponse, Response\GetContainers::class);
             $containers = $response->getData();
         } catch (RestClientErrorException $e) {
             $this->logger->log(LogLevel::ERROR, $e->getMessage());
@@ -394,7 +382,7 @@ class Adapter implements
 
     /**
      * @param ListRequestInterface $request
-     * @return Completion[]
+     * @return CompletionResponseType[]
      * @throws AdapterException
      */
     public function getCompletions(ListRequestInterface $request)
@@ -412,8 +400,8 @@ class Adapter implements
             $rawResponse = $this->restClient->get($uri, $queryParams, $headers);
             $this->logger->log(LogLevel::DEBUG, $rawResponse);
 
-            /** @var GetCompletions $response */
-            $response = $this->responseParser->parse($rawResponse, GetCompletions::class);
+            /** @var Response\GetCompletions $response */
+            $response = $this->responseParser->parse($rawResponse, Response\GetCompletions::class);
             $completions  = $response->getData();
         } catch (RestClientErrorException $e) {
             $this->logger->log(LogLevel::ERROR, $e->getMessage());
@@ -431,7 +419,7 @@ class Adapter implements
 
     /**
      * @param ItemRequestInterface $request
-     * @return Shipment
+     * @return ShipmentResponseType
      * @throws AdapterException
      */
     public function getShipment(ItemRequestInterface $request)
@@ -447,8 +435,8 @@ class Adapter implements
             $rawResponse = $this->restClient->get($uri, [], $headers);
             $this->logger->log(LogLevel::DEBUG, $rawResponse);
 
-            /** @var GetShipment $response */
-            $response = $this->responseParser->parse($rawResponse, GetShipment::class);
+            /** @var Response\GetShipment $response */
+            $response = $this->responseParser->parse($rawResponse, Response\GetShipment::class);
             $shipment = $response->getData();
         } catch (RestClientErrorException $e) {
             $this->logger->log(LogLevel::ERROR, $e->getMessage());
@@ -465,7 +453,7 @@ class Adapter implements
 
     /**
      * @param ItemRequestInterface $request
-     * @return TrackingEvent[]
+     * @return TrackingEventResponseType[]
      * @throws AdapterException
      */
     public function getTrackingEvents(ItemRequestInterface $request)
@@ -481,8 +469,8 @@ class Adapter implements
             $rawResponse = $this->restClient->get($uri, [], $headers);
             $this->logger->log(LogLevel::DEBUG, $rawResponse);
 
-            /** @var GetTrackingEvents $response */
-            $response = $this->responseParser->parse($rawResponse, GetTrackingEvents::class);
+            /** @var Response\GetTrackingEvents $response */
+            $response = $this->responseParser->parse($rawResponse, Response\GetTrackingEvents::class);
             $trackingEvents = $response->getData();
         } catch (RestClientErrorException $e) {
             $this->logger->log(LogLevel::ERROR, $e->getMessage());
@@ -499,7 +487,7 @@ class Adapter implements
 
     /**
      * @param ItemRequestInterface $request
-     * @return Completion
+     * @return CompletionResponseType
      * @throws AdapterException
      */
     public function getCompletion(ItemRequestInterface $request)
@@ -515,8 +503,8 @@ class Adapter implements
             $rawResponse = $this->restClient->get($uri, [], $headers);
             $this->logger->log(LogLevel::DEBUG, $rawResponse);
 
-            /** @var GetCompletion $response */
-            $response = $this->responseParser->parse($rawResponse, GetCompletion::class);
+            /** @var Response\GetCompletion $response */
+            $response = $this->responseParser->parse($rawResponse, Response\GetCompletion::class);
             $completion = $response->getData();
         } catch (RestClientErrorException $e) {
             $this->logger->log(LogLevel::ERROR, $e->getMessage());
@@ -590,7 +578,7 @@ class Adapter implements
     /**
      * @param StreamEventListRequestInterface $request
      *
-     * @return StreamEvent[]
+     * @return StreamEventResponseType[]
      * @throws AdapterException
      */
     public function getStreamEvents(StreamEventListRequestInterface $request)
@@ -607,8 +595,8 @@ class Adapter implements
             $rawResponse = $this->restClient->get($uri, $queryParams, $headers);
             $this->logger->log(LogLevel::DEBUG, $rawResponse);
 
-            /** @var GetStreamEvents $response */
-            $response = $this->responseParser->parse($rawResponse, GetStreamEvents::class);
+            /** @var Response\GetStreamEvents $response */
+            $response = $this->responseParser->parse($rawResponse, Response\GetStreamEvents::class);
             $events = $response->getData();
         } catch (RestClientErrorException $e) {
             $this->logger->log(LogLevel::ERROR, $e->getMessage());

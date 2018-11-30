@@ -11,6 +11,8 @@ use Magento\Sales\Model\Order\Item as OrderItem;
 use Magento\Sales\Model\Order\Payment;
 use Magento\Store\Model\StoreManagerInterface;
 
+// @codingStandardsIgnoreFile
+
 require 'default_rollback.php';
 require __DIR__ . '/../../../Magento/Catalog/_files/product_simple.php';
 /** @var \Magento\Catalog\Model\Product $product */
@@ -29,13 +31,10 @@ $shippingAddress->setId(null)->setAddressType('shipping');
 $payment = $objectManager->create(Payment::class);
 $payment->setMethod('checkmo')
     ->setAdditionalInformation('last_trans_id', '11122')
-    ->setAdditionalInformation(
-        'metadata',
-        [
-            'type' => 'free',
-            'fraudulent' => false,
-        ]
-    );
+    ->setAdditionalInformation('metadata', [
+        'type' => 'free',
+        'fraudulent' => false,
+    ]);
 
 /** @var OrderItem $orderItem */
 $orderItem = $objectManager->create(OrderItem::class);

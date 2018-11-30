@@ -33,7 +33,7 @@ final class PhpdocIndentFixer extends AbstractFixer
     {
         return new FixerDefinition(
             'Docblocks should have the same indentation as the documented subject.',
-            [new CodeSample('<?php
+            array(new CodeSample('<?php
 class DocBlocks
 {
 /**
@@ -41,7 +41,7 @@ class DocBlocks
  */
     const INDENT = 1;
 }
-')]
+'))
         );
     }
 
@@ -93,7 +93,7 @@ class DocBlocks
             if (
                 $prevToken->isGivenKind(T_OPEN_TAG)
                 || ($prevToken->isWhitespace(" \t") && !$tokens[$index - 2]->isGivenKind(T_OPEN_TAG))
-                || $prevToken->equalsAny([';', ',', '{', '('])
+                || $prevToken->equalsAny(array(';', ',', '{', '('))
             ) {
                 continue;
             }
@@ -106,7 +106,7 @@ class DocBlocks
             $newPrevContent = $this->fixWhitespaceBeforeDocblock($prevToken->getContent(), $indent);
             if ($newPrevContent) {
                 if ($prevToken->isArray()) {
-                    $tokens[$prevIndex] = new Token([$prevToken->getId(), $newPrevContent]);
+                    $tokens[$prevIndex] = new Token(array($prevToken->getId(), $newPrevContent));
                 } else {
                     $tokens[$prevIndex] = new Token($newPrevContent);
                 }
@@ -114,7 +114,7 @@ class DocBlocks
                 $tokens->clearAt($prevIndex);
             }
 
-            $tokens[$index] = new Token([T_DOC_COMMENT, $this->fixDocBlock($token->getContent(), $indent)]);
+            $tokens[$index] = new Token(array(T_DOC_COMMENT, $this->fixDocBlock($token->getContent(), $indent)));
         }
     }
 

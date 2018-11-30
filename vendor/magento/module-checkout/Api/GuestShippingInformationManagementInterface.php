@@ -8,7 +8,6 @@ namespace Magento\Checkout\Api;
 /**
  * Interface for managing guest shipping address information
  * @api
- * @since 100.0.2
  */
 interface GuestShippingInformationManagementInterface
 {

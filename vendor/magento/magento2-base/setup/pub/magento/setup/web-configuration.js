@@ -126,7 +126,6 @@ angular.module('web-configuration', ['ngStorage'])
                 $http.post('index.php/url-check', $scope.config)
                     .then(function successCallback(resp) {
                         $scope.validateUrl.result = resp.data;
-
                         if ($scope.validateUrl.result.successUrl && $scope.validateUrl.result.successSecureUrl) {
                             $scope.nextState();
                         }

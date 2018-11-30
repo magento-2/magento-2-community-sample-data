@@ -6,7 +6,7 @@
 namespace Magento\Framework\Serialize;
 
 /**
- * This class was introducted only for usage in the \Magento\Framework\DataObject::toJson method.
+ * This class was introduced only for usage in the \Magento\Framework\DataObject::toJson method.
  * It should not be used in other cases and instead \Magento\Framework\Serialize\Serializer\Json::serialize
  * should be used.
  */

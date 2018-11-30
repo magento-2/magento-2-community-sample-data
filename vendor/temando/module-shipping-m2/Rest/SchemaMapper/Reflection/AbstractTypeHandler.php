@@ -20,11 +20,6 @@ abstract class AbstractTypeHandler implements TypeHandlerInterface
     private $reflect;
 
     /**
-     * @var string[]
-     */
-    private $typeMap = [];
-
-    /**
      * AbstractTypeHandler constructor.
      * @param ReflectionInterface $reflect
      */
@@ -43,19 +38,13 @@ abstract class AbstractTypeHandler implements TypeHandlerInterface
      */
     public function getPropertyType(PropertyHandlerInterface $propertyHandler, $type, $property)
     {
-        $class = get_class($type);
-
-        if (!isset($this->typeMap["$class||$property"])) {
-            $propertyType = $this->reflect->getPropertyType($type, $property);
-            if (!$propertyType) {
-                $getter = $propertyHandler->getter($property);
-                $propertyType = $this->reflect->getReturnValueType($type, $getter);
-            }
-
-            $this->typeMap["$class||$property"] = $propertyType;
+        $propertyType = $this->reflect->getPropertyType($type, $property);
+        if (!$propertyType) {
+            $getter = $propertyHandler->getter($property);
+            $propertyType = $this->reflect->getReturnValueType($type, $getter);
         }
 
-        return $this->typeMap["$class||$property"];
+        return $propertyType;
     }
 
     /**

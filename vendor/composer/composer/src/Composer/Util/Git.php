@@ -57,7 +57,7 @@ class Git
             // capture username/password from URL if there is one
             $this->process->execute('git remote -v', $output, $cwd);
             if (preg_match('{^(?:composer|origin)\s+https?://(.+):(.+)@([^/]+)}im', $output, $match)) {
-                $this->io->setAuthentication($match[3], rawurldecode($match[1]), rawurldecode($match[2]));
+                $this->io->setAuthentication($match[3], urldecode($match[1]), urldecode($match[2]));
             }
         }
 
@@ -228,24 +228,9 @@ class Git
         return true;
     }
 
-    public function fetchRefOrSyncMirror($url, $dir, $ref)
-    {
-        if (is_dir($dir) && 0 === $this->process->execute('git rev-parse --git-dir', $output, $dir) && trim($output) === '.') {
-            $escapedRef = ProcessExecutor::escape($ref.'^{commit}');
-            $exitCode = $this->process->execute(sprintf('git rev-parse --quiet --verify %s', $escapedRef), $output, $dir);
-            if ($exitCode === 0) {
-                return true;
-            }
-        }
-
-        $this->syncMirror($url, $dir);
-
-        return false;
-    }
-
     private function isAuthenticationFailure($url, &$match)
     {
-        if (!preg_match('{^(https?://)([^/]+)(.*)$}i', $url, $match)) {
+        if (!preg_match('{(https?://)([^/]+)(.*)$}i', $url, $match)) {
             return false;
         }
 
@@ -254,12 +239,10 @@ class Git
             'remote error: Invalid username or password.',
             'error: 401 Unauthorized',
             'fatal: unable to access',
-            'fatal: could not read Username',
         );
 
-        $errorOutput = $this->process->getErrorOutput();
         foreach ($authFailures as $authFailure) {
-            if (strpos($errorOutput, $authFailure) !== false) {
+            if (strpos($this->process->getErrorOutput(), $authFailure) !== false) {
                 return true;
             }
         }
@@ -269,7 +252,7 @@ class Git
 
     public static function cleanEnv()
     {
-        if (PHP_VERSION_ID < 50400 && ini_get('safe_mode') && false === strpos(ini_get('safe_mode_allowed_env_vars'), 'GIT_ASKPASS')) {
+        if (ini_get('safe_mode') && false === strpos(ini_get('safe_mode_allowed_env_vars'), 'GIT_ASKPASS')) {
             throw new \RuntimeException('safe_mode is enabled and safe_mode_allowed_env_vars does not contain GIT_ASKPASS, can not set env var. You can disable safe_mode with "-dsafe_mode=0" when running composer');
         }
 

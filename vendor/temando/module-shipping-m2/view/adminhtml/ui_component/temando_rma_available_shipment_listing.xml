@@ -22,13 +22,14 @@
     </settings>
     <dataSource name="temando_rma_available_shipment_listing_data_source" component="Magento_Ui/js/grid/provider">
         <settings>
+            <filterUrlParams>
+                <param name="id">*</param>
+            </filterUrlParams>
             <updateUrl path="mui/index/render"/>
             <storageConfig>
                 <param name="indexField" xsi:type="string">shipment_id</param>
             </storageConfig>
-            <filterUrlParams>
-                <param name="id">*</param>
-            </filterUrlParams>
+            <updateUrl path="mui/index/render"/>
         </settings>
         <aclResource>Magento_Rma::magento_rma</aclResource>
         <dataProvider class="Magento\Framework\View\Element\UiComponent\DataProvider\DataProvider" name="temando_rma_available_shipment_listing_data_source">

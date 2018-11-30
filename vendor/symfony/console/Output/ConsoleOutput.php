@@ -14,30 +14,28 @@ namespace Symfony\Component\Console\Output;
 use Symfony\Component\Console\Formatter\OutputFormatterInterface;
 
 /**
- * ConsoleOutput is the default class for all CLI output. It uses STDOUT and STDERR.
+ * ConsoleOutput is the default class for all CLI output. It uses STDOUT.
  *
- * This class is a convenient wrapper around `StreamOutput` for both STDOUT and STDERR.
+ * This class is a convenient wrapper around `StreamOutput`.
  *
  *     $output = new ConsoleOutput();
  *
  * This is equivalent to:
  *
  *     $output = new StreamOutput(fopen('php://stdout', 'w'));
- *     $stdErr = new StreamOutput(fopen('php://stderr', 'w'));
  *
  * @author Fabien Potencier <fabien@symfony.com>
  */
 class ConsoleOutput extends StreamOutput implements ConsoleOutputInterface
 {
     private $stderr;
-    private $consoleSectionOutputs = array();
 
     /**
      * @param int                           $verbosity The verbosity level (one of the VERBOSITY constants in OutputInterface)
      * @param bool|null                     $decorated Whether to decorate messages (null for auto-guessing)
      * @param OutputFormatterInterface|null $formatter Output formatter instance (null to use default OutputFormatter)
      */
-    public function __construct(int $verbosity = self::VERBOSITY_NORMAL, bool $decorated = null, OutputFormatterInterface $formatter = null)
+    public function __construct($verbosity = self::VERBOSITY_NORMAL, $decorated = null, OutputFormatterInterface $formatter = null)
     {
         parent::__construct($this->openOutputStream(), $verbosity, $decorated, $formatter);
 
@@ -47,14 +45,6 @@ class ConsoleOutput extends StreamOutput implements ConsoleOutputInterface
         if (null === $decorated) {
             $this->setDecorated($actualDecorated && $this->stderr->isDecorated());
         }
-    }
-
-    /**
-     * Creates a new output section.
-     */
-    public function section(): ConsoleSectionOutput
-    {
-        return new ConsoleSectionOutput($this->getStream(), $this->consoleSectionOutputs, $this->getVerbosity(), $this->isDecorated(), $this->getFormatter());
     }
 
     /**
@@ -144,11 +134,9 @@ class ConsoleOutput extends StreamOutput implements ConsoleOutputInterface
      */
     private function openOutputStream()
     {
-        if (!$this->hasStdoutSupport()) {
-            return fopen('php://output', 'w');
-        }
+        $outputStream = $this->hasStdoutSupport() ? 'php://stdout' : 'php://output';
 
-        return @fopen('php://stdout', 'w') ?: fopen('php://output', 'w');
+        return @fopen($outputStream, 'w') ?: fopen('php://output', 'w');
     }
 
     /**
@@ -156,6 +144,8 @@ class ConsoleOutput extends StreamOutput implements ConsoleOutputInterface
      */
     private function openErrorStream()
     {
-        return fopen($this->hasStderrSupport() ? 'php://stderr' : 'php://output', 'w');
+        $errorStream = $this->hasStderrSupport() ? 'php://stderr' : 'php://output';
+
+        return fopen($errorStream, 'w');
     }
 }

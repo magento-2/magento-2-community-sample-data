@@ -20,6 +20,8 @@ use Magento\Sales\Api\CreditmemoRepositoryInterface;
 use Psr\Log\LoggerInterface;
 
 /**
+ * Class CommentRepository
+ *
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  */
 class CommentRepository implements CreditmemoCommentRepositoryInterface
@@ -137,9 +139,8 @@ class CommentRepository implements CreditmemoCommentRepositoryInterface
             $creditmemo = $this->creditmemoRepository->get($entity->getParentId());
             $this->creditmemoCommentSender->send($creditmemo, $entity->getIsCustomerNotified(), $entity->getComment());
         } catch (\Exception $exception) {
-            $this->logger->critical($exception);
+            $this->logger->warning('Something went wrong while sending email.');
         }
-
         return $entity;
     }
 }

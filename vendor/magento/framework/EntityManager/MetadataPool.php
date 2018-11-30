@@ -46,6 +46,7 @@ class MetadataPool
      * @param ObjectManagerInterface $objectManager
      * @param SequenceFactory $sequenceFactory
      * @param array $metadata
+     * @since 100.1.0
      */
     public function __construct(
         ObjectManagerInterface $objectManager,

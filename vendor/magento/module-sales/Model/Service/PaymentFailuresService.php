@@ -3,8 +3,6 @@
  * Copyright © Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
-declare(strict_types=1);
-
 namespace Magento\Sales\Model\Service;
 
 use Magento\Backend\App\Area\FrontNameResolver;
@@ -205,12 +203,10 @@ class PaymentFailuresService implements PaymentFailuresInterface
      * @param Quote $quote
      * @return string
      */
-    private function getShippingMethod(Quote $quote): string
+    private function getShippingMethod(Quote $quote)
     {
         $shippingMethod = '';
-        $shippingInfo = $quote->getShippingAddress()->getShippingMethod();
-
-        if ($shippingInfo) {
+        if ($shippingInfo = $quote->getShippingAddress()->getShippingMethod()) {
             $data = explode('_', $shippingInfo);
             $shippingMethod = $data[0];
         }
@@ -224,9 +220,12 @@ class PaymentFailuresService implements PaymentFailuresInterface
      * @param Quote $quote
      * @return string
      */
-    private function getPaymentMethod(Quote $quote): string
+    private function getPaymentMethod(Quote $quote)
     {
-        $paymentMethod = $quote->getPayment()->getMethod() ?? '';
+        $paymentMethod = '';
+        if ($paymentInfo = $quote->getPayment()) {
+            $paymentMethod = $paymentInfo->getMethod();
+        }
 
         return $paymentMethod;
     }
@@ -299,7 +298,7 @@ class PaymentFailuresService implements PaymentFailuresInterface
      */
     private function getCustomerName(Quote $quote): string
     {
-        $customer = __('Guest')->render();
+        $customer = __('Guest');
         if (!$quote->getCustomerIsGuest()) {
             $customer = $quote->getCustomer()->getFirstname() . ' ' .
                         $quote->getCustomer()->getLastname();

@@ -7,13 +7,12 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-namespace PHPUnit\Framework\MockObject\Matcher;
 
 /**
  * Invocation matcher which checks if a method has been invoked zero or more
  * times. This matcher will always match.
  */
-class AnyInvokedCount extends InvokedRecorder
+class PHPUnit_Framework_MockObject_Matcher_AnyInvokedCount extends PHPUnit_Framework_MockObject_Matcher_InvokedRecorder
 {
     /**
      * @return string

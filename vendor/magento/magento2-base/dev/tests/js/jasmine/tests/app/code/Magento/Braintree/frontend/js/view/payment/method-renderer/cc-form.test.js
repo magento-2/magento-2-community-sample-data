@@ -56,13 +56,6 @@ define([
             });
         });
 
-        afterEach(function () {
-            try {
-                injector.clean();
-                injector.remove();
-            } catch (e) {}
-        });
-
         it('Check if payment code and message container are restored after onActiveChange call.', function () {
             var expectedMessageContainer = braintreeCcForm.messageContainer,
                 expectedCode = braintreeCcForm.code;

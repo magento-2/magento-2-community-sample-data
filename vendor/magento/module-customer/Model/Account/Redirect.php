@@ -54,7 +54,7 @@ class Redirect
     protected $customerUrl;
 
     /**
-     * @deprecated 100.0.2
+     * @deprecated 100.1.8
      * @var UrlInterface
      */
     protected $url;
@@ -73,11 +73,6 @@ class Redirect
      * @var HostChecker
      */
     private $hostChecker;
-
-    /**
-     * @var Session
-     */
-    private $session;
 
     /**
      * @param RequestInterface $request
@@ -211,9 +206,9 @@ class Redirect
             $referer = $this->request->getParam(CustomerUrl::REFERER_QUERY_PARAM_NAME);
             if ($referer) {
                 $referer = $this->urlDecoder->decode($referer);
-                preg_match('/logoutSuccess\//', $referer, $matches, PREG_OFFSET_CAPTURE);
+                preg_match('/logoutSuccess/', $referer, $matches, PREG_OFFSET_CAPTURE);
                 if (!empty($matches)) {
-                    $referer = str_replace('logoutSuccess/', '', $referer);
+                    $referer = str_replace('logoutSuccess', '', $referer);
                 }
                 if ($this->hostChecker->isOwnOrigin($referer)) {
                     $this->applyRedirect($referer);

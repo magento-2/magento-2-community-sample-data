@@ -8,6 +8,8 @@ namespace Magento\Indexer\Test\Unit\Console\Command;
 use Magento\Framework\Indexer\StateInterface;
 use Magento\Indexer\Console\Command\IndexerStatusCommand;
 use Symfony\Component\Console\Tester\CommandTester;
+use Symfony\Component\Console\Helper\HelperSet;
+use Symfony\Component\Console\Helper\TableHelper;
 
 class IndexerStatusCommandTest extends AbstractIndexerCommandCommonSetup
 {
@@ -25,7 +27,7 @@ class IndexerStatusCommandTest extends AbstractIndexerCommandCommonSetup
      */
     private function attachViewToIndexerMock($indexerMock, array $data)
     {
-        /** @var \Magento\Framework\Mview\View\Changelog|\PHPUnit_Framework_MockObject_MockObject $changelog */
+         /** @var \Magento\Framework\Mview\View\Changelog|\PHPUnit_Framework_MockObject_MockObject $changelog */
         $changelog = $this->getMockBuilder(\Magento\Framework\Mview\View\Changelog::class)
             ->disableOriginalConstructor()
             ->getMock();
@@ -91,6 +93,15 @@ class IndexerStatusCommandTest extends AbstractIndexerCommandCommonSetup
         $this->initIndexerCollectionByItems($indexerMocks);
         $this->command = new IndexerStatusCommand($this->objectManagerFactory);
 
+        $objectManager = new \Magento\Framework\TestFramework\Unit\Helper\ObjectManager($this);
+
+        $this->command->setHelperSet(
+            $objectManager->getObject(
+                HelperSet::class,
+                ['helpers' => [$objectManager->getObject(TableHelper::class)]]
+            )
+        );
+        
         $commandTester = new CommandTester($this->command);
         $commandTester->execute([]);
 

@@ -14,16 +14,16 @@ use Magento\Sales\Api\Data\OrderAddressExtensionInterface;
 use Magento\Sales\Api\Data\OrderInterface;
 use Temando\Shipping\Model\Checkout\Attribute\CheckoutFieldInterface;
 use Temando\Shipping\Model\Checkout\Attribute\CheckoutFieldInterfaceFactory;
-use Temando\Shipping\Model\Checkout\RateRequest\Extractor;
 use Temando\Shipping\Model\Checkout\Schema\CheckoutFieldsSchema;
+use Temando\Shipping\Model\Shipping\RateRequest\Extractor;
 
 /**
  * Temando Order Checkout Field Container Builder
  *
- * @package Temando\Shipping\Model
- * @author  Christoph Aßmann <christoph.assmann@netresearch.de>
- * @license https://opensource.org/licenses/osl-3.0.php Open Software License (OSL 3.0)
- * @link    https://www.temando.com/
+ * @package  Temando\Shipping\Model
+ * @author   Christoph Aßmann <christoph.assmann@netresearch.de>
+ * @license  http://opensource.org/licenses/osl-3.0.php Open Software License (OSL 3.0)
+ * @link     http://www.temando.com/
  */
 class CheckoutFieldContainerInterfaceBuilder extends AbstractSimpleObjectBuilder
 {
@@ -109,9 +109,7 @@ class CheckoutFieldContainerInterfaceBuilder extends AbstractSimpleObjectBuilder
         try {
             $shippingAddress = $this->rateRequestExtractor->getShippingAddress($rateRequest);
             $extensionAttributes = $shippingAddress->getExtensionAttributes();
-            if ($extensionAttributes instanceof AddressExtensionInterface
-                && is_array($extensionAttributes->getCheckoutFields())
-            ) {
+            if ($extensionAttributes instanceof AddressExtensionInterface) {
                 $checkoutFields = $this->getCheckoutFieldsFromAttributes($extensionAttributes->getCheckoutFields());
             } else {
                 $checkoutFields = [];
@@ -133,9 +131,7 @@ class CheckoutFieldContainerInterfaceBuilder extends AbstractSimpleObjectBuilder
         $shippingAddress = $order->getShippingAddress();
 
         $extensionAttributes = $shippingAddress->getExtensionAttributes();
-        if ($extensionAttributes instanceof OrderAddressExtensionInterface
-            && is_array($extensionAttributes->getCheckoutFields())
-        ) {
+        if ($extensionAttributes instanceof OrderAddressExtensionInterface) {
             $checkoutFields = $this->getCheckoutFieldsFromAttributes($extensionAttributes->getCheckoutFields());
         } else {
             $checkoutFields = [];

@@ -3,21 +3,16 @@
  */
 
 define([
-    'underscore',
     'Magento_Checkout/js/model/url-builder',
     'Magento_Customer/js/model/customer',
     'mage/storage',
     'Magento_Checkout/js/model/quote',
     'Magento_Checkout/js/model/shipping-service',
     'Temando_Shipping/js/model/cache-service',
-    'Temando_Shipping/js/model/collection-points',
-    'Temando_Shipping/js/model/pickup-locations'
-], function (_, urlBuilder, customer, storage, quote, shippingService, cacheService, collectionPoints, pickupLocations) {
+    'Temando_Shipping/js/model/collection-points'
+], function (urlBuilder, customer, storage, quote, shippingService, cacheService, collectionPoints) {
     'use strict';
-    var deliveryOptions = {
-        clickAndCollect: pickupLocations,
-        toCollectionPoint: collectionPoints
-    };
+
     return function (value) {
         shippingService.isLoading(true);
 
@@ -41,12 +36,7 @@ define([
             cacheService.invalidateCacheForAddress(quote.shippingAddress());
             quote.shippingAddress.valueHasMutated();
             var subscription = shippingService.getShippingRates().subscribe(function () {
-                _.each(deliveryOptions, function(option){
-                    option.clear();
-                });
-                if (deliveryOptions[value]) {
-                    deliveryOptions[value].reloadCheckoutData();
-                }
+                collectionPoints.reloadCheckoutData();
                 subscription.dispose();
             });
         }).fail(function () {

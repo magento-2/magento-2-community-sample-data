@@ -10,7 +10,6 @@ namespace Magento\Framework\Stdlib;
  * Internal dates
  *
  * @api
- * @since 100.0.2
  */
 class DateTime
 {
@@ -80,7 +79,7 @@ class DateTime
      * @param int $time
      * @return string The given time in given format
      *
-     * @deprecated
+     * @deprecated 101.0.1
      * @see Use Intl library for datetime handling: http://php.net/manual/en/book.intl.php
      *
      * @codeCoverageIgnore
@@ -96,7 +95,7 @@ class DateTime
      * @param string $timeStr
      * @return int
      *
-     * @deprecated
+     * @deprecated 101.0.1
      * @see Use Intl library for datetime handling: http://php.net/manual/en/book.intl.php
      *
      * @codeCoverageIgnore

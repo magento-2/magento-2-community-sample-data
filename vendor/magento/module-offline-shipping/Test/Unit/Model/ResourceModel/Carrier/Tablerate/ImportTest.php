@@ -193,7 +193,7 @@ class ImportTest extends \PHPUnit\Framework\TestCase
 
     /**
      * @expectedException \Magento\Framework\Exception\LocalizedException
-     * @expectedExceptionMessage The Table Rates File Format is incorrect. Verify the format and try again.
+     * @expectedExceptionMessage Please correct Table Rates File Format.
      * @SuppressWarnings(PHPMD.UnusedLocalVariable)
      */
     public function testGetDataFromEmptyFile()

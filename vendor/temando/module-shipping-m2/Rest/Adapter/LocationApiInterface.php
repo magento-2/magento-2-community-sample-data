@@ -5,10 +5,10 @@
 
 namespace Temando\Shipping\Rest\Adapter;
 
-use Temando\Shipping\Rest\Exception\AdapterException;
 use Temando\Shipping\Rest\Request\ItemRequestInterface;
 use Temando\Shipping\Rest\Request\ListRequestInterface;
-use Temando\Shipping\Rest\Response\DataObject\Location;
+use Temando\Shipping\Rest\Response\Type\LocationResponseType;
+use Temando\Shipping\Rest\Exception\AdapterException;
 
 /**
  * The Temando Location API interface defines the supported subset of operations
@@ -24,7 +24,7 @@ interface LocationApiInterface
     /**
      * @param ListRequestInterface $request
      *
-     * @return Location[]
+     * @return LocationResponseType[]
      * @throws AdapterException
      */
     public function getLocations(ListRequestInterface $request);

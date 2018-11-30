@@ -221,19 +221,14 @@ class CustomerGateway
      *
      * @access public
      * @param string id customer Id
-     * @param string associationFilterId association filter Id
      * @return Customer|boolean The customer object or false if the request fails.
      * @throws Exception\NotFound
      */
-    public function find($id, $associationFilterId = null)
+    public function find($id)
     {
         $this->_validateId($id);
         try {
-            $queryParams = '';
-            if ($associationFilterId) {
-                $queryParams = '?association_filter_id=' . $associationFilterId;
-            }
-            $path = $this->_config->merchantPath() . '/customers/' . $id . $queryParams;
+            $path = $this->_config->merchantPath() . '/customers/' . $id;
             $response = $this->_http->get($path);
             return Customer::factory($response['customer']);
         } catch (Exception\NotFound $e) {

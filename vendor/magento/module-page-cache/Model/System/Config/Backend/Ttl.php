@@ -9,9 +9,10 @@ namespace Magento\PageCache\Model\System\Config\Backend;
 use Magento\Framework\App\ObjectManager;
 use Magento\Framework\Escaper;
 use Magento\Framework\App\Config\ScopeConfigInterface;
+use Magento\Framework\Exception\LocalizedException;
 
 /**
- * Backend model for processing Public content cache lifetime settings
+ * Backend model for processing Public content cache lifetime settings.
  *
  * Class Ttl
  */
@@ -23,7 +24,6 @@ class Ttl extends \Magento\Framework\App\Config\Value
     private $escaper;
 
     /**
-     * Ttl constructor.
      * @param \Magento\Framework\Model\Context $context
      * @param \Magento\Framework\Registry $registry
      * @param ScopeConfigInterface $config
@@ -38,17 +38,17 @@ class Ttl extends \Magento\Framework\App\Config\Value
         \Magento\Framework\Registry $registry,
         ScopeConfigInterface $config,
         \Magento\Framework\App\Cache\TypeListInterface $cacheTypeList,
-        ?\Magento\Framework\Model\ResourceModel\AbstractResource $resource = null,
-        ?\Magento\Framework\Data\Collection\AbstractDb $resourceCollection = null,
+        \Magento\Framework\Model\ResourceModel\AbstractResource $resource = null,
+        \Magento\Framework\Data\Collection\AbstractDb $resourceCollection = null,
         array $data = [],
-        ?Escaper $escaper = null
+        Escaper $escaper = null
     ) {
         parent::__construct($context, $registry, $config, $cacheTypeList, $resource, $resourceCollection, $data);
         $this->escaper = $escaper ?: ObjectManager::getInstance()->create(Escaper::class);
     }
 
     /**
-     * Throw exception if Ttl data is invalid or empty
+     * Throw exception if Ttl data is invalid or empty.
      *
      * @return $this
      * @throws \Magento\Framework\Exception\LocalizedException
@@ -57,13 +57,14 @@ class Ttl extends \Magento\Framework\App\Config\Value
     {
         $value = $this->getValue();
         if ($value < 0 || !preg_match('/^[0-9]+$/', $value)) {
-            throw new \Magento\Framework\Exception\LocalizedException(
+            throw new LocalizedException(
                 __(
                     'Ttl value "%1" is not valid. Please use only numbers equal or greater than zero.',
                     $this->escaper->escapeHtml($value)
                 )
             );
         }
+
         return $this;
     }
 }

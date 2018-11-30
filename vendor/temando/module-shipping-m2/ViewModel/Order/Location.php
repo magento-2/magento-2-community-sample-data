@@ -2,19 +2,16 @@
 /**
  * Refer to LICENSE.txt distributed with the Temando Shipping module for notice of license
  */
-
 namespace Temando\Shipping\ViewModel\Order;
 
+use Magento\Directory\Model\RegionFactory;
 use Magento\Framework\Exception\LocalizedException;
 use Magento\Framework\View\Element\Block\ArgumentInterface;
+use Magento\Sales\Api\Data\OrderAddressInterfaceFactory;
 use Magento\Sales\Api\Data\OrderInterface;
-use Magento\Sales\Model\Order;
-use Temando\Shipping\Api\Data\Delivery\OrderCollectionPointInterface;
-use Temando\Shipping\Api\Data\Delivery\OrderPickupLocationInterface;
-use Temando\Shipping\Model\Location\OrderAddressFactory;
+use Magento\Sales\Model\Order\Address\Renderer as AddressRenderer;
+use Temando\Shipping\Api\Data\CollectionPoint\OrderCollectionPointInterface;
 use Temando\Shipping\Model\ResourceModel\Repository\OrderCollectionPointRepositoryInterface;
-use Temando\Shipping\Model\ResourceModel\Repository\OrderPickupLocationRepositoryInterface;
-use Temando\Shipping\ViewModel\DataProvider\OrderAddress as AddressRenderer;
 
 /**
  * View model for order locations.
@@ -22,165 +19,96 @@ use Temando\Shipping\ViewModel\DataProvider\OrderAddress as AddressRenderer;
  * @package Temando\Shipping\ViewModel
  * @author  Christoph Aßmann <christoph.assmann@netresearch.de>
  * @author  Sebastian Ertner <sebastian.ertner@netresearch.de>
- * @license https://opensource.org/licenses/osl-3.0.php Open Software License (OSL 3.0)
- * @link    https://www.temando.com/
+ * @license http://opensource.org/licenses/osl-3.0.php Open Software License (OSL 3.0)
+ * @link    http://www.temando.com/
  */
 class Location implements ArgumentInterface
 {
-    /**
-     * @var AddressRenderer
-     */
-    private $addressRenderer;
-
     /**
      * @var OrderCollectionPointRepositoryInterface
      */
     private $collectionPointRepository;
 
     /**
-     * @var OrderPickupLocationRepositoryInterface
+     * @var OrderAddressInterfaceFactory
      */
-    private $pickupLocationRepository;
+    private $addressFactory;
 
     /**
-     * @var OrderAddressFactory
+     * @var AddressRenderer
      */
-    private $orderAddressFactory;
+    private $addressRenderer;
 
     /**
-     * @var OrderCollectionPointInterface
+     * @var RegionFactory
      */
-    private $collectionPoint;
-
-    /**
-     * @var OrderPickupLocationInterface
-     */
-    private $pickupLocation;
+    private $regionFactory;
 
     /**
      * Location constructor.
-     *
-     * @param AddressRenderer $addressRenderer
      * @param OrderCollectionPointRepositoryInterface $collectionPointRepository
-     * @param OrderPickupLocationRepositoryInterface $pickupLocationRepository
-     * @param OrderAddressFactory $orderAddressFactory
+     * @param OrderAddressInterfaceFactory $addressFactory
+     * @param AddressRenderer $addressRenderer
+     * @param RegionFactory $regionFactory
      */
     public function __construct(
-        AddressRenderer $addressRenderer,
         OrderCollectionPointRepositoryInterface $collectionPointRepository,
-        OrderPickupLocationRepositoryInterface $pickupLocationRepository,
-        OrderAddressFactory $orderAddressFactory
+        OrderAddressInterfaceFactory $addressFactory,
+        AddressRenderer $addressRenderer,
+        RegionFactory $regionFactory
     ) {
-        $this->addressRenderer = $addressRenderer;
         $this->collectionPointRepository = $collectionPointRepository;
-        $this->pickupLocationRepository = $pickupLocationRepository;
-        $this->orderAddressFactory = $orderAddressFactory;
+        $this->addressFactory = $addressFactory;
+        $this->addressRenderer = $addressRenderer;
+        $this->regionFactory = $regionFactory;
     }
 
     /**
-     * @param OrderInterface|Order $order
-     *
-     * @return OrderCollectionPointInterface|null
-     */
-    private function getCollectionPoint(OrderInterface $order)
-    {
-        if (!$this->collectionPoint) {
-            try {
-                $shippingAddressId = $order->getData('shipping_address_id');
-                $this->collectionPoint = $this->collectionPointRepository->get($shippingAddressId);
-            } catch (LocalizedException $e) {
-                $this->collectionPoint = null;
-            }
-        }
-
-        return $this->collectionPoint;
-    }
-
-    /**
-     * @param OrderInterface|Order $order
-     *
-     * @return OrderPickupLocationInterface|null
-     */
-    private function getPickupLocation(OrderInterface $order)
-    {
-        if (!$this->pickupLocation) {
-            try {
-                $shippingAddressId = $order->getData('shipping_address_id');
-                $this->pickupLocation = $this->pickupLocationRepository->get($shippingAddressId);
-            } catch (LocalizedException $e) {
-                $this->pickupLocation = null;
-            }
-        }
-
-        return $this->pickupLocation;
-    }
-
-    /**
-     * @param OrderInterface $order
-     *
-     * @return bool
-     */
-    public function hasDeliveryLocation(OrderInterface $order)
-    {
-        $collectionPoint = $this->getCollectionPoint($order);
-        $pickUpLocation = $this->getPickupLocation($order);
-
-        return ($collectionPoint || $pickUpLocation);
-    }
-
-    /**
-     * @param OrderInterface $order
-     *
+     * @param string[] $addressData
      * @return string
      */
-    public function getDeliveryLocationTitle(OrderInterface $order)
+    private function getFormattedAddress(array $addressData)
     {
-        if ($this->getCollectionPoint($order)) {
-            return __('Collection Point');
-        } elseif ($this->getPickupLocation($order)) {
-            return __('Pickup Location');
-        } else {
+        /** @var \Magento\Sales\Model\Order\Address $address */
+        $address = $this->addressFactory->create(['data' => $addressData]);
+        $formattedAddress = $this->addressRenderer->format($address, 'html');
+        return (string) $formattedAddress;
+    }
+
+    /**
+     * @param OrderInterface|\Magento\Sales\Model\Order $order
+     * @return string
+     */
+    public function getCollectionPointAddressHtml(OrderInterface $order)
+    {
+        $shippingAddressId = $order->getShippingAddress()->getId();
+
+        try {
+            /** @var OrderCollectionPointInterface $collectionPoint */
+            $collectionPoint = $this->collectionPointRepository->get($shippingAddressId);
+        } catch (LocalizedException $e) {
             return '';
         }
-    }
 
-    /**
-     * @param OrderInterface|Order $order
-     * @return string
-     */
-    public function getBillingAddressHtml(OrderInterface $order)
-    {
-        return $this->addressRenderer->getFormattedAddress($order->getBillingAddress());
-    }
-
-    /**
-     * @param OrderInterface|Order $order
-     * @return string
-     */
-    public function getShippingAddressHtml(OrderInterface $order)
-    {
-        return $this->addressRenderer->getFormattedAddress($order->getShippingAddress());
-    }
-
-    /**
-     * @param OrderInterface|Order $order
-     *
-     * @return string
-     */
-    public function getDeliveryLocationAddressHtml(OrderInterface $order)
-    {
-        $collectionPoint = $this->getCollectionPoint($order);
-        if ($collectionPoint !== null) {
-            $address = $this->orderAddressFactory->createFromCollectionPoint($collectionPoint);
-            return $this->addressRenderer->getFormattedAddress($address);
+        try {
+            /** @var \Magento\Directory\Model\Region $region */
+            $region = $this->regionFactory->create();
+            $region = $region->loadByCode($collectionPoint->getRegion(), $collectionPoint->getCountry());
+            $regionName = $region->getName();
+        } catch (\Exception $e) {
+            $regionName = $collectionPoint->getRegion();
         }
 
-        $pickupLocation = $this->getPickupLocation($order);
-        if ($pickupLocation !== null) {
-            $address = $this->orderAddressFactory->createFromPickupLocation($pickupLocation);
-            return $this->addressRenderer->getFormattedAddress($address);
-        }
+        $addressData = [
+            'company'    => $collectionPoint->getName(),
+            'street'     => $collectionPoint->getStreet(),
+            'region'     => $regionName,
+            'city'       => $collectionPoint->getCity(),
+            'postcode'   => $collectionPoint->getPostcode(),
+            'country_id' => $collectionPoint->getCountry(),
 
-        return '';
+        ];
+
+        return $this->getFormattedAddress($addressData);
     }
 }

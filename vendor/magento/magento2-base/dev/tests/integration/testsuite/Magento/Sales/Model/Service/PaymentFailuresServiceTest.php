@@ -3,8 +3,6 @@
  * Copyright © Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
-declare(strict_types=1);
-
 namespace Magento\Sales\Model\Service;
 
 use Magento\Quote\Api\CartRepositoryInterface;
@@ -59,7 +57,7 @@ class PaymentFailuresServiceTest extends \PHPUnit\Framework\TestCase
      * @magentoAppIsolation enabled
      * @return void
      */
-    public function testHandlerWithCustomer(): void
+    public function testHandlerWithCustomer()
     {
         $errorMessage = __('Transaction declined.');
         $checkoutType = 'custom_checkout';
@@ -69,7 +67,7 @@ class PaymentFailuresServiceTest extends \PHPUnit\Framework\TestCase
             ->with($this->quote->getId())
             ->willReturn($this->quote);
 
-        $this->paymentFailures->handle((int)$this->quote->getId(), $errorMessage->render());
+        $this->paymentFailures->handle((int)$this->quote->getId(), $errorMessage);
 
         $paymentReflection = new \ReflectionClass($this->paymentFailures);
         $templateTimeMethod = $paymentReflection->getMethod('getLocaleDate');

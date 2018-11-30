@@ -19,7 +19,7 @@ use Magento\Framework\Stdlib\DateTime;
 use Magento\Integration\Model\Integration;
 
 /**
- * Tests for TokenUserContext.
+ * Tests TokenUserContext
  */
 class TokenUserContextTest extends \PHPUnit\Framework\TestCase
 {
@@ -88,7 +88,7 @@ class TokenUserContextTest extends \PHPUnit\Framework\TestCase
                     'findByConsumerId',
                     'findActiveIntegrationByConsumerId',
                     'delete',
-                    'getSelectedResources',
+                    'getSelectedResources'
                 ]
             )
             ->getMock();
@@ -242,7 +242,7 @@ class TokenUserContextTest extends \PHPUnit\Framework\TestCase
                     'getCustomerId',
                     'getAdminId',
                     '__wakeup',
-                    'getCreatedAt',
+                    'getCreatedAt'
                 ]
             )->getMock();
         $this->tokenFactory->expects($this->once())
@@ -331,21 +331,10 @@ class TokenUserContextTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * @param array $tokenData
-     * @param int $tokenTtl
-     * @param int $currentTime
-     * @param int|null $expectedUserType
-     * @param int|null $expectedUserId
-     * @return void
      * @dataProvider getExpiredTestTokenData
      */
-    public function testExpiredToken(
-        array $tokenData,
-        int $tokenTtl,
-        int $currentTime,
-        $expectedUserType,
-        $expectedUserId
-    ) {
+    public function testExpiredToken($tokenData, $tokenTtl, $currentTime, $expectedUserType, $expectedUserId)
+    {
         $bearerToken = 'bearer1234';
 
         $this->dateMock->expects($this->any())

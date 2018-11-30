@@ -7,7 +7,6 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-namespace PHPUnit\Framework\MockObject\Builder;
 
 /**
  * Builder interface for unique identifiers.
@@ -15,9 +14,9 @@ namespace PHPUnit\Framework\MockObject\Builder;
  * Defines the interface for recording unique identifiers. The identifiers
  * can be used to define the invocation order of expectations. The expectation
  * is recorded using id() and then defined in order using
- * PHPUnit\Framework\MockObject\Builder\Match::after().
+ * PHPUnit_Framework_MockObject_Builder_Match::after().
  */
-interface Identity
+interface PHPUnit_Framework_MockObject_Builder_Identity
 {
     /**
      * Sets the identification of the expectation to $id.

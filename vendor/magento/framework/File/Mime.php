@@ -3,6 +3,7 @@
  * Copyright © Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
+declare(strict_types=1);
 
 namespace Magento\Framework\File;
 
@@ -59,7 +60,7 @@ class Mime
     ];
 
     /**
-     * List of mime types that can be defined by file extension.
+     * List of mime types that can be defined by file extension
      *
      * @var array $defineByExtensionList
      */
@@ -72,7 +73,7 @@ class Mime
         'js'   => 'application/javascript',
         'json' => 'application/json',
         'xml'  => 'application/xml',
-        'svg' => 'image/svg+xml',
+        'svg' => 'image/svg+xml'
     ];
 
     /**
@@ -116,7 +117,7 @@ class Mime
         $extension = $this->getFileExtension($file);
         $result = mime_content_type($file);
         if (isset($this->mimeTypes[$extension], $this->defineByExtensionList[$extension])
-            && (strpos($result, 'text/') === 0 || strpos($result, 'image/svg') === 0)
+            && strpos($result, 'text/') === 0
         ) {
             $result = $this->mimeTypes[$extension];
         }
@@ -125,7 +126,7 @@ class Mime
     }
 
     /**
-     * Get file extension by file name.
+     * Get file extension by file name
      *
      * @param string $file
      * @return string

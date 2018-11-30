@@ -10,6 +10,8 @@ use Magento\Framework\App\ResourceConnection;
 use Magento\Framework\DB\Sql\ColumnValueExpression;
 
 /**
+ * Class ColumnsResolver
+ *
  * Resolves columns names
  */
 class ColumnsResolver

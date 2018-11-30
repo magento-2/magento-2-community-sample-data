@@ -8,26 +8,22 @@ namespace Magento\Framework;
 
 use Magento\TestFramework\Helper\Bootstrap;
 use Magento\TestFramework\Helper\CacheCleaner;
-use PHPUnit_Framework_MockObject_MockObject as MockObject;
+use PHPUnit\Framework\TestCase;
+use PHPUnit_Framework_MockObject_MockObject;
 
 /**
  * @magentoAppIsolation enabled
  * @magentoCache all disabled
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  */
-class TranslateTest extends \PHPUnit\Framework\TestCase
+class TranslateTest extends TestCase
 {
-    /**
-     * @var \Magento\Framework\Translate
-     */
+    /** @var \Magento\Framework\Translate */
     private $translate;
 
-    /**
-     * @inheritdoc
-     */
     protected function setUp()
     {
-        /** @var \Magento\Framework\View\FileSystem|MockObject $viewFileSystem */
+        /** @var \Magento\Framework\View\FileSystem | PHPUnit_Framework_MockObject_MockObject $viewFileSystem */
         $viewFileSystem = $this->createPartialMock(
             \Magento\Framework\View\FileSystem::class,
             ['getLocaleFileName']
@@ -41,7 +37,7 @@ class TranslateTest extends \PHPUnit\Framework\TestCase
                 )
             );
 
-        /** @var \Magento\Framework\View\Design\ThemeInterface|MockObject $theme */
+        /** @var \Magento\Framework\View\Design\ThemeInterface | PHPUnit_Framework_MockObject_MockObject $theme */
         $theme = $this->createMock(\Magento\Framework\View\Design\ThemeInterface::class);
         $theme->expects($this->any())->method('getThemePath')->will($this->returnValue('Magento/luma'));
 
@@ -62,7 +58,7 @@ class TranslateTest extends \PHPUnit\Framework\TestCase
             dirname(__DIR__) . '/Translation/Model/_files/Magento/Catalog/i18n'
         );
 
-        /** @var \Magento\Theme\Model\View\Design|MockObject $designModel */
+        /** @var \Magento\Theme\Model\View\Design | \PHPUnit_Framework_MockObject_MockObject $designModel */
         $designModel = $this->getMockBuilder(\Magento\Theme\Model\View\Design::class)
             ->setMethods(['getDesignTheme'])
             ->setConstructorArgs(
@@ -78,7 +74,7 @@ class TranslateTest extends \PHPUnit\Framework\TestCase
             )
             ->getMock();
 
-        $designModel->expects($this->any())->method('getDesignTheme')->willReturn($theme);
+        $designModel->expects($this->any())->method('getDesignTheme')->will($this->returnValue($theme));
 
         $objectManager->addSharedInstance($designModel, \Magento\Theme\Model\View\Design\Proxy::class);
 
@@ -103,10 +99,8 @@ class TranslateTest extends \PHPUnit\Framework\TestCase
     /**
      * @magentoCache all disabled
      * @dataProvider translateDataProvider
-     *
      * @param string $inputText
      * @param string $expectedTranslation
-     * @return void
      * @throws Exception\LocalizedException
      */
     public function testTranslate($inputText, $expectedTranslation)
@@ -136,12 +130,12 @@ class TranslateTest extends \PHPUnit\Framework\TestCase
                 'Phrase in Magento_Catalog module that doesn\'t need translation',
             ],
             [
-                'Magento_Store module phrase will be overridden by theme translation',
-                'Magento_Store module phrase is overridden by theme translation',
+                'Magento_Store module phrase will be override by theme translation',
+                'Magento_Store module phrase is override by theme translation',
             ],
             [
-                'Magento_Catalog module phrase will be overridden by theme translation',
-                'Magento_Catalog module phrase is overridden by theme translation',
+                'Magento_Catalog module phrase will be override by theme translation',
+                'Magento_Catalog module phrase is override by theme translation',
             ],
         ];
     }

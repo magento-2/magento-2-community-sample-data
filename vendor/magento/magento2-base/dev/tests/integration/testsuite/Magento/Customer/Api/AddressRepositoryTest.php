@@ -160,13 +160,6 @@ class AddressRepositoryTest extends \PHPUnit\Framework\TestCase
         $expectedNewAddress = $this->_expectedAddresses[1];
         $expectedNewAddress->setId($savedAddress->getId());
         $expectedNewAddress->setRegion($this->_expectedAddresses[1]->getRegion());
-
-        $this->assertEquals($expectedNewAddress->getExtensionAttributes(), $savedAddress->getExtensionAttributes());
-        $this->assertEquals(
-            $expectedNewAddress->getRegion()->getExtensionAttributes(),
-            $savedAddress->getRegion()->getExtensionAttributes()
-        );
-
         $this->assertEquals($expectedNewAddress, $savedAddress);
     }
 
@@ -215,8 +208,8 @@ class AddressRepositoryTest extends \PHPUnit\Framework\TestCase
             $this->assertEquals('One or more input exceptions have occurred.', $exception->getMessage());
             $errors = $exception->getErrors();
             $this->assertCount(3, $errors);
-            $this->assertEquals('"firstname" is required. Enter and try again.', $errors[0]->getLogMessage());
-            $this->assertEquals('"lastname" is required. Enter and try again.', $errors[1]->getLogMessage());
+            $this->assertEquals('firstname is a required field.', $errors[0]->getLogMessage());
+            $this->assertEquals('lastname is a required field.', $errors[1]->getLogMessage());
             $this->assertEquals(
                 __(
                     'Invalid value of "%value" provided for the %fieldName field.',
@@ -237,11 +230,11 @@ class AddressRepositoryTest extends \PHPUnit\Framework\TestCase
             $errors = $exception->getErrors();
             $this->assertCount(3, $errors);
             $this->assertEquals(
-                '"firstname" is required. Enter and try again.',
+                'firstname is a required field.',
                 $errors[0]->getLogMessage()
             );
             $this->assertEquals(
-                '"lastname" is required. Enter and try again.',
+                'lastname is a required field.',
                 $errors[1]->getLogMessage()
             );
             $this->assertEquals(
@@ -379,6 +372,9 @@ class AddressRepositoryTest extends \PHPUnit\Framework\TestCase
         }
     }
 
+    /**
+     * @return array
+     */
     public function searchAddressDataProvider()
     {
         /**
@@ -402,7 +398,7 @@ class AddressRepositoryTest extends \PHPUnit\Framework\TestCase
                 null,
                 [
                     1 => ['city' => 'CityM', 'postcode' => 75477, 'firstname' => 'John'],
-                    2 => ['city' => 'CityX', 'postcode' => 47676, 'firstname' => 'John']
+                    2 => ['city' => 'CityX', 'postcode' => 47676, 'firstname' => 'John'],
                 ],
             ],
             'Addresses with postcode of either 75477 or 47676' => [
@@ -413,7 +409,7 @@ class AddressRepositoryTest extends \PHPUnit\Framework\TestCase
                 ],
                 [
                     1 => ['city' => 'CityM', 'postcode' => 75477, 'firstname' => 'John'],
-                    2 => ['city' => 'CityX', 'postcode' => 47676, 'firstname' => 'John']
+                    2 => ['city' => 'CityX', 'postcode' => 47676, 'firstname' => 'John'],
                 ],
             ],
             'Addresses with postcode greater than 0' => [
@@ -421,7 +417,7 @@ class AddressRepositoryTest extends \PHPUnit\Framework\TestCase
                 null,
                 [
                     1 => ['city' => 'CityM', 'postcode' => 75477, 'firstname' => 'John'],
-                    2 => ['city' => 'CityX', 'postcode' => 47676, 'firstname' => 'John']
+                    2 => ['city' => 'CityX', 'postcode' => 47676, 'firstname' => 'John'],
                 ],
             ]
         ];

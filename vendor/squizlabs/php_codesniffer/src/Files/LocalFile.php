@@ -48,7 +48,7 @@ class LocalFile extends File
                 fclose($handle);
 
                 if (strpos($firstContent, '@codingStandardsIgnoreFile') !== false
-                    || stripos($firstContent, 'phpcs:ignorefile') !== false
+                    || strpos(strtolower($firstContent), 'phpcs:ignorefile') !== false
                 ) {
                     // We are ignoring the whole file.
                     $this->ignored = true;
@@ -69,7 +69,7 @@ class LocalFile extends File
      *
      * @return void
      */
-    public function reloadContent()
+    function reloadContent()
     {
         $this->setContent(file_get_contents($this->path));
 

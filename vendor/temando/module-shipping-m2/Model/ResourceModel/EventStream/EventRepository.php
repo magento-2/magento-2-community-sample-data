@@ -7,20 +7,20 @@ namespace Temando\Shipping\Model\ResourceModel\EventStream;
 use Magento\Framework\Exception\CouldNotDeleteException;
 use Magento\Framework\Exception\LocalizedException;
 use Temando\Shipping\Model\StreamEventInterface;
-use Temando\Shipping\Rest\Adapter\EventStreamApiInterface;
 use Temando\Shipping\Rest\EntityMapper\StreamEventResponseMapper;
+use Temando\Shipping\Rest\Adapter\EventStreamApiInterface;
 use Temando\Shipping\Rest\Exception\AdapterException;
 use Temando\Shipping\Rest\Request\StreamEventItemRequestInterfaceFactory;
 use Temando\Shipping\Rest\Request\StreamEventListRequestInterfaceFactory;
-use Temando\Shipping\Rest\Response\DataObject\StreamEvent;
+use Temando\Shipping\Rest\Response\Type\StreamEventResponseType;
 
 /**
  * Temando Event Stream Repository
  *
- * @package Temando\Shipping\Model
- * @author  Benjamin Heuer <benjamin.heuer@netresearch.de>
- * @license https://opensource.org/licenses/osl-3.0.php Open Software License (OSL 3.0)
- * @link    https://www.temando.com/
+ * @package  Temando\Shipping\Model
+ * @author   Benjamin Heuer <benjamin.heuer@netresearch.de>
+ * @license  http://opensource.org/licenses/osl-3.0.php Open Software License (OSL 3.0)
+ * @link     http://www.temando.com/
  */
 class EventRepository implements EventRepositoryInterface
 {
@@ -83,7 +83,7 @@ class EventRepository implements EventRepositoryInterface
 
             // convert api response to local (reduced) event objects
             $apiStreamEvents = $this->apiAdapter->getStreamEvents($request);
-            $streamEvents = array_map(function (StreamEvent $apiEvent) {
+            $streamEvents = array_map(function (StreamEventResponseType $apiEvent) {
                 return $this->streamEventMapper->map($apiEvent);
             }, $apiStreamEvents);
         } catch (AdapterException $e) {

@@ -61,7 +61,7 @@ class UpgradeSchema implements UpgradeSchemaInterface
     private function upgradeTwoOSix($connection, $setup)
     {
         //modify email_campaign table
-        $campaignTable = $setup->getTable(Schema::EMAIL_CAMPAIGN_TABLE);
+        $campaignTable = $setup->getTable('email_campaign');
 
         //add columns
         $connection->addColumn(
@@ -157,7 +157,7 @@ class UpgradeSchema implements UpgradeSchemaInterface
      */
     private function convertDataForRules(SchemaSetupInterface $setup, $connection)
     {
-        $rulesTable = $setup->getTable(Schema::EMAIL_RULES_TABLE);
+        $rulesTable = $setup->getTable('email_rules');
         //rules data
         $select = $connection->select()->from($rulesTable);
         $rows = $setup->getConnection()->fetchAssoc($select);
@@ -182,7 +182,7 @@ class UpgradeSchema implements UpgradeSchemaInterface
      */
     private function convertDataForImporter(SchemaSetupInterface $setup, $connection)
     {
-        $importerTable = $setup->getTable(Schema::EMAIL_IMPORTER_TABLE);
+        $importerTable = $setup->getTable('email_importer');
         //imports that are not imported and has TD data
         $select = $connection->select()
             ->from($importerTable)
@@ -248,12 +248,12 @@ class UpgradeSchema implements UpgradeSchemaInterface
     ) {
         $connection->addForeignKey(
             $setup->getFkName(
-                Schema::EMAIL_CATALOG_TABLE,
+                'email_catalog',
                 'product_id',
                 'catalog_product_entity',
                 'entity_id'
             ),
-            $setup->getTable(Schema::EMAIL_CATALOG_TABLE),
+            $setup->getTable('email_catalog'),
             'product_id',
             $setup->getTable('catalog_product_entity'),
             'entity_id',
@@ -273,12 +273,12 @@ class UpgradeSchema implements UpgradeSchemaInterface
     ) {
         $connection->addForeignKey(
             $setup->getFkName(
-                Schema::EMAIL_ORDER_TABLE,
+                'email_order',
                 'order_id',
                 'sales_order',
                 'entity_id'
             ),
-            $setup->getTable(Schema::EMAIL_ORDER_TABLE),
+            $setup->getTable('email_order'),
             'order_id',
             $setup->getTable('sales_order'),
             'entity_id',
@@ -312,7 +312,7 @@ class UpgradeSchema implements UpgradeSchemaInterface
     private function convertDataAndAddIndexes(SchemaSetupInterface $setup, $connection)
     {
         //modify the condition column name for the email_rules table - reserved name for mysql
-        $rulesTable = $setup->getTable(Schema::EMAIL_RULES_TABLE);
+        $rulesTable = $setup->getTable('email_rules');
 
         if ($connection->tableColumnExists($rulesTable, 'condition')) {
             $connection->changeColumn(
@@ -355,7 +355,7 @@ class UpgradeSchema implements UpgradeSchemaInterface
     private function modifyWishlistTable(SchemaSetupInterface $setup)
     {
         $connection = $setup->getConnection();
-        $emailWishlistTable = $setup->getTable(Schema::EMAIL_WISHLIST_TABLE);
+        $emailWishlistTable = $setup->getTable('email_wishlist');
 
         if ($connection->tableColumnExists($emailWishlistTable, 'customer_id')) {
             $connection->changeColumn(
@@ -373,12 +373,12 @@ class UpgradeSchema implements UpgradeSchemaInterface
 
         $connection->addForeignKey(
             $setup->getFkName(
-                Schema::EMAIL_WISHLIST_TABLE,
+                'email_wishlist',
                 'customer_id',
                 'customer_entity',
                 'entity_id'
             ),
-            $setup->getTable(Schema::EMAIL_WISHLIST_TABLE),
+            $setup->getTable('email_wishlist'),
             'customer_id',
             $setup->getTable('customer_entity'),
             'entity_id',
@@ -386,12 +386,12 @@ class UpgradeSchema implements UpgradeSchemaInterface
         );
         $connection->addForeignKey(
             $setup->getFkName(
-                Schema::EMAIL_WISHLIST_TABLE,
+                'email_wishlist',
                 'wishlist_id',
                 'wishlist',
                 'wishlist_id'
             ),
-            $setup->getTable(Schema::EMAIL_WISHLIST_TABLE),
+            $setup->getTable('email_wishlist'),
             'wishlist_id',
             $setup->getTable('wishlist'),
             'wishlist_id',
@@ -435,17 +435,17 @@ class UpgradeSchema implements UpgradeSchemaInterface
         ModuleContextInterface $context
     ) {
         if (version_compare($context->getVersion(), '2.3.6', '<')) {
-            $tableName = $setup->getTable(Schema::EMAIL_ABANDONED_CART_TABLE);
+            $tableName = $setup->getTable('email_abandoned_cart');
             $this->shared->createAbandonedCartTable($setup, $tableName);
         }
 
         if (version_compare($context->getVersion(), '2.5.2', '<')) {
-            $tableName = $setup->getTable(Schema::EMAIL_CONTACT_CONSENT_TABLE);
+            $tableName = $setup->getTable('email_contact_consent');
             $this->shared->createConsentTable($setup, $tableName);
         }
 
         if (version_compare($context->getVersion(), '2.5.3', '<')) {
-            $tableName = $setup->getTable(Schema::EMAIL_FAILED_AUTH_TABLE);
+            $tableName = $setup->getTable('email_failed_auth');
             $this->shared->createFailedAuthTable($setup, $tableName);
         }
 

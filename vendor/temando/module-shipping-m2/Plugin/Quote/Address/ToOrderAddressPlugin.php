@@ -7,17 +7,18 @@ namespace Temando\Shipping\Plugin\Quote\Address;
 use Magento\Framework\Exception\NoSuchEntityException;
 use Magento\Quote\Model\Quote\Address;
 use Magento\Quote\Model\Quote\Address\ToOrderAddress;
+use Magento\Sales\Api\Data\OrderAddressInterface;
 use Magento\Sales\Api\Data\OrderAddressExtensionInterface;
 use Magento\Sales\Api\Data\OrderAddressExtensionInterfaceFactory;
-use Magento\Sales\Api\Data\OrderAddressInterface;
+use Magento\Store\Model\StoreManagerInterface;
 use Temando\Shipping\Model\Config\ModuleConfigInterface;
 use Temando\Shipping\Model\ResourceModel\Repository\AddressRepositoryInterface;
 
 /**
- * @package Temando\Shipping\Plugin
- * @author  Christoph Aßmann <christoph.assmann@netresearch.de>
- * @license https://opensource.org/licenses/osl-3.0.php Open Software License (OSL 3.0)
- * @link    https://www.temando.com/
+ * @package  Temando\Shipping\Plugin
+ * @author   Christoph Aßmann <christoph.assmann@netresearch.de>
+ * @license  http://opensource.org/licenses/osl-3.0.php Open Software License (OSL 3.0)
+ * @link     http://www.temando.com/
  */
 class ToOrderAddressPlugin
 {
@@ -37,20 +38,28 @@ class ToOrderAddressPlugin
     private $addressExtensionFactory;
 
     /**
+     * @var StoreManagerInterface
+     */
+    private $storeManager;
+
+    /**
      * ToOrderAddressPlugin constructor.
      *
-     * @param ModuleConfigInterface $config
-     * @param AddressRepositoryInterface $addressRepository
+     * @param ModuleConfigInterface                 $config
+     * @param AddressRepositoryInterface            $addressRepository
      * @param OrderAddressExtensionInterfaceFactory $addressExtensionFactory
+     * @param StoreManagerInterface                 $storeManager
      */
     public function __construct(
         ModuleConfigInterface $config,
         AddressRepositoryInterface $addressRepository,
-        OrderAddressExtensionInterfaceFactory $addressExtensionFactory
+        OrderAddressExtensionInterfaceFactory $addressExtensionFactory,
+        StoreManagerInterface $storeManager
     ) {
-        $this->config = $config;
-        $this->addressRepository = $addressRepository;
+        $this->config                  = $config;
+        $this->addressRepository       = $addressRepository;
         $this->addressExtensionFactory = $addressExtensionFactory;
+        $this->storeManager            = $storeManager;
     }
 
     /**
@@ -71,8 +80,7 @@ class ToOrderAddressPlugin
         OrderAddressInterface $orderAddress,
         Address $quoteAddress
     ) {
-        $storeId = $quoteAddress->getQuote()->getStoreId();
-        if (!$this->config->isEnabled($storeId)) {
+        if (!$this->config->isEnabled($this->storeManager->getStore()->getId())) {
             return $orderAddress;
         }
 

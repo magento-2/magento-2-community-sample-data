@@ -10,7 +10,6 @@ namespace Magento\Framework\Api;
  * Interface for entities which can be extended with custom attributes.
  *
  * @api
- * @since 100.0.2
  */
 interface CustomAttributesDataInterface extends ExtensibleDataInterface
 {

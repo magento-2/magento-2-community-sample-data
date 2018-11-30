@@ -4,25 +4,33 @@
  */
 namespace Temando\Shipping\Model\CollectionPoint;
 
-use Magento\Framework\DataObject;
+use Magento\Framework\Model\AbstractModel;
 use Temando\Shipping\Api\Data\CollectionPoint\OrderCollectionPointInterface;
+use Temando\Shipping\Model\ResourceModel\CollectionPoint\OrderCollectionPoint as CollectionPointResource;
 
 /**
  * Temando Order Collection Point Entity
- *
- * @deprecated since 1.4.0
- * @see \Temando\Shipping\Model\Delivery\OrderCollectionPoint
  *
  * This model contains a subset of data that is used in the shipping module.
  * It does not contain all data as available in its platform representation.
  *
  * @package Temando\Shipping\Model
  * @author  Christoph Aßmann <christoph.assmann@netresearch.de>
- * @license https://opensource.org/licenses/osl-3.0.php Open Software License (OSL 3.0)
- * @link    https://www.temando.com/
+ * @license http://opensource.org/licenses/osl-3.0.php Open Software License (OSL 3.0)
+ * @link    http://www.temando.com/
  */
-class OrderCollectionPoint extends DataObject implements OrderCollectionPointInterface
+class OrderCollectionPoint extends AbstractModel implements OrderCollectionPointInterface
 {
+    /**
+     * Init resource model.
+     * @return void
+     */
+    protected function _construct()
+    {
+        parent::_construct();
+        $this->_init(CollectionPointResource::class);
+    }
+
     /**
      * @return int
      */

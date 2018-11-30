@@ -32,13 +32,13 @@ final class NoUnreachableDefaultArgumentValueFixer extends AbstractFixer
     {
         return new FixerDefinition(
             'In function arguments there must not be arguments with default values before non-default ones.',
-            [
+            array(
                 new CodeSample(
                     '<?php
 function example($foo = "two words", $bar) {}
 '
                 ),
-            ],
+            ),
             null,
             'Modifies the signature of functions; therefore risky when using systems (such as some Symfony components) that rely on those (for example through reflection).'
         );
@@ -70,7 +70,7 @@ function example($foo = "two words", $bar) {}
                 continue;
             }
 
-            $startIndex = $tokens->getNextTokenOfKind($i, ['(']);
+            $startIndex = $tokens->getNextTokenOfKind($i, array('('));
             $i = $tokens->findBlockEnd(Tokens::BLOCK_TYPE_PARENTHESIS_BRACE, $startIndex);
 
             $this->fixFunctionDefinition($tokens, $startIndex, $i);
@@ -99,11 +99,11 @@ function example($foo = "two words", $bar) {}
                 continue;
             }
 
-            if (!$token->equals('=') || $this->isNonNullableTypehintedNullableVariable($tokens, $i)) {
+            if (!$token->equals('=') || $this->isTypehintedNullableVariable($tokens, $i)) {
                 continue;
             }
 
-            $endIndex = $tokens->getPrevTokenOfKind($lastArgumentIndex, [',']);
+            $endIndex = $tokens->getPrevTokenOfKind($lastArgumentIndex, array(','));
             $endIndex = $tokens->getPrevMeaningfulToken($endIndex);
             $this->removeDefaultArgument($tokens, $i, $endIndex);
         }
@@ -141,6 +141,10 @@ function example($foo = "two words", $bar) {}
      */
     private function isEllipsis(Tokens $tokens, $variableIndex)
     {
+        if (!defined('T_ELLIPSIS')) {
+            return $tokens[$tokens->getPrevMeaningfulToken($variableIndex)]->equals('.');
+        }
+
         return $tokens[$tokens->getPrevMeaningfulToken($variableIndex)]->isGivenKind(T_ELLIPSIS);
     }
 
@@ -164,26 +168,27 @@ function example($foo = "two words", $bar) {}
      *
      * @return bool
      */
-    private function isNonNullableTypehintedNullableVariable(Tokens $tokens, $index)
+    private function isTypehintedNullableVariable(Tokens $tokens, $index)
     {
         $nextToken = $tokens[$tokens->getNextMeaningfulToken($index)];
 
-        if (!$nextToken->equals([T_STRING, 'null'], false)) {
+        if (!$nextToken->equals(array(T_STRING, 'null'), false)) {
             return false;
         }
 
         $variableIndex = $tokens->getPrevMeaningfulToken($index);
 
-        $searchTokens = [',', '(', [T_STRING], [CT::T_ARRAY_TYPEHINT], [T_CALLABLE]];
-        $typehintKinds = [T_STRING, CT::T_ARRAY_TYPEHINT, T_CALLABLE];
+        $searchTokens = array(',', '(', array(T_STRING), array(CT::T_ARRAY_TYPEHINT));
+        $typehintKinds = array(T_STRING, CT::T_ARRAY_TYPEHINT);
+
+        if (defined('T_CALLABLE')) {
+            $searchTokens[] = array(T_CALLABLE);
+            $typehintKinds[] = T_CALLABLE;
+        }
 
         $prevIndex = $tokens->getPrevTokenOfKind($variableIndex, $searchTokens);
 
-        if (!$tokens[$prevIndex]->isGivenKind($typehintKinds)) {
-            return false;
-        }
-
-        return !$tokens[$tokens->getPrevMeaningfulToken($prevIndex)]->isGivenKind(CT::T_NULLABLE_TYPE);
+        return $tokens[$prevIndex]->isGivenKind($typehintKinds);
     }
 
     /**

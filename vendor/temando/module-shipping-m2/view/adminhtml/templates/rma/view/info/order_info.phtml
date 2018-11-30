@@ -6,6 +6,19 @@
     $orderViewModel = $block->getData('orderViewModel');
 
     $order = $rmaViewModel->getOrder();
+
+    $orderAdminDate = $block->formatDate(
+        $orderViewModel->getOrderAdminDate($order->getCreatedAt()),
+        \IntlDateFormatter::MEDIUM,
+        true
+    );
+
+    $orderStoreDate = $block->formatDate(
+        $order->getCreatedAt(),
+        \IntlDateFormatter::MEDIUM,
+        true,
+        $orderViewModel->getOrderTimezone($order)
+    );
 ?>
 
 <div class="admin__page-section-item-title">
@@ -15,8 +28,6 @@
 </div>
 <div class="admin__page-section-item-content">
     <table class="admin__table-secondary order-information-table">
-        <?php $orderAdminDate = $orderViewModel->getOrderAdminDate($order) ?>
-        <?php $orderStoreDate = $orderViewModel->getOrderStoreDate($order) ?>
         <tr>
             <th><?= $block->escapeHtml(__('Order Date')) ?></th>
             <td><?= $block->escapeHtml($orderAdminDate) ?></td>

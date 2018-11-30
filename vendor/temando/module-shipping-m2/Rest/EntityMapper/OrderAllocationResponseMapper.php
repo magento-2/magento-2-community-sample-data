@@ -7,7 +7,7 @@ namespace Temando\Shipping\Rest\EntityMapper;
 use Temando\Shipping\Model\Shipment\AllocationErrorInterface;
 use Temando\Shipping\Model\Shipment\AllocationErrorInterfaceFactory;
 use Temando\Shipping\Model\ShipmentInterface;
-use Temando\Shipping\Rest\Response\DataObject\Shipment;
+use Temando\Shipping\Rest\Response\Type\ShipmentResponseType;
 
 /**
  * Map API data to application data object
@@ -43,13 +43,13 @@ class OrderAllocationResponseMapper
     }
 
     /**
-     * @param Shipment[] $allocateIncluded
+     * @param ShipmentResponseType[] $allocateIncluded
      * @return AllocationErrorInterface[]
      */
     public function mapErrors(array $allocateIncluded)
     {
-        /** @var Shipment[] $includedErrors */
-        $includedErrors = array_filter($allocateIncluded, function (Shipment $element) {
+        /** @var ShipmentResponseType[] $includedErrors */
+        $includedErrors = array_filter($allocateIncluded, function (ShipmentResponseType $element) {
             return ($element->getType() == 'error');
         });
 
@@ -69,13 +69,13 @@ class OrderAllocationResponseMapper
     }
 
     /**
-     * @param Shipment[] $allocateIncluded
+     * @param ShipmentResponseType[] $allocateIncluded
      * @return ShipmentInterface[]
      */
     public function mapShipments(array $allocateIncluded)
     {
-        /** @var Shipment[] $includedShipments */
-        $includedShipments = array_filter($allocateIncluded, function (Shipment $element) {
+        /** @var ShipmentResponseType[] $includedShipments */
+        $includedShipments = array_filter($allocateIncluded, function (ShipmentResponseType $element) {
             return ($element->getType() == 'shipment');
         });
 

@@ -129,8 +129,7 @@ class Price implements DimensionalIndexerInterface
 
     /**
      * {@inheritdoc}
-     * @param array $dimensions
-     * @param \Traversable $entityIds
+     *
      * @throws \Exception
      */
     public function executeByDimensions(array $dimensions, \Traversable $entityIds)
@@ -239,8 +238,8 @@ class Price implements DimensionalIndexerInterface
     /**
      * Prepare temporary price index data for bundle products by price type
      *
-     * @param int $priceType
      * @param array $dimensions
+     * @param int $priceType
      * @param int|array $entityIds the entity ids limitation
      * @return void
      * @throws \Exception
@@ -610,12 +609,9 @@ class Price implements DimensionalIndexerInterface
     }
 
     /**
-     * Create bundle price.
-     *
      * @param IndexTableStructure $priceTable
-     * @return  void
      */
-    private function applyBundlePrice($priceTable): void
+    private function applyBundlePrice($priceTable)
     {
         $select = $this->getConnection()->select();
         $select->from(
@@ -638,12 +634,9 @@ class Price implements DimensionalIndexerInterface
     }
 
     /**
-     * Make insert/update bundle option price.
-     *
-     * @return void
      * @param IndexTableStructure $priceTable
      */
-    private function applyBundleOptionPrice($priceTable): void
+    private function applyBundleOptionPrice($priceTable)
     {
         $connection = $this->getConnection();
 
@@ -668,7 +661,7 @@ class Price implements DimensionalIndexerInterface
         $select = $connection->select()->join(
             ['io' => $subSelect],
             'i.entity_id = io.entity_id AND i.customer_group_id = io.customer_group_id' .
-                ' AND i.website_id = io.website_id',
+            ' AND i.website_id = io.website_id',
             []
         )->columns(
             [

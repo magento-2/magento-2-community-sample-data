@@ -12,17 +12,16 @@
 
 namespace PhpCsFixer\Fixer\LanguageConstruct;
 
-use PhpCsFixer\AbstractProxyFixer;
-use PhpCsFixer\Fixer\DeprecatedFixerInterface;
+use PhpCsFixer\AbstractFixer;
 use PhpCsFixer\FixerDefinition\CodeSample;
 use PhpCsFixer\FixerDefinition\FixerDefinition;
+use PhpCsFixer\Tokenizer\Token;
+use PhpCsFixer\Tokenizer\Tokens;
 
 /**
  * @author Jules Pietri <jules@heahprod.com>
- *
- * @deprecated
  */
-final class SilencedDeprecationErrorFixer extends AbstractProxyFixer implements DeprecatedFixerInterface
+final class SilencedDeprecationErrorFixer extends AbstractFixer
 {
     /**
      * {@inheritdoc}
@@ -31,7 +30,7 @@ final class SilencedDeprecationErrorFixer extends AbstractProxyFixer implements 
     {
         return new FixerDefinition(
             'Ensures deprecation notices are silenced.',
-            [new CodeSample("<?php\ntrigger_error('Warning.', E_USER_DEPRECATED);\n")],
+            array(new CodeSample("<?php\ntrigger_error('Warning.', E_USER_DEPRECATED);")),
             null,
             'Silencing of deprecation errors might cause changes to code behaviour.'
         );
@@ -40,16 +39,45 @@ final class SilencedDeprecationErrorFixer extends AbstractProxyFixer implements 
     /**
      * {@inheritdoc}
      */
-    public function getSuccessorsNames()
+    public function isCandidate(Tokens $tokens)
     {
-        return array_keys($this->proxyFixers);
+        return $tokens->isTokenKindFound(T_STRING);
     }
 
     /**
      * {@inheritdoc}
      */
-    protected function createProxyFixers()
+    public function isRisky()
     {
-        return [new ErrorSuppressionFixer()];
+        return true;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    protected function applyFix(\SplFileInfo $file, Tokens $tokens)
+    {
+        for ($index = $tokens->count() - 1; $index >= 0; --$index) {
+            $token = $tokens[$index];
+            if (!$token->equals(array(T_STRING, 'trigger_error'), false)) {
+                continue;
+            }
+
+            $start = $index;
+            $prev = $tokens->getPrevMeaningfulToken($start);
+            if ($tokens[$prev]->isGivenKind(T_NS_SEPARATOR)) {
+                $start = $prev;
+                $prev = $tokens->getPrevMeaningfulToken($start);
+            }
+
+            if ($tokens[$prev]->isGivenKind(array(T_DOUBLE_COLON, T_NEW, T_OBJECT_OPERATOR, T_STRING)) || $tokens[$prev]->equals('@')) {
+                continue;
+            }
+
+            $end = $tokens->findBlockEnd(Tokens::BLOCK_TYPE_PARENTHESIS_BRACE, $tokens->getNextTokenOfKind($index, array(T_STRING, '(')));
+            if ($tokens[$tokens->getPrevMeaningfulToken($end)]->equals(array(T_STRING, 'E_USER_DEPRECATED'))) {
+                $tokens->insertAt($start, new Token('@'));
+            }
+        }
     }
 }

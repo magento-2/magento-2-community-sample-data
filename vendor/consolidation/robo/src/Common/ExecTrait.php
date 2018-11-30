@@ -159,7 +159,7 @@ trait ExecTrait
      */
     public function envVars(array $env)
     {
-        $this->env = $this->env ? $env + $this->env : $env;
+        $this->env = $env;
         return $this;
     }
 
@@ -311,11 +311,6 @@ trait ExecTrait
         }
 
         if (isset($this->env)) {
-            // Symfony 4 will inherit environment variables by default, but until
-            // then, manually ensure they are inherited.
-            if (method_exists($this->process, 'inheritEnvironmentVariables')) {
-                $this->process->inheritEnvironmentVariables();
-            }
             $this->process->setEnv($this->env);
         }
 

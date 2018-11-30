@@ -15,10 +15,10 @@ use Temando\Shipping\Model\Shipping\Carrier;
 /**
  * RMA Shipments Tab
  *
- * @package Temando\Shipping\Block
- * @author  Sebastian Ertner <sebastian.ertner@netresearch.de>
- * @license https://opensource.org/licenses/osl-3.0.php Open Software License (OSL 3.0)
- * @link    https://www.temando.com/
+ * @package  Temando\Shipping\Block
+ * @author   Sebastian Ertner <sebastian.ertner@netresearch.de>
+ * @license  http://opensource.org/licenses/osl-3.0.php Open Software License (OSL 3.0)
+ * @link     http://www.temando.com/
  *
  * @api
  */

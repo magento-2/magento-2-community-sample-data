@@ -35,18 +35,17 @@ final class GeneralPhpdocAnnotationRemoveFixer extends AbstractFixer implements 
     {
         return new FixerDefinition(
             'Configured annotations should be omitted from PHPDoc.',
-            [
+            array(
                 new CodeSample(
                     '<?php
 /**
  * @internal
  * @author someone
  */
-function foo() {}
-',
-                    ['annotations' => ['author']]
+function foo() {}',
+                    array('annotations' => array('author'))
                 ),
-            ]
+            )
         );
     }
 
@@ -73,7 +72,7 @@ function foo() {}
      */
     protected function applyFix(\SplFileInfo $file, Tokens $tokens)
     {
-        if (!\count($this->configuration['annotations'])) {
+        if (!count($this->configuration['annotations'])) {
             return;
         }
 
@@ -97,7 +96,7 @@ function foo() {}
             if ('' === $doc->getContent()) {
                 $tokens->clearTokenAndMergeSurroundingWhitespace($index);
             } else {
-                $tokens[$index] = new Token([T_DOC_COMMENT, $doc->getContent()]);
+                $tokens[$index] = new Token(array(T_DOC_COMMENT, $doc->getContent()));
             }
         }
     }
@@ -107,11 +106,13 @@ function foo() {}
      */
     protected function createConfigurationDefinition()
     {
-        return new FixerConfigurationResolverRootless('annotations', [
-            (new FixerOptionBuilder('annotations', 'List of annotations to remove, e.g. `["author"]`.'))
-                ->setAllowedTypes(['array'])
-                ->setDefault([])
-                ->getOption(),
-        ], $this->getName());
+        $annotations = new FixerOptionBuilder('annotations', 'List of annotations to remove, e.g. `["author"]`.');
+        $annotations = $annotations
+            ->setAllowedTypes(array('array'))
+            ->setDefault(array())
+            ->getOption()
+        ;
+
+        return new FixerConfigurationResolverRootless('annotations', array($annotations));
     }
 }

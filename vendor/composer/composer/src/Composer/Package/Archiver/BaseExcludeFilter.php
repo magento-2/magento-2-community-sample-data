@@ -71,7 +71,7 @@ abstract class BaseExcludeFilter
      * Processes a file containing exclude rules of different formats per line
      *
      * @param array    $lines      A set of lines to be parsed
-     * @param callable $lineParser The parser to be used on each line
+     * @param callback $lineParser The parser to be used on each line
      *
      * @return array Exclude patterns to be used in filter()
      */

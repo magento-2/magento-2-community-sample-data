@@ -32,8 +32,9 @@ class PluginInstaller extends LibraryInstaller
      *
      * @param IOInterface $io
      * @param Composer    $composer
+     * @param string      $type
      */
-    public function __construct(IOInterface $io, Composer $composer)
+    public function __construct(IOInterface $io, Composer $composer, $type = 'library')
     {
         parent::__construct($io, $composer, 'composer-plugin');
         $this->installationManager = $composer->getInstallationManager();

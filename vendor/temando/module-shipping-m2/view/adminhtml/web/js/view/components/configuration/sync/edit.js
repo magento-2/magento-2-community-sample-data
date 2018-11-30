@@ -1,16 +1,12 @@
-/**
- * Refer to LICENSE.txt distributed with the Temando Shipping module for notice of license
- */
 define([
-    'uiComponent',
-    'ko'
-], function (Component, ko) {
+    'uiComponent', 'ko'
+], function(Component, ko) {
+
     "use strict";
 
     return Component.extend({
         initialize: function () {
             var self = this;
-
             this._super();
             this.sync.checked = ko.observable(this.sync.checked);
             this.elements.forEach(function (element) {

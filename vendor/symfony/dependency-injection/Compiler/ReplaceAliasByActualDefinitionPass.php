@@ -43,7 +43,7 @@ class ReplaceAliasByActualDefinitionPass extends AbstractRecursivePass
             }
             // Check if target needs to be replaces
             if (isset($replacements[$targetId])) {
-                $container->setAlias($definitionId, $replacements[$targetId])->setPublic($target->isPublic())->setPrivate($target->isPrivate());
+                $container->setAlias($definitionId, $replacements[$targetId]);
             }
             // No need to process the same target twice
             if (isset($seenAliasTargets[$targetId])) {
@@ -60,8 +60,7 @@ class ReplaceAliasByActualDefinitionPass extends AbstractRecursivePass
                 continue;
             }
             // Remove private definition and schedule for replacement
-            $definition->setPublic(!$target->isPrivate());
-            $definition->setPrivate($target->isPrivate());
+            $definition->setPublic(true);
             $container->setDefinition($definitionId, $definition);
             $container->removeDefinition($targetId);
             $replacements[$targetId] = $definitionId;

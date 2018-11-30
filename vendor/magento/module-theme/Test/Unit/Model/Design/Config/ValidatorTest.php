@@ -3,7 +3,6 @@
  * Copyright © Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
-declare(strict_types=1);
 
 namespace Magento\Theme\Test\Unit\Model\Design\Config;
 
@@ -38,7 +37,7 @@ class ValidatorTest extends \PHPUnit\Framework\TestCase
     /**
      * @inheritdoc
      */
-    protected function setUp()
+    public function setUp()
     {
         $this->objectManager = new ObjectManager($this);
         $this->templateFactory = $this->getMockBuilder(\Magento\Framework\Mail\TemplateInterfaceFactory::class)
@@ -67,7 +66,7 @@ class ValidatorTest extends \PHPUnit\Framework\TestCase
     /**
      * @return void
      */
-    public function testGetDefaultTemplateTextDefaultScope(): void
+    public function testGetDefaultTemplateTextDefaultScope()
     {
         $templateId = 'email_template';
         $designData = [
@@ -113,7 +112,7 @@ class ValidatorTest extends \PHPUnit\Framework\TestCase
      * @param array $data
      * @return \Magento\Theme\Model\Data\Design\Config\Data
      */
-    private function getDesignConfigData(array $data = []): \Magento\Theme\Model\Data\Design\Config\Data
+    private function getDesignConfigData(array $data = [])
     {
         return $this->objectManager->getObject(
             \Magento\Theme\Model\Data\Design\Config\Data::class,

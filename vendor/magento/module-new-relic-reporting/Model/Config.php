@@ -5,9 +5,6 @@
  */
 namespace Magento\NewRelicReporting\Model;
 
-/**
- * NewRelic configuration model
- */
 class Config
 {
     /**#@+

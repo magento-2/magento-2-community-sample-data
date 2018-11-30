@@ -7,7 +7,7 @@ namespace Temando\Shipping\Model\Dispatch;
 /**
  * Temando Dispatch Shipment Interface.
  *
- * @deprecated since 1.3.0
+ * @deprecated
  * @see \Temando\Shipping\Model\Shipment\ShipmentErrorInterface
  *
  * @package Temando\Shipping\Model

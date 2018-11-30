@@ -13,13 +13,12 @@ use PHP_Timer;
 use PHPUnit\Framework\Assert;
 use PHPUnit\Framework\AssertionFailedError;
 use PHPUnit\Framework\IncompleteTestError;
-use PHPUnit\Framework\SelfDescribing;
-use PHPUnit\Framework\SkippedTestError;
-use PHPUnit\Framework\Test;
 use PHPUnit\Framework\TestResult;
+use PHPUnit\Framework\Test;
+use PHPUnit\Framework\SkippedTestError;
+use PHPUnit\Framework\SelfDescribing;
 use PHPUnit\Util\InvalidArgumentHelper;
 use PHPUnit\Util\PHP\AbstractPhpProcess;
-use Text_Template;
 use Throwable;
 
 /**
@@ -153,13 +152,15 @@ class PhptTestCase implements Test, SelfDescribing
             $result = new TestResult;
         }
 
+        $skip     = false;
         $xfail    = false;
-        $settings = $this->parseIniSection($this->settings);
+        $time     = 0;
+        $settings = $this->settings;
 
         $result->startTest($this);
 
         if (isset($sections['INI'])) {
-            $settings = $this->parseIniSection($sections['INI'], $settings);
+            $settings = \array_merge($settings, $this->parseIniSection($sections['INI']));
         }
 
         if (isset($sections['ENV'])) {
@@ -167,110 +168,91 @@ class PhptTestCase implements Test, SelfDescribing
             $this->phpUtil->setEnv($env);
         }
 
+        // Redirects STDERR to STDOUT
         $this->phpUtil->setUseStderrRedirection(true);
 
         if ($result->enforcesTimeLimit()) {
             $this->phpUtil->setTimeout($result->getTimeoutForLargeTests());
         }
 
-        $skip = $this->runSkip($sections, $result, $settings);
+        if (isset($sections['SKIPIF'])) {
+            $skipif    = $this->render($sections['SKIPIF']);
+            $jobResult = $this->phpUtil->runJob($skipif, $settings);
 
-        if ($skip) {
-            return $result;
+            if (!\strncasecmp('skip', \ltrim($jobResult['stdout']), 4)) {
+                if (\preg_match('/^\s*skip\s*(.+)\s*/i', $jobResult['stdout'], $message)) {
+                    $message = \substr($message[1], 2);
+                } else {
+                    $message = '';
+                }
+
+                $result->addFailure($this, new SkippedTestError($message), 0);
+
+                $skip = true;
+            }
         }
 
         if (isset($sections['XFAIL'])) {
             $xfail = \trim($sections['XFAIL']);
         }
 
-        if (isset($sections['STDIN'])) {
-            $this->phpUtil->setStdin($sections['STDIN']);
-        }
-
-        if (isset($sections['ARGS'])) {
-            $this->phpUtil->setArgs($sections['ARGS']);
-        }
-
-        if ($result->getCollectCodeCoverageInformation()) {
-            $this->renderForCoverage($settings);
-        }
-
-        PHP_Timer::start();
-
-        $jobResult = $this->phpUtil->runJob($code, $this->stringifyIni($settings));
-        $time      = PHP_Timer::stop();
-
-        if ($result->getCollectCodeCoverageInformation() && ($coverage = $this->cleanupForCoverage())) {
-            $result->getCodeCoverage()->append($coverage, $this, true, [], [], true);
-        }
-
-        try {
-            $this->assertPhptExpectation($sections, $jobResult['stdout']);
-        } catch (AssertionFailedError $e) {
-            $failure = $e;
-            if ($xfail !== false) {
-                $failure = new IncompleteTestError($xfail, 0, $e);
+        if (!$skip) {
+            if (isset($sections['STDIN'])) {
+                $this->phpUtil->setStdin($sections['STDIN']);
             }
-            $result->addFailure($this, $failure, $time);
-        } catch (Throwable $t) {
-            $result->addError($this, $t, $time);
-        }
 
-        if ($result->allCompletelyImplemented() && $xfail !== false) {
-            $result->addFailure($this, new IncompleteTestError('XFAIL section but test passes'), $time);
-        }
+            if (isset($sections['ARGS'])) {
+                $this->phpUtil->setArgs($sections['ARGS']);
+            }
 
-        $this->runClean($sections);
+            PHP_Timer::start();
+
+            $jobResult = $this->phpUtil->runJob($code, $settings);
+            $time      = PHP_Timer::stop();
+
+            try {
+                $this->assertPhptExpectation($sections, $jobResult['stdout']);
+            } catch (AssertionFailedError $e) {
+                if ($xfail !== false) {
+                    $result->addFailure(
+                        $this,
+                        new IncompleteTestError(
+                            $xfail,
+                            0,
+                            $e
+                        ),
+                        $time
+                    );
+                } else {
+                    $result->addFailure($this, $e, $time);
+                }
+            } catch (Throwable $t) {
+                $result->addError($this, $t, $time);
+            }
+
+            if ($result->allCompletelyImplemented() && $xfail !== false) {
+                $result->addFailure(
+                    $this,
+                    new IncompleteTestError(
+                        'XFAIL section but test passes'
+                    ),
+                    $time
+                );
+            }
+
+            $this->phpUtil->setStdin('');
+            $this->phpUtil->setArgs('');
+
+            if (isset($sections['CLEAN'])) {
+                $cleanCode = $this->render($sections['CLEAN']);
+
+                $this->phpUtil->runJob($cleanCode, $this->settings);
+            }
+        }
 
         $result->endTest($this, $time);
 
         return $result;
-    }
-
-    /**
-     * @param array<string, string> $sections
-     * @param TestResult            $result
-     * @param array                 $settings
-     *
-     * @return bool
-     */
-    private function runSkip(&$sections, TestResult $result, $settings)
-    {
-        if (!isset($sections['SKIPIF'])) {
-            return false;
-        }
-
-        $skipif    = $this->render($sections['SKIPIF']);
-        $jobResult = $this->phpUtil->runJob($skipif, $this->stringifyIni($settings));
-
-        if (!\strncasecmp('skip', \ltrim($jobResult['stdout']), 4)) {
-            $message = '';
-            if (\preg_match('/^\s*skip\s*(.+)\s*/i', $jobResult['stdout'], $skipMatch)) {
-                $message = \substr($skipMatch[1], 2);
-            }
-
-            $result->addFailure($this, new SkippedTestError($message), 0);
-            $result->endTest($this, 0);
-
-            return true;
-        }
-
-        return false;
-    }
-
-    /**
-     * @param array<string, string> $sections
-     */
-    private function runClean(&$sections)
-    {
-        $this->phpUtil->setStdin('');
-        $this->phpUtil->setArgs('');
-
-        if (isset($sections['CLEAN'])) {
-            $cleanCode = $this->render($sections['CLEAN']);
-
-            $this->phpUtil->runJob($cleanCode, $this->settings);
-        }
     }
 
     /**
@@ -302,6 +284,22 @@ class PhptTestCase implements Test, SelfDescribing
     {
         $sections = [];
         $section  = '';
+
+        $allowExternalSections = [
+            'FILE',
+            'EXPECT',
+            'EXPECTF',
+            'EXPECTREGEX'
+        ];
+
+        $requiredSections = [
+            'FILE',
+            [
+                'EXPECT',
+                'EXPECTF',
+                'EXPECTREGEX'
+            ]
+        ];
 
         $unsupportedSections = [
             'REDIRECTTEST',
@@ -338,42 +336,13 @@ class PhptTestCase implements Test, SelfDescribing
             unset($sections['FILEEOF']);
         }
 
-        $this->parseExtenal($sections);
-
-        if (!$this->validate($sections)) {
-            throw new Exception('Invalid PHPT file');
-        }
-
-        foreach ($unsupportedSections as $section) {
-            if (isset($sections[$section])) {
-                throw new Exception(
-                    'PHPUnit does not support this PHPT file'
-                );
-            }
-        }
-
-        return $sections;
-    }
-
-    /**
-     * @param array<string, string> $sections
-     */
-    private function parseExtenal(&$sections)
-    {
-        $allowSections = [
-            'FILE',
-            'EXPECT',
-            'EXPECTF',
-            'EXPECTREGEX'
-        ];
         $testDirectory = \dirname($this->filename) . DIRECTORY_SEPARATOR;
 
-        foreach ($allowSections as $section) {
+        foreach ($allowExternalSections as $section) {
             if (isset($sections[$section . '_EXTERNAL'])) {
                 $externalFilename = \trim($sections[$section . '_EXTERNAL']);
 
-                if (!\is_file($testDirectory . $externalFilename) ||
-                    !\is_readable($testDirectory . $externalFilename)) {
+                if (!\is_file($testDirectory . $externalFilename) || !\is_readable($testDirectory . $externalFilename)) {
                     throw new Exception(
                         \sprintf(
                             'Could not load --%s-- %s for PHPT file',
@@ -388,23 +357,8 @@ class PhptTestCase implements Test, SelfDescribing
                 unset($sections[$section . '_EXTERNAL']);
             }
         }
-    }
 
-    /**
-     * @param array<string, string> $sections
-     *
-     * @return bool
-     */
-    private function validate(&$sections)
-    {
-        $requiredSections = [
-            'FILE',
-            [
-                'EXPECT',
-                'EXPECTF',
-                'EXPECTREGEX'
-            ]
-        ];
+        $isValid = true;
 
         foreach ($requiredSections as $section) {
             if (\is_array($section)) {
@@ -419,18 +373,32 @@ class PhptTestCase implements Test, SelfDescribing
                 }
 
                 if (!$foundSection) {
-                    return false;
+                    $isValid = false;
+
+                    break;
                 }
+            } else {
+                if (!isset($sections[$section])) {
+                    $isValid = false;
 
-                continue;
-            }
-
-            if (!isset($sections[$section])) {
-                return false;
+                    break;
+                }
             }
         }
 
-        return true;
+        if (!$isValid) {
+            throw new Exception('Invalid PHPT file');
+        }
+
+        foreach ($unsupportedSections as $section) {
+            if (isset($sections[$section])) {
+                throw new Exception(
+                    'PHPUnit does not support this PHPT file'
+                );
+            }
+        }
+
+        return $sections;
     }
 
     /**
@@ -454,141 +422,15 @@ class PhptTestCase implements Test, SelfDescribing
     }
 
     /**
-     * @return array<string, string>
-     */
-    private function getCoverageFiles()
-    {
-        $baseDir          = \dirname($this->filename) . DIRECTORY_SEPARATOR;
-        $basename         = \basename($this->filename, 'phpt');
-
-        return [
-            'coverage' => $baseDir . $basename . 'coverage',
-            'job'      => $baseDir . $basename . 'php'
-        ];
-    }
-
-    /**
-     * @param array $settings
-     *
-     * @return string
-     */
-    private function renderForCoverage(&$settings)
-    {
-        $files = $this->getCoverageFiles();
-
-        $template = new Text_Template(
-            __DIR__ . '/../Util/PHP/Template/PhptTestCase.tpl'
-        );
-
-        $composerAutoload = '\'\'';
-        if (\defined('PHPUNIT_COMPOSER_INSTALL') && !\defined('PHPUNIT_TESTSUITE')) {
-            $composerAutoload = \var_export(PHPUNIT_COMPOSER_INSTALL, true);
-        }
-
-        $phar = '\'\'';
-        if (\defined('__PHPUNIT_PHAR__')) {
-            $phar = \var_export(__PHPUNIT_PHAR__, true);
-        }
-
-        $globals = '';
-        if (!empty($GLOBALS['__PHPUNIT_BOOTSTRAP'])) {
-            $globals = '$GLOBALS[\'__PHPUNIT_BOOTSTRAP\'] = ' . \var_export($GLOBALS['__PHPUNIT_BOOTSTRAP'], true) . ";\n";
-        }
-
-        $template->setVar(
-            [
-                'composerAutoload' => $composerAutoload,
-                'phar'             => $phar,
-                'globals'          => $globals,
-                'job'              => $files['job'],
-                'coverageFile'     => $files['coverage'],
-                'autoPrependFile'  => \var_export(
-                    !empty($settings['auto_prepend_file']) ? $settings['auto_prepend_file'] : false,
-                    true
-                )
-            ]
-        );
-
-        \file_put_contents($files['job'], $template->render());
-
-        $settings['auto_prepend_file'] = $files['job'];
-    }
-
-    /**
-     * @return array
-     */
-    private function cleanupForCoverage()
-    {
-        $files    = $this->getCoverageFiles();
-        $coverage = @\unserialize(\file_get_contents($files['coverage']));
-
-        foreach ($files as $file) {
-            @\unlink($file);
-        }
-
-        return $coverage;
-    }
-
-    /**
-     * @param array $ini
-     *
-     * @return array
-     */
-    private function stringifyIni($ini)
-    {
-        $settings = [];
-
-        foreach ($ini as $key => $value) {
-            if (\is_array($value)) {
-                foreach ($value as $val) {
-                    $settings[] = $key . '=' . $val;
-                }
-
-                continue;
-            }
-
-            $settings[] = $key . '=' . $value;
-        }
-
-        return $settings;
-    }
-
-    /**
      * Parse --INI-- section key value pairs and return as array.
      *
-     * @param string|array
+     * @param string
      *
      * @return array
      */
-    protected function parseIniSection($content, $ini = [])
+    protected function parseIniSection($content)
     {
-        if (\is_string($content)) {
-            $content = \explode("\n", \trim($content));
-        }
-
-        foreach ($content as $setting) {
-            if (\strpos($setting, '=') === false) {
-                continue;
-            }
-
-            $setting = \explode('=', $setting, 2);
-            $name    = \trim($setting[0]);
-            $value   = \trim($setting[1]);
-
-            if ($name === 'extension' || $name === 'zend_extension') {
-                if (!isset($ini[$name])) {
-                    $ini[$name] = [];
-                }
-
-                $ini[$name][] = $value;
-
-                continue;
-            }
-
-            $ini[$name] = $value;
-        }
-
-        return $ini;
+        return \preg_split('/\n|\r/', $content, -1, PREG_SPLIT_NO_EMPTY);
     }
 
     /**

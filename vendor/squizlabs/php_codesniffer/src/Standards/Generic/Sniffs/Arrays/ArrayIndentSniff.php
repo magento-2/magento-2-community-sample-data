@@ -10,6 +10,7 @@
 namespace PHP_CodeSniffer\Standards\Generic\Sniffs\Arrays;
 
 use PHP_CodeSniffer\Sniffs\AbstractArraySniff;
+use PHP_CodeSniffer\Files\File;
 use PHP_CodeSniffer\Util\Tokens;
 
 class ArrayIndentSniff extends AbstractArraySniff

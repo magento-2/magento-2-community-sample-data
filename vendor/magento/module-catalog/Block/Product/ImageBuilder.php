@@ -3,17 +3,12 @@
  * Copyright © Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
-declare(strict_types=1);
-
 namespace Magento\Catalog\Block\Product;
 
 use Magento\Catalog\Helper\ImageFactory as HelperFactory;
 use Magento\Catalog\Model\Product;
+use Magento\Catalog\Model\Product\Image\NotLoadInfoImageException;
 
-/**
- * @deprecated
- * @see ImageFactory
- */
 class ImageBuilder
 {
     /**
@@ -122,16 +117,39 @@ class ImageBuilder
     /**
      * Create image block
      *
-     * @param Product|null $product
-     * @param string|null $imageId
-     * @param array|null $attributes
-     * @return Image
+     * @return \Magento\Catalog\Block\Product\Image
      */
-    public function create(Product $product = null, string $imageId = null, array $attributes = null)
+    public function create()
     {
-        $product = $product ?? $this->product;
-        $imageId = $imageId ?? $this->imageId;
-        $attributes = $attributes ?? $this->attributes;
-        return $this->imageFactory->create($product, $imageId, $attributes);
+        /** @var \Magento\Catalog\Helper\Image $helper */
+        $helper = $this->helperFactory->create()
+            ->init($this->product, $this->imageId);
+
+        $template = $helper->getFrame()
+            ? 'Magento_Catalog::product/image.phtml'
+            : 'Magento_Catalog::product/image_with_borders.phtml';
+
+        try {
+            $imagesize = $helper->getResizedImageInfo();
+        } catch (NotLoadInfoImageException $exception) {
+            $imagesize = [$helper->getWidth(), $helper->getHeight()];
+        }
+
+        $data = [
+            'data' => [
+                'template' => $template,
+                'image_url' => $helper->getUrl(),
+                'width' => $helper->getWidth(),
+                'height' => $helper->getHeight(),
+                'label' => $helper->getLabel(),
+                'ratio' =>  $this->getRatio($helper),
+                'custom_attributes' => $this->getCustomAttributes(),
+                'resized_image_width' => $imagesize[0],
+                'resized_image_height' => $imagesize[1],
+                'product_id' => $this->product->getId()
+            ],
+        ];
+
+        return $this->imageFactory->create($data);
     }
 }

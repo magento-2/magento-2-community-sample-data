@@ -17,6 +17,7 @@ use PhpCsFixer\DocBlock\Annotation;
 use PhpCsFixer\DocBlock\DocBlock;
 use PhpCsFixer\FixerDefinition\CodeSample;
 use PhpCsFixer\FixerDefinition\FixerDefinition;
+use PhpCsFixer\Preg;
 use PhpCsFixer\Tokenizer\Token;
 use PhpCsFixer\Tokenizer\Tokens;
 
@@ -39,8 +40,8 @@ final class PhpdocNoEmptyReturnFixer extends AbstractFixer
     public function getDefinition()
     {
         return new FixerDefinition(
-            '`@return void` and `@return null` annotations should be omitted from PHPDoc.',
-            [
+            '`@return` void and `@return null` annotations should be omitted from PHPDoc.',
+            array(
                 new CodeSample(
                     '<?php
 /**
@@ -57,7 +58,7 @@ function foo() {}
 function foo() {}
 '
                 ),
-            ]
+            )
         );
     }
 
@@ -92,19 +93,7 @@ function foo() {}
                 $this->fixAnnotation($doc, $annotation);
             }
 
-            $newContent = $doc->getContent();
-
-            if ($newContent === $token->getContent()) {
-                continue;
-            }
-
-            if ('' === $newContent) {
-                $tokens->clearTokenAndMergeSurroundingWhitespace($index);
-
-                continue;
-            }
-
-            $tokens[$index] = new Token([T_DOC_COMMENT, $doc->getContent()]);
+            $tokens[$index] = new Token(array(T_DOC_COMMENT, $doc->getContent()));
         }
     }
 
@@ -116,9 +105,7 @@ function foo() {}
      */
     private function fixAnnotation(DocBlock $doc, Annotation $annotation)
     {
-        $types = $annotation->getNormalizedTypes();
-
-        if (1 === \count($types) && ('null' === $types[0] || 'void' === $types[0])) {
+        if (1 === Preg::match('/@return\s+(void|null)(?!\|)/', $doc->getLine($annotation->getStart())->getContent())) {
             $annotation->remove();
         }
     }

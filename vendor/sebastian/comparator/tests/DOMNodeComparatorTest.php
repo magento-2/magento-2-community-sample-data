@@ -1,6 +1,6 @@
 <?php
 /*
- * This file is part of sebastian/comparator.
+ * This file is part of the Comparator package.
  *
  * (c) Sebastian Bergmann <sebastian@phpunit.de>
  *
@@ -10,16 +10,12 @@
 
 namespace SebastianBergmann\Comparator;
 
-use DOMDocument;
 use DOMNode;
+use DOMDocument;
 use PHPUnit\Framework\TestCase;
 
 /**
  * @coversDefaultClass SebastianBergmann\Comparator\DOMNodeComparator
- *
- * @uses SebastianBergmann\Comparator\Comparator
- * @uses SebastianBergmann\Comparator\Factory
- * @uses SebastianBergmann\Comparator\ComparisonFailure
  */
 class DOMNodeComparatorTest extends TestCase
 {

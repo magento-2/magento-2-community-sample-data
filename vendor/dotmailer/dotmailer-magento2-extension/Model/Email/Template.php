@@ -209,10 +209,10 @@ class Template extends \Magento\Framework\DataObject
 
     /**
      * Template constructor.
+     *
      * @param \Dotdigitalgroup\Email\Helper\Data $helper
      * @param \Magento\Store\Model\StoreManagerInterface $store
      * @param \Magento\Framework\App\Config\ScopeConfigInterface $scopeConfig
-     * @param \Magento\Email\Model\TemplateFactory $templateFactory
      * @param \Magento\Email\Model\ResourceModel\Template $templateResource
      * @param \Magento\Email\Model\ResourceModel\Template\CollectionFactory $templateCollectionFactory
      */
@@ -239,7 +239,7 @@ class Template extends \Magento\Framework\DataObject
      * Load email_template by code/name.
      *
      * @param string $templateCode
-     * @return \Magento\Framework\DataObject
+     * @return string
      */
     public function loadByTemplateByCode($templateCode)
     {
@@ -346,17 +346,17 @@ class Template extends \Magento\Framework\DataObject
     /**
      * @param string $templateConfigPath
      * @param int $campaignId
-     * @param string $scope
-     * @param int $scopeId
+     * @param int $storeId
+     * @param int $websiteId
      * @return bool|mixed
      * @throws \Magento\Framework\Exception\LocalizedException
      */
-    public function saveTemplateWithConfigPath($templateConfigPath, $campaignId, $scope, $scopeId)
+    public function saveTemplateWithConfigPath($templateConfigPath, $campaignId, $storeId, $websiteId)
     {
-        if ($scope == \Magento\Store\Model\ScopeInterface::SCOPE_WEBSITES) {
-            $websiteId = $scopeId;
-        } elseif ($scope == \Magento\Store\Model\ScopeInterface::SCOPE_STORES) {
-            $websiteId = $this->storeManager->getStore($scopeId)->getWebsiteId();
+        if ($storeId) {
+            $websiteId = $this->storeManager->getStore($storeId)->getWebsiteId();
+        } elseif ($websiteId) {
+            $websiteId = $this->storeManager->getWebsite($websiteId)->getId();
         } else {
             $websiteId = '0';
         }

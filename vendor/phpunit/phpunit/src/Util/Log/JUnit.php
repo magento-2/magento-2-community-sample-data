@@ -13,13 +13,13 @@ use DOMDocument;
 use DOMElement;
 use PHPUnit\Framework\AssertionFailedError;
 use PHPUnit\Framework\ExceptionWrapper;
-use PHPUnit\Framework\SelfDescribing;
-use PHPUnit\Framework\Test;
-use PHPUnit\Framework\TestCase;
-use PHPUnit\Framework\TestFailure;
-use PHPUnit\Framework\TestListener;
-use PHPUnit\Framework\TestSuite;
 use PHPUnit\Framework\Warning;
+use PHPUnit\Framework\TestSuite;
+use PHPUnit\Framework\TestListener;
+use PHPUnit\Framework\TestFailure;
+use PHPUnit\Framework\TestCase;
+use PHPUnit\Framework\Test;
+use PHPUnit\Framework\SelfDescribing;
 use PHPUnit\Util\Filter;
 use PHPUnit\Util\Printer;
 use PHPUnit\Util\Xml;
@@ -362,9 +362,10 @@ class JUnit extends Printer implements TestListener
         $this->testSuiteTimes[$this->testSuiteLevel] += $time;
 
         if (\method_exists($test, 'hasOutput') && $test->hasOutput()) {
-            $systemOut = $this->document->createElement(
-                'system-out',
-                Xml::prepareString($test->getActualOutput())
+            $systemOut = $this->document->createElement('system-out');
+
+            $systemOut->appendChild(
+                $this->document->createTextNode($test->getActualOutput())
             );
 
             $this->currentTestCase->appendChild($systemOut);

@@ -16,7 +16,6 @@ use Magento\Framework\Pricing\SaleableInterface;
  * Price info model factory
  *
  * @api
- * @since 100.0.2
  */
 class Factory
 {

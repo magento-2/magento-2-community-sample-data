@@ -10,7 +10,6 @@
             <argument name="sectionSourceMap" xsi:type="array">
                 <item name="checkout-fields" xsi:type="string">Temando\Shipping\CustomerData\CheckoutFields</item>
                 <item name="collection-point-result" xsi:type="string">Temando\Shipping\CustomerData\CollectionPoints</item>
-                <item name="pickup-location-result" xsi:type="string">Temando\Shipping\CustomerData\PickupLocations</item>
             </argument>
         </arguments>
     </type>
@@ -24,8 +23,7 @@
     <type name="Magento\Checkout\Model\CompositeConfigProvider">
         <arguments>
             <argument name="configProviders" xsi:type="array">
-                <item name="ts-collection-point-config" xsi:type="object">Temando\Shipping\Model\Delivery\CollectionPointConfigProvider</item>
-                <item name="ts-delivery-options" xsi:type="object">Temando\Shipping\Model\Delivery\DeliveryOptionsConfigProvider</item>
+                <item name="ts-collection-point-config" xsi:type="object">Temando\Shipping\Model\CollectionPoint\CollectionPointConfigProvider</item>
             </argument>
         </arguments>
     </type>

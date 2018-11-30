@@ -29,8 +29,8 @@ final class ShortScalarCastFixer extends AbstractFixer
     public function getDefinition()
     {
         return new FixerDefinition(
-            'Cast `(boolean)` and `(integer)` should be written as `(bool)` and `(int)`, `(double)` and `(real)` as `(float)`, `(binary)` as `(string)`.',
-            [new CodeSample("<?php\n\$a = (boolean) \$b;\n\$a = (integer) \$b;\n\$a = (double) \$b;\n\$a = (real) \$b;\n\n\$a = (binary) \$b;\n")]
+            'Cast `(boolean)` and `(integer)` should be written as `(bool)` and `(int)`, `(double)` and `(real)` as `(float)`.',
+            array(new CodeSample("<?php\n\$a = (boolean) \$b;\n\$a = (integer) \$b;\n\$a = (double) \$b;\n\$a = (real) \$b;"))
         );
     }
 
@@ -47,13 +47,12 @@ final class ShortScalarCastFixer extends AbstractFixer
      */
     protected function applyFix(\SplFileInfo $file, Tokens $tokens)
     {
-        static $castMap = [
+        static $castMap = array(
             'boolean' => 'bool',
             'integer' => 'int',
             'double' => 'float',
             'real' => 'float',
-            'binary' => 'string',
-        ];
+        );
 
         for ($index = 0, $count = $tokens->count(); $index < $count; ++$index) {
             if (!$tokens[$index]->isCast()) {
@@ -67,10 +66,10 @@ final class ShortScalarCastFixer extends AbstractFixer
                 continue;
             }
 
-            $tokens[$index] = new Token([
+            $tokens[$index] = new Token(array(
                 $tokens[$index]->getId(),
                 str_replace($castFrom, $castMap[$castFromLowered], $tokens[$index]->getContent()),
-            ]);
+            ));
         }
     }
 }

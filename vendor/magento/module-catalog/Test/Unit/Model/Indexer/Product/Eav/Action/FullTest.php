@@ -58,9 +58,6 @@ class FullTest extends \PHPUnit\Framework\TestCase
      */
     private $scopeConfig;
 
-    /**
-     * @return void
-     */
     protected function setUp()
     {
         $this->eavDecimalFactory = $this->createPartialMock(DecimalFactory::class, ['create']);
@@ -151,10 +148,6 @@ class FullTest extends \PHPUnit\Framework\TestCase
         $this->model->execute();
     }
 
-    /**
-     * @return void
-     * @throws \Magento\Framework\Exception\LocalizedException
-     */
     public function testExecuteWithDisabledEavIndexer()
     {
         $this->scopeConfig->expects($this->once())->method('getValue')->willReturn(0);

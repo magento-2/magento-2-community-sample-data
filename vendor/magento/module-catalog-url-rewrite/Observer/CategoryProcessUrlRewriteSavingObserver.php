@@ -102,7 +102,7 @@ class CategoryProcessUrlRewriteSavingObserver implements ObserverInterface
         $mapsGenerated = false;
         if ($category->dataHasChangedFor('url_key')
             || $category->dataHasChangedFor('is_anchor')
-            || !empty($category->getChangedProductIds())
+            || $category->getChangedProductIds()
         ) {
             if ($category->dataHasChangedFor('url_key')) {
                 $categoryUrlRewriteResult = $this->categoryUrlRewriteGenerator->generate($category);
@@ -120,8 +120,8 @@ class CategoryProcessUrlRewriteSavingObserver implements ObserverInterface
     }
 
     /**
-     * In case store_id is not set for category then we can assume that it was passed through product import.
-     * Store group must have only one root category, so receiving category's path and checking if one of it parts
+     * in case store_id is not set for category then we can assume that it was passed through product import.
+     * store group must have only one root category, so receiving category's path and checking if one of it parts
      * is the root category for store group, we can set default_store_id value from it to category.
      * it prevents urls duplication for different stores
      * ("Default Category/category/sub" and "Default Category2/category/sub")

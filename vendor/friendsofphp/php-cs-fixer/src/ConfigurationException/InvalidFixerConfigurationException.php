@@ -20,7 +20,6 @@ use PhpCsFixer\Console\Command\FixCommandExitStatusCalculator;
  * @author SpacePossum
  *
  * @internal
- * @final Only internal extending this class is supported
  */
 class InvalidFixerConfigurationException extends InvalidConfigurationException
 {

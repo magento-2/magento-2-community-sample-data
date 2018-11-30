@@ -4,23 +4,24 @@
  */
 namespace Temando\Shipping\Rest;
 
-use Magento\TestFramework\Helper\Bootstrap;
 use Magento\TestFramework\ObjectManager;
+use Magento\TestFramework\Helper\Bootstrap;
 use Temando\Shipping\Rest\Adapter as RestAdapter;
+use Temando\Shipping\Rest\Exception\AdapterException;
 use Temando\Shipping\Rest\Request\AuthRequestInterface;
 use Temando\Shipping\Rest\Request\ItemRequestInterface;
 use Temando\Shipping\Rest\Request\ListRequestInterface;
 use Temando\Shipping\Rest\Request\OrderRequestInterface;
 use Temando\Shipping\Rest\Request\Type\OrderRequestType;
-use Temando\Shipping\Rest\Response\DataObject\CarrierIntegration;
-use Temando\Shipping\Rest\Response\DataObject\Completion;
-use Temando\Shipping\Rest\Response\DataObject\Container;
-use Temando\Shipping\Rest\Response\DataObject\Location;
-use Temando\Shipping\Rest\Response\DataObject\Session;
-use Temando\Shipping\Rest\Response\DataObject\Shipment;
-use Temando\Shipping\Rest\Response\Document\QualifyOrderInterface;
+use Temando\Shipping\Rest\Response\CreateOrderInterface;
+use Temando\Shipping\Rest\Response\Type\CarrierIntegrationResponseType;
+use Temando\Shipping\Rest\Response\Type\CompletionResponseType;
+use Temando\Shipping\Rest\Response\Type\ContainerResponseType;
+use Temando\Shipping\Rest\Response\Type\LocationResponseType;
+use Temando\Shipping\Rest\Response\Type\SessionResponseType;
+use Temando\Shipping\Rest\Response\Type\ShipmentResponseType;
+use Temando\Shipping\Rest\Response\UpdateOrder as UpdateOrderResponse;
 use Temando\Shipping\Test\Integration\Provider\RestResponseProvider;
-use Temando\Shipping\Webservice\Filter\CollectionFilter;
 use Temando\Shipping\Webservice\HttpClient;
 use Temando\Shipping\Webservice\HttpClientInterfaceFactory;
 
@@ -202,7 +203,7 @@ class AdapterTest extends \PHPUnit\Framework\TestCase
         ]);
         $session = $adapter->startSession($request);
 
-        $this->assertInstanceOf(Session::class, $session);
+        $this->assertInstanceOf(SessionResponseType::class, $session);
         $this->assertNotEmpty($session->getAttributes()->getSessionToken());
         $this->assertNotEmpty($session->getAttributes()->getExpiry());
     }
@@ -231,7 +232,7 @@ class AdapterTest extends \PHPUnit\Framework\TestCase
         $carriers = $adapter->getCarrierIntegrations($request);
 
         $this->assertInternalType('array', $carriers);
-        $this->assertContainsOnly(CarrierIntegration::class, $carriers);
+        $this->assertContainsOnly(CarrierIntegrationResponseType::class, $carriers);
     }
 
     /**
@@ -258,7 +259,7 @@ class AdapterTest extends \PHPUnit\Framework\TestCase
         $locations = $adapter->getLocations($request);
 
         $this->assertInternalType('array', $locations);
-        $this->assertContainsOnly(Location::class, $locations);
+        $this->assertContainsOnly(LocationResponseType::class, $locations);
     }
 
     /**
@@ -285,7 +286,7 @@ class AdapterTest extends \PHPUnit\Framework\TestCase
         $containers = $adapter->getContainers($request);
 
         $this->assertInternalType('array', $containers);
-        $this->assertContainsOnly(Container::class, $containers);
+        $this->assertContainsOnly(ContainerResponseType::class, $containers);
     }
 
     /**
@@ -306,7 +307,7 @@ class AdapterTest extends \PHPUnit\Framework\TestCase
         $request = $this->objectManager->create(ListRequestInterface::class, [
             'offset' => 0,
             'limit' => 20,
-            'filter' => $this->objectManager->create(CollectionFilter::class, ['filters' => ['foo' => 'bar']]),
+            'filter' => [['foo' => 'bar']],
         ]);
         /** @var RestAdapter $adapter */
         $adapter = $this->objectManager->create(RestAdapter::class, [
@@ -316,7 +317,7 @@ class AdapterTest extends \PHPUnit\Framework\TestCase
         $completions = $adapter->getCompletions($request);
 
         $this->assertInternalType('array', $completions);
-        $this->assertContainsOnly(Completion::class, $completions);
+        $this->assertContainsOnly(CompletionResponseType::class, $completions);
     }
 
     /**
@@ -346,7 +347,7 @@ class AdapterTest extends \PHPUnit\Framework\TestCase
         ]);
         $completion = $adapter->getCompletion($request);
 
-        $this->assertInstanceOf(Completion::class, $completion);
+        $this->assertInstanceOf(CompletionResponseType::class, $completion);
         $this->assertEquals($completionId, $completion->getId());
     }
 
@@ -384,7 +385,7 @@ class AdapterTest extends \PHPUnit\Framework\TestCase
         ]);
         $shipment = $adapter->getShipment($request);
 
-        $this->assertInstanceOf(Shipment::class, $shipment);
+        $this->assertInstanceOf(ShipmentResponseType::class, $shipment);
         $this->assertEquals($shipmentId, $shipment->getId());
 
         // assert origin location being parsed
@@ -404,13 +405,13 @@ class AdapterTest extends \PHPUnit\Framework\TestCase
         $packages = $shipment->getAttributes()->getPackages();
         $this->assertNotEmpty($packages);
         $this->assertContainsOnlyInstancesOf(
-            \Temando\Shipping\Rest\Response\Fields\Generic\Package::class,
+            \Temando\Shipping\Rest\Response\Type\Generic\Package::class,
             $packages
         );
         foreach ($packages as $package) {
             $packageDocs = $package->getDocumentation();
             $this->assertContainsOnlyInstancesOf(
-                \Temando\Shipping\Rest\Response\Fields\Generic\Documentation::class,
+                \Temando\Shipping\Rest\Response\Type\Generic\Documentation::class,
                 $packageDocs
             );
             foreach ($packageDocs as $packageDoc) {
@@ -453,7 +454,7 @@ class AdapterTest extends \PHPUnit\Framework\TestCase
         ]);
         $order = $adapter->createOrder($request);
 
-        $this->assertInstanceOf(QualifyOrderInterface::class, $order);
+        $this->assertInstanceOf(CreateOrderInterface::class, $order);
         $this->assertNotEmpty($order->getData()->getId());
         $this->assertNotEmpty($order->getData()->getAttributes()->getSource()->getReference());
 
@@ -498,14 +499,10 @@ class AdapterTest extends \PHPUnit\Framework\TestCase
 
         $orderType = $this->getMockBuilder(OrderRequestType::class)
             ->disableOriginalConstructor()
-            ->setMethods(['getId'])
             ->getMock();
-        $orderType->expects($this->any())
-            ->method('getId')
-            ->willReturn('00000000-0000-0000-0000-000000000000');
-
         /** @var OrderRequestInterface $request */
         $request =  $this->objectManager->create(OrderRequestInterface::class, [
+            'orderId' => '00000000-0000-0000-0000-000000000000',
             'order' => $orderType,
         ]);
         /** @var OrderAdapter $adapter */
@@ -515,7 +512,7 @@ class AdapterTest extends \PHPUnit\Framework\TestCase
         ]);
         $order = $adapter->updateOrder($request);
 
-        $this->assertInstanceOf(QualifyOrderInterface::class, $order);
+        $this->assertInstanceOf(UpdateOrderResponse::class, $order);
         $this->assertNotEmpty($order->getData()->getId());
         $this->assertNotEmpty($order->getData()->getAttributes()->getSource()->getReference());
     }

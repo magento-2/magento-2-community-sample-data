@@ -80,11 +80,5 @@ class UpgradeSchema implements UpgradeSchemaInterface
         if (version_compare($moduleVersion, '1.2.1', '<')) {
             $this->installer->addCollectionPointSearchPendingColumn($setup);
         }
-
-        if (version_compare($moduleVersion, '1.4.0', '<')) {
-            $this->installer->createPickupLocationSearchTable($setup);
-            $this->installer->createQuotePickupLocationTable($setup);
-            $this->installer->createOrderPickupLocationTable($setup);
-        }
     }
 }

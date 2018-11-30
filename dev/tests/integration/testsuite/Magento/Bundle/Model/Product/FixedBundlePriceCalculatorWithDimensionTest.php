@@ -3,7 +3,6 @@
  * Copyright © Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
-declare(strict_types=1);
 
 namespace Magento\Bundle\Model\Product;
 
@@ -370,8 +369,8 @@ class FixedBundlePriceCalculatorWithDimensionTest extends BundlePriceAbstract
 
     /**
      * Fixed bundle product with required option, custom option and without any discounts
-     * @param string $selectionsPriceType
-     * @param string $customOptionsPriceType
+     * @param $selectionsPriceType
+     * @param $customOptionsPriceType
      * @return array
      */
     private function getBundleConfiguration3($selectionsPriceType, $customOptionsPriceType)

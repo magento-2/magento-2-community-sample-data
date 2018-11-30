@@ -36,14 +36,14 @@ class WebhookNotificationGateway
         if (!preg_match('/^[a-f0-9]{20,32}$/', $challenge)) {
             throw new Exception\InvalidChallenge("challenge contains non-hex characters");
         }
-        $publicKey = $this->config->getPublicKey();
-        $digest = Digest::hexDigestSha1($this->config->getPrivateKey(), $challenge);
+        $publicKey = $this->config->publicKey();
+        $digest = Digest::hexDigestSha1($this->config->privateKey(), $challenge);
         return "{$publicKey}|{$digest}";
     }
 
     private function _payloadMatches($signature, $payload)
     {
-        $payloadSignature = Digest::hexDigestSha1($this->config->getPrivateKey(), $payload);
+        $payloadSignature = Digest::hexDigestSha1($this->config->privateKey(), $payload);
         return Digest::secureCompare($signature, $payloadSignature);
     }
 
@@ -65,7 +65,7 @@ class WebhookNotificationGateway
         foreach ($signaturePairs as $pair)
         {
             $components = preg_split("/\|/", $pair);
-            if ($components[0] == $this->config->getPublicKey()) {
+            if ($components[0] == $this->config->publicKey()) {
                 return $components[1];
             }
         }

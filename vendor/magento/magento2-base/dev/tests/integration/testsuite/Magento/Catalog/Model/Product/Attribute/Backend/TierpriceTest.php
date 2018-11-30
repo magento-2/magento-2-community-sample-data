@@ -3,8 +3,6 @@
  * Copyright © Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
-declare(strict_types=1);
-
 namespace Magento\Catalog\Model\Product\Attribute\Backend;
 
 use Magento\Catalog\Api\Data\ProductInterface;
@@ -154,13 +152,13 @@ class TierpriceTest extends \PHPUnit\Framework\TestCase
     /**
      * @dataProvider saveExistingProductDataProvider
      * @param array $tierPricesData
-     * @param int $tierPriceCount
+     * @param $tierPriceCount
      * @throws \Magento\Framework\Exception\CouldNotSaveException
      * @throws \Magento\Framework\Exception\InputException
      * @throws \Magento\Framework\Exception\NoSuchEntityException
      * @throws \Magento\Framework\Exception\StateException
      */
-    public function testSaveExistingProduct(array $tierPricesData, int $tierPriceCount): void
+    public function testSaveExistingProduct(array $tierPricesData, $tierPriceCount)
     {
         /** @var $product \Magento\Catalog\Model\Product */
         $product = $this->productRepository->get('simple', true);
@@ -250,13 +248,13 @@ class TierpriceTest extends \PHPUnit\Framework\TestCase
     /**
      * @dataProvider saveNewProductDataProvider
      * @param array $tierPricesData
-     * @param int $tierPriceCount
+     * @param $tierPriceCount
      * @throws \Magento\Framework\Exception\CouldNotSaveException
      * @throws \Magento\Framework\Exception\InputException
      * @throws \Magento\Framework\Exception\LocalizedException
      * @throws \Magento\Framework\Exception\StateException
      */
-    public function testSaveNewProduct(array $tierPricesData, int $tierPriceCount): void
+    public function testSaveNewProduct(array $tierPricesData, $tierPriceCount)
     {
         /** @var $product \Magento\Catalog\Model\Product */
         $product = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()

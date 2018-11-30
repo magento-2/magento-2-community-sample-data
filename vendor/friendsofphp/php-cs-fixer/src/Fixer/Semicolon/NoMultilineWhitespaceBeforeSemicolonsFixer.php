@@ -12,21 +12,26 @@
 
 namespace PhpCsFixer\Fixer\Semicolon;
 
-use PhpCsFixer\AbstractProxyFixer;
-use PhpCsFixer\Fixer\DeprecatedFixerInterface;
+use PhpCsFixer\AbstractFixer;
 use PhpCsFixer\Fixer\WhitespacesAwareFixerInterface;
 use PhpCsFixer\FixerDefinition\CodeSample;
 use PhpCsFixer\FixerDefinition\FixerDefinition;
+use PhpCsFixer\Tokenizer\Token;
+use PhpCsFixer\Tokenizer\Tokens;
 
 /**
- * @deprecated since 2.9.1, replaced by MultilineWhitespaceBeforeSemicolonsFixer
- *
- * @todo To be removed at 3.0
- *
  * @author Graham Campbell <graham@alt-three.com>
  */
-final class NoMultilineWhitespaceBeforeSemicolonsFixer extends AbstractProxyFixer implements DeprecatedFixerInterface, WhitespacesAwareFixerInterface
+final class NoMultilineWhitespaceBeforeSemicolonsFixer extends AbstractFixer implements WhitespacesAwareFixerInterface
 {
+    /**
+     * {@inheritdoc}
+     */
+    public function isCandidate(Tokens $tokens)
+    {
+        return $tokens->isTokenKindFound(';');
+    }
+
     /**
      * {@inheritdoc}
      */
@@ -34,7 +39,7 @@ final class NoMultilineWhitespaceBeforeSemicolonsFixer extends AbstractProxyFixe
     {
         return new FixerDefinition(
             'Multi-line whitespace before closing semicolon are prohibited.',
-            [
+            array(
                 new CodeSample(
                     '<?php
 function foo () {
@@ -43,26 +48,34 @@ function foo () {
 }
 '
                 ),
-            ]
+            )
         );
     }
 
     /**
      * {@inheritdoc}
      */
-    public function getSuccessorsNames()
+    protected function applyFix(\SplFileInfo $file, Tokens $tokens)
     {
-        return array_keys($this->proxyFixers);
-    }
+        $lineEnding = $this->whitespacesConfig->getLineEnding();
 
-    /**
-     * {@inheritdoc}
-     */
-    protected function createProxyFixers()
-    {
-        $fixer = new MultilineWhitespaceBeforeSemicolonsFixer();
-        $fixer->configure(['strategy' => MultilineWhitespaceBeforeSemicolonsFixer::STRATEGY_NO_MULTI_LINE]);
+        foreach ($tokens as $index => $token) {
+            if (!$token->equals(';')) {
+                continue;
+            }
 
-        return [$fixer];
+            $previousIndex = $index - 1;
+            $previous = $tokens[$previousIndex];
+            if (!$previous->isWhitespace() || false === strpos($previous->getContent(), "\n")) {
+                continue;
+            }
+
+            $content = $previous->getContent();
+            if (("\n" === $content[0] || "\r" === $content[0]) && $tokens[$index - 2]->isComment()) {
+                $tokens[$previousIndex] = new Token(array($previous->getId(), $lineEnding));
+            } else {
+                $tokens->clearAt($previousIndex);
+            }
+        }
     }
 }

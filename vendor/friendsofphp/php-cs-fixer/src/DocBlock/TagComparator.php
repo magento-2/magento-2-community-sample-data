@@ -25,12 +25,12 @@ class TagComparator
      *
      * @var array
      */
-    private static $groups = [
-        ['deprecated', 'link', 'see', 'since'],
-        ['author', 'copyright', 'license'],
-        ['category', 'package', 'subpackage'],
-        ['property', 'property-read', 'property-write'],
-    ];
+    private static $groups = array(
+        array('deprecated', 'link', 'see', 'since'),
+        array('author', 'copyright', 'license'),
+        array('category', 'package', 'subpackage'),
+        array('property', 'property-read', 'property-write'),
+    );
 
     /**
      * Should the given tags be kept together, or kept apart?
@@ -50,7 +50,7 @@ class TagComparator
         }
 
         foreach (self::$groups as $group) {
-            if (\in_array($firstName, $group, true) && \in_array($secondName, $group, true)) {
+            if (in_array($firstName, $group, true) && in_array($secondName, $group, true)) {
                 return true;
             }
         }

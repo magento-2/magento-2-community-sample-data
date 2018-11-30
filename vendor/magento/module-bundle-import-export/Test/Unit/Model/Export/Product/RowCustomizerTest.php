@@ -68,7 +68,7 @@ class RowCustomizerTest extends \PHPUnit\Framework\TestCase
         $this->rowCustomizerMock = $this->objectManagerHelper->getObject(
             \Magento\BundleImportExport\Model\Export\RowCustomizer::class,
             [
-                'scopeResolver' => $this->scopeResolver,
+                'scopeResolver' => $this->scopeResolver
             ]
         );
         $this->productResourceCollection = $this->createPartialMock(
@@ -119,20 +119,12 @@ class RowCustomizerTest extends \PHPUnit\Framework\TestCase
         );
         $this->selection = $this->createPartialMock(
             \Magento\Catalog\Model\Product::class,
-            [
-                'getSku',
-                'getSelectionPriceValue',
-                'getIsDefault',
-                'getSelectionQty',
-                'getSelectionPriceType',
-                'getSelectionCanChangeQty'
-            ]
+            ['getSku', 'getSelectionPriceValue', 'getIsDefault', 'getSelectionQty', 'getSelectionPriceType']
         );
         $this->selection->expects($this->any())->method('getSku')->willReturn(1);
         $this->selection->expects($this->any())->method('getSelectionPriceValue')->willReturn(1);
         $this->selection->expects($this->any())->method('getSelectionQty')->willReturn(1);
         $this->selection->expects($this->any())->method('getSelectionPriceType')->willReturn(1);
-        $this->selection->expects($this->any())->method('getSelectionCanChangeQty')->willReturn(1);
         $this->selectionsCollection = $this->createPartialMock(
             \Magento\Bundle\Model\ResourceModel\Selection\Collection::class,
             ['getIterator', 'addAttributeToSort']
@@ -157,7 +149,8 @@ class RowCustomizerTest extends \PHPUnit\Framework\TestCase
     public function testPrepareData()
     {
         $scope = $this->getMockBuilder(\Magento\Framework\App\ScopeInterface::class)->getMockForAbstractClass();
-        $this->scopeResolver->expects($this->any())->method('getScope')->willReturn($scope);
+        $this->scopeResolver->expects($this->any())->method('getScope')
+            ->willReturn($scope);
         $result = $this->rowCustomizerMock->prepareData($this->productResourceCollection, [1]);
         $this->assertNotNull($result);
     }
@@ -186,7 +179,8 @@ class RowCustomizerTest extends \PHPUnit\Framework\TestCase
     public function testAddData()
     {
         $scope = $this->getMockBuilder(\Magento\Framework\App\ScopeInterface::class)->getMockForAbstractClass();
-        $this->scopeResolver->expects($this->any())->method('getScope')->willReturn($scope);
+        $this->scopeResolver->expects($this->any())->method('getScope')
+            ->willReturn($scope);
         $preparedData = $this->rowCustomizerMock->prepareData($this->productResourceCollection, [1]);
         $attributes = 'attribute=1,sku_type=1,attribute2="Text",price_type=1,price_view=1,weight_type=1,'
             . 'values=values,shipment_type=1,attribute3=One,Two,Three';
@@ -195,19 +189,6 @@ class RowCustomizerTest extends \PHPUnit\Framework\TestCase
             'additional_attributes' => $attributes
         ];
         $preparedRow = $preparedData->addData($dataRow, 1);
-
-        $bundleValues = [
-            'name=title',
-            'type=1',
-            'required=1',
-            'sku=1',
-            'price=1',
-            'default=',
-            'default_qty=1',
-            'price_type=percent',
-            'can_change_qty=1',
-        ];
-
         $expected = [
             'sku' => 'sku1',
             'additional_attributes' => 'attribute=1,attribute2="Text",attribute3=One,Two,Three',
@@ -216,7 +197,7 @@ class RowCustomizerTest extends \PHPUnit\Framework\TestCase
             'bundle_sku_type' => 'fixed',
             'bundle_price_view' => 'As low as',
             'bundle_weight_type' => 'fixed',
-            'bundle_values' => implode(',', $bundleValues)
+            'bundle_values' => 'name=title,type=1,required=1,sku=1,price=1,default=,default_qty=1,price_type=percent'
         ];
         $this->assertEquals($expected, $preparedRow);
     }

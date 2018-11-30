@@ -14,7 +14,6 @@ namespace Magento\Framework;
  * Implementations of this interface should implement application type specific initialization.
  *
  * @api
- * @since 100.0.2
  */
 interface AppInterface
 {

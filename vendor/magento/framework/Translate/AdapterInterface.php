@@ -10,7 +10,6 @@ namespace Magento\Framework\Translate;
  * Magento translate adapter interface
  *
  * @api
- * @since 100.0.2
  */
 interface AdapterInterface
 {

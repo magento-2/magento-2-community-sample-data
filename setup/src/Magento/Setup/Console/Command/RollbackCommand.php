@@ -72,6 +72,7 @@ class RollbackCommand extends AbstractSetupCommand
         MaintenanceModeEnabler $maintenanceModeEnabler = null
     ) {
         $this->objectManager = $objectManagerProvider->get();
+        $this->maintenanceModeEnabler = $maintenanceMode;
         $this->backupRollbackFactory = $this->objectManager->get(\Magento\Framework\Setup\BackupRollbackFactory::class);
         $this->deploymentConfig = $deploymentConfig;
         $this->maintenanceModeEnabler =
@@ -116,12 +117,12 @@ class RollbackCommand extends AbstractSetupCommand
     protected function execute(InputInterface $input, OutputInterface $output)
     {
         if (!$this->deploymentConfig->isAvailable() && ($input->getOption(self::INPUT_KEY_MEDIA_BACKUP_FILE)
-                || $input->getOption(self::INPUT_KEY_DB_BACKUP_FILE))
-        ) {
+                || $input->getOption(self::INPUT_KEY_DB_BACKUP_FILE))) {
             $output->writeln("<info>No information is available: the Magento application is not installed.</info>");
             // we must have an exit code higher than zero to indicate something was wrong
             return \Magento\Framework\Console\Cli::RETURN_FAILURE;
         }
+
         $returnValue = $this->maintenanceModeEnabler->executeInMaintenanceMode(
             function () use ($input, $output, &$returnValue) {
                 try {
@@ -133,13 +134,7 @@ class RollbackCommand extends AbstractSetupCommand
                     if (!$helper->ask($input, $output, $question) && $input->isInteractive()) {
                         return \Magento\Framework\Console\Cli::RETURN_FAILURE;
                     }
-                    $questionKeep = new ConfirmationQuestion(
-                        '<info>Do you want to keep the backups?[y/N]<info>',
-                        false
-                    );
-                    $keepSourceFile = $helper->ask($input, $output, $questionKeep);
-
-                    $this->doRollback($input, $output, $keepSourceFile);
+                    $this->doRollback($input, $output);
                     $output->writeln('<info>Please set file permission of bin/magento to executable</info>');
 
                     return \Magento\Framework\Console\Cli::RETURN_SUCCESS;
@@ -152,6 +147,7 @@ class RollbackCommand extends AbstractSetupCommand
             $output,
             false
         );
+
         return $returnValue;
     }
 
@@ -160,33 +156,24 @@ class RollbackCommand extends AbstractSetupCommand
      *
      * @param InputInterface $input
      * @param OutputInterface $output
-     * @param boolean $keepSourceFile
      * @return void
      * @throws \InvalidArgumentException
      */
-    private function doRollback(InputInterface $input, OutputInterface $output, $keepSourceFile)
+    private function doRollback(InputInterface $input, OutputInterface $output)
     {
         $inputOptionProvided = false;
         $rollbackHandler = $this->backupRollbackFactory->create($output);
         if ($input->getOption(self::INPUT_KEY_CODE_BACKUP_FILE)) {
-            $rollbackHandler->codeRollback(
-                $input->getOption(self::INPUT_KEY_CODE_BACKUP_FILE),
-                Factory::TYPE_FILESYSTEM,
-                $keepSourceFile
-            );
+            $rollbackHandler->codeRollback($input->getOption(self::INPUT_KEY_CODE_BACKUP_FILE));
             $inputOptionProvided = true;
         }
         if ($input->getOption(self::INPUT_KEY_MEDIA_BACKUP_FILE)) {
-            $rollbackHandler->codeRollback(
-                $input->getOption(self::INPUT_KEY_MEDIA_BACKUP_FILE),
-                Factory::TYPE_MEDIA,
-                $keepSourceFile
-            );
+            $rollbackHandler->codeRollback($input->getOption(self::INPUT_KEY_MEDIA_BACKUP_FILE), Factory::TYPE_MEDIA);
             $inputOptionProvided = true;
         }
         if ($input->getOption(self::INPUT_KEY_DB_BACKUP_FILE)) {
             $this->setAreaCode();
-            $rollbackHandler->dbRollback($input->getOption(self::INPUT_KEY_DB_BACKUP_FILE), $keepSourceFile);
+            $rollbackHandler->dbRollback($input->getOption(self::INPUT_KEY_DB_BACKUP_FILE));
             $inputOptionProvided = true;
         }
         if (!$inputOptionProvided) {

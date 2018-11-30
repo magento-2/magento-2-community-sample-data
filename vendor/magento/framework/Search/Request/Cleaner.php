@@ -3,7 +3,6 @@
  * Copyright © Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
-
 namespace Magento\Framework\Search\Request;
 
 use Magento\Framework\Exception\StateException;
@@ -12,7 +11,6 @@ use Magento\Framework\Phrase;
 
 /**
  * @api
- * @since 100.0.2
  */
 class Cleaner
 {
@@ -62,9 +60,7 @@ class Cleaner
         $this->clear();
 
         if (empty($requestData['queries']) && empty($requestData['filters'])) {
-            throw new EmptyRequestDataException(
-                new Phrase("The request query and filters aren't set. Verify the query and filters and try again.")
-            );
+            throw new EmptyRequestDataException(new Phrase('Request query and filters are not set'));
         }
 
         return $requestData;
@@ -86,7 +82,7 @@ class Cleaner
             throw new \Exception('Query ' . $queryName . ' does not exist');
         } elseif (in_array($queryName, $this->mappedQueries)) {
             throw new StateException(
-                new Phrase('A cycle was found. The "%1" query is already used in the request hierarchy.', [$queryName])
+                new Phrase('Cycle found. Query %1 already used in request hierarchy', [$queryName])
             );
         }
         $this->mappedQueries[] = $queryName;
@@ -167,10 +163,7 @@ class Cleaner
             throw new \Exception('Filter ' . $filterName . ' does not exist');
         } elseif (in_array($filterName, $this->mappedFilters)) {
             throw new StateException(
-                new Phrase(
-                    'A cycle was found. The "%1" filter is already used in the request hierarchy.',
-                    [$filterName]
-                )
+                new Phrase('Cycle found. Filter %1 already used in request hierarchy', [$filterName])
             );
         }
         $this->mappedFilters[] = $filterName;

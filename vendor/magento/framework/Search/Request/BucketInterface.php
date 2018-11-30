@@ -9,7 +9,6 @@ namespace Magento\Framework\Search\Request;
  * Aggregation Bucket Interface
  *
  * @api
- * @since 100.0.2
  */
 interface BucketInterface
 {

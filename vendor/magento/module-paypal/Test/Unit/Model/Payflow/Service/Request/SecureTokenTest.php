@@ -5,8 +5,8 @@
  */
 namespace Magento\Paypal\Test\Unit\Model\Payflow\Service\Request;
 
-use Magento\Framework\Math\Random;
 use Magento\Framework\DataObject;
+use Magento\Framework\Math\Random;
 use Magento\Framework\UrlInterface;
 use Magento\Paypal\Model\Payflow\Service\Request\SecureToken;
 use Magento\Paypal\Model\Payflow\Transparent;
@@ -14,15 +14,12 @@ use Magento\Paypal\Model\PayflowConfig;
 use Magento\Quote\Model\Quote;
 use PHPUnit_Framework_MockObject_MockObject as MockObject;
 
-/**
- * Test class for \Magento\Paypal\Model\Payflow\Service\Request\SecureToken
- */
 class SecureTokenTest extends \PHPUnit\Framework\TestCase
 {
     /**
      * @var SecureToken
      */
-    private $model;
+    private $service;
 
     /**
      * @var Transparent|MockObject
@@ -35,21 +32,19 @@ class SecureTokenTest extends \PHPUnit\Framework\TestCase
     private $mathRandom;
 
     /**
-     * @var UrlInterface|MockObject
-     */
-    private $url;
-
-    /**
      * @inheritdoc
      */
     protected function setUp()
     {
-        $this->url = $this->createMock(\Magento\Framework\UrlInterface::class);
-        $this->mathRandom = $this->createMock(\Magento\Framework\Math\Random::class);
-        $this->transparent = $this->createMock(\Magento\Paypal\Model\Payflow\Transparent::class);
+        $url = $this->getMockForAbstractClass(UrlInterface::class);
+        $this->mathRandom = $this->getMockBuilder(Random::class)
+            ->getMock();
+        $this->transparent = $this->getMockBuilder(Transparent::class)
+            ->disableOriginalConstructor()
+            ->getMock();
 
-        $this->model = new SecureToken(
-            $this->url,
+        $this->service = new SecureToken(
+            $url,
             $this->mathRandom,
             $this->transparent
         );
@@ -57,7 +52,6 @@ class SecureTokenTest extends \PHPUnit\Framework\TestCase
 
     public function testRequestToken()
     {
-        $request = new DataObject();
         $storeId = 1;
         $secureTokenID = 'Sdj46hDokds09c8k2klaGJdKLl032ekR';
         $response = new DataObject([
@@ -71,34 +65,33 @@ class SecureTokenTest extends \PHPUnit\Framework\TestCase
         $quote = $this->getMockBuilder(Quote::class)
             ->disableOriginalConstructor()
             ->getMock();
-        $quote->expects($this->once())
-            ->method('getStoreId')
+        $quote->method('getStoreId')
             ->willReturn($storeId);
 
-        $this->transparent->expects($this->once())
-            ->method('buildBasicRequest')
-            ->willReturn($request);
-        $this->transparent->expects($this->once())
+        $this->transparent->expects(self::once())
             ->method('setStore')
             ->with($storeId);
-        $this->transparent->expects($this->once())
-            ->method('fillCustomerContacts');
-        $this->transparent->expects($this->once())
-            ->method('getConfig')
-            ->willReturn($this->createMock(\Magento\Paypal\Model\PayflowConfig::class));
-        $this->transparent->expects($this->once())
-            ->method('postRequest')
+
+        $this->transparent->method('buildBasicRequest')
+            ->willReturn(new DataObject());
+
+        $config = $this->getMockBuilder(PayflowConfig::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+        $this->transparent->method('getConfig')
+            ->willReturn($config);
+        $this->transparent->method('postRequest')
+            ->with(self::callback(function ($request) use ($secureTokenID) {
+                self::assertEquals($secureTokenID, $request->getSecuretokenid(), '{Secure Token} should match.');
+                return true;
+            }))
             ->willReturn($response);
 
-        $this->mathRandom->expects($this->once())
-            ->method('getUniqueHash')
+        $this->mathRandom->method('getUniqueHash')
             ->willReturn($secureTokenID);
 
-        $this->url->expects($this->exactly(3))
-            ->method('getUrl');
+        $actual = $this->service->requestToken($quote);
 
-        $this->model->requestToken($quote);
-
-        $this->assertEquals($secureTokenID, $request->getSecuretokenid());
+        self::assertEquals($secureTokenID, $actual->getSecuretokenid());
     }
 }

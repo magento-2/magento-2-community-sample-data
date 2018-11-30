@@ -8,11 +8,11 @@ namespace Temando\Shipping\Model\Config;
 /**
  * Temando Config Interface
  *
- * @package Temando\Shipping\Model
- * @author  Christoph Aßmann <christoph.assmann@netresearch.de>
- * @author  Sebastian Ertner <sebastian.ertner@netresearch.de>
- * @license https://opensource.org/licenses/osl-3.0.php Open Software License (OSL 3.0)
- * @link    https://www.temando.com/
+ * @package  Temando\Shipping\Model
+ * @author   Christoph Aßmann <christoph.assmann@netresearch.de>
+ * @author   Sebastian Ertner <sebastian.ertner@netresearch.de>
+ * @license  http://opensource.org/licenses/osl-3.0.php Open Software License (OSL 3.0)
+ * @link     http://www.temando.com/
  */
 interface ModuleConfigInterface
 {
@@ -161,18 +161,7 @@ interface ModuleConfigInterface
     /**
      * Obtain country codes enabled for collection point deliveries.
      *
-     * @param int $storeId
-     *
      * @return string[]
      */
-    public function getCollectionPointDeliveryCountries($storeId = null);
-
-    /**
-     * Check if click and collect feature is enabled in config.
-     *
-     * @param int $storeId
-     *
-     * @return bool
-     */
-    public function isClickAndCollectEnabled($storeId = null);
+    public function getCollectionPointDeliveryCountries();
 }

@@ -51,12 +51,6 @@ class Configuration
             if ($kind == 'privateKey') {
                 $this->_privateKey = $value;
             }
-            if ($kind == 'timeout') {
-                $this->_timeout = $value;
-            }
-            if ($kind == 'acceptGzipEncoding') {
-                $this->_acceptGzipEncoding = $value;
-            }
         }
 
         if (isset($attribs['clientId']) || isset($attribs['accessToken'])) {
@@ -420,7 +414,7 @@ class Configuration
         return $this->_sslVersion;
     }
 
-    public function getAcceptGzipEncoding()
+    private function getAcceptGzipEncoding()
     {
         return $this->_acceptGzipEncoding;
     }

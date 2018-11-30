@@ -25,7 +25,7 @@ class ConfigurationGenerator
          beStrictAboutOutputDuringTests="true"
          beStrictAboutTodoAnnotatedTests="true"
          verbose="true">
-    <testsuite name="default">
+    <testsuite>
         <directory suffix="Test.php">{tests_directory}</directory>
     </testsuite>
 

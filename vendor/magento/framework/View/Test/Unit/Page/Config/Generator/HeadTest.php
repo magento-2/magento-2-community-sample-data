@@ -61,9 +61,11 @@ class HeadTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
+     * @param array $assets
+     *
+     * @dataProvider testProcessAssetDataProvider
      */
-    public function testProcess()
+    public function testProcess($assets)
     {
         $generatorContextMock = $this->createMock(Context::class);
         $this->title->expects($this->any())->method('set')->with()->will($this->returnSelf());
@@ -77,46 +79,6 @@ class HeadTest extends \PHPUnit\Framework\TestCase
             ->method('getUrl')
             ->with('customcss/render/css')
             ->willReturn('http://magento.dev/customcss/render/css');
-
-        $assets = [
-            'remoteCss' => [
-                'src' => 'file-url-css',
-                'src_type' => 'url',
-                'content_type' => 'css',
-                'media' => 'all',
-            ],
-            'remoteCssOrderedLast' => [
-                'src' => 'file-url-css-last',
-                'src_type' => 'url',
-                'content_type' => 'css',
-                'media' => 'all',
-                'order' => 30,
-            ],
-            'remoteCssOrderedFirst' => [
-                'src' => 'file-url-css-first',
-                'src_type' => 'url',
-                'content_type' => 'css',
-                'media' => 'all',
-                'order' => 10,
-            ],
-            'remoteLink' => [
-                'src' => 'file-url-link',
-                'src_type' => 'url',
-                'media' => 'all',
-            ],
-            'controllerCss' => [
-                'src' => 'customcss/render/css',
-                'src_type' => 'controller',
-                'content_type' => 'css',
-                'media' => 'all',
-            ],
-            'name' => [
-                'src' => 'file-path',
-                'ie_condition' => 'lt IE 7',
-                'content_type' => 'css',
-                'media' => 'print',
-            ],
-        ];
 
         $this->pageConfigMock->expects($this->at(0))
             ->method('addRemotePageAsset')
@@ -176,5 +138,55 @@ class HeadTest extends \PHPUnit\Framework\TestCase
 
         $result = $this->headGenerator->process($readerContextMock, $generatorContextMock);
         $this->assertEquals($this->headGenerator, $result);
+    }
+
+    /**
+     * @return array
+     */
+    public function testProcessAssetDataProvider()
+    {
+        return [
+            [
+                'assets' => [
+                    'remoteCss' => [
+                    'src' => 'file-url-css',
+                    'src_type' => 'url',
+                    'content_type' => 'css',
+                    'media' => 'all',
+                    ],
+                    'remoteCssOrderedLast' => [
+                        'src' => 'file-url-css-last',
+                        'src_type' => 'url',
+                        'content_type' => 'css',
+                        'media' => 'all',
+                        'order' => 30,
+                    ],
+                    'remoteCssOrderedFirst' => [
+                        'src' => 'file-url-css-first',
+                        'src_type' => 'url',
+                        'content_type' => 'css',
+                        'media' => 'all',
+                        'order' => 10,
+                    ],
+                    'remoteLink' => [
+                        'src' => 'file-url-link',
+                        'src_type' => 'url',
+                        'media' => 'all',
+                    ],
+                    'controllerCss' => [
+                        'src' => 'customcss/render/css',
+                        'src_type' => 'controller',
+                        'content_type' => 'css',
+                        'media' => 'all',
+                    ],
+                    'name' => [
+                        'src' => 'file-path',
+                        'ie_condition' => 'lt IE 7',
+                        'content_type' => 'css',
+                        'media' => 'print',
+                    ],
+                ],
+            ],
+        ];
     }
 }

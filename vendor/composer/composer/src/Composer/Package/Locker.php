@@ -102,7 +102,7 @@ class Locker
     }
 
     /**
-     * Checks whether locker has been locked (lockfile found).
+     * Checks whether locker were been locked (lockfile found).
      *
      * @return bool
      */
@@ -289,7 +289,7 @@ class Locker
     {
         $lock = array(
             '_readme' => array('This file locks the dependencies of your project to a known state',
-                               'Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies',
+                               'Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file',
                                'This file is @gener'.'ated automatically', ),
             'content-hash' => $this->contentHash,
             'packages' => null,
@@ -360,8 +360,7 @@ class Locker
 
             if (!$name || !$version) {
                 throw new \LogicException(sprintf(
-                    'Package "%s" has no version or name and can not be locked',
-                    $package
+                    'Package "%s" has no version or name and can not be locked', $package
                 ));
             }
 
@@ -433,6 +432,6 @@ class Locker
             }
         }
 
-        return $datetime ? $datetime->format(DATE_RFC3339) : null;
+        return $datetime ? $datetime->format('Y-m-d H:i:s') : null;
     }
 }

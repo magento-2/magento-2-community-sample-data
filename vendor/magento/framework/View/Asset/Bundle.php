@@ -13,7 +13,7 @@ use Magento\Framework\View\Asset\File\FallbackContext;
 
 /**
  * Bundle model
- * @deprecated 101.0.0
+ * @deprecated 100.2.0
  * @see \Magento\Deploy\Package\Bundle
  */
 class Bundle
@@ -287,7 +287,7 @@ class Bundle
      */
     protected function fillContent($parts, $context)
     {
-        $index = count($this->content) > 0 ? count($this->content) - 1 : 0 ;
+        $index = count($this->content) > 0 ? count($this->content) - 1 : 0;
         foreach ($parts as $part) {
             if (!isset($this->content[$index])) {
                 $this->content[$index] = '';

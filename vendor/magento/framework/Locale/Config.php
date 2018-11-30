@@ -74,8 +74,8 @@ class Config implements \Magento\Framework\Locale\ConfigInterface
         'lv_LV', /*Latvian (Latvia)*/
         'mk_MK', /*Macedonian (Macedonia)*/
         'mn_Cyrl_MN', /*Mongolian (Mongolia)*/
-        'ms_MY', /*Malaysian (Malaysia)*/
         'ms_Latn_MY', /*Malaysian (Malaysia)*/
+        'ms_MY', /*Malaysian (Malaysia)*/
         'nl_BE', /*Dutch (Belgium)*/
         'nl_NL', /*Dutch (Netherlands)*/
         'nb_NO', /*Norwegian BokmГ_l (Norway)*/
@@ -90,6 +90,7 @@ class Config implements \Magento\Framework\Locale\ConfigInterface
         'sq_AL', /*Albanian (Albania)*/
         'sr_Cyrl_RS', /*Serbian (Serbia)*/
         'sv_SE', /*Swedish (Sweden)*/
+        'sv_FI', /*Swedish (Finland)*/
         'sw_KE', /*Swahili (Kenya)*/
         'th_TH', /*Thai (Thailand)*/
         'tr_TR', /*Turkish (Turkey)*/

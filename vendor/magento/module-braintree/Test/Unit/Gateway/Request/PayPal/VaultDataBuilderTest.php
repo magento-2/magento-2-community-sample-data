@@ -13,24 +13,19 @@ use Magento\Vault\Model\Ui\VaultConfigProvider;
 use PHPUnit_Framework_MockObject_MockObject as MockObject;
 
 /**
- * Tests \Magento\Braintree\Gateway\Request\PayPal\VaultDataBuilder.
+ * Class VaultDataBuilderTest
  */
 class VaultDataBuilderTest extends \PHPUnit\Framework\TestCase
 {
     /**
-     * @var SubjectReader|MockObject
-     */
-    private $subjectReaderMock;
-
-    /**
      * @var PaymentDataObjectInterface|MockObject
      */
-    private $paymentDataObjectMock;
+    private $paymentDO;
 
     /**
      * @var InfoInterface|MockObject
      */
-    private $paymentInfoMock;
+    private $paymentInfo;
 
     /**
      * @var VaultDataBuilder
@@ -39,16 +34,11 @@ class VaultDataBuilderTest extends \PHPUnit\Framework\TestCase
 
     protected function setUp()
     {
-        $this->paymentDataObjectMock = $this->createMock(PaymentDataObjectInterface::class);
+        $this->paymentDO = $this->createMock(PaymentDataObjectInterface::class);
 
-        $this->paymentInfoMock = $this->createMock(InfoInterface::class);
+        $this->paymentInfo = $this->createMock(InfoInterface::class);
 
-        $this->subjectReaderMock = $this->getMockBuilder(SubjectReader::class)
-            ->disableOriginalConstructor()
-            ->setMethods(['readPayment'])
-            ->getMock();
-
-        $this->builder = new VaultDataBuilder($this->subjectReaderMock);
+        $this->builder = new VaultDataBuilder(new SubjectReader());
     }
 
     /**
@@ -60,24 +50,17 @@ class VaultDataBuilderTest extends \PHPUnit\Framework\TestCase
     public function testBuild(array $additionalInfo, array $expected)
     {
         $subject = [
-            'payment' => $this->paymentDataObjectMock,
+            'payment' => $this->paymentDO
         ];
 
-        $this->subjectReaderMock->expects(static::once())
-            ->method('readPayment')
-            ->with($subject)
-            ->willReturn($this->paymentDataObjectMock);
+        $this->paymentDO->method('getPayment')
+            ->willReturn($this->paymentInfo);
 
-        $this->paymentDataObjectMock->expects(static::once())
-            ->method('getPayment')
-            ->willReturn($this->paymentInfoMock);
-
-        $this->paymentInfoMock->expects(static::once())
-            ->method('getAdditionalInformation')
+        $this->paymentInfo->method('getAdditionalInformation')
             ->willReturn($additionalInfo);
 
         $actual = $this->builder->build($subject);
-        static::assertEquals($expected, $actual);
+        self::assertEquals($expected, $actual);
     }
 
     /**

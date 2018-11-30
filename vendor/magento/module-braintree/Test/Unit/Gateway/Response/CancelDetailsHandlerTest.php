@@ -15,9 +15,6 @@ use Magento\Sales\Model\Order\Payment;
 use PHPUnit\Framework\TestCase;
 use PHPUnit_Framework_MockObject_MockObject as MockObject;
 
-/**
- * Tests \Magento\Braintree\Gateway\Response\CancelDetailsHandler.
- */
 class CancelDetailsHandlerTest extends TestCase
 {
     /**
@@ -25,9 +22,6 @@ class CancelDetailsHandlerTest extends TestCase
      */
     private $handler;
 
-    /**
-     * @inheritdoc
-     */
     protected function setUp()
     {
         $this->handler = new CancelDetailsHandler(new SubjectReader());
@@ -35,10 +29,8 @@ class CancelDetailsHandlerTest extends TestCase
 
     /**
      * Checks a case when cancel handler closes the current and parent transactions.
-     *
-     * @return void
      */
-    public function testHandle(): void
+    public function testHandle()
     {
         /** @var OrderAdapterInterface|MockObject $order */
         $order = $this->getMockForAbstractClass(OrderAdapterInterface::class);
@@ -50,7 +42,7 @@ class CancelDetailsHandlerTest extends TestCase
 
         $paymentDO = new PaymentDataObject($order, $payment);
         $response = [
-            'payment' => $paymentDO,
+            'payment' => $paymentDO
         ];
 
         $this->handler->handle($response, []);

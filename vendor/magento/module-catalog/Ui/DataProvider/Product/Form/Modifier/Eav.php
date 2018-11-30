@@ -31,8 +31,6 @@ use Magento\Ui\Component\Form\Field;
 use Magento\Ui\Component\Form\Fieldset;
 use Magento\Ui\DataProvider\Mapper\FormElement as FormElementMapper;
 use Magento\Ui\DataProvider\Mapper\MetaProperties as MetaPropertiesMapper;
-use Magento\Catalog\Ui\DataProvider\Product\Form\Modifier\Eav\CompositeConfigProcessor;
-use Magento\Framework\App\Config\ScopeConfigInterface;
 use Magento\Eav\Model\ResourceModel\Entity\Attribute\CollectionFactory as AttributeCollectionFactory;
 
 /**
@@ -203,17 +201,6 @@ class Eav extends AbstractModifier
     private $attributeCollectionFactory;
 
     /**
-     * @var CompositeConfigProcessor
-     */
-    private $wysiwygConfigProcessor;
-
-    /**
-     * @var ScopeConfigInterface
-     */
-    private $scopeConfig;
-
-    /**
-     * Eav constructor.
      * @param LocatorInterface $locator
      * @param CatalogEavValidationRules $catalogEavValidationRules
      * @param Config $eavConfig
@@ -233,8 +220,6 @@ class Eav extends AbstractModifier
      * @param DataPersistorInterface $dataPersistor
      * @param array $attributesToDisable
      * @param array $attributesToEliminate
-     * @param CompositeConfigProcessor|null $wysiwygConfigProcessor
-     * @param ScopeConfigInterface|null $scopeConfig
      * @param AttributeCollectionFactory $attributeCollectionFactory
      * @SuppressWarnings(PHPMD.ExcessiveParameterList)
      */
@@ -258,8 +243,6 @@ class Eav extends AbstractModifier
         DataPersistorInterface $dataPersistor,
         $attributesToDisable = [],
         $attributesToEliminate = [],
-        CompositeConfigProcessor $wysiwygConfigProcessor = null,
-        ScopeConfigInterface $scopeConfig = null,
         AttributeCollectionFactory $attributeCollectionFactory = null
     ) {
         $this->locator = $locator;
@@ -281,16 +264,12 @@ class Eav extends AbstractModifier
         $this->dataPersistor = $dataPersistor;
         $this->attributesToDisable = $attributesToDisable;
         $this->attributesToEliminate = $attributesToEliminate;
-        $this->wysiwygConfigProcessor = $wysiwygConfigProcessor ?: \Magento\Framework\App\ObjectManager::getInstance()
-            ->get(CompositeConfigProcessor::class);
-        $this->scopeConfig = $scopeConfig ?: \Magento\Framework\App\ObjectManager::getInstance()
-        ->get(ScopeConfigInterface::class);
         $this->attributeCollectionFactory = $attributeCollectionFactory
             ?: \Magento\Framework\App\ObjectManager::getInstance()->get(AttributeCollectionFactory::class);
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      * @since 101.0.0
      */
     public function modifyMeta(array $meta)
@@ -401,7 +380,7 @@ class Eav extends AbstractModifier
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      * @since 101.0.0
      */
     public function modifyData(array $data)
@@ -532,7 +511,7 @@ class Eav extends AbstractModifier
     /**
      * Loads attributes for specified groups at once
      *
-     * @param AttributeGroupInterface[] $groups
+     * @param AttributeGroupInterface[] ...$groups
      * @return @return ProductAttributeInterface[]
      */
     private function loadAttributesForGroups(array $groups)
@@ -611,7 +590,7 @@ class Eav extends AbstractModifier
      */
     private function isProductExists()
     {
-        return (bool) $this->locator->getProduct()->getId();
+        return (bool)$this->locator->getProduct()->getId();
     }
 
     /**
@@ -636,9 +615,9 @@ class Eav extends AbstractModifier
             'formElement' => $this->getFormElementsMapValue($attribute->getFrontendInput()),
             'visible' => $attribute->getIsVisible(),
             'required' => $attribute->getIsRequired(),
-            'notice' => $attribute->getNote() === null ? null : __($attribute->getNote()),
-            'default' => (!$this->isProductExists()) ? $this->getAttributeDefaultValue($attribute) : null,
-            'label' => __($attribute->getDefaultFrontendLabel()),
+            'notice' => $attribute->getNote(),
+            'default' => (!$this->isProductExists()) ? $attribute->getDefaultValue() : null,
+            'label' => $attribute->getDefaultFrontendLabel(),
             'code' => $attributeCode,
             'source' => $groupCode,
             'scopeLabel' => $this->getScopeLabel($attribute),
@@ -670,8 +649,7 @@ class Eav extends AbstractModifier
         }
 
         $product = $this->locator->getProduct();
-        if (in_array($attributeCode, $this->attributesToDisable)
-            || $product->isLockedAttribute($attributeCode)) {
+        if (in_array($attributeCode, $this->attributesToDisable) || $product->isLockedAttribute($attributeCode)) {
             $meta = $this->arrayManager->merge($configPath, $meta, [
                 'disabled' => true,
             ]);
@@ -707,44 +685,22 @@ class Eav extends AbstractModifier
     }
 
     /**
-     * Returns attribute default value, based on db setting or setting in the system configuration.
-     *
-     * @param ProductAttributeInterface $attribute
-     * @return null|string
-     */
-    private function getAttributeDefaultValue(ProductAttributeInterface $attribute)
-    {
-        if ($attribute->getAttributeCode() === 'page_layout') {
-            $defaultValue = $this->scopeConfig->getValue(
-                'web/default_layouts/default_product_layout',
-                \Magento\Store\Model\ScopeInterface::SCOPE_STORE,
-                $this->storeManager->getStore()
-            );
-            $attribute->setDefaultValue($defaultValue);
-        }
-        return $attribute->getDefaultValue();
-    }
-
-    /**
-     * Convert options value to string.
+     * Convert options value to string
      *
      * @param array $options
      * @return array
      */
-    private function convertOptionsValueToString(array $options) : array
+    private function convertOptionsValueToString(array $options): array
     {
         array_walk($options, function (&$value) {
             if (isset($value['value']) && is_scalar($value['value'])) {
                 $value['value'] = (string)$value['value'];
             }
         });
-
         return $options;
     }
 
     /**
-     * Adds 'use default value' checkbox.
-     *
      * @param ProductAttributeInterface $attribute
      * @param array $meta
      * @return array
@@ -878,7 +834,13 @@ class Eav extends AbstractModifier
 
         $meta['arguments']['data']['config']['formElement'] = WysiwygElement::NAME;
         $meta['arguments']['data']['config']['wysiwyg'] = true;
-        $meta['arguments']['data']['config']['wysiwygConfigData'] = $this->wysiwygConfigProcessor->process($attribute);
+        $meta['arguments']['data']['config']['wysiwygConfigData'] = [
+            'add_variables' => false,
+            'add_widgets' => false,
+            'add_directives' => true,
+            'use_container' => true,
+            'container_class' => 'hor-scroll',
+        ];
 
         return $meta;
     }

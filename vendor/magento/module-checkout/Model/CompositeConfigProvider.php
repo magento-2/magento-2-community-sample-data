@@ -10,7 +10,6 @@ namespace Magento\Checkout\Model;
  *
  * @see \Magento\Checkout\Model\ConfigProviderInterface
  * @api
- * @since 100.0.2
  */
 class CompositeConfigProvider implements ConfigProviderInterface
 {

@@ -10,7 +10,6 @@ use Magento\Framework\ObjectManagerInterface;
 /**
  * EntityStorage Factory
  * @api
- * @since 100.0.2
  */
 class EntityStorageFactory
 {

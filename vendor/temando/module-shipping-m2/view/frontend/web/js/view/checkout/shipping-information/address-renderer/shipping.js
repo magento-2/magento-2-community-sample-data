@@ -6,9 +6,8 @@ define([
     'underscore',
     'uiComponent',
     'Magento_Customer/js/customer-data',
-    'Temando_Shipping/js/model/collection-points',
-    'Temando_Shipping/js/model/pickup-locations'
-], function (_, Component, customerData, collectionPoints, pickupLocations) {
+    'Temando_Shipping/js/model/collection-points'
+], function (_, Component, customerData, collectionPoints) {
     'use strict';
 
     var countryData = customerData.get('directory-data');
@@ -18,7 +17,6 @@ define([
             template: 'Magento_Checkout/shipping-information/address-renderer/default'
         },
         collectionPoints: collectionPoints,
-        pickupLocations: pickupLocations,
 
         /**
          * @param {*} countryId
@@ -50,10 +48,6 @@ define([
             var collectionPoint = collectionPoints.getSelectedCollectionPoint();
             if (collectionPoint) {
                 return 'Temando_Shipping/checkout/shipping/address-renderer/collection-point';
-            }
-            var pickupLocation = pickupLocations.getSelectedPickupLocation();
-            if (pickupLocation) {
-                return 'Temando_Shipping/checkout/shipping/address-renderer/pickup-location';
             }
             // handle other specific adresses here
             return this.template;

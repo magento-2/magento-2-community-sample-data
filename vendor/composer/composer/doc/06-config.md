@@ -65,17 +65,13 @@ an OAuth token for GitHub.
 
 A list of domain names and oauth keys. For example using `{"gitlab.com":
 "oauthtoken"}` as the value of this option will use `oauthtoken` to access
-private repositories on gitlab. Please note: If the package is not hosted at 
-gitlab.com the domain names must be also specified with the 
-[`gitlab-domains`](06-config.md#gitlab-domains) option.
+private repositories on gitlab.
 
 ## gitlab-token
 
 A list of domain names and private tokens. For example using `{"gitlab.com":
 "privatetoken"}` as the value of this option will use `privatetoken` to access
-private repositories on gitlab. Please note: If the package is not hosted at 
-gitlab.com the domain names must be also specified with the 
-[`gitlab-domains`](06-config.md#gitlab-domains) option.
+private repositories on gitlab.
 
 ## disable-tls
 
@@ -124,7 +120,7 @@ value of this option will let Composer authenticate against example.org.
 
 Lets you fake platform packages (PHP and extensions) so that you can emulate a
 production env or define your target platform in the config. Example: `{"php":
-"7.0.3", "ext-something": "4.0.3"}`.
+"5.4", "ext-something": "4.0"}`.
 
 ## vendor-dir
 
@@ -268,10 +264,5 @@ Example:
     }
 }
 ```
-
-## htaccess-protect
-
-Defaults to `true`. If set to `false`, Composer will not create `.htaccess` files
-in the composer home, cache, and data directories.
 
 &larr; [Repositories](05-repositories.md)  |  [Community](07-community.md) &rarr;

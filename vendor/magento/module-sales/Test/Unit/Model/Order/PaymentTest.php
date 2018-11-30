@@ -1664,6 +1664,7 @@ class PaymentTest extends \PHPUnit\Framework\TestCase
 
     /**
      * @param $transactionId
+     *
      * @return MockObject
      */
     protected function getTransactionMock($transactionId)

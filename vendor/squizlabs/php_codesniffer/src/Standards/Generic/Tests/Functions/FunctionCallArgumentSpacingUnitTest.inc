@@ -123,13 +123,3 @@ $obj->{$var}($foo,$bar);
         echo $a, $b, $c, $d;
     };
 })('a','b')('c','d');
-
-my_function_call(
-    'a'
-    /* Comment */
-    ,'b'
-    , 'c' // Comment.
-    ,'d'
-    ,'e' // phpcs:ignore Standard.Category.Sniff -- for reasons.
-    , 'f'
-);

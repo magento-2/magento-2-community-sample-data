@@ -16,7 +16,6 @@ use Composer\Composer;
 use Composer\Factory;
 use Composer\Config;
 use Composer\Downloader\TransportException;
-use Composer\Repository\PlatformRepository;
 use Composer\Plugin\CommandEvent;
 use Composer\Plugin\PluginEvents;
 use Composer\Util\ConfigValidator;
@@ -35,7 +34,7 @@ use Symfony\Component\Console\Output\OutputInterface;
  */
 class DiagnoseCommand extends BaseCommand
 {
-    /** @var RemoteFilesystem */
+    /** @var RemoteFileSystem */
     protected $rfs;
 
     /** @var ProcessExecutor */
@@ -49,8 +48,7 @@ class DiagnoseCommand extends BaseCommand
         $this
             ->setName('diagnose')
             ->setDescription('Diagnoses the system to identify common errors.')
-            ->setHelp(
-                <<<EOT
+            ->setHelp(<<<EOT
 The <info>diagnose</info> command checks common errors to help debugging problems.
 
 The process exit code will be 1 in case of warnings and 2 for errors.
@@ -83,7 +81,7 @@ EOT
         }
 
         $config->merge(array('config' => array('secure-http' => false)));
-        $config->prohibitUrlByConfig('http://repo.packagist.org', new NullIO);
+        $config->prohibitUrlByConfig('http://packagist.org', new NullIO);
 
         $this->rfs = Factory::createRemoteFilesystem($io, $config);
         $this->process = new ProcessExecutor($io);
@@ -152,22 +150,6 @@ EOT
             $this->outputResult($this->checkVersion($config));
         }
 
-        $io->write(sprintf('Composer version: <comment>%s</comment>', Composer::VERSION));
-
-        $platformOverrides = $config->get('platform') ?: array();
-        $platformRepo = new PlatformRepository(array(), $platformOverrides);
-        $phpPkg = $platformRepo->findPackage('php', '*');
-        $phpVersion = $phpPkg->getPrettyVersion();
-        if (false !== strpos($phpPkg->getDescription(), 'overridden')) {
-            $phpVersion .= ' - ' . $phpPkg->getDescription();
-        }
-
-        $io->write(sprintf('PHP version: <comment>%s</comment>', $phpVersion));
-
-        if (defined('PHP_BINARY')) {
-            $io->write(sprintf('PHP binary path: <comment>%s</comment>', PHP_BINARY));
-        }
-
         return $this->exitCode;
     }
 
@@ -218,7 +200,7 @@ EOT
         }
 
         try {
-            $this->rfs->getContents('packagist.org', $proto . '://repo.packagist.org/packages.json', false);
+            $this->rfs->getContents('packagist.org', $proto . '://packagist.org/packages.json', false);
         } catch (TransportException $e) {
             if (false !== strpos($e->getMessage(), 'cafile')) {
                 $result[] = '<error>[' . get_class($e) . '] ' . $e->getMessage() . '</error>';
@@ -240,11 +222,11 @@ EOT
     {
         $protocol = extension_loaded('openssl') ? 'https' : 'http';
         try {
-            $json = json_decode($this->rfs->getContents('packagist.org', $protocol . '://repo.packagist.org/packages.json', false), true);
+            $json = json_decode($this->rfs->getContents('packagist.org', $protocol . '://packagist.org/packages.json', false), true);
             $hash = reset($json['provider-includes']);
             $hash = $hash['sha256'];
             $path = str_replace('%hash%', $hash, key($json['provider-includes']));
-            $provider = $this->rfs->getContents('packagist.org', $protocol . '://repo.packagist.org/'.$path, false);
+            $provider = $this->rfs->getContents('packagist.org', $protocol . '://packagist.org/'.$path, false);
 
             if (hash('sha256', $provider) !== $hash) {
                 return 'It seems that your proxy is modifying http traffic on the fly';
@@ -265,7 +247,7 @@ EOT
      */
     private function checkHttpProxyFullUriRequestParam()
     {
-        $url = 'http://repo.packagist.org/packages.json';
+        $url = 'http://packagist.org/packages.json';
         try {
             $this->rfs->getContents('packagist.org', $url, false);
         } catch (TransportException $e) {
@@ -481,7 +463,7 @@ EOT
             $errors['iconv_mbstring'] = true;
         }
 
-        if (!filter_var(ini_get('allow_url_fopen'), FILTER_VALIDATE_BOOLEAN)) {
+        if (!ini_get('allow_url_fopen')) {
             $errors['allow_url_fopen'] = true;
         }
 
@@ -505,7 +487,7 @@ EOT
             $warnings['openssl_version'] = true;
         }
 
-        if (!defined('HHVM_VERSION') && !extension_loaded('apcu') && filter_var(ini_get('apc.enable_cli'), FILTER_VALIDATE_BOOLEAN)) {
+        if (!defined('HHVM_VERSION') && !extension_loaded('apcu') && ini_get('apc.enable_cli')) {
             $warnings['apc_cli'] = true;
         }
 
@@ -528,7 +510,7 @@ EOT
             }
         }
 
-        if (filter_var(ini_get('xdebug.profiler_enabled'), FILTER_VALIDATE_BOOLEAN)) {
+        if (ini_get('xdebug.profiler_enabled')) {
             $warnings['xdebug_profile'] = true;
         } elseif (extension_loaded('xdebug')) {
             $warnings['xdebug_loaded'] = true;

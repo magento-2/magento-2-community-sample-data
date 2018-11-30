@@ -53,20 +53,4 @@ class MyClass {
 
         $var = null;
     }
-
-    public $mCounter, $mSearchUser, $mSearchPeriodStart, $mSearchPeriodEnd,
-    $mTestFilter;
-
-    protected $mCounter,
-        $mSearchUser,
-        $mSearchPeriodStart,
-        $mSearchPeriodEnd,
-        $mTestFilter;
-
-    var $mCounter, $mSearchUser,
-        $mSearchPeriodStart;
-}
-
-interface Base {
-    protected $anonymous;
 }

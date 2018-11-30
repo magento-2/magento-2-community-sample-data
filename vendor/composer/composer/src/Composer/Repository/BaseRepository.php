@@ -39,7 +39,7 @@ abstract class BaseRepository implements RepositoryInterface
      */
     public function getDependents($needle, $constraint = null, $invert = false, $recurse = true, $packagesFound = null)
     {
-        $needles = array_map('strtolower', (array) $needle);
+        $needles = (array) $needle;
         $results = array();
 
         // initialize the array with the needles before any recursion occurs
@@ -78,7 +78,7 @@ abstract class BaseRepository implements RepositoryInterface
             foreach ($links as $link) {
                 foreach ($needles as $needle) {
                     if ($link->getTarget() === $needle) {
-                        if ($constraint === null || ($link->getConstraint()->matches($constraint) === !$invert)) {
+                        if (is_null($constraint) || (($link->getConstraint()->matches($constraint) === !$invert))) {
                             // already displayed this node's dependencies, cutting short
                             if (in_array($link->getSource(), $packagesInTree)) {
                                 $results[$link->getSource()] = array($package, $link, false);

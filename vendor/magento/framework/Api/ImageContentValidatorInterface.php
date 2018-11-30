@@ -13,7 +13,6 @@ use Magento\Framework\Exception\InputException;
  * Image content validation interface
  *
  * @api
- * @since 100.0.2
  */
 interface ImageContentValidatorInterface
 {

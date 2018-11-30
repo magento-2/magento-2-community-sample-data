@@ -1,42 +1,40 @@
 {
     "name": "magento/module-catalog",
     "description": "N/A",
-    "config": {
-        "sort-packages": true
-    },
     "require": {
-        "php": "~7.1.3||~7.2.0",
-        "magento/framework": "102.0.*",
-        "magento/module-backend": "101.0.*",
-        "magento/module-catalog-inventory": "100.3.*",
-        "magento/module-catalog-rule": "101.1.*",
-        "magento/module-catalog-url-rewrite": "100.3.*",
-        "magento/module-checkout": "100.3.*",
-        "magento/module-cms": "103.0.*",
-        "magento/module-config": "101.1.*",
-        "magento/module-customer": "102.0.*",
-        "magento/module-directory": "100.3.*",
-        "magento/module-eav": "102.0.*",
-        "magento/module-indexer": "100.3.*",
-        "magento/module-media-storage": "100.3.*",
-        "magento/module-msrp": "100.3.*",
-        "magento/module-page-cache": "100.3.*",
-        "magento/module-product-alert": "100.3.*",
-        "magento/module-quote": "101.1.*",
-        "magento/module-store": "101.0.*",
-        "magento/module-tax": "100.3.*",
-        "magento/module-theme": "101.0.*",
-        "magento/module-ui": "101.1.*",
-        "magento/module-url-rewrite": "101.1.*",
-        "magento/module-widget": "101.1.*",
-        "magento/module-wishlist": "101.1.*"
+        "php": "~7.0.13|~7.1.0",
+        "magento/module-store": "100.2.*",
+        "magento/module-eav": "101.0.*",
+        "magento/module-cms": "102.0.*",
+        "magento/module-indexer": "100.2.*",
+        "magento/module-customer": "101.0.*",
+        "magento/module-theme": "100.2.*",
+        "magento/module-checkout": "100.2.*",
+        "magento/module-backend": "100.2.*",
+        "magento/module-widget": "101.0.*",
+        "magento/module-wishlist": "101.0.*",
+        "magento/module-tax": "100.2.*",
+        "magento/module-msrp": "100.2.*",
+        "magento/module-catalog-inventory": "100.2.*",
+        "magento/module-directory": "100.2.*",
+        "magento/module-catalog-rule": "101.0.*",
+        "magento/module-product-alert": "100.2.*",
+        "magento/module-url-rewrite": "101.0.*",
+        "magento/module-catalog-url-rewrite": "100.2.*",
+        "magento/module-page-cache": "100.2.*",
+        "magento/module-quote": "101.0.*",
+        "magento/module-config": "101.0.*",
+        "magento/module-media-storage": "100.2.*",
+        "magento/framework": "101.0.*",
+        "magento/module-ui": "101.0.*"
     },
     "suggest": {
-        "magento/module-cookie": "100.3.*",
-        "magento/module-sales": "102.0.*",
-        "magento/module-catalog-sample-data": "Sample Data version: 100.3.*"
+        "magento/module-cookie": "100.2.*",
+        "magento/module-sales": "101.0.*",
+        "magento/module-catalog-sample-data": "Sample Data version:100.2.*"
     },
     "type": "magento2-module",
+    "version": "102.0.7",
     "license": [
         "OSL-3.0",
         "AFL-3.0"
@@ -48,6 +46,5 @@
         "psr-4": {
             "Magento\\Catalog\\": ""
         }
-    },
-    "version": "103.0.0"
+    }
 }

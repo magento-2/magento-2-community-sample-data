@@ -5,19 +5,15 @@
  */
 namespace Magento\ImportExport\Controller\Adminhtml\Import;
 
-use Magento\Framework\App\Action\HttpPostActionInterface as HttpPostActionInterface;
 use Magento\ImportExport\Controller\Adminhtml\ImportResult as ImportResultController;
 use Magento\ImportExport\Model\Import;
 use Magento\ImportExport\Block\Adminhtml\Import\Frame\Result;
 use Magento\Framework\Controller\ResultFactory;
 use Magento\Framework\App\Filesystem\DirectoryList;
 use Magento\ImportExport\Model\Import\Adapter as ImportAdapter;
+use Magento\ImportExport\Model\Import\ErrorProcessing\ProcessingErrorAggregatorInterface;
 
-/**
- * Import validate controller action.
- * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
- */
-class Validate extends ImportResultController implements HttpPostActionInterface
+class Validate extends ImportResultController
 {
     /**
      * @var Import
@@ -28,7 +24,6 @@ class Validate extends ImportResultController implements HttpPostActionInterface
      * Validate uploaded files action
      *
      * @return \Magento\Framework\Controller\ResultInterface
-     * @SuppressWarnings(PHPMD.Superglobals)
      */
     public function execute()
     {
@@ -72,7 +67,6 @@ class Validate extends ImportResultController implements HttpPostActionInterface
      * @param bool $validationResult
      * @param Result $resultBlock
      * @return void
-     * @throws \Magento\Framework\Exception\LocalizedException
      */
     private function processValidationResult($validationResult, $resultBlock)
     {
@@ -110,8 +104,6 @@ class Validate extends ImportResultController implements HttpPostActionInterface
     }
 
     /**
-     * Provides import model.
-     *
      * @return Import
      * @deprecated 100.1.0
      */
@@ -131,7 +123,6 @@ class Validate extends ImportResultController implements HttpPostActionInterface
      *
      * @param Result $resultBlock
      * @return void
-     * @throws \Magento\Framework\Exception\LocalizedException
      */
     private function addMessageToSkipErrors(Result $resultBlock)
     {
@@ -152,7 +143,6 @@ class Validate extends ImportResultController implements HttpPostActionInterface
      *
      * @param Result $resultBlock
      * @return void
-     * @throws \Magento\Framework\Exception\LocalizedException
      */
     private function addMessageForValidResult(Result $resultBlock)
     {
@@ -166,12 +156,11 @@ class Validate extends ImportResultController implements HttpPostActionInterface
     /**
      * Collect errors and add error messages to Result block
      *
-     * Get all errors from Error Aggregator and add appropriated error messages
+     * Get all errors from ProcessingErrorAggregatorInterface and add appropriated error messages
      * to Result block.
      *
      * @param Result $resultBlock
      * @return void
-     * @throws \Magento\Framework\Exception\LocalizedException
      */
     private function collectErrors(Result $resultBlock)
     {

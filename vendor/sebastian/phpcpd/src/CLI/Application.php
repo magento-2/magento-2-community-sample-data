@@ -13,14 +13,24 @@ namespace SebastianBergmann\PHPCPD\CLI;
 use SebastianBergmann\Version;
 use Symfony\Component\Console\Application as AbstractApplication;
 use Symfony\Component\Console\Input\InputInterface;
+use Symfony\Component\Console\Input\ArgvInput;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Input\ArrayInput;
 
+/**
+ * TextUI frontend for PHPCPD.
+ *
+ * @author    Sebastian Bergmann <sebastian@phpunit.de>
+ * @copyright Sebastian Bergmann <sebastian@phpunit.de>
+ * @license   http://www.opensource.org/licenses/BSD-3-Clause  The BSD 3-Clause License
+ * @link      http://github.com/sebastianbergmann/phpcpd/tree
+ * @since     Class available since Release 2.0.0
+ */
 class Application extends AbstractApplication
 {
     public function __construct()
     {
-        $version = new Version('3.0.1', \dirname(\dirname(__DIR__)));
+        $version = new Version('2.0.4', dirname(dirname(__DIR__)));
         parent::__construct('phpcpd', $version->getVersion());
     }
 
@@ -68,15 +78,13 @@ class Application extends AbstractApplication
      * @param InputInterface  $input  An Input instance
      * @param OutputInterface $output An Output instance
      *
-     * @return int 0 if everything went fine, or an error code
+     * @return integer 0 if everything went fine, or an error code
      */
     public function doRun(InputInterface $input, OutputInterface $output)
     {
-        $this->disableXdebug();
-
         if (!$input->hasParameterOption('--quiet')) {
             $output->write(
-                \sprintf(
+                sprintf(
                     "phpcpd %s by Sebastian Bergmann.\n\n",
                     $this->getVersion()
                 )
@@ -89,23 +97,9 @@ class Application extends AbstractApplication
         }
 
         if (!$input->getFirstArgument()) {
-            $input = new ArrayInput(['--help']);
+            $input = new ArrayInput(array('--help'));
         }
 
         parent::doRun($input, $output);
-    }
-
-    private function disableXdebug()
-    {
-        if (!\extension_loaded('xdebug')) {
-            return;
-        }
-
-        \ini_set('xdebug.scream', 0);
-        \ini_set('xdebug.max_nesting_level', 8192);
-        \ini_set('xdebug.show_exception_trace', 0);
-        \ini_set('xdebug.show_error_trace', 0);
-
-        \xdebug_disable();
     }
 }

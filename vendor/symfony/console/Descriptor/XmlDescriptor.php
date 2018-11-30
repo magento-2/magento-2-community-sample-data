@@ -60,7 +60,6 @@ class XmlDescriptor extends Descriptor
 
         $commandXML->setAttribute('id', $command->getName());
         $commandXML->setAttribute('name', $command->getName());
-        $commandXML->setAttribute('hidden', $command->isHidden() ? 1 : 0);
 
         $commandXML->appendChild($usagesXML = $dom->createElement('usages'));
 
@@ -100,7 +99,7 @@ class XmlDescriptor extends Descriptor
 
         $rootXml->appendChild($commandsXML = $dom->createElement('commands'));
 
-        $description = new ApplicationDescription($application, $namespace, true);
+        $description = new ApplicationDescription($application, $namespace);
 
         if ($namespace) {
             $commandsXML->setAttribute('namespace', $namespace);
@@ -188,7 +187,10 @@ class XmlDescriptor extends Descriptor
         $this->write($dom->saveXML());
     }
 
-    private function getInputArgumentDocument(InputArgument $argument): \DOMDocument
+    /**
+     * @return \DOMDocument
+     */
+    private function getInputArgumentDocument(InputArgument $argument)
     {
         $dom = new \DOMDocument('1.0', 'UTF-8');
 
@@ -209,7 +211,10 @@ class XmlDescriptor extends Descriptor
         return $dom;
     }
 
-    private function getInputOptionDocument(InputOption $option): \DOMDocument
+    /**
+     * @return \DOMDocument
+     */
+    private function getInputOptionDocument(InputOption $option)
     {
         $dom = new \DOMDocument('1.0', 'UTF-8');
 

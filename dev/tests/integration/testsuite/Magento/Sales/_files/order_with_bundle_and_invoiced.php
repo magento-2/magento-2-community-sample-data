@@ -3,7 +3,6 @@
  * Copyright © Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
-declare(strict_types=1);
 
 use Magento\Sales\Api\Data\OrderItemInterface;
 use Magento\Sales\Api\OrderItemRepositoryInterface;
@@ -28,7 +27,7 @@ $orderItems = [
         OrderItemInterface::ROW_TOTAL => 102,
         OrderItemInterface::PRODUCT_TYPE => 'bundle',
         'product_options' => [
-            'product_calculations' => 0,
+            'product_calculations' => 0
         ],
         'children' => [
             [
@@ -42,12 +41,12 @@ $orderItems = [
                 OrderItemInterface::PRODUCT_TYPE => 'simple',
                 'product_options' => [
                     'bundle_selection_attributes' => [
-                        'qty' => 2,
+                        'qty' => 2
                     ],
                 ],
-            ],
+            ]
         ],
-    ],
+    ]
 ];
 
 /** @var OrderItemRepositoryInterface $itemRepository */
@@ -59,6 +58,7 @@ foreach ($order->getAllItems() as $item) {
 }
 
 if (!function_exists('saveOrderItems')) {
+
     /**
      * Save Order Items.
      *

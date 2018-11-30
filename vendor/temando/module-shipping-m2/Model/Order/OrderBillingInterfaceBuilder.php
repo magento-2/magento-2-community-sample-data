@@ -9,7 +9,7 @@ use Magento\Framework\Api\ObjectFactory;
 use Magento\Framework\Exception\LocalizedException;
 use Magento\Quote\Model\Quote\Address\RateRequest;
 use Magento\Sales\Api\Data\OrderInterface;
-use Temando\Shipping\Model\Checkout\RateRequest\Extractor;
+use Temando\Shipping\Model\Shipping\RateRequest\Extractor;
 
 /**
  * Temando Order Billing Builder

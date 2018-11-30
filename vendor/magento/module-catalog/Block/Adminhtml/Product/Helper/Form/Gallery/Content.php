@@ -18,9 +18,6 @@ use Magento\Framework\View\Element\AbstractBlock;
 use Magento\Framework\App\Filesystem\DirectoryList;
 use Magento\Framework\Exception\FileSystemException;
 
-/**
- * Block for gallery content.
- */
 class Content extends \Magento\Backend\Block\Widget
 {
     /**
@@ -61,8 +58,6 @@ class Content extends \Magento\Backend\Block\Widget
     }
 
     /**
-     * Prepare layout.
-     *
      * @return AbstractBlock
      */
     protected function _prepareLayout()
@@ -108,8 +103,6 @@ class Content extends \Magento\Backend\Block\Widget
     }
 
     /**
-     * Returns js object name
-     *
      * @return string
      */
     public function getJsObjectName()
@@ -118,8 +111,6 @@ class Content extends \Magento\Backend\Block\Widget
     }
 
     /**
-     * Returns buttons for add image action.
-     *
      * @return string
      */
     public function getAddImagesButton()
@@ -133,8 +124,6 @@ class Content extends \Magento\Backend\Block\Widget
     }
 
     /**
-     * Returns image json
-     *
      * @return string
      */
     public function getImagesJson()
@@ -180,8 +169,6 @@ class Content extends \Magento\Backend\Block\Widget
     }
 
     /**
-     * Returns image values json
-     *
      * @return string
      */
     public function getImagesValuesJson()
@@ -256,8 +243,6 @@ class Content extends \Magento\Backend\Block\Widget
     }
 
     /**
-     * Returns image helper object.
-     *
      * @return \Magento\Catalog\Helper\Image
      * @deprecated 101.0.3
      */

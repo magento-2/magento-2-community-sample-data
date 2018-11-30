@@ -19,7 +19,6 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Output\OutputInterface;
-use Symfony\Component\Console\Helper\Table;
 
 /**
  * @author Fabien Potencier <fabien.potencier@gmail.com>
@@ -48,7 +47,7 @@ class RunScriptCommand extends BaseCommand
     {
         $this
             ->setName('run-script')
-            ->setDescription('Runs the scripts defined in composer.json.')
+            ->setDescription('Run the scripts defined in composer.json.')
             ->setDefinition(array(
                 new InputArgument('script', InputArgument::OPTIONAL, 'Script name to run.'),
                 new InputArgument('args', InputArgument::IS_ARRAY | InputArgument::OPTIONAL, ''),
@@ -57,8 +56,7 @@ class RunScriptCommand extends BaseCommand
                 new InputOption('no-dev', null, InputOption::VALUE_NONE, 'Disables the dev mode.'),
                 new InputOption('list', 'l', InputOption::VALUE_NONE, 'List scripts.'),
             ))
-            ->setHelp(
-                <<<EOT
+            ->setHelp(<<<EOT
 The <info>run-script</info> command runs scripts defined in composer.json:
 
 <info>php composer.phar run-script post-update-cmd</info>
@@ -70,7 +68,7 @@ EOT
     protected function execute(InputInterface $input, OutputInterface $output)
     {
         if ($input->getOption('list')) {
-            return $this->listScripts($output);
+            return $this->listScripts();
         } elseif (!$input->getArgument('script')) {
             throw new \RuntimeException('Missing required argument "script"');
         }
@@ -92,7 +90,7 @@ EOT
 
         $args = $input->getArgument('args');
 
-        if (null !== $timeout = $input->getOption('timeout')) {
+        if (!is_null($timeout = $input->getOption('timeout'))) {
             if (!ctype_digit($timeout)) {
                 throw new \RuntimeException('Timeout value must be numeric and positive if defined, or 0 for forever');
             }
@@ -103,7 +101,7 @@ EOT
         return $composer->getEventDispatcher()->dispatchScript($script, $devMode, $args);
     }
 
-    protected function listScripts(OutputInterface $output)
+    protected function listScripts()
     {
         $scripts = $this->getComposer()->getPackage()->getScripts();
 
@@ -113,26 +111,9 @@ EOT
 
         $io = $this->getIO();
         $io->writeError('<info>scripts:</info>');
-        $table = array();
         foreach ($scripts as $name => $script) {
-            $description = '';
-            try {
-                $cmd = $this->getApplication()->find($name);
-                if ($cmd instanceof ScriptAliasCommand) {
-                    $description = $cmd->getDescription();
-                }
-            } catch (\Symfony\Component\Console\Exception\CommandNotFoundException $e) {
-                // ignore scripts that have no command associated, like native Composer script listeners
-            }
-            $table[] = array('  '.$name, $description);
+            $io->write('  ' . $name);
         }
-
-        $renderer = new Table($output);
-        $renderer->setStyle('compact');
-        $rendererStyle = $renderer->getStyle();
-        $rendererStyle->setVerticalBorderChar('');
-        $rendererStyle->setCellRowContentFormat('%s  ');
-        $renderer->setRows($table)->render();
 
         return 0;
     }

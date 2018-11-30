@@ -4,37 +4,31 @@
  */
 namespace Temando\Shipping\ViewModel\Order;
 
+use Magento\Backend\Model\UrlInterface;
 use Magento\Framework\Exception\NoSuchEntityException;
+use Magento\Framework\Stdlib\DateTime\TimezoneInterface;
 use Magento\Framework\View\Element\Block\ArgumentInterface;
 use Magento\Sales\Api\Data\OrderInterface;
-use Magento\Sales\Model\Order;
 use Magento\Store\Api\GroupRepositoryInterface as StoreGroupRepository;
 use Magento\Store\Api\WebsiteRepositoryInterface;
+use Magento\Store\Model\ScopeInterface;
 use Magento\Store\Model\StoreManagerInterface;
 use Temando\Shipping\Model\ResourceModel\Repository\OrderRepositoryInterface;
-use Temando\Shipping\ViewModel\DataProvider\DeliveryType;
-use Temando\Shipping\ViewModel\DataProvider\OrderDate;
-use Temando\Shipping\ViewModel\DataProvider\OrderUrl;
 
 /**
  * View model for order related information.
  *
- * @package Temando\Shipping\ViewModel
- * @author  Christoph Aßmann <christoph.assmann@netresearch.de>
- * @license https://opensource.org/licenses/osl-3.0.php Open Software License (OSL 3.0)
- * @link    https://www.temando.com/
+ * @package  Temando\Shipping\ViewModel
+ * @author   Christoph Aßmann <christoph.assmann@netresearch.de>
+ * @license  http://opensource.org/licenses/osl-3.0.php Open Software License (OSL 3.0)
+ * @link     http://www.temando.com/
  */
 class OrderDetails implements ArgumentInterface
 {
     /**
-     * @var OrderDate
+     * @var TimezoneInterface
      */
-    private $orderDate;
-
-    /**
-     * @var OrderUrl
-     */
-    private $orderUrl;
+    private $localeDate;
 
     /**
      * @var StoreManagerInterface
@@ -57,36 +51,33 @@ class OrderDetails implements ArgumentInterface
     private $orderRepository;
 
     /**
-     * @var DeliveryType
+     * @var UrlInterface
      */
-    private $deliveryType;
+    private $urlBuilder;
 
     /**
      * OrderDetails constructor.
-     * @param OrderDate $orderDate
-     * @param OrderUrl $orderUrl
+     * @param TimezoneInterface $localeDate
      * @param StoreManagerInterface $storeManager
      * @param StoreGroupRepository $storeGroupRepository
      * @param WebsiteRepositoryInterface $websiteRepository
      * @param OrderRepositoryInterface $orderRepository
-     * @param DeliveryType $orderType
+     * @param UrlInterface $urlBuilder
      */
     public function __construct(
-        OrderDate $orderDate,
-        OrderUrl $orderUrl,
+        TimezoneInterface $localeDate,
         StoreManagerInterface $storeManager,
         StoreGroupRepository $storeGroupRepository,
         WebsiteRepositoryInterface $websiteRepository,
         OrderRepositoryInterface $orderRepository,
-        DeliveryType $orderType
+        UrlInterface $urlBuilder
     ) {
-        $this->orderDate = $orderDate;
-        $this->orderUrl = $orderUrl;
+        $this->localeDate = $localeDate;
         $this->storeManager = $storeManager;
         $this->storeGroupRepository = $storeGroupRepository;
         $this->websiteRepository = $websiteRepository;
         $this->orderRepository = $orderRepository;
-        $this->deliveryType = $orderType;
+        $this->urlBuilder = $urlBuilder;
     }
 
     /**
@@ -99,28 +90,20 @@ class OrderDetails implements ArgumentInterface
      */
     public function getOrderTimezone(OrderInterface $order)
     {
-        return $this->orderDate->getStoreTimezone((int)$order->getStoreId());
+        return $this->localeDate->getConfigTimezone(ScopeInterface::SCOPE_STORE, $order->getStoreId());
     }
 
     /**
-     * @param OrderInterface $order
-     * @return string
+     * Get object created at date
+     *
+     * @see \Magento\Sales\Block\Adminhtml\Order\View\Info::getOrderAdminDate
+     *
+     * @param string $createdAt
+     * @return \DateTime
      */
-    public function getOrderAdminDate(OrderInterface $order): string
+    public function getOrderAdminDate($createdAt)
     {
-        $date = $order->getCreatedAt();
-        return $this->orderDate->getAdminDate($date);
-    }
-
-    /**
-     * @param OrderInterface $order
-     * @return string
-     */
-    public function getOrderStoreDate(OrderInterface $order): string
-    {
-        $date = $order->getCreatedAt();
-        $storeId = (int)$order->getStoreId();
-        return $this->orderDate->getStoreDate($date, $storeId);
+        return $this->localeDate->date(new \DateTime($createdAt));
     }
 
     /**
@@ -129,7 +112,7 @@ class OrderDetails implements ArgumentInterface
      * @param OrderInterface $order
      * @return string
      */
-    public function getOrderStoreName(OrderInterface $order): string
+    public function getOrderStoreName(OrderInterface $order)
     {
         $storeId = $order->getStoreId();
         if ($storeId === null) {
@@ -152,7 +135,7 @@ class OrderDetails implements ArgumentInterface
      *
      * @return bool
      */
-    public function isSingleStoreMode(): bool
+    public function isSingleStoreMode()
     {
         return $this->storeManager->isSingleStoreMode();
     }
@@ -163,7 +146,7 @@ class OrderDetails implements ArgumentInterface
      * @param OrderInterface $order
      * @return string
      */
-    public function getExtOrderId(OrderInterface $order): string
+    public function getExtOrderId(OrderInterface $order)
     {
         try {
             /** @var \Temando\Shipping\Api\Data\Order\OrderReferenceInterface $orderReference */
@@ -180,17 +163,8 @@ class OrderDetails implements ArgumentInterface
      *
      * @return string
      */
-    public function getViewActionUrl(string $orderId): string
+    public function getViewActionUrl($orderId)
     {
-        return $this->orderUrl->getViewActionUrl(['order_id' => $orderId]);
-    }
-
-    /**
-     * @param OrderInterface|Order $order
-     * @return bool
-     */
-    public function isPickupOrder(OrderInterface $order): bool
-    {
-        return $this->deliveryType->isPickupOrder($order);
+        return $this->urlBuilder->getUrl('sales/order/view', ['order_id' => $orderId]);
     }
 }

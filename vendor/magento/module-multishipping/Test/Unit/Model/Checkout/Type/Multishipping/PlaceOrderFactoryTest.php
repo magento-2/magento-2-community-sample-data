@@ -3,8 +3,6 @@
  * Copyright © Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
-declare(strict_types=1);
-
 namespace Magento\Multishipping\Test\Unit\Model\Checkout\Type\Multishipping;
 
 use Magento\Framework\ObjectManagerInterface;
@@ -13,9 +11,6 @@ use Magento\Multishipping\Model\Checkout\Type\Multishipping\PlaceOrderFactory;
 use Magento\Multishipping\Model\Checkout\Type\Multishipping\PlaceOrderInterface;
 use Magento\Multishipping\Model\Checkout\Type\Multishipping\PlaceOrderPool;
 
-/**
- * Tests Magento\Multishipping\Model\Checkout\Type\Multishipping\PlaceOrderFactory.
- */
 class PlaceOrderFactoryTest extends \PHPUnit\Framework\TestCase
 {
     /**
@@ -47,11 +42,6 @@ class PlaceOrderFactoryTest extends \PHPUnit\Framework\TestCase
         $this->placeOrderFactory = new PlaceOrderFactory($this->objectManager, $this->placeOrderPool);
     }
 
-    /**
-     * Checks instantiation of place order service.
-     *
-     * @return void
-     */
     public function testCreate()
     {
         $paymentProviderCode = 'code';
@@ -68,8 +58,6 @@ class PlaceOrderFactoryTest extends \PHPUnit\Framework\TestCase
 
     /**
      * Checks that default place order service is created when place order pull returns null.
-     *
-     * @return void
      */
     public function testCreateWithDefault()
     {

@@ -34,7 +34,7 @@ $product->setTypeId(\Magento\Catalog\Model\Product\Type::TYPE_SIMPLE)
         'qty' => 100,
         'is_qty_decimal' => 0,
         'is_in_stock' => 1,
-        'manage_stock' => 1,
+        'manage_stock' => 1
     ]);
 
 $productRepository->save($product);
@@ -65,7 +65,7 @@ $product->setTypeId(\Magento\Catalog\Model\Product\Type::TYPE_SIMPLE)
         'qty' => 50,
         'is_qty_decimal' => 0,
         'is_in_stock' => 1,
-        'manage_stock' => 1,
+        'manage_stock' => 1
     ]);
 
 $productRepository->save($product);
@@ -91,7 +91,7 @@ $product->setTypeId(\Magento\Catalog\Model\Product\Type::TYPE_SIMPLE)
         'qty' => 140,
         'is_qty_decimal' => 0,
         'is_in_stock' => 1,
-        'manage_stock' => 1,
+        'manage_stock' => 1
     ]);
 
 $productRepository->save($product);
@@ -122,7 +122,7 @@ $product->setTypeId(\Magento\Catalog\Model\Product\Type::TYPE_SIMPLE)
         'qty' => 20,
         'is_qty_decimal' => 0,
         'is_in_stock' => 1,
-        'manage_stock' => 1,
+        'manage_stock' => 1
     ]);
 
 $productRepository->save($product);
@@ -153,7 +153,7 @@ $product->setTypeId(\Magento\Catalog\Model\Product\Type::TYPE_SIMPLE)
         'qty' => 15,
         'is_qty_decimal' => 0,
         'is_in_stock' => 1,
-        'manage_stock' => 1,
+        'manage_stock' => 1
     ]);
 
 $productRepository->save($product);

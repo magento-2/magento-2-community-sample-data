@@ -31,7 +31,7 @@ class RoboFile extends \Robo\Tasks
      *
      * @param array $tests
      * @param array $opts
-     * @return \Robo\Result
+     * @return void
      */
     function generateTests(array $tests, $opts = [
         'config' => null,
@@ -56,7 +56,7 @@ class RoboFile extends \Robo\Tasks
             $baseCmd .= ' --force';
         }
 
-        return $this->taskExec($baseCmd)->args($tests)->run();
+        $this->taskExec($baseCmd)->args($tests)->run();
     }
 
     /**
@@ -64,7 +64,7 @@ class RoboFile extends \Robo\Tasks
      *
      * @param array $args
      * @throws Exception
-     * @return \Robo\Result
+     * @return void
      */
     function generateSuite(array $args)
     {
@@ -72,20 +72,20 @@ class RoboFile extends \Robo\Tasks
             throw new Exception("Please provide suite name(s) after generate:suite command");
         }
         $baseCmd = $this->getBaseCmd("generate:suite");
-        return $this->taskExec($baseCmd)->args($args)->run();
+        $this->taskExec($baseCmd)->args($args)->run();
     }
 
     /**
      * Run all Tests with the specified @group tag'.
      *
      * @param array $args
-     * @return \Robo\Result
+     * @return void
      */
     function group(array $args)
     {
         $args = array_merge($args, ['-k']);
         $baseCmd = $this->getBaseCmd("run:group");
-        return $this->taskExec($baseCmd)->args($args)->run();
+        $this->taskExec($baseCmd)->args($args)->run();
     }
 
     /**
@@ -111,52 +111,48 @@ class RoboFile extends \Robo\Tasks
     /**
      * Open the HTML Allure report - Allure v1.4.X
      *
-     * @return \Robo\Result
+     * @return void
      */
     function allure1Open()
     {
-        return $this->_exec('allure report open --report-dir tests'. DIRECTORY_SEPARATOR .'_output'. DIRECTORY_SEPARATOR .'allure-report'. DIRECTORY_SEPARATOR .'');
+        $this->_exec('allure report open --report-dir tests'. DIRECTORY_SEPARATOR .'_output'. DIRECTORY_SEPARATOR .'allure-report'. DIRECTORY_SEPARATOR .'');
     }
 
     /**
      * Open the HTML Allure report - Allure v2.3.X
      *
-     * @return \Robo\Result
+     * @return void
      */
     function allure2Open()
     {
-        return $this->_exec('allure open --port 0 tests'. DIRECTORY_SEPARATOR .'_output'. DIRECTORY_SEPARATOR .'allure-report'. DIRECTORY_SEPARATOR .'');
+        $this->_exec('allure open --port 0 tests'. DIRECTORY_SEPARATOR .'_output'. DIRECTORY_SEPARATOR .'allure-report'. DIRECTORY_SEPARATOR .'');
     }
 
     /**
      * Generate and open the HTML Allure report - Allure v1.4.X
      *
-     * @return \Robo\Result
+     * @return void
      */
     function allure1Report()
     {
         $result1 = $this->allure1Generate();
 
         if ($result1->wasSuccessful()) {
-            return $this->allure1Open();
-        } else {
-            return $result1;
+            $this->allure1Open();
         }
     }
 
     /**
      * Generate and open the HTML Allure report - Allure v2.3.X
      *
-     * @return \Robo\Result
+     * @return void
      */
     function allure2Report()
     {
         $result1 = $this->allure2Generate();
 
         if ($result1->wasSuccessful()) {
-            return $this->allure2Open();
-        } else {
-            return $result1;
+            $this->allure2Open();
         }
     }
 

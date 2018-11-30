@@ -47,14 +47,14 @@ class BaseUrlChecker
      */
     public function isEnabled()
     {
-        return (bool) $this->scopeConfig->getValue(
+        return (bool)$this->scopeConfig->getValue(
             'web/url/redirect_to_base',
             \Magento\Store\Model\ScopeInterface::SCOPE_STORE
         );
     }
 
     /**
-     * Checks whether frontend is completely secure or not.
+     * Cheks whether frontend is completely secure or not.
      *
      * @return bool
      */

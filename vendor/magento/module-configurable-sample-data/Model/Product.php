@@ -98,5 +98,16 @@ class Product
         chdir($currentPath);
 
         $this->eavConfig->clear();
+        $this->reindex();
+    }
+
+    /**
+     * Perform full reindex
+     */
+    private function reindex()
+    {
+        foreach ($this->indexerCollectionFactory->create()->getItems() as $indexer) {
+            $indexer->reindexAll();
+        }
     }
 }

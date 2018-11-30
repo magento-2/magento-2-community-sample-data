@@ -10,7 +10,6 @@ namespace Magento\Framework\Pricing\Price;
  * Class Pool
  *
  * @api
- * @since 100.0.2
  */
 class Pool implements \Iterator, \ArrayAccess
 {

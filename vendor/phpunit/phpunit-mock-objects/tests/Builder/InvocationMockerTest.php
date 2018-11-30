@@ -10,7 +10,7 @@
 
 use PHPUnit\Framework\TestCase;
 
-class InvocationMockerTest extends TestCase
+class Framework_MockObject_Builder_InvocationMockerTest extends TestCase
 {
     public function testWillReturnWithOneValue()
     {

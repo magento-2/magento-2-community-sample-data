@@ -5,7 +5,6 @@
 namespace Temando\Shipping\CustomerData;
 
 use Magento\Customer\CustomerData\SectionSourceInterface;
-use Magento\Framework\Exception\NoSuchEntityException;
 use Magento\Store\Model\StoreManagerInterface;
 use Temando\Shipping\Model\Checkout\Schema\CheckoutField;
 use Temando\Shipping\Model\Checkout\Schema\CheckoutFieldsSchema;
@@ -58,13 +57,7 @@ class CheckoutFields implements SectionSourceInterface
      */
     public function getSectionData()
     {
-        try {
-            $storeId = $this->storeManager->getStore()->getId();
-        } catch (NoSuchEntityException $exception) {
-            $storeId = null;
-        }
-
-        if (!$this->moduleConfig->isEnabled($storeId)) {
+        if (!$this->moduleConfig->isEnabled($this->storeManager->getStore()->getId())) {
             return ['fields' => []];
         }
 

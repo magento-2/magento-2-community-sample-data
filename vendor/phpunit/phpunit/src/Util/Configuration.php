@@ -170,9 +170,6 @@ class Configuration
         $this->xpath    = new DOMXPath($this->document);
     }
 
-    /**
-     * @codeCoverageIgnore
-     */
     final private function __clone()
     {
     }
@@ -223,14 +220,16 @@ class Configuration
     {
         $addUncoveredFilesFromWhitelist     = true;
         $processUncoveredFilesFromWhitelist = false;
-        $includeDirectory                   = [];
-        $includeFile                        = [];
-        $excludeDirectory                   = [];
-        $excludeFile                        = [];
 
         $tmp = $this->xpath->query('filter/whitelist');
 
-        if ($tmp->length === 1) {
+        if ($tmp->length == 0) {
+            return [
+                'whitelist' => []
+            ];
+        }
+
+        if ($tmp->length == 1) {
             if ($tmp->item(0)->hasAttribute('addUncoveredFilesFromWhitelist')) {
                 $addUncoveredFilesFromWhitelist = $this->getBoolean(
                     (string) $tmp->item(0)->getAttribute(
@@ -248,22 +247,6 @@ class Configuration
                     false
                 );
             }
-
-            $includeDirectory = $this->readFilterDirectories(
-                'filter/whitelist/directory'
-            );
-
-            $includeFile = $this->readFilterFiles(
-                'filter/whitelist/file'
-            );
-
-            $excludeDirectory = $this->readFilterDirectories(
-                'filter/whitelist/exclude/directory'
-            );
-
-            $excludeFile = $this->readFilterFiles(
-                'filter/whitelist/exclude/file'
-            );
         }
 
         return [
@@ -271,12 +254,20 @@ class Configuration
                 'addUncoveredFilesFromWhitelist'     => $addUncoveredFilesFromWhitelist,
                 'processUncoveredFilesFromWhitelist' => $processUncoveredFilesFromWhitelist,
                 'include'                            => [
-                    'directory' => $includeDirectory,
-                    'file'      => $includeFile
+                    'directory' => $this->readFilterDirectories(
+                        'filter/whitelist/directory'
+                    ),
+                    'file' => $this->readFilterFiles(
+                        'filter/whitelist/file'
+                    )
                 ],
                 'exclude' => [
-                    'directory' => $excludeDirectory,
-                    'file'      => $excludeFile
+                    'directory' => $this->readFilterDirectories(
+                        'filter/whitelist/exclude/directory'
+                    ),
+                    'file' => $this->readFilterFiles(
+                        'filter/whitelist/exclude/file'
+                    )
                 ]
             ]
         ];
@@ -464,14 +455,14 @@ class Configuration
             $name  = (string) $ini->getAttribute('name');
             $value = (string) $ini->getAttribute('value');
 
-            $result['ini'][$name]['value'] = $value;
+            $result['ini'][$name] = $value;
         }
 
         foreach ($this->xpath->query('php/const') as $const) {
             $name  = (string) $const->getAttribute('name');
             $value = (string) $const->getAttribute('value');
 
-            $result['const'][$name]['value'] = $this->getBoolean($value, $value);
+            $result['const'][$name] = $this->getBoolean($value, $value);
         }
 
         foreach (['var', 'env', 'post', 'get', 'cookie', 'server', 'files', 'request'] as $array) {
@@ -479,23 +470,16 @@ class Configuration
                 $name     = (string) $var->getAttribute('name');
                 $value    = (string) $var->getAttribute('value');
                 $verbatim = false;
-                $force    = false;
 
                 if ($var->hasAttribute('verbatim')) {
-                    $verbatim                          = $this->getBoolean($var->getAttribute('verbatim'), false);
-                    $result[$array][$name]['verbatim'] = $verbatim;
-                }
-
-                if ($var->hasAttribute('force')) {
-                    $force                          = $this->getBoolean($var->getAttribute('force'), false);
-                    $result[$array][$name]['force'] = $force;
+                    $verbatim = $this->getBoolean($var->getAttribute('verbatim'), false);
                 }
 
                 if (!$verbatim) {
                     $value = $this->getBoolean($value, $value);
                 }
 
-                $result[$array][$name]['value'] = $value;
+                $result[$array][$name] = $value;
             }
         }
 
@@ -518,19 +502,15 @@ class Configuration
             );
         }
 
-        foreach ($configuration['ini'] as $name => $data) {
-            $value = $data['value'];
-
+        foreach ($configuration['ini'] as $name => $value) {
             if (\defined($value)) {
-                $value = (string) \constant($value);
+                $value = \constant($value);
             }
 
             \ini_set($name, $value);
         }
 
-        foreach ($configuration['const'] as $name => $data) {
-            $value = $data['value'];
-
+        foreach ($configuration['const'] as $name => $value) {
             if (!\defined($name)) {
                 \define($name, $value);
             }
@@ -541,40 +521,27 @@ class Configuration
             switch ($array) {
                 case 'var':
                     $target = &$GLOBALS;
-
                     break;
 
                 case 'server':
                     $target = &$_SERVER;
-
                     break;
 
                 default:
                     $target = &$GLOBALS['_' . \strtoupper($array)];
-
                     break;
             }
 
-            foreach ($configuration[$array] as $name => $data) {
-                $target[$name] = $data['value'];
+            foreach ($configuration[$array] as $name => $value) {
+                $target[$name] = $value;
             }
         }
 
-        foreach ($configuration['env'] as $name => $data) {
-            $value = $data['value'];
-            $force = isset($data['force']) ? $data['force'] : false;
-
-            if ($force || false === \getenv($name)) {
+        foreach ($configuration['env'] as $name => $value) {
+            if (false === \getenv($name)) {
                 \putenv("{$name}={$value}");
             }
-
-            $value = \getenv($name);
-
             if (!isset($_ENV[$name])) {
-                $_ENV[$name] = $value;
-            }
-
-            if (true === $force) {
                 $_ENV[$name] = $value;
             }
         }

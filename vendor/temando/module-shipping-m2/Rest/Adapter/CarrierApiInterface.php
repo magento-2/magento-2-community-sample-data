@@ -5,11 +5,11 @@
 
 namespace Temando\Shipping\Rest\Adapter;
 
-use Temando\Shipping\Rest\Exception\AdapterException;
 use Temando\Shipping\Rest\Request\ItemRequestInterface;
 use Temando\Shipping\Rest\Request\ListRequestInterface;
-use Temando\Shipping\Rest\Response\DataObject\CarrierConfiguration;
-use Temando\Shipping\Rest\Response\DataObject\CarrierIntegration;
+use Temando\Shipping\Rest\Response\Type\CarrierIntegrationResponseType;
+use Temando\Shipping\Rest\Response\Type\CarrierConfigurationResponseType;
+use Temando\Shipping\Rest\Exception\AdapterException;
 
 /**
  * The Temando Carriers API interface defines the supported subset of operations
@@ -25,7 +25,7 @@ interface CarrierApiInterface
     /**
      * @param ListRequestInterface $request
      *
-     * @return CarrierConfiguration[]
+     * @return CarrierConfigurationResponseType[]
      * @throws AdapterException
      */
     public function getCarrierConfigurations(ListRequestInterface $request);
@@ -33,7 +33,7 @@ interface CarrierApiInterface
     /**
      * @param ListRequestInterface $request
      *
-     * @return CarrierIntegration[]
+     * @return CarrierIntegrationResponseType[]
      * @throws AdapterException
      */
     public function getCarrierIntegrations(ListRequestInterface $request);

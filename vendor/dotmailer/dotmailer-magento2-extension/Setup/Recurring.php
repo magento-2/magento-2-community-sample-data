@@ -48,7 +48,7 @@ class Recurring implements InstallSchemaInterface
             $installer,
             'catalog_product_entity',
             'entity_id',
-            Schema::EMAIL_CATALOG_TABLE,
+            'email_catalog',
             'product_id'
         );
 
@@ -66,7 +66,7 @@ class Recurring implements InstallSchemaInterface
     private function checkAndCreateAbandonedCart($setup, $context)
     {
         $connection = $setup->getConnection();
-        $abandonedCartTableName = $setup->getTable(Schema::EMAIL_ABANDONED_CART_TABLE);
+        $abandonedCartTableName = $setup->getTable('email_abandoned_cart');
 
         if (version_compare($context->getVersion(), '2.3.8', '>') &&
             ! $connection->isTableExists($abandonedCartTableName)

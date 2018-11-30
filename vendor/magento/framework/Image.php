@@ -261,7 +261,6 @@ class Image
      */
     public function setImageBackgroundColor($color)
     {
-        /** @noinspection PhpUndefinedFieldInspection */
         $this->_adapter->imageBackgroundColor = intval($color);
     }
 

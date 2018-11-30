@@ -7,11 +7,9 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-namespace PHPUnit\Framework\MockObject\Matcher;
 
 use PHPUnit\Framework\Constraint\Constraint;
 use PHPUnit\Framework\Constraint\IsEqual;
-use PHPUnit\Framework\MockObject\Invocation as BaseInvocation;
 use PHPUnit\Util\InvalidArgumentHelper;
 
 /**
@@ -21,23 +19,22 @@ use PHPUnit\Util\InvalidArgumentHelper;
  * the defined constraint $constraint. If the constraint is met it will return
  * true in matches().
  */
-class MethodName extends StatelessInvocation
+class PHPUnit_Framework_MockObject_Matcher_MethodName extends PHPUnit_Framework_MockObject_Matcher_StatelessInvocation
 {
     /**
      * @var Constraint
      */
-    private $constraint;
+    protected $constraint;
 
     /**
      * @param  Constraint|string
      *
      * @throws Constraint
-     * @throws \PHPUnit\Framework\Exception
      */
     public function __construct($constraint)
     {
         if (!$constraint instanceof Constraint) {
-            if (!\is_string($constraint)) {
+            if (!is_string($constraint)) {
                 throw InvalidArgumentHelper::factory(1, 'string');
             }
 
@@ -62,12 +59,12 @@ class MethodName extends StatelessInvocation
     }
 
     /**
-     * @param BaseInvocation $invocation
+     * @param PHPUnit_Framework_MockObject_Invocation $invocation
      *
      * @return bool
      */
-    public function matches(BaseInvocation $invocation)
+    public function matches(PHPUnit_Framework_MockObject_Invocation $invocation)
     {
-        return $this->constraint->evaluate($invocation->getMethodName(), '', true);
+        return $this->constraint->evaluate($invocation->methodName, '', true);
     }
 }

@@ -9,7 +9,7 @@ namespace Magento\Catalog\Test\Unit\Controller\Adminhtml\Product\Initialization\
 use Magento\Catalog\Controller\Adminhtml\Product\Initialization\Helper\AttributeFilter;
 use Magento\Catalog\Model\Product;
 use Magento\Catalog\Model\ResourceModel\Eav\Attribute;
-use PHPUnit_Framework_MockObject_MockObject as MockObject;
+use PHPUnit_Framework_MockObject_MockObject;
 
 class AttributeFilterTest extends \PHPUnit\Framework\TestCase
 {
@@ -19,12 +19,12 @@ class AttributeFilterTest extends \PHPUnit\Framework\TestCase
     protected $model;
 
     /**
-     * @var MockObject
+     * @var PHPUnit_Framework_MockObject_MockObject
      */
     protected $objectManagerMock;
 
     /**
-     * @var Product|MockObject
+     * @var Product|PHPUnit_Framework_MockObject_MockObject
      */
     protected $productMock;
 
@@ -47,7 +47,7 @@ class AttributeFilterTest extends \PHPUnit\Framework\TestCase
         $expectedProductData,
         $initialProductData
     ) {
-        /** @var MockObject | Product $productMockMap */
+        /** @var PHPUnit_Framework_MockObject_MockObject | Product $productMockMap */
         $productMockMap = $this->getMockBuilder(Product::class)
             ->disableOriginalConstructor()
             ->setMethods(['getData', 'getAttributes'])
@@ -82,15 +82,15 @@ class AttributeFilterTest extends \PHPUnit\Framework\TestCase
                     'name' => 'testName',
                     'sku' => 'testSku',
                     'price' => '100',
-                    'description' => '',
+                    'description' => ''
                 ],
                 'useDefaults' => [],
                 'expectedProductData' => [
                     'name' => 'testName',
                     'sku' => 'testSku',
-                    'price' => '100',
+                    'price' => '100'
                 ],
-                'initialProductData' => [],
+                'initialProductData' => []
             ],
             'update_product_without_use_defaults' => [
                 'productData' => [
@@ -98,21 +98,21 @@ class AttributeFilterTest extends \PHPUnit\Framework\TestCase
                     'sku' => 'testSku2',
                     'price' => '101',
                     'description' => '',
-                    'special_price' => null,
+                    'special_price' => null
                 ],
                 'useDefaults' => [],
                 'expectedProductData' => [
                     'name' => 'testName2',
                     'sku' => 'testSku2',
                     'price' => '101',
-                    'special_price' => null,
+                    'special_price' => null
                 ],
                 'initialProductData' => [
                     ['name', 'testName2'],
                     ['sku', 'testSku2'],
                     ['price', '101'],
-                    ['special_price', null],
-                ],
+                    ['special_price', null]
+                ]
             ],
             'update_product_without_use_defaults_2' => [
                 'productData' => [
@@ -120,7 +120,7 @@ class AttributeFilterTest extends \PHPUnit\Framework\TestCase
                     'sku' => 'testSku2',
                     'price' => '101',
                     'description' => 'updated description',
-                    'special_price' => null,
+                    'special_price' => null
                 ],
                 'useDefaults' => [],
                 'expectedProductData' => [
@@ -128,14 +128,14 @@ class AttributeFilterTest extends \PHPUnit\Framework\TestCase
                     'sku' => 'testSku2',
                     'price' => '101',
                     'description' => 'updated description',
-                    'special_price' => null,
+                    'special_price' => null
                 ],
                 'initialProductData' => [
                     ['name', 'testName2'],
                     ['sku', 'testSku2'],
                     ['price', '101'],
-                    ['special_price', null],
-                ],
+                    ['special_price', null]
+                ]
             ],
             'update_product_with_use_defaults' => [
                 'productData' => [
@@ -143,25 +143,25 @@ class AttributeFilterTest extends \PHPUnit\Framework\TestCase
                     'sku' => 'testSku2',
                     'price' => '101',
                     'description' => '',
-                    'special_price' => null,
+                    'special_price' => null
                 ],
                 'useDefaults' => [
-                    'description' => '0',
+                    'description' => '0'
                 ],
                 'expectedProductData' => [
                     'name' => 'testName2',
                     'sku' => 'testSku2',
                     'price' => '101',
                     'special_price' => null,
-                    'description' => '',
+                    'description' => ''
                 ],
                 'initialProductData' => [
                     ['name', 'testName2'],
                     ['sku', 'testSku2'],
                     ['price', '101'],
                     ['special_price', null],
-                    ['description', 'descr text'],
-                ],
+                    ['description', 'descr text']
+                ]
             ],
             'update_product_with_use_defaults_2' => [
                 'requestProductData' => [
@@ -169,24 +169,24 @@ class AttributeFilterTest extends \PHPUnit\Framework\TestCase
                     'sku' => 'testSku3',
                     'price' => '103',
                     'description' => 'descr modified',
-                    'special_price' => '100',
+                    'special_price' => '100'
                 ],
                 'useDefaults' => [
-                    'description' => '0',
+                    'description' => '0'
                 ],
                 'expectedProductData' => [
                     'name' => 'testName3',
                     'sku' => 'testSku3',
                     'price' => '103',
                     'special_price' => '100',
-                    'description' => 'descr modified',
+                    'description' => 'descr modified'
                 ],
                 'initialProductData' => [
                     ['name', null, 'testName2'],
                     ['sku', null, 'testSku2'],
                     ['price', null, '101'],
-                    ['description', null, 'descr text'],
-                ],
+                    ['description', null, 'descr text']
+                ]
             ],
             'update_product_with_use_defaults_3' => [
                 'requestProductData' => [
@@ -197,21 +197,21 @@ class AttributeFilterTest extends \PHPUnit\Framework\TestCase
                     'description' => 'descr modified',
                 ],
                 'useDefaults' => [
-                    'description' => '1',
+                    'description' => '1'
                 ],
                 'expectedProductData' => [
                     'name' => 'testName3',
                     'sku' => 'testSku3',
                     'price' => '103',
                     'special_price' => '100',
-                    'description' => false,
+                    'description' => false
                 ],
                 'initialProductData' => [
                     ['name', null, 'testName2'],
                     ['sku', null, 'testSku2'],
                     ['price', null, '101'],
-                    ['description', null, 'descr text'],
-                ],
+                    ['description', null, 'descr text']
+                ]
             ],
         ];
     }
@@ -225,7 +225,7 @@ class AttributeFilterTest extends \PHPUnit\Framework\TestCase
         $returnArray = [];
         foreach ($useDefaults as $attributecode => $isDefault) {
             if ($isDefault === '1') {
-                /** @var Attribute | MockObject $attribute */
+                /** @var Attribute | PHPUnit_Framework_MockObject_MockObject $attribute */
                 $attribute = $this->getMockBuilder(Attribute::class)
                     ->disableOriginalConstructor()
                     ->getMock();

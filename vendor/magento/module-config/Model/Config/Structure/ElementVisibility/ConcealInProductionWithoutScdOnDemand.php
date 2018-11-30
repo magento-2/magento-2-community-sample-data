@@ -18,7 +18,6 @@ use Magento\Framework\Config\ConfigOptionsListConstants as Constants;
  * @see \Magento\Config\Model\Config\Structure\ElementVisibility\ConcealInProduction
  *
  * @api
- * @since 101.0.6
  */
 class ConcealInProductionWithoutScdOnDemand implements ElementVisibilityInterface
 {
@@ -51,7 +50,6 @@ class ConcealInProductionWithoutScdOnDemand implements ElementVisibilityInterfac
 
     /**
      * @inheritdoc
-     * @since 101.0.6
      */
     public function isHidden($path): bool
     {
@@ -63,7 +61,6 @@ class ConcealInProductionWithoutScdOnDemand implements ElementVisibilityInterfac
 
     /**
      * @inheritdoc
-     * @since 101.0.6
      */
     public function isDisabled($path): bool
     {

@@ -423,8 +423,8 @@ class FunctionCommentSniff extends PEARFunctionCommentSniff
                 if ($suggestedTypeHint !== '' && isset($realParams[$pos]) === true) {
                     $typeHint = $realParams[$pos]['type_hint'];
 
-                    // Remove namespace prefixes when comparing.
-                    $compareTypeHint = substr($suggestedTypeHint, (strlen($typeHint) * -1));
+                    // Remove namespace prefixes.
+                    $suggestedTypeHint = substr($suggestedTypeHint, (strlen($typeHint) * -1));
 
                     if ($typeHint === '') {
                         $error = 'Type hint "%s" missing for %s';
@@ -443,7 +443,7 @@ class FunctionCommentSniff extends PEARFunctionCommentSniff
                         }
 
                         $phpcsFile->addError($error, $stackPtr, $errorCode, $data);
-                    } else if ($typeHint !== $compareTypeHint && $typeHint !== '?'.$compareTypeHint) {
+                    } else if ($typeHint !== $suggestedTypeHint && $typeHint !== '?'.$suggestedTypeHint) {
                         $error = 'Expected type hint "%s"; found "%s" for %s';
                         $data  = [
                             $suggestedTypeHint,

@@ -62,14 +62,13 @@ class InfoTest extends \PHPUnit\Framework\TestCase
             ->disableOriginalConstructor()
             ->getMock();
         $this->trackFactory = $this->getMockBuilder(\Magento\Shipping\Model\Order\TrackFactory::class)
-           ->disableOriginalConstructor()
+            ->disableOriginalConstructor()
             ->setMethods(['create'])
             ->getMock();
         $this->trackCollectionFactory = $this->getMockBuilder(CollectionFactory::class)
             ->disableOriginalConstructor()
             ->setMethods(['create'])
             ->getMock();
-
         $objectManagerHelper = new ObjectManager($this);
         $this->info = $objectManagerHelper->getObject(
             Info::class,
@@ -103,7 +102,6 @@ class InfoTest extends \PHPUnit\Framework\TestCase
             ->disableOriginalConstructor()
             ->setMethods(['getIterator'])
             ->getMock();
-
         $order = $this->getMockBuilder(\Magento\Sales\Model\Order::class)
             ->disableOriginalConstructor()
             ->setMethods(['load', 'getId', 'getProtectCode', 'getShipmentsCollection'])
@@ -112,7 +110,6 @@ class InfoTest extends \PHPUnit\Framework\TestCase
         $order->expects($this->atLeastOnce())->method('getId')->willReturn($decodedHash['id']);
         $order->expects($this->atLeastOnce())->method('getProtectCode')->willReturn($decodedHash['hash']);
         $order->expects($this->atLeastOnce())->method('getShipmentsCollection')->willReturn($shipmentCollection);
-        $this->orderFactory->expects($this->atLeastOnce())->method('create')->willReturn($order);
 
         $shipment = $this->getMockBuilder(\Magento\Sales\Model\Order\Shipment::class)
             ->disableOriginalConstructor()
@@ -120,8 +117,9 @@ class InfoTest extends \PHPUnit\Framework\TestCase
             ->getMock();
         $shipment->expects($this->atLeastOnce())->method('getIncrementId')->willReturn($shipmentIncrementId);
         $shipment->expects($this->atLeastOnce())->method('getId')->willReturn($shipmentId);
-        $shipmentCollection->expects($this->any())->method('getIterator')->willReturn(new \ArrayIterator([$shipment]));
 
+        $shipmentCollection->expects($this->any())->method('getIterator')->willReturn(new \ArrayIterator([$shipment]));
+        $this->orderFactory->expects($this->atLeastOnce())->method('create')->willReturn($order);
         $track = $this->getMockBuilder(\Magento\Sales\Model\Order\Shipment\Track::class)
             ->disableOriginalConstructor()
             ->setMethods(['setShipment', 'getNumberDetail'])
@@ -139,10 +137,9 @@ class InfoTest extends \PHPUnit\Framework\TestCase
         $trackCollection->expects($this->atLeastOnce())
             ->method('getIterator')
             ->willReturn(new \ArrayIterator([$track]));
-
         $this->trackCollectionFactory->expects($this->atLeastOnce())->method('create')->willReturn($trackCollection);
-        $this->info->loadByHash($hash);
 
+        $this->info->loadByHash($hash);
         $this->assertEquals([$shipmentIncrementId => [$trackDetails]], $this->info->getTrackingInfo());
     }
 
@@ -154,20 +151,20 @@ class InfoTest extends \PHPUnit\Framework\TestCase
             'id' => 1,
             'hash' => '0',
         ];
+
         $this->helper->expects($this->atLeastOnce())
             ->method('decodeTrackingHash')
             ->with($hash)
             ->willReturn($decodedHash);
         $order = $this->getMockBuilder(\Magento\Sales\Model\Order::class)
             ->disableOriginalConstructor()
-            ->setMethods(['load', 'getId', 'getProtectCode'])
+            ->setMethods(['load', 'getId', 'getProtectCode', 'getShipmentsCollection'])
             ->getMock();
         $order->expects($this->atLeastOnce())->method('load')->with($decodedHash['id'])->willReturnSelf();
         $order->expects($this->atLeastOnce())->method('getId')->willReturn($decodedHash['id']);
         $order->expects($this->atLeastOnce())->method('getProtectCode')->willReturn('0e123123123');
         $this->orderFactory->expects($this->atLeastOnce())->method('create')->willReturn($order);
         $this->info->loadByHash($hash);
-
         $this->assertEmpty($this->info->getTrackingInfo());
     }
 
@@ -218,7 +215,6 @@ class InfoTest extends \PHPUnit\Framework\TestCase
         $this->trackCollectionFactory->expects($this->atLeastOnce())->method('create')->willReturn($trackCollection);
 
         $this->info->loadByHash($hash);
-
         $this->assertEquals([$shipmentIncrementId => [$trackDetails]], $this->info->getTrackingInfo());
     }
 
@@ -230,13 +226,14 @@ class InfoTest extends \PHPUnit\Framework\TestCase
             'id' => 1,
             'hash' => '0',
         ];
+
         $this->helper->expects($this->atLeastOnce())
             ->method('decodeTrackingHash')
             ->with($hash)
             ->willReturn($decodedHash);
         $shipment = $this->getMockBuilder(\Magento\Sales\Model\Order\Shipment::class)
             ->disableOriginalConstructor()
-            ->setMethods(['getEntityId', 'getProtectCode'])
+            ->setMethods(['getEntityId', 'getProtectCode', 'getIncrementId', 'getId'])
             ->getMock();
         $shipment->expects($this->atLeastOnce())->method('getEntityId')->willReturn(3);
         $shipment->expects($this->atLeastOnce())->method('getProtectCode')->willReturn('0e123123123');
@@ -246,30 +243,18 @@ class InfoTest extends \PHPUnit\Framework\TestCase
             ->willReturn($shipment);
 
         $this->info->loadByHash($hash);
-
         $this->assertEmpty($this->info->getTrackingInfo());
     }
 
-    /**
-     * @dataProvider loadByHashWithTrackIdDataProvider
-     * @param string $protectCodeHash
-     * @param string $protectCode
-     * @param string $numberDetail
-     * @param array $trackDetails
-     * @return void
-     */
-    public function testLoadByHashWithTrackId(
-        string $protectCodeHash,
-        string $protectCode,
-        string $numberDetail,
-        array $trackDetails
-    ) {
+    public function testLoadByHashWithTrackId()
+    {
         $hash = base64_encode('hash');
         $decodedHash = [
             'key' => 'track_id',
             'id' => 1,
-            'hash' => $protectCodeHash,
-            ];
+            'hash' => 'protected_code',
+        ];
+        $trackDetails = 'track_details';
         $this->helper->expects($this->atLeastOnce())
             ->method('decodeTrackingHash')
             ->with($hash)
@@ -280,33 +265,36 @@ class InfoTest extends \PHPUnit\Framework\TestCase
             ->getMock();
         $track->expects($this->atLeastOnce())->method('load')->with($decodedHash['id'])->willReturnSelf();
         $track->expects($this->atLeastOnce())->method('getId')->willReturn($decodedHash['id']);
-        $track->expects($this->atLeastOnce())->method('getProtectCode')->willReturn($protectCode);
-        $track->expects($this->any())->method('getNumberDetail')->willReturn($numberDetail);
-
+        $track->expects($this->atLeastOnce())->method('getProtectCode')->willReturn($decodedHash['hash']);
+        $track->expects($this->atLeastOnce())->method('getNumberDetail')->willReturn($trackDetails);
         $this->trackFactory->expects($this->atLeastOnce())->method('create')->willReturn($track);
-        $this->info->loadByHash($hash);
 
-        $this->assertEquals($trackDetails, $this->info->getTrackingInfo());
+        $this->info->loadByHash($hash);
+        $this->assertEquals([[$trackDetails]], $this->info->getTrackingInfo());
     }
 
-    /**
-     * @return array
-     */
-    public function loadByHashWithTrackIdDataProvider()
+    public function testLoadByHashWithWrongCode()
     {
-        return [
-            [
-                'hash' => 'protected_code',
-                'protect_code' => 'protected_code',
-                'number_detail' => 'track_details',
-                'track_details' => [['track_details']],
-            ],
-            [
-                'hash' => '0',
-                'protect_code' => '0e6640',
-                'number_detail' => '',
-                'track_details' => [],
-            ],
+        $hash = base64_encode('hash');
+        $decodedHash = [
+            'key' => 'track_id',
+            'id' => 1,
+            'hash' => 'protected_code',
         ];
+        $this->helper->expects($this->atLeastOnce())
+            ->method('decodeTrackingHash')
+            ->with($hash)
+            ->willReturn($decodedHash);
+        $track = $this->getMockBuilder(\Magento\Sales\Model\Order\Shipment\Track::class)
+            ->disableOriginalConstructor()
+            ->setMethods(['load', 'getId', 'getProtectCode', 'getNumberDetail'])
+            ->getMock();
+        $track->expects($this->atLeastOnce())->method('load')->with($decodedHash['id'])->willReturnSelf();
+        $track->expects($this->atLeastOnce())->method('getId')->willReturn($decodedHash['id']);
+        $track->expects($this->atLeastOnce())->method('getProtectCode')->willReturn('0e123123123');
+        $this->trackFactory->expects($this->atLeastOnce())->method('create')->willReturn($track);
+
+        $this->info->loadByHash($hash);
+        $this->assertEmpty($this->info->getTrackingInfo());
     }
 }

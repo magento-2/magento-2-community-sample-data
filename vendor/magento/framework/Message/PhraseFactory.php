@@ -9,7 +9,7 @@ use Magento\Framework\Phrase;
 
 /**
  * Factory to combine several messages into one
- * @deprecated 101.0.0
+ * @deprecated 100.2.0
  */
 class PhraseFactory
 {

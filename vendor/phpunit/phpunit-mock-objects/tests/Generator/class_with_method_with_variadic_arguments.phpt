@@ -1,5 +1,5 @@
 --TEST--
-\PHPUnit\Framework\MockObject\Generator::generate('ClassWithMethodWithVariadicArguments', array(), 'MockFoo', true, true)
+PHPUnit_Framework_MockObject_Generator::generate('ClassWithMethodWithVariadicArguments', array(), 'MockFoo', true, true)
 --FILE--
 <?php
 class ClassWithMethodWithVariadicArguments
@@ -11,7 +11,7 @@ class ClassWithMethodWithVariadicArguments
 
 require __DIR__ . '/../../vendor/autoload.php';
 
-$generator = new \PHPUnit\Framework\MockObject\Generator;
+$generator = new PHPUnit_Framework_MockObject_Generator;
 
 $mock = $generator->generate(
     'ClassWithMethodWithVariadicArguments',
@@ -24,7 +24,7 @@ $mock = $generator->generate(
 print $mock['code'];
 ?>
 --EXPECTF--
-class MockFoo extends ClassWithMethodWithVariadicArguments implements PHPUnit\Framework\MockObject\MockObject
+class MockFoo extends ClassWithMethodWithVariadicArguments implements PHPUnit_Framework_MockObject_MockObject
 {
     private $__phpunit_invocationMocker;
     private $__phpunit_originalObject;
@@ -49,7 +49,7 @@ class MockFoo extends ClassWithMethodWithVariadicArguments implements PHPUnit\Fr
         }
 
         $result = $this->__phpunit_getInvocationMocker()->invoke(
-            new \PHPUnit\Framework\MockObject\Invocation\ObjectInvocation(
+            new PHPUnit_Framework_MockObject_Invocation_Object(
                 'ClassWithMethodWithVariadicArguments', 'methodWithVariadicArguments', $arguments, '', $this, true
             )
         );
@@ -57,14 +57,14 @@ class MockFoo extends ClassWithMethodWithVariadicArguments implements PHPUnit\Fr
         return $result;
     }
 
-    public function expects(\PHPUnit\Framework\MockObject\Matcher\Invocation $matcher)
+    public function expects(PHPUnit_Framework_MockObject_Matcher_Invocation $matcher)
     {
         return $this->__phpunit_getInvocationMocker()->expects($matcher);
     }
 
     public function method()
     {
-        $any = new \PHPUnit\Framework\MockObject\Matcher\AnyInvokedCount;
+        $any = new PHPUnit_Framework_MockObject_Matcher_AnyInvokedCount;
         $expects = $this->expects($any);
         return call_user_func_array(array($expects, 'method'), func_get_args());
     }
@@ -77,7 +77,7 @@ class MockFoo extends ClassWithMethodWithVariadicArguments implements PHPUnit\Fr
     public function __phpunit_getInvocationMocker()
     {
         if ($this->__phpunit_invocationMocker === null) {
-            $this->__phpunit_invocationMocker = new \PHPUnit\Framework\MockObject\InvocationMocker($this->__phpunit_configurable);
+            $this->__phpunit_invocationMocker = new PHPUnit_Framework_MockObject_InvocationMocker($this->__phpunit_configurable);
         }
 
         return $this->__phpunit_invocationMocker;

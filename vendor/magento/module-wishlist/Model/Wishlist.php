@@ -3,7 +3,6 @@
  * Copyright © Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
-declare(strict_types=1);
 
 namespace Magento\Wishlist\Model;
 
@@ -217,9 +216,11 @@ class Wishlist extends \Magento\Framework\Model\AbstractModel implements \Magent
     public function getName()
     {
         $name = $this->_getData('name');
+
         if ($name === null || !strlen($name)) {
             return $this->_wishlistData->getDefaultWishlistName();
         }
+
         return $name;
     }
 
@@ -380,7 +381,6 @@ class Wishlist extends \Magento\Framework\Model\AbstractModel implements \Magent
 
     /**
      * Adds new product to wishlist.
-     *
      * Returns new item or string on error.
      *
      * @param int|\Magento\Catalog\Model\Product $product

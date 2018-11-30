@@ -10,8 +10,8 @@
 
 namespace PHPUnit\Util;
 
-use PHPUnit\Framework\Error\Deprecated;
 use PHPUnit\Framework\Error\Error;
+use PHPUnit\Framework\Error\Deprecated;
 use PHPUnit\Framework\Error\Notice;
 use PHPUnit\Framework\Error\Warning;
 
@@ -50,7 +50,7 @@ class ErrorHandler
 
         self::$errorStack[] = [$errno, $errstr, $errfile, $errline];
 
-        $trace = \debug_backtrace();
+        $trace = \debug_backtrace(false);
         \array_shift($trace);
 
         foreach ($trace as $frame) {

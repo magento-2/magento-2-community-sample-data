@@ -9,7 +9,6 @@ namespace Magento\Framework\Mail\Template;
  * High-level interface for mail templates data that hides format from the client code
  *
  * @api
- * @since 100.0.2
  */
 interface ConfigInterface
 {

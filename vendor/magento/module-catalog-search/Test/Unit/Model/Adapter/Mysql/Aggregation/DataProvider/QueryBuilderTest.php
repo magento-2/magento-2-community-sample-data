@@ -20,8 +20,6 @@ use Magento\Store\Model\Store;
  * Test for Magento\CatalogSearch\Model\Adapter\Mysql\Aggregation\DataProvider\QueryBuilder.
  *
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
- * @deprecated
- * @see \Magento\ElasticSearch
  */
 class QueryBuilderTest extends \PHPUnit\Framework\TestCase
 {

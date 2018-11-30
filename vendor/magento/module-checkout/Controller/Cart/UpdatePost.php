@@ -1,18 +1,14 @@
 <?php
 /**
+ *
  * Copyright © Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Checkout\Controller\Cart;
 
 use Magento\Checkout\Model\Cart\RequestQuantityProcessor;
-use Magento\Framework\App\Action\HttpPostActionInterface;
-use Magento\Framework\App\Action\HttpGetActionInterface;
 
-/**
- * Class UpdatePost
- */
-class UpdatePost extends \Magento\Checkout\Controller\Cart implements HttpPostActionInterface, HttpGetActionInterface
+class UpdatePost extends \Magento\Checkout\Controller\Cart
 {
     /**
      * @var RequestQuantityProcessor
@@ -59,9 +55,9 @@ class UpdatePost extends \Magento\Checkout\Controller\Cart implements HttpPostAc
         try {
             $this->cart->truncate()->save();
         } catch (\Magento\Framework\Exception\LocalizedException $exception) {
-            $this->messageManager->addErrorMessage($exception->getMessage());
+            $this->messageManager->addError($exception->getMessage());
         } catch (\Exception $exception) {
-            $this->messageManager->addExceptionMessage($exception, __('We can\'t update the shopping cart.'));
+            $this->messageManager->addException($exception, __('We can\'t update the shopping cart.'));
         }
     }
 
@@ -83,11 +79,11 @@ class UpdatePost extends \Magento\Checkout\Controller\Cart implements HttpPostAc
                 $this->cart->updateItems($cartData)->save();
             }
         } catch (\Magento\Framework\Exception\LocalizedException $e) {
-            $this->messageManager->addErrorMessage(
+            $this->messageManager->addError(
                 $this->_objectManager->get(\Magento\Framework\Escaper::class)->escapeHtml($e->getMessage())
             );
         } catch (\Exception $e) {
-            $this->messageManager->addExceptionMessage($e, __('We can\'t update the shopping cart.'));
+            $this->messageManager->addException($e, __('We can\'t update the shopping cart.'));
             $this->_objectManager->get(\Psr\Log\LoggerInterface::class)->critical($e);
         }
     }

@@ -6,26 +6,18 @@
 namespace Magento\Braintree\Test\Unit\Gateway\Request;
 
 use Magento\Braintree\Gateway\Config\Config;
-use Magento\Braintree\Gateway\Request\DescriptorDataBuilder;
 use Magento\Braintree\Gateway\SubjectReader;
+use Magento\Braintree\Gateway\Request\DescriptorDataBuilder;
 use Magento\Payment\Gateway\Data\OrderAdapterInterface;
 use Magento\Payment\Gateway\Data\PaymentDataObjectInterface;
 use PHPUnit_Framework_MockObject_MockObject as MockObject;
 
-/**
- * Class DescriptorDataBuilderTest
- */
 class DescriptorDataBuilderTest extends \PHPUnit\Framework\TestCase
 {
     /**
-     * @var SubjectReader|MockObject
-     */
-    private $subjectReaderMock;
-
-    /**
      * @var Config|MockObject
      */
-    private $configMock;
+    private $config;
 
     /**
      * @var DescriptorDataBuilder
@@ -34,15 +26,12 @@ class DescriptorDataBuilderTest extends \PHPUnit\Framework\TestCase
 
     protected function setUp()
     {
-        $this->configMock = $this->getMockBuilder(Config::class)
+        $this->config = $this->getMockBuilder(Config::class)
             ->disableOriginalConstructor()
             ->setMethods(['getDynamicDescriptors'])
             ->getMock();
-        $this->subjectReaderMock = $this->getMockBuilder(SubjectReader::class)
-            ->disableOriginalConstructor()
-            ->getMock();
 
-        $this->builder = new DescriptorDataBuilder($this->configMock, $this->subjectReaderMock);
+        $this->builder = new DescriptorDataBuilder($this->config, new SubjectReader());
     }
 
     /**
@@ -52,23 +41,15 @@ class DescriptorDataBuilderTest extends \PHPUnit\Framework\TestCase
      */
     public function testBuild(array $descriptors, array $expected)
     {
-        $paymentDOMock = $this->createMock(PaymentDataObjectInterface::class);
-        $buildSubject = [
-            'payment' => $paymentDOMock,
-        ];
-        $this->subjectReaderMock->expects(self::once())
-            ->method('readPayment')
-            ->with($buildSubject)
-            ->willReturn($paymentDOMock);
-
+        $paymentDO = $this->createMock(PaymentDataObjectInterface::class);
         $order = $this->createMock(OrderAdapterInterface::class);
-        $order->expects(self::once())->method('getStoreId')->willReturn('1');
+        $paymentDO->method('getOrder')
+            ->willReturn($order);
 
-        $paymentDOMock->expects(self::once())->method('getOrder')->willReturn($order);
+        $this->config->method('getDynamicDescriptors')
+            ->willReturn($descriptors);
 
-        $this->configMock->method('getDynamicDescriptors')->willReturn($descriptors);
-
-        $actual = $this->builder->build(['payment' => $paymentDOMock]);
+        $actual = $this->builder->build(['payment' => $paymentDO]);
         static::assertEquals($expected, $actual);
     }
 
@@ -86,42 +67,42 @@ class DescriptorDataBuilderTest extends \PHPUnit\Framework\TestCase
                 'descriptors' => [
                     'name' => $name,
                     'phone' => $phone,
-                    'url' => $url,
+                    'url' => $url
                 ],
                 'expected' => [
                     'descriptor' => [
                         'name' => $name,
                         'phone' => $phone,
-                        'url' => $url,
-                    ],
-                ],
+                        'url' => $url
+                    ]
+                ]
             ],
             [
                 'descriptors' => [
                     'name' => $name,
-                    'phone' => $phone,
+                    'phone' => $phone
                 ],
                 'expected' => [
                     'descriptor' => [
                         'name' => $name,
-                        'phone' => $phone,
-                    ],
-                ],
+                        'phone' => $phone
+                    ]
+                ]
             ],
             [
                 'descriptors' => [
-                    'name' => $name,
+                    'name' => $name
                 ],
                 'expected' => [
                     'descriptor' => [
-                        'name' => $name,
-                    ],
-                ],
+                        'name' => $name
+                    ]
+                ]
             ],
             [
                 'descriptors' => [],
-                'expected' => [],
-            ],
+                'expected' => []
+            ]
         ];
     }
 }

@@ -65,21 +65,21 @@ final class DiffConsoleFormatter
                     function ($string) use ($isDecorated, $lineTemplate) {
                         if ($isDecorated) {
                             $string = Preg::replaceCallback(
-                                [
+                                array(
                                     '/^(\+.*)/',
                                     '/^(\-.*)/',
                                     '/^(@.*)/',
-                                ],
+                                ),
                                 function ($matches) {
                                     if ('+' === $matches[0][0]) {
-                                        $colour = 'green';
+                                        $c = 'green';
                                     } elseif ('-' === $matches[0][0]) {
-                                        $colour = 'red';
+                                        $c = 'red';
                                     } else {
-                                        $colour = 'cyan';
+                                        $c = 'cyan';
                                     }
 
-                                    return sprintf('<fg=%s>%s</fg=%s>', $colour, OutputFormatter::escape($matches[0]), $colour);
+                                    return sprintf('<fg=%s>%s</fg=%s>', $c, OutputFormatter::escape($matches[0]), $c);
                                 },
                                 $string
                             );

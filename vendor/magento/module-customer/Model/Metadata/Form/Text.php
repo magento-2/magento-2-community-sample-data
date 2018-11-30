@@ -43,7 +43,7 @@ class Text extends AbstractData
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function extractValue(\Magento\Framework\App\RequestInterface $request)
     {
@@ -51,7 +51,7 @@ class Text extends AbstractData
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      * @SuppressWarnings(PHPMD.CyclomaticComplexity)
      * @SuppressWarnings(PHPMD.NPathComplexity)
      */
@@ -88,7 +88,7 @@ class Text extends AbstractData
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function compactValue($value)
     {
@@ -96,7 +96,7 @@ class Text extends AbstractData
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function restoreValue($value)
     {
@@ -104,7 +104,7 @@ class Text extends AbstractData
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function outputValue($format = \Magento\Customer\Model\Metadata\ElementFactory::OUTPUT_FORMAT_TEXT)
     {
@@ -119,7 +119,7 @@ class Text extends AbstractData
      * @param array $errors
      * @return array
      */
-    private function validateLength($value, AttributeMetadataInterface $attribute, array $errors): array
+    protected function validateLength($value, AttributeMetadataInterface $attribute, array $errors): array
     {
         // validate length
         $label = __($attribute->getStoreLabel());

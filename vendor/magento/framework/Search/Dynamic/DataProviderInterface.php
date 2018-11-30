@@ -11,7 +11,6 @@ use Magento\Framework\Search\Request\BucketInterface;
 
 /**
  * @api
- * @since 100.0.2
  */
 interface DataProviderInterface
 {

@@ -3,8 +3,6 @@
  * Copyright © Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
-declare(strict_types=1);
-
 namespace Magento\Sales\Test\Unit\Model\Order\Creditmemo;
 
 use Magento\Framework\Api\SearchCriteria\CollectionProcessorInterface;
@@ -182,7 +180,7 @@ class CommentRepositoryTest extends \PHPUnit\Framework\TestCase
             ->method('send')
             ->willThrowException(new \Exception());
         $this->loggerMock->expects($this->once())
-            ->method('critical');
+            ->method('warning');
 
         $this->commentRepository->save($this->commentMock);
     }

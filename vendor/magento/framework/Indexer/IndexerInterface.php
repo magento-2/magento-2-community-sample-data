@@ -9,9 +9,6 @@ namespace Magento\Framework\Indexer;
  * Indexer
  *
  * @api
- * @deprecated Facade will be split
- * @see \Magento\Framework\Indexer\ActionInterface
- * @since 100.0.2
  */
 interface IndexerInterface
 {
@@ -164,8 +161,6 @@ interface IndexerInterface
      *
      * @return void
      * @throws \Exception
-     * @deprecated
-     * @see \Magento\Framework\Indexer\ActionInterface::executeFull
      */
     public function reindexAll();
 
@@ -174,8 +169,6 @@ interface IndexerInterface
      *
      * @param int $id
      * @return void
-     * @deprecated
-     * @see \Magento\Framework\Indexer\ActionInterface::executeList
      */
     public function reindexRow($id);
 
@@ -184,8 +177,6 @@ interface IndexerInterface
      *
      * @param int[] $ids
      * @return void
-     * @deprecated
-     * @see \Magento\Framework\Indexer\ActionInterface::executeList
      */
     public function reindexList($ids);
 }

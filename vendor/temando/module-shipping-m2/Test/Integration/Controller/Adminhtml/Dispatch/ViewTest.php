@@ -55,56 +55,6 @@ class ViewTest extends AbstractBackendController
     }
 
     /**
-     * @param string $dispatchId
-     * @return Dispatch
-     */
-    private function createDispatch($dispatchId)
-    {
-        $status = 'processed';
-        $carrierName = 'Foo';
-        $carrierMessages = ['Message Foo', 'Message Bar'];
-        $createdAtDate = '1999-01-19T03:03:33.000Z';
-        $readyAtDate = '2099-01-19T03:03:33.000Z';
-        $pickupNumbers = ['pnum 123', 'pnum 987'];
-        $pickupCharges = [
-            new Dispatch\PickupCharge([
-                Dispatch\PickupChargeInterface::DESCRIPTION => 'Treats',
-                Dispatch\PickupChargeInterface::AMOUNT => 0.99,
-                Dispatch\PickupChargeInterface::CURRENCY => 'AUD'
-            ]),
-            new Dispatch\PickupCharge([
-                Dispatch\PickupChargeInterface::DESCRIPTION => 'Sweets',
-                Dispatch\PickupChargeInterface::AMOUNT => 3.03,
-                Dispatch\PickupChargeInterface::CURRENCY => 'AUD'
-            ]),
-        ];
-        $includedShipments = [
-            new Dispatch\Shipment([
-                Dispatch\ShipmentInterface::SHIPMENT_ID => '1234-ship',
-                Dispatch\ShipmentInterface::STATUS => 'fulfilled',
-            ]),
-        ];
-        $failedShipments = [];
-        $documentation = [];
-
-        $dispatch = new Dispatch([
-            Dispatch::DISPATCH_ID => $dispatchId,
-            Dispatch::STATUS => $status,
-            Dispatch::CARRIER_NAME => $carrierName,
-            Dispatch::CARRIER_MESSAGES => $carrierMessages,
-            Dispatch::CREATED_AT_DATE => $createdAtDate,
-            Dispatch::READY_AT_DATE => $readyAtDate,
-            Dispatch::PICKUP_NUMBERS => $pickupNumbers,
-            Dispatch::PICKUP_CHARGES => $pickupCharges,
-            Dispatch::INCLUDED_SHIPMENTS => $includedShipments,
-            Dispatch::FAILED_SHIPMENTS => $failedShipments,
-            Dispatch::DOCUMENTATION => $documentation,
-        ]);
-
-        return $dispatch;
-    }
-
-    /**
      * @test
      * @magentoConfigFixture default/carriers/temando/account_id 23
      * @magentoConfigFixture default/carriers/temando/bearer_token 808
@@ -112,7 +62,18 @@ class ViewTest extends AbstractBackendController
     public function dispatchLoadSuccess()
     {
         $dispatchId = '1234-abcd';
-        $dispatch = $this->createDispatch($dispatchId);
+        $carrierName = 'Foo';
+        $createdAtDate = '1999-01-19T03:03:33.000Z';
+        $readyAtDate = '2099-01-19T03:03:33.000Z';
+        $shipmentCount = '42';
+
+        $dispatch = new Dispatch([
+            Dispatch::DISPATCH_ID => $dispatchId,
+            Dispatch::CARRIER_NAME => $carrierName,
+            Dispatch::CREATED_AT_DATE => $createdAtDate,
+            Dispatch::READY_AT_DATE => $readyAtDate,
+            Dispatch::INCLUDED_SHIPMENTS => $shipmentCount,
+        ]);
 
         $this->dispatchRepo
             ->expects($this->once())
@@ -123,16 +84,8 @@ class ViewTest extends AbstractBackendController
         $this->getRequest()->setParam('dispatch_id', $dispatchId);
         $this->dispatch($this->uri);
 
-        $this->assertContains($dispatch->getCarrierName(), $this->getResponse()->getBody());
+        $this->assertContains($carrierName, $this->getResponse()->getBody());
         $this->assertContains('Documentation', $this->getResponse()->getBody());
-
-        foreach ($dispatch->getPickupCharges() as $pickupCharge) {
-            $this->assertContains($pickupCharge->getDescription(), $this->getResponse()->getBody());
-        }
-
-        foreach ($dispatch->getCarrierMessages() as $carrierMessage) {
-            $this->assertContains($carrierMessage, $this->getResponse()->getBody());
-        }
     }
 
     /**
@@ -164,7 +117,10 @@ class ViewTest extends AbstractBackendController
     public function testAclHasAccess()
     {
         $dispatchId = '1234-abcd';
-        $dispatch = $this->createDispatch($dispatchId);
+
+        $dispatch = new Dispatch([
+            Dispatch::DISPATCH_ID => $dispatchId,
+        ]);
 
         $this->dispatchRepo
             ->expects($this->once())
@@ -185,7 +141,10 @@ class ViewTest extends AbstractBackendController
     public function testAclNoAccess()
     {
         $dispatchId = '1234-abcd';
-        $dispatch = $this->createDispatch($dispatchId);
+
+        $dispatch = new Dispatch([
+            Dispatch::DISPATCH_ID => $dispatchId,
+        ]);
 
         $this->dispatchRepo
             ->expects($this->once())

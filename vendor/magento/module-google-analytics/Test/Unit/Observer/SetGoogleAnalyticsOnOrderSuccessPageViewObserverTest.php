@@ -49,9 +49,6 @@ class SetGoogleAnalyticsOnOrderSuccessPageViewObserverTest extends TestCase
      */
     private $orderSuccessObserver;
 
-    /**
-     * Test setUp
-     */
     protected function setUp()
     {
         $this->googleAnalyticsDataMock = $this->getMockBuilder(GaDataHelper::class)
@@ -78,9 +75,6 @@ class SetGoogleAnalyticsOnOrderSuccessPageViewObserverTest extends TestCase
         );
     }
 
-    /**
-     * Observer test
-     */
     public function testExecuteWithNoOrderIds()
     {
         $this->observerMock->expects($this->once())
@@ -98,9 +92,6 @@ class SetGoogleAnalyticsOnOrderSuccessPageViewObserverTest extends TestCase
         $this->orderSuccessObserver->execute($this->observerMock);
     }
 
-    /**
-     * Observer test
-     */
     public function testExecuteWithOrderIds()
     {
         $blockMock = $this->getMockBuilder(AbstractBlock::class)

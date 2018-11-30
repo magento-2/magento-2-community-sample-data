@@ -5,10 +5,10 @@
 
 namespace Temando\Shipping\Rest\Adapter;
 
-use Temando\Shipping\Rest\Exception\AdapterException;
 use Temando\Shipping\Rest\Request\ItemRequestInterface;
 use Temando\Shipping\Rest\Request\ListRequestInterface;
-use Temando\Shipping\Rest\Response\DataObject\Completion;
+use Temando\Shipping\Rest\Response\Type\CompletionResponseType;
+use Temando\Shipping\Rest\Exception\AdapterException;
 
 /**
  * The Temando Completion API interface defines the supported subset of operations
@@ -24,7 +24,7 @@ interface CompletionApiInterface
     /**
      * @param ItemRequestInterface $request
      *
-     * @return Completion
+     * @return CompletionResponseType
      * @throws AdapterException
      */
     public function getCompletion(ItemRequestInterface $request);
@@ -32,7 +32,7 @@ interface CompletionApiInterface
     /**
      * @param ListRequestInterface $request
      *
-     * @return Completion[]
+     * @return CompletionResponseType[]
      * @throws AdapterException
      */
     public function getCompletions(ListRequestInterface $request);

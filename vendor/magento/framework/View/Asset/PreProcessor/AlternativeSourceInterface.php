@@ -11,7 +11,6 @@ use Magento\Framework\View\Asset\PreProcessorInterface;
  * Interface AlternativeSourceInterface
  *
  * @api
- * @since 100.0.2
  */
 interface AlternativeSourceInterface extends PreProcessorInterface
 {

@@ -7,14 +7,13 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-namespace PHPUnit\Framework\MockObject;
 
 use PHPUnit\Framework\ExpectationFailedException;
 
 /**
  * Interface for classes which must verify a given expectation.
  */
-interface Verifiable
+interface PHPUnit_Framework_MockObject_Verifiable
 {
     /**
      * Verifies that the current expectation is valid. If everything is OK the

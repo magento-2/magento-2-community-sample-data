@@ -16,16 +16,14 @@ use Magento\Catalog\Pricing\Price\RegularPrice;
 use Magento\Framework\Pricing\Render\RendererPool;
 use Magento\Framework\Pricing\SaleableInterface;
 use Magento\Framework\View\Element\Template\Context;
-use Magento\Catalog\Pricing\Price\ConfiguredPriceSelection;
-use Magento\Framework\App\ObjectManager;
 
 /**
- * Class for configured_price rendering.
+ * Class for configured_price rendering
  */
 class ConfiguredPriceBox extends FinalPriceBox
 {
     /**
-     * @var ConfiguredPriceSelection
+     * @var \Magento\Catalog\Pricing\Price\ConfiguredPriceSelection
      */
     private $configuredPriceSelection;
 
@@ -37,7 +35,7 @@ class ConfiguredPriceBox extends FinalPriceBox
      * @param array $data
      * @param SalableResolverInterface|null $salableResolver
      * @param MinimalPriceCalculatorInterface|null $minimalPriceCalculator
-     * @param ConfiguredPriceSelection|null $configuredPriceSelection
+     * @param \Magento\Catalog\Pricing\Price\ConfiguredPriceSelection|null $configuredPriceSelection
      */
     public function __construct(
         Context $context,
@@ -47,11 +45,11 @@ class ConfiguredPriceBox extends FinalPriceBox
         array $data = [],
         SalableResolverInterface $salableResolver = null,
         MinimalPriceCalculatorInterface $minimalPriceCalculator = null,
-        ConfiguredPriceSelection $configuredPriceSelection = null
+        \Magento\Catalog\Pricing\Price\ConfiguredPriceSelection $configuredPriceSelection = null
     ) {
         $this->configuredPriceSelection = $configuredPriceSelection
-            ?: ObjectManager::getInstance()
-            ->get(ConfiguredPriceSelection::class);
+            ?: \Magento\Framework\App\ObjectManager::getInstance()
+            ->get(\Magento\Catalog\Pricing\Price\ConfiguredPriceSelection::class);
         parent::__construct(
             $context,
             $saleableItem,
@@ -92,19 +90,17 @@ class ConfiguredPriceBox extends FinalPriceBox
     {
         $price = $this->saleableItem->getPriceInfo()->getPrice($priceCode);
         $item = $this->getData('item');
-        if ($price instanceof ConfiguredPriceInterface
-            && $item instanceof ItemInterface
-        ) {
+        if ($price instanceof \Magento\Catalog\Pricing\Price\ConfiguredPriceInterface
+        && $item instanceof \Magento\Catalog\Model\Product\Configuration\Item\ItemInterface) {
             $price->setItem($item);
         }
-
         return $price;
     }
 
     /**
      * @return PriceInterface
      */
-    public function getConfiguredPrice(): PriceInterface
+    public function getConfiguredPrice()
     {
         /** @var \Magento\Bundle\Pricing\Price\ConfiguredPrice $configuredPrice */
         $configuredPrice = $this->getPrice();
@@ -119,7 +115,7 @@ class ConfiguredPriceBox extends FinalPriceBox
     /**
      * @return PriceInterface
      */
-    public function getConfiguredRegularPrice(): PriceInterface
+    public function getConfiguredRegularPrice()
     {
         /** @var \Magento\Bundle\Pricing\Price\ConfiguredPrice $configuredPrice */
         $configuredPrice = $this->getPriceType(ConfiguredPriceInterface::CONFIGURED_REGULAR_PRICE_CODE);
@@ -132,19 +128,17 @@ class ConfiguredPriceBox extends FinalPriceBox
     }
 
     /**
-     * Define if the special price should be shown.
+     * Define if the special price should be shown
      *
      * @return bool
      */
-    public function hasSpecialPrice(): bool
+    public function hasSpecialPrice()
     {
         if ($this->price->getPriceCode() == ConfiguredPriceInterface::CONFIGURED_PRICE_CODE) {
             $displayRegularPrice = $this->getConfiguredRegularPrice()->getAmount()->getValue();
             $displayFinalPrice = $this->getConfiguredPrice()->getAmount()->getValue();
-
             return $displayFinalPrice < $displayRegularPrice;
         }
-
         return parent::hasSpecialPrice();
     }
 }

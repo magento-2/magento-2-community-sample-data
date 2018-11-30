@@ -5,14 +5,12 @@
 namespace Temando\Shipping\Api\Data\CollectionPoint;
 
 use Magento\Framework\Api\SearchResultsInterface;
+use Magento\Framework\Exception\CouldNotSaveException;
 
 /**
  * Collection point search result interface
  *
  * @api
- * @deprecated since 1.4.0
- * @see \Temando\Shipping\Api\Data\Delivery\CollectionPointSearchResultInterface
- *
  * @package  Temando\Shipping\Api
  * @author   Christoph Aßmann <christoph.assmann@netresearch.de>
  * @license  http://opensource.org/licenses/osl-3.0.php Open Software License (OSL 3.0)

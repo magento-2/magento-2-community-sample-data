@@ -7,31 +7,28 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-namespace PHPUnit\Framework\MockObject\Builder;
-
-use PHPUnit\Framework\MockObject\Matcher\AnyParameters;
 
 /**
  * Builder interface for parameter matchers.
  */
-interface ParametersMatch extends Match
+interface PHPUnit_Framework_MockObject_Builder_ParametersMatch extends PHPUnit_Framework_MockObject_Builder_Match
 {
     /**
      * Sets the parameters to match for, each parameter to this function will
      * be part of match. To perform specific matches or constraints create a
-     * new PHPUnit\Framework\Constraint\Constraint and use it for the parameter.
+     * new PHPUnit_Framework_Constraint and use it for the parameter.
      * If the parameter value is not a constraint it will use the
-     * PHPUnit\Framework\Constraint\IsEqual for the value.
+     * PHPUnit_Framework_Constraint_IsEqual for the value.
      *
      * Some examples:
      * <code>
      * // match first parameter with value 2
      * $b->with(2);
      * // match first parameter with value 'smock' and second identical to 42
-     * $b->with('smock', new PHPUnit\Framework\Constraint\IsEqual(42));
+     * $b->with('smock', new PHPUnit_Framework_Constraint_IsEqual(42));
      * </code>
      *
-     * @return ParametersMatch
+     * @return PHPUnit_Framework_MockObject_Builder_ParametersMatch
      */
     public function with(...$arguments);
 
@@ -44,7 +41,7 @@ interface ParametersMatch extends Match
      * $b->withAnyParameters();
      * </code>
      *
-     * @return AnyParameters
+     * @return PHPUnit_Framework_MockObject_Matcher_AnyParameters
      */
     public function withAnyParameters();
 }

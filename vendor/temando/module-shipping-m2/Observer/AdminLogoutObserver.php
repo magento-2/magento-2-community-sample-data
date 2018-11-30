@@ -4,18 +4,18 @@
  */
 namespace Temando\Shipping\Observer;
 
-use Magento\Framework\Event\Observer;
 use Magento\Framework\Event\ObserverInterface;
+use Magento\Framework\Event\Observer;
 use Temando\Shipping\Rest\AuthenticationInterface;
 
 /**
  * Temando Logout Observer
  *
- * @package Temando\Shipping\Observer
- * @author  Sebastian Ertner <sebastian.ertner@netresearch.de>
- * @author  Christoph Aßmann <christoph.assmann@netresearch.de>
- * @license https://opensource.org/licenses/osl-3.0.php Open Software License (OSL 3.0)
- * @link    https://www.temando.com/
+ * @package  Temando\Shipping\Observer
+ * @author   Sebastian Ertner <sebastian.ertner@netresearch.de>
+ * @author   Christoph Aßmann <christoph.assmann@netresearch.de>
+ * @license  http://opensource.org/licenses/osl-3.0.php Open Software License (OSL 3.0)
+ * @link     http://www.temando.com/
  */
 class AdminLogoutObserver implements ObserverInterface
 {

@@ -15,7 +15,6 @@ use Magento\Rma\Api\Data\RmaInterface;
 use Magento\Sales\Api\ShipmentRepositoryInterface as SalesShipmentRepositoryInterface;
 use Temando\Shipping\Api\Data\Shipment\ShipmentReferenceInterface;
 use Temando\Shipping\Model\ResourceModel\Repository\RmaShipmentRepositoryInterface;
-use Temando\Shipping\Model\ResourceModel\Repository\ShipmentReferenceRepositoryInterface;
 use Temando\Shipping\Model\ResourceModel\Repository\ShipmentRepositoryInterface;
 use Temando\Shipping\Model\ResourceModel\Rma\RmaShipment as RmaShipmentResource;
 use Temando\Shipping\Model\ShipmentInterface;
@@ -35,11 +34,6 @@ class RmaShipmentRepository implements RmaShipmentRepositoryInterface
      * @var RmaShipmentResource
      */
     private $resource;
-
-    /**
-     * @var ShipmentReferenceRepositoryInterface
-     */
-    private $shipmentReferenceRepository;
 
     /**
      * @var ShipmentRepositoryInterface
@@ -75,7 +69,6 @@ class RmaShipmentRepository implements RmaShipmentRepositoryInterface
      * RmaShipmentRepository constructor.
      *
      * @param RmaShipmentResource $resource
-     * @param ShipmentReferenceRepositoryInterface $shipmentReferenceRepository
      * @param ShipmentRepositoryInterface $shipmentRepository
      * @param SalesShipmentRepositoryInterface $salesShipmentRepository,
      * @param RmaAccess $rmaAccess
@@ -85,7 +78,6 @@ class RmaShipmentRepository implements RmaShipmentRepositoryInterface
      */
     public function __construct(
         RmaShipmentResource $resource,
-        ShipmentReferenceRepositoryInterface $shipmentReferenceRepository,
         ShipmentRepositoryInterface $shipmentRepository,
         SalesShipmentRepositoryInterface $salesShipmentRepository,
         RmaAccess $rmaAccess,
@@ -94,7 +86,6 @@ class RmaShipmentRepository implements RmaShipmentRepositoryInterface
         SearchCriteriaBuilder $searchCriteriaBuilder
     ) {
         $this->resource = $resource;
-        $this->shipmentReferenceRepository = $shipmentReferenceRepository;
         $this->shipmentRepository = $shipmentRepository;
         $this->salesShipmentRepository = $salesShipmentRepository;
         $this->rmaAccess = $rmaAccess;
@@ -183,7 +174,7 @@ class RmaShipmentRepository implements RmaShipmentRepositoryInterface
 
         $this->searchCriteriaBuilder->setFilterGroups($filters);
         $searchCriteria = $this->searchCriteriaBuilder->create();
-        $shipmentReferenceCollection = $this->shipmentReferenceRepository->getList($searchCriteria);
+        $shipmentReferenceCollection = $this->shipmentRepository->getList($searchCriteria);
 
         $shipmentIds = $shipmentReferenceCollection->getColumnValues('ext_return_shipment_id');
         $availableShipments = array_map(function ($shipmentId) {

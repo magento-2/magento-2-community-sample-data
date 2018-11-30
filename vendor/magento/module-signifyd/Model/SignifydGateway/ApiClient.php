@@ -39,8 +39,10 @@ class ApiClient
      * @param array $params
      * @param int|null $storeId
      * @return array
+     * @throws ApiCallException
+     * @throws \Zend_Http_Client_Exception
      */
-    public function makeApiCall($url, $method, array $params = [], $storeId = null): array
+    public function makeApiCall($url, $method, array $params = [], $storeId = null)
     {
         $result = $this->requestBuilder->doRequest($url, $method, $params, $storeId);
 

@@ -11,7 +11,6 @@ namespace Magento\Framework\Oauth;
  * provided to help clients manipulating tokens validate and acquire the associated token consumer.
  *
  * @api
- * @since 100.0.2
  */
 interface TokenProviderInterface
 {

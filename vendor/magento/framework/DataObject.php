@@ -10,7 +10,6 @@ namespace Magento\Framework;
  *
  * @api
  * @SuppressWarnings(PHPMD.NumberOfChildren)
- * @since 100.0.2
  */
 class DataObject implements \ArrayAccess
 {
@@ -123,7 +122,7 @@ class DataObject implements \ArrayAccess
         }
 
         /* process a/b/c key as ['a']['b']['c'] */
-        if (strpos($key, '/') !== false) {
+        if (strpos($key, '/')) {
             $data = $this->getDataByPath($key);
         } else {
             $data = $this->_getData($key);

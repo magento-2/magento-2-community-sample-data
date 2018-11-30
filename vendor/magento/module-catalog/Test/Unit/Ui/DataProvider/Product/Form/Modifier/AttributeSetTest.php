@@ -91,9 +91,10 @@ class AttributeSetTest extends AbstractModifierTest
 
     /**
      * @param bool $locked
+     * @return void
      * @dataProvider modifyMetaLockedDataProvider
      */
-    public function testModifyMetaLocked($locked)
+    public function testModifyMetaLocked(bool $locked)
     {
         $this->productMock->expects($this->any())
             ->method('isLockedAttribute')

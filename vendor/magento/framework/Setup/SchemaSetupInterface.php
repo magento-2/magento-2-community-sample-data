@@ -8,7 +8,6 @@ namespace Magento\Framework\Setup;
 /**
  * DB schema resource interface
  * @api
- * @since 100.0.2
  */
 interface SchemaSetupInterface extends SetupInterface
 {

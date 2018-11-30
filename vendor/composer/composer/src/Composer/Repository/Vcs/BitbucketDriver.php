@@ -189,15 +189,8 @@ abstract class BitbucketDriver extends VcsDriver
             return $this->fallbackDriver->getFileContent($file, $identifier);
         }
 
-        if (strpos($identifier, '/') !== false) {
-            $branches = $this->getBranches();
-            if (isset($branches[$identifier])) {
-                $identifier = $branches[$identifier];
-            }
-        }
-
         $resource = sprintf(
-            'https://api.bitbucket.org/2.0/repositories/%s/%s/src/%s/%s',
+            'https://api.bitbucket.org/1.0/repositories/%s/%s/raw/%s/%s',
             $this->owner,
             $this->repository,
             $identifier,
@@ -319,7 +312,7 @@ abstract class BitbucketDriver extends VcsDriver
                 http_build_query(
                     array(
                         'pagelen' => 100,
-                        'fields' => 'values.name,values.target.hash,values.heads,next',
+                        'fields' => 'values.name,values.target.hash,next',
                         'sort' => '-target.date',
                     ),
                     null,
@@ -330,11 +323,6 @@ abstract class BitbucketDriver extends VcsDriver
             while ($hasNext) {
                 $branchData = JsonFile::parseJson($this->getContentsWithOAuthCredentials($resource), $resource);
                 foreach ($branchData['values'] as $data) {
-                    // skip headless branches which seem to be deleted branches that bitbucket nevertheless returns in the API
-                    if ($this->vcsType === 'hg' && empty($data['heads'])) {
-                        continue;
-                    }
-
                     $this->branches[$data['name']] = $data['target']['hash'];
                 }
                 if (empty($branchData['next'])) {
@@ -428,16 +416,11 @@ abstract class BitbucketDriver extends VcsDriver
     protected function getMainBranchData()
     {
         $resource = sprintf(
-            'https://api.bitbucket.org/2.0/repositories/%s/%s?fields=mainbranch',
+            'https://api.bitbucket.org/1.0/repositories/%s/%s/main-branch',
             $this->owner,
             $this->repository
         );
 
-        $data = JsonFile::parseJson($this->getContentsWithOAuthCredentials($resource), $resource);
-        if (isset($data['mainbranch'])) {
-            return $data['mainbranch'];
-        }
-
-        return null;
+        return JsonFile::parseJson($this->getContentsWithOAuthCredentials($resource), $resource);
     }
 }

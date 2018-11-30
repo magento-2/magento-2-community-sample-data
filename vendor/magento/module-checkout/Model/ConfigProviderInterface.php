@@ -8,7 +8,6 @@ namespace Magento\Checkout\Model;
 /**
  * Interface ConfigProviderInterface
  * @api
- * @since 100.0.2
  */
 interface ConfigProviderInterface
 {

@@ -11,8 +11,8 @@
 
 namespace Symfony\Component\DependencyInjection\Compiler;
 
-use Symfony\Component\DependencyInjection\Alias;
 use Symfony\Component\DependencyInjection\Definition;
+use Symfony\Component\DependencyInjection\Alias;
 
 /**
  * Represents a node in your service graph.
@@ -32,7 +32,7 @@ class ServiceReferenceGraphNode
      * @param string $id    The node identifier
      * @param mixed  $value The node value
      */
-    public function __construct(string $id, $value)
+    public function __construct($id, $value)
     {
         $this->id = $id;
         $this->value = $value;
@@ -106,13 +106,5 @@ class ServiceReferenceGraphNode
     public function getValue()
     {
         return $this->value;
-    }
-
-    /**
-     * Clears all edges.
-     */
-    public function clear()
-    {
-        $this->inEdges = $this->outEdges = array();
     }
 }

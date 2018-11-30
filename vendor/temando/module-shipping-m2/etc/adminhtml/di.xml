@@ -18,11 +18,6 @@
             <argument name="session" xsi:type="object">Magento\Backend\Model\Session</argument>
         </arguments>
     </type>
-    <type name="Temando\Shipping\Rest\EntityMapper\ShippingExperiencesMapper">
-        <arguments>
-            <argument name="session" xsi:type="object">Magento\Backend\Model\Session\Quote</argument>
-        </arguments>
-    </type>
 
     <virtualType name="Magento\Catalog\Ui\DataProvider\Product\Form\Modifier\Pool">
         <arguments>

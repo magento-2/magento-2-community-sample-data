@@ -23,6 +23,7 @@ class Authorization
      * Initialize dependencies.
      *
      * @param \Magento\Framework\AuthorizationInterface $authorization
+     * @since 100.1.0
      */
     public function __construct(\Magento\Framework\AuthorizationInterface $authorization)
     {

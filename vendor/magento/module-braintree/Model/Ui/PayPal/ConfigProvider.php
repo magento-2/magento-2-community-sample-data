@@ -47,8 +47,6 @@ class ConfigProvider implements ConfigProviderInterface
      */
     public function getConfig()
     {
-        $requireBillingAddressAll = \Magento\Paypal\Model\Config::REQUIRE_BILLING_ADDRESS_ALL;
-        
         return [
             'payment' => [
                 self::PAYPAL_CODE => [
@@ -62,8 +60,6 @@ class ConfigProvider implements ConfigProviderInterface
                     'vaultCode' => self::PAYPAL_VAULT_CODE,
                     'skipOrderReview' => $this->config->isSkipOrderReview(),
                     'paymentIcon' => $this->config->getPayPalIcon(),
-                    'isRequiredBillingAddress' =>
-                        (int)$this->config->isRequiredBillingAddress() === $requireBillingAddressAll
                 ]
             ]
         ];

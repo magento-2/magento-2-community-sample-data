@@ -9,7 +9,6 @@ namespace Magento\Framework\Math;
  * Calculations Library
  *
  * @api
- * @since 100.0.2
  */
 class Calculator
 {

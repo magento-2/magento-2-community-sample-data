@@ -14,7 +14,6 @@ use Magento\Framework\App\ResponseInterface;
  * and be able to set it to the HTTP response
  *
  * @api
- * @since 100.0.2
  */
 interface ResultInterface
 {

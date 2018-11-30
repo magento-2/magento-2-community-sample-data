@@ -27,11 +27,6 @@ class ReindexRuleGroupWebsiteTest extends \PHPUnit\Framework\TestCase
     private $resourceMock;
 
     /**
-     * @var ActiveTableSwitcher|\PHPUnit_Framework_MockObject_MockObject
-     */
-    private $activeTableSwitcherMock;
-
-    /**
      * @var IndexerTableSwapperInterface|\PHPUnit_Framework_MockObject_MockObject
      */
     private $tableSwapperMock;
@@ -44,7 +39,8 @@ class ReindexRuleGroupWebsiteTest extends \PHPUnit\Framework\TestCase
         $this->resourceMock = $this->getMockBuilder(\Magento\Framework\App\ResourceConnection::class)
             ->disableOriginalConstructor()
             ->getMock();
-        $this->activeTableSwitcherMock =
+        /** @var ActiveTableSwitcher|\PHPUnit_Framework_MockObject_MockObject $activeTableSwitcherMock */
+        $activeTableSwitcherMock =
             $this->getMockBuilder(ActiveTableSwitcher::class)
             ->disableOriginalConstructor()
             ->getMock();
@@ -54,7 +50,7 @@ class ReindexRuleGroupWebsiteTest extends \PHPUnit\Framework\TestCase
         $this->model = new \Magento\CatalogRule\Model\Indexer\ReindexRuleGroupWebsite(
             $this->dateTimeMock,
             $this->resourceMock,
-            $this->activeTableSwitcherMock,
+            $activeTableSwitcherMock,
             $this->tableSwapperMock
         );
     }
@@ -67,25 +63,31 @@ class ReindexRuleGroupWebsiteTest extends \PHPUnit\Framework\TestCase
         $this->resourceMock->expects($this->at(0))->method('getConnection')->willReturn($connectionMock);
         $this->dateTimeMock->expects($this->once())->method('gmtTimestamp')->willReturn($timeStamp);
 
-        $this->tableSwapperMock->expects($this->any())
+        $this->tableSwapperMock->expects($this->at(0))
             ->method('getWorkingTableName')
-            ->willReturnMap(
-                [
-                    ['catalogrule_group_website', 'catalogrule_group_website_replica'],
-                    ['catalogrule_product', 'catalogrule_product_replica'],
-                ]
-            );
+            ->with('catalogrule_group_website')
+            ->willReturn('catalogrule_group_website_replica');
+        $this->tableSwapperMock->expects($this->at(1))
+            ->method('getWorkingTableName')
+            ->with('catalogrule_product')
+            ->willReturn('catalogrule_product_replica');
 
-        $this->resourceMock->expects($this->any())
+        $this->resourceMock->expects($this->at(1))
             ->method('getTableName')
-            ->willReturnMap(
-                [
-                    ['catalogrule_group_website', 'default', 'catalogrule_group_website'],
-                    ['catalogrule_product', 'default', 'catalogrule_product'],
-                    ['catalogrule_group_website_replica', 'default', 'catalogrule_group_website_replica'],
-                    ['catalogrule_product_replica', 'default', 'catalogrule_product_replica'],
-                ]
-            );
+            ->with('catalogrule_group_website')
+            ->willReturn('catalogrule_group_website');
+        $this->resourceMock->expects($this->at(2))
+            ->method('getTableName')
+            ->with('catalogrule_product')
+            ->willReturn('catalogrule_product');
+        $this->resourceMock->expects($this->at(3))
+            ->method('getTableName')
+            ->with('catalogrule_group_website_replica')
+            ->willReturn('catalogrule_group_website_replica');
+        $this->resourceMock->expects($this->at(4))
+            ->method('getTableName')
+            ->with('catalogrule_product_replica')
+            ->willReturn('catalogrule_product_replica');
 
         $selectMock = $this->getMockBuilder(\Magento\Framework\DB\Select::class)
             ->disableOriginalConstructor()

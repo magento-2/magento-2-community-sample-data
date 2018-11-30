@@ -8,9 +8,6 @@ namespace Temando\Shipping\Api\Data\CollectionPoint;
  * Temando Collection Point Search Request Interface
  *
  * @api
- * @deprecated since 1.4.0
- * @see \Temando\Shipping\Api\Data\Delivery\CollectionPointSearchRequestInterface
- *
  * @package  Temando\Shipping\Api
  * @author   Christoph Aßmann <christoph.assmann@netresearch.de>
  * @license  http://opensource.org/licenses/osl-3.0.php Open Software License (OSL 3.0)

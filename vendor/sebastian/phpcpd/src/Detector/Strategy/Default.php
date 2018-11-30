@@ -14,37 +14,48 @@ use SebastianBergmann\PHPCPD\CodeClone;
 use SebastianBergmann\PHPCPD\CodeCloneFile;
 use SebastianBergmann\PHPCPD\CodeCloneMap;
 
+/**
+ * Default strategy for detecting code clones.
+ *
+ * @author    Johann-Peter Hartmann <johann-peter.hartmann@mayflower.de>
+ * @author    Sebastian Bergmann <sebastian@phpunit.de>
+ * @copyright Sebastian Bergmann <sebastian@phpunit.de>
+ * @license   http://www.opensource.org/licenses/BSD-3-Clause  The BSD 3-Clause License
+ * @link      http://github.com/sebastianbergmann/phpcpd/tree
+ * @since     Class available since Release 1.4.0
+ */
 class DefaultStrategy extends AbstractStrategy
 {
     /**
      * Copy & Paste Detection (CPD).
      *
-     * @param string       $file
-     * @param int          $minLines
-     * @param int          $minTokens
-     * @param CodeCloneMap $result
-     * @param bool         $fuzzy
+     * @param  string       $file
+     * @param  integer      $minLines
+     * @param  integer      $minTokens
+     * @param  CodeCloneMap $result
+     * @param  boolean      $fuzzy
+     * @author Johann-Peter Hartmann <johann-peter.hartmann@mayflower.de>
      */
     public function processFile($file, $minLines, $minTokens, CodeCloneMap $result, $fuzzy = false)
     {
-        $buffer                    = \file_get_contents($file);
-        $currentTokenPositions     = [];
-        $currentTokenRealPositions = [];
+        $buffer                    = file_get_contents($file);
+        $currentTokenPositions     = array();
+        $currentTokenRealPositions = array();
         $currentSignature          = '';
-        $tokens                    = \token_get_all($buffer);
+        $tokens                    = token_get_all($buffer);
         $tokenNr                   = 0;
         $lastTokenLine             = 0;
 
         $result->setNumLines(
-            $result->getNumLines() + \substr_count($buffer, "\n")
+            $result->getNumLines() + substr_count($buffer, "\n")
         );
 
         unset($buffer);
 
-        foreach (\array_keys($tokens) as $key) {
+        foreach (array_keys($tokens) as $key) {
             $token = $tokens[$key];
 
-            if (\is_array($token)) {
+            if (is_array($token)) {
                 if (!isset($this->tokensIgnoreList[$token[0]])) {
                     if ($tokenNr == 0) {
                         $currentTokenPositions[$tokenNr] = $token[2] - $lastTokenLine;
@@ -59,15 +70,15 @@ class DefaultStrategy extends AbstractStrategy
                         $token[1] = 'variable';
                     }
 
-                    $currentSignature .= \chr($token[0] & 255) .
-                                         \pack('N*', \crc32($token[1]));
+                    $currentSignature .= chr($token[0] & 255) .
+                                         pack('N*', crc32($token[1]));
                 }
 
                 $lastTokenLine = $token[2];
             }
         }
 
-        $count         = \count($currentTokenPositions);
+        $count         = count($currentTokenPositions);
         $firstLine     = 0;
         $firstRealLine = 0;
         $found         = false;
@@ -77,9 +88,9 @@ class DefaultStrategy extends AbstractStrategy
             $line     = $currentTokenPositions[$tokenNr];
             $realLine = $currentTokenRealPositions[$tokenNr];
 
-            $hash = \substr(
-                \md5(
-                    \substr(
+            $hash = substr(
+                md5(
+                    substr(
                         $currentSignature,
                         $tokenNr * 5,
                         $minTokens * 5
@@ -107,7 +118,7 @@ class DefaultStrategy extends AbstractStrategy
                     $lastLine     = $currentTokenPositions[$lastToken];
                     $lastRealLine = $currentTokenRealPositions[$lastToken];
                     $numLines     = $lastLine + 1 - $firstLine;
-                    $realNumLines = $lastRealLine + 1 - $firstRealLine;
+                    $realNumLines = $lastRealLine +1 - $firstRealLine;
 
                     if ($numLines >= $minLines &&
                         ($fileA != $file ||
@@ -126,7 +137,7 @@ class DefaultStrategy extends AbstractStrategy
                     $firstLine = 0;
                 }
 
-                $this->hashes[$hash] = [$file, $realLine];
+                $this->hashes[$hash] = array($file, $realLine);
             }
 
             $tokenNr++;
@@ -139,7 +150,7 @@ class DefaultStrategy extends AbstractStrategy
             $lastLine     = $currentTokenPositions[$lastToken];
             $lastRealLine = $currentTokenRealPositions[$lastToken];
             $numLines     = $lastLine + 1 - $firstLine;
-            $realNumLines = $lastRealLine + 1 - $firstRealLine;
+            $realNumLines = $lastRealLine +1 - $firstRealLine;
 
             if ($numLines >= $minLines &&
                 ($fileA != $file || $firstLineA != $firstRealLine)) {
@@ -152,6 +163,8 @@ class DefaultStrategy extends AbstractStrategy
                     )
                 );
             }
+
+            $found = false;
         }
     }
 }

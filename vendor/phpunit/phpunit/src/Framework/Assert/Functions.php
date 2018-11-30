@@ -9,12 +9,13 @@
  */
 use PHPUnit\Framework\Assert;
 use PHPUnit\Framework\AssertionFailedError;
+use PHPUnit\Framework\Constraint\Constraint;
+use PHPUnit\Framework\Constraint\Count;
+use PHPUnit\Framework\Constraint\LogicalAnd;
 use PHPUnit\Framework\Constraint\ArrayHasKey;
 use PHPUnit\Framework\Constraint\Attribute;
 use PHPUnit\Framework\Constraint\ClassHasAttribute;
 use PHPUnit\Framework\Constraint\ClassHasStaticAttribute;
-use PHPUnit\Framework\Constraint\Constraint;
-use PHPUnit\Framework\Constraint\Count;
 use PHPUnit\Framework\Constraint\DirectoryExists;
 use PHPUnit\Framework\Constraint\FileExists;
 use PHPUnit\Framework\Constraint\GreaterThan;
@@ -33,25 +34,24 @@ use PHPUnit\Framework\Constraint\IsTrue;
 use PHPUnit\Framework\Constraint\IsType;
 use PHPUnit\Framework\Constraint\IsWritable;
 use PHPUnit\Framework\Constraint\LessThan;
-use PHPUnit\Framework\Constraint\LogicalAnd;
 use PHPUnit\Framework\Constraint\LogicalNot;
+use PHPUnit\Framework\Constraint\ObjectHasAttribute;
 use PHPUnit\Framework\Constraint\LogicalOr;
 use PHPUnit\Framework\Constraint\LogicalXor;
-use PHPUnit\Framework\Constraint\ObjectHasAttribute;
-use PHPUnit\Framework\Constraint\RegularExpression;
-use PHPUnit\Framework\Constraint\StringContains;
-use PHPUnit\Framework\Constraint\StringEndsWith;
-use PHPUnit\Framework\Constraint\StringMatchesFormatDescription;
-use PHPUnit\Framework\Constraint\StringStartsWith;
-use PHPUnit\Framework\Constraint\TraversableContains;
 use PHPUnit\Framework\Constraint\TraversableContainsOnly;
+use PHPUnit\Framework\Constraint\TraversableContains;
+use PHPUnit\Framework\Constraint\StringStartsWith;
+use PHPUnit\Framework\Constraint\StringMatchesFormatDescription;
+use PHPUnit\Framework\Constraint\StringEndsWith;
+use PHPUnit\Framework\Constraint\StringContains;
+use PHPUnit\Framework\Constraint\RegularExpression;
 use PHPUnit\Framework\TestCase;
 
 /**
  * Returns a matcher that matches when the method is executed
  * zero or more times.
  *
- * @return PHPUnit\Framework\MockObject\Matcher\AnyInvokedCount
+ * @return PHPUnit_Framework_MockObject_Matcher_AnyInvokedCount
  */
 function any()
 {
@@ -1269,7 +1269,7 @@ function assertXmlStringNotEqualsXmlString($expectedXml, $actualXml, $message = 
  *
  * @param int $index
  *
- * @return PHPUnit\Framework\MockObject\Matcher\InvokedAtIndex
+ * @return PHPUnit_Framework_MockObject_Matcher_InvokedAtIndex
  */
 function at($index)
 {
@@ -1279,7 +1279,7 @@ function at($index)
 /**
  * Returns a matcher that matches when the method is executed at least once.
  *
- * @return PHPUnit\Framework\MockObject\Matcher\InvokedAtLeastOnce
+ * @return PHPUnit_Framework_MockObject_Matcher_InvokedAtLeastOnce
  */
 function atLeastOnce()
 {
@@ -1440,7 +1440,7 @@ function equalTo($value, $delta = 0.0, $maxDepth = 10, $canonicalize = false, $i
  *
  * @param int $count
  *
- * @return PHPUnit\Framework\MockObject\Matcher\InvokedCount
+ * @return PHPUnit_Framework_MockObject_Matcher_InvokedCount
  */
 function exactly($count)
 {
@@ -1704,7 +1704,7 @@ function matchesRegularExpression($pattern)
 /**
  * Returns a matcher that matches when the method is never executed.
  *
- * @return PHPUnit\Framework\MockObject\Matcher\InvokedCount
+ * @return PHPUnit_Framework_MockObject_Matcher_InvokedCount
  */
 function never()
 {
@@ -1726,7 +1726,7 @@ function objectHasAttribute($attributeName)
 /**
  * @param mixed $value, ...
  *
- * @return PHPUnit\Framework\MockObject\Stub\ConsecutiveCalls
+ * @return PHPUnit_Framework_MockObject_Stub_ConsecutiveCalls
  */
 function onConsecutiveCalls()
 {
@@ -1736,7 +1736,7 @@ function onConsecutiveCalls()
 /**
  * Returns a matcher that matches when the method is executed exactly once.
  *
- * @return PHPUnit\Framework\MockObject\Matcher\InvokedCount
+ * @return PHPUnit_Framework_MockObject_Matcher_InvokedCount
  */
 function once()
 {
@@ -1746,7 +1746,7 @@ function once()
 /**
  * @param int $argumentIndex
  *
- * @return PHPUnit\Framework\MockObject\Stub\ReturnArgument
+ * @return PHPUnit_Framework_MockObject_Stub_ReturnArgument
  */
 function returnArgument($argumentIndex)
 {
@@ -1756,7 +1756,7 @@ function returnArgument($argumentIndex)
 /**
  * @param mixed $callback
  *
- * @return PHPUnit\Framework\MockObject\Stub\ReturnCallback
+ * @return PHPUnit_Framework_MockObject_Stub_ReturnCallback
  */
 function returnCallback($callback)
 {
@@ -1768,7 +1768,7 @@ function returnCallback($callback)
  *
  * This method is useful when mocking a fluent interface.
  *
- * @return PHPUnit\Framework\MockObject\Stub\ReturnSelf
+ * @return PHPUnit_Framework_MockObject_Stub_ReturnSelf
  */
 function returnSelf()
 {
@@ -1778,7 +1778,7 @@ function returnSelf()
 /**
  * @param mixed $value
  *
- * @return PHPUnit\Framework\MockObject\Stub\Return
+ * @return PHPUnit_Framework_MockObject_Stub_Return
  */
 function returnValue($value)
 {
@@ -1788,7 +1788,7 @@ function returnValue($value)
 /**
  * @param array $valueMap
  *
- * @return PHPUnit\Framework\MockObject\Stub\ReturnValueMap
+ * @return PHPUnit_Framework_MockObject_Stub_ReturnValueMap
  */
 function returnValueMap(array $valueMap)
 {
@@ -1835,7 +1835,7 @@ function stringStartsWith($prefix)
 /**
  * @param Exception $exception
  *
- * @return PHPUnit\Framework\MockObject\Stub\Exception
+ * @return PHPUnit_Framework_MockObject_Stub_Exception
  */
 function throwException(Exception $exception)
 {

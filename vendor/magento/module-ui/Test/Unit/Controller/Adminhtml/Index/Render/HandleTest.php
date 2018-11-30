@@ -9,6 +9,8 @@ use Magento\Ui\Controller\Adminhtml\Index\Render\Handle;
 use Magento\Framework\View\Element\UiComponent\ContextInterface;
 
 /**
+ * Tests \Magento\Ui\Controller\Adminhtml\Index\Render\Handle.
+ *
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  */
 class HandleTest extends \PHPUnit\Framework\TestCase
@@ -76,14 +78,11 @@ class HandleTest extends \PHPUnit\Framework\TestCase
 
         $this->viewMock = $this->createMock(\Magento\Framework\App\ViewInterface::class);
         $this->contextMock->expects($this->atLeastOnce())->method('getView')->willReturn($this->viewMock);
-        $this->authorizationMock = $this->getMockBuilder(\Magento\Framework\AuthorizationInterface::class)
-            ->getMockForAbstractClass();
+        $this->authorizationMock = $this->getMockForAbstractClass(\Magento\Framework\AuthorizationInterface::class);
         $this->authorizationMock->expects($this->any())
             ->method('isAllowed')
             ->willReturn(true);
-        $this->uiComponentContextMock = $this->getMockForAbstractClass(
-            ContextInterface::class
-        );
+        $this->uiComponentContextMock = $this->getMockForAbstractClass(ContextInterface::class);
         $this->uiComponentMock = $this->getMockForAbstractClass(
             \Magento\Framework\View\Element\UiComponentInterface::class
         );

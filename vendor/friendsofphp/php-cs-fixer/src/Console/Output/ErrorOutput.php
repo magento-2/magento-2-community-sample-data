@@ -12,7 +12,6 @@
 
 namespace PhpCsFixer\Console\Output;
 
-use PhpCsFixer\Differ\DiffConsoleFormatter;
 use PhpCsFixer\Error\Error;
 use PhpCsFixer\Linter\LintingException;
 use Symfony\Component\Console\Formatter\OutputFormatter;
@@ -47,72 +46,56 @@ final class ErrorOutput
      */
     public function listErrors($process, array $errors)
     {
-        $this->output->writeln(['', sprintf(
+        $this->output->writeln(array('', sprintf(
             'Files that were not fixed due to errors reported during %s:',
             $process
-        )]);
+        )));
 
         $showDetails = $this->output->getVerbosity() >= OutputInterface::VERBOSITY_VERY_VERBOSE;
         $showTrace = $this->output->getVerbosity() >= OutputInterface::VERBOSITY_DEBUG;
         foreach ($errors as $i => $error) {
             $this->output->writeln(sprintf('%4d) %s', $i + 1, $error->getFilePath()));
-            $e = $error->getSource();
-            if (!$showDetails || null === $e) {
-                continue;
-            }
-
-            $class = sprintf('[%s]', \get_class($e));
-            $message = $e->getMessage();
-            $code = $e->getCode();
-            if (0 !== $code) {
-                $message .= " (${code})";
-            }
-
-            $length = max(\strlen($class), \strlen($message));
-            $lines = [
-                '',
-                $class,
-                $message,
-                '',
-            ];
-
-            $this->output->writeln('');
-
-            foreach ($lines as $line) {
-                if (\strlen($line) < $length) {
-                    $line .= str_repeat(' ', $length - \strlen($line));
-                }
-
-                $this->output->writeln(sprintf('      <error>  %s  </error>', $this->prepareOutput($line)));
-            }
-
-            if ($showTrace && !$e instanceof LintingException) { // stack trace of lint exception is of no interest
-                $this->output->writeln('');
-                $stackTrace = $e->getTrace();
-                foreach ($stackTrace as $trace) {
-                    if (isset($trace['class'], $trace['function']) && \Symfony\Component\Console\Command\Command::class === $trace['class'] && 'run' === $trace['function']) {
-                        $this->output->writeln('      [ ... ]');
-
-                        break;
+            if ($showDetails) {
+                $e = $error->getSource();
+                if (null !== $e) {
+                    $class = sprintf('[%s]', get_class($e));
+                    $message = $e->getMessage();
+                    $code = $e->getCode();
+                    if (0 !== $code) {
+                        $message .= " (${code})";
                     }
 
-                    $this->outputTrace($trace);
-                }
-            }
+                    $length = max(strlen($class), strlen($message));
+                    $lines = array(
+                        '',
+                        $class,
+                        $message,
+                        '',
+                    );
 
-            if (Error::TYPE_LINT === $error->getType() && 0 < \count($error->getAppliedFixers())) {
-                $this->output->writeln('');
-                $this->output->writeln(sprintf('      Applied fixers: <comment>%s</comment>', implode(', ', $error->getAppliedFixers())));
+                    $this->output->writeln('');
 
-                $diff = $error->getDiff();
-                if (!empty($diff)) {
-                    $diffFormatter = new DiffConsoleFormatter($this->isDecorated, sprintf(
-                        '<comment>      ---------- begin diff ----------</comment>%s%%s%s<comment>      ----------- end diff -----------</comment>',
-                        PHP_EOL,
-                        PHP_EOL
-                    ));
+                    foreach ($lines as $line) {
+                        if (strlen($line) < $length) {
+                            $line .= str_repeat(' ', $length - strlen($line));
+                        }
 
-                    $this->output->writeln($diffFormatter->format($diff));
+                        $this->output->writeln(sprintf('      <error>  %s  </error>', $this->prepareOutput($line)));
+                    }
+
+                    if ($showTrace && !$e instanceof LintingException) { // stack trace of lint exception is of no interest
+                        $this->output->writeln('');
+                        $stackTrace = $e->getTrace();
+                        foreach ($stackTrace as $trace) {
+                            if (isset($trace['class'], $trace['function']) && 'Symfony\Component\Console\Command\Command' === $trace['class'] && 'run' === $trace['function']) {
+                                $this->output->writeln('      [ ... ]');
+
+                                break;
+                            }
+
+                            $this->outputTrace($trace);
+                        }
+                    }
                 }
             }
         }

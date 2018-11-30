@@ -118,35 +118,16 @@ class SvnDriver extends VcsDriver
     /**
      * {@inheritdoc}
      */
-    protected function shouldCache($identifier)
-    {
-        return $this->cache && preg_match('{@\d+$}', $identifier);
-    }
-
-    /**
-     * {@inheritdoc}
-     */
     public function getComposerInformation($identifier)
     {
         if (!isset($this->infoCache[$identifier])) {
-            if ($this->shouldCache($identifier) && $res = $this->cache->read($identifier.'.json')) {
+            if ($res = $this->cache->read($identifier.'.json')) {
                 return $this->infoCache[$identifier] = JsonFile::parseJson($res);
             }
 
-            try {
-                $composer = $this->getBaseComposerInformation($identifier);
-            } catch (TransportException $e) {
-                $message = $e->getMessage();
-                if (stripos($message, 'path not found') === false && stripos($message, 'svn: warning: W160013') === false) {
-                    throw $e;
-                }
-                // remember a not-existent composer.json
-                $composer = '';
-            }
+            $composer = $this->getBaseComposerInformation($identifier);
 
-            if ($this->shouldCache($identifier)) {
-                $this->cache->write($identifier.'.json', json_encode($composer));
-            }
+            $this->cache->write($identifier.'.json', json_encode($composer));
 
             $this->infoCache[$identifier] = $composer;
         }
@@ -307,10 +288,10 @@ class SvnDriver extends VcsDriver
             return false;
         }
 
-        $processExecutor = new ProcessExecutor($io);
+        $processExecutor = new ProcessExecutor();
 
         $exit = $processExecutor->execute(
-            "svn info --non-interactive ".ProcessExecutor::escape($url),
+            "svn info --non-interactive {$url}",
             $ignoredOutput
         );
 
@@ -372,7 +353,7 @@ class SvnDriver extends VcsDriver
         try {
             return $this->util->execute($command, $url);
         } catch (\RuntimeException $e) {
-            if (null === $this->util->binaryVersion()) {
+            if (0 !== $this->process->execute('svn --version', $ignoredOutput)) {
                 throw new \RuntimeException('Failed to load '.$this->url.', svn was not found, check that it is installed and in your PATH env.' . "\n\n" . $this->process->getErrorOutput());
             }
 

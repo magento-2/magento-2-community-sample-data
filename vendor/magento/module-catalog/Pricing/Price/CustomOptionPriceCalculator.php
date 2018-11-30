@@ -3,8 +3,6 @@
  * Copyright © Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
-declare(strict_types=1);
-
 namespace Magento\Catalog\Pricing\Price;
 
 use Magento\Catalog\Model\Product\Option\Value as ProductOptionValue;
@@ -37,10 +35,8 @@ class CustomOptionPriceCalculator
         if ($optionValue->getPriceType() === ProductOptionValue::TYPE_PERCENT) {
             $basePrice = $optionValue->getOption()->getProduct()->getPriceInfo()->getPrice($priceCode)->getValue();
             $price = $basePrice * ($optionValue->getData(ProductOptionValue::KEY_PRICE) / 100);
-
             return $price;
         }
-
         return $optionValue->getData(ProductOptionValue::KEY_PRICE);
     }
 }

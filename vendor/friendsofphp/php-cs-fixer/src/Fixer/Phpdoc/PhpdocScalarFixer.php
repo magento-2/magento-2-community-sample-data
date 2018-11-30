@@ -13,31 +13,26 @@
 namespace PhpCsFixer\Fixer\Phpdoc;
 
 use PhpCsFixer\AbstractPhpdocTypesFixer;
-use PhpCsFixer\Fixer\ConfigurationDefinitionFixerInterface;
-use PhpCsFixer\FixerConfiguration\AllowedValueSubset;
-use PhpCsFixer\FixerConfiguration\FixerConfigurationResolver;
-use PhpCsFixer\FixerConfiguration\FixerOptionBuilder;
 use PhpCsFixer\FixerDefinition\CodeSample;
 use PhpCsFixer\FixerDefinition\FixerDefinition;
 
 /**
  * @author Graham Campbell <graham@alt-three.com>
  */
-final class PhpdocScalarFixer extends AbstractPhpdocTypesFixer implements ConfigurationDefinitionFixerInterface
+final class PhpdocScalarFixer extends AbstractPhpdocTypesFixer
 {
     /**
      * The types to fix.
      *
      * @var array
      */
-    private static $types = [
+    private static $types = array(
         'boolean' => 'bool',
-        'callback' => 'callable',
         'double' => 'float',
         'integer' => 'int',
         'real' => 'float',
         'str' => 'string',
-    ];
+    );
 
     /**
      * {@inheritdoc}
@@ -46,7 +41,7 @@ final class PhpdocScalarFixer extends AbstractPhpdocTypesFixer implements Config
     {
         return new FixerDefinition(
             'Scalar types should always be written in the same form. `int` not `integer`, `bool` not `boolean`, `float` not `real` or `double`.',
-            [new CodeSample('<?php
+            array(new CodeSample('<?php
 /**
  * @param integer $a
  * @param boolean $b
@@ -57,8 +52,7 @@ final class PhpdocScalarFixer extends AbstractPhpdocTypesFixer implements Config
 function sample($a, $b, $c)
 {
     return sample2($a, $b, $c);
-}
-')]
+}'))
         );
     }
 
@@ -79,22 +73,9 @@ function sample($a, $b, $c)
     /**
      * {@inheritdoc}
      */
-    protected function createConfigurationDefinition()
-    {
-        return new FixerConfigurationResolver([
-            (new FixerOptionBuilder('types', 'A map of types to fix.'))
-                ->setAllowedValues([new AllowedValueSubset(array_keys(self::$types))])
-                ->setDefault(['boolean', 'double', 'integer', 'real', 'str']) // TODO 3.0 add "callback"
-                ->getOption(),
-        ]);
-    }
-
-    /**
-     * {@inheritdoc}
-     */
     protected function normalize($type)
     {
-        if (\in_array($type, $this->configuration['types'], true)) {
+        if (array_key_exists($type, self::$types)) {
             return self::$types[$type];
         }
 

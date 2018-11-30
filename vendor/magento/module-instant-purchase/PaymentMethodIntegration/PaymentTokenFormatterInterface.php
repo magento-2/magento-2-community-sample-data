@@ -15,7 +15,6 @@ use Magento\Vault\Api\Data\PaymentTokenInterface;
  * instant_purchase/tokenFormat configuration option in vault payment config.
  *
  * @api
- * @since 100.2.0
  */
 interface PaymentTokenFormatterInterface
 {
@@ -24,7 +23,6 @@ interface PaymentTokenFormatterInterface
      *
      * @param PaymentTokenInterface $paymentToken
      * @return string
-     * @since 100.2.0
      */
     public function formatPaymentToken(PaymentTokenInterface $paymentToken): string;
 }

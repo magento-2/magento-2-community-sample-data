@@ -5,7 +5,7 @@
  */
 namespace Magento\Update;
 
-class StatusTest extends \PHPUnit\Framework\TestCase
+class StatusTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\Update\Status

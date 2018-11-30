@@ -9,7 +9,6 @@ namespace Magento\Framework\Math;
  * Division library
  *
  * @api
- * @since 100.0.2
  */
 class Division
 {

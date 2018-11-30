@@ -183,13 +183,30 @@ class GitHubDriver extends VcsDriver
             return $this->gitDriver->getFileContent($file, $identifier);
         }
 
-        $resource = $this->getApiUrl() . '/repos/'.$this->owner.'/'.$this->repository.'/contents/' . $file . '?ref='.urlencode($identifier);
-        $resource = JsonFile::parseJson($this->getContents($resource));
-        if (empty($resource['content']) || $resource['encoding'] !== 'base64' || !($content = base64_decode($resource['content']))) {
-            throw new \RuntimeException('Could not retrieve ' . $file . ' for '.$identifier);
+        $notFoundRetries = 2;
+        while ($notFoundRetries) {
+            try {
+                $resource = $this->getApiUrl() . '/repos/'.$this->owner.'/'.$this->repository.'/contents/' . $file . '?ref='.urlencode($identifier);
+                $resource = JsonFile::parseJson($this->getContents($resource));
+                if (empty($resource['content']) || $resource['encoding'] !== 'base64' || !($content = base64_decode($resource['content']))) {
+                    throw new \RuntimeException('Could not retrieve ' . $file . ' for '.$identifier);
+                }
+
+                return $content;
+            } catch (TransportException $e) {
+                if (404 !== $e->getCode()) {
+                    throw $e;
+                }
+
+                // TODO should be removed when possible
+                // retry fetching if github returns a 404 since they happen randomly
+                $notFoundRetries--;
+
+                return null;
+            }
         }
 
-        return $content;
+        return null;
     }
 
     /**
@@ -344,9 +361,7 @@ class GitHubDriver extends VcsDriver
                         }
                     }
                     $scopesFailed = array_diff($scopesNeeded, $scopesIssued);
-                    // non-authenticated requests get no scopesNeeded, so ask for credentials
-                    // authenticated requests which failed some scopes should ask for new credentials too
-                    if (!$headers || !count($scopesNeeded) || count($scopesFailed)) {
+                    if (!$headers || count($scopesFailed)) {
                         $gitHubUtil->authorizeOAuthInteractively($this->originUrl, 'Your GitHub credentials are required to fetch private repository metadata (<info>'.$this->url.'</info>)');
                     }
 
@@ -361,7 +376,12 @@ class GitHubDriver extends VcsDriver
                         return $this->attemptCloneFallback();
                     }
 
-                    $rateLimited = $gitHubUtil->isRateLimited($e->getHeaders());
+                    $rateLimited = false;
+                    foreach ($e->getHeaders() as $header) {
+                        if (preg_match('{^X-RateLimit-Remaining: *0$}i', trim($header))) {
+                            $rateLimited = true;
+                        }
+                    }
 
                     if (!$this->io->hasAuthentication($this->originUrl)) {
                         if (!$this->io->isInteractive()) {
@@ -375,7 +395,7 @@ class GitHubDriver extends VcsDriver
                     }
 
                     if ($rateLimited) {
-                        $rateLimit = $gitHubUtil->getRateLimit($e->getHeaders());
+                        $rateLimit = $this->getRateLimit($e->getHeaders());
                         $this->io->writeError(sprintf(
                             '<error>GitHub API limit (%d calls/hr) is exhausted. You are already authorized so you have to wait until %s before doing more requests</error>',
                             $rateLimit['limit'],
@@ -389,6 +409,39 @@ class GitHubDriver extends VcsDriver
                     throw $e;
             }
         }
+    }
+
+    /**
+     * Extract ratelimit from response.
+     *
+     * @param array $headers Headers from Composer\Downloader\TransportException.
+     *
+     * @return array Associative array with the keys limit and reset.
+     */
+    protected function getRateLimit(array $headers)
+    {
+        $rateLimit = array(
+            'limit' => '?',
+            'reset' => '?',
+        );
+
+        foreach ($headers as $header) {
+            $header = trim($header);
+            if (false === strpos($header, 'X-RateLimit-')) {
+                continue;
+            }
+            list($type, $value) = explode(':', $header, 2);
+            switch ($type) {
+                case 'X-RateLimit-Limit':
+                    $rateLimit['limit'] = (int) trim($value);
+                    break;
+                case 'X-RateLimit-Reset':
+                    $rateLimit['reset'] = date('Y-m-d H:i:s', (int) trim($value));
+                    break;
+            }
+        }
+
+        return $rateLimit;
     }
 
     /**
@@ -459,8 +512,8 @@ class GitHubDriver extends VcsDriver
     {
         $headers = $this->remoteFilesystem->getLastHeaders();
         foreach ($headers as $header) {
-            if (preg_match('{^link:\s*(.+?)\s*$}i', $header, $match)) {
-                $links = explode(',', $match[1]);
+            if (substr($header, 0, 5) === 'Link:') {
+                $links = explode(',', substr($header, 5));
                 foreach ($links as $link) {
                     if (preg_match('{<(.+?)>; *rel="next"}', $link, $match)) {
                         return $match[1];

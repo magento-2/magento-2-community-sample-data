@@ -3,10 +3,6 @@ namespace Braintree;
 
 class Disbursement extends Base
 {
-
-    const TYPE_CREDIT = "credit";
-    const TYPE_DEBIT  = "debit";
-
     private $_merchantAccount;
 
     protected function _initialize($disbursementAttribs)
@@ -42,7 +38,7 @@ class Disbursement extends Base
         $display = [
             'id', 'merchantAccountDetails', 'exceptionMessage', 'amount',
             'disbursementDate', 'followUpAction', 'retry', 'success',
-            'transactionIds', 'disbursementType'
+            'transactionIds'
             ];
 
         $displayAttributes = [];
@@ -51,16 +47,6 @@ class Disbursement extends Base
         }
         return __CLASS__ . '[' .
                 Util::attributesToString($displayAttributes) .']';
-    }
-
-    public function isDebit()
-    {
-        return $this->disbursementType == Disbursement::TYPE_DEBIT;
-    }
-
-    public function isCredit()
-    {
-        return $this->disbursementType == Disbursement::TYPE_CREDIT;
     }
 }
 class_alias('Braintree\Disbursement', 'Braintree_Disbursement');

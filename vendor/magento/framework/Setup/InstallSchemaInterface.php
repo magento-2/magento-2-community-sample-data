@@ -9,7 +9,6 @@ namespace Magento\Framework\Setup;
  * Interface for DB schema installs of a module
  *
  * @api
- * @since 100.0.2
  */
 interface InstallSchemaInterface
 {

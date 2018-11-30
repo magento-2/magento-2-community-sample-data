@@ -50,7 +50,7 @@ final class SingleClassElementPerStatementFixer extends AbstractFixer implements
     {
         return new FixerDefinition(
             'There MUST NOT be more than one property or constant declared per statement.',
-            [
+            array(
                 new CodeSample(
                     '<?php
 final class Example
@@ -68,9 +68,9 @@ final class Example
     private static $bar1 = array(1,2,3), $bar2 = [1,2,3];
 }
 ',
-                    ['elements' => ['property']]
+                    array('elements' => array('property'))
                 ),
-            ]
+            )
         );
     }
 
@@ -83,7 +83,7 @@ final class Example
         $elements = array_reverse($analyzer->getClassyElements(), true);
 
         foreach ($elements as $index => $element) {
-            if (!\in_array($element['type'], $this->configuration['elements'], true)) {
+            if (!in_array($element['type'], $this->configuration['elements'], true)) {
                 continue; // not in configuration
             }
 
@@ -96,15 +96,17 @@ final class Example
      */
     protected function createConfigurationDefinition()
     {
-        $values = ['const', 'property'];
+        $values = array('const', 'property');
 
-        return new FixerConfigurationResolverRootless('elements', [
-            (new FixerOptionBuilder('elements', 'List of strings which element should be modified.'))
-                ->setDefault($values)
-                ->setAllowedTypes(['array'])
-                ->setAllowedValues([new AllowedValueSubset($values)])
-                ->getOption(),
-        ], $this->getName());
+        $elements = new FixerOptionBuilder('elements', 'List of strings which element should be modified.');
+        $elements = $elements
+            ->setDefault($values)
+            ->setAllowedTypes(array('array'))
+            ->setAllowedValues(array(new AllowedValueSubset($values)))
+            ->getOption()
+        ;
+
+        return new FixerConfigurationResolverRootless('elements', array($elements));
     }
 
     /**
@@ -122,7 +124,7 @@ final class Example
 
             if ($tokensAnalyzer->isArray($repeatIndex)) {
                 if ($repeatToken->isGivenKind(T_ARRAY)) {
-                    $repeatIndex = $tokens->getNextTokenOfKind($repeatIndex, ['(']);
+                    $repeatIndex = $tokens->getNextTokenOfKind($repeatIndex, array('('));
                     $repeatIndex = $tokens->findBlockEnd(Tokens::BLOCK_TYPE_PARENTHESIS_BRACE, $repeatIndex);
                 } else {
                     $repeatIndex = $tokens->findBlockEnd(Tokens::BLOCK_TYPE_ARRAY_SQUARE_BRACE, $repeatIndex);
@@ -140,11 +142,11 @@ final class Example
             }
         }
 
-        $start = $tokens->getPrevTokenOfKind($index, [';', '{', '}']);
+        $start = $tokens->getPrevTokenOfKind($index, array(';', '{', '}'));
         $this->expandElement(
             $tokens,
             $tokens->getNextMeaningfulToken($start),
-            $tokens->getNextTokenOfKind($index, [';'])
+            $tokens->getNextTokenOfKind($index, array(';'))
         );
     }
 
@@ -189,7 +191,7 @@ final class Example
             }
 
             if (null !== $divisionContent && '' !== $divisionContent) {
-                $tokens->insertAt($i + 1, new Token([T_WHITESPACE, $divisionContent]));
+                $tokens->insertAt($i + 1, new Token(array(T_WHITESPACE, $divisionContent)));
             }
 
             // collect modifiers
@@ -207,18 +209,18 @@ final class Example
      */
     private function getModifiersSequences(Tokens $tokens, $startIndex, $endIndex)
     {
-        $sequence = [];
+        $sequence = array();
         for ($i = $startIndex; $i < $endIndex - 1; ++$i) {
             if ($tokens[$i]->isWhitespace() || $tokens[$i]->isComment()) {
                 continue;
             }
 
-            if (!$tokens[$i]->isGivenKind([T_PUBLIC, T_PROTECTED, T_PRIVATE, T_STATIC, T_CONST, T_VAR])) {
+            if (!$tokens[$i]->isGivenKind(array(T_PUBLIC, T_PROTECTED, T_PRIVATE, T_STATIC, T_CONST, T_VAR))) {
                 break;
             }
 
             $sequence[] = clone $tokens[$i];
-            $sequence[] = new Token([T_WHITESPACE, ' ']);
+            $sequence[] = new Token(array(T_WHITESPACE, ' '));
         }
 
         return $sequence;

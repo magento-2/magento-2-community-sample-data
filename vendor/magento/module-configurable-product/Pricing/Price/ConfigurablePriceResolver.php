@@ -19,13 +19,13 @@ class ConfigurablePriceResolver implements PriceResolverInterface
 
     /**
      * @var PriceCurrencyInterface
-     * @deprecated 100.0.2
+     * @deprecated 100.1.1
      */
     protected $priceCurrency;
 
     /**
      * @var Configurable
-     * @deprecated 100.0.2
+     * @deprecated 100.1.1
      */
     protected $configurable;
 

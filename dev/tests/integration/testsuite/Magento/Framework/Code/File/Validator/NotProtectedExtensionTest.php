@@ -10,15 +10,18 @@ namespace Magento\Framework\Code\File\Validator;
 use Magento\TestFramework\Helper\Bootstrap;
 
 /**
- * Class NotProtectedExtension
+ * Tests protected extensions.
  */
 class NotProtectedExtensionTest extends \PHPUnit\Framework\TestCase
 {
     /**
-     * Test that phpt, pht is invalid extension type
+     * Tests that phpt, pht are invalid extension types.
+     *
      * @dataProvider isValidDataProvider
+     * @param string $extension
+     * @return void
      */
-    public function testIsValid($extension)
+    public function testIsValid(string $extension)
     {
         $objectManager = Bootstrap::getObjectManager();
         /** @var \Magento\MediaStorage\Model\File\Validator\NotProtectedExtension $model */
@@ -26,11 +29,14 @@ class NotProtectedExtensionTest extends \PHPUnit\Framework\TestCase
         $this->assertFalse($model->isValid($extension));
     }
 
-    public function isValidDataProvider()
+    /**
+     * @return array
+     */
+    public function isValidDataProvider(): array
     {
         return [
             ['phpt'],
-            ['pht']
+            ['pht'],
         ];
     }
 }

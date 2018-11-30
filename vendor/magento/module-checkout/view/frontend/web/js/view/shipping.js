@@ -247,7 +247,6 @@ define([
          */
         setShippingInformation: function () {
             if (this.validateShippingInformation()) {
-                quote.billingAddress(null);
                 checkoutDataResolver.resolveBillingAddress();
                 setShippingInformationAction().done(
                     function () {
@@ -268,9 +267,7 @@ define([
                 field;
 
             if (!quote.shippingMethod()) {
-                this.errorValidationMessage(
-                    $t('The shipping method is missing. Select the shipping method and try again.')
-                );
+                this.errorValidationMessage($t('Please specify a shipping method.'));
 
                 return false;
             }

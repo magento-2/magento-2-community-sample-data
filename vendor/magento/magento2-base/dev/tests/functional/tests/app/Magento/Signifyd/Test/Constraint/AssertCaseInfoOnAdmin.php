@@ -68,7 +68,7 @@ class AssertCaseInfoOnAdmin extends AbstractConstraint
      */
     private function checkCaseGuaranteeDisposition()
     {
-        \PHPUnit\Framework\Assert::assertEquals(
+        \PHPUnit_Framework_Assert::assertEquals(
             $this->signifydData->getGuaranteeDisposition(),
             $this->orderView->getFraudProtectionBlock()->getCaseGuaranteeDisposition(),
             'Case Guarantee Disposition status is wrong for order #' . $this->orderId

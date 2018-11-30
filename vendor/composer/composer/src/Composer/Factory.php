@@ -164,19 +164,16 @@ class Factory
             'data-dir' => self::getDataDir($home),
         )));
 
-        $htaccessProtect = (bool) $config->get('htaccess-protect');
-        if ($htaccessProtect) {
-            // Protect directory against web access. Since HOME could be
-            // the www-data's user home and be web-accessible it is a
-            // potential security risk
-            $dirs = array($config->get('home'), $config->get('cache-dir'), $config->get('data-dir'));
-            foreach ($dirs as $dir) {
-                if (!file_exists($dir . '/.htaccess')) {
-                    if (!is_dir($dir)) {
-                        Silencer::call('mkdir', $dir, 0777, true);
-                    }
-                    Silencer::call('file_put_contents', $dir . '/.htaccess', 'Deny from all');
+        // Protect directory against web access. Since HOME could be
+        // the www-data's user home and be web-accessible it is a
+        // potential security risk
+        $dirs = array($config->get('home'), $config->get('cache-dir'), $config->get('data-dir'));
+        foreach ($dirs as $dir) {
+            if (!file_exists($dir . '/.htaccess')) {
+                if (!is_dir($dir)) {
+                    Silencer::call('mkdir', $dir, 0777, true);
                 }
+                Silencer::call('file_put_contents', $dir . '/.htaccess', 'Deny from all');
             }
         }
 
@@ -204,7 +201,7 @@ class Factory
         if ($composerAuthEnv = getenv('COMPOSER_AUTH')) {
             $authData = json_decode($composerAuthEnv, true);
 
-            if (null === $authData) {
+            if (is_null($authData)) {
                 throw new \UnexpectedValueException('COMPOSER_AUTH environment variable is malformed, should be a valid JSON object');
             }
 
@@ -238,7 +235,7 @@ class Factory
     public static function createOutput()
     {
         $styles = self::createAdditionalStyles();
-        $formatter = new OutputFormatter(false, $styles);
+        $formatter = new OutputFormatter(null, $styles);
 
         return new ConsoleOutput(ConsoleOutput::VERBOSITY_NORMAL, null, $formatter);
     }
@@ -363,10 +360,6 @@ class Factory
             // initialize autoload generator
             $generator = new AutoloadGenerator($dispatcher, $io);
             $composer->setAutoloadGenerator($generator);
-
-            // initialize archive manager
-            $am = $this->createArchiveManager($config, $dm);
-            $composer->setArchiveManager($am);
         }
 
         // add installers to the manager (must happen after download manager is created since they read it out of $composer)
@@ -437,7 +430,7 @@ class Factory
     {
         $composer = null;
         try {
-            $composer = $this->createComposer($io, $config->get('home') . '/composer.json', $disablePlugins, $config->get('home'), $fullLoad);
+            $composer = self::createComposer($io, $config->get('home') . '/composer.json', $disablePlugins, $config->get('home'), $fullLoad);
         } catch (\Exception $e) {
             $io->writeError('Failed to initialize global composer: '.$e->getMessage(), true, IOInterface::DEBUG);
         }
@@ -546,7 +539,7 @@ class Factory
         $im->addInstaller(new Installer\LibraryInstaller($io, $composer, null));
         $im->addInstaller(new Installer\PearInstaller($io, $composer, 'pear-library'));
         $im->addInstaller(new Installer\PluginInstaller($io, $composer));
-        $im->addInstaller(new Installer\MetapackageInstaller());
+        $im->addInstaller(new Installer\MetapackageInstaller($io));
     }
 
     /**

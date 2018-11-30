@@ -11,7 +11,7 @@ use Magento\Framework\Serialize\Serializer\Json;
  * Backend model for attribute that stores structures in json format
  *
  * @api
- * @since 101.0.0
+ * @since 100.2.0
  */
 class JsonEncoded extends \Magento\Eav\Model\Entity\Attribute\Backend\AbstractBackend
 {
@@ -35,7 +35,7 @@ class JsonEncoded extends \Magento\Eav\Model\Entity\Attribute\Backend\AbstractBa
      *
      * @param \Magento\Framework\DataObject $object
      * @return $this
-     * @since 101.0.0
+     * @since 100.2.0
      */
     public function beforeSave($object)
     {
@@ -52,7 +52,7 @@ class JsonEncoded extends \Magento\Eav\Model\Entity\Attribute\Backend\AbstractBa
      *
      * @param \Magento\Framework\DataObject $object
      * @return $this
-     * @since 101.0.0
+     * @since 100.2.0
      */
     public function afterLoad($object)
     {
@@ -63,7 +63,7 @@ class JsonEncoded extends \Magento\Eav\Model\Entity\Attribute\Backend\AbstractBa
     }
 
     /**
-     * Returns true if given value is a valid json value, and false otherwise.
+     * Returns true if given param is a valid json value else false.
      *
      * @param string|int|float|bool|array|null $value
      * @return bool

@@ -2,8 +2,6 @@
 
 namespace Dotdigitalgroup\Email\Model\ResourceModel;
 
-use Dotdigitalgroup\Email\Setup\Schema;
-
 class Automation extends \Magento\Framework\Model\ResourceModel\Db\AbstractDb
 {
     /**
@@ -18,7 +16,7 @@ class Automation extends \Magento\Framework\Model\ResourceModel\Db\AbstractDb
      */
     public function _construct()
     {
-        $this->_init(Schema::EMAIL_AUTOMATION_TABLE, 'id');
+        $this->_init('email_automation', 'id');
     }
 
     /**
@@ -53,7 +51,7 @@ class Automation extends \Magento\Framework\Model\ResourceModel\Db\AbstractDb
         ];
         $where = ['id IN(?)' => $contactIds];
         $num = $this->getConnection()->update(
-            $this->getTable(Schema::EMAIL_AUTOMATION_TABLE),
+            $this->getTable('email_automation'),
             $bind,
             $where
         );

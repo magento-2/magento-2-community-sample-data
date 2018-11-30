@@ -38,14 +38,13 @@ class SearchCommand extends BaseCommand
     {
         $this
             ->setName('search')
-            ->setDescription('Searches for packages.')
+            ->setDescription('Search for packages.')
             ->setDefinition(array(
                 new InputOption('only-name', 'N', InputOption::VALUE_NONE, 'Search only in name'),
                 new InputOption('type', 't', InputOption::VALUE_REQUIRED, 'Search for a specific package type'),
                 new InputArgument('tokens', InputArgument::IS_ARRAY | InputArgument::REQUIRED, 'tokens to search for'),
             ))
-            ->setHelp(
-                <<<EOT
+            ->setHelp(<<<EOT
 The search command searches for packages by its name
 <info>php composer.phar search symfony composer</info>
 
@@ -60,7 +59,7 @@ EOT
         $platformRepo = new PlatformRepository;
         $io = $this->getIO();
         if (!($composer = $this->getComposer(false))) {
-            $composer = Factory::create($this->getIO(), array(), $input->hasParameterOption('--no-plugins'));
+            $composer = Factory::create($this->getIO(), array());
         }
         $localRepo = $composer->getRepositoryManager()->getLocalRepository();
         $installedRepo = new CompositeRepository(array($localRepo, $platformRepo));

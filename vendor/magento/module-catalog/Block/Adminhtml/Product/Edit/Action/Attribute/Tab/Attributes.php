@@ -4,6 +4,8 @@
  * See COPYING.txt for license details.
  */
 
+// @codingStandardsIgnoreFile
+
 /**
  * Adminhtml catalog product edit action attributes update tab block
  *
@@ -134,7 +136,6 @@ class Attributes extends \Magento\Catalog\Block\Adminhtml\Form implements
         $dataAttribute = "data-disable='{$elementId}'";
         $dataCheckboxName = "toggle_" . "{$elementId}";
         $checkboxLabel = __('Change');
-        // @codingStandardsIgnoreStart
         $html = <<<HTML
 <span class="attribute-change-checkbox">
     <input type="checkbox" id="$dataCheckboxName" name="$dataCheckboxName" class="checkbox" $nameAttributeHtml onclick="toogleFieldEditMode(this, '{$elementId}')" $dataAttribute />
@@ -149,7 +150,6 @@ HTML;
     weightHandle.hideWeightSwitcher();
 });</script>
 HTML;
-        // @codingStandardsIgnoreEnd
         }
         return $html;
     }

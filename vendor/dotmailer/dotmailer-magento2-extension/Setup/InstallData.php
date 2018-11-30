@@ -112,7 +112,7 @@ class InstallData implements InstallDataInterface
 
         $insertArray = ['customer_id', 'email', 'website_id', 'store_id'];
         $sqlQuery = $select->insertFromSelect(
-            $installer->getTable(Schema::EMAIL_CONTACT_TABLE),
+            $installer->getTable('email_contact'),
             $insertArray,
             false
         );
@@ -142,7 +142,7 @@ class InstallData implements InstallDataInterface
             'store_id'
         ];
         $sqlQuery = $select->insertFromSelect(
-            $installer->getTable(Schema::EMAIL_CONTACT_TABLE),
+            $installer->getTable('email_contact'),
             $insertArray,
             false
         );
@@ -168,7 +168,7 @@ class InstallData implements InstallDataInterface
 
         if (!empty($customerIds)) {
             $installer->getConnection()->update(
-                $installer->getTable(Schema::EMAIL_CONTACT_TABLE),
+                $installer->getTable('email_contact'),
                 [
                     'is_subscriber' => new \Zend_Db_Expr('1'),
                     'subscriber_status' => new \Zend_Db_Expr('1')
@@ -185,103 +185,32 @@ class InstallData implements InstallDataInterface
      */
     private function populateEmailOrderTable($installer)
     {
-        $dotmailerTableConnection = $installer->getConnection();
-        $dotmailerTableName = $installer->getTable(Schema::EMAIL_ORDER_TABLE);
-        $dotmailerTableTargetColumns = [
-                                                'order_id',
-                                                'quote_id',
-                                                'store_id',
-                                                'created_at',
-                                                'updated_at',
-                                                'order_status'
-                                              ];
-        $magentoTableConnection = $installer->getConnection('sales');
-        $magentoTableName = $installer->getTable('sales_order', 'sales');
-        $magentoTableIdColumn = 'entity_id';
-        $magentoTableSourceColumns = [
-                                                'order_id' => 'entity_id',
-                                                'quote_id',
-                                                'store_id',
-                                                'created_at',
-                                                'updated_at',
-                                                'order_status' => 'status'
-                                            ];
-        $batchSize = 1000;
-
-        $this->batchPopulateTable(
-            $dotmailerTableConnection,
-            $dotmailerTableName,
-            $dotmailerTableTargetColumns,
-            $magentoTableConnection,
-            $magentoTableName,
-            $magentoTableIdColumn,
-            $magentoTableSourceColumns,
-            $batchSize
+        $select = $installer->getConnection()->select()
+            ->from(
+                $installer->getTable('sales_order'),
+                [
+                    'order_id' => 'entity_id',
+                    'quote_id',
+                    'store_id',
+                    'created_at',
+                    'updated_at',
+                    'order_status' => 'status'
+                ]
+            );
+        $insertArray = [
+            'order_id',
+            'quote_id',
+            'store_id',
+            'created_at',
+            'updated_at',
+            'order_status'
+        ];
+        $sqlQuery = $select->insertFromSelect(
+            $installer->getTable('email_order'),
+            $insertArray,
+            false
         );
-    }
-
-    /**
-     * @param \Magento\Framework\DB\Adapter\AdapterInterface $dotmailerTableConnection
-     * @param string $dotmailerTableName
-     * @param array $dotmailerTableTargetColumns
-     * @param \Magento\Framework\DB\Adapter\AdapterInterface $magentoTableConnection
-     * @param string $magentoTableName
-     * @param string $magentoTableIdColumn
-     * @param array $magentoTableSourceColumns
-     * @param int $batchSize
-     *
-     * @return null
-     */
-    private function batchPopulateTable(
-        $dotmailerTableConnection,
-        $dotmailerTableName,
-        $dotmailerTableTargetColumns,
-        $magentoTableConnection,
-        $magentoTableName,
-        $magentoTableIdColumn,
-        $magentoTableSourceColumns,
-        $batchSize
-    ) {
-        $sourceConnection = $magentoTableConnection;
-        $sourceTableName = $magentoTableName;
-        $sourceTableIdColumn = $magentoTableIdColumn;
-        $sourceTableColumns = $magentoTableSourceColumns;
-
-        $minSourceIdSelect = $sourceConnection->select()
-                                              ->from($sourceTableName, [$sourceTableIdColumn])
-                                              ->order("$sourceTableIdColumn ASC");
-
-        $minSourceId = $sourceConnection->fetchRow($minSourceIdSelect)[$sourceTableIdColumn];
-        if ($minSourceId) {
-            $maxSourceIdSelect = $sourceConnection->select()
-                                                  ->from($sourceTableName, [$sourceTableIdColumn])
-                                                  ->order("$sourceTableIdColumn DESC");
-
-            $maxOrderId = $sourceConnection->fetchRow($maxSourceIdSelect)[$sourceTableIdColumn];
-
-            $batchMinId = $minSourceId;
-            $batchMaxId = $minSourceId + $batchSize;
-            $moreRecords = true;
-
-            while ($moreRecords) {
-                $sourceBatchSelect = $sourceConnection->select()
-                                                      ->from($sourceTableName, $sourceTableColumns)
-                                                      ->where('entity_id >= ?', $batchMinId)
-                                                      ->where('entity_id < ?', $batchMaxId);
-
-                $pageOfResults = $sourceConnection->fetchAll($sourceBatchSelect);
-
-                $dotmailerTableConnection->insertArray(
-                    $dotmailerTableName,
-                    $dotmailerTableTargetColumns,
-                    $pageOfResults
-                );
-
-                $moreRecords = $maxOrderId >= $batchMaxId;
-                $batchMinId = $batchMinId + $batchSize;
-                $batchMaxId = $batchMaxId + $batchSize;
-            }
-        }
+        $installer->getConnection()->query($sqlQuery);
     }
 
     /**
@@ -319,7 +248,7 @@ class InstallData implements InstallDataInterface
             'customer_id'
         ];
         $sqlQuery = $select->insertFromSelect(
-            $installer->getTable(Schema::EMAIL_REVIEW_TABLE),
+            $installer->getTable('email_review'),
             $insertArray,
             false
         );
@@ -359,7 +288,7 @@ class InstallData implements InstallDataInterface
             'item_count'
         ];
         $sqlQuery = $select->insertFromSelect(
-            $installer->getTable(Schema::EMAIL_WISHLIST_TABLE),
+            $installer->getTable('email_wishlist'),
             $insertArray,
             false
         );
@@ -373,7 +302,7 @@ class InstallData implements InstallDataInterface
      */
     private function populateEmailCatalogTable($installer)
     {
-        $emailCatalogTable = $installer->getTable(Schema::EMAIL_CATALOG_TABLE);
+        $emailCatalogTable = $installer->getTable('email_catalog');
         $select = $installer->getConnection()->select()
             ->from(
                 [

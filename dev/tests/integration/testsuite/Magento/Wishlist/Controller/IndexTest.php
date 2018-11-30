@@ -170,7 +170,9 @@ class IndexTest extends \Magento\TestFramework\TestCase\AbstractController
             \Magento\TestFramework\Mail\Template\TransportBuilderMock::class
         );
 
-        $actualResult = quoted_printable_decode($transportBuilder->getSentMessage()->getRawMessage());
+        $actualResult = \Zend_Mime_Decode::decodeQuotedPrintable(
+            $transportBuilder->getSentMessage()->getBodyHtml()->getContent()
+        );
 
         $this->assertStringMatchesFormat(
             '%A' . $this->_customerViewHelper->getCustomerName($this->_customerSession->getCustomerDataObject())

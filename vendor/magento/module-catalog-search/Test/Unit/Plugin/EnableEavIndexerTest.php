@@ -3,16 +3,10 @@
  * Copyright © Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
-declare(strict_types=1);
-
 namespace Magento\CatalogSearch\Test\Unit\Plugin;
 
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager as ObjectManagerHelper;
 
-/**
- * @deprecated
- * @see \Magento\ElasticSearch
- */
 class EnableEavIndexerTest extends \PHPUnit\Framework\TestCase
 {
     /**
@@ -25,11 +19,6 @@ class EnableEavIndexerTest extends \PHPUnit\Framework\TestCase
      */
     private $config;
 
-    /**
-     * Set up
-     *
-     * @return void
-     */
     protected function setUp()
     {
         $this->config = $this->getMockBuilder(\Magento\Config\Model\Config::class)
@@ -43,11 +32,6 @@ class EnableEavIndexerTest extends \PHPUnit\Framework\TestCase
         );
     }
 
-    /**
-     * Test with other search engine (not MySQL) selected in config
-     *
-     * @return void
-     */
     public function testBeforeSave()
     {
         $this->config->expects($this->once())->method('getData')->willReturn('elasticsearch');
@@ -56,11 +40,6 @@ class EnableEavIndexerTest extends \PHPUnit\Framework\TestCase
         $this->model->beforeSave($this->config);
     }
 
-    /**
-     * Test with MySQL search engine selected in config
-     *
-     * @return void
-     */
     public function testBeforeSaveMysqlSearchEngine()
     {
         $this->config->expects($this->at(0))->method('getData')->willReturn('mysql');

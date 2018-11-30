@@ -9,9 +9,8 @@
  */
 
 use PHPUnit\Framework\TestCase;
-use PHPUnit\Framework\MockObject\MockBuilder;
 
-class MockBuilderTest extends TestCase
+class Framework_MockBuilderTest extends TestCase
 {
     public function testMockBuilderRequiresClassName()
     {
@@ -124,6 +123,6 @@ class MockBuilderTest extends TestCase
                      ->disableOriginalClone()
                      ->disableAutoload();
 
-        $this->assertTrue($spec instanceof MockBuilder);
+        $this->assertTrue($spec instanceof PHPUnit_Framework_MockObject_MockBuilder);
     }
 }

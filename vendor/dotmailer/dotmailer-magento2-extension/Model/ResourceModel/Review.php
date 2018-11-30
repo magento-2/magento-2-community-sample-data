@@ -2,7 +2,6 @@
 
 namespace Dotdigitalgroup\Email\Model\ResourceModel;
 
-use Dotdigitalgroup\Email\Setup\Schema;
 use Magento\Review\Model\ResourceModel\Rating\Option;
 
 /**
@@ -60,7 +59,7 @@ class Review extends \Magento\Framework\Model\ResourceModel\Db\AbstractDb
      */
     public function _construct()
     {
-        $this->_init(Schema::EMAIL_REVIEW_TABLE, 'id');
+        $this->_init('email_review', 'id');
     }
 
     /**
@@ -127,7 +126,7 @@ class Review extends \Magento\Framework\Model\ResourceModel\Db\AbstractDb
             );
         }
         $num = $conn->update(
-            $this->getTable(Schema::EMAIL_REVIEW_TABLE),
+            $this->getTable('email_review'),
             ['review_imported' => new \Zend_Db_Expr('null')],
             $where
         );
@@ -202,7 +201,7 @@ class Review extends \Magento\Framework\Model\ResourceModel\Db\AbstractDb
     {
         try {
             $coreResource = $this->getConnection();
-            $tableName = $this->getTable(Schema::EMAIL_REVIEW_TABLE);
+            $tableName = $this->getTable('email_review');
             $coreResource->update(
                 $tableName,
                 ['review_imported' => 1, 'updated_at' => $nowDate],

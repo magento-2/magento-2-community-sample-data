@@ -9,12 +9,12 @@ use Magento\Backend\Block\Widget\Button;
 use Magento\Framework\Controller\ResultFactory;
 use Magento\Framework\Exception\LocalizedException;
 use Magento\Sales\Api\Data\OrderInterface;
-use Magento\Sales\Api\ShipmentRepositoryInterface;
+use Magento\Sales\Api\ShipmentRepositoryInterface as SalesShipmentRepositoryInterface;
 use Magento\Sales\Model\Order\Shipment;
 use Temando\Shipping\Model\BatchInterface;
 use Temando\Shipping\Model\BatchProviderInterface;
 use Temando\Shipping\Model\ResourceModel\Repository\BatchRepositoryInterface;
-use Temando\Shipping\Model\ResourceModel\Repository\ShipmentReferenceRepositoryInterface;
+use Temando\Shipping\Model\ResourceModel\Repository\ShipmentRepositoryInterface;
 use Temando\Shipping\ViewModel\DataProvider\BatchUrl;
 
 /**
@@ -38,14 +38,14 @@ class View extends AbstractBatchAction
     private $batchProvider;
 
     /**
-     * @var ShipmentReferenceRepositoryInterface
+     * @var ShipmentRepositoryInterface
      */
     private $shipmentReferenceRepository;
 
     /**
-     * @var ShipmentRepositoryInterface
+     * @var SalesShipmentRepositoryInterface
      */
-    private $shipmentRepository;
+    private $salesShipmentRepository;
 
     /**
      * @var int
@@ -58,21 +58,21 @@ class View extends AbstractBatchAction
      * @param BatchRepositoryInterface $batchRepository
      * @param BatchProviderInterface $batchProvider
      * @param BatchUrl $batchUrl
-     * @param ShipmentReferenceRepositoryInterface $shipmentReferenceRepository
-     * @param ShipmentRepositoryInterface $shipmentRepository
+     * @param ShipmentRepositoryInterface $shipmentReferenceRepository
+     * @param SalesShipmentRepositoryInterface $salesShipmentRepository
      */
     public function __construct(
         Context $context,
         BatchRepositoryInterface $batchRepository,
         BatchProviderInterface $batchProvider,
         BatchUrl $batchUrl,
-        ShipmentReferenceRepositoryInterface $shipmentReferenceRepository,
-        ShipmentRepositoryInterface $shipmentRepository
+        ShipmentRepositoryInterface $shipmentReferenceRepository,
+        SalesShipmentRepositoryInterface $salesShipmentRepository
     ) {
         $this->batchUrl = $batchUrl;
         $this->batchProvider = $batchProvider;
         $this->shipmentReferenceRepository = $shipmentReferenceRepository;
-        $this->shipmentRepository = $shipmentRepository;
+        $this->salesShipmentRepository = $salesShipmentRepository;
 
         parent::__construct($context, $batchRepository, $batchProvider);
     }
@@ -140,9 +140,9 @@ class View extends AbstractBatchAction
             $extShipmentId = $batchShipment->getShipmentId();
 
             try {
-                $shipmentReference = $this->shipmentReferenceRepository->getByExtShipmentId($extShipmentId);
+                $shipmentReference = $this->shipmentReferenceRepository->getReferenceByExtShipmentId($extShipmentId);
                 /** @var Shipment $salesShipment */
-                $salesShipment = $this->shipmentRepository->get($shipmentReference->getShipmentId());
+                $salesShipment = $this->salesShipmentRepository->get($shipmentReference->getShipmentId());
                 /** @var OrderInterface[] $orders */
                 $orders[$extShipmentId] = $salesShipment->getOrder();
             } catch (LocalizedException $e) {

@@ -1,6 +1,6 @@
 <?php
 /*
- * This file is part of sebastian/comparator.
+ * This file is part of the Comparator package.
  *
  * (c) Sebastian Bergmann <sebastian@phpunit.de>
  *
@@ -11,7 +11,6 @@
 namespace SebastianBergmann\Comparator;
 
 use SebastianBergmann\Diff\Differ;
-use SebastianBergmann\Diff\Output\UnifiedDiffOutputBuilder;
 
 /**
  * Thrown when an assertion for string equality failed.
@@ -120,7 +119,7 @@ class ComparisonFailure extends \RuntimeException
             return '';
         }
 
-        $differ = new Differ(new UnifiedDiffOutputBuilder("\n--- Expected\n+++ Actual\n"));
+        $differ = new Differ("\n--- Expected\n+++ Actual\n");
 
         return $differ->diff($this->expectedAsString, $this->actualAsString);
     }

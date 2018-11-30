@@ -13,11 +13,7 @@
 namespace PhpCsFixer\Fixer\Phpdoc;
 
 use PhpCsFixer\AbstractFixer;
-use PhpCsFixer\Fixer\ConfigurationDefinitionFixerInterface;
 use PhpCsFixer\Fixer\WhitespacesAwareFixerInterface;
-use PhpCsFixer\FixerConfiguration\AllowedValueSubset;
-use PhpCsFixer\FixerConfiguration\FixerConfigurationResolver;
-use PhpCsFixer\FixerConfiguration\FixerOptionBuilder;
 use PhpCsFixer\FixerDefinition\CodeSample;
 use PhpCsFixer\FixerDefinition\FixerDefinition;
 use PhpCsFixer\Preg;
@@ -32,86 +28,25 @@ use PhpCsFixer\Utils;
  * @author Graham Campbell <graham@alt-three.com>
  * @author Dariusz Rumiński <dariusz.ruminski@gmail.com>
  */
-final class PhpdocAlignFixer extends AbstractFixer implements ConfigurationDefinitionFixerInterface, WhitespacesAwareFixerInterface
+final class PhpdocAlignFixer extends AbstractFixer implements WhitespacesAwareFixerInterface
 {
-    /**
-     * @internal
-     */
-    const ALIGN_LEFT = 'left';
-
-    /**
-     * @internal
-     */
-    const ALIGN_VERTICAL = 'vertical';
-
-    /**
-     * @var string
-     */
     private $regex;
-
-    /**
-     * @var string
-     */
     private $regexCommentLine;
 
-    /**
-     * @var string
-     */
-    private $align;
-
-    private static $alignableTags = [
-        'param',
-        'property',
-        'return',
-        'throws',
-        'type',
-        'var',
-        'method',
-    ];
-
-    private static $tagsWithName = [
-        'param',
-        'property',
-    ];
-
-    private static $tagsWithMethodSignature = [
-        'method',
-    ];
-
-    /**
-     * {@inheritdoc}
-     */
-    public function configure(array $configuration = null)
+    public function __construct()
     {
-        parent::configure($configuration);
-
-        $tagsWithNameToAlign = array_intersect($this->configuration['tags'], self::$tagsWithName);
-        $tagsWithMethodSignatureToAlign = array_intersect($this->configuration['tags'], self::$tagsWithMethodSignature);
-        $tagsWithoutNameToAlign = array_diff($this->configuration['tags'], $tagsWithNameToAlign, $tagsWithMethodSignatureToAlign);
-        $types = [];
+        parent::__construct();
 
         $indent = '(?P<indent>(?: {2}|\t)*)';
         // e.g. @param <hint> <$var>
-        if (!empty($tagsWithNameToAlign)) {
-            $types[] = '(?P<tag>'.implode('|', $tagsWithNameToAlign).')\s+(?P<hint>[^$]+?)\s+(?P<var>(?:&|\.{3})?\$[^\s]+)';
-        }
-
+        $paramTag = '(?P<tag>param)\s+(?P<hint>[^$]+?)\s+(?P<var>(?:&|\.{3})?\$[^\s]+)';
         // e.g. @return <hint>
-        if (!empty($tagsWithoutNameToAlign)) {
-            $types[] = '(?P<tag2>'.implode('|', $tagsWithoutNameToAlign).')\s+(?P<hint2>[^\s]+?)';
-        }
-
-        // e.g. @method <hint> <signature>
-        if (!empty($tagsWithMethodSignatureToAlign)) {
-            $types[] = '(?P<tag3>'.implode('|', $tagsWithMethodSignatureToAlign).')(\s+(?P<hint3>[^\s(]+)|)\s+(?P<signature>.+\))';
-        }
-
+        $otherTags = '(?P<tag2>return|throws|var|type)\s+(?P<hint2>[^\s]+?)';
         // optional <desc>
         $desc = '(?:\s+(?P<desc>\V*))';
 
-        $this->regex = '/^'.$indent.' \* @(?:'.implode('|', $types).')'.$desc.'\s*$/u';
+        $this->regex = '/^'.$indent.' \* @(?:'.$paramTag.'|'.$otherTags.')'.$desc.'\s*$/u';
         $this->regexCommentLine = '/^'.$indent.' \*(?! @)(?:\s+(?P<desc>\V+))(?<!\*\/)\r?$/u';
-        $this->align = $this->configuration['align'];
     }
 
     /**
@@ -119,8 +54,9 @@ final class PhpdocAlignFixer extends AbstractFixer implements ConfigurationDefin
      */
     public function getDefinition()
     {
-        $code = <<<'EOF'
-<?php
+        return new FixerDefinition(
+            'All items of the `@param`, `@throws`, `@return`, `@var`, and `@type` PHPDoc tags must be aligned vertically.',
+            array(new CodeSample('<?php
 /**
  * @param  EngineInterface $templating
  * @param string      $format
@@ -128,16 +64,7 @@ final class PhpdocAlignFixer extends AbstractFixer implements ConfigurationDefin
  * @param    bool         $debug
  * @param  mixed    &$reference     a parameter passed by reference
  */
-
-EOF;
-
-        return new FixerDefinition(
-            'All items of the given phpdoc tags must be either left-aligned or (by default) aligned vertically.',
-            [
-                new CodeSample($code),
-                new CodeSample($code, ['align' => self::ALIGN_VERTICAL]),
-                new CodeSample($code, ['align' => self::ALIGN_LEFT]),
-            ]
+'))
         );
     }
 
@@ -177,41 +104,9 @@ EOF;
             $content = $token->getContent();
             $newContent = $this->fixDocBlock($content);
             if ($newContent !== $content) {
-                $tokens[$index] = new Token([T_DOC_COMMENT, $newContent]);
+                $tokens[$index] = new Token(array(T_DOC_COMMENT, $newContent));
             }
         }
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    protected function createConfigurationDefinition()
-    {
-        $tags = new FixerOptionBuilder('tags', 'The tags that should be aligned.');
-        $tags
-            ->setAllowedTypes(['array'])
-            ->setAllowedValues([new AllowedValueSubset(self::$alignableTags)])
-            /*
-             * By default, all tags apart from @property and @method will be aligned for backwards compatibility
-             * @TODO 3.0 Align all available tags by default
-             */
-            ->setDefault([
-                'param',
-                'return',
-                'throws',
-                'type',
-                'var',
-            ])
-        ;
-
-        $align = new FixerOptionBuilder('align', 'Align comments');
-        $align
-            ->setAllowedTypes(['string'])
-            ->setAllowedValues([self::ALIGN_LEFT, self::ALIGN_VERTICAL])
-            ->setDefault(self::ALIGN_VERTICAL)
-        ;
-
-        return new FixerConfigurationResolver([$tags->getOption(), $align->getOption()]);
     }
 
     /**
@@ -224,8 +119,8 @@ EOF;
         $lineEnding = $this->whitespacesConfig->getLineEnding();
         $lines = Utils::splitLines($content);
 
-        for ($i = 0, $l = \count($lines); $i < $l; ++$i) {
-            $items = [];
+        for ($i = 0, $l = count($lines); $i < $l; ++$i) {
+            $items = array();
             $matches = $this->getMatches($lines[$i]);
 
             if (null === $matches) {
@@ -258,9 +153,9 @@ EOF;
                     continue;
                 }
 
-                $tagMax = max($tagMax, \strlen($item['tag']));
-                $hintMax = max($hintMax, \strlen($item['hint']));
-                $varMax = max($varMax, \strlen($item['var']));
+                $tagMax = max($tagMax, strlen($item['tag']));
+                $hintMax = max($hintMax, strlen($item['hint']));
+                $varMax = max($varMax, strlen($item['var']));
             }
 
             $currTag = null;
@@ -268,25 +163,16 @@ EOF;
             // update
             foreach ($items as $j => $item) {
                 if (null === $item['tag']) {
-                    if ('@' === $item['desc'][0]) {
+                    if ($item['desc'][0] === '@') {
                         $lines[$current + $j] = $item['indent'].' * '.$item['desc'].$lineEnding;
 
                         continue;
                     }
 
-                    $extraIndent = 2;
-
-                    if (\in_array($currTag, self::$tagsWithName, true) || \in_array($currTag, self::$tagsWithMethodSignature, true)) {
-                        $extraIndent = 3;
-                    }
-
                     $line =
                         $item['indent']
                         .' *  '
-                        .$this->getIndent(
-                            $tagMax + $hintMax + $varMax + $extraIndent,
-                            $this->getLeftAlignedDescriptionIndent($items, $j)
-                        )
+                        .str_repeat(' ', $tagMax + $hintMax + $varMax + ('param' === $currTag ? 3 : 2))
                         .$item['desc']
                         .$lineEnding;
 
@@ -301,25 +187,22 @@ EOF;
                     $item['indent']
                     .' * @'
                     .$item['tag']
-                    .$this->getIndent(
-                        $tagMax - \strlen($item['tag']) + 1,
-                        $item['hint'] ? 1 : 0
-                    )
+                    .str_repeat(' ', $tagMax - strlen($item['tag']) + 1)
                     .$item['hint']
                 ;
 
                 if (!empty($item['var'])) {
                     $line .=
-                        $this->getIndent(($hintMax ?: -1) - \strlen($item['hint']) + 1)
+                        str_repeat(' ', $hintMax - strlen($item['hint']) + 1)
                         .$item['var']
                         .(
                             !empty($item['desc'])
-                            ? $this->getIndent($varMax - \strlen($item['var']) + 1).$item['desc'].$lineEnding
+                            ? str_repeat(' ', $varMax - strlen($item['var']) + 1).$item['desc'].$lineEnding
                             : $lineEnding
                         )
                     ;
                 } elseif (!empty($item['desc'])) {
-                    $line .= $this->getIndent($hintMax - \strlen($item['hint']) + 1).$item['desc'].$lineEnding;
+                    $line .= str_repeat(' ', $hintMax - strlen($item['hint']) + 1).$item['desc'].$lineEnding;
                 } else {
                     $line .= $lineEnding;
                 }
@@ -328,7 +211,7 @@ EOF;
             }
         }
 
-        return implode('', $lines);
+        return implode($lines);
     }
 
     /**
@@ -346,16 +229,6 @@ EOF;
                 $matches['var'] = '';
             }
 
-            if (!empty($matches['tag3'])) {
-                $matches['tag'] = $matches['tag3'];
-                $matches['hint'] = $matches['hint3'];
-                $matches['var'] = $matches['signature'];
-            }
-
-            if (isset($matches['hint'])) {
-                $matches['hint'] = trim($matches['hint']);
-            }
-
             return $matches;
         }
 
@@ -366,69 +239,5 @@ EOF;
 
             return $matches;
         }
-    }
-
-    /**
-     * @param int $verticalAlignIndent
-     * @param int $leftAlignIndent
-     *
-     * @return string
-     */
-    private function getIndent($verticalAlignIndent, $leftAlignIndent = 1)
-    {
-        $indent = self::ALIGN_VERTICAL === $this->align ? $verticalAlignIndent : $leftAlignIndent;
-
-        return \str_repeat(' ', $indent);
-    }
-
-    /**
-     * @param array[] $items
-     * @param int     $index
-     *
-     * @return int
-     */
-    private function getLeftAlignedDescriptionIndent(array $items, $index)
-    {
-        if (self::ALIGN_LEFT !== $this->align) {
-            return 0;
-        }
-
-        // Find last tagged line:
-        $item = null;
-        for (; $index >= 0; --$index) {
-            $item = $items[$index];
-            if (null !== $item['tag']) {
-                break;
-            }
-        }
-
-        // No last tag found — no indent:
-        if (null === $item) {
-            return 0;
-        }
-
-        // Indent according to existing values:
-        return
-            $this->getSentenceIndent($item['tag']) +
-            $this->getSentenceIndent($item['hint']) +
-            $this->getSentenceIndent($item['var']);
-    }
-
-    /**
-     * Get indent for sentence.
-     *
-     * @param null|string $sentence
-     *
-     * @return int
-     */
-    private function getSentenceIndent($sentence)
-    {
-        if (null === $sentence) {
-            return 0;
-        }
-
-        $length = \strlen($sentence);
-
-        return 0 === $length ? 0 : $length + 1;
     }
 }

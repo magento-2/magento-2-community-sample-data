@@ -11,12 +11,12 @@ use Temando\Shipping\Webservice\Config\WsConfigInterface;
 /**
  * Temando Config Values Handler
  *
- * @package Temando\Shipping\Model
- * @author  Sebastian Ertner <sebastian.ertner@netresearch.de>
- * @author  Christoph Aßmann <christoph.assmann@netresearch.de>
- * @author  Max Melzer <max.melzer@netresearch.de>
- * @license https://opensource.org/licenses/osl-3.0.php Open Software License (OSL 3.0)
- * @link    https://www.temando.com/
+ * @package  Temando\Shipping\Model
+ * @author   Sebastian Ertner <sebastian.ertner@netresearch.de>
+ * @author   Christoph Aßmann <christoph.assmann@netresearch.de>
+ * @author   Max Melzer <max.melzer@netresearch.de>
+ * @license  http://opensource.org/licenses/osl-3.0.php Open Software License (OSL 3.0)
+ * @link     http://www.temando.com/
  */
 class ModuleConfig implements ModuleConfigInterface, WsConfigInterface
 {
@@ -44,9 +44,6 @@ class ModuleConfig implements ModuleConfigInterface, WsConfigInterface
 
     const CONFIG_XML_PATH_COLLECTION_POINTS_ENABLED = 'carriers/temando/collectionpoints_enabled';
     const CONFIG_XML_PATH_COLLECTION_POINTS_COUNTRIES = 'carriers/temando/collectionpoints_countries';
-
-    const CONFIG_XML_PATH_CLICK_AND_COLLECT_ENABLED = 'carriers/temando/clickandcollect_enabled';
-    const CONFIG_XML_PATH_CLICK_AND_COLLECT_COUNTRIES = 'carriers/temando/clickandcollect_countries';
 
     /**
      * @var DataObjectFactory
@@ -409,28 +406,11 @@ class ModuleConfig implements ModuleConfigInterface, WsConfigInterface
     /**
      * Obtain country codes enabled for collection point deliveries.
      *
-     * @param int $storeId
-     *
      * @return string[]
      */
-    public function getCollectionPointDeliveryCountries($storeId = null)
+    public function getCollectionPointDeliveryCountries()
     {
-        return $this->configAccessor->getConfigValue(
-            self::CONFIG_XML_PATH_COLLECTION_POINTS_COUNTRIES,
-            $storeId
-        );
-    }
-
-    /**
-     * Check if click and collect feature is enabled in config.
-     *
-     * @param int $storeId
-     *
-     * @return bool
-     */
-    public function isClickAndCollectEnabled($storeId = null)
-    {
-        return (bool) $this->configAccessor->getConfigValue(self::CONFIG_XML_PATH_CLICK_AND_COLLECT_ENABLED, $storeId);
+        return (array) $this->configAccessor->getConfigValue(self::CONFIG_XML_PATH_COLLECTION_POINTS_COUNTRIES);
     }
 
     /**

@@ -98,7 +98,7 @@ class Suffix extends \Magento\Framework\App\Config\Value
      * Get instance of ScopePool
      *
      * @return \Magento\Framework\App\Config
-     * @deprecated 102.0.0
+     * @deprecated 101.1.0
      */
     private function getAppConfig()
     {
@@ -140,7 +140,7 @@ class Suffix extends \Magento\Framework\App\Config\Value
 
     /**
      * {@inheritdoc}
-     * @since 102.0.0
+     * @since 101.1.0
      */
     public function afterDeleteCommit()
     {

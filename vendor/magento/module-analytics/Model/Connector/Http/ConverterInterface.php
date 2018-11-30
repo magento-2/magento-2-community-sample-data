@@ -7,8 +7,6 @@ namespace Magento\Analytics\Model\Connector\Http;
 
 /**
  * Represents converter interface for http request and response body.
- *
- * @api
  */
 interface ConverterInterface
 {
@@ -30,9 +28,4 @@ interface ConverterInterface
      * @return string
      */
     public function getContentTypeHeader();
-
-    /**
-     * @return string
-     */
-    public function getContentMediaType(): string;
 }

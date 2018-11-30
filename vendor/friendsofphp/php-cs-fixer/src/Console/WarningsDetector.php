@@ -30,7 +30,7 @@ final class WarningsDetector
     /**
      * @var string[]
      */
-    private $warnings = [];
+    private $warnings = array();
 
     public function __construct(ToolInfoInterface $toolInfo)
     {
@@ -39,7 +39,7 @@ final class WarningsDetector
 
     public function detectOldMajor()
     {
-        // @TODO 3.0 to be activated with new MAJOR release
+        // @TODO to be activated at v3
         // $this->warnings[] = 'You are running PHP CS Fixer v2, which is not maintained anymore. Please update to v3.';
     }
 
@@ -62,13 +62,13 @@ final class WarningsDetector
      */
     public function getWarnings()
     {
-        if (!\count($this->warnings)) {
-            return [];
+        if (!count($this->warnings)) {
+            return array();
         }
 
         return array_unique(array_merge(
             $this->warnings,
-            ['If you need help while solving warnings, ask at https://gitter.im/PHP-CS-Fixer, we will help you!']
+            array('If you need help while solving warnings, ask at https://gitter.im/PHP-CS-Fixer, we will help you!')
         ));
     }
 }

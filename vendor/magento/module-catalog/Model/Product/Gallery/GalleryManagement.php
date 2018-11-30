@@ -1,22 +1,19 @@
 <?php
 /**
+ *
  * Copyright © Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
-
 namespace Magento\Catalog\Model\Product\Gallery;
 
 use Magento\Catalog\Api\Data\ProductAttributeMediaGalleryEntryInterface;
+use Magento\Catalog\Api\Data\ProductInterface as Product;
 use Magento\Framework\Exception\InputException;
 use Magento\Framework\Exception\NoSuchEntityException;
 use Magento\Framework\Exception\StateException;
 use Magento\Framework\Api\ImageContentValidatorInterface;
 
 /**
- * Class GalleryManagement
- *
- * Provides implementation of api interface ProductAttributeMediaGalleryManagementInterface
- *
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  */
 class GalleryManagement implements \Magento\Catalog\Api\ProductAttributeMediaGalleryManagementInterface
@@ -46,7 +43,7 @@ class GalleryManagement implements \Magento\Catalog\Api\ProductAttributeMediaGal
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function create($sku, ProductAttributeMediaGalleryEntryInterface $entry)
     {
@@ -54,9 +51,9 @@ class GalleryManagement implements \Magento\Catalog\Api\ProductAttributeMediaGal
         $entryContent = $entry->getContent();
 
         if (!$this->contentValidator->isValid($entryContent)) {
-            throw new InputException(__('The image content is invalid. Verify the content and try again.'));
+            throw new InputException(__('The image content is not valid.'));
         }
-        $product = $this->productRepository->get($sku, true);
+        $product = $this->productRepository->get($sku);
 
         $existingMediaGalleryEntries = $product->getMediaGalleryEntries();
         $existingEntryIds = [];
@@ -74,7 +71,7 @@ class GalleryManagement implements \Magento\Catalog\Api\ProductAttributeMediaGal
         } catch (InputException $inputException) {
             throw $inputException;
         } catch (\Exception $e) {
-            throw new StateException(__("The product can't be saved."));
+            throw new StateException(__('Cannot save product.'));
         }
 
         foreach ($product->getMediaGalleryEntries() as $entry) {
@@ -82,20 +79,18 @@ class GalleryManagement implements \Magento\Catalog\Api\ProductAttributeMediaGal
                 return $entry->getId();
             }
         }
-        throw new StateException(__('The new media gallery entry failed to save.'));
+        throw new StateException(__('Failed to save new media gallery entry.'));
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function update($sku, ProductAttributeMediaGalleryEntryInterface $entry)
     {
-        $product = $this->productRepository->get($sku, true);
+        $product = $this->productRepository->get($sku);
         $existingMediaGalleryEntries = $product->getMediaGalleryEntries();
         if ($existingMediaGalleryEntries == null) {
-            throw new NoSuchEntityException(
-                __('No image with the provided ID was found. Verify the ID and try again.')
-            );
+            throw new NoSuchEntityException(__('There is no image with provided ID.'));
         }
         $found = false;
         foreach ($existingMediaGalleryEntries as $key => $existingEntry) {
@@ -112,31 +107,27 @@ class GalleryManagement implements \Magento\Catalog\Api\ProductAttributeMediaGal
             }
         }
         if (!$found) {
-            throw new NoSuchEntityException(
-                __('No image with the provided ID was found. Verify the ID and try again.')
-            );
+            throw new NoSuchEntityException(__('There is no image with provided ID.'));
         }
         $product->setMediaGalleryEntries($existingMediaGalleryEntries);
 
         try {
             $this->productRepository->save($product);
         } catch (\Exception $exception) {
-            throw new StateException(__("The product can't be saved."));
+            throw new StateException(__('Cannot save product.'));
         }
         return true;
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function remove($sku, $entryId)
     {
-        $product = $this->productRepository->get($sku, true);
+        $product = $this->productRepository->get($sku);
         $existingMediaGalleryEntries = $product->getMediaGalleryEntries();
         if ($existingMediaGalleryEntries == null) {
-            throw new NoSuchEntityException(
-                __('No image with the provided ID was found. Verify the ID and try again.')
-            );
+            throw new NoSuchEntityException(__('There is no image with provided ID.'));
         }
         $found = false;
         foreach ($existingMediaGalleryEntries as $key => $entry) {
@@ -147,9 +138,7 @@ class GalleryManagement implements \Magento\Catalog\Api\ProductAttributeMediaGal
             }
         }
         if (!$found) {
-            throw new NoSuchEntityException(
-                __('No image with the provided ID was found. Verify the ID and try again.')
-            );
+            throw new NoSuchEntityException(__('There is no image with provided ID.'));
         }
         $product->setMediaGalleryEntries($existingMediaGalleryEntries);
         $this->productRepository->save($product);
@@ -157,14 +146,14 @@ class GalleryManagement implements \Magento\Catalog\Api\ProductAttributeMediaGal
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function get($sku, $entryId)
     {
         try {
             $product = $this->productRepository->get($sku);
         } catch (\Exception $exception) {
-            throw new NoSuchEntityException(__("The product doesn't exist. Verify and try again."));
+            throw new NoSuchEntityException(__('Such product doesn\'t exist'));
         }
 
         $mediaGalleryEntries = $product->getMediaGalleryEntries();
@@ -174,11 +163,11 @@ class GalleryManagement implements \Magento\Catalog\Api\ProductAttributeMediaGal
             }
         }
 
-        throw new NoSuchEntityException(__("The image doesn't exist. Verify and try again."));
+        throw new NoSuchEntityException(__('Such image doesn\'t exist'));
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function getList($sku)
     {

@@ -3,7 +3,6 @@
  * Copyright © Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
-
 namespace Magento\Framework\View\Element;
 
 use Magento\Framework\Config\DataInterface;
@@ -24,7 +23,6 @@ use Magento\Framework\View\Element\UiComponent\Factory\ComponentFactoryInterface
  *
  * @api
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
- * @since 100.0.2
  */
 class UiComponentFactory extends DataObject
 {
@@ -50,7 +48,7 @@ class UiComponentFactory extends DataObject
     /**
      * UI component manager
      *
-     * @deprecated 101.0.0
+     * @deprecated 100.2.0
      * @var ManagerInterface
      */
     protected $componentManager;
@@ -267,17 +265,13 @@ class UiComponentFactory extends DataObject
         foreach ($children as $identifier => $config) {
             if (!isset($config['componentType'])) {
                 throw new LocalizedException(new Phrase(
-                    'The "componentType" configuration parameter is required for the "%1" component.',
+                    'The configuration parameter "componentType" is a required for "%1" component.',
                     $identifier
                 ));
             }
 
             if (!isset($componentArguments['context'])) {
-                throw new LocalizedException(
-                    new \Magento\Framework\Phrase(
-                        'An error occurred with the UI component. Each component needs context. Verify and try again.'
-                    )
-                );
+                throw new LocalizedException(new \Magento\Framework\Phrase('Each UI component should have context.'));
             }
 
             $rawComponentData = $this->definitionData->get($config['componentType']);
@@ -388,7 +382,7 @@ class UiComponentFactory extends DataObject
             if (!$isMerged) {
                 if (!isset($data['arguments']['data']['config']['componentType'])) {
                     throw new LocalizedException(new Phrase(
-                        'The "componentType" configuration parameter is required for the "%1" component.',
+                        'The configuration parameter "componentType" is a required for "%1" component.',
                         [$name]
                     ));
                 }

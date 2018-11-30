@@ -7,6 +7,7 @@ namespace Magento\ProductVideo\Model\Plugin;
 
 use Magento\Catalog\Model\ResourceModel\Product\Gallery;
 use Magento\Framework\DB\Select;
+use Magento\ProductVideo\Setup\InstallSchema;
 
 /**
  * Media Resource decorator
@@ -52,7 +53,7 @@ class ExternalVideoResourceBackend
     public function afterCreateBatchBaseSelect(Gallery $originalResourceModel, Select $select)
     {
         $select = $select->joinLeft(
-            ['value_video' => $originalResourceModel->getTable('catalog_product_entity_media_gallery_value_video')],
+            ['value_video' => $originalResourceModel->getTable(InstallSchema::GALLERY_VALUE_VIDEO_TABLE)],
             implode(
                 ' AND ',
                 [
@@ -60,19 +61,9 @@ class ExternalVideoResourceBackend
                     'value.store_id = value_video.store_id',
                 ]
             ),
-            [
-                'video_provider' => 'provider',
-                'video_url' => 'url',
-                'video_title' => 'title',
-                'video_description' => 'description',
-                'video_metadata' => 'metadata'
-            ]
+            []
         )->joinLeft(
-            [
-                'default_value_video' => $originalResourceModel->getTable(
-                    'catalog_product_entity_media_gallery_value_video'
-                )
-            ],
+            ['default_value_video' => $originalResourceModel->getTable(InstallSchema::GALLERY_VALUE_VIDEO_TABLE)],
             implode(
                 ' AND ',
                 [
@@ -80,14 +71,24 @@ class ExternalVideoResourceBackend
                     'default_value.store_id = default_value_video.store_id',
                 ]
             ),
-            [
-                'video_provider_default' => 'provider',
-                'video_url_default' => 'url',
-                'video_title_default' => 'title',
-                'video_description_default' => 'description',
-                'video_metadata_default' => 'metadata',
-            ]
-        );
+            []
+        )->columns([
+            'video_provider' => $originalResourceModel->getConnection()
+                ->getIfNullSql('`value_video`.`provider`', '`default_value_video`.`provider`'),
+            'video_url' => $originalResourceModel->getConnection()
+                ->getIfNullSql('`value_video`.`url`', '`default_value_video`.`url`'),
+            'video_title' => $originalResourceModel->getConnection()
+                ->getIfNullSql('`value_video`.`title`', '`default_value_video`.`title`'),
+            'video_description' => $originalResourceModel->getConnection()
+                ->getIfNullSql('`value_video`.`description`', '`default_value_video`.`description`'),
+            'video_metadata' => $originalResourceModel->getConnection()
+                ->getIfNullSql('`value_video`.`metadata`', '`default_value_video`.`metadata`'),
+            'video_provider_default' => 'default_value_video.provider',
+            'video_url_default' => 'default_value_video.url',
+            'video_title_default' => 'default_value_video.title',
+            'video_description_default' => 'default_value_video.description',
+            'video_metadata_default' => 'default_value_video.metadata',
+        ]);
 
         return $select;
     }

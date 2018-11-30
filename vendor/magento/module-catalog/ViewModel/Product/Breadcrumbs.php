@@ -3,16 +3,15 @@
  * Copyright © Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
-
 namespace Magento\Catalog\ViewModel\Product;
 
 use Magento\Catalog\Helper\Data;
 use Magento\Framework\App\Config\ScopeConfigInterface;
 use Magento\Framework\App\ObjectManager;
 use Magento\Framework\DataObject;
+use Magento\Framework\Escaper;
 use Magento\Framework\Serialize\Serializer\Json;
 use Magento\Framework\View\Element\Block\ArgumentInterface;
-use Magento\Framework\Escaper;
 
 /**
  * Product breadcrumbs view model.
@@ -32,6 +31,10 @@ class Breadcrumbs extends DataObject implements ArgumentInterface
     private $scopeConfig;
 
     /**
+     * @var Json
+     */
+    private $json;
+    /**
      * @var Escaper
      */
     private $escaper;
@@ -39,9 +42,8 @@ class Breadcrumbs extends DataObject implements ArgumentInterface
     /**
      * @param Data $catalogData
      * @param ScopeConfigInterface $scopeConfig
-     * @param Json|null $json
-     * @param Escaper|null $escaper
-     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
+     * @param Json $json
+     * @param Escaper $escaper
      */
     public function __construct(
         Data $catalogData,
@@ -53,6 +55,7 @@ class Breadcrumbs extends DataObject implements ArgumentInterface
 
         $this->catalogData = $catalogData;
         $this->scopeConfig = $scopeConfig;
+        $this->json = $json ?: ObjectManager::getInstance()->get(Json::class);
         $this->escaper = $escaper ?: ObjectManager::getInstance()->get(Escaper::class);
     }
 
@@ -74,7 +77,7 @@ class Breadcrumbs extends DataObject implements ArgumentInterface
      *
      * @return bool
      */
-    public function isCategoryUsedInProductUrl(): bool
+    public function isCategoryUsedInProductUrl()
     {
         return $this->scopeConfig->isSetFlag(
             'catalog/seo/product_use_categories',
@@ -87,7 +90,7 @@ class Breadcrumbs extends DataObject implements ArgumentInterface
      *
      * @return string
      */
-    public function getProductName(): string
+    public function getProductName()
     {
         return $this->catalogData->getProduct() !== null
             ? $this->catalogData->getProduct()->getName()
@@ -95,32 +98,18 @@ class Breadcrumbs extends DataObject implements ArgumentInterface
     }
 
     /**
-     * Returns breadcrumb json with html escaped names
-     *
-     * @return string
-     */
-    public function getJsonConfigurationHtmlEscaped() : string
-    {
-        return json_encode(
-            [
-                'breadcrumbs' => [
-                    'categoryUrlSuffix' => $this->escaper->escapeHtml($this->getCategoryUrlSuffix()),
-                    'userCategoryPathInUrl' => (int)$this->isCategoryUsedInProductUrl(),
-                    'product' => $this->escaper->escapeHtml($this->getProductName())
-                ]
-            ],
-            JSON_HEX_TAG
-        );
-    }
-
-    /**
      * Returns breadcrumb json.
      *
      * @return string
-     * @deprecated in favor of new method with name {suffix}Html{postfix}()
      */
     public function getJsonConfiguration()
     {
-        return $this->getJsonConfigurationHtmlEscaped();
+        return $this->escaper->escapeHtml($this->json->serialize([
+            'breadcrumbs' => [
+                'categoryUrlSuffix' => $this->escaper->escapeHtml($this->getCategoryUrlSuffix()),
+                'userCategoryPathInUrl' => (int)$this->isCategoryUsedInProductUrl(),
+                'product' => $this->getProductName()
+            ]
+        ]));
     }
 }

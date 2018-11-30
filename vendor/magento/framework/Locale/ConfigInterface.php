@@ -9,7 +9,6 @@ namespace Magento\Framework\Locale;
  * Provides access to locale-related config information
  *
  * @api
- * @since 100.0.2
  */
 interface ConfigInterface
 {

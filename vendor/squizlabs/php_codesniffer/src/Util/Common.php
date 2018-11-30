@@ -9,6 +9,9 @@
 
 namespace PHP_CodeSniffer\Util;
 
+use PHP_CodeSniffer\Config;
+use PHP_CodeSniffer\Exceptions\RuntimeException;
+
 class Common
 {
 

@@ -3,7 +3,6 @@
  * Copyright © Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
-
 namespace Magento\Webapi\Controller\Soap\Request;
 
 use Magento\Framework\Api\ExtensibleDataInterface;
@@ -18,6 +17,7 @@ use Magento\Framework\Webapi\Exception as WebapiException;
 use Magento\Webapi\Model\Soap\Config as SoapConfig;
 use Magento\Framework\Reflection\MethodsMap;
 use Magento\Webapi\Model\ServiceMetadata;
+use Magento\Webapi\Model\UrlDecoder;
 
 /**
  * Handler of requests to SOAP server.
@@ -71,8 +71,11 @@ class Handler
     protected $methodsMapProcessor;
 
     /**
-     * Initialize dependencies.
-     *
+     * @var UrlDecoder
+     */
+    private $urlDecoder;
+
+    /**
      * @param SoapRequest $request
      * @param \Magento\Framework\ObjectManagerInterface $objectManager
      * @param SoapConfig $apiConfig
@@ -81,6 +84,7 @@ class Handler
      * @param ServiceInputProcessor $serviceInputProcessor
      * @param DataObjectProcessor $dataObjectProcessor
      * @param MethodsMap $methodsMapProcessor
+     * @param UrlDecoder $urlDecoder
      */
     public function __construct(
         SoapRequest $request,
@@ -90,7 +94,8 @@ class Handler
         SimpleDataObjectConverter $dataObjectConverter,
         ServiceInputProcessor $serviceInputProcessor,
         DataObjectProcessor $dataObjectProcessor,
-        MethodsMap $methodsMapProcessor
+        MethodsMap $methodsMapProcessor,
+        UrlDecoder $urlDecoder = null
     ) {
         $this->_request = $request;
         $this->_objectManager = $objectManager;
@@ -100,6 +105,7 @@ class Handler
         $this->serviceInputProcessor = $serviceInputProcessor;
         $this->_dataObjectProcessor = $dataObjectProcessor;
         $this->methodsMapProcessor = $methodsMapProcessor;
+        $this->urlDecoder = $urlDecoder ?: \Magento\Framework\App\ObjectManager::getInstance()->get(UrlDecoder::class);
     }
 
     /**
@@ -127,7 +133,7 @@ class Handler
         if (!$this->authorization->isAllowed($serviceMethodInfo[ServiceMetadata::KEY_ACL_RESOURCES])) {
             throw new AuthorizationException(
                 __(
-                    "The consumer isn't authorized to access %resources.",
+                    'Consumer is not authorized to access %resources',
                     ['resources' => implode(', ', $serviceMethodInfo[ServiceMetadata::KEY_ACL_RESOURCES])]
                 )
             );
@@ -151,6 +157,7 @@ class Handler
         /** SoapServer wraps parameters into array. Thus this wrapping should be removed to get access to parameters. */
         $arguments = reset($arguments);
         $arguments = $this->_dataObjectConverter->convertStdObjectToArray($arguments, true);
+        $arguments = $this->urlDecoder->decodeParams($arguments);
         return $this->serviceInputProcessor->process($serviceClass, $serviceMethod, $arguments);
     }
 

@@ -3,7 +3,6 @@
  * Copyright © Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
-
 namespace Magento\Multishipping\Test\Unit\Model\Checkout\Type;
 
 use Magento\Checkout\Model\Session;
@@ -123,6 +122,11 @@ class MultishippingTest extends \PHPUnit\Framework\TestCase
     private $quoteRepositoryMock;
 
     /**
+     * @var PHPUnit_Framework_MockObject_MockObject
+     */
+    private $scopeConfigMock;
+
+    /**
      * @var OrderFactory|PHPUnit_Framework_MockObject_MockObject
      */
     private $orderFactoryMock;
@@ -173,7 +177,7 @@ class MultishippingTest extends \PHPUnit\Framework\TestCase
         $this->customerSessionMock = $this->createSimpleMock(CustomerSession::class);
         $this->orderFactoryMock = $this->createSimpleMock(OrderFactory::class);
         $eventManagerMock = $this->createSimpleMock(ManagerInterface::class);
-        $scopeConfigMock = $this->createSimpleMock(ScopeConfigInterface::class);
+        $this->scopeConfigMock = $this->createSimpleMock(ScopeConfigInterface::class);
         $this->sessionMock = $this->createSimpleMock(Generic::class);
         $addressFactoryMock = $this->createSimpleMock(AddressFactory::class);
         $this->toOrderMock = $this->createSimpleMock(ToOrder::class);
@@ -224,7 +228,7 @@ class MultishippingTest extends \PHPUnit\Framework\TestCase
             $this->orderFactoryMock,
             $this->addressRepositoryMock,
             $eventManagerMock,
-            $scopeConfigMock,
+            $this->scopeConfigMock,
             $this->sessionMock,
             $addressFactoryMock,
             $this->toOrderMock,
@@ -303,7 +307,7 @@ class MultishippingTest extends \PHPUnit\Framework\TestCase
 
     /**
      * @expectedException \Magento\Framework\Exception\LocalizedException
-     * @expectedExceptionMessage Verify the shipping address information and continue.
+     * @expectedExceptionMessage Please check shipping address information.
      */
     public function testSetShippingItemsInformationForAddressLeak()
     {
@@ -332,7 +336,7 @@ class MultishippingTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals($this->model, $this->model->setShippingItemsInformation($info));
     }
 
-    public function testUpdateQuoteCustomerShippingAddress()
+    public function testupdateQuoteCustomerShippingAddress()
     {
         $addressId = 42;
         $customerAddressId = 42;
@@ -349,9 +353,9 @@ class MultishippingTest extends \PHPUnit\Framework\TestCase
 
     /**
      * @expectedException \Magento\Framework\Exception\LocalizedException
-     * @expectedExceptionMessage Verify the shipping address information and continue.
+     * @expectedExceptionMessage Please check shipping address information.
      */
-    public function testUpdateQuoteCustomerShippingAddressForAddressLeak()
+    public function testupdateQuoteCustomerShippingAddressForAddressLeak()
     {
         $addressId = 43;
         $customerAddressId = 42;
@@ -379,7 +383,7 @@ class MultishippingTest extends \PHPUnit\Framework\TestCase
 
     /**
      * @expectedException \Magento\Framework\Exception\LocalizedException
-     * @expectedExceptionMessage Verify the billing address information and continue.
+     * @expectedExceptionMessage Please check billing address information.
      */
     public function testSetQuoteCustomerBillingAddressForAddressLeak()
     {
@@ -428,7 +432,7 @@ class MultishippingTest extends \PHPUnit\Framework\TestCase
     /**
      * @return void
      */
-    public function testCreateOrders(): void
+    public function testCreateOrders()
     {
         $addressTotal = 5;
         $productType = \Magento\Catalog\Model\Product\Type::TYPE_SIMPLE;
@@ -614,10 +618,8 @@ class MultishippingTest extends \PHPUnit\Framework\TestCase
      * @param string $paymentProviderCode
      * @param Address|PHPUnit_Framework_MockObject_MockObject $shippingAddressMock
      * @param Address|PHPUnit_Framework_MockObject_MockObject $billingAddressMock
-     *
-     * @return void
      */
-    private function setQuoteMockData(string $paymentProviderCode, $shippingAddressMock, $billingAddressMock): void
+    private function setQuoteMockData(string $paymentProviderCode, $shippingAddressMock, $billingAddressMock)
     {
         $quoteId = 1;
         $paymentMock = $this->getPaymentMock($paymentProviderCode);
@@ -680,7 +682,7 @@ class MultishippingTest extends \PHPUnit\Framework\TestCase
      * Tests exception for addresses with country id not in the allowed countries list.
      *
      * @expectedException \Magento\Framework\Exception\LocalizedException
-     * @expectedExceptionMessage Some addresses can't be used due to the configurations for specific countries.
+     * @expectedExceptionMessage Some addresses cannot be used due to country-specific configurations.
      */
     public function testCreateOrdersCountryNotPresentInAllowedListException()
     {
@@ -808,5 +810,38 @@ class MultishippingTest extends \PHPUnit\Framework\TestCase
         return $this->getMockBuilder($className)
             ->disableOriginalConstructor()
             ->getMock();
+    }
+
+    public function testValidateMinimumAmountMultiAddressTrue()
+    {
+        $this->scopeConfigMock->expects($this->exactly(2))->method('isSetFlag')->withConsecutive(
+            ['sales/minimum_order/active', \Magento\Store\Model\ScopeInterface::SCOPE_STORE],
+            ['sales/minimum_order/multi_address', \Magento\Store\Model\ScopeInterface::SCOPE_STORE]
+        )->willReturnOnConsecutiveCalls(true, true);
+
+        $this->checkoutSessionMock->expects($this->atLeastOnce())->method('getQuote')->willReturn($this->quoteMock);
+        $this->quoteMock->expects($this->once())->method('validateMinimumAmount')->willReturn(false);
+        $this->assertFalse($this->model->validateMinimumAmount());
+    }
+
+    public function testValidateMinimumAmountMultiAddressFalse()
+    {
+        $addressMock = $this->createMock(\Magento\Quote\Model\Quote\Address::class);
+        $this->scopeConfigMock->expects($this->exactly(2))->method('isSetFlag')->withConsecutive(
+            ['sales/minimum_order/active', \Magento\Store\Model\ScopeInterface::SCOPE_STORE],
+            ['sales/minimum_order/multi_address', \Magento\Store\Model\ScopeInterface::SCOPE_STORE]
+        )->willReturnOnConsecutiveCalls(true, false);
+
+        $this->scopeConfigMock->expects($this->exactly(2))->method('getValue')->withConsecutive(
+            ['sales/minimum_order/amount', \Magento\Store\Model\ScopeInterface::SCOPE_STORE],
+            ['sales/minimum_order/tax_including', \Magento\Store\Model\ScopeInterface::SCOPE_STORE]
+        )->willReturnOnConsecutiveCalls(100, false);
+
+        $this->checkoutSessionMock->expects($this->atLeastOnce())->method('getQuote')->willReturn($this->quoteMock);
+        $this->quoteMock->expects($this->once())->method('getStoreId')->willReturn(1);
+        $this->quoteMock->expects($this->once())->method('getAllAddresses')->willReturn([$addressMock]);
+        $addressMock->expects($this->once())->method('getBaseSubtotalWithDiscount')->willReturn(101);
+
+        $this->assertTrue($this->model->validateMinimumAmount());
     }
 }

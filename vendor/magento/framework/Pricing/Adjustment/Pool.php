@@ -12,7 +12,6 @@ use Magento\Framework\Pricing\Adjustment\Factory as AdjustmentFactory;
  * Global adjustment pool model
  *
  * @api
- * @since 100.0.2
  */
 class Pool
 {

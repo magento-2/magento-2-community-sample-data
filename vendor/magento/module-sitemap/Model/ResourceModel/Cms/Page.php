@@ -38,6 +38,7 @@ class Page extends AbstractDb
 
     /**
      * @var GetUtilityPageIdentifiersInterface
+     * @since 100.2.0
      */
     private $getUtilityPageIdentifiers;
 

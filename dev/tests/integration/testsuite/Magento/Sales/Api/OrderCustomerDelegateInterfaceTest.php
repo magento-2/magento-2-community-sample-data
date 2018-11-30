@@ -3,7 +3,6 @@
  * Copyright © Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
-declare(strict_types=1);
 
 namespace Magento\Sales\Api;
 
@@ -18,8 +17,6 @@ use Magento\TestFramework\Helper\Bootstrap;
 use PHPUnit\Framework\TestCase;
 
 /**
- * Test for Magento\Sales\Api\OrderCustomerDelegateInterface class.
- *
  * @magentoAppIsolation enabled
  */
 class OrderCustomerDelegateInterfaceTest extends TestCase
@@ -50,7 +47,7 @@ class OrderCustomerDelegateInterfaceTest extends TestCase
     private $orderFactory;
 
     /**
-     * {@inheritdoc}
+     * @inheritDoc
      */
     protected function setUp()
     {
@@ -80,7 +77,7 @@ class OrderCustomerDelegateInterfaceTest extends TestCase
     private function compareAddresses(
         OrderAddressInterface $orderAddress,
         AddressInterface $address
-    ): void {
+    ) {
         $this->assertEquals(
             $orderAddress->getFirstname(),
             $address->getFirstname()
@@ -127,15 +124,14 @@ class OrderCustomerDelegateInterfaceTest extends TestCase
      * @magentoDbIsolation enabled
      * @magentoAppIsolation enabled
      * @magentoDataFixture Magento/Sales/_files/order.php
-     * @return void
      */
-    public function testDelegateNew(): void
+    public function testDelegateNew()
     {
         $orderAutoincrementId = '100000001';
         /** @var Order $orderModel */
         $orderModel = $this->orderFactory->create();
         $orderModel->loadByIncrementId($orderAutoincrementId);
-        $orderId = (int)$orderModel->getId();
+        $orderId = $orderModel->getId();
         unset($orderModel);
 
         $this->delegate->delegateNew($orderId);
@@ -182,15 +178,14 @@ class OrderCustomerDelegateInterfaceTest extends TestCase
      * @magentoDbIsolation enabled
      * @magentoAppIsolation enabled
      * @magentoDataFixture Magento/Sales/_files/order_different_addresses.php
-     * @return void
      */
-    public function testDelegateNewDifferentAddresses(): void
+    public function testDelegateNewDifferentAddresses()
     {
         $orderAutoincrementId = '100000001';
         /** @var Order $orderModel */
         $orderModel = $this->orderFactory->create();
         $orderModel->loadByIncrementId($orderAutoincrementId);
-        $orderId = (int)$orderModel->getId();
+        $orderId = $orderModel->getId();
         unset($orderModel);
 
         $this->delegate->delegateNew($orderId);
@@ -230,7 +225,6 @@ class OrderCustomerDelegateInterfaceTest extends TestCase
                 $this->compareAddresses($order->getShippingAddress(), $address);
             }
         }
-
         $this->assertEquals($order->getCustomerId(), $createdCustomer->getId());
     }
 }

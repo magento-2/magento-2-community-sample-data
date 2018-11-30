@@ -2,6 +2,7 @@
 /**
  * Refer to LICENSE.txt distributed with the Temando Shipping module for notice of license
  */
+
 namespace Temando\Shipping\Setup;
 
 use Magento\Catalog\Model\Product;
@@ -14,10 +15,10 @@ use Magento\Framework\Setup\UninstallInterface;
 /**
  * Uninstall
  *
- * @package Temando\Shipping\Setup
- * @author  Christoph Aßmann <christoph.assmann@netresearch.de>
- * @license https://opensource.org/licenses/osl-3.0.php Open Software License (OSL 3.0)
- * @link    https://www.temando.com/
+ * @package  Temando\Shipping\Setup
+ * @author   Christoph Aßmann <christoph.assmann@netresearch.de>
+ * @license  http://opensource.org/licenses/osl-3.0.php Open Software License (OSL 3.0)
+ * @link     http://www.temando.com/
  */
 class Uninstall implements UninstallInterface
 {
@@ -52,26 +53,19 @@ class Uninstall implements UninstallInterface
         $salesConnection = $uninstaller->getConnection(SetupSchema::SALES_CONNECTION_NAME);
 
         $salesConnection->dropTable(SetupSchema::TABLE_ORDER);
-
         $checkoutConnection->dropTable(SetupSchema::TABLE_QUOTE_COLLECTION_POINT);
         $checkoutConnection->dropTable(SetupSchema::TABLE_COLLECTION_POINT_SEARCH);
         $checkoutConnection->dropTable(SetupSchema::TABLE_ORDER_COLLECTION_POINT);
-
-        $checkoutConnection->dropTable(SetupSchema::TABLE_QUOTE_PICKUP_LOCATION);
-        $checkoutConnection->dropTable(SetupSchema::TABLE_PICKUP_LOCATION_SEARCH);
-        $checkoutConnection->dropTable(SetupSchema::TABLE_ORDER_PICKUP_LOCATION);
-
         $checkoutConnection->dropTable(SetupSchema::TABLE_CHECKOUT_ADDRESS);
-
         $salesConnection->dropTable(SetupSchema::TABLE_SHIPMENT);
         $defaultConnection->dropTable(RmaSetupSchema::TABLE_RMA_SHIPMENT);
+
+        $configTable = $uninstaller->getTable('core_config_data');
+        $defaultConnection->delete($configTable, "`path` LIKE 'carriers/temando/%'");
 
         $eavSetup = $this->eavSetupFactory->create();
         $eavSetup->removeAttribute(Product::ENTITY, SetupData::ATTRIBUTE_CODE_HEIGHT);
         $eavSetup->removeAttribute(Product::ENTITY, SetupData::ATTRIBUTE_CODE_WIDTH);
         $eavSetup->removeAttribute(Product::ENTITY, SetupData::ATTRIBUTE_CODE_LENGTH);
-
-        $configTable = $uninstaller->getTable('core_config_data');
-        $defaultConnection->delete($configTable, "`path` LIKE 'carriers/temando/%'");
     }
 }

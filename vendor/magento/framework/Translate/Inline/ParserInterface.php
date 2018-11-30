@@ -9,7 +9,6 @@ namespace Magento\Framework\Translate\Inline;
  * Processes the content with the inline translation replacement so the inline translate JavaScript code will work.
  *
  * @api
- * @since 100.0.2
  */
 interface ParserInterface
 {

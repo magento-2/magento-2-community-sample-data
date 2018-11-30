@@ -18,7 +18,7 @@ use Magento\Mtf\Fixture\FixtureInterface;
 use Magento\Mtf\TestStep\TestStepFactory;
 
 /**
- * Test Step for DeleteWebsitesEntity.
+ * Test Step for DeleteStoreEntity
  */
 class DeleteWebsitesEntityStep implements TestStepInterface
 {
@@ -28,31 +28,43 @@ class DeleteWebsitesEntityStep implements TestStepInterface
     /* end tags */
 
     /**
+     * Page BackupIndex
+     *
      * @var BackupIndex
      */
     private $backupIndex;
 
     /**
+     * Page StoreIndex
+     *
      * @var StoreIndex
      */
     private $storeIndex;
 
     /**
+     * Page EditWebsite
+     *
      * @var EditWebsite
      */
     private $editWebsite;
 
     /**
+     * Page StoreDelete
+     *
      * @var DeleteWebsite
      */
     private $deleteWebsite;
 
     /**
+     * Fixture factory.
+     *
      * @var FixtureFactory
      */
     private $fixtureFactory;
 
     /**
+     * Fixture factory.
+     *
      * @var FixtureInterface
      */
     private $item;
@@ -68,7 +80,7 @@ class DeleteWebsitesEntityStep implements TestStepInterface
     private $stepFactory;
 
     /**
-     * Prepare pages for test.
+     * Prepare pages for test
      *
      * @param BackupIndex $backupIndex
      * @param StoreIndex $storeIndex

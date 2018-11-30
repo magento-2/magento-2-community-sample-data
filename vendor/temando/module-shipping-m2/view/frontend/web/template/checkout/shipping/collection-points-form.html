@@ -1,5 +1,8 @@
-<form id="collection-points-form" class="form fieldset delivery-locations-form" data-bind="submit: submitForm.bind($data)">
-    <div class="step-title" translate="'Collection Point Selection'" data-role="title"/>
+<form id="collection-points-form" class="form fieldset" data-bind="submit: submitForm.bind($data)">
+        <div class="step-title"
+             translate="'Collection Point Selection'"
+             data-role="title"
+        />
 
     <div class="field _required collection-point-country">
         <label class="label" for="collection-point-countries">
@@ -7,7 +10,12 @@
         </label>
         <div class="control">
             <select class="input-select" id="collection-point-countries"
-                    data-bind="options: getCountryData(), optionsText: 'countryName', optionsValue: 'countryCode', value: countryValue">
+                    data-bind="  options: getCountryData(),
+                                 optionsText: 'countryName',
+                                 optionsValue: 'countryCode',
+                                 value: countryValue
+                                ">
+
             </select>
         </div>
     </div>
@@ -34,7 +42,7 @@
         </div>
     </div>
 
-    <div class="collection-point-list delivery-locations-list" if="getCollectionPoints().length > 0">
+    <div class="collection-point-list" if="getCollectionPoints().length > 0">
         <table>
             <tbody data-bind="foreach: getCollectionPoints()">
                 <tr>
@@ -49,30 +57,10 @@
                             <span data-bind="text: street"></span>, <span data-bind="text: city"></span>
                         </div>
                         <table class="collection-point-opening-hours">
-                            <tbody data-bind="foreach: opening_hours.general">
+                            <tbody data-bind="foreach: opening_hours">
                                 <tr>
                                     <td data-bind="text: days"></td>
                                     <td data-bind="text: times"></td>
-                                </tr>
-                            </tbody>
-                            <tbody data-bind="foreach: opening_hours.specific.openings">
-                                <tr>
-                                    <td colspan="2" data-bind="text: description"></td>
-                                </tr>
-                                <tr>
-                                    <td colspan="2">
-                                        <span data-bind="text: from"></span> - <span data-bind="text: to"></span>
-                                    </td>
-                                </tr>
-                            </tbody>
-                            <tbody data-bind="foreach: opening_hours.specific.closures">
-                                <tr>
-                                    <td colspan="2" data-bind="text: description"></td>
-                                </tr>
-                                <tr>
-                                    <td colspan="2">
-                                        <span data-bind="text: from"></span> - <span data-bind="text: to"></span>
-                                    </td>
                                 </tr>
                             </tbody>
                         </table>
@@ -81,5 +69,7 @@
             </tbody>
         </table>
     </div>
-    <div if="getMessage()" data-bind="text:getMessage(), css:{'field-error':hasNoResult()}"></div>
+    <div class="collection-point-message">
+        <label if="getMessage()" data-bind="text:getMessage(), css:{'field-error':hasNoResult()}" />
+    </div>
 </form>

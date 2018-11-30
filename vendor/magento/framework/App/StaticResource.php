@@ -165,11 +165,11 @@ class StaticResource implements \Magento\Framework\AppInterface
     {
         $path = ltrim($path, '/');
         $parts = explode('/', $path, 6);
-        if (count($parts) < 5 || preg_match('/\.\.(\\\|\/)/', $path)) {
+        if (count($parts) < 5 || mb_strpos($path, '..') !== false) {
             //Checking that path contains all required parts and is not above static folder.
             throw new \InvalidArgumentException("Requested path '$path' is wrong.");
         }
-
+        
         $result = [];
         $result['area'] = $parts[0];
         $result['theme'] = $parts[1] . '/' . $parts[2];
@@ -206,7 +206,7 @@ class StaticResource implements \Magento\Framework\AppInterface
      * Retrieves LoggerInterface instance
      *
      * @return LoggerInterface
-     * @deprecated 101.0.0
+     * @deprecated 100.2.0
      */
     private function getLogger()
     {

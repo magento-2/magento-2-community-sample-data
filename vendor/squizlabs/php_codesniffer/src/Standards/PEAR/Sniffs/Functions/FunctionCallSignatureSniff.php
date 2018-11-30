@@ -348,17 +348,17 @@ class FunctionCallSignatureSniff implements Sniff
             $first = $phpcsFile->findFirstOnLine(Tokens::$emptyTokens, $prev, true);
         }
 
-        $foundFunctionIndent = 0;
+        $foundIndent = 0;
         if ($first !== false) {
             if ($tokens[$first]['code'] === T_INLINE_HTML) {
                 $trimmed = ltrim($tokens[$first]['content']);
                 if ($trimmed === '') {
-                    $foundFunctionIndent = strlen($tokens[$first]['content']);
+                    $foundIndent = strlen($tokens[$first]['content']);
                 } else {
-                    $foundFunctionIndent = (strlen($tokens[$first]['content']) - strlen($trimmed));
+                    $foundIndent = (strlen($tokens[$first]['content']) - strlen($trimmed));
                 }
             } else {
-                $foundFunctionIndent = ($tokens[$first]['column'] - 1);
+                $foundIndent = ($tokens[$first]['column'] - 1);
             }
         }
 
@@ -367,21 +367,18 @@ class FunctionCallSignatureSniff implements Sniff
         // surrounding code is indented a little too far in, and not correctly
         // at a tab stop. Without this, the function will be indented a further
         // $indent spaces to the right.
-        $functionIndent = (int) (floor($foundFunctionIndent / $this->indent) * $this->indent);
-        $adjustment     = 0;
-
-        if ($foundFunctionIndent !== $functionIndent) {
+        $functionIndent = (int) (floor($foundIndent / $this->indent) * $this->indent);
+        if ($foundIndent !== $functionIndent) {
             $error = 'Opening statement of multi-line function call not indented correctly; expected %s spaces but found %s';
             $data  = [
                 $functionIndent,
-                $foundFunctionIndent,
+                $foundIndent,
             ];
 
             $fix = $phpcsFile->addFixableError($error, $first, 'OpeningIndent', $data);
             if ($fix === true) {
-                $adjustment = ($functionIndent - $foundFunctionIndent);
-                $padding    = str_repeat(' ', $functionIndent);
-                if ($foundFunctionIndent === 0) {
+                $padding = str_repeat(' ', $functionIndent);
+                if ($foundIndent === 0) {
                     $phpcsFile->fixer->addContentBefore($first, $padding);
                 } else {
                     $phpcsFile->fixer->replaceToken(($first - 1), $padding);
@@ -396,7 +393,7 @@ class FunctionCallSignatureSniff implements Sniff
             if ($fix === true) {
                 $phpcsFile->fixer->addContent(
                     $openBracket,
-                    $phpcsFile->eolChar.str_repeat(' ', ($foundFunctionIndent + $this->indent))
+                    $phpcsFile->eolChar.str_repeat(' ', ($functionIndent + $this->indent))
                 );
             }
         }
@@ -409,7 +406,7 @@ class FunctionCallSignatureSniff implements Sniff
             if ($fix === true) {
                 $phpcsFile->fixer->addContentBefore(
                     $closeBracket,
-                    $phpcsFile->eolChar.str_repeat(' ', ($foundFunctionIndent + $this->indent))
+                    $phpcsFile->eolChar.str_repeat(' ', ($functionIndent + $this->indent))
                 );
             }
         }
@@ -480,9 +477,9 @@ class FunctionCallSignatureSniff implements Sniff
                         // Closing brace needs to be indented to the same level
                         // as the function call.
                         $inArg          = false;
-                        $expectedIndent = ($foundFunctionIndent + $adjustment);
+                        $expectedIndent = $functionIndent;
                     } else {
-                        $expectedIndent = ($foundFunctionIndent + $this->indent + $adjustment);
+                        $expectedIndent = ($functionIndent + $this->indent);
                     }
 
                     if ($tokens[$i]['code'] !== T_WHITESPACE
@@ -568,7 +565,7 @@ class FunctionCallSignatureSniff implements Sniff
 
                             $phpcsFile->fixer->addContentBefore(
                                 $next,
-                                $phpcsFile->eolChar.str_repeat(' ', ($foundFunctionIndent + $this->indent))
+                                $phpcsFile->eolChar.str_repeat(' ', ($functionIndent + $this->indent))
                             );
                             $phpcsFile->fixer->endChangeset();
                         }

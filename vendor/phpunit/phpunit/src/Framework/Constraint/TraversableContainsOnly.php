@@ -71,7 +71,6 @@ class TraversableContainsOnly extends Constraint
         foreach ($other as $item) {
             if (!$this->constraint->evaluate($item, '', true)) {
                 $success = false;
-
                 break;
             }
         }

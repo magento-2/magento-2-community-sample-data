@@ -65,9 +65,5 @@ td {
     padding: 0 0 0 30px;
 }
 
-.WhitelistCommentIndentationShouldBeIgnored {
-/* phpcs:disable Standard.Category.Sniff -- for reasons. */
-}
-
 /* syntax error */
 --------------------------------------------- */

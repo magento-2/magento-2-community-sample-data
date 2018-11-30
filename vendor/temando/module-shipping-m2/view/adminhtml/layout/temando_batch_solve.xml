@@ -11,6 +11,7 @@
                 <arguments>
                     <argument name="template" xsi:type="string">Temando_Shipping::batch/solve.phtml</argument>
                     <argument name="viewModel" xsi:type="object">Temando\Shipping\ViewModel\Batch\BatchDetails</argument>
+                    <argument name="orderViewModel" xsi:type="object">Temando\Shipping\ViewModel\Order\OrderDetails</argument>
                     <argument name="supportViewModel" xsi:type="object">Temando\Shipping\ViewModel\Account\Support</argument>
                 </arguments>
             </block>

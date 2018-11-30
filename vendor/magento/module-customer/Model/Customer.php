@@ -3,7 +3,6 @@
  * Copyright © Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
-
 namespace Magento\Customer\Model;
 
 use Magento\Customer\Api\CustomerMetadataInterface;
@@ -393,7 +392,7 @@ class Customer extends \Magento\Framework\Model\AbstractModel
         $this->loadByEmail($login);
         if ($this->getConfirmation() && $this->isConfirmationRequired()) {
             throw new EmailNotConfirmedException(
-                __("This account isn't confirmed. Verify and try again.")
+                __('This account is not confirmed.')
             );
         }
         if (!$this->validatePassword($password)) {
@@ -763,7 +762,7 @@ class Customer extends \Magento\Framework\Model\AbstractModel
 
         if (!isset($types[$type])) {
             throw new \Magento\Framework\Exception\LocalizedException(
-                __('The transactional account email type is incorrect. Verify and try again.')
+                __('Please correct the transactional account email type.')
             );
         }
 
@@ -785,7 +784,7 @@ class Customer extends \Magento\Framework\Model\AbstractModel
      * Check if accounts confirmation is required in config
      *
      * @return bool
-     * @deprecated 101.0.4
+     * @deprecated
      * @see AccountConfirmation::isConfirmationRequired
      */
     public function isConfirmationRequired()
@@ -1165,7 +1164,7 @@ class Customer extends \Magento\Framework\Model\AbstractModel
      * Check whether confirmation may be skipped when registering using certain email address
      *
      * @return bool
-     * @deprecated 101.0.4
+     * @deprecated
      * @see AccountConfirmation::isConfirmationRequired
      */
     protected function canSkipConfirmation()
@@ -1241,7 +1240,7 @@ class Customer extends \Magento\Framework\Model\AbstractModel
     {
         if (!is_string($passwordLinkToken) || empty($passwordLinkToken)) {
             throw new AuthenticationException(
-                __('A valid password reset token is missing. Enter and try again.')
+                __('Please enter a valid password reset token.')
             );
         }
         $this->_getResource()->changeResetPasswordLinkToken($this, $passwordLinkToken);

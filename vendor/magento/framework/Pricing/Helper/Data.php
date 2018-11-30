@@ -11,7 +11,6 @@ use Magento\Framework\Pricing\PriceCurrencyInterface;
  * Pricing data helper
  *
  * @api
- * @since 100.0.2
  */
 class Data extends \Magento\Framework\App\Helper\AbstractHelper
 {

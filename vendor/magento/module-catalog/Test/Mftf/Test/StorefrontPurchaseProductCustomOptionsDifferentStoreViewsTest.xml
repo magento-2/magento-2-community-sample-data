@@ -7,15 +7,14 @@
 -->
 
 <tests xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-       xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/testSchema.xsd">
+       xsi:noNamespaceSchemaLocation="../../../../../../../dev/tests/acceptance/vendor/magento/magento2-functional-testing-framework/src/Magento/FunctionalTestingFramework/Test/etc/testSchema.xsd">
     <test name="StorefrontPurchaseProductCustomOptionsDifferentStoreViewsTest">
         <annotations>
-            <features value="Catalog"/>
-            <stories value="Custom options different storeviews"/>
-            <title value="Admin should be able to sell products with different variants of their own"/>
-            <description value="Admin should be able to sell products with different variants of their own"/>
+            <features value="Purchase a product with Custom Options on different Store Views"/>
+            <title value="You should be able to sell products with different variants of your own."/>
+            <description value="You should be able to sell products with different variants of your own."/>
             <severity value="CRITICAL"/>
-            <testCaseId value="MAGETWO-58184"/>
+            <testCaseId value="MAGETWO-77831"/>
             <group value="product"/>
         </annotations>
 
@@ -73,11 +72,11 @@
         <actionGroup ref="SearchForProductOnBackendActionGroup" stepKey="filterGroupedProductOptions">
             <argument name="product" value="_defaultProduct"/>
         </actionGroup>
-
         <click selector="{{AdminProductGridSection.productGridXRowYColumnButton('1', '2')}}" stepKey="openProductForEdit"/>
         <waitForPageLoad time="30" stepKey="waitForPageLoad2"/>
 
         <!-- Update Product with Option Value DropDown 1-->
+
         <conditionalClick selector="{{AdminProductCustomizableOptionsSection.customizableOptions}}" dependentSelector="{{AdminProductCustomizableOptionsSection.checkIfCustomizableOptionsTabOpen}}" visible="true" stepKey="clickIfContentTabCloses2"/>
         <click selector="{{AdminProductCustomizableOptionsSection.addOptionBtn}}" stepKey="checkAddOption1"/>
         <waitForPageLoad time="10" stepKey="waitForPageLoad3"/>
@@ -97,6 +96,7 @@
         <click selector="{{AdminProductFormActionSection.saveButton}}" stepKey="clickSaveButton1"/>
 
         <!-- Switcher to Store FR-->
+
         <scrollToTopOfPage stepKey="scrollToTopOfPage1"/>
 
         <click selector="{{AdminProductFormActionSection.changeStoreButton}}" stepKey="clickStoreSwitcher"/>
@@ -113,13 +113,13 @@
         <waitForPageLoad time="30" stepKey="waitForPageLoad5"/>
         <uncheckOption selector="{{AdminProductCustomizableOptionsSection.useDefaultOptionTitle}}" stepKey="uncheckUseDefaultOptionTitle"/>
         <fillField selector="{{AdminProductCustomizableOptionsSection.fillOptionTitle('Custom Options 1')}}" userInput="FR Custom Options 1" stepKey="fillOptionTitle2"/>
-        <uncheckOption selector="{{AdminProductCustomizableOptionsSection.useDefaultOptionTitleByIndex('0')}}" stepKey="uncheckUseDefaultOptionValueTitle1"/>
+        <uncheckOption selector="{{AdminProductCustomizableOptionsSection.useDefaultOptionValueTitleByIndex('0')}}" stepKey="uncheckUseDefaultOptionValueTitle1"/>
         <fillField selector="{{AdminProductCustomizableOptionsSection.fillOptionValueTitle('FR Custom Options 1', '0')}}" userInput="FR option1" stepKey="fillOptionValueTitle3"/>
 
         <!-- Update Product with Option Value 1 DropDown 1-->
 
-        <click selector="{{AdminProductCustomizableOptionsSection.useDefaultOptionTitleByIndex('1')}}" stepKey="clickHiddenRequireMessage"/>
-        <uncheckOption selector="{{AdminProductCustomizableOptionsSection.useDefaultOptionTitleByIndex('1')}}" stepKey="uncheckUseDefaultOptionValueTitle2"/>
+        <click selector="{{AdminProductCustomizableOptionsSection.useDefaultOptionValueTitleByIndex('1')}}" stepKey="clickHiddenRequireMessage"/>
+        <uncheckOption selector="{{AdminProductCustomizableOptionsSection.useDefaultOptionValueTitleByIndex('1')}}" stepKey="uncheckUseDefaultOptionValueTitle2"/>
         <fillField selector="{{AdminProductCustomizableOptionsSection.fillOptionValueTitle('FR Custom Options 1', '1')}}" userInput="FR option2" stepKey="fillOptionValueTitle4"/>
         <click selector="{{AdminProductFormActionSection.saveButton}}" stepKey="clickSaveButton2"/>
 
@@ -154,7 +154,9 @@
 
         <!-- Checking the correctness of displayed custom options for user parameters on checkout -->
 
-        <actionGroup ref="GoToCheckoutFromMinicartActionGroup" stepKey="goToCheckoutFromMinicart" />
+        <click selector="{{StorefrontMiniCartSection.show}}" stepKey="clickCart"/>
+        <click selector="{{StorefrontMiniCartSection.goToCheckout}}" stepKey="goToCheckout"/>
+        <waitForPageLoad stepKey="s33"/>
 
         <conditionalClick selector="{{CheckoutPaymentSection.cartItemsArea}}" dependentSelector="{{CheckoutPaymentSection.cartItemsArea}}" visible="true" stepKey="exposeMiniCart"/>
 
@@ -185,11 +187,11 @@
         <!-- Open Order -->
 
         <amOnPage url="{{AdminOrdersPage.url}}" stepKey="onOrdersPage"/>
-        <waitForPageLoad stepKey="waitForPageLoadOrdersPage"/>
-        <fillField selector="{{AdminOrdersGridSection.search}}" userInput="{$grabOrderNumber}" stepKey="fillOrderNum"/>
-        <click selector="{{AdminOrdersGridSection.submitSearch}}" stepKey="submitSearchOrderNum"/>
-        <waitForLoadingMaskToDisappear stepKey="waitForLoadingMaskToDisappearOnSearch"/>
-        <click selector="{{AdminOrdersGridSection.firstRow}}" stepKey="clickOrderRow"/>
+        <waitForPageLoad time="30" stepKey="waitForPageLoad9"/>
+        <fillField selector="{{OrdersGridSection.search}}" userInput="{$grabOrderNumber}" stepKey="fillOrderNum"/>
+        <click selector="{{OrdersGridSection.submitSearch}}" stepKey="submitSearch"/>
+        <waitForLoadingMaskToDisappear stepKey="waitForLoadingMask4"/>
+        <click selector="{{OrdersGridSection.firstRow}}" stepKey="clickOrderRow"/>
         <waitForPageLoad time="30" stepKey="waitForPageLoad10"/>
 
         <!-- Checking the correctness of displayed custom options for user parameters on Order -->
@@ -227,7 +229,9 @@
 
         <!-- Checking the correctness of displayed custom options for user parameters on checkout -->
 
-        <actionGroup ref="GoToCheckoutFromMinicartActionGroup" stepKey="goToCheckoutFromMinicart1" />
+        <click selector="{{StorefrontMiniCartSection.show}}" stepKey="clickCart1"/>
+        <click selector="{{StorefrontMiniCartSection.goToCheckout}}" stepKey="goToCheckout1"/>
+        <waitForPageLoad stepKey="s34"/>
 
         <conditionalClick selector="{{CheckoutPaymentSection.cartItemsArea}}" dependentSelector="{{CheckoutPaymentSection.cartItemsArea}}" visible="true" stepKey="exposeMiniCart1"/>
 
@@ -261,12 +265,10 @@
         <actionGroup ref="SearchForProductOnBackendActionGroup" stepKey="filterGroupedProductOptions1">
             <argument name="product" value="_defaultProduct"/>
         </actionGroup>
-
         <click selector="{{AdminProductGridSection.productGridXRowYColumnButton('1', '2')}}" stepKey="openProductForEdit1"/>
         <waitForPageLoad time="30" stepKey="waitForPageLoad16"/>
 
         <!-- Switcher to Store FR-->
-
         <scrollToTopOfPage stepKey="scrollToTopOfPage2"/>
         <click selector="{{AdminProductFormActionSection.changeStoreButton}}" stepKey="clickStoreSwitcher1"/>
         <click selector="{{AdminProductFormActionSection.selectStoreView(customStoreFR.name)}}" stepKey="clickStoreView1"/>
@@ -281,12 +283,12 @@
 
         <waitForPageLoad time="30" stepKey="waitForPageLoad18"/>
         <checkOption selector="{{AdminProductCustomizableOptionsSection.useDefaultOptionTitle}}" stepKey="checkUseDefaultOptionTitle"/>
-        <checkOption selector="{{AdminProductCustomizableOptionsSection.useDefaultOptionTitleByIndex('0')}}" stepKey="checkUseDefaultOptionValueTitle1"/>
+        <checkOption selector="{{AdminProductCustomizableOptionsSection.useDefaultOptionValueTitleByIndex('0')}}" stepKey="checkUseDefaultOptionValueTitle1"/>
 
         <!-- Update Product with Option Value 1 DropDown 1-->
 
         <waitForPageLoad time="30" stepKey="waitForPageLoad19"/>
-        <checkOption selector="{{AdminProductCustomizableOptionsSection.useDefaultOptionTitleByIndex('1')}}" stepKey="checkUseDefaultOptionValueTitle2"/>
+        <checkOption selector="{{AdminProductCustomizableOptionsSection.useDefaultOptionValueTitleByIndex('1')}}" stepKey="checkUseDefaultOptionValueTitle2"/>
         <click selector="{{AdminProductFormActionSection.saveButton}}" stepKey="clickSaveButton3"/>
 
         <!--Go to Product Page-->

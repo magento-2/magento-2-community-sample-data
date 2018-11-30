@@ -3,8 +3,6 @@
  * Copyright © Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
-declare(strict_types=1);
-
 namespace Magento\Catalog\Model;
 
 use Magento\TestFramework\Helper\Bootstrap;
@@ -33,18 +31,12 @@ class ProductPriceWithDimensionTest extends \PHPUnit\Framework\TestCase
      */
     private $productRepository;
 
-    /**
-     * Set up
-     */
     protected function setUp()
     {
         $this->_model = Bootstrap::getObjectManager()->create(Product::class);
         $this->productRepository = Bootstrap::getObjectManager()->create(ProductRepositoryInterface::class);
     }
 
-    /**
-     * Get price
-     */
     public function testGetPrice()
     {
         $this->assertEmpty($this->_model->getPrice());
@@ -52,9 +44,6 @@ class ProductPriceWithDimensionTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals(10.0, $this->_model->getPrice());
     }
 
-    /**
-     * Get price model
-     */
     public function testGetPriceModel()
     {
         $default = $this->_model->getPriceModel();
@@ -86,9 +75,6 @@ class ProductPriceWithDimensionTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals('<span class="price">$0.00</span>', $this->_model->getFormatedPrice());
     }
 
-    /**
-     * Set get final price
-     */
     public function testSetGetFinalPrice()
     {
         $this->assertEquals(0, $this->_model->getFinalPrice());
@@ -99,9 +85,8 @@ class ProductPriceWithDimensionTest extends \PHPUnit\Framework\TestCase
 
     /**
      * @magentoDataFixture Magento/Catalog/_files/product_with_options.php
-     * @return void
      */
-    public function testGetMinPrice(): void
+    public function testGetMinPrice()
     {
         $product = $this->productRepository->get('simple');
         $collection = Bootstrap::getObjectManager()->create(Collection::class);

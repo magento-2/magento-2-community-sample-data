@@ -57,6 +57,7 @@ class StoreConfigManagerTest extends \PHPUnit\Framework\TestCase
 
     /**
      * @param array $storeConfig
+     *
      * @return \PHPUnit_Framework_MockObject_MockObject
      */
     protected function getStoreMock(array $storeConfig)

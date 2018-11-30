@@ -12,10 +12,10 @@ use Magento\Framework\DataObject;
  * This model contains the data used in the shipping module, not necessarily all
  * data available in its webservice representation.
  *
- * @package Temando\Shipping\Model
- * @author  Rhodri Davies <rhodri.davies@temando.com>
- * @license https://opensource.org/licenses/osl-3.0.php Open Software License (OSL 3.0)
- * @link    https://www.temando.com/
+ * @package  Temando\Shipping\Model
+ * @author   Rhodri Davies <rhodri.davies@temando.com>
+ * @license  http://opensource.org/licenses/osl-3.0.php Open Software License (OSL 3.0)
+ * @link     http://www.temando.com/
  */
 class Batch extends DataObject implements BatchInterface
 {
@@ -68,7 +68,7 @@ class Batch extends DataObject implements BatchInterface
     }
 
     /**
-     * @return string
+     * @return DocumentationInterface[]
      */
     public function getDocumentation()
     {

@@ -40,7 +40,7 @@ class IndexerShowDimensionsModeCommand extends AbstractIndexerCommand
     /**
      * @param ObjectManagerFactory $objectManagerFactory
      * @param ScopeConfigInterface $configReader
-     * @param array $indexers
+     * @param array                $indexers
      */
     public function __construct(
         ObjectManagerFactory $objectManagerFactory,
@@ -65,9 +65,6 @@ class IndexerShowDimensionsModeCommand extends AbstractIndexerCommand
 
     /**
      * {@inheritdoc}
-     * @param InputInterface $input
-     * @param OutputInterface $output
-     * @return int
      */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
@@ -137,8 +134,8 @@ class IndexerShowDimensionsModeCommand extends AbstractIndexerCommand
      * Validate command argument and return errors in case if argument is invalid
      *
      * @param string $inputKey
-     * @param array $inputIndexer
-     * @param array $acceptedValues
+     * @param array  $inputIndexer
+     * @param array  $acceptedValues
      * @return array
      */
     private function validateArgument(string $inputKey, array $inputIndexer, array $acceptedValues): array

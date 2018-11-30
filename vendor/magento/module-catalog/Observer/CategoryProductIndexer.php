@@ -12,7 +12,8 @@ use Magento\Framework\Event\Observer;
 use Magento\Framework\Event\ObserverInterface;
 
 /**
- * Checks if a category has changed products and depends on indexer configuration.
+ * Checks if a category has changed products and depends on indexer configuration
+ * marks `Category Products` indexer as invalid or reindexes affected products.
  */
 class CategoryProductIndexer implements ObserverInterface
 {
@@ -32,7 +33,7 @@ class CategoryProductIndexer implements ObserverInterface
     /**
      * @inheritdoc
      */
-    public function execute(Observer $observer): void
+    public function execute(Observer $observer)
     {
         $productIds = $observer->getEvent()->getProductIds();
         if (!empty($productIds) && $this->processor->isIndexerScheduled()) {

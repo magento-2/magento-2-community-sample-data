@@ -15,7 +15,7 @@ use Magento\Wishlist\Model\WishlistFactory;
 
 /**
  * Class AddToCart
- * @deprecated 101.0.0
+ * @deprecated 100.2.0
  * @package Magento\Wishlist\Observer
  */
 class AddToCart implements ObserverInterface
@@ -76,7 +76,7 @@ class AddToCart implements ObserverInterface
             $wishlistIds = [$singleWishlistId];
         }
 
-        if (is_array($wishlistIds) && count($wishlistIds) && $request->getParam('wishlist_next')) {
+        if (count($wishlistIds) && $request->getParam('wishlist_next')) {
             $wishlistId = array_shift($wishlistIds);
 
             if ($this->customerSession->isLoggedIn()) {

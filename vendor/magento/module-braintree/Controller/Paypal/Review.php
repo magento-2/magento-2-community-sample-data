@@ -3,7 +3,6 @@
  * Copyright © Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
-
 namespace Magento\Braintree\Controller\Paypal;
 
 use Magento\Checkout\Model\Session;
@@ -67,7 +66,7 @@ class Review extends AbstractAction
                     $quote
                 );
             } elseif (!$quote->getPayment()->getAdditionalInformation(self::$paymentMethodNonce)) {
-                throw new LocalizedException(__('Checkout failed to initialize. Verify and try again.'));
+                throw new LocalizedException(__('We can\'t initialize checkout.'));
             }
 
             /** @var \Magento\Framework\View\Result\Page $resultPage */

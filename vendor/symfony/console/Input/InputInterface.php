@@ -36,12 +36,11 @@ interface InputInterface
      * Does not necessarily return the correct result for short options
      * when multiple flags are combined in the same option.
      *
-     * @param string|array $values     The values to look for in the raw parameters (can be an array)
-     * @param bool         $onlyParams Only check real parameters, skip those following an end of options (--) signal
+     * @param string|array $values The values to look for in the raw parameters (can be an array)
      *
      * @return bool true if the value is contained in the raw parameters
      */
-    public function hasParameterOption($values, $onlyParams = false);
+    public function hasParameterOption($values);
 
     /**
      * Returns the value of a raw option (not parsed).
@@ -51,13 +50,12 @@ interface InputInterface
      * Does not necessarily return the correct result for short options
      * when multiple flags are combined in the same option.
      *
-     * @param string|array $values     The value(s) to look for in the raw parameters (can be an array)
-     * @param mixed        $default    The default value to return if no result is found
-     * @param bool         $onlyParams Only check real parameters, skip those following an end of options (--) signal
+     * @param string|array $values  The value(s) to look for in the raw parameters (can be an array)
+     * @param mixed        $default The default value to return if no result is found
      *
      * @return mixed The option value
      */
-    public function getParameterOption($values, $default = false, $onlyParams = false);
+    public function getParameterOption($values, $default = false);
 
     /**
      * Binds the current Input instance with the given arguments and options.

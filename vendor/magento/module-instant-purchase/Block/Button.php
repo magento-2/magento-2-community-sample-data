@@ -13,7 +13,6 @@ use Magento\InstantPurchase\Model\Config;
  * Configuration for JavaScript instant purchase button component.
  *
  * @api
- * @since 100.2.0
  */
 class Button extends Template
 {
@@ -41,7 +40,6 @@ class Button extends Template
      * Checks if button enabled.
      *
      * @return bool
-     * @since 100.2.0
      */
     public function isEnabled(): bool
     {
@@ -50,7 +48,6 @@ class Button extends Template
 
     /**
      * @inheritdoc
-     * @since 100.2.0
      */
     public function getJsLayout(): string
     {

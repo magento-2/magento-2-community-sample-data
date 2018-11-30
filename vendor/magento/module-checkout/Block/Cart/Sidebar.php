@@ -11,7 +11,6 @@ use Magento\Store\Model\ScopeInterface;
  * Cart sidebar block
  *
  * @api
- * @since 100.0.2
  */
 class Sidebar extends AbstractCart
 {
@@ -101,7 +100,9 @@ class Sidebar extends AbstractCart
      */
     public function getImageHtmlTemplate()
     {
-        return 'Magento_Catalog/product/image_with_borders';
+        return $this->imageHelper->getFrame()
+            ? 'Magento_Catalog/product/image'
+            : 'Magento_Catalog/product/image_with_borders';
     }
 
     /**

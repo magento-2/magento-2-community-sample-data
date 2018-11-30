@@ -1,27 +1,4 @@
 
-6.0.0 / 2018-11-12
-==================
-
-  * Artificially increment major version to stop code from updating on 2.2.4/2.2.5
-
-5.5.4 / 2018-10-15
-==================
-
-  * PPI-559 Allow OM module to be version 4.x or 5.x
-  * PPI-579 Fix system configuration to remove unused settings
-
-5.5.3 / 2018-10-09
-==================
-
-  * PPI-557 Fix issue with running under Magento Commerce with split DB
-  * PPI-577 Fix MFTF test
-
-5.5.2 / 2018-09-27
-==================
-
-  * PPI-557 Fix checkout doesn't work after enabling Klarna
-  * PPI-561 Fix composer requirements after 2.3.0 change
-
 5.5.1 / 2018-08-31
 ==================
 

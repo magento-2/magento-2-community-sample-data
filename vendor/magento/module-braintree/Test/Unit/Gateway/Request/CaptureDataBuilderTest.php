@@ -12,45 +12,36 @@ use Magento\Braintree\Gateway\SubjectReader;
 use PHPUnit_Framework_MockObject_MockObject as MockObject;
 
 /**
- * Tests \Magento\Braintree\Gateway\Request\CaptureDataBuilder.
+ * Class CaptureDataBuilderTest
  */
 class CaptureDataBuilderTest extends \PHPUnit\Framework\TestCase
 {
     /**
-     * @var CaptureDataBuilder
+     * @var \Magento\Braintree\Gateway\Request\CaptureDataBuilder
      */
     private $builder;
 
     /**
      * @var Payment|MockObject
      */
-    private $paymentMock;
+    private $payment;
 
     /**
-     * @var Payment|MockObject
+     * @var \Magento\Sales\Model\Order\Payment|MockObject
      */
-    private $paymentDOMock;
-
-    /**
-     * @var SubjectReader|MockObject
-     */
-    private $subjectReaderMock;
+    private $paymentDO;
 
     protected function setUp()
     {
-        $this->paymentDOMock = $this->createMock(PaymentDataObjectInterface::class);
-        $this->paymentMock = $this->getMockBuilder(Payment::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $this->subjectReaderMock = $this->getMockBuilder(SubjectReader::class)
+        $this->paymentDO = $this->createMock(PaymentDataObjectInterface::class);
+        $this->payment = $this->getMockBuilder(Payment::class)
             ->disableOriginalConstructor()
             ->getMock();
 
-        $this->builder = new CaptureDataBuilder($this->subjectReaderMock);
+        $this->builder = new CaptureDataBuilder(new SubjectReader());
     }
 
     /**
-     * @covers \Magento\Braintree\Gateway\Request\CaptureDataBuilder::build
      * @expectedException \Magento\Framework\Exception\LocalizedException
      * @expectedExceptionMessage No authorization transaction to proceed capture.
      */
@@ -58,29 +49,19 @@ class CaptureDataBuilderTest extends \PHPUnit\Framework\TestCase
     {
         $amount = 10.00;
         $buildSubject = [
-            'payment' => $this->paymentDOMock,
-            'amount' => $amount,
+            'payment' => $this->paymentDO,
+            'amount' => $amount
         ];
 
-        $this->paymentMock->expects(self::once())
-            ->method('getCcTransId')
+        $this->payment->method('getCcTransId')
             ->willReturn('');
 
-        $this->paymentDOMock->expects(self::once())
-            ->method('getPayment')
-            ->willReturn($this->paymentMock);
-
-        $this->subjectReaderMock->expects(self::once())
-            ->method('readPayment')
-            ->with($buildSubject)
-            ->willReturn($this->paymentDOMock);
+        $this->paymentDO->method('getPayment')
+            ->willReturn($this->payment);
 
         $this->builder->build($buildSubject);
     }
 
-    /**
-     * @covers \Magento\Braintree\Gateway\Request\CaptureDataBuilder::build
-     */
     public function testBuild()
     {
         $transactionId = 'b3b99d';
@@ -88,31 +69,20 @@ class CaptureDataBuilderTest extends \PHPUnit\Framework\TestCase
 
         $expected = [
             'transaction_id' => $transactionId,
-            'amount' => $amount,
+            'amount' => $amount
         ];
 
         $buildSubject = [
-            'payment' => $this->paymentDOMock,
-            'amount' => $amount,
+            'payment' => $this->paymentDO,
+            'amount' => $amount
         ];
 
-        $this->paymentMock->expects(self::once())
-            ->method('getCcTransId')
+        $this->payment->method('getCcTransId')
             ->willReturn($transactionId);
 
-        $this->paymentDOMock->expects(self::once())
-            ->method('getPayment')
-            ->willReturn($this->paymentMock);
+        $this->paymentDO->method('getPayment')
+            ->willReturn($this->payment);
 
-        $this->subjectReaderMock->expects(self::once())
-            ->method('readPayment')
-            ->with($buildSubject)
-            ->willReturn($this->paymentDOMock);
-        $this->subjectReaderMock->expects(self::once())
-            ->method('readAmount')
-            ->with($buildSubject)
-            ->willReturn($amount);
-
-        static::assertEquals($expected, $this->builder->build($buildSubject));
+        self::assertEquals($expected, $this->builder->build($buildSubject));
     }
 }

@@ -41,11 +41,6 @@ define([
 
         afterEach(function () {
             $('#product_addtocart_form').remove();
-
-            try {
-                injector.clean();
-                injector.remove();
-            } catch (e) {}
         });
 
         it('Check initialized data.', function () {

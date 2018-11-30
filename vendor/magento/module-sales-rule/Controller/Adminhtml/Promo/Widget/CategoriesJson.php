@@ -3,9 +3,6 @@
  * Copyright © Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
-
-declare(strict_types=1);
-
 namespace Magento\SalesRule\Controller\Adminhtml\Promo\Widget;
 
 /**
@@ -18,7 +15,7 @@ namespace Magento\SalesRule\Controller\Adminhtml\Promo\Widget;
 class CategoriesJson extends \Magento\CatalogRule\Controller\Adminhtml\Promo\Widget\CategoriesJson
 {
     /**
-     * Authorization level of a basic admin session.
+     * Authorization level of a basic admin session
      *
      * @see _isAllowed()
      */

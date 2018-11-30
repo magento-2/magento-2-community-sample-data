@@ -9,7 +9,6 @@ namespace Magento\Framework\Mail\Template;
  * Mail Template Factory interface
  *
  * @api
- * @since 100.0.2
  */
 interface FactoryInterface
 {

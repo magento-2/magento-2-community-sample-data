@@ -10,7 +10,7 @@ use Magento\Framework\App\Config\ScopeConfigInterface;
 use Magento\Store\Model\ScopeInterface;
 
 /**
- * Utility Cms Pages.
+ * Utility Cms Pages
  */
 class GetUtilityPageIdentifiers implements GetUtilityPageIdentifiersInterface
 {
@@ -30,8 +30,7 @@ class GetUtilityPageIdentifiers implements GetUtilityPageIdentifiersInterface
     }
 
     /**
-     * Get List Page Identifiers.
-     *
+     * Get List Page Identifiers
      * @return array
      */
     public function execute()

@@ -11,7 +11,6 @@ namespace Magento\Framework\Acl;
  * On consequent requests, ACL object is deserialized from cache.
  *
  * @api
- * @since 100.0.2
  */
 class Builder
 {
@@ -78,7 +77,7 @@ class Builder
      * Remove cached ACL instance.
      *
      * @return $this
-     * @since 101.0.0
+     * @since 100.2.0
      */
     public function resetRuntimeAcl()
     {

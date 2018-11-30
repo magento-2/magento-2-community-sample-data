@@ -117,7 +117,7 @@ class Tabs extends \Magento\Backend\Block\Widget
         if (empty($tabId)) {
             throw new \Exception(__('Please correct the tab configuration and try again. Tab Id should be not empty'));
         }
-
+        
         if (is_array($tab)) {
             $this->_tabs[$tabId] = new \Magento\Framework\DataObject($tab);
         } elseif ($tab instanceof \Magento\Framework\DataObject) {
@@ -164,7 +164,7 @@ class Tabs extends \Magento\Backend\Block\Widget
      */
     protected function _addTabByName($tab, $tabId)
     {
-        if (strpos($tab, '\Block\\') !== false) {
+        if (strpos($tab, '\Block\\')) {
             $this->_tabs[$tabId] = $this->getLayout()->createBlock($tab, $this->getNameInLayout() . '_tab_' . $tabId);
         } elseif ($this->getChildBlock($tab)) {
             $this->_tabs[$tabId] = $this->getChildBlock($tab);
@@ -280,7 +280,7 @@ class Tabs extends \Magento\Backend\Block\Widget
 
         return $this->applyTabsCorrectOrder($orderByPosition, $orderByIdentity);
     }
-
+    
     /**
      * @param array $orderByPosition
      * @param array $orderByIdentity

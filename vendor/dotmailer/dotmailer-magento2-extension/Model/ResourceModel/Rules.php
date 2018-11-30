@@ -4,7 +4,6 @@ namespace Dotdigitalgroup\Email\Model\ResourceModel;
 
 use Dotdigitalgroup\Email\Model\ResourceModel\Cron\Collection;
 use Dotdigitalgroup\Email\Model\Config\Json;
-use Dotdigitalgroup\Email\Setup\Schema;
 
 class Rules extends \Magento\Framework\Model\ResourceModel\Db\AbstractDb
 {
@@ -20,7 +19,7 @@ class Rules extends \Magento\Framework\Model\ResourceModel\Db\AbstractDb
      */
     public function _construct()
     {
-        $this->_init(Schema::EMAIL_RULES_TABLE, 'id');
+        $this->_init('email_rules', 'id');
     }
 
     /**
@@ -80,6 +79,10 @@ class Rules extends \Magento\Framework\Model\ResourceModel\Db\AbstractDb
                     ['order_payment' => $this->getTable('sales_order_payment')],
                     'main_table.entity_id = order_payment.parent_id',
                     ['method']
+                )->join(
+                    ['quote' => $this->getTable('quote')],
+                    'main_table.quote_id = quote.entity_id',
+                    ['items_qty']
                 )->where('order_address.address_type = ?', 'shipping');
         }
 

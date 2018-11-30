@@ -15,7 +15,6 @@ namespace Composer\Command;
 use Composer\Factory;
 use Composer\IO\IOInterface;
 use Composer\Config;
-use Composer\Composer;
 use Composer\Repository\CompositeRepository;
 use Composer\Repository\RepositoryFactory;
 use Composer\Script\ScriptEvents;
@@ -38,7 +37,7 @@ class ArchiveCommand extends BaseCommand
     {
         $this
             ->setName('archive')
-            ->setDescription('Creates an archive of this composer package.')
+            ->setDescription('Create an archive of this composer package.')
             ->setDefinition(array(
                 new InputArgument('package', InputArgument::OPTIONAL, 'The package to archive instead of the current project'),
                 new InputArgument('version', InputArgument::OPTIONAL, 'A version constraint to find the package to archive'),
@@ -48,8 +47,7 @@ class ArchiveCommand extends BaseCommand
                     .' Note that the format will be appended.'),
                 new InputOption('ignore-filters', false, InputOption::VALUE_NONE, 'Ignore filters when saving package'),
             ))
-            ->setHelp(
-                <<<EOT
+            ->setHelp(<<<EOT
 The <info>archive</info> command creates an archive of the specified format
 containing the files and directories of the Composer project or the specified
 package in the specified version and writes it to the specified directory.
@@ -67,9 +65,8 @@ EOT
         $composer = $this->getComposer(false);
         if ($composer) {
             $commandEvent = new CommandEvent(PluginEvents::COMMAND, 'archive', $input, $output);
-            $eventDispatcher = $composer->getEventDispatcher();
-            $eventDispatcher->dispatch($commandEvent->getName(), $commandEvent);
-            $eventDispatcher->dispatchScript(ScriptEvents::PRE_ARCHIVE_CMD);
+            $composer->getEventDispatcher()->dispatch($commandEvent->getName(), $commandEvent);
+            $composer->getEventDispatcher()->dispatchScript(ScriptEvents::PRE_ARCHIVE_CMD);
         }
 
         if (null === $input->getOption('format')) {
@@ -87,8 +84,7 @@ EOT
             $input->getOption('format'),
             $input->getOption('dir'),
             $input->getOption('file'),
-            $input->getOption('ignore-filters'),
-            $composer
+            $input->getOption('ignore-filters')
         );
 
         if (0 === $returnCode && $composer) {
@@ -98,15 +94,11 @@ EOT
         return $returnCode;
     }
 
-    protected function archive(IOInterface $io, Config $config, $packageName = null, $version = null, $format = 'tar', $dest = '.', $fileName = null, $ignoreFilters = false, Composer $composer = null)
+    protected function archive(IOInterface $io, Config $config, $packageName = null, $version = null, $format = 'tar', $dest = '.', $fileName = null, $ignoreFilters)
     {
-        if ($composer) {
-            $archiveManager = $composer->getArchiveManager();
-        } else {
-            $factory = new Factory;
-            $downloadManager = $factory->createDownloadManager($io, $config);
-            $archiveManager = $factory->createArchiveManager($config, $downloadManager);
-        }
+        $factory = new Factory;
+        $downloadManager = $factory->createDownloadManager($io, $config);
+        $archiveManager = $factory->createArchiveManager($config, $downloadManager);
 
         if ($packageName) {
             $package = $this->selectPackage($io, $packageName, $version);

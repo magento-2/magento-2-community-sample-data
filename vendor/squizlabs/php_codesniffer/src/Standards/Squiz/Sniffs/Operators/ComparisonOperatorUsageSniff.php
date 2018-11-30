@@ -32,13 +32,13 @@ class ComparisonOperatorUsageSniff implements Sniff
      * @var array
      */
     private static $validOps = [
-        T_IS_IDENTICAL        => true,
-        T_IS_NOT_IDENTICAL    => true,
-        T_LESS_THAN           => true,
-        T_GREATER_THAN        => true,
-        T_IS_GREATER_OR_EQUAL => true,
-        T_IS_SMALLER_OR_EQUAL => true,
-        T_INSTANCEOF          => true,
+        T_IS_IDENTICAL,
+        T_IS_NOT_IDENTICAL,
+        T_LESS_THAN,
+        T_GREATER_THAN,
+        T_IS_GREATER_OR_EQUAL,
+        T_IS_SMALLER_OR_EQUAL,
+        T_INSTANCEOF,
     ];
 
     /**
@@ -153,11 +153,9 @@ class ComparisonOperatorUsageSniff implements Sniff
         $foundOps    = 0;
         $foundBools  = 0;
 
-        $lastNonEmpty = $start;
-
         for ($i = $start; $i <= $end; $i++) {
             $type = $tokens[$i]['code'];
-            if (isset(self::$invalidOps[$tokenizer][$type]) === true) {
+            if (in_array($type, array_keys(self::$invalidOps[$tokenizer])) === true) {
                 $error = 'Operator %s prohibited; use %s instead';
                 $data  = [
                     $tokens[$i]['content'],
@@ -165,17 +163,8 @@ class ComparisonOperatorUsageSniff implements Sniff
                 ];
                 $phpcsFile->addError($error, $i, 'NotAllowed', $data);
                 $foundOps++;
-            } else if (isset(self::$validOps[$type]) === true) {
+            } else if (in_array($type, self::$validOps) === true) {
                 $foundOps++;
-            }
-
-            if ($type === T_OPEN_PARENTHESIS
-                && isset($tokens[$i]['parenthesis_closer']) === true
-                && isset(Tokens::$functionNameTokens[$tokens[$lastNonEmpty]['code']]) === true
-            ) {
-                $i            = $tokens[$i]['parenthesis_closer'];
-                $lastNonEmpty = $i;
-                continue;
             }
 
             if ($tokens[$i]['code'] === T_TRUE || $tokens[$i]['code'] === T_FALSE) {
@@ -203,10 +192,6 @@ class ComparisonOperatorUsageSniff implements Sniff
                     $phpcsFile->addError($error, $stackPtr, 'ImplicitTrue');
                     $foundOps++;
                 }
-            }
-
-            if (isset(Tokens::$emptyTokens[$type]) === false) {
-                $lastNonEmpty = $i;
             }
         }//end for
 

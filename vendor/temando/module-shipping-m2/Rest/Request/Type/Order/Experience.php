@@ -43,23 +43,16 @@ class Experience implements \JsonSerializable, EmptyFilterableInterface, Extensi
     private $additionalAttributes = [];
 
     /**
-     * @var string
-     */
-    private $pickUpLocationId;
-
-    /**
      * Experience constructor.
      * @param string $code
      * @param MonetaryValue $cost
      * @param Description $description
-     * @param string $pickUpLocationId
      */
-    public function __construct($code, MonetaryValue $cost, Description $description, $pickUpLocationId)
+    public function __construct($code, MonetaryValue $cost, Description $description)
     {
         $this->code = $code;
         $this->cost = $cost;
         $this->description = $description;
-        $this->pickUpLocationId = $pickUpLocationId;
     }
 
     /**
@@ -116,24 +109,6 @@ class Experience implements \JsonSerializable, EmptyFilterableInterface, Extensi
     /**
      * @return string
      */
-    public function getPickUpLocationId()
-    {
-        return $this->pickUpLocationId;
-    }
-
-    /**
-     * @param string $pickUpLocationId
-     *
-     * @return void
-     */
-    public function setPickUpLocationId($pickUpLocationId)
-    {
-        $this->pickUpLocationId = $pickUpLocationId;
-    }
-
-    /**
-     * @return string
-     */
     public function getLabel()
     {
         return $this->description;
@@ -159,7 +134,6 @@ class Experience implements \JsonSerializable, EmptyFilterableInterface, Extensi
             'code' => $this->code,
             'cost' => $this->cost,
             'description' => $this->description,
-            'pickUpLocationId' => $this->pickUpLocationId,
         ];
 
         foreach ($this->additionalAttributes as $additionalAttribute) {

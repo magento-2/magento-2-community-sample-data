@@ -19,48 +19,50 @@ class ProjectServiceContainer extends Container
     private $parameters;
     private $targetDirs = array();
 
-    /**
-     * @internal but protected for BC on cache:clear
-     */
-    protected $privates = array();
-
     public function __construct()
     {
         $this->parameters = $this->getDefaultParameters();
 
-        $this->services = $this->privates = array();
+        $this->services = array();
+        $this->normalizedIds = array(
+            'bar_%env(bar)%' => 'bar_%env(BAR)%',
+        );
         $this->methodMap = array(
             'bar' => 'getBarService',
+            'bar_%env(BAR)%' => 'getBarenvBARService',
             'foo' => 'getFooService',
+        );
+        $this->privates = array(
+            'bar_%env(BAR)%' => true,
         );
 
         $this->aliases = array();
     }
 
-    public function reset()
-    {
-        $this->privates = array();
-        parent::reset();
-    }
-
+    /**
+     * {@inheritdoc}
+     */
     public function compile()
     {
         throw new LogicException('You cannot compile a dumped container that was already compiled.');
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function isCompiled()
     {
         return true;
     }
 
-    public function getRemovedIds()
+    /**
+     * {@inheritdoc}
+     */
+    public function isFrozen()
     {
-        return array(
-            'Psr\\Container\\ContainerInterface' => true,
-            'Symfony\\Component\\DependencyInjection\\ContainerInterface' => true,
-            'bar_%env(BAR)%' => true,
-            'baz_%env(BAR)%' => true,
-        );
+        @trigger_error(sprintf('The %s() method is deprecated since Symfony 3.3 and will be removed in 4.0. Use the isCompiled() method instead.', __METHOD__), E_USER_DEPRECATED);
+
+        return true;
     }
 
     /**
@@ -70,7 +72,7 @@ class ProjectServiceContainer extends Container
      */
     protected function getBarService()
     {
-        return $this->services['bar'] = new \stdClass(($this->privates['bar_%env(BAR)%'] ?? $this->privates['bar_%env(BAR)%'] = new \stdClass()));
+        return $this->services['bar'] = new \stdClass(${($_ = isset($this->services['bar_%env(BAR)%']) ? $this->services['bar_%env(BAR)%'] : $this->getBarenvBARService()) && false ?: '_'});
     }
 
     /**
@@ -80,14 +82,27 @@ class ProjectServiceContainer extends Container
      */
     protected function getFooService()
     {
-        return $this->services['foo'] = new \stdClass(($this->privates['bar_%env(BAR)%'] ?? $this->privates['bar_%env(BAR)%'] = new \stdClass()), array('baz_'.$this->getEnv('string:BAR') => new \stdClass()));
+        return $this->services['foo'] = new \stdClass(${($_ = isset($this->services['bar_%env(BAR)%']) ? $this->services['bar_%env(BAR)%'] : $this->getBarenvBARService()) && false ?: '_'}, array('baz_'.$this->getEnv('BAR') => new \stdClass()));
     }
 
+    /**
+     * Gets the private 'bar_%env(BAR)%' shared service.
+     *
+     * @return \stdClass
+     */
+    protected function getBarenvBARService()
+    {
+        return $this->services['bar_%env(BAR)%'] = new \stdClass();
+    }
+
+    /**
+     * {@inheritdoc}
+     */
     public function getParameter($name)
     {
-        $name = (string) $name;
+        $name = strtolower($name);
 
-        if (!(isset($this->parameters[$name]) || isset($this->loadedDynamicParameters[$name]) || array_key_exists($name, $this->parameters))) {
+        if (!(isset($this->parameters[$name]) || array_key_exists($name, $this->parameters) || isset($this->loadedDynamicParameters[$name]))) {
             throw new InvalidArgumentException(sprintf('The parameter "%s" must be defined.', $name));
         }
         if (isset($this->loadedDynamicParameters[$name])) {
@@ -97,18 +112,27 @@ class ProjectServiceContainer extends Container
         return $this->parameters[$name];
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function hasParameter($name)
     {
-        $name = (string) $name;
+        $name = strtolower($name);
 
-        return isset($this->parameters[$name]) || isset($this->loadedDynamicParameters[$name]) || array_key_exists($name, $this->parameters);
+        return isset($this->parameters[$name]) || array_key_exists($name, $this->parameters) || isset($this->loadedDynamicParameters[$name]);
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function setParameter($name, $value)
     {
         throw new LogicException('Impossible to call set() on a frozen ParameterBag.');
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function getParameterBag()
     {
         if (null === $this->parameterBag) {
@@ -128,7 +152,7 @@ class ProjectServiceContainer extends Container
     /**
      * Computes a dynamic parameter.
      *
-     * @param string $name The name of the dynamic parameter to load
+     * @param string The name of the dynamic parameter to load
      *
      * @return mixed The value of the dynamic parameter
      *
@@ -147,7 +171,7 @@ class ProjectServiceContainer extends Container
     protected function getDefaultParameters()
     {
         return array(
-            'env(BAR)' => 'bar',
+            'env(bar)' => 'bar',
         );
     }
 }

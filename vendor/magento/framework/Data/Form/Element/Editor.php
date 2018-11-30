@@ -67,7 +67,7 @@ class Editor extends Textarea
      * @return bool|string
      * @throws \InvalidArgumentException
      */
-    protected function getJsonConfig()
+    private function getJsonConfig()
     {
         if (is_object($this->getConfig()) && method_exists($this->getConfig(), 'toJson')) {
             return $this->getConfig()->toJson();
@@ -75,35 +75,6 @@ class Editor extends Textarea
             return $this->serializer->serialize(
                 $this->getConfig()
             );
-        }
-    }
-
-    /**
-     * Fetch config options from plugin.  If $key is passed, return only that option key's value
-     * @param string $pluginName
-     * @param null $key
-     * @return mixed all options or single option if $key is passed; null if nonexistent
-     */
-    public function getPluginConfigOptions($pluginName, $key = null)
-    {
-        if (!is_array($this->getConfig('plugins'))) {
-            return null;
-        }
-
-        $plugins = $this->getConfig('plugins');
-
-        $pluginArrIndex = array_search($pluginName, array_column($plugins, 'name'));
-
-        if ($pluginArrIndex === false || !isset($plugins[$pluginArrIndex]['options'])) {
-            return null;
-        }
-
-        $pluginOptions = $plugins[$pluginArrIndex]['options'];
-
-        if ($key !== null) {
-            return isset($pluginOptions[$key]) ? $pluginOptions[$key] : null;
-        } else {
-            return $pluginOptions;
         }
     }
 
@@ -172,14 +143,61 @@ class Editor extends Textarea
                 ' >' .
                 $this->getEscapedValue() .
                 '</textarea>' .
-                $js . $this->getInlineJs($jsSetupObject, $forceLoad);
+                $js .
+                '
+                <script type="text/javascript">
+                //<![CDATA[
+                window.tinyMCE_GZ = window.tinyMCE_GZ || {}; 
+                window.tinyMCE_GZ.loaded = true;
+                require([
+                "jquery", 
+                "mage/translate", 
+                "mage/adminhtml/events", 
+                "mage/adminhtml/wysiwyg/tiny_mce/setup", 
+                "mage/adminhtml/wysiwyg/widget"
+                ], function(jQuery){' .
+                "\n" .
+                '  (function($) {$.mage.translate.add(' .
+                $this->serializer->serialize(
+                    $this->getButtonTranslations()
+                ) .
+                ')})(jQuery);' .
+                "\n" .
+                $jsSetupObject .
+                ' = new tinyMceWysiwygSetup("' .
+                $this->getHtmlId() .
+                '", ' .
+                $this->getJsonConfig() .
+                ');' .
+                $forceLoad .
+                '
+                    editorFormValidationHandler = ' .
+                $jsSetupObject .
+                '.onFormValidation.bind(' .
+                $jsSetupObject .
+                ');
+                    Event.observe("toggle' .
+                $this->getHtmlId() .
+                '", "click", ' .
+                $jsSetupObject .
+                '.toggle.bind(' .
+                $jsSetupObject .
+                '));
+                    varienGlobalEvents.attachEventHandler("formSubmit", editorFormValidationHandler);
+                    varienGlobalEvents.clearEventHandlers("open_browser_callback");
+                    varienGlobalEvents.attachEventHandler("open_browser_callback", ' .
+                $jsSetupObject .
+                '.openFileBrowser);
+                //]]>
+                });
+                </script>';
 
             $html = $this->_wrapIntoContainer($html);
             $html .= $this->getAfterElementHtml();
             return $html;
         } else {
             // Display only buttons to additional features
-            if ($this->getPluginConfigOptions('magentowidget', 'window_url')) {
+            if ($this->getConfig('widget_window_url')) {
                 $html = $this->_getButtonsHtml() . $js . parent::getElementHtml();
                 if ($this->getConfig('add_widgets')) {
                     $html .= '<script type="text/javascript">
@@ -267,8 +285,8 @@ class Editor extends Textarea
                 [
                     'title' => $this->translate('Insert Widget...'),
                     'onclick' => "widgetTools.openDialog('"
-                        . $this->getPluginConfigOptions('magentowidget', 'window_url')
-                        . "widget_target_id/" . $this->getHtmlId() . "/')",
+                        . $this->getConfig('widget_window_url')
+                        . "widget_target_id/" . $this->getHtmlId() . "')",
                     'class' => 'action-add-widget plugin',
                     'style' => $visible ? '' : 'display:none',
                 ]
@@ -468,64 +486,5 @@ class Editor extends Textarea
     protected function isToggleButtonVisible()
     {
         return !$this->getConfig()->hasData('toggle_button') || $this->getConfig('toggle_button');
-    }
-
-    /**
-     * Returns inline js to initialize wysiwyg adapter
-     *
-     * @param string $jsSetupObject
-     * @param string $forceLoad
-     * @return string
-     */
-    protected function getInlineJs($jsSetupObject, $forceLoad)
-    {
-        $jsString = '
-                <script type="text/javascript">
-                //<![CDATA[
-                window.tinyMCE_GZ = window.tinyMCE_GZ || {}; 
-                window.tinyMCE_GZ.loaded = true;
-                require([
-                "jquery", 
-                "mage/translate", 
-                "mage/adminhtml/events", 
-                "mage/adminhtml/wysiwyg/tiny_mce/setup", 
-                "mage/adminhtml/wysiwyg/widget"
-                ], function(jQuery){' .
-            "\n" .
-            '  (function($) {$.mage.translate.add(' .
-            $this->serializer->serialize(
-                $this->getButtonTranslations()
-            ) .
-            ')})(jQuery);' .
-            "\n" .
-            $jsSetupObject .
-            ' = new wysiwygSetup("' .
-            $this->getHtmlId() .
-            '", ' .
-            $this->getJsonConfig() .
-            ');' .
-            $forceLoad .
-            '
-                    editorFormValidationHandler = ' .
-            $jsSetupObject .
-            '.onFormValidation.bind(' .
-            $jsSetupObject .
-            ');
-                    Event.observe("toggle' .
-            $this->getHtmlId() .
-            '", "click", ' .
-            $jsSetupObject .
-            '.toggle.bind(' .
-            $jsSetupObject .
-            '));
-                    varienGlobalEvents.attachEventHandler("formSubmit", editorFormValidationHandler);
-                    varienGlobalEvents.clearEventHandlers("open_browser_callback");
-                    varienGlobalEvents.attachEventHandler("open_browser_callback", ' .
-            $jsSetupObject .
-            '.openFileBrowser);
-                //]]>
-                });
-                </script>';
-        return $jsString;
     }
 }

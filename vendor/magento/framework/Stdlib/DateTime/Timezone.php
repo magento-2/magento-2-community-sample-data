@@ -3,19 +3,13 @@
  * Copyright © Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
-
 namespace Magento\Framework\Stdlib\DateTime;
 
-use Magento\Framework\App\Config\ScopeConfigInterface;
-use Magento\Framework\App\ScopeInterface;
-use Magento\Framework\App\ScopeResolverInterface;
-use Magento\Framework\Exception\LocalizedException;
-use Magento\Framework\Locale\ResolverInterface;
+use \Magento\Framework\Exception\LocalizedException;
 use Magento\Framework\Phrase;
 
 /**
  * Timezone library
- *
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  */
 class Timezone implements TimezoneInterface
@@ -36,7 +30,7 @@ class Timezone implements TimezoneInterface
     protected $_scopeType;
 
     /**
-     * @var ScopeResolverInterface
+     * @var \Magento\Framework\App\ScopeResolverInterface
      */
     protected $_scopeResolver;
 
@@ -51,28 +45,28 @@ class Timezone implements TimezoneInterface
     protected $_defaultTimezonePath;
 
     /**
-     * @var ScopeConfigInterface
+     * @var \Magento\Framework\App\Config\ScopeConfigInterface
      */
     protected $_scopeConfig;
 
     /**
-     * @var ResolverInterface
+     * @var \Magento\Framework\Locale\ResolverInterface
      */
     protected $_localeResolver;
 
     /**
-     * @param ScopeResolverInterface $scopeResolver
-     * @param ResolverInterface $localeResolver
+     * @param \Magento\Framework\App\ScopeResolverInterface $scopeResolver
+     * @param \Magento\Framework\Locale\ResolverInterface $localeResolver
      * @param \Magento\Framework\Stdlib\DateTime $dateTime
-     * @param ScopeConfigInterface $scopeConfig
+     * @param \Magento\Framework\App\Config\ScopeConfigInterface $scopeConfig
      * @param string $scopeType
      * @param string $defaultTimezonePath
      */
     public function __construct(
-        ScopeResolverInterface $scopeResolver,
-        ResolverInterface $localeResolver,
+        \Magento\Framework\App\ScopeResolverInterface $scopeResolver,
+        \Magento\Framework\Locale\ResolverInterface $localeResolver,
         \Magento\Framework\Stdlib\DateTime $dateTime,
-        ScopeConfigInterface $scopeConfig,
+        \Magento\Framework\App\Config\ScopeConfigInterface $scopeConfig,
         $scopeType,
         $defaultTimezonePath
     ) {
@@ -117,11 +111,21 @@ class Timezone implements TimezoneInterface
      */
     public function getDateFormat($type = \IntlDateFormatter::SHORT)
     {
-        return (new \IntlDateFormatter(
+        $pattern = (new \IntlDateFormatter(
             $this->_localeResolver->getLocale(),
             $type,
             \IntlDateFormatter::NONE
         ))->getPattern();
+
+        /**
+         * This replacement is a workaround to prevent bugs in some third party libraries,
+         * that works incorrectly with 'yyyy' value.
+         * According to official doc of the ICU library
+         * internally used in \Intl, 'yyyy' and 'y' formats are the same
+         * @see http://userguide.icu-project.org/formatparse/datetime
+         */
+        $pattern = str_replace('yyyy', 'y', $pattern);
+        return $pattern;
     }
 
     /**
@@ -166,28 +170,54 @@ class Timezone implements TimezoneInterface
             ? $this->getConfigTimezone()
             : date_default_timezone_get();
 
-        switch (true) {
-            case (empty($date)):
-                return new \DateTime('now', new \DateTimeZone($timezone));
-            case ($date instanceof \DateTime):
-                return $date->setTimezone(new \DateTimeZone($timezone));
-            case ($date instanceof \DateTimeImmutable):
-                return new \DateTime($date->format('Y-m-d H:i:s'), $date->getTimezone());
-            case (!is_numeric($date)):
-                $timeType = $includeTime ? \IntlDateFormatter::SHORT : \IntlDateFormatter::NONE;
-                $formatter = new \IntlDateFormatter(
-                    $locale,
-                    \IntlDateFormatter::SHORT,
-                    $timeType,
-                    new \DateTimeZone($timezone)
-                );
-
-                $date = $this->appendTimeIfNeeded($date, $includeTime);
-                $date = $formatter->parse($date) ?: (new \DateTime($date))->getTimestamp();
-                break;
+        if (empty($date)) {
+            return new \DateTime('now', new \DateTimeZone($timezone));
+        } elseif ($date instanceof \DateTime) {
+            return $date->setTimezone(new \DateTimeZone($timezone));
+        } elseif ($date instanceof \DateTimeImmutable) {
+            return new \DateTime($date->format('Y-m-d H:i:s'), $date->getTimezone());
+        } elseif (!is_numeric($date)) {
+            $date = $this->prepareDate($date, $locale, $timezone, $includeTime);
         }
 
         return (new \DateTime(null, new \DateTimeZone($timezone)))->setTimestamp($date);
+    }
+
+    /**
+     * Convert string date according to locale format
+     *
+     * @param string $date
+     * @param string $locale
+     * @param string $timezone
+     * @param bool $includeTime
+     * @return string
+     */
+    private function prepareDate(string $date, string $locale, string $timezone, bool $includeTime) : string
+    {
+        $timeType = $includeTime ? \IntlDateFormatter::SHORT : \IntlDateFormatter::NONE;
+        $formatter = new \IntlDateFormatter(
+            $locale,
+            \IntlDateFormatter::SHORT,
+            $timeType,
+            new \DateTimeZone($timezone)
+        );
+
+        /**
+         * IntlDateFormatter does not parse correctly date formats per some locales
+         * It depends on ICU lib version used by intl extension
+         * For locales like fr_FR, ar_KW parse date with hyphen as separator
+         */
+        if ($includeTime) {
+            $date = $this->appendTimeIfNeeded($date);
+        }
+        try {
+            $date = $formatter->parse($date) ?: (new \DateTime($date))->getTimestamp();
+        } catch (\Exception $e) {
+            $date = str_replace('/', '-', $date);
+            $date = $formatter->parse($date) ?: (new \DateTime($date))->getTimestamp();
+        }
+
+        return $date;
     }
 
     /**
@@ -235,7 +265,7 @@ class Timezone implements TimezoneInterface
      */
     public function isScopeDateInInterval($scope, $dateFrom = null, $dateTo = null)
     {
-        if (!$scope instanceof ScopeInterface) {
+        if (!$scope instanceof \Magento\Framework\App\ScopeInterface) {
             $scope = $this->_scopeResolver->getScope($scope);
         }
 
@@ -247,12 +277,8 @@ class Timezone implements TimezoneInterface
             $toTimeStamp += 86400;
         }
 
-        $result = false;
-        if (!$this->_dateTime->isEmptyDate($dateFrom) && $scopeTimeStamp < $fromTimeStamp) {
-        } elseif (!$this->_dateTime->isEmptyDate($dateTo) && $scopeTimeStamp > $toTimeStamp) {
-        } else {
-            $result = true;
-        }
+        $result = !(!$this->_dateTime->isEmptyDate($dateFrom) && $scopeTimeStamp < $fromTimeStamp)
+            && !(!$this->_dateTime->isEmptyDate($dateTo) && $scopeTimeStamp > $toTimeStamp);
         return $result;
     }
 
@@ -318,10 +344,7 @@ class Timezone implements TimezoneInterface
         } else {
             if ($date->getTimezone()->getName() !== $this->getConfigTimezone()) {
                 throw new LocalizedException(
-                    new Phrase(
-                        'The DateTime object timezone needs to be the same as the "%1" timezone in config.',
-                        $this->getConfigTimezone()
-                    )
+                    new Phrase('DateTime object timezone must be the same as config - %1', $this->getConfigTimezone())
                 );
             }
         }
@@ -332,16 +355,15 @@ class Timezone implements TimezoneInterface
     }
 
     /**
-     * Retrieve date with time
+     * Add time in case if no time provided but required
      *
      * @param string $date
-     * @param bool $includeTime
      * @return string
      */
-    private function appendTimeIfNeeded($date, $includeTime)
+    private function appendTimeIfNeeded(string $date) : string
     {
-        if ($includeTime && !preg_match('/\d{1}:\d{2}/', $date)) {
-            $date .= " 0:00am";
+        if (!preg_match('/\d{1,2}:\d{2}/', $date)) {
+            $date .= " 00:00";
         }
         return $date;
     }

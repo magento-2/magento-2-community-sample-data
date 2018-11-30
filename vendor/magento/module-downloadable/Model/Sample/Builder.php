@@ -74,7 +74,6 @@ class Builder
      * @param array $data
      * @return $this;
      * @since 100.1.0
-     * @since 100.1.0
      */
     public function setData(array $data)
     {

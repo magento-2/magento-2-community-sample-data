@@ -73,40 +73,26 @@ class FilesystemTest extends \PHPUnit\Framework\TestCase
     {
         $objectManager = new ObjectManager($this);
 
-        $this->storeView = $this->getMockBuilder(StoreView::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $this->shell = $this->getMockBuilder(ShellInterface::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $this->output = $this->getMockBuilder(OutputInterface::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $this->objectManager = $this->getMockBuilder(ObjectManagerInterface::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $this->filesystem = $this->getMockBuilder(Filesystem::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $this->directoryWrite = $this->getMockBuilder(WriteInterface::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->storeView = $this->createMock(StoreView::class);
+        $this->shell = $this->createMock(ShellInterface::class);
+        $this->output = $this->createMock(OutputInterface::class);
+        $this->objectManager = $this->createMock(ObjectManagerInterface::class);
+        $this->filesystem = $this->createMock(Filesystem::class);
+        $this->directoryWrite = $this->createMock(WriteInterface::class);
         $this->filesystem->method('getDirectoryWrite')
             ->willReturn($this->directoryWrite);
 
-        $this->userCollection = $this->getMockBuilder(Collection::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->userCollection = $this->createMock(Collection::class);
+
         $lists = $this->getMockBuilder(Lists::class)
             ->disableOriginalConstructor()
             ->getMock();
-
         $lists->method('getLocaleList')
             ->willReturn([
                 'fr_FR' => 'France',
                 'de_DE' => 'Germany',
                 'nl_NL' => 'Netherlands',
-                'en_US' => 'USA',
+                'en_US' => 'USA'
             ]);
         $locale = $objectManager->getObject(Locale::class, ['lists' => $lists]);
 
@@ -117,7 +103,7 @@ class FilesystemTest extends \PHPUnit\Framework\TestCase
                 'shell' => $this->shell,
                 'filesystem' => $this->filesystem,
                 'userCollection' => $this->userCollection,
-                'locale' => $locale,
+                'locale' => $locale
             ]
         );
 
@@ -163,7 +149,6 @@ class FilesystemTest extends \PHPUnit\Framework\TestCase
     /**
      * Checks a case when configuration contains incorrect locale code.
      *
-     * @return void
      * @expectedException \InvalidArgumentException
      * @expectedExceptionMessage ;echo argument has invalid value, run info:language:list for list of available locales
      */
@@ -181,7 +166,6 @@ class FilesystemTest extends \PHPUnit\Framework\TestCase
     /**
      * Checks as case when admin locale is incorrect.
      *
-     * @return void
      * @expectedException \InvalidArgumentException
      * @expectedExceptionMessage ;echo argument has invalid value, run info:language:list for list of available locales
      */
@@ -200,14 +184,11 @@ class FilesystemTest extends \PHPUnit\Framework\TestCase
      * Initializes admin user locale.
      *
      * @param string $locale
-     * @return void
      */
     private function initAdminLocaleMock($locale)
     {
         /** @var User|MockObject $user */
-        $user = $this->getMockBuilder(User::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $user = $this->createMock(User::class);
         $user->method('getInterfaceLocale')
             ->willReturn($locale);
         $this->userCollection->method('getIterator')

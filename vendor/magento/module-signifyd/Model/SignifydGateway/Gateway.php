@@ -91,6 +91,7 @@ class Gateway
      * @param int $orderId
      * @return int Signifyd case (investigation) identifier
      * @throws GatewayException
+     * @throws \Zend_Http_Client_Exception
      */
     public function createCase($orderId)
     {
@@ -118,6 +119,7 @@ class Gateway
      * @param int $signifydCaseId
      * @return string
      * @throws GatewayException
+     * @throws \Zend_Http_Client_Exception
      */
     public function submitCaseForGuarantee($signifydCaseId)
     {
@@ -142,6 +144,7 @@ class Gateway
      * @param int $caseId
      * @return string
      * @throws GatewayException
+     * @throws \Zend_Http_Client_Exception
      */
     public function cancelGuarantee($caseId)
     {

@@ -10,8 +10,6 @@ use Magento\Analytics\Model\Connector\Http\JsonConverter;
 use Magento\Analytics\Model\Connector\Http\ResponseResolver;
 use Magento\Framework\App\Config\ScopeConfigInterface;
 use Magento\Framework\HTTP\ZendClient;
-use Magento\Framework\Serialize\Serializer\Json;
-use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
 use Psr\Log\LoggerInterface;
 use Magento\Analytics\Model\Connector\NotifyDataChangedCommand;
 use Magento\Analytics\Model\Connector\Http\ClientInterface;
@@ -64,31 +62,13 @@ class NotifyDataChangedCommandTest extends \PHPUnit\Framework\TestCase
             ->getMockForAbstractClass();
         $successHandler->method('handleResponse')
             ->willReturn(true);
-        $serializerMock = $this->getMockBuilder(Json::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $serializerMock->expects($this->any())
-            ->method('unserialize')
-            ->willReturn(['unserialized data']);
-        $objectManager = new ObjectManager($this);
-        $this->notifyDataChangedCommand = $objectManager->getObject(
-            NotifyDataChangedCommand::class,
-            [
-                'analyticsToken' => $this->analyticsTokenMock,
-                'httpClient' => $this->httpClientMock,
-                'config' => $this->configMock,
-                'responseResolver' => $objectManager->getObject(
-                    ResponseResolver::class,
-                    [
-                        'converter' => $objectManager->getObject(
-                            JsonConverter::class,
-                            ['serializer' => $serializerMock]
-                        ),
-                        'responseHandlers' => [201 => $successHandler]
-                    ]
-                ),
-                'logger' => $this->loggerMock
-            ]
+
+        $this->notifyDataChangedCommand = new NotifyDataChangedCommand(
+            $this->analyticsTokenMock,
+            $this->httpClientMock,
+            $this->configMock,
+            new ResponseResolver(new JsonConverter(), [201 => $successHandler]),
+            $this->loggerMock
         );
     }
 

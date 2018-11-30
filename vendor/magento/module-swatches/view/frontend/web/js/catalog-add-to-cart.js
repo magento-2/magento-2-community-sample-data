@@ -23,7 +23,6 @@ require([
                 attr = $item.parent().attr('attribute-code');
             }
             data.redirectParameters.push(attr + '=' + $item.val());
-
         });
     });
 });

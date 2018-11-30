@@ -15,7 +15,6 @@ use Magento\Framework\Module\ModuleListInterface;
 
 /**
  * @api
- * @since 100.0.2
  */
 class Reader
 {

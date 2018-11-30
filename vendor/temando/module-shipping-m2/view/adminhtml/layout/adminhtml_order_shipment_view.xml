@@ -1,0 +1,45 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * Refer to LICENSE.txt distributed with the Temando Shipping module for notice of license
+ */
+-->
+<page xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:View/Layout/etc/page_configuration.xsd">
+    <body>
+        <referenceBlock name="form">
+            <block class="Magento\Backend\Block\Template" name="documentation_listing"
+                   template="Temando_Shipping::shipment/documentation.phtml">
+                <arguments>
+                    <argument name="viewModel" xsi:type="object">Temando\Shipping\ViewModel\Shipment\ShipmentDetails</argument>
+                </arguments>
+            </block>
+
+            <block class="Magento\Backend\Block\Template" name="package_listing"
+                   template="Temando_Shipping::shipment/packages.phtml">
+                <arguments>
+                    <argument name="viewModel" xsi:type="object">Temando\Shipping\ViewModel\Shipment\ShipmentDetails</argument>
+                </arguments>
+            </block>
+
+            <block class="Magento\Backend\Block\Template" name="addon_listing"
+                   template="Temando_Shipping::shipping/view/form/addons.phtml">
+                <arguments>
+                    <argument name="viewModel" xsi:type="object">Temando\Shipping\ViewModel\Shipment\AddOns</argument>
+                    <argument name="templates" xsi:type="array">
+                        <item name="default" xsi:type="string">Temando_Shipping::shipping/view/form/addon/default.phtml</item>
+                        <item name="signature" xsi:type="string">Temando_Shipping::shipping/view/form/addon/signature.phtml</item>
+                        <item name="authorityToLeave" xsi:type="string">Temando_Shipping::shipping/view/form/addon/authority_to_leave.phtml</item>
+                        <item name="addressType" xsi:type="string">Temando_Shipping::shipping/view/form/addon/address_type.phtml</item>
+                        <item name="collectionPoints" xsi:type="string">Temando_Shipping::shipping/view/form/addon/collection_point.phtml</item>
+                        <item name="deliveryAvailability" xsi:type="string">Temando_Shipping::shipping/view/form/addon/delivery_availability.phtml</item>
+                        <item name="directDeliveryOnly" xsi:type="string">Temando_Shipping::shipping/view/form/addon/direct_delivery_only.phtml</item>
+                        <item name="adultSignature" xsi:type="string">Temando_Shipping::shipping/view/form/addon/adult_signature.phtml</item>
+                    </argument>
+                </arguments>
+            </block>
+
+            <block class="Temando\Shipping\Block\Adminhtml\Shipping\View\ExportDetails" name="export_details"
+                   template="Temando_Shipping::shipping/view/form/export.phtml"/>
+        </referenceBlock>
+    </body>
+</page>

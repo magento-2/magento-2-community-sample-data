@@ -13,73 +13,45 @@
 namespace PhpCsFixer\Fixer\Phpdoc;
 
 use PhpCsFixer\AbstractPhpdocTypesFixer;
-use PhpCsFixer\Fixer\ConfigurationDefinitionFixerInterface;
-use PhpCsFixer\FixerConfiguration\AllowedValueSubset;
-use PhpCsFixer\FixerConfiguration\FixerConfigurationResolver;
-use PhpCsFixer\FixerConfiguration\FixerOptionBuilder;
 use PhpCsFixer\FixerDefinition\CodeSample;
 use PhpCsFixer\FixerDefinition\FixerDefinition;
 
 /**
  * @author Graham Campbell <graham@alt-three.com>
- * @author Dariusz Rumiński <dariusz.ruminski@gmail.com>
  */
-final class PhpdocTypesFixer extends AbstractPhpdocTypesFixer implements ConfigurationDefinitionFixerInterface
+final class PhpdocTypesFixer extends AbstractPhpdocTypesFixer
 {
     /**
-     * Available types, grouped.
+     * The types to process.
      *
-     * @var array<string,string[]>
+     * @var string[]
      */
-    private static $possibleTypes = [
-        'simple' => [
-            'array',
-            'bool',
-            'callable',
-            'float',
-            'int',
-            'iterable',
-            'null',
-            'object',
-            'string',
-        ],
-        'alias' => [
-            'boolean',
-            'callback',
-            'double',
-            'integer',
-            'real',
-        ],
-        'meta' => [
-            '$this',
-            'false',
-            'mixed',
-            'parent',
-            'resource',
-            'scalar',
-            'self',
-            'static',
-            'true',
-            'void',
-        ],
-    ];
-
-    /**
-     * @var array string[]
-     */
-    private $typesToFix = [];
-
-    /**
-     * {@inheritdoc}
-     */
-    public function configure(array $configuration = null)
-    {
-        parent::configure($configuration);
-
-        $this->typesToFix = array_merge(...array_map(function ($group) {
-            return self::$possibleTypes[$group];
-        }, $this->configuration['groups']));
-    }
+    private static $types = array(
+        'array',
+        'bool',
+        'boolean',
+        'callable',
+        'callback',
+        'double',
+        'false',
+        'float',
+        'int',
+        'integer',
+        'iterable',
+        'mixed',
+        'null',
+        'object',
+        'parent',
+        'real',
+        'resource',
+        'scalar',
+        'self',
+        'static',
+        'string',
+        'true',
+        'void',
+        '$this',
+    );
 
     /**
      * {@inheritdoc}
@@ -88,7 +60,7 @@ final class PhpdocTypesFixer extends AbstractPhpdocTypesFixer implements Configu
     {
         return new FixerDefinition(
             'The correct case must be used for standard PHP types in PHPDoc.',
-            [
+            array(
                 new CodeSample(
                     '<?php
 /**
@@ -98,7 +70,7 @@ final class PhpdocTypesFixer extends AbstractPhpdocTypesFixer implements Configu
  */
 '
                 ),
-            ]
+            )
         );
     }
 
@@ -122,26 +94,10 @@ final class PhpdocTypesFixer extends AbstractPhpdocTypesFixer implements Configu
     {
         $lower = strtolower($type);
 
-        if (\in_array($lower, $this->typesToFix, true)) {
+        if (in_array($lower, self::$types, true)) {
             return $lower;
         }
 
         return $type;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    protected function createConfigurationDefinition()
-    {
-        $possibleGroups = array_keys(self::$possibleTypes);
-
-        return new FixerConfigurationResolver([
-            (new FixerOptionBuilder('groups', 'Type groups to fix.'))
-                ->setAllowedTypes(['array'])
-                ->setAllowedValues([new AllowedValueSubset($possibleGroups)])
-                ->setDefault($possibleGroups)
-                ->getOption(),
-        ]);
     }
 }

@@ -10,7 +10,6 @@ use Magento\Framework\App\DeploymentConfig;
 use Magento\Framework\App\MaintenanceMode;
 use Magento\Framework\Backup\Factory;
 use Magento\Framework\Composer\ComposerInformation;
-use Magento\Framework\Console\Cli;
 use Magento\Framework\Module\DependencyChecker;
 use Magento\Framework\Module\FullModuleList;
 use Magento\Framework\Module\PackageInfo;
@@ -18,12 +17,12 @@ use Magento\Framework\Setup\BackupRollbackFactory;
 use Magento\Setup\Model\ModuleRegistryUninstaller;
 use Magento\Setup\Model\ModuleUninstaller;
 use Magento\Setup\Model\ObjectManagerProvider;
-use Magento\Framework\Setup\Patch\PatchApplier;
 use Magento\Setup\Model\UninstallCollector;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Question\ConfirmationQuestion;
+use Magento\Framework\Console\Cli;
 
 /**
  * Command for uninstalling modules
@@ -40,7 +39,6 @@ class ModuleUninstallCommand extends AbstractModuleCommand
     const INPUT_KEY_BACKUP_CODE = 'backup-code';
     const INPUT_KEY_BACKUP_MEDIA = 'backup-media';
     const INPUT_KEY_BACKUP_DB = 'backup-db';
-    const INPUT_KEY_NON_COMPOSER_MODULE = 'non-composer';
 
     /**
      * Deployment Configuration
@@ -111,11 +109,6 @@ class ModuleUninstallCommand extends AbstractModuleCommand
     private $maintenanceModeEnabler;
 
     /**
-     * @var PatchApplier
-     */
-    private $patchApplier;
-
-    /**
      * Constructor
      *
      * @param ComposerInformation $composer
@@ -156,19 +149,6 @@ class ModuleUninstallCommand extends AbstractModuleCommand
     }
 
     /**
-     * @return PatchApplier
-     */
-    private function getPatchApplier()
-    {
-        if (!$this->patchApplier) {
-            $this->patchApplier = $this
-                ->objectManager->get(PatchApplier::class);
-        }
-
-        return $this->patchApplier;
-    }
-
-    /**
      * {@inheritdoc}
      */
     protected function configure()
@@ -198,12 +178,6 @@ class ModuleUninstallCommand extends AbstractModuleCommand
                 InputOption::VALUE_NONE,
                 'Take complete database backup'
             ),
-            new InputOption(
-                self::INPUT_KEY_NON_COMPOSER_MODULE,
-                null,
-                InputOption::VALUE_NONE,
-                'All modules, that will be past here will be non composer based'
-            )
         ];
         $this->setName('module:uninstall')
             ->setDescription('Uninstalls modules installed by composer')
@@ -222,7 +196,6 @@ class ModuleUninstallCommand extends AbstractModuleCommand
     /**
      * {@inheritdoc}
      * @SuppressWarnings(PHPMD.CyclomaticComplexity)
-     * @SuppressWarnings(PHPMD.NPathComplexity)
      */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
@@ -235,15 +208,6 @@ class ModuleUninstallCommand extends AbstractModuleCommand
         }
 
         $modules = $input->getArgument(self::INPUT_KEY_MODULES);
-
-        if ($input->getOption(self::INPUT_KEY_NON_COMPOSER_MODULE)) {
-            foreach ($modules as $moduleName) {
-                $this->getPatchApplier()->revertDataPatches($moduleName);
-            }
-
-            return Cli::RETURN_SUCCESS;
-        }
-
         // validate modules input
         $messages = $this->validate($modules);
         if (!empty($messages)) {
@@ -297,7 +261,6 @@ class ModuleUninstallCommand extends AbstractModuleCommand
                     $this->moduleRegistryUninstaller->removeModulesFromDeploymentConfig($output, $modules);
                     $this->moduleUninstaller->uninstallCode($output, $modules);
                     $this->cleanup($input, $output);
-
                     return Cli::RETURN_SUCCESS;
                 } catch (\Exception $e) {
                     $output->writeln('<error>' . $e->getMessage() . '</error>');

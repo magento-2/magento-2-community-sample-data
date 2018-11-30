@@ -54,7 +54,6 @@ class RepositoryManager
     public function findPackage($name, $constraint)
     {
         foreach ($this->repositories as $repository) {
-            /** @var RepositoryInterface $repository */
             if ($package = $repository->findPackage($name, $constraint)) {
                 return $package;
             }
@@ -69,13 +68,13 @@ class RepositoryManager
      * @param string                                                 $name       package name
      * @param string|\Composer\Semver\Constraint\ConstraintInterface $constraint package version or version constraint to match against
      *
-     * @return PackageInterface[]
+     * @return array
      */
     public function findPackages($name, $constraint)
     {
         $packages = array();
 
-        foreach ($this->getRepositories() as $repository) {
+        foreach ($this->repositories as $repository) {
             $packages = array_merge($packages, $repository->findPackages($name, $constraint));
         }
 
@@ -148,7 +147,7 @@ class RepositoryManager
     /**
      * Returns all repositories, except local one.
      *
-     * @return RepositoryInterface[]
+     * @return array
      */
     public function getRepositories()
     {

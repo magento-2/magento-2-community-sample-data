@@ -2,11 +2,12 @@
 /**
  * Refer to LICENSE.txt distributed with the Temando Shipping module for notice of license
  */
+
 namespace Temando\Shipping\Rest\EntityMapper;
 
 use Temando\Shipping\Model\StreamEventInterface;
 use Temando\Shipping\Model\StreamEventInterfaceFactory;
-use Temando\Shipping\Rest\Response\DataObject\StreamEvent;
+use Temando\Shipping\Rest\Response\Type\StreamEventResponseType;
 
 /**
  * Map API data to application data object
@@ -34,10 +35,11 @@ class StreamEventResponseMapper
     }
 
     /**
-     * @param StreamEvent $apiStreamEvent
+     * @param StreamEventResponseType $apiStreamEvent
+     *
      * @return StreamEventInterface
      */
-    public function map(StreamEvent $apiStreamEvent)
+    public function map(StreamEventResponseType $apiStreamEvent)
     {
         $event = $this->streamEventFactory->create(['data' => [
             StreamEventInterface::EVENT_ID => $apiStreamEvent->getId(),

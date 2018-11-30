@@ -80,8 +80,7 @@ class RequirementsTest extends TestCase
     }
 
     /**
-     * @requires OS SunOS
-     * @requires OSFAMILY Solaris
+     * @requires OS Linux
      */
     public function testEleven()
     {
@@ -147,13 +146,6 @@ class RequirementsTest extends TestCase
      * @requires OS DOESNOTEXIST
      */
     public function testAlwaysSkip3()
-    {
-    }
-
-    /**
-     * @requires OSFAMILY DOESNOTEXIST
-     */
-    public function testAlwaysSkip4()
     {
     }
 

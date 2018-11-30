@@ -5,7 +5,7 @@
  */
 namespace Magento\Update;
 
-class StatusCheckTest extends \PHPUnit\Framework\TestCase
+class StatusCheckTest extends \PHPUnit_Framework_TestCase
 {
     const REQUEST_TYPE_AJAX = 'ajax';
 

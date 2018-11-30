@@ -3,21 +3,21 @@
  * Copyright © Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
-declare(strict_types=1);
 
 namespace Magento\Sales\Model;
 
 /**
- * This class uses for checking if reserved order id was already used for some order.
+ * This class uses for checking if reserved order id was already used for some order
  */
 class OrderIncrementIdChecker
 {
     /**
-     * @var ResourceModel\Order
+     * @var \Magento\Sales\Model\ResourceModel\Order
      */
     private $resourceModel;
 
     /**
+     * OrderIncrementIdChecker constructor.
      * @param ResourceModel\Order $resourceModel
      */
     public function __construct(ResourceModel\Order $resourceModel)
@@ -30,18 +30,17 @@ class OrderIncrementIdChecker
      *
      * Method can be used to avoid collisions of order IDs.
      *
-     * @param string|int $orderIncrementId
+     * @param int $orderIncrementId
      * @return bool
      */
-    public function isIncrementIdUsed($orderIncrementId): bool
+    public function isIncrementIdUsed($orderIncrementId)
     {
         /** @var  \Magento\Framework\DB\Adapter\AdapterInterface $adapter */
         $adapter = $this->resourceModel->getConnection();
         $bind = [':increment_id' => $orderIncrementId];
         /** @var \Magento\Framework\DB\Select $select */
         $select = $adapter->select();
-        $select->from($this->resourceModel->getMainTable(), $this->resourceModel->getIdFieldName())
-            ->where('increment_id = :increment_id');
+        $select->from($this->resourceModel->getMainTable(), 'entity_id')->where('increment_id = :increment_id');
         $entity_id = $adapter->fetchOne($select, $bind);
         if ($entity_id > 0) {
             return true;

@@ -3,13 +3,12 @@
  * Copyright © Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
-declare(strict_types=1);
-
-namespace Magento\Framework\Lock\Backend;
 
 /**
  * \Magento\Framework\Lock\Backend\Database test case
  */
+namespace Magento\Framework\Lock\Backend;
+
 class DatabaseTest extends \PHPUnit\Framework\TestCase
 {
     /**

@@ -338,7 +338,11 @@ class Zend_Validate_File_ImageSize extends Zend_Validate_Abstract
             $this->_throw($file, self::HEIGHT_TOO_BIG);
         }
 
-        return empty($this->_messages);
+        if (count($this->_messages) > 0) {
+            return false;
+        }
+
+        return true;
     }
 
     /**

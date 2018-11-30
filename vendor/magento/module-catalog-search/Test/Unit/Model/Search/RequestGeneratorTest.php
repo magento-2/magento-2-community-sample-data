@@ -241,6 +241,7 @@ class RequestGeneratorTest extends \PHPUnit\Framework\TestCase
 
     /**
      * @param $value
+     *
      * @return int|void
      */
     private function countVal(&$value)

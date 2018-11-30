@@ -26,12 +26,12 @@ class Tag
      *
      * @var string[]
      */
-    private static $tags = [
+    private static $tags = array(
         'api', 'author', 'category', 'copyright', 'deprecated', 'example',
         'global', 'internal', 'license', 'link', 'method', 'package', 'param',
         'property', 'property-read', 'property-write', 'return', 'see',
         'since', 'subpackage', 'throws', 'todo', 'uses', 'var', 'version',
-    ];
+    );
 
     /**
      * The line containing the tag.
@@ -108,6 +108,6 @@ class Tag
      */
     public function valid()
     {
-        return \in_array($this->getName(), self::$tags, true);
+        return in_array($this->getName(), self::$tags, true);
     }
 }

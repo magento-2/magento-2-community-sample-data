@@ -40,7 +40,7 @@ class ItemProductResolver implements ItemResolverInterface
     /**
      * {@inheritdoc}
      */
-    public function getFinalProduct(ItemInterface $item) : ProductInterface
+    public function getFinalProduct(ItemInterface $item): ProductInterface
     {
         /**
          * Show parent product thumbnail if it must be always shown according to the related setting in system config
@@ -49,6 +49,7 @@ class ItemProductResolver implements ItemResolverInterface
         $parentProduct = $item->getProduct();
         $finalProduct = $parentProduct;
         $childProduct = $this->getChildProduct($item);
+
         if ($childProduct !== $parentProduct) {
             $configValue = $this->scopeConfig->getValue(
                 self::CONFIG_THUMBNAIL_SOURCE,
@@ -60,6 +61,7 @@ class ItemProductResolver implements ItemResolverInterface
                     ? $parentProduct
                     : $childProduct;
         }
+
         return $finalProduct;
     }
 
@@ -69,13 +71,15 @@ class ItemProductResolver implements ItemResolverInterface
      * @param ItemInterface $item
      * @return Product
      */
-    private function getChildProduct(ItemInterface $item) : Product
+    private function getChildProduct(ItemInterface $item): Product
     {
         $option = $item->getOptionByCode('simple_product');
         $product = $item->getProduct();
+
         if ($option) {
             $product = $option->getProduct();
         }
+
         return $product;
     }
 }

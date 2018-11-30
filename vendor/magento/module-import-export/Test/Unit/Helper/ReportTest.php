@@ -153,40 +153,25 @@ class ReportTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * @dataProvider importFileExistsDataProvider
      * @expectedException \InvalidArgumentException
      * @expectedExceptionMessage Filename has not permitted symbols in it
-     * @param string $fileName
-     * @return void
      */
-    public function testImportFileExistsException($fileName)
+    public function testImportFileExistsException()
     {
-        $this->report->importFileExists($fileName);
+        $this->report->importFileExists('some_folder/../another_folder');
     }
 
-    /**
-     * Test importFileExists()
-     */
     public function testImportFileExists()
     {
         $this->assertEquals($this->report->importFileExists('..file..name'), true);
     }
 
     /**
-     * Dataprovider for testImportFileExistsException()
-     *
-     * @return array
+     * @expectedException \InvalidArgumentException
      */
-    public function importFileExistsDataProvider()
+    public function testImportFileExistsExceptionInverted()
     {
-        return [
-            [
-                'fileName' => 'some_folder/../another_folder',
-            ],
-            [
-                'fileName' => 'some_folder\..\another_folder',
-            ],
-        ];
+        $this->report->importFileExists('some_folder\..\another_folder');
     }
 
     /**

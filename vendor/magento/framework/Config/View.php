@@ -9,7 +9,6 @@ namespace Magento\Framework\Config;
  * View configuration files handler
  *
  * @api
- * @since 100.0.2
  */
 class View extends \Magento\Framework\Config\Reader\Filesystem
 {

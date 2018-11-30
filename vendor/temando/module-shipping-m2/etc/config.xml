@@ -20,15 +20,5 @@
                 <sovereign_endpoint></sovereign_endpoint>
             </temando>
         </carriers>
-        <sales_email>
-            <temando_pickup>
-                <enabled>1</enabled>
-                <ready_template>sales_email_temando_pickup_ready_template</ready_template>
-                <collected_template>sales_email_temando_pickup_collected_template</collected_template>
-                <canceled_template>sales_email_temando_pickup_canceled_template</canceled_template>
-                <identity>sales</identity>
-                <copy_method>bcc</copy_method>
-            </temando_pickup>
-        </sales_email>
     </default>
 </config>

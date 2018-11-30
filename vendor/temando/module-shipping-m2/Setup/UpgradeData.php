@@ -4,6 +4,7 @@
  */
 namespace Temando\Shipping\Setup;
 
+use Magento\Eav\Setup\EavSetupFactory;
 use Magento\Framework\Setup\ModuleContextInterface;
 use Magento\Framework\Setup\ModuleDataSetupInterface;
 use Magento\Framework\Setup\UpgradeDataInterface;
@@ -11,11 +12,10 @@ use Magento\Framework\Setup\UpgradeDataInterface;
 /**
  * Init module data
  *
- * @package Temando\Shipping\Setup
- * @author  Christoph Aßmann <christoph.assmann@netresearch.de>
- * @author  Sebastian Ertner <sebastian.ertner@netresearch.de>
- * @license https://opensource.org/licenses/osl-3.0.php Open Software License (OSL 3.0)
- * @link    https://www.temando.com/
+ * @package  Temando\Shipping\Setup
+ * @author   Christoph Aßmann <christoph.assmann@netresearch.de>
+ * @license  http://opensource.org/licenses/osl-3.0.php Open Software License (OSL 3.0)
+ * @link     http://www.temando.com/
  */
 class UpgradeData implements UpgradeDataInterface
 {
@@ -34,10 +34,11 @@ class UpgradeData implements UpgradeDataInterface
     }
 
     /**
+     * Upgrades data for a module
+     *
      * @param ModuleDataSetupInterface $setup
      * @param ModuleContextInterface $context
-     * @throws \Magento\Framework\Exception\AlreadyExistsException
-     * @throws \Magento\Framework\Exception\FileSystemException
+     * @return void
      */
     public function upgrade(ModuleDataSetupInterface $setup, ModuleContextInterface $context)
     {
@@ -46,11 +47,6 @@ class UpgradeData implements UpgradeDataInterface
 
         if (version_compare($moduleVersion, '1.2.0', '<')) {
             $this->installer->addDimensionAttributes($setup);
-        }
-
-        if (version_compare($moduleVersion, '1.4.0', '<')) {
-            $this->installer->addPickupOrderEmailTemplate();
-            $this->installer->addPickupOrderGuestEmailTemplate();
         }
     }
 }

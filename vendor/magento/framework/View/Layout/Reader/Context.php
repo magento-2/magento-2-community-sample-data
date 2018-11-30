@@ -10,7 +10,6 @@ use Magento\Framework\View\Page;
 
 /**
  * @api
- * @since 100.0.2
  */
 class Context
 {

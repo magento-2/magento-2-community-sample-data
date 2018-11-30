@@ -11,7 +11,6 @@ use Magento\Framework\View\Design\ThemeInterface;
  * Interface of locating view files in the file system
  *
  * @api
- * @since 100.0.2
  */
 interface CollectorInterface
 {

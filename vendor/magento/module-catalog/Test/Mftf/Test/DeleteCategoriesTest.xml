@@ -7,15 +7,14 @@
 -->
 
 <tests xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-        xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/testSchema.xsd">
+       xsi:noNamespaceSchemaLocation="../../../../../../../dev/tests/acceptance/vendor/magento/magento2-functional-testing-framework/src/Magento/FunctionalTestingFramework/Test/etc/testSchema.xsd">
     <test name="DeleteCategoriesTest">
         <annotations>
-            <features value="Catalog"/>
-            <stories value="Delete categories"/>
-            <title value="Admin should be able to delete the default root category and subcategories and still see products in the storefront"/>
-            <description value="Admin should be able to delete the default root category and subcategories and still see products in the storefront"/>
+            <features value="Delete categories"/>
+            <title value="Delete categories."/>
+            <description value="Delete Default Root Category and subcategories and vefify after products on storefront."/>
             <severity value="CRITICAL"/>
-            <testCaseId value="MAGETWO-46344"/>
+            <testCaseId value="MAGETWO-76275"/>
             <group value="testNotIsolated"/>
         </annotations>
         <before>
@@ -95,11 +94,11 @@
         <!-- @TODO: Uncomment commented below code after MQE-903 is fixed -->
         <!--<click selector="{{StorefrontHeaderSection.NavigationCategoryByName($$createCategoryC.name$$)}}" stepKey="browseClickCategoryC"/>-->
         <!--<actionGroup ref="StorefrontCheckCategoryActionGroup" stepKey="browseAssertCategoryC">-->
-            <!--<argument name="category" value="$$createCategoryC$$"/>-->
-            <!--<argument name="productCount" value="2"/>-->
+        <!--<argument name="category" value="$$createCategoryC$$"/>-->
+        <!--<argument name="productCount" value="2"/>-->
         <!--</actionGroup>-->
         <!--<actionGroup ref="StorefrontCheckCategorySimpleProduct" stepKey="browseAssertCategoryProduct1">-->
-            <!--<argument name="product" value="$$createProduct1$$"/>-->
+        <!--<argument name="product" value="$$createProduct1$$"/>-->
         <!--</actionGroup>-->
 
         <moveMouseOver selector="{{StorefrontHeaderSection.NavigationCategoryByName($$createCategoryC.name$$)}}" stepKey="hoverCategory"/>
@@ -115,11 +114,11 @@
 
         <!-- @TODO: Uncomment commented below code after MQE-903 is fixed -->
         <!--<actionGroup ref="StorefrontCheckCategoryActionGroup" stepKey="browseAssertCategoryB">-->
-            <!--<argument name="category" value="$$createCategoryB$$"/>-->
-            <!--<argument name="productCount" value="1"/>-->
+        <!--<argument name="category" value="$$createCategoryB$$"/>-->
+        <!--<argument name="productCount" value="1"/>-->
         <!--</actionGroup>-->
         <!--<actionGroup ref="StorefrontCheckCategorySimpleProduct" stepKey="browseAssertCategoryProduct3">-->
-            <!--<argument name="product" value="$$createProduct3$$"/>-->
+        <!--<argument name="product" value="$$createProduct3$$"/>-->
         <!--</actionGroup>-->
 
         <!-- Delete Categories 1(with subcategory) and 3. -->

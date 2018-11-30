@@ -5,12 +5,12 @@
  */
 namespace Magento\Framework\View\Element\Template\File;
 
-use \Magento\Framework\App\Filesystem\DirectoryList;
+use Magento\Framework\App\Filesystem\DirectoryList;
 use Magento\Framework\Component\ComponentRegistrar;
-use \Magento\Framework\Filesystem\Driver\File as FileDriver;
+use Magento\Framework\Filesystem\Driver\File as FileDriver;
 
 /**
- * Class Validator
+ * Class Validator.
  */
 class Validator
 {
@@ -87,7 +87,7 @@ class Validator
         \Magento\Framework\App\Config\ScopeConfigInterface $scopeConfigInterface,
         ComponentRegistrar $componentRegistrar,
         $scope = null,
-        ?FileDriver $fileDriver = null
+        FileDriver $fileDriver = null
     ) {
         $this->_filesystem = $filesystem;
         $this->_isAllowSymlinks = $scopeConfigInterface->getValue(self::XML_PATH_TEMPLATE_ALLOW_SYMLINK, $scope);
@@ -135,9 +135,8 @@ class Validator
         if (!is_array($directories)) {
             $directories = (array)$directories;
         }
-        $realPath = $this->fileDriver->getRealPath($path);
         foreach ($directories as $directory) {
-            if (0 === strpos($realPath, $directory)) {
+            if (0 === strpos($this->fileDriver->getRealPath($path), $directory)) {
                 return true;
             }
         }

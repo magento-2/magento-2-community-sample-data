@@ -40,7 +40,7 @@ class GitLab
     {
         $this->io = $io;
         $this->config = $config;
-        $this->process = $process ?: new ProcessExecutor($io);
+        $this->process = $process ?: new ProcessExecutor();
         $this->remoteFilesystem = $remoteFilesystem ?: Factory::createRemoteFilesystem($this->io, $config);
     }
 
@@ -112,8 +112,8 @@ class GitLab
                         $this->io->writeError('Maximum number of login attempts exceeded. Please try again later.');
                     }
 
-                    $this->io->writeError('You can also manually create a personal token at '.$scheme.'://'.$originUrl.'/profile/personal_access_tokens');
-                    $this->io->writeError('Add it using "composer config --global --auth gitlab-token.'.$originUrl.' <token>"');
+                    $this->io->writeError('You can also manually create a personal token at '.$scheme.'://'.$originUrl.'/profile/applications');
+                    $this->io->writeError('Add it using "composer config gitlab-oauth.'.$originUrl.' <token>"');
 
                     continue;
                 }

@@ -2,18 +2,32 @@
 /**
  * Refer to LICENSE.txt distributed with the Temando Shipping module for notice of license
  */
-?>
 
-<?php
-/** @var \Magento\Sales\Block\Adminhtml\Order\View\Info $block */
+/**
+ * @var \Magento\Sales\Block\Adminhtml\Order\View\Info $block
+ */
+
+$order = $block->getOrder();
+
+$orderAdminDate = $block->formatDate(
+    $block->getOrderAdminDate($order->getCreatedAt()),
+    \IntlDateFormatter::MEDIUM,
+    true
+);
+
+$orderStoreDate = $block->formatDate(
+    $order->getCreatedAt(),
+    \IntlDateFormatter::MEDIUM,
+    true,
+    $block->getTimezoneForStore($order->getStore())
+);
+
 /** @var \Temando\Shipping\ViewModel\Shipment\Location $locationViewModel */
 $locationViewModel = $block->getData('locationViewModel');
 /** @var \Temando\Shipping\ViewModel\Order\OrderDetails $orderDetailsViewModel */
 $orderDetailsViewModel = $block->getData('orderDetailsViewModel');
 /** @var \Temando\Shipping\ViewModel\Shipment\ShipmentDetails $shipmentDetailsViewModel */
 $shipmentDetailsViewModel = $block->getData('shipmentDetailsViewModel');
-
-$order = $block->getOrder();
 ?>
 
 <section class="admin__page-section order-view-account-information">
@@ -43,8 +57,6 @@ $order = $block->getOrder();
             </div>
             <div class="admin__page-section-item-content">
                 <table class="admin__table-secondary order-information-table">
-                    <?php $orderAdminDate = $orderDetailsViewModel->getOrderAdminDate($order) ?>
-                    <?php $orderStoreDate = $orderDetailsViewModel->getOrderStoreDate($order) ?>
                     <tr>
                         <th><?= $block->escapeHtml(__('Order Date')) ?></th>
                         <td><?= $block->escapeHtml($orderAdminDate) ?></td>

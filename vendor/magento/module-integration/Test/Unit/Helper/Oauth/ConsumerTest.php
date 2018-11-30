@@ -199,6 +199,7 @@ class ConsumerTest extends \PHPUnit\Framework\TestCase
 
     /**
      * @param $length
+     *
      * @return bool|string
      */
     private function _generateRandomString($length)

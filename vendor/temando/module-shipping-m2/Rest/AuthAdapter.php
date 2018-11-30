@@ -10,9 +10,8 @@ use Temando\Shipping\Rest\Adapter\AuthenticationApiInterface;
 use Temando\Shipping\Rest\Exception\AdapterException;
 use Temando\Shipping\Rest\Exception\RestClientErrorException;
 use Temando\Shipping\Rest\Request\AuthRequestInterface;
-use Temando\Shipping\Rest\Response\DataObject\Session;
-use Temando\Shipping\Rest\Response\Document\Errors;
-use Temando\Shipping\Rest\Response\Document\GetSession;
+use Temando\Shipping\Rest\Response\Errors;
+use Temando\Shipping\Rest\Response\Type\SessionResponseType;
 use Temando\Shipping\Rest\SchemaMapper\ParserInterface;
 use Temando\Shipping\Webservice\Config\WsConfigInterface;
 
@@ -75,7 +74,7 @@ class AuthAdapter implements AuthenticationApiInterface
 
     /**
      * @param AuthRequestInterface $request
-     * @return Session
+     * @return SessionResponseType
      * @throws AdapterException
      */
     public function startSession(AuthRequestInterface $request)
@@ -96,8 +95,8 @@ class AuthAdapter implements AuthenticationApiInterface
             $rawResponse = $this->restClient->post($uri, $requestBody, $headers);
             $this->logger->log(LogLevel::DEBUG, $rawResponse);
 
-            /** @var GetSession $response */
-            $response = $this->responseParser->parse($rawResponse, GetSession::class);
+            /** @var Response\GetSession $response */
+            $response = $this->responseParser->parse($rawResponse, Response\GetSession::class);
             $session = $response->getData();
         } catch (RestClientErrorException $e) {
             $this->logger->log(LogLevel::ERROR, $e->getMessage());

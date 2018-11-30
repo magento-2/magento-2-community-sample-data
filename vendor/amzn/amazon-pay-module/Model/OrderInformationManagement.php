@@ -259,7 +259,9 @@ class OrderInformationManagement implements OrderInformationManagementInterface
     public function removeOrderReference()
     {
         $quote = $this->session->getQuote();
-        
+
+        $quote->getExtensionAttributes()->setAmazonOrderReferenceId(null);
+
         if ($quote->getId()) {
             $quoteLink = $this->quoteLinkFactory->create()->load($quote->getId(), 'quote_id');
 

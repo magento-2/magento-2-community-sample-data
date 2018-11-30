@@ -3,7 +3,6 @@
  * Copyright © Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
-
 namespace Magento\Email\Model;
 
 use Magento\Framework\App\Filesystem\DirectoryList;
@@ -290,7 +289,7 @@ abstract class AbstractTemplate extends AbstractModel implements TemplateTypesIn
         /**
          * trim copyright message
          */
-        if (preg_match('/^<!--[\w\W]+?-->/m', $templateText, $matches) && strpos($matches[0], 'Copyright') !== false) {
+        if (preg_match('/^<!--[\w\W]+?-->/m', $templateText, $matches) && strpos($matches[0], 'Copyright') > 0) {
             $templateText = str_replace($matches[0], '', $templateText);
         }
 
@@ -531,13 +530,13 @@ abstract class AbstractTemplate extends AbstractModel implements TemplateTypesIn
      *
      * @param string $templateId
      * @return $this
+     * @throws \Magento\Framework\Exception\MailException
      */
     public function setForcedArea($templateId)
     {
-        if ($this->area === null) {
+        if (!isset($this->area)) {
             $this->area = $this->emailConfig->getTemplateArea($templateId);
         }
-
         return $this;
     }
 
@@ -605,9 +604,7 @@ abstract class AbstractTemplate extends AbstractModel implements TemplateTypesIn
     public function setDesignConfig(array $config)
     {
         if (!isset($config['area']) || !isset($config['store'])) {
-            throw new LocalizedException(
-                __('The design config needs an area and a store. Verify that both are set and try again.')
-            );
+            throw new LocalizedException(__('Design config must have area and store.'));
         }
         $this->getDesignConfig()->setData($config);
         return $this;
